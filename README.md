@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 Required packages:
 
 - Node.js: http://nodejs.org
