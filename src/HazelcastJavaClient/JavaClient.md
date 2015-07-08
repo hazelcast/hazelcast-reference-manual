@@ -18,3 +18,57 @@ Currently, Hazelcast has Native Java, C++ and .NET Clients available. This chapt
 ![image](images/NoteSmall.jpg) ***IMPORTANT:*** *Starting with the Hazelcast 3.5. release, a new Java Native Client Library is introduced in the release package: `hazelcast-client-new-<version>.jar`. This library contains clients which use the new Hazelcast Binary Client Protocol. This library does not exist for the releases before 3.5.*
 
 <br><br>
+
+## Hazelcast Clients Feature Comparison
+
+Before detailing the Java Client, this section provides the below comparison matrix to show which features are supported by the Hazelcast clients.
+
+
+Feature|Java Client|.NET Client|C++ Client
+-|-|-
+Map|&#9745;|&#9745;|&#9745;
+Queue|&#9745;|&#9745;|&#9745;
+Set|&#9745;|&#9745;|&#9745;
+List|&#9745;|&#9745;|&#9745;
+MultiMap|&#9745;|&#9745;|&#9745;
+Replicated Map|&#9745;|&#9747;|&#9747;
+Topic|&#9745;|&#9745;|&#9745;
+MapReduce|&#9745;|&#9747;|&#9747;
+Lock|&#9745;|&#9745;|&#9745;
+Semaphore|&#9745;|&#9745;|&#9745;
+AtomicLong|&#9745;|&#9745;|&#9745;
+AtomicReference|&#9745;|&#9745;|&#9745;
+IdGenerator|&#9745;|&#9745;|&#9745;
+CountDownLatch|&#9745;|&#9745;|&#9745;
+Transactional Map|&#9745;|&#9745;|&#9745;
+Transactional MultiMap|&#9745;|&#9745;|&#9745;
+Transactional Queue|&#9745;|&#9745;|&#9745;
+Transactional List|&#9745;|&#9745;|&#9745;
+Transactional Set|&#9745;|&#9745;|&#9745;
+JCache|&#9745;|&#9747;|&#9747;
+Ringbuffer|&#9745;|&#9747;|&#9747;
+Reliable Topic|&#9747;|&#9747;|&#9747;
+Client Configuration Import|&#9745;|&#9747;|&#9747;
+Hazelcast Client Protocol|&#9745;|&#9745;|&#9745;
+Fail Fast on Invalid Conviguration|&#9745;|&#9747;|&#9747;
+Sub-Listener Interfaces for Map ListenerMap|&#9745;|&#9747;|&#9747;
+Continuous Query Caching|&#9745;|&#9747;|&#9747;
+Distributed Executor Service|&#9745;|&#9747;|&#9747;
+Query|&#9745;|&#9745;|&#9745;
+Near Cache|&#9745;|&#9745;|&#9747;
+Heartbeat|&#9745;|&#9745;|&#9745;
+Declarative Configuration|&#9745;|&#9745;|&#9747;
+Programmatic Configuration|&#9745;|&#9745;|&#9745;
+SSL Support|&#9745;|&#9747;|&#9747;
+XA Transactions|&#9745;|&#9747;|&#9747;
+Smart Client|&#9745;|&#9745;|&#9745;
+Dummy Client|&#9745;|&#9745;|&#9745;
+Lifecycle Service|&#9745;|&#9745;|&#9745;
+Event Listeners|&#9745;|&#9745;|&#9745;
+DataSerializable|&#9745;|&#9745;|&#9745;
+IdentifiedDataSerializable|&#9745;|&#9745;|&#9745;
+Portable|&#9745;|&#9745;|&#9745;
+
+
+
+<br><br>
