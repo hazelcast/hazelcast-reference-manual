@@ -31,6 +31,7 @@ collectionList.setName( "MyList" ).setBackupCount( "1" )
 List configuration has the following elements.
 
 
+- `statistics-enabled`: True (default) if statistics gathering is enabled on the list, false otherwise.
 - `backup-count`: Number of synchronous backups. List is a non-partitioned data structure, so all entries of a List reside in one partition. When this parameter is '1', there will be 1 backup of that List in another node in the cluster. When it is '2', 2 nodes will have the backup.
 - `async-backup-count`: Number of asynchronous backups.
 - `max-size`: The maximum number of entries for this List.

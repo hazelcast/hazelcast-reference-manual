@@ -32,6 +32,7 @@ collectionSet.setName( "MySet" ).setBackupCount( "1" )
 Set configuration has the following elements.
 
 
+- `statistics-enabled`: True (default) if statistics gathering is enabled on the set, false otherwise.
 - `backup-count`: Count of synchronous backups. Set is a non-partitioned data structure, so all entries of a Set reside in one partition. When this parameter is '1', it means there will be 1 backup of that Set in another node in the cluster. When it is '2', 2 nodes will have the backup.
 - `async-backup-count`: Count of asynchronous backups.
 - `max-size`: The maximum number of entries for this Set.

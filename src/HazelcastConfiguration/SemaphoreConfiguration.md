@@ -23,9 +23,13 @@ semaphoreConfig.setName( "semaphore" ).setBackupCount( "1" )
         .setInitialPermits( "3" );
 ```
 
-It has below elements.
+Semaphore configuration has the below elements.
 
 - `initial-permits`: the thread count to which the concurrent access is limited. For example, if you set it to "3", concurrent access to the object is limited to 3 threads.
 - `backup-count`: Number of synchronous backups.
 - `async-backup-count`: Number of asynchronous backups.
+
+Semaphore configuration has the following attributes.
+
+- `name`: The name of the semaphore. Required.
 

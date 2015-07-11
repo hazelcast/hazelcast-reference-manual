@@ -37,3 +37,7 @@ Reliable Topic configuration has the following elements.
 - `read-batch-size`: Minimum number of messages that Reliable Topic will try to read in batches. The default value is 10.
 - `topic-overload-policy`: Policy to handle an overloaded topic. Available values are `DISCARD_OLDEST`, `DISCARD_NEWEST`, `BLOCK` and `ERROR`. The default value is `BLOCK.
 
+Reliable Topic configuration has the following attributes.
+
+- `name`: Name of the reliable topic. Optional.
+

@@ -31,9 +31,14 @@ rbConfig.setCapacity( 1000 )
 
 RingBuffer configuration has the following elements.
 
-- `capacity`: Total number of items in the RingBuffer. The default value is 10000.
-- `time-to-live-seconds`: Duration that the RingBuffer retains the items before deleting them. When it is set to **0**, it will be disabled. The default value is 0.
+- `capacity`: Total number of items in the RingBuffer. The default value is 10000. If no time-to-live-seconds is set, the size will always be equal to capacity after the head completed the first loop around the ring. This is because no items are getting retired.
+- `time-to-live-seconds`: The number of seconds that the RingBuffer retains the items before deleting them. When it is set to **0**, it will be disabled. The default value is 0.
 - `backup-count`: Number of synchronous backups. The default value is 1.
 - `async-backup-count`: Number of asynchronous backups. The default value is 0.
-- `in-memory-format`: In-memory format of an item when stored in the RingBuffer. Available values are `OBJECT` and `BINARY`. The default value is `BINARY`. 
+- `in-memory-format`: In-memory format of an item when stored in the RingBuffer. Available values are `OBJECT` and `BINARY`. The default value is `BINARY`.
+
+
+Ringbuffer configuration has the following attributes.
+
+- `name`: Name of the ringbuffer. Required.
 

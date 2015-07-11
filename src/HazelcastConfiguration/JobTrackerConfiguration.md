@@ -38,3 +38,7 @@ being sent to reducers. To prevent this, you might want to use a combiner to pre
 - `communicate-stats`: Defines if statistics (for example, about processed entries) are transmitted to the job emitter. This might be used to show some kind of progress to a user inside of an UI system, but it produces additional traffic. If not needed, you might want to deactivate this.
 - `topology-changed-strategy`: Defines how the MapReduce framework will react on topology changes while executing a job. Currently, only CANCEL_RUNNING_OPERATION is fully supported, which throws an exception to the job emitter (will throw a `com.hazelcast.mapreduce.TopologyChangedException`).
 
+MapReduce JobTracker configuration has the following attributes.
+
+- `name`: The name of the JobTracker. Required.
+

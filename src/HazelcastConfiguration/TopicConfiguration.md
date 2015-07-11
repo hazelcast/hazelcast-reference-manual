@@ -42,10 +42,11 @@ Topic configuration has the following elements.
 - `statistics-enabled`: Default is `true`, meaning statistics are calculated.
 - `global-ordering-enabled`: Default is `false`, meaning there is no global order guarantee.
 - `message-listeners`: Lets you add listeners (listener classes) for the topic messages.
+- `name`: The name of the topic. Optional.
 
 
 
-Topic related but not topic specific configuration parameters
+The following are topic-related but not topic-specific configuration parameters.
 
    - `hazelcast.event.queue.capacity`: default value is 1,000,000.
    - `hazelcast.event.queue.timeout.millis`: default value is 250.
