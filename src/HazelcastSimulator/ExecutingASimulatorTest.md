@@ -137,17 +137,21 @@ INFO  09:06:57 Shutting down Provisioner...
 INFO  09:06:57 Done!
 ```
 
-You can also see the file `agents.txt` that was created automatically by the provisioner in the working folder. The file `agents.txt` includes IP addresses of the started EC2 instances. You can take a glance at `agents.txt` via this command:
+You can also see the file `agents.txt` that was created automatically by the provisioner in the working folder. The file `agents.txt` includes IP addresses of the started EC2 instances. You can see this file's content using the following command.
 
-	less agents.txt
+```
+less agents.txt
+```
 
-As you can see, first column of ips is a public ips, second one is a private ips.A public ip address is used for coordinator-agent communication. A private ip address is used for client-member and member-member communication. A private ip address can't be connected to from outside of the ec2 environment.
+First column lists the public IP addresses and the second one lists the private IP addresses. A public IP address is used for the communication between the coordinator and agent. A private IP address is used for the communications between client and member and also between member and member. A private IP address cannot be connected to from the outside of EC2 environment.
 
-* After the create instances and install agents to them. You just need cordinate and run your test suite via `cooordinator`.
+**2. Running the Test Suite**
+
+After you created the instances and agents are installed to them,  just need cordinate and run your test suite via `cooordinator`.
 	
-	```
-	coordinator test.properties
-	```
+```
+coordinator test.properties
+```
 
 Please see the [Coordinator section](#coordinator) for detailed information about coordinator arguments.
 
