@@ -147,15 +147,15 @@ First column lists the public IP addresses and the second one lists the private 
 
 **2. Running the Test Suite**
 
-After you created the instances and agents are installed to them,  just need cordinate and run your test suite via `cooordinator`.
+After you created the instances and agents are installed to them, execute the following command to run your test suite.
 	
 ```
 coordinator test.properties
 ```
 
-Please see the [Coordinator section](#coordinator) for detailed information about coordinator arguments.
+Please refer to the [Coordinator section](#coordinator) for detailed information about the arguments of `coordinator`.
 
-The output of the command looks like the following.
+The output looks like the following.
 
 ```
 INFO  09:57:17 Hazelcast Simulator Coordinator
@@ -250,9 +250,11 @@ INFO  09:59:55 Total running time: 133 seconds
 INFO  09:59:55 -----------------------------------------------------------------------------
 INFO  09:59:55 No failures have been detected!
 INFO  09:59:55 -----------------------------------------------------------------------------```
+```
 
+**3. Downloading the Results**
 
-* Now you need logs and results that produced by workers. You can get these requirements from agents via `provisioner`.  
+ Now you need the logs and results that the workers generated. You can get these requirements from agents via `provisioner`.  
 
 	``` provisioner --download ```
 
