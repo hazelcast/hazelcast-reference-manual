@@ -249,16 +249,18 @@ INFO  09:59:55 Finished cool down
 INFO  09:59:55 Total running time: 133 seconds
 INFO  09:59:55 -----------------------------------------------------------------------------
 INFO  09:59:55 No failures have been detected!
-INFO  09:59:55 -----------------------------------------------------------------------------```
+INFO  09:59:55 -----------------------------------------------------------------------------
 ```
 
 **3. Downloading the Results**
 
  Now you need the logs and results that the workers generated. You can get these requirements from agents via `provisioner`.  
 
-	``` provisioner --download ```
+```
+provisioner --download
+```
 
-This line performs the following.
+The output looks like the following.
 
 ```
 INFO  10:05:41 Hazelcast Simulator Provisioner
@@ -279,14 +281,19 @@ INFO  10:05:43 Shutting down Provisioner...
 INFO  10:05:43 Done!
 ```
  
-After it is completed, the artifacts (log files) are downloaded into the `workers` folder in the working directory.
+The artifacts (log files) are downloaded into the `workers` subfolder of the working folder.
 
+**4. Terminating the Instances**
 
-* If want to terminate the instances, just run this line of command. If an ec2 machine with an agent running is not used for 2 hours, the machines will terminate themselves to prevent running into a big bill.
+If want to terminate the instances, execute the following command.
 
-	```provisioner --terminate```
+```
+provisioner --terminate
+```
+	
+If an EC2 machine with an agent running is idle for 2 hours, that machine will automatically terminate itself to prevent running into a big bill.
 
-This line performs the following.
+The output looks like the following.
 
 ```
 INFO  10:26:46 Hazelcast Simulator Provisioner
@@ -311,39 +318,40 @@ INFO  10:28:13 Shutting down Provisioner...
 INFO  10:28:13 Done!
 ```
 
+### Running the Test with a Script
 
-* Alternative way to run test via script. You should create script:
+Another option to run the test is using a script. Execute the following command to create a script called, for example, `run.sh`.
 
-	`cat > run.sh`
+```
+cat > run.sh
+```
 
 
-The script `run.sh` is for your convenience. It gathers all the commands used to perform a test into one script. The following is the content of this example `run.sh` script.
+This option is for your convenience. It gathers all the commands used to perform a test into one script. The following is the content of this example `run.sh` script.
 
 ```
 #!/bin/bash
-
 set -e
-
 provisioner --scale 4
-
 coordinator test.properties
-
 provisioner --download
 ```
 
-Also you should make `run.sh` executable:
+Note that you should make the script `run.sh` executable executing the following command.
 
-	chmod +x run.sh
+```
+chmod +x run.sh
+```
 	
 <br></br>
 ***RELATED INFORMATION***
 
-*Please see the [Provisioner section](#provisioner) and the [Coordinator section](#coordinator) for the more `provisioner` and `coordinator` commands.*
+*Please see the [Provisioner section](#provisioner) and the [Coordinator section](#coordinator) for more `provisioner` and `coordinator` commands.*
 <br></br>
 
 ### Using Maven Archetypes
 
-Alternatively, you can execute tests using the Simulator archetype. Please see the following:
+Alternatively, you can execute tests using the Simulator archetype. Please see the following.
 
 ```
 mvn archetype:generate  \
@@ -354,9 +362,9 @@ mvn archetype:generate  \
     -DartifactId=yourproject
 ```
 
-This will create a fully working Simulator project, including the test having `yourgroupid`. 
+This creates a fully working Simulator project, including the test having `yourgroupid`. 
 
-1. After this project is generated, go to the created folder and run the following command.
+1. After this project is generated, go to the created folder and execute the following command.
 
    ```
 mvn clean install
