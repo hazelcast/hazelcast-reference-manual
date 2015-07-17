@@ -1,6 +1,6 @@
 
 
-### Paging Predicate (Order & Limit)
+### Paging Predicate
 
 Hazelcast provides paging for defined predicates. With its `PagingPredicate` class, you can
 get a collection of keys, values, or entries page by page by filtering them with predicates and giving the size of the pages. Also, you
@@ -30,7 +30,7 @@ values = map.values( pagingPredicate );
 
 If a comparator is not specified for `PagingPredicate`, but you want to get a collection of keys or values page by page, this collection must be an instance of `Comparable` (i.e. it must implement `java.lang.Comparable`). Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
-Paging Predicate is not supported in Transactional Context.
+Paging Predicate, also known as Order & Limit, is not supported in Transactional Context.
 <br></br>
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, random page accessing is not supported.*
