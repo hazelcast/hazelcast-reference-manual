@@ -1,6 +1,5 @@
-# Overview
+# Hazelcast Overview
 
-## Hazelcast Overview
 
 Hazelcast is an open source In-Memory Data Grid (IMDG). 
 It provides elastically scalable distributed In-Memory computing, widely recognized as the fastest and most scalable
@@ -23,34 +22,34 @@ implemented in Java and has clients for Java, C/C++, .NET and REST. Hazelcast al
 If you are looking for In-Memory speed, elastic scalability, and the developer friendliness of NoSQL, Hazelcast is a
 great choice.
 
-###Hazelcast is simple
+**Hazelcast is simple**
 
 Hazelcast is written in Java with no other dependencies. It exposes the same API from the familiar Java util package,
 exposing the same interfaces. Just add `hazelcast.jar` to your classpath, and you can quickly enjoy JVMs clustering
 and you can start building scalable applications.
 
-###Hazelcast is Peer-to-Peer
+**Hazelcast is Peer-to-Peer**
 
 Unlike many NoSQL solutions, Hazelcast is peer-to-peer. There is no master and slave; there is no single point of
 failure. All nodes store equal amounts of data and do equal amounts of processing. You can embed Hazelcast in your
 existing application or use it in client and server mode where your application is a client to Hazelcast nodes.
 
-###Hazelcast is scalable
+**Hazelcast is scalable**
 
 Hazelcast is designed to scale up to hundreds and thousands of nodes. Simply add new nodes and they will
 automatically discover the cluster and will linearly increase both memory and processing capacity. The nodes maintain
 a TCP connection between each other and all communication is performed through this layer.
 
-###Hazelcast is fast
+**Hazelcast is fast**
 
 Hazelcast stores everything in-memory. It is designed to perform very fast reads and updates.
 
-###Hazelcast is redundant
+**Hazelcast is redundant**
 
 Hazelcast keeps the backup of each data entry on multiple nodes. On a node failure, the data is restored from the
 backup and the cluster will continue to operate without downtime.
 
-###Sharding in Hazelcast
+## Sharding in Hazelcast
 
 Hazelcast shards are called Partitions. By default, Hazelcast has 271 partitions. Given a key, we serialize, hash
 and mode it with the number of partitions to find the partition the key belongs to. The partitions themselves are
@@ -64,7 +63,7 @@ them among nodes for redundancy.
 your data.*
 
 
-###Hazelcast Topology
+## Hazelcast Topology
 
 If you have an application whose main focal point is asynchronous or high performance computing and lots of task
 executions, then embedded deployment is very useful. In this type, nodes include both the application and data.
