@@ -1,20 +1,19 @@
 
 
-## Starting the Instance and Client
-
+## Starting the Member and Client
 
 Having installed Hazelcast, you can get started. 
 
-In this short tutorial, we:
+In this short tutorial, you perform the following activities.
 
 1. Create a simple Java application using the Hazelcast distributed map and queue. 
-2. Run our application twice to have a cluster with two nodes (JVMs). 
+2. Run our application twice to have a cluster with two members (JVMs). 
 3. Connect to our cluster from another Java application by using the Hazelcast Native Java Client API.
 
 Let's begin.
 
 
-- The following code starts the first instance (node), and creates and uses the `customers` map and queue.
+- The following code starts the first Hazelcast member and creates and uses the `customers` map and queue.
 
 ```java
 import com.hazelcast.core.Hazelcast;
@@ -45,8 +44,8 @@ public class GettingStarted {
 }
 ```
 
-- Run this `GettingStarted` class a second time to get the second node 
-started. The nodes form a cluster. You should see something like the following.
+- Run this `GettingStarted` class a second time to get the second member 
+started. The members form a cluster and the output is similar to the following.
 
 ```
 Members [2] {
@@ -58,7 +57,7 @@ Members [2] {
 - Now, add the `hazelcast-client-`*`<version>`*`.jar` library to your classpath. 
 This is required to use a Hazelcast client.
 
-- The following code starts a Hazelcast Client, connects to our two node cluster, 
+- The following code starts a Hazelcast Client, connects to our cluster, 
 and prints the size of the `customers` map.
 
 ```java    
@@ -83,11 +82,11 @@ and printing the map size as **3**.
 
 Hazelcast also offers a tool, **Management Center**, that enables you to monitor your cluster. 
 To use it, deploy the `mancenter-`*`<version>`*`.war` included in the ZIP file to your web server. 
-You can use it to monitor your maps, queues, and other distributed data structures and nodes. Please 
+You can use it to monitor your maps, queues, and other distributed data structures and members. Please 
 see the [Management Center section](#management-center) for usage explanations.
 
 
-By default, Hazelcast uses Multicast to discover other nodes that can form a cluster.  If you are 
+By default, Hazelcast uses Multicast to discover other members that can form a cluster.  If you are 
 working with other Hazelcast developers on the same network, you may find yourself joining their 
 clusters under the default settings.  Hazelcast provides a way to segregate clusters within the same 
 network when using Multicast. Please see the [Creating Cluster Groups](#creating-cluster-groups) 
