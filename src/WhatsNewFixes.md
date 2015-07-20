@@ -3,7 +3,7 @@
 
 **3.5.1 Fixes**
 
-This section lists issues solved for Hazelcast 3.5.1 release.
+The following are the issues solved for Hazelcast 3.5.1 release.
 
 - Hazelcast Management Center uses `UpdateMapConfigOperation` to update map configurations. This operation simply replaces the map configuration of the related map container. However, this replacement has no effect for `maxIdleSeconds` and `timeToLiveSeconds` properties of the map configuration since they are not used in the map container directly. They are assigned to the final variables during map container creation and never touched again [[#5593]](https://github.com/hazelcast/hazelcast/issues/5593).
 - Destroying a map just after creating it produces double create/destroy events for `DistributedObjectListener` [[#5592]](https://github.com/hazelcast/hazelcast/issues/5592).
@@ -19,7 +19,7 @@ This section lists issues solved for Hazelcast 3.5.1 release.
 
 **3.5 Fixes**
 
-This section lists issues solved for Hazelcast 3.5 release.
+The following are the issues solved for Hazelcast 3.5 release.
 
 - Operation timeout mechanism is not working [[#5468]](https://github.com/hazelcast/hazelcast/issues/5468).
 - `MapLoader` exception is not logged: Exception should be logged and propagated back to the client that triggered the loading of the map [[#5430]](https://github.com/hazelcast/hazelcast/issues/5430).
