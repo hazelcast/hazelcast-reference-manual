@@ -2,7 +2,6 @@
 
 ## Upgrading Hazelcast
 
-
 In the following sections, you can see the changes that you should take into account before upgrading to latest Hazelcast from 2.x and 3.x releases.
 
 

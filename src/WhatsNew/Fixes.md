@@ -14,7 +14,6 @@ The following are the issues solved for Hazelcast 3.5.1 release.
 - Hazelcast Management Center "Scripting" tab is not refreshed when a new node joins to the cluster [[#4738]](https://github.com/hazelcast/hazelcast/issues/4738).
 - When updating a map entry which is replicated over WAN, the TTL (time to live) is not honored in the remote cluster map. When the timeout expires, the entry disappears from the cluster in which the key is owned, however it remains in the remote cluster [[#254]](https://github.com/hazelcast/hazelcast/issues/254).
 
-
 <br><br>
 
 **3.5 Fixes**
