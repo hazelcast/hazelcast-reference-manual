@@ -3,7 +3,7 @@
 
 **3.5 Fixes**
 
-This section lists issues solved for **Hazelcast 3.5** release.
+The following are the issues solved for Hazelcast 3.5.1 release.
 
 - Operation timeout mechanism is not working [[#5468]](https://github.com/hazelcast/hazelcast/issues/5468).
 - `MapLoader` exception is not logged: Exception should be logged and propagated back to the client that triggered the loading of the map [[#5430]](https://github.com/hazelcast/hazelcast/issues/5430).

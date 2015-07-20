@@ -1,12 +1,14 @@
 # What's New in Hazelcast 3.5
 
-
+This chapter includes the release notes, information on how to upgrade Hazelcast from previous releases and the revision history for this document.
 
 ## Release Notes
 
+This section lists the new features and enhancements developed and bugs fixed for this release.
+
 ### New Features
 
-This section provides the new features introduced with Hazelcast 3.5 release. 
+The following the new features introduced with Hazelcast 3.5 release.
 
 - **Async Back Pressure**: The Back Pressure introduced with Hazelcast 3.4 now supports async operations. For more information, please see the [Back Pressure section](#back-pressure).
 - **Client Configuration Import**: Hazelcast now supports replacing variables with system properties in the declarative configuration of Hazelcast client. Moreover, now you can compose the Hazelcast client declarative configuration out of smaller configuration snippets. For more information, please see the [Composing Declarative Configuration section](#composing-declarative-configuration).
