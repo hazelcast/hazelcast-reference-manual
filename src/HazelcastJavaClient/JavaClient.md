@@ -26,48 +26,48 @@ Before detailing the Java Client, this section provides the below comparison mat
 
 Feature|Java Client|.NET Client|C++ Client
 -|-|-
-Map|&#9745;|&#9745;|&#9745;
-Queue|&#9745;|&#9745;|&#9745;
-Set|&#9745;|&#9745;|&#9745;
-List|&#9745;|&#9745;|&#9745;
-MultiMap|&#9745;|&#9745;|&#9745;
-Replicated Map|&#9745;|&#9747;|&#9747;
-Topic|&#9745;|&#9745;|&#9745;
-MapReduce|&#9745;|&#9747;|&#9747;
-Lock|&#9745;|&#9745;|&#9745;
-Semaphore|&#9745;|&#9745;|&#9745;
-AtomicLong|&#9745;|&#9745;|&#9745;
-AtomicReference|&#9745;|&#9745;|&#9745;
-IdGenerator|&#9745;|&#9745;|&#9745;
-CountDownLatch|&#9745;|&#9745;|&#9745;
-Transactional Map|&#9745;|&#9745;|&#9745;
-Transactional MultiMap|&#9745;|&#9745;|&#9745;
-Transactional Queue|&#9745;|&#9745;|&#9745;
-Transactional List|&#9745;|&#9745;|&#9745;
-Transactional Set|&#9745;|&#9745;|&#9745;
-JCache|&#9745;|&#9747;|&#9747;
-Ringbuffer|&#9745;|&#9747;|&#9747;
-Reliable Topic|&#9747;|&#9747;|&#9747;
-Client Configuration Import|&#9745;|&#9747;|&#9747;
-Hazelcast Client Protocol|&#9745;|&#9745;|&#9745;
-Fail Fast on Invalid Conviguration|&#9745;|&#9747;|&#9747;
-Sub-Listener Interfaces for Map ListenerMap|&#9745;|&#9747;|&#9747;
-Continuous Query Caching|&#9745;|&#9747;|&#9747;
-Distributed Executor Service|&#9745;|&#9747;|&#9747;
-Query|&#9745;|&#9745;|&#9745;
-Near Cache|&#9745;|&#9745;|&#9747;
-Heartbeat|&#9745;|&#9745;|&#9745;
-Declarative Configuration|&#9745;|&#9745;|&#9747;
-Programmatic Configuration|&#9745;|&#9745;|&#9745;
-SSL Support|&#9745;|&#9747;|&#9747;
-XA Transactions|&#9745;|&#9747;|&#9747;
-Smart Client|&#9745;|&#9745;|&#9745;
-Dummy Client|&#9745;|&#9745;|&#9745;
-Lifecycle Service|&#9745;|&#9745;|&#9745;
-Event Listeners|&#9745;|&#9745;|&#9745;
-DataSerializable|&#9745;|&#9745;|&#9745;
-IdentifiedDataSerializable|&#9745;|&#9745;|&#9745;
-Portable|&#9745;|&#9745;|&#9745;
+Map|Yes|Yes|Yes
+Queue|Yes|Yes|Yes
+Set|Yes|Yes|Yes
+List|Yes|Yes|Yes
+MultiMap|Yes|Yes|Yes
+Replicated Map|Yes|No|No
+Topic|Yes|Yes|Yes
+MapReduce|Yes|No|No
+Lock|Yes|Yes|Yes
+Semaphore|Yes|Yes|Yes
+AtomicLong|Yes|Yes|Yes
+AtomicReference|Yes|Yes|Yes
+IdGenerator|Yes|Yes|Yes
+CountDownLatch|Yes|Yes|Yes
+Transactional Map|Yes|Yes|Yes
+Transactional MultiMap|Yes|Yes|Yes
+Transactional Queue|Yes|Yes|Yes
+Transactional List|Yes|Yes|Yes
+Transactional Set|Yes|Yes|Yes
+JCache|Yes|No|No
+Ringbuffer|Yes|No|No
+Reliable Topic|No|No|No
+Client Configuration Import|Yes|No|No
+Hazelcast Client Protocol|Yes|Yes|Yes
+Fail Fast on Invalid Conviguration|Yes|No|No
+Sub-Listener Interfaces for Map ListenerMap|Yes|No|No
+Continuous Query Caching|Yes|No|No
+Distributed Executor Service|Yes|No|No
+Query|Yes|Yes|Yes
+Near Cache|Yes|Yes|No
+Heartbeat|Yes|Yes|Yes
+Declarative Configuration|Yes|Yes|No
+Programmatic Configuration|Yes|Yes|Yes
+SSL Support|Yes|No|No
+XA Transactions|Yes|No|No
+Smart Client|Yes|Yes|Yes
+Dummy Client|Yes|Yes|Yes
+Lifecycle Service|Yes|Yes|Yes
+Event Listeners|Yes|Yes|Yes
+DataSerializable|Yes|Yes|Yes
+IdentifiedDataSerializable|Yes|Yes|Yes
+Portable|Yes|Yes|Yes
 
 
 
