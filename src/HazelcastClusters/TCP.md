@@ -2,7 +2,7 @@
 
 ### Discovering Members by TCP
 
-If multicast is not the preferred way of discovery for your environment, then you can configure Hazelcast to be a full TCP/IP cluster. When you configure Hazelcast to discover members by TCP/IP, you must list all or a subset of the TCP/IP nodes' hostnames and/or IP addresses as cluster members. You do not have to list all of these cluster members, but at least one of the listed members has to be active in the cluster when a new member joins.
+If multicast is not the preferred way of discovery for your environment, then you can configure Hazelcast to be a full TCP/IP cluster. When you configure Hazelcast to discover members by TCP/IP, you must list all or a subset of the members' hostnames and/or IP addresses as cluster members. You do not have to list all of these cluster members, but at least one of the listed members has to be active in the cluster when a new member joins.
 
 To set your Hazelcast to be a full TCP/IP cluster, set the following configuration elements. Please refer to the [tcp-ip element section](#tcp-ip-element) for the full description of the TCP/IP discovery configuration elements.
 

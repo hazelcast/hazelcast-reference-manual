@@ -6,9 +6,9 @@ With the multicast auto-discovery mechanism, Hazelcast allows cluster members to
 
 To set your Hazelcast to multicast auto-discovery, set the following configuration elements. Please refer to the [multicast element section](#multicast-element) for the full description of the multicast discovery configuration elements.
 
-- Set `multicast enabled` to "true".
+- Set the `enabled` attribute of the `multicast` element to "true".
 - Set `multicast-group`, `multicast-port`, `multicast-time-to-live`, etc. to your multicast values.
-- Set `tcp-ip enabled` and `aws-enabled` to "false".
+- Set the `enabled` attribute of both `tcp-ip` and `aws` elements to "false".
 
 The following is an example declarative configuration.
 
