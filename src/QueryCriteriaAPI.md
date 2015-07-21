@@ -52,7 +52,7 @@ characters,  (underscore) is placeholder for only one character.
 ***RELATED INFORMATION*** 
 
 *Please see the
-[Predicates class](https://github.com/hazelcast/hazelcast/blob/2709bc81cd499a3160827de24422cdb6cf98fe36/hazelcast/src/main/java/com/hazelcast/query/Predicates.java) for all predicates provided.*
+[Predicates class](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/query/Predicates.java) for all predicates provided.*
 
 
 #### Joining Predicates with AND, OR, NOT
