@@ -465,7 +465,7 @@ You can add three types of event listeners.
 
 ***RELATED INFORMATION***
 
-*Please refer to Hazelcast JavaDocs and see LifecycleListener, MembershipListener and DistributedObjectListener in the `com.hazelcast.core` package.*
+*Please refer to [LifecycleListener](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/LifecycleListener.java), [MembershipListener](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MembershipListener.java) and [DistributedObjectListener](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/DistributedObjectListener.java).*
 <br></br>
 
 
