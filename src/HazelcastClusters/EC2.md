@@ -1,5 +1,5 @@
 
-### Discovering Members by EC2 Cloud
+### Discovering Members within EC2 Cloud
 
 Hazelcast supports EC2 Auto Discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses. 
 
