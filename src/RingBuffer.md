@@ -5,7 +5,10 @@ given capacity. Each Ringbuffer has a tail and a head. The tail is where the ite
 or expired. You can reach each element in a Ringbuffer using a sequence ID, which is mapped to the elements between the head 
 and tail (inclusive) of the Ringbuffer. 
 
-Reading from Ringbuffer is simple: get its current head with the `headSequence` method and start reading. Use the method `readOne` to return the item at the 
+### Getting a Ringbuffer and Reading Items
+
+Reading from Ringbuffer is simple: get the Ringbuffer with the Hazelcast `get` method, get its current head with
+the `headSequence` method, and start reading. Use the method `readOne` to return the item at the 
 given sequence; `readOne` blocks if no item is available. To read the next item, increment the sequence by one.
 
 ```java
@@ -21,7 +24,9 @@ while(true){
 By exposing the sequence, you can now move the item from the Ringbuffer as long as the item is still available. If the item is not available
 any longer, `StaleSequenceException` is thrown.
 
-Adding an item to Ringbuffer is also easy:
+### Adding Items to a Ringbuffer
+
+Adding an item to a Ringbuffer is also easy with the Ringbuffer `add` method:
 
 ```java
 Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");

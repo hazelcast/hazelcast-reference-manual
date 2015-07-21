@@ -9,7 +9,9 @@ Hazelcast List is similar to Hazelcast Set, but Hazelcast List also allows dupli
 * Hazelcast List cannot be scaled beyond the capacity of a single machine.
 * All items are copied to local and iteration occurs locally.
 
-### Sample List Code
+### Getting a List and Putting Items
+
+Use the Hazelcast `getList` method to get the list, then use the list `put` method to put items into the List.
 
 ```java
 import com.hazelcast.core.Hazelcast;
@@ -33,9 +35,10 @@ while ( iterator.hasNext() ) {
 }
 ```
 
-### Event Registration and Configuration for List
+### Listening for List Item Events
 
-Hazelcast List uses `ItemListener` to listen to events which occur when items are added and removed.
+Hazelcast List uses `ItemListener` to listen to events which occur when items are added and removed from the List.
+Use the list `addItemListener` method to create an `ItemListener`.
 
 
 ```java

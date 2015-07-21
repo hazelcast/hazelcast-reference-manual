@@ -12,7 +12,9 @@ Hazelcast Set is a distributed and concurrent implementation of `java.util.Set`.
 * All items are copied to the local node and iteration occurs locally.
 * The equals method implemented in Hazelcast Set uses a serialized byte version of objects, as opposed to `java.util.HashSet`.
 
-### Sample Set Code
+### Getting a Set and Putting Items
+
+Use the Hazelcast `getSet` method to get the Set, then use the set `put` method to put items into the Set.
 
 ```java
 import com.hazelcast.core.Hazelcast;
@@ -34,9 +36,15 @@ while ( iterator.hasNext() ) {
 }
 ```
 
-### Event Registration and Configuration for Set
+***RELATED INFORMATION***
 
-Hazelcast Set uses `ItemListener` to listen to events which occur when items are added and removed.
+
+*Please refer to the [Set Configuration section](#set-configuration) for a full description of Hazelcast Distributed Set configuration.*
+
+### Listening for Set Item Events
+
+Hazelcast Set uses `ItemListener` to listen to events which occur when items are added and removed from the Set.
+Use the set `addItemListener` method to create an `ItemListener`.
 
 ```java
 import java.util.Queue;
@@ -78,9 +86,4 @@ public class Sample implements ItemListener {
 *To learn more about the configuration of listeners please refer to the [Listener Configurations section](#listener-configurations).*
 
 <br></br>
-
-***RELATED INFORMATION***
-
-
-*Please refer to the [Set Configuration section](#set-configuration) for a full description of Hazelcast Distributed Set configuration.*
 

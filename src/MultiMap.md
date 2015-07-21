@@ -7,9 +7,9 @@ Hazelcast `MultiMap` is a specialized map where you can store multiple values un
 Hazelcast `MultiMap` is not an implementation of `java.util.Map` due to the difference in method signatures. It supports most features of Hazelcast Map except for indexing, predicates and MapLoader/MapStore. Yet, like Hazelcast Map, entries are almost evenly distributed onto all cluster members. When a new member joins the cluster, the same ownership logic used in the distributed map applies.
 
 
-### Sample MultiMap Code
+### Getting a MultiMap and Putting an Entry
 
-Let's write code that puts data into a MultiMap.
+The following example creates a MultiMap and puts items into it. Use the Hazelcast `getMultiMap` method to get the MultiMap, then use the MultiMap `put` method to put an entry into the MultiMap.
 
 
 ```java

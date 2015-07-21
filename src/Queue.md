@@ -2,6 +2,10 @@
 
 Hazelcast distributed queue is an implementation of `java.util.concurrent.BlockingQueue`. Being distributed, Hazelcast distributed queue enables all cluster members to interact with it. Using Hazelcast distributed queue, you can add an item in one cluster member and remove it from another one.
 
+### Getting a Queue and Putting Items
+
+Use the Hazelcast `getQueue` method to get the queue, then use the queue `put` method to put items into the queue.
+
 ```java
 import com.hazelcast.core.Hazelcast;
 import java.util.concurrent.BlockingQueue;

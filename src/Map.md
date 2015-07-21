@@ -4,11 +4,11 @@
 
 Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap` and hence `java.util.Map`. It is the distributed implementation of Java map. You can perform operations like reading and writing from/to a Hazelcast map with the well known get and put methods.
 
-### Creating Distributed Maps
+### Getting a Map and Putting an Entry
 
 Hazelcast will partition your map entries and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "(1/n `*` total-data) + backups", **n** being the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
 
-Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code.
+Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the Hazelcast `getMap` method to get the map, then use the map `put` method to put an entry into the map.
 
 ```java
 public class FillMapMember {
@@ -39,7 +39,7 @@ When you run this code, a cluster member is created with a map whose entries are
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that some of the partitions will not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the [System Properties section](#system-properties).*
 
-#### Adding A Cluster Member
+#### Creating A Member for Map Backup
 
 Now, let's create a second member by running the above code again. This will create a cluster with 2 members. This is also where backups of entries are created; remember the backup partitions mentioned in the [Hazelcast Overview section](#hazelcast-overview). The following illustration shows two members and how the data and its backup is distributed.
 
