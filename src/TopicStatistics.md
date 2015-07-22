@@ -1,7 +1,7 @@
 
 
 
-### Statistics
+### Getting Topic Statistics
 
 Topic has two statistic variables that you can query. These values are incremental and local to the member.
 

@@ -1,12 +1,12 @@
 
 
-### ICondition
+### Synchronizing Threads with ICondition
 
 `ICondition` is the distributed implementation of the `notify`, `notifyAll` and `wait` operations on the Java object. You can use it to synchronize
 threads across the cluster. More specifically, you use `ICondition` when a thread's work depends on another thread's output. A good example
 can be producer/consumer methodology. 
 
-Please see the below code snippets for a sample producer/consumer implementation.
+Please see the below code examples for a producer/consumer implementation.
 
 **Producer thread:**
 

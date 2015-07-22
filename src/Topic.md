@@ -8,7 +8,9 @@ including the new members that joined after you add the listener.
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Publish operation is async. It does not wait for operations to run in
 remote nodes, it works as fire and forget.*
 
-### Sample Topic Code
+### Getting a Topic and Publishing Messages
+
+Use the Hazelcast `getTopic` method to get the Topic, then use the topic `publish` method to publish your messages (`messageObject`).
 
 ```java
 import com.hazelcast.core.Topic;

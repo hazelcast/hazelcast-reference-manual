@@ -4,7 +4,7 @@
 Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and hence their performances differ from AtomicLong.
 
 
-The following sample code creates an instance, increments it by a million, and prints the count.
+The following example code creates an instance, increments it by a million, and prints the count.
 
 ```java
 public class Member {
@@ -24,6 +24,8 @@ public class Member {
 
 When you start other instances with the code above, you will see the count as *member count* times *a million*.
 
+### Sending Functions to IAtomicLong
+
 You can send functions to an IAtomicLong. `Function` is a Hazelcast owned, single method interface. The following sample `Function` implementation doubles the original value.
 
 ```java
@@ -34,6 +36,8 @@ private static class Add2Function implements Function <Long, Long> {
   }
 }
 ```
+
+### Executing Functions on IAtomicLong
 
 You can use the following methods to execute functions on IAtomicLong.
 
@@ -71,6 +75,8 @@ public class Member {
   }
 }
 ```
+
+### Reasons to Use Functions with IAtomic
 
 The reason for using a function instead of a simple code line like `atomicLong.set(atomicLong.get() + 2));` is that the IAtomicLong read and write operations are not atomic. Since `IAtomicLong` is a distributed implementation, those operations can be remote ones, which may lead to race problems. By using functions, the data is not pulled into the code, but the code is sent to the data. This makes it more scalable.
 
