@@ -106,6 +106,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.partition.migration.timeout` | 300 | int  |   Timeout for partition migration tasks in seconds.
 `hazelcast.partition.table.send.interval`|15|int|Interval for publishing partition table periodically to all cluster members.
 `hazelcast.partitioning.strategy.class`|null|string|Class name implementing `com.hazelcast.core.PartitioningStrategy`, which defines key to partition mapping.
+`hazelcast.performance.monitor.max.rolled.file.count`|10|int|The PerformanceMonitor uses a rolling file approach to prevent eating too much disk space. This property sets the maximum number of rolling files to keep on disk.
+`hazelcast.performance.monitor.max.rolled.file.size.mb`|10|int|The performance monitor uses a rolling file approach to prevent eating too much disk space. This property sets the maximum size in MB for a single file. Every HazelcastInstance gets its own history of log files.
 `hazelcast.performance.monitoring.enabled`||bool|Enable the performance monitor which is a tool enabling you to see internal performance metrics. These metrics are written to the log file.
 `hazelcast.performance.monitoring.delay.seconds`||int| The delay in seconds between monitoring of the performance.
 `hazelcast.prefer.ipv4.stack` | true | bool  |   Prefer Ipv4 network interface when picking a local address.
