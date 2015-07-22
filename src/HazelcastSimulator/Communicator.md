@@ -44,7 +44,7 @@ Mode can be either '*' for broadcast or 'R' for a single random destination.
 
 `Agent=*,Worker=R,Test=*`: A message will be routed to all agents, then each agent will pass the message to a single random worker and workers will pass the message to all tests for processing.
 
-#### Addressing shortcuts
+#### Addressing Shortcuts
 
 Hierarchical addressing is powerful, but it can be quite verbose. You can use convenient shortcuts, as shown below.
 

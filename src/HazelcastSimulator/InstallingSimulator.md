@@ -3,13 +3,13 @@
 
 Hazelcast Simulator needs a Unix shell to run. Ensure that your local and remote machines are running under Unix, Linux or Mac OS. Hazelcast Simulator may work with Windows using a Unix-like environment such as Cygwin, but that is not officially supported at the moment.
 
-### Firewall settings
+### Firewall Settings
 
 Please ensure that all remote machines are reachable via TCP ports 22, 9000 and 5701 to 5751 on their external network interface (for example, `eth0`). The first two ports are used by Hazelcast Simulator. The other ports are used by Hazelcast itself. Port 9001 is used on the loopback device on all remote machines for local communication.
 
 ![](images/simulator/network.png)
 
-### Setup of local machine (Coordinator)
+### Setting Up the Local Machine (Coordinator)
 
 Hazelcast Simulator is provided as a separate downloadable package, in `zip` or `tar.gz` format. You can download either one [here](http://www.hazelcast.org/download).
 
@@ -36,17 +36,17 @@ mkdir ~/tests
 cp $SIMULATOR_HOME/conf/simulator.properties ~/tests
 ```
 
-### Setup of remote machines (Agents, Workers)
+### Setting Up the Remote Machines (Agents, Workers)
 
 After you have installed Hazelcast Simulator as described in the previous section, make sure you create a user on the remote machines upon which you want to run `Agents` and `Workers`. The default username used by Hazelcast Simulator is `simulator`. You can change this in the `simulator.properties` file in your working folder.
 
 Please ensure that you can connect to the remote machines with the configured username and without password authentication (see the next section). The [Provisioner](#provisioner) terminates when it needs to access the remote machines and cannot connect automatically.
 
-### Setup of public/private key pair
+### Setting Up the Public/Private Key Pair
 
 The preferred method for password free authentication is using an RSA (Rivest,Shamir and Adleman cryptosystem) public/private key pair. The RSA key should not require you to enter the pass-phrase manually. A key with a pass-phrase and ssh-agent-forwarding is strongly recommended, but a key without a pass-phrase also works.
 
-#### Local machine (Coordinator)
+#### Local Machine (Coordinator)
 
 Make sure you have the files `id_rsa.pub` and `id_rsa` in your local `~/.ssh` folder.
 
@@ -58,7 +58,7 @@ ssh-keygen -t rsa -C "your_email@example.com"
 
 Press `[Enter]` for all questions. The value for the e-mail address is not relevant in this case. After you execute this command, you should have the files `id_rsa.pub` and `id_rsa` in your `~/.ssh` folder.
 
-#### Remote machines (Agents, Workers)
+#### Remote Machines (Agents, Workers)
 
 Please ensure you have appended the public key (`id_rsa.pub`) to the `~/.ssh/authorized_keys` file on all remote machines (`Agents` and `Workers`). You can 
 copy the public key to all your remote machines using the following command.
@@ -67,7 +67,7 @@ copy the public key to all your remote machines using the following command.
 ssh-copy-id -i ~/.ssh/id_rsa.pub simulator@remote-ip-address
 ```
 
-#### SSH connection test
+#### SSH Connection Test
 
 You can check if the connection works as expected using the following command from the `Coordinator` machine (it will print `ok` if everything is fine).
 
