@@ -3,8 +3,6 @@
 
 # Serialization
 
-## Serialization Overview
-
 You need to serialize the Java objects that you put into Hazelcast because Hazelcast is a distributed system. The data and its replicas are stored in different partitions on multiple nodes. The data you need may not be present on the local machine, and in that case, Hazelcast retrieves that data from another machine. This requires serialization.
 
 Hazelcast serializes all your objects into an instance of `com.hazelcast.nio.serialization.Data`. `Data` is the binary representation of an object. 
@@ -21,13 +19,13 @@ Serialization is used when:
 
 Hazelcast optimizes the serialization for the below types. You cannot override this behavior.
 
-![image](images/OptimizedTypes.jpg)
+*Byte, Boolean, Character, Short, Integer, Long, Float, Double, byte[], char[], short[], int[]*
 
-
+<br><br>
 Hazelcast also optimizes the following types. However, you can override these types by creating a custom serializer and registering it. See [Custom Serialization](#custom-serialization) for more information.
 
-![image](images/OptimizedTypesII.jpg)
+*Date, BigInteger, BigDecimal, Class, Externalizable, Serializable*
 
-
+<br><br>
 Hazelcast optimizes all of the above object types. You do not need to worry about their (de)serializations.
 
