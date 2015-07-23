@@ -1,6 +1,8 @@
 
 # Storage
 
+This chapter describes Hazelcast's High-Density Memory Store and its configuration and provides information on the High-Density Memory First Generation, also known as Hazelcast Elastic Memory. It also gives recommendations on the storage sizing.
+
 ## High-Density Memory Store
 
 ![](images/enterprise-onlycopy.jpg)
@@ -89,7 +91,7 @@ MapConfig mapConfig = new MapConfig();
 mapConfig.setInMemoryFormat( InMemoryFormat.NATIVE );
 ```
 
-And, the following are the High-Denisty Memory First Generation related system properties.
+And, the following are the High-Density Memory First Generation related system properties.
 
 |Property|Default Value|Type|Description|
 |:-------|:-------|:-----------|
