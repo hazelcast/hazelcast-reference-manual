@@ -442,8 +442,6 @@ Please refer to the Hibernate [RegionFactory Options section](#regionfactory-opt
 
 ### Best Practices
 
-#### Avoid Out of Memory Error with Large Distributed Data Structures
-
 Spring tries to create a new `Map`/`Collection` instance and fill the new instance by iterating and converting values of the original `Map`/`Collection` (`IMap`, `IQueue`, etc.) to required types when generic type parameters of the original `Map`/`Collection` and the target property/attribute do not match.
 
 Since Hazelcast `Map`s/`Collection`s are designed to hold very large data which a single machine cannot carry, iterating through whole values can cause out of memory errors.
