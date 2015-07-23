@@ -1,9 +1,11 @@
 # WAN
 
+This chapter explains how you can replicate the state of your clusters over Wide Area Network (WAN) environmments.
+
 ## WAN Replication
 
 There are cases where you need to synchronize multiple clusters to the same state. Synchronization of clusters, also known as
-WAN (Wide Area Network) Replication, is mainly used for replicating state of different clusters over WAN environments like
+WAN Replication, is mainly used for replicating state of different clusters over WAN environments like
 the Internet. 
 
 Imagine you have different data centers in New York, London and Tokyo each running an independent Hazelcast cluster. Every cluster
