@@ -14,7 +14,7 @@ Hazelcast Set is a distributed and concurrent implementation of `java.util.Set`.
 
 ### Getting a Set and Putting Items
 
-Use the Hazelcast `getSet` method to get the Set, then use the set `put` method to put items into the Set.
+Use the HazelcastInstance `getSet` method to get the Set, then use the set `put` method to put items into the Set.
 
 ```java
 import com.hazelcast.core.Hazelcast;

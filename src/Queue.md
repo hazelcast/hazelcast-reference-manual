@@ -4,7 +4,7 @@ Hazelcast distributed queue is an implementation of `java.util.concurrent.Blocki
 
 ### Getting a Queue and Putting Items
 
-Use the Hazelcast `getQueue` method to get the queue, then use the queue `put` method to put items into the queue.
+Use the HazelcastInstance `getQueue` method to get the queue, then use the queue `put` method to put items into the queue.
 
 ```java
 import com.hazelcast.core.Hazelcast;

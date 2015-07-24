@@ -8,7 +8,7 @@ Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap
 
 Hazelcast will partition your map entries and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "(1/n `*` total-data) + backups", **n** being the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
 
-Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the Hazelcast `getMap` method to get the map, then use the map `put` method to put an entry into the map.
+Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the HazelcastInstance `getMap` method to get the map, then use the map `put` method to put an entry into the map.
 
 ```java
 public class FillMapMember {

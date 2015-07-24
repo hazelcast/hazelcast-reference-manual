@@ -2,9 +2,11 @@
 
 ## ICountDownLatch
 
+Hazelcast `ICountDownLatch` is the distributed implementation of `java.util.concurrent.CountDownLatch`.
 
+### Gate-Keeping Concurrent Activities
 
-Hazelcast `ICountDownLatch` is the distributed implementation of `java.util.concurrent.CountDownLatch`. As you may know, `CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
+`CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
 
 The following code samples describe the mechanism of `ICountDownLatch`. Assume that there is a leader process and there are follower processes that will wait until the leader completes. Here is the leader:
 
@@ -38,9 +40,13 @@ public class Follower {
 } 
 ```
 
-The follower class above first retrieves `ICountDownLatch` and then calls the `await` method to enable the thread to listen for the latch. The method `await` has a timeout value as a parameter. This is useful when `countDown` method fails. To see `ICountDownLatch` in action, start the leader first and then start one or more followers. You will see that the followers will wait until the leader completes.
+The follower class above first retrieves `ICountDownLatch` and then calls the `await` method to enable the thread to listen for the latch. The method `await` has a timeout value as a parameter. This is useful when the `countDown` method fails. To see `ICountDownLatch` in action, start the leader first and then start one or more followers. You will see that the followers will wait until the leader completes.
+
+### Recovering From Failure
 
 In a distributed environment, the counting down cluster member may go down. In this case, all listeners are notified immediately and automatically by Hazelcast. The state of the current process just before the failure should be verified and 'how to continue now' should be decided (e.g. restart all process operations, continue with the first failed process operation, throw an exception, etc.).
+
+### Using ICountDownLatch
 
 Although the `ICountDownLatch` is a very useful synchronization aid, you will probably not use it on a daily basis. Unlike Java’s implementation, Hazelcast’s `ICountDownLatch` count can be re-set after a countdown has finished but not during an active count.
 

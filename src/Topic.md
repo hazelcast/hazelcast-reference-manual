@@ -10,7 +10,7 @@ remote nodes, it works as fire and forget.*
 
 ### Getting a Topic and Publishing Messages
 
-Use the Hazelcast `getTopic` method to get the Topic, then use the topic `publish` method to publish your messages (`messageObject`).
+Use the HazelcastInstance `getTopic` method to get the Topic, then use the topic `publish` method to publish your messages (`messageObject`).
 
 ```java
 import com.hazelcast.core.Topic;

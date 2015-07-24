@@ -9,7 +9,7 @@ Hazelcast `MultiMap` is not an implementation of `java.util.Map` due to the diff
 
 ### Getting a MultiMap and Putting an Entry
 
-The following example creates a MultiMap and puts items into it. Use the Hazelcast `getMultiMap` method to get the MultiMap, then use the MultiMap `put` method to put an entry into the MultiMap.
+The following example creates a MultiMap and puts items into it. Use the HazelcastInstance `getMultiMap` method to get the MultiMap, then use the MultiMap `put` method to put an entry into the MultiMap.
 
 
 ```java

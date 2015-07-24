@@ -7,7 +7,7 @@ and tail (inclusive) of the Ringbuffer.
 
 ### Getting a Ringbuffer and Reading Items
 
-Reading from Ringbuffer is simple: get the Ringbuffer with the Hazelcast `get` method, get its current head with
+Reading from Ringbuffer is simple: get the Ringbuffer with the HazelcastInstance `getRingbuffer` method, get its current head with
 the `headSequence` method, and start reading. Use the method `readOne` to return the item at the 
 given sequence; `readOne` blocks if no item is available. To read the next item, increment the sequence by one.
 
