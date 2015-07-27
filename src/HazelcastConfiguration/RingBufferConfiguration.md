@@ -1,8 +1,8 @@
 
-## RingBuffer Configuration
+## Ringbuffer Configuration
 
 
-The following are example RingBuffer configurations.
+The following are example Ringbuffer configurations.
 
 
 **Declarative:**
@@ -29,11 +29,11 @@ rbConfig.setCapacity( 1000 )
         .setInMemoryFormat( "BINARY" );
 ```
 
-RingBuffer configuration has the following elements.
+Ringbuffer configuration has the following elements.
 
-- `capacity`: Total number of items in the RingBuffer. The default value is 10000.
-- `time-to-live-seconds`: Duration that the RingBuffer retains the items before deleting them. When it is set to **0**, it will be disabled. The default value is 0.
+- `capacity`: Total number of items in the Ringbuffer. The default value is 10000.
+- `time-to-live-seconds`: Duration that the Ringbuffer retains the items before deleting them. When it is set to **0**, it will be disabled. The default value is 0.
 - `backup-count`: Number of synchronous backups. The default value is 1.
 - `async-backup-count`: Number of asynchronous backups. The default value is 0.
-- `in-memory-format`: In-memory format of an item when stored in the RingBuffer. Available values are `OBJECT` and `BINARY`. The default value is `BINARY`. 
+- `in-memory-format`: In-memory format of an item when stored in the Ringbuffer. Available values are `OBJECT` and `BINARY`. The default value is `BINARY`. 
 

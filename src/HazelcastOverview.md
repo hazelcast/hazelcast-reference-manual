@@ -49,33 +49,3 @@ Hazelcast stores everything in-memory. It is designed to perform very fast reads
 Hazelcast keeps the backup of each data entry on multiple nodes. On a node failure, the data is restored from the
 backup and the cluster will continue to operate without downtime.
 
-## Sharding in Hazelcast
-
-Hazelcast shards are called Partitions. By default, Hazelcast has 271 partitions. Given a key, we serialize, hash
-and mode it with the number of partitions to find the partition the key belongs to. The partitions themselves are
-distributed equally among the members of the cluster. Hazelcast also creates the backups of partitions and distributes
-them among nodes for redundancy.
-
-<br></br>
-***RELATED INFORMATION***
-
-*Please refer to the [Data Partitioning section](#data-partitioning) for more information on how Hazelcast partitions
-your data.*
-
-
-## Hazelcast Topology
-
-If you have an application whose main focal point is asynchronous or high performance computing and lots of task
-executions, then embedded deployment is very useful. In this type, nodes include both the application and data.
-See the below illustration.
-
-![](images/P2Pcluster.jpg)
-
-
-
-You can have a cluster of server nodes that can be independently created and scaled. Your clients communicate with
-these server nodes to reach to the data on them. Hazelcast provides native clients (Java, .NET and C++), Memcache
-clients and REST clients. See the below illustration.
-
-![](images/CSCluster.jpg)
-
