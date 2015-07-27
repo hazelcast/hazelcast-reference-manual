@@ -225,7 +225,7 @@
     <ol>
     
         <li>
-            <a href="hazelcastoverview.html">Sharding in Hazelcast</a>
+            <a href="shardinginhazelcast.html">Sharding in Hazelcast</a>
             
                 
     <ol>
@@ -236,7 +236,7 @@
         </li>
     
         <li>
-            <a href="hazelcastoverview.html">Hazelcast Topology</a>
+            <a href="hazelcasttopology.html">Hazelcast Topology</a>
             
                 
     <ol>
@@ -1862,17 +1862,6 @@
     <ol>
     
         <li>
-            <a href="serialization.html">Serialization Overview</a>
-            
-                
-    <ol>
-    
-</ol>
-
-            
-        </li>
-    
-        <li>
             <a href="serializationinterfaces.html">Serialization Interfaces</a>
             
                 
@@ -2086,7 +2075,7 @@
     <ol>
     
         <li>
-            <a href="managementcenter.html">Introduction</a>
+            <a href="managementcenter.html">Installation</a>
             
         </li>
     
@@ -2528,17 +2517,6 @@
             
                 
     <ol>
-    
-        <li>
-            <a href="simulatoroverview.html">Simulator Overview</a>
-            
-                
-    <ol>
-    
-</ol>
-
-            
-        </li>
     
         <li>
             <a href="simulatoroverview.html">Key Concepts</a>
@@ -3623,7 +3601,6 @@
 
 	        <div id="content">
 	            <a name="serialization"></a><h1 id="serialization">Serialization</h1>
-<a name="serialization-overview"></a><h2 id="serialization-overview">Serialization Overview</h2>
 <p>You need to serialize the Java objects that you put into Hazelcast because Hazelcast is a distributed system. The data and its replicas are stored in different partitions on multiple nodes. The data you need may not be present on the local machine, and in that case, Hazelcast retrieves that data from another machine. This requires serialization.</p>
 <p>Hazelcast serializes all your objects into an instance of <code>com.hazelcast.nio.serialization.Data</code>. <code>Data</code> is the binary representation of an object. </p>
 <p>Serialization is used when:</p>
@@ -3636,10 +3613,12 @@
 <li>a message is sent to a topic.</li>
 </ul>
 <p>Hazelcast optimizes the serialization for the below types. You cannot override this behavior.</p>
-<p><img src="images/OptimizedTypes.jpg" alt="image"></p>
-<p>Hazelcast also optimizes the following types. However, you can override these types by creating a custom serializer and registering it. See <a href="#custom-serialization">Custom Serialization</a> for more information.</p>
-<p><img src="images/OptimizedTypesII.jpg" alt="image"></p>
-<p>Hazelcast optimizes all of the above object types. You do not need to worry about their (de)serializations.</p>
+<p><em>Byte, Boolean, Character, Short, Integer, Long, Float, Double, byte[], char[], short[], int[]</em></p>
+<p><br><br>
+Hazelcast also optimizes the following types. However, you can override these types by creating a custom serializer and registering it. See <a href="#custom-serialization">Custom Serialization</a> for more information.</p>
+<p><em>Date, BigInteger, BigDecimal, Class, Externalizable, Serializable</em></p>
+<p><br><br>
+Hazelcast optimizes all of the above object types. You do not need to worry about their (de)serializations.</p>
 
 
 

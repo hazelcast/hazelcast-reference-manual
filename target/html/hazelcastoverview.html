@@ -225,7 +225,7 @@
     <ol>
     
         <li>
-            <a href="hazelcastoverview.html">Sharding in Hazelcast</a>
+            <a href="shardinginhazelcast.html">Sharding in Hazelcast</a>
             
                 
     <ol>
@@ -236,7 +236,7 @@
         </li>
     
         <li>
-            <a href="hazelcastoverview.html">Hazelcast Topology</a>
+            <a href="hazelcasttopology.html">Hazelcast Topology</a>
             
                 
     <ol>
@@ -1862,17 +1862,6 @@
     <ol>
     
         <li>
-            <a href="serialization.html">Serialization Overview</a>
-            
-                
-    <ol>
-    
-</ol>
-
-            
-        </li>
-    
-        <li>
             <a href="serializationinterfaces.html">Serialization Interfaces</a>
             
                 
@@ -2086,7 +2075,7 @@
     <ol>
     
         <li>
-            <a href="managementcenter.html">Introduction</a>
+            <a href="managementcenter.html">Installation</a>
             
         </li>
     
@@ -2528,17 +2517,6 @@
             
                 
     <ol>
-    
-        <li>
-            <a href="simulatoroverview.html">Simulator Overview</a>
-            
-                
-    <ol>
-    
-</ol>
-
-            
-        </li>
     
         <li>
             <a href="simulatoroverview.html">Key Concepts</a>
@@ -3657,30 +3635,6 @@ a TCP connection between each other and all communication is performed through t
 <p><strong>Hazelcast is redundant</strong></p>
 <p>Hazelcast keeps the backup of each data entry on multiple nodes. On a node failure, the data is restored from the
 backup and the cluster will continue to operate without downtime.</p>
-<a name="sharding-in-hazelcast"></a><h2 id="sharding-in-hazelcast">Sharding in Hazelcast</h2>
-<p>Hazelcast shards are called Partitions. By default, Hazelcast has 271 partitions. Given a key, we serialize, hash
-and mode it with the number of partitions to find the partition the key belongs to. The partitions themselves are
-distributed equally among the members of the cluster. Hazelcast also creates the backups of partitions and distributes
-them among nodes for redundancy.</p>
-<p><br></br>
-<strong><em>RELATED INFORMATION</em></strong></p>
-<p><em>Please refer to the <a href="#data-partitioning">Data Partitioning section</a> for more information on how Hazelcast partitions
-your data.</em></p>
-<a name="hazelcast-topology"></a><h2 id="hazelcast-topology">Hazelcast Topology</h2>
-<p>You can deploy a Hazelcast cluster in two ways: Embedded or Client/Server.</p>
-<p>If you have an application whose main focal point is asynchronous or high performance computing and lots of task
-executions, then Embedded deployment is useful. In this type, members include both the application and Hazelcast data and services. The advantage of the Embedded deployment is having a low-latency data access.</p>
-<p>See the below illustration.</p>
-<p><img src="images/P2Pcluster.jpg" alt=""></p>
-<p>In the Client/Server deployment, Hazelcast data and services are centralized in one or more server members and they are accessed by the application through clients. 
-You can have a cluster of server members that can be independently created and scaled. Your clients communicate with
-these members to reach to Hazelcast data and services on them. Hazelcast provides native clients (Java, .NET and C++), Memcache
-clients and REST clients. 
-See the below illustration.</p>
-<p><img src="images/CSCluster.jpg" alt=""></p>
-<p>Client/Server deployment has advantages including more predictable and reliable Hazelcast performance, easier identification of problem causes, and most importantly, better scalability. 
-When you need to scale in this deployment type, just add more Hazelcast server members. You can address client and server scalability concerns separately.</p>
-<p>If you want low-latency data access, as it is in the Embedded deployment, and you also want the scalability advantages of the Client/Server deployment, you can consider to define near caches for your clients. This enables the frequently used data to be kept in the client&#39;s local memory. Please refer to the <a href="#client-near-cache-configuration">Client Near Cache Configuration section</a>.</p>
 
 
 

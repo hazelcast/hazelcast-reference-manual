@@ -76,7 +76,7 @@ public class Echo implements Callable<String>, Serializable {
         return instance.getCluster().getLocalMember().toString() + ":" + input;
     }
 }
-```java
+```
 
 To execute a task with the executor framework:
 

@@ -225,7 +225,7 @@
     <ol>
     
         <li>
-            <a href="hazelcastoverview.html">Sharding in Hazelcast</a>
+            <a href="shardinginhazelcast.html">Sharding in Hazelcast</a>
             
                 
     <ol>
@@ -236,7 +236,7 @@
         </li>
     
         <li>
-            <a href="hazelcastoverview.html">Hazelcast Topology</a>
+            <a href="hazelcasttopology.html">Hazelcast Topology</a>
             
                 
     <ol>
@@ -1862,17 +1862,6 @@
     <ol>
     
         <li>
-            <a href="serialization.html">Serialization Overview</a>
-            
-                
-    <ol>
-    
-</ol>
-
-            
-        </li>
-    
-        <li>
             <a href="serializationinterfaces.html">Serialization Interfaces</a>
             
                 
@@ -2086,7 +2075,7 @@
     <ol>
     
         <li>
-            <a href="managementcenter.html">Introduction</a>
+            <a href="managementcenter.html">Installation</a>
             
         </li>
     
@@ -2528,17 +2517,6 @@
             
                 
     <ol>
-    
-        <li>
-            <a href="simulatoroverview.html">Simulator Overview</a>
-            
-                
-    <ol>
-    
-</ol>
-
-            
-        </li>
     
         <li>
             <a href="simulatoroverview.html">Key Concepts</a>
@@ -4244,6 +4222,7 @@ a TCP connection between each other and all communication is performed through t
 <p><strong>Hazelcast is redundant</strong></p>
 <p>Hazelcast keeps the backup of each data entry on multiple nodes. On a node failure, the data is restored from the
 backup and the cluster will continue to operate without downtime.</p>
+
 <a name="sharding-in-hazelcast"></a><h2 id="sharding-in-hazelcast">Sharding in Hazelcast</h2>
 <p>Hazelcast shards are called Partitions. By default, Hazelcast has 271 partitions. Given a key, we serialize, hash
 and mode it with the number of partitions to find the partition the key belongs to. The partitions themselves are
@@ -4253,6 +4232,7 @@ them among nodes for redundancy.</p>
 <strong><em>RELATED INFORMATION</em></strong></p>
 <p><em>Please refer to the <a href="#data-partitioning">Data Partitioning section</a> for more information on how Hazelcast partitions
 your data.</em></p>
+
 <a name="hazelcast-topology"></a><h2 id="hazelcast-topology">Hazelcast Topology</h2>
 <p>You can deploy a Hazelcast cluster in two ways: Embedded or Client/Server.</p>
 <p>If you have an application whose main focal point is asynchronous or high performance computing and lots of task
@@ -12016,6 +11996,7 @@ If sticky sessions are enabled, the <code>workerName</code> parameter has to be 
 <p><br></br></p>
 
 <a name="spring-integration"></a><h2 id="spring-integration">Spring Integration</h2>
+<p>You can integrate Hazelcast with Spring and this chapter explains the configuration of Hazelcast within Spring context. </p>
 <a name="supported-versions"></a><h3 id="supported-versions">Supported Versions</h3>
 <ul>
 <li>Spring 2.5+</li>
@@ -12395,7 +12376,6 @@ context.refresh();
 </ul>
 <p>Please refer to the Hibernate <a href="#regionfactory-options">RegionFactory Options section</a> for more information.</p>
 <a name="best-practices"></a><h3 id="best-practices">Best Practices</h3>
-<a name="avoid-out-of-memory-error-with-large-distributed-data-structures"></a><h4 id="avoid-out-of-memory-error-with-large-distributed-data-structures">Avoid Out of Memory Error with Large Distributed Data Structures</h4>
 <p>Spring tries to create a new <code>Map</code>/<code>Collection</code> instance and fill the new instance by iterating and converting values of the original <code>Map</code>/<code>Collection</code> (<code>IMap</code>, <code>IQueue</code>, etc.) to required types when generic type parameters of the original <code>Map</code>/<code>Collection</code> and the target property/attribute do not match.</p>
 <p>Since Hazelcast <code>Map</code>s/<code>Collection</code>s are designed to hold very large data which a single machine cannot carry, iterating through whole values can cause out of memory errors.</p>
 <p>To avoid this issue, the target property/attribute can be declared as un-typed <code>Map</code>/<code>Collection</code> as shown below.</p>
@@ -12435,6 +12415,7 @@ context.refresh();
 <p><em>For more information please see <a href="https://jira.springsource.org/browse/SPR-3407">Spring issue-3407</a>.</em></p>
 
 <a name="storage"></a><h1 id="storage">Storage</h1>
+<p>This chapter describes Hazelcast&#39;s High-Density Memory Store and its configuration and provides information on the High-Density Memory First Generation, also known as Hazelcast Elastic Memory. It also gives recommendations on the storage sizing.</p>
 <a name="high-density-memory-store"></a><h2 id="high-density-memory-store">High-Density Memory Store</h2>
 <p><img src="images/enterprise-onlycopy.jpg" alt=""></p>
 <p>Hazelcast High-Density Memory Store, the successor to Hazelcast Elastic Memory, is Hazelcast&#39;s new enterprise grade backend storage solution. This solution is used with the Hazelcast JCache implementation.</p>
@@ -12500,7 +12481,7 @@ NativeMemoryConfig nativeMemoryConfig =
 <pre><code class="lang-java">MapConfig mapConfig = new MapConfig();
 mapConfig.setInMemoryFormat( InMemoryFormat.NATIVE );
 </code></pre>
-<p>And, the following are the High-Denisty Memory First Generation related system properties.</p>
+<p>And, the following are the High-Density Memory First Generation related system properties.</p>
 <table>
 <thead>
 <tr>
@@ -14000,7 +13981,6 @@ in a default map named <em>hz_memcache_default</em>.</p>
 <p><br> </br></p>
 
 <a name="serialization"></a><h1 id="serialization">Serialization</h1>
-<a name="serialization-overview"></a><h2 id="serialization-overview">Serialization Overview</h2>
 <p>You need to serialize the Java objects that you put into Hazelcast because Hazelcast is a distributed system. The data and its replicas are stored in different partitions on multiple nodes. The data you need may not be present on the local machine, and in that case, Hazelcast retrieves that data from another machine. This requires serialization.</p>
 <p>Hazelcast serializes all your objects into an instance of <code>com.hazelcast.nio.serialization.Data</code>. <code>Data</code> is the binary representation of an object. </p>
 <p>Serialization is used when:</p>
@@ -14013,10 +13993,12 @@ in a default map named <em>hz_memcache_default</em>.</p>
 <li>a message is sent to a topic.</li>
 </ul>
 <p>Hazelcast optimizes the serialization for the below types. You cannot override this behavior.</p>
-<p><img src="images/OptimizedTypes.jpg" alt="image"></p>
-<p>Hazelcast also optimizes the following types. However, you can override these types by creating a custom serializer and registering it. See <a href="#custom-serialization">Custom Serialization</a> for more information.</p>
-<p><img src="images/OptimizedTypesII.jpg" alt="image"></p>
-<p>Hazelcast optimizes all of the above object types. You do not need to worry about their (de)serializations.</p>
+<p><em>Byte, Boolean, Character, Short, Integer, Long, Float, Double, byte[], char[], short[], int[]</em></p>
+<p><br><br>
+Hazelcast also optimizes the following types. However, you can override these types by creating a custom serializer and registering it. See <a href="#custom-serialization">Custom Serialization</a> for more information.</p>
+<p><em>Date, BigInteger, BigDecimal, Class, Externalizable, Serializable</em></p>
+<p><br><br>
+Hazelcast optimizes all of the above object types. You do not need to worry about their (de)serializations.</p>
 
 <a name="serialization-interfaces"></a><h2 id="serialization-interfaces">Serialization Interfaces</h2>
 <p>For complex objects, the following interfaces are used for serialization and deserialization.</p>
@@ -14570,6 +14552,7 @@ to serialize Foo objects. This way one can write an adapter (StreamSerializer) f
 <p><br></br></p>
 
 <a name="management"></a><h1 id="management">Management</h1>
+<p>This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol and managing the cluster with useful utilities. It also includes the usage explanations of Hazelcast Management Center.</p>
 <a name="statistics-api-per-node"></a><h2 id="statistics-api-per-node">Statistics API per Node</h2>
 <p>You can gather various statistics from your distributed data structures via Statistics API.
 Since the data structures are distributed in the cluster, the Statistics API provides
@@ -15407,6 +15390,7 @@ long getTotalExecutionLatency();
 </ul>
 
 <a name="cluster-utilities"></a><h2 id="cluster-utilities">Cluster Utilities</h2>
+<p>This section provides information on programmatic utilities you can use to listen to the cluster events, to check whether the cluster and/or members are safe before shutting down a member, and to define the minimum number of cluster members required for the cluster to remain up and running.</p>
 <a name="cluster-interface"></a><h3 id="cluster-interface">Cluster Interface</h3>
 <p>Hazelcast allows you to register for membership events so you will be notified when members are added or removed. You can also get the set of cluster members.</p>
 <pre><code class="lang-java">import com.hazelcast.core.*;
@@ -15642,9 +15626,8 @@ boolean quorumPresence = quorum.isPresent();
 </code></pre>
 
 <a name="management-center"></a><h2 id="management-center">Management Center</h2>
-<a name="introduction"></a><h3 id="introduction">Introduction</h3>
 <p>Hazelcast Management Center enables you to monitor and manage your nodes running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dump from nodes. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your nodes.</p>
-<a name="installation"></a><h4 id="installation">Installation</h4>
+<a name="installation"></a><h3 id="installation">Installation</h3>
 <p>You have two options for installing Hazelcast Management Center. You can either deploy the <code>mancenter</code>-<em>version</em><code>.war</code> application into your Java application server/container or you can start Hazelcast Management Center from the command line and then have the Hazelcast nodes communicate with that web application. This means that your Hazelcast nodes should know the URL of the <code>mancenter</code> application before they start.</p>
 <p>Here are the steps:</p>
 <ul>
@@ -16752,6 +16735,7 @@ Hazelcast Management Center starting on port 8080 at path : /mancenter
 </ul>
 
 <a name="security"></a><h1 id="security">Security</h1>
+<p>This chapter provides information on the security features of Hazelcast. These features allow you to perform security activities including intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level and using SSL socket communication.</p>
 <a name="enabling-security-for-hazelcast-enterprise"></a><h2 id="enabling-security-for-hazelcast-enterprise">Enabling Security for Hazelcast Enterprise</h2>
 <p><img src="images/enterprise-onlycopy.jpg" alt=""></p>
 <p>Hazelcast has an extensible, JAAS based security feature you can use to authenticate both cluster members and clients, and to perform access control checks on client operations. Access control can be done according to endpoint principal and/or endpoint address. </p>
@@ -17067,7 +17051,7 @@ public abstract class ClusterLoginModule implements LoginModule {
   ...
 &lt;/security&gt;
 </code></pre>
-<p>You can define as many asLoginModules you wanted in configuration. They are executed in the given order. The <code>usage</code> attribute has 4 values: &#39;required&#39;, &#39;requisite&#39;, &#39;sufficient&#39; and &#39;optional&#39; as defined in <code>javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag</code>.</p>
+<p>You can define as many as LoginModules you wanted in configuration. They are executed in the given order. The <code>usage</code> attribute has 4 values: &#39;required&#39;, &#39;requisite&#39;, &#39;sufficient&#39; and &#39;optional&#39; as defined in <code>javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag</code>.</p>
 <pre><code class="lang-java">package com.hazelcast.security;
 /**
  * ICredentialsFactory is used to create Credentials objects to be used
@@ -17361,6 +17345,7 @@ getClientPermissionConfigs()</code> during <code>configure(SecurityConfig securi
 <p><br> </br></p>
 
 <a name="performance"></a><h1 id="performance">Performance</h1>
+<p>This chapter provides information on the performance features of Hazelcast including slow operations detector, back pressure and data affinity. Moreover, the chapter describes the best performance practices for Hazelcast deployed on Amazon EC2. It also describes the threading models for I/O, events, executors and operations. </p>
 <a name="data-affinity"></a><h2 id="data-affinity">Data Affinity</h2>
 <p>Data affinity ensures that related entries exist on the same node. If related data is on the same node, operations can be executed without the cost of extra network calls and extra wire data. This feature is provided by using the same partition keys for related data.</p>
 <p><strong>Co-location of related data and computation</strong></p>
@@ -17795,7 +17780,6 @@ WARN 2015-05-07 11:05:30,892 SlowOperationDetector: [127.0.0.1]:5701
 <p>AWS uses two virtualization types to launch the EC2 instances: Para-Virtualization (PV) and Hardware-assisted Virtual Machine (HVM). According to the tests we performed, HVM provided up to three times higher throughput than PV. Therefore, we recommend you use HVM when you run Hazelcast on EC2.</p>
 
 <a name="hazelcast-simulator"></a><h1 id="hazelcast-simulator">Hazelcast Simulator</h1>
-<a name="simulator-overview"></a><h2 id="simulator-overview">Simulator Overview</h2>
 <p>Hazelcast Simulator is a production simulator used to test Hazelcast and Hazelcast-based applications in clustered environments. It also allows you to create your own tests and perform them on your Hazelcast clusters and applications that are deployed to cloud computing environments. In your tests, you can provide any property that can be specified on these environments (Amazon EC2, Google Compute Engine(GCE), or your own environment): properties such as hardware specifications, operating system, Java version, etc.</p>
 <p>Hazelcast Simulator allows you to add potential production problems, such as real-life failures, network problems, overloaded CPU, and failing nodes to your tests. It also provides a benchmarking and performance testing platform by supporting performance tracking and also supporting various out-of-the-box profilers.</p>
 <p>Hazelcast Simulator makes use of Apache jclouds&reg;, an open source multi-cloud toolkit that is primarily designed for testing on the clouds like Amazon EC2 and GCE.</p>
@@ -18398,9 +18382,10 @@ probe-simpleProbe=throughput
 <p>It is important to understand that the class of a probe does not mandate what the probe is actually measuring. Therefore, the tests just know a class of probe, but they do not know if the probe generates, for example, a full latency histogram or just a maximum recorded latency. This detail must be implemented from a point of view of a test.</p>
 
 <a name="wan"></a><h1 id="wan">WAN</h1>
+<p>This chapter explains how you can replicate the state of your clusters over Wide Area Network (WAN) environmments.</p>
 <a name="wan-replication"></a><h2 id="wan-replication">WAN Replication</h2>
 <p>There are cases where you need to synchronize multiple clusters to the same state. Synchronization of clusters, also known as
-WAN (Wide Area Network) Replication, is mainly used for replicating state of different clusters over WAN environments like
+WAN Replication, is mainly used for replicating state of different clusters over WAN environments like
 the Internet. </p>
 <p>Imagine you have different data centers in New York, London and Tokyo each running an independent Hazelcast cluster. Every cluster
 would be operating at native speed in their own LAN (Local Area Network), but you also want some or all recordsets in

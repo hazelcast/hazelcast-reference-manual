@@ -3600,48 +3600,16 @@
 	</div>
 
 	        <div id="content">
-	            <a name="installing-simulator"></a><h2 id="installing-simulator">Installing Simulator</h2>
-<p>Hazelcast Simulator needs a Unix shell to run. Ensure that your local and remote machines are running under Unix, Linux or Mac OS. Hazelcast Simulator may work with Windows using a Unix-like environment such as Cygwin, but that is not officially supported at the moment.</p>
-<a name="firewall-settings"></a><h3 id="firewall-settings">Firewall Settings</h3>
-<p>Please ensure that all remote machines are reachable via TCP ports 22, 9000 and 5701 to 5751 on their external network interface (for example, <code>eth0</code>). The first two ports are used by Hazelcast Simulator. The other ports are used by Hazelcast itself. Port 9001 is used on the loopback device on all remote machines for local communication.</p>
-<p><img src="images/simulator/network.png" alt=""></p>
-<a name="setting-up-the-local-machine-coordinator"></a><h3 id="setting-up-the-local-machine-coordinator-">Setting Up the Local Machine (Coordinator)</h3>
-<p>Hazelcast Simulator is provided as a separate downloadable package, in <code>zip</code> or <code>tar.gz</code> format. You can download either one <a href="http://www.hazelcast.org/download">here</a>.</p>
-<p>After the download is completed, follow the below steps.</p>
-<ul>
-<li><p>Unpack the <code>tar.gz</code> or <code>zip</code> file to a folder that you prefer to be the home folder for Hazelcast Simulator. The file extracts with the name <code>hazelcast-simulator-&lt;</code><em>version</em><code>&gt;</code>. (If you are updating Hazelcast Simulator, perform this same unpacking, but skip the following steps.)</p>
-</li>
-<li><p>Add the following lines to the file <code>~/.bashrc</code> (for Unix/Linux) or to the file <code>~/.profile</code> (for Mac OS).</p>
-</li>
-</ul>
-<pre><code>export SIMULATOR_HOME=&lt;extracted folder path&gt;/hazelcast-simulator-&lt;version&gt;
-PATH=$SIMULATOR_HOME/bin:$PATH
-</code></pre><ul>
-<li>Create a working folder for your Simulator <code>TestSuite</code> (<code>tests</code> is an example name in the following commands).</li>
-</ul>
-<pre><code>mkdir ~/tests
-</code></pre><ul>
-<li>Copy the <code>simulator.properties</code> file to your working folder.</li>
-</ul>
-<pre><code>cp $SIMULATOR_HOME/conf/simulator.properties ~/tests
-</code></pre><a name="setting-up-the-remote-machines-agents-workers"></a><h3 id="setting-up-the-remote-machines-agents-workers-">Setting Up the Remote Machines (Agents, Workers)</h3>
-<p>After you have installed Hazelcast Simulator as described in the previous section, make sure you create a user on the remote machines upon which you want to run <code>Agents</code> and <code>Workers</code>. The default username used by Hazelcast Simulator is <code>simulator</code>. You can change this in the <code>simulator.properties</code> file in your working folder.</p>
-<p>Please ensure that you can connect to the remote machines with the configured username and without password authentication (see the next section). The <a href="#provisioner">Provisioner</a> terminates when it needs to access the remote machines and cannot connect automatically.</p>
-<a name="setting-up-the-publicprivate-key-pair"></a><h3 id="setting-up-the-public-private-key-pair">Setting Up the Public/Private Key Pair</h3>
-<p>The preferred method for password free authentication is using an RSA (Rivest,Shamir and Adleman cryptosystem) public/private key pair. The RSA key should not require you to enter the pass-phrase manually. A key with a pass-phrase and ssh-agent-forwarding is strongly recommended, but a key without a pass-phrase also works.</p>
-<a name="local-machine-coordinator"></a><h4 id="local-machine-coordinator-">Local Machine (Coordinator)</h4>
-<p>Make sure you have the files <code>id_rsa.pub</code> and <code>id_rsa</code> in your local <code>~/.ssh</code> folder.</p>
-<p>If you do not have the RSA keys, you can generate a public/private key pair using the following command.</p>
-<pre><code>ssh-keygen -t rsa -C &quot;your_email@example.com&quot;
-</code></pre><p>Press <code>[Enter]</code> for all questions. The value for the e-mail address is not relevant in this case. After you execute this command, you should have the files <code>id_rsa.pub</code> and <code>id_rsa</code> in your <code>~/.ssh</code> folder.</p>
-<a name="remote-machines-agents-workers"></a><h4 id="remote-machines-agents-workers-">Remote Machines (Agents, Workers)</h4>
-<p>Please ensure you have appended the public key (<code>id_rsa.pub</code>) to the <code>~/.ssh/authorized_keys</code> file on all remote machines (<code>Agents</code> and <code>Workers</code>). You can 
-copy the public key to all your remote machines using the following command.</p>
-<pre><code>ssh-copy-id -i ~/.ssh/id_rsa.pub simulator@remote-ip-address
-</code></pre><a name="ssh-connection-test"></a><h4 id="ssh-connection-test">SSH Connection Test</h4>
-<p>You can check if the connection works as expected using the following command from the <code>Coordinator</code> machine (it will print <code>ok</code> if everything is fine).</p>
-<pre><code>ssh -o BatchMode=yes simulator@remote-ip-address &quot;echo ok&quot; 2&gt;&amp;1
-</code></pre>
+	            <a name="sharding-in-hazelcast"></a><h2 id="sharding-in-hazelcast">Sharding in Hazelcast</h2>
+<p>Hazelcast shards are called Partitions. By default, Hazelcast has 271 partitions. Given a key, we serialize, hash
+and mode it with the number of partitions to find the partition the key belongs to. The partitions themselves are
+distributed equally among the members of the cluster. Hazelcast also creates the backups of partitions and distributes
+them among nodes for redundancy.</p>
+<p><br></br>
+<strong><em>RELATED INFORMATION</em></strong></p>
+<p><em>Please refer to the <a href="#data-partitioning">Data Partitioning section</a> for more information on how Hazelcast partitions
+your data.</em></p>
+
 
 
 
