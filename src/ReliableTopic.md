@@ -46,9 +46,13 @@ Because the reads on a RingBuffer are not destructive, it is easy to apply batch
 ### Slow Consumers
 
 The Reliable `ITopic` provides control and a way to deal with slow consumers. It is unwise to keep events for a slow consumer in memory 
-indefinitely since you do not know when it is going to catch up. You can control the size of the RingBuffer by using its capacity. For the cases when a RingBuffer runs out of its capacity, you can specify the following policies for the `TopicOverloadPolicy` configuration:
+indefinitely since you do not know when it is going to catch up. You can control the size of the Ringbuffer by using its capacity. For the cases when a Ringbuffer runs out of its capacity, you can specify the following policies for the `TopicOverloadPolicy` configuration:
 
 * `DISCARD_OLDEST`: Overwrite the oldest item, no matter if a TTL is set. In this case the fast producer supersedes a slow consumer
 * `DISCARD_NEWEST`: Discard the newest item.
-* `BLOCK`: Wait until the items are expired in the RingBuffer.
-* `FAIL`: Immediately throw `TopicOverloadException` if there is no space in the RingBuffer.
+* `BLOCK`: Wait until the items are expired in the Ringbuffer.
+* `FAIL`: Immediately throw `TopicOverloadException` if there is no space in the Ringbuffer.
+
+***RELATED INFORMATION***
+
+*Please refer to the [Reliable Topic Configuration section](#reliable-topic-configuration) for more information on configuring the Reliable Topic.*
