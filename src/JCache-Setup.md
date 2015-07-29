@@ -69,6 +69,6 @@ Maven snippet:
 ```
 
 For other build systems, e.g. ANT, the users have to download these dependencies from either the JSR-107 specification and
-Hazelcast community website ([http://www.hazelcast.org](http://www.hazelcast.org)) or from the Maven repository search page
-([http://search.maven.org](http://search.maven.org)).
+Hazelcast community website (<a href="http://www.hazelcast.org" target="_blank">http://www.hazelcast.org</a>) or from the Maven repository search page
+(<a href="http://search.maven.org" target="_blank">http://search.maven.org</a>).
 

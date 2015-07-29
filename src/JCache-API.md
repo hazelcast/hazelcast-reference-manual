@@ -102,7 +102,7 @@ happens on the cache. Again we will look in the implementation of the listener i
 
 A full running example that is presented in this
 subsection is available in the
-[code samples repository](https://github.com/hazelcast/hazelcast-code-samples/tree/master/jcache/src/main/java/com/hazelcast/examples/application).
+<a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/jcache/src/main/java/com/hazelcast/examples/application" target="_blank">code samples repository</a>.
 The application is built to be a command line app. It offers a small shell to accept different commands. After startup, you can
 enter `help` to see all available commands and their descriptions.
 

@@ -22,7 +22,9 @@ operations to give the user extra power.
 This chapter gives a basic understanding of how to configure your application and how to setup Hazelcast to be your JCache
 provider. It also shows examples of basic JCache usage as well as the additionally offered features that are not part of JSR-107.
 To gain a full understanding of the JCache functionality and provided guarantees of different operations, read
-the specification document (which is also the main documentation for functionality) at the specification page of JSR-107:
+the specification document (which is also the main documentation for functionality) at the specification page of <a href="https://www.jcp.org/en/jsr/detail?id=107" target="_blank">JSR-107</a>.
 
-[https://www.jcp.org/en/jsr/detail?id=107](https://www.jcp.org/en/jsr/detail?id=107)
+
+
+
 

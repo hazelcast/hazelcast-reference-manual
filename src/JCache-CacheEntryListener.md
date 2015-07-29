@@ -6,7 +6,7 @@ The `javax.cache.event.CacheEntryListener` implementation is straight forward. `
 - `CacheEntryCreatedListener`: Fires after a cache entry is added (even on read-through by a `CacheLoader`) to the cache.
 - `CacheEntryUpdatedListener`: Fires after an already existing cache entry was updates.
 - `CacheEntryRemovedListener`: Fires after a cache entry was removed (not expired) from the cache.
-- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be parallel process, it is only required to be executed on the keys that are requested by `Cache::get` and some other operations. For a full table of expiry please see the [https://www.jcp.org/en/jsr/detail?id=107](https://www.jcp.org/en/jsr/detail?id=107) point 6.  
+- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be parallel process, it is only required to be executed on the keys that are requested by `Cache::get` and some other operations. For a full table of expiry please see the <a href="https://www.jcp.org/en/jsr/detail?id=107" target="_blank">https://www.jcp.org/en/jsr/detail?id=107</a> point 6.  
 
 To configure `CacheEntryListener`, add a `javax.cache.configuration.CacheEntryListenerConfiguration` instance to
 the JCache configuration class, as seen in the above example configuration. In addition listeners can be configured to be
