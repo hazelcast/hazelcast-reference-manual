@@ -11,7 +11,7 @@ To give an easy introduction to people used to Hadoop, we created the class name
 
 While building the example, we will go through as many options as possible, e.g. we create a specialized `JobTracker` configuration (at the end). Special `JobTracker` configuration is not required, because for all other Hazelcast features you can use "default" as the configuration name. However, special configurations offer better options to predict behavior of the framework execution.
 
-The full example is available [here](http://github.com/noctarius/hz-map-reduce) as a ready to run Maven project.
+The full example is available <a href="http://github.com/noctarius/hz-map-reduce" target="_blank">here</a> as a ready to run Maven project.
 
 #### JobTracker
 

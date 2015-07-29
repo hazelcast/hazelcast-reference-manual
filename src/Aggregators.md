@@ -25,7 +25,7 @@ To make Aggregations more convenient to use and future proof, the API is heavily
 The API is still fully compatible with any Java version Hazelcast supports (Java 6 and Java 7). The biggest difference is how you
 work with the Java generics: on Java 6 and 7, the process to resolve generics is not as strong as on Java 8 and
 upcoming Java versions. In addition, the whole Aggregations API has full Java 8 Project Lambda (or Closure, 
-[JSR 335](https://jcp.org/en/jsr/detail?id=335)) support.
+<a href="https://jcp.org/en/jsr/detail?id=335" target="_blank">JSR 335</a>) support.
 
 For illustration of the differences in Java 6 and 7 in comparison to Java 8, we will have a quick look at code
 examples for both. After that, we will focus on using Java 8 syntax to keep examples short and easy to understand, and we will see some hints as to what the code looks like in Java 6 or 7.
