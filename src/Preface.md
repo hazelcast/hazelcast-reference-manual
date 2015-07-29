@@ -26,17 +26,19 @@ Hazelcast is a registered trademark of Hazelcast, Inc. All other trademarks in t
 
 ##### Customer Support
 
-Support for Hazelcast is provided via [GitHub](https://github.com/hazelcast/hazelcast/issues), [Mail Group](https://groups.google.com/forum/#!forum/hazelcast) and [StackOverflow](http://www.stackoverflow.com). 
+Support for Hazelcast is provided via <a href="https://github.com/hazelcast/hazelcast/issues" target="_blank">GitHub</a>, <a href="https://groups.google.com/forum/#!forum/hazelcast" target="_blank">Mail Group</a> and <a href="http://www.stackoverflow.com" target="_blank">StackOverflow</a>
 
-For information on support for Hazelcast Enterprise, please see [hazelcast.com/pricing](http://hazelcast.com/pricing/).
+For information on support for Hazelcast Enterprise, please see <a href="hazelcast.com/pricing](http://hazelcast.com/pricing/" target="_blank">hazelcast.com</a>.
+
+<a href="" target="_blank">..</a>
 
 ##### Contributing to Hazelcast
 
 You can contribute to the Hazelcast code, report a bug or request an enhancement. Please see the following resources.
 
-- [Developing with Git](https://hazelcast.atlassian.net/wiki/display/COM/Developing+with+Git): Document that explains the branch mechanism of Hazelcast and how to request changes.
-- [Hazelcast Contributor Agreement form](https://hazelcast.atlassian.net/wiki/display/COM/Hazelcast+Contributor+Agreement): Form that each contributing developer needs to fill and send back to Hazelcast.
-- [Hazelcast on GitHub](https://github.com/hazelcast/hazelcast): Hazelcast repository where the code is developed, issues and pull requests are managed.
+- <a href="https://hazelcast.atlassian.net/wiki/display/COM/Developing+with+Git" target="_blank">Developing with Git</a>: Document that explains the branch mechanism of Hazelcast and how to request changes.
+- <a href="https://hazelcast.atlassian.net/wiki/display/COM/Hazelcast+Contributor+Agreement" target="_blank">Hazelcast Contributor Agreement form</a>: Form that each contributing developer needs to fill and send back to Hazelcast.
+- <a href="https://github.com/hazelcast/hazelcast" target="_blank">Hazelcast on GitHub</a>: Hazelcast repository where the code is developed, issues and pull requests are managed.
 
 ##### Typographical Conventions
 
