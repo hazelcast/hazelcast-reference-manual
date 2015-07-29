@@ -6,6 +6,7 @@ Welcome to the Hazelcast Reference Manual. This manual includes concepts, instru
 
 As the reader of this manual, you must be familiar with the Java programming language and you should have installed your preferred IDE.
 
+
 ##### Product Naming
 
 Throughout this manual:
@@ -13,11 +14,13 @@ Throughout this manual:
 - **Hazelcast** refers to the open source edition of Hazelcast in-memory data grid middleware. It is also the name of the company providing the Hazelcast product.
 - **Hazelcast Enterprise** refers to the commercial edition of Hazelcast.
 
+
 ##### Licensing
 
 Hazelcast is free provided under the Apache 2 license. Hazelcast Enterprise is commercially licensed by Hazelcast, Inc.
 
 For more detailed information on licensing, please see the [License Questions appendix](#license-questions).
+
 
 ##### Trademarks
 
@@ -30,7 +33,6 @@ Support for Hazelcast is provided via <a href="https://github.com/hazelcast/haze
 
 For information on support for Hazelcast Enterprise, please see <a href="hazelcast.com/pricing](http://hazelcast.com/pricing/" target="_blank">hazelcast.com</a>.
 
-<a href="" target="_blank">..</a>
 
 ##### Contributing to Hazelcast
 
@@ -39,6 +41,7 @@ You can contribute to the Hazelcast code, report a bug or request an enhancement
 - <a href="https://hazelcast.atlassian.net/wiki/display/COM/Developing+with+Git" target="_blank">Developing with Git</a>: Document that explains the branch mechanism of Hazelcast and how to request changes.
 - <a href="https://hazelcast.atlassian.net/wiki/display/COM/Hazelcast+Contributor+Agreement" target="_blank">Hazelcast Contributor Agreement form</a>: Form that each contributing developer needs to fill and send back to Hazelcast.
 - <a href="https://github.com/hazelcast/hazelcast" target="_blank">Hazelcast on GitHub</a>: Hazelcast repository where the code is developed, issues and pull requests are managed.
+
 
 ##### Typographical Conventions
 
