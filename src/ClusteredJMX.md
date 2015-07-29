@@ -226,7 +226,7 @@ Here is the list of attributes that are exposed from the Clustered JMX interface
 
 Use the Clustered JMX interface to integrate Hazelcast Management Center with *New Relic*. To perform this integration, attach New Relic Java agent and provide an extension file that describes which metrics will be sent to New Relic.
 
-Please see [Custom JMX instrumentation by YAML](http://docs.newrelic.com/docs/java/custom-jmx-instrumentation-by-yml) on the New Relic webpage.
+Please see <a href="http://docs.newrelic.com/docs/java/custom-jmx-instrumentation-by-yml" target="_blank">Custom JMX instrumentation by YAML</a> on the New Relic webpage.
 
 Below is an example Map monitoring `.yml` file for New Relic.
 
@@ -288,7 +288,7 @@ Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric LastAccessTime : 1,401,962,426,811
 ```
 
-Then you can navigate to your New Relic account and create Custom Dashboards. Please see [Creating custom dashboards](http://docs.newrelic.com/docs/dashboards-menu/creating-custom-dashboards).
+Then you can navigate to your New Relic account and create Custom Dashboards. Please see <a href="http://docs.newrelic.com/docs/dashboards-menu/creating-custom-dashboards" target="_blank">Creating custom dashboards</a>.
 
 While you are creating the dashboard, you should see the metrics that you are sending to New Relic from Management Center in the **Metrics** section under the JMX folder.
 
@@ -296,9 +296,9 @@ While you are creating the dashboard, you should see the metrics that you are se
 
 Use the Clustered JMX interface to integrate Hazelcast Management Center with *AppDynamics*. To perform this integration, attach AppDynamics Java agent to the Management Center.
 
-For agent installation, refer to [Install the App Agent for Java](http://docs.appdynamics.com/display/PRO14S/Install+the+App+Agent+for+Java) page.
+For agent installation, refer to <a href="http://docs.appdynamics.com/display/PRO14S/Install+the+App+Agent+for+Java" target="_blank">Install the App Agent for Java</a> page.
 
-For monitoring on AppDynamics, refer to [Using AppDynamics for JMX Monitoring](http://docs.appdynamics.com/display/PRO14S/Monitor+JMX+MBeans#MonitorJMXMBeans-UsingAppDynamicsforJMXMonitoring) page.
+For monitoring on AppDynamics, refer to <a href="http://docs.appdynamics.com/display/PRO14S/Monitor+JMX+MBeans#MonitorJMXMBeans-UsingAppDynamicsforJMXMonitoring" target="_blank">Using AppDynamics for JMX Monitoring</a> page.
 
 After installing AppDynamics agent, you can start Management Center as shown below.
 

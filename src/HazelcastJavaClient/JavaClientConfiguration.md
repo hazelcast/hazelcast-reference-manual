@@ -307,7 +307,7 @@ socketOptions.setLingerSeconds(3);
 ![](images/enterprise-onlycopy.jpg)
 
 
-You can use SSL to secure the connection between the client and the nodes. If you want SSL enabled for the client-cluster connection, you should set `SSLConfig`. Once set, the connection (socket) is established out of an SSL factory defined either by a factory class name or factory implementation. Please see the `SSLConfig` class in the `com.hazelcast.config` package at the JavaDocs page of the [Hazelcast Documentation](http://www.hazelcast.org/documentation) web site.
+You can use SSL to secure the connection between the client and the nodes. If you want SSL enabled for the client-cluster connection, you should set `SSLConfig`. Once set, the connection (socket) is established out of an SSL factory defined either by a factory class name or factory implementation. Please see the `SSLConfig` class in the `com.hazelcast.config` package at the JavaDocs page of the <a href="http://www.hazelcast.org/documentation" target="_blank">Hazelcast Documentation</a> web site.
 
 #### Client Configuration for AWS
 
@@ -465,7 +465,7 @@ You can add three types of event listeners.
 
 ***RELATED INFORMATION***
 
-*Please refer to [LifecycleListener](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/LifecycleListener.java), [MembershipListener](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MembershipListener.java) and [DistributedObjectListener](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/DistributedObjectListener.java).*
+*Please refer to <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/LifecycleListener.java" target="_blank">LifecycleListener</a>, <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MembershipListener.java" target="_blank">MembershipListener</a> and <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/DistributedObjectListener.java" target="_blank">DistributedObjectListener</a>.*
 <br></br>
 
 

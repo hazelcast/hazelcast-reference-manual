@@ -5,7 +5,7 @@
 ![](images/enterprise-onlycopy.jpg)
 
 
-All security attributes are carried in the `Credentials` object. `Credentials` is used by [LoginModule](http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html)s during the authentication process. User supplied attributes from `LoginModule`s are accessed by [CallbackHandler](http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html)s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.
+All security attributes are carried in the `Credentials` object. `Credentials` is used by <a href="http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html" target="_blank">LoginModule</a> s during the authentication process. User supplied attributes from `LoginModule`s are accessed by <a href="http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html" target="_blank">CallbackHandler</a> s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.
 
 `LoginModule` implementations should create an instance of `com.hazelcast.security.CredentialsCallback` and call the `handle(Callback[] callbacks)` method of `CallbackHandler` during the login process. 
 
@@ -69,10 +69,10 @@ public abstract class ClusterLoginModule implements LoginModule {
 
 ### Enterprise Integration
 
-Using the above API, it should be possible to implement a `LoginModule` that performs authentication against the Security System of your choice, possibly an LDAP store like [Apache Directory](https://directory.apache.org/) or some other corporate standard you have.  For example, you may wish to have your clients send an identification token in the `Credentials` object.  This token can then be sent to your back-end security system via the `LoginModule` that runs on the cluster side.
+Using the above API, it should be possible to implement a `LoginModule` that performs authentication against the Security System of your choice, possibly an LDAP store like <a href="https://directory.apache.org/" target="_blank">Apache Directory</a> or some other corporate standard you have.  For example, you may wish to have your clients send an identification token in the `Credentials` object.  This token can then be sent to your back-end security system via the `LoginModule` that runs on the cluster side.
 
 Additionally, the same system may authenticate the user and also then return the roles that are attributed to the user. These roles can then be used for data structure authorization. 
 
 ***RELATED INFORMATION***
 
-*Please refer to [JAAS Reference Guide](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html) for further information.*
+*Please refer to <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html" target="_blank">JAAS Reference Guide</a> for further information.*

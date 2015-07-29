@@ -10,7 +10,7 @@
 
 
 
-***Sample Code:*** *Please see our [sample application](https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/enterprise-session-replication) for Jetty Based Web Session Replication.*
+***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/enterprise-session-replication" target="_blank">sample application</a> for Jetty Based Web Session Replication.*
 <br></br>
 
 #### Overview
@@ -32,9 +32,9 @@ Jetty Web Session Replication with Hazelcast Enterprise is a container specific 
 
 Jetty Web Session Replication Module has been tested against the following containers.
 
-- Jetty 7  - It can be downloaded [here](http://download.eclipse.org/jetty/stable-7/dist/).
-- Jetty 8  - It can be downloaded [here](http://download.eclipse.org/jetty/stable-8/dist/).
-- Jetty 9  - It can be downloaded [here](http://download.eclipse.org/jetty/stable-9/dist/).
+- Jetty 7  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-7/dist/" target="_blank">here</a>.
+- Jetty 8  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-8/dist/" target="_blank">here</a>.
+- Jetty 9  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-9/dist/" target="_blank">here</a>.
 
 Latest tested versions are **7.6.16.v20140903**, **8.1.16.v20140903** and **9.2.3.v20140905**
 <br></br>
@@ -45,7 +45,7 @@ Latest tested versions are **7.6.16.v20140903**, **8.1.16.v20140903** and **9.2.
  - Jetty instance must be running with Java 1.6 or higher.
  - Session objects that need to be clustered have to be Serializable.
  - Hazelcast Jetty-based Web Session Replication is built on top of the `jetty-nosql` module. This module (`jetty-nosql-<*jettyversion*>.jar`) needs to be added to `$JETTY_HOME/lib/ext`.
-   This module can be found [here](http://mvnrepository.com/artifact/org.eclipse.jetty/jetty-nosql).
+   This module can be found <a href="http://mvnrepository.com/artifact/org.eclipse.jetty/jetty-nosql" target="_blank">here</a>.
 
 #### How Jetty Session Replication Works
 
@@ -69,7 +69,7 @@ This type of deployment is simple: just configure your Jetty and launch. There i
 
 ***Sample P2P Configuration to use Hazelcast Session Replication***
 
-- Go to [hazelcast.com](http://www.hazelcast.com/products/hazelcast-enterprise/) and download the latest Hazelcast Enterprise.
+- Go to <a href="http://www.hazelcast.com/products/hazelcast-enterprise/" target="_blank">hazelcast.com</a> and download the latest Hazelcast Enterprise.
 - Unzip the Hazelcast Enterprise zip file into the folder `$HAZELCAST_ENTERPRISE_ROOT`.
 - Update `$HAZELCAST_ENTERPRISE_ROOT/bin/hazelcast.xml` with the provided Hazelcast Enterprise License Key. 
 - Put `hazelcast.xml` in the folder `$JETTY_HOME/etc`.
@@ -151,7 +151,7 @@ In client/server deployment type, Jetty instances work as clients to an existing
 
 ***Sample Client/Server Configuration to use Hazelcast Session Replication***
 
-- Go to [hazelcast.com](http://www.hazelcast.com/products/hazelcast-enterprise/) and download the latest Hazelcast Enterprise.
+- Go to <a href="http://www.hazelcast.com/products/hazelcast-enterprise/" target="_blank">hazelcast.com</a> and download the latest Hazelcast Enterprise.
 - Unzip the Hazelcast Enterprise zip file into the folder `$HAZELCAST_ENTERPRISE_ROOT`.
 - Update `$HAZELCAST_ENTERPRISE_ROOT/bin/hazelcast.xml` with the provided Hazelcast Enterprise License Key. 
 - Put `hazelcast.xml` in the folder `$JETTY_HOME/etc`.

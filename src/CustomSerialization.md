@@ -1,7 +1,7 @@
 
 ## Custom Serialization
 
-Hazelcast lets you plug a custom serializer for serializing objects. You can use `StreamSerializer` and [`ByteArraySerializer`](#bytearrayserializer) interfaces for this purpose.
+Hazelcast lets you plug a custom serializer for serializing objects. You can use [StreamSerializer](#streamserializer) and [ByteArraySerializer](#bytearrayserializer) interfaces for this purpose.
 
 
 ### StreamSerializer

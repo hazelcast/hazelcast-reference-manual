@@ -6,7 +6,7 @@ If you are using Tomcat as your web container, please see the [Tomcat based Web 
 
 ### Filter Based Web Session Replication
 
-***Sample Code***: *Please see our [sample application](https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/filter-based-session-replication) for Filter Based Web Session Replication.*
+***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/filter-based-session-replication" target="_blank">sample application</a> for Filter Based Web Session Replication.*
 <br></br>
 
 Assume that you have more than one web server (A, B, C) with a load balancer in front of it. If server A goes down, your users on that server will be directed to one of the live servers (B or C), but their sessions will be lost.
@@ -174,7 +174,7 @@ It is that easy. All HTTP requests will go through Hazelcast `WebFilter` and it 
 
 ### Spring Security Support
 
-***Sample Code***: *Please see our [sample application](https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-security) for Spring Security Support.*
+***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-security" target="_blank">sample application</a> for Spring Security Support.*
 <br><br/>
 
 If Spring based security is used for your application, you should use `com.hazelcast.web.spring.SpringAwareWebFilter` instead of `com.hazelcast.web.WebFilter` in your filter definition.

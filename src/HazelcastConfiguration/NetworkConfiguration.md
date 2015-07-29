@@ -370,6 +370,6 @@ All you need is to define IPv6 addresses or interfaces in [network configuration
 
 JVM has two system properties for setting the preferred protocol stack (IPv4 or IPv6) as well as the preferred address family types (inet4 or inet6). On a dual stack machine, IPv6 stack is preferred by default, you can change this through the `java.net.preferIPv4Stack=<true|false>` system property. When querying name services, JVM prefers IPv4 addresses over IPv6 addresses and will return an IPv4 address if possible. You can change this through `java.net.preferIPv6Addresses=<true|false>` system property.
 
-Also see additional [details on IPv6 support in Java](http://docs.oracle.com/javase/1.5.0/docs/guide/net/ipv6_guide/query.html#details).
+Also see additional <a href="http://docs.oracle.com/javase/1.5.0/docs/guide/net/ipv6_guide/query.html#details" target="_blank">details on IPv6 support in Java</a>.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *IPv6 support has been switched off by default, since some platforms have issues using the IPv6 stack. Some other platforms such as Amazon AWS have no support at all. To enable IPv6 support, just set configuration property `hazelcast.prefer.ipv4.stack` to *false*. Please refer to the [System Properties section](#system-properties) for details.*

@@ -8,7 +8,7 @@ You have two options for installing Hazelcast Management Center. You can either 
 
 Here are the steps:
 
--	Download the latest Hazelcast ZIP from [hazelcast.org](http://www.hazelcast.org/download/). The ZIP contains the `mancenter`-*version*`.war` file. 
+-	Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file. 
 -	You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
 
 ```java

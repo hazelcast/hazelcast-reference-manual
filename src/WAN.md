@@ -95,7 +95,7 @@ as mentioned before.
 ***RELATED INFORMATION***
 
 _You can download the white paper **Hazelcast on AWS: Best Practices for Deployment** from
-[Hazelcast.com](http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/)._
+<a href="http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/" target="_blank">Hazelcast.com</a>._
 
 <br></br>
 
@@ -166,7 +166,7 @@ or by setting the property inside the `hazelcast.xml` (where xxx is the requeste
 
 ### WAN Replication Batch Frequency
 
-When using `WanBatchReplication` if the number of WAN replication events generated does not reach [Wan Replication Batch Size](#wan-replication-batch-size),
+When using `WanBatchReplication` if the number of WAN replication events generated does not reach [WAN Replication Batch Size](#wan-replication-batch-size),
 they are sent to the target cluster after a certain amount of time is passed.
 
 Default value of for this duration is `5` seconds.

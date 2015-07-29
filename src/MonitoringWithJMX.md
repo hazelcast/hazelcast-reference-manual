@@ -4,7 +4,7 @@
 
 You can monitor your Hazelcast members via the JMX protocol.
 
-- Add the following system properties to enable [JMX agent](http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html):
+- Add the following system properties to enable <a href="http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html" target="_blank">JMX agent</a>:
 
    - `-Dcom.sun.management.jmxremote`
    - `-Dcom.sun.management.jmxremote.port=\_portNo\_` (to specify JMX port) (*optional*)

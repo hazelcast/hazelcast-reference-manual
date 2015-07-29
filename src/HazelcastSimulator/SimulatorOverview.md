@@ -14,7 +14,7 @@ You can use Hazelcast Simulator for the following use cases:
 - As part of your test suite in your deployment process.
 - When you upgrade your Hazelcast version.
 
-Hazelcast Simulator is available as a downloadable package on the Hazelcast [web site](http://www.hazelcast.org/download). Please refer to the [Installing Simulator section](#installing-simulator) for more information.
+Hazelcast Simulator is available as a downloadable package on the Hazelcast <a href="http://www.hazelcast.org/download" target="_blank">web site</a>. Please refer to the [Installing Simulator section](#installing-simulator) for more information.
 
 ## Key Concepts
 
