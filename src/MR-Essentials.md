@@ -78,10 +78,10 @@ This is not a real MapReduce phase, but it is the final step in Hazelcast after 
 
 The Internet is full of useful resources to find deeper information on MapReduce. Below is a short collection of more introduction material. In addition, there are books written about all kinds of MapReduce patterns and how to write a MapReduce function for your use case. To name them all is out of scope of this documentation.
 
- - <http://research.google.com/archive/mapreduce.html>
- - <http://en.wikipedia.org/wiki/MapReduce>
- - <http://hci.stanford.edu/courses/cs448g/a2/files/map_reduce_tutorial.pdf>
- - <http://ksat.me/map-reduce-a-really-simple-introduction-kloudo/>
- - <http://www.slideshare.net/franebandov/an-introduction-to-mapreduce-6789635>
+ - <a href="http://research.google.com/archive/mapreduce.html" target="_blank">http://research.google.com/archive/mapreduce.html</a>
+ - <a href="http://en.wikipedia.org/wiki/MapReduce" target="_blank">http://en.wikipedia.org/wiki/MapReduce</a>
+ - <a href="http://hci.stanford.edu/courses/cs448g/a2/files/map_reduce_tutorial.pdf">http://hci.stanford.edu/courses/cs448g/a2/files/map_reduce_tutorial.pdf</a>
+ - <a href="http://ksat.me/map-reduce-a-really-simple-introduction-kloudo/">http://ksat.me/map-reduce-a-really-simple-introduction-kloudo/</a>
+ - <a href="http://www.slideshare.net/franebandov/an-introduction-to-mapreduce-6789635">http://www.slideshare.net/franebandov/an-introduction-to-mapreduce-6789635</a>
 
 

@@ -37,7 +37,7 @@ When needed, Hazelcast can log the events for the instances that exist in a regi
 <br> </br>
 ***RELATED INFORMATION***
 
-*You can download the white paper *"Hazelcast on AWS: Best Practices for Deployment"* from [Hazelcast.com](http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/).*
+*You can download the white paper *"Hazelcast on AWS: Best Practices for Deployment"* from <a href="http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/" target="_blank">Hazelcast.com</a>.*
 <br> </br>
 
 

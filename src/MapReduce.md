@@ -2,7 +2,7 @@
 
 ## MapReduce
 
-You have likely heard about MapReduce ever since Google released its [research white paper](http://research.google.com/archive/mapreduce.html) on this concept. With Hadoop as the most common and well known implementation, MapReduce gained a broad audience and made it into all kinds of business applications dominated by data warehouses.
+You have likely heard about MapReduce ever since Google released its <a href="http://research.google.com/archive/mapreduce.html" target="_blank">research white paper</a>  on this concept. With Hadoop as the most common and well known implementation, MapReduce gained a broad audience and made it into all kinds of business applications dominated by data warehouses.
 
 MapReduce is a software framework for processing large amounts of data in a distributed way. Therefore, the processing is normally spread over several machines. The basic idea behind MapReduce is to map your source data into a collection of key-value pairs and reducing those pairs, grouped by key, in a second
 step towards the final result.

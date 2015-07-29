@@ -38,5 +38,6 @@ Paging Predicate, also known as Order & Limit, is not supported in Transactional
 ***RELATED INFORMATION***
 
 *Please see the
-[Predicates class](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/query/Predicates.java) for all predicates provided.*
+<a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/query/Predicates.java" target="_blank">
+Predicates class</a> for all predicates provided.*
 
