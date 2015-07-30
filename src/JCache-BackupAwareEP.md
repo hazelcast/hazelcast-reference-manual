@@ -14,7 +14,7 @@ The backup partition `EntryProcessor` can either be the currently running proces
 a specialized `EntryProcessor` implementation (other from the currently running one) which does different operations or leaves
 out operations, e.g. sending emails.
 
-If we again take the `EntryProcessor` example from the demonstration application provided in the [JCache EntryProcessor sectiob](#jcache-entryprocessor),
+If we again take the `EntryProcessor` example from the demonstration application provided in the [JCache EntryProcessor section](#jcache-entryprocessor),
 the changed code will look like the following snippet.
 
 ```java
