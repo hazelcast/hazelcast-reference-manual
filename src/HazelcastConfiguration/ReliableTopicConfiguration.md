@@ -12,7 +12,7 @@ The following are example Reliable Topic configurations.
     <statistics-enabled>true</statistics-enabled>
     <message-listeners>
         <message-listener>
-        
+        ...
         </message-listener>
     </message-listeners>
     <read-batch-size>10</read-batch-size>
