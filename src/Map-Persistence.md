@@ -83,7 +83,7 @@ public class PersonMapStore implements MapStore<Long, Person> {
 }
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Loading process is performed on a thread different than the partition threads using ExecutorService.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *During the initial loading process, MapStore uses a thread different than the partition threads that is used by the ExecutorService. After the initialization is completed, the `map.get` method looks up any inexistent value from the database in a partition thread or the `map.put` method looks up the database to return the previously associated value for a key also in a partition thread.*
 
 <br></br>
 ***RELATED INFORMATION***
@@ -113,7 +113,7 @@ The same behavior goes for a `map.remove(key)` call. The only difference is that
 
 If `MapStore` throws an exception, then the exception will be propagated back to the original `put` or `remove` call in the form of `RuntimeException`.
 
-#### Setting Write-Behind Delay
+#### Setting Write-Behind Persistence
 
 You can configure `MapStore` as write-behind by setting the `write-delay-seconds` property to a value bigger than **0**. This means the modified entries will be put to the data store asynchronously after a configured delay. 
 
