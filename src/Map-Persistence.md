@@ -83,7 +83,7 @@ public class PersonMapStore implements MapStore<Long, Person> {
 }
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Loading process is performed on a thread different than the partition threads using ExecutorService.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *During the initial loading process, MapStore uses a thread different than the partition threads that is used by the ExecutorService. After the initialization is completed, the `map.get` method looks up any inexistent value from the database in a partition thread or the `map.put` method looks up the database to return the previously associated value for a key also in a partition thread.*
 
 <br></br>
 ***RELATED INFORMATION***
