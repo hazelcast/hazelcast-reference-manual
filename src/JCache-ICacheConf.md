@@ -36,3 +36,6 @@ Since `javax.cache.configuration.MutableConfiguration` misses the above addition
 provides an extended configuration class called `com.hazelcast.config.CacheConfig`. This class is an implementation of `javax.cache.configuration.CompleteConfiguration` and all the properties shown above can be configured
 using its corresponding setter methods.
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *At the client side, ICache can be configured only programmatically.*
+<br></br>
