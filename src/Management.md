@@ -2,7 +2,7 @@
 
 # Management
 
-
+This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol and managing the cluster with useful utilities. It also includes the usage explanations of Hazelcast Management Center.
 
 
 ## Statistics API per Node
