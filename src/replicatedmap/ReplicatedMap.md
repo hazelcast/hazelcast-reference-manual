@@ -3,11 +3,13 @@
 
 A replicated map is a weakly consistent, distributed key-value data structure provided by Hazelcast.
 
-All other data structures are partitioned in design. A replicated map does not partition data
-(it does not spread data to different cluster members); instead, it replicates the data to all nodes.
+### Replicating Instead of Partitioning
 
-This leads to higher memory consumption. However, a replicated map has faster read and write access since the data are available on all nodes and
-writes take place on local nodes, eventually being replicated to all other nodes.
+All other data structures are partitioned in design. A replicated map does not partition data
+(it does not spread data to different cluster members); instead, it replicates the data to all members.
+
+This leads to higher memory consumption. However, a replicated map has faster read and write access since the data are available on all members and
+writes take place on local members, eventually being replicated to all other members.
 
 Weak consistency compared to eventually consistency means that replication is done on a best efforts basis. Lost or missing updates
 are neither tracked nor resent. This kind of data structure is suitable for immutable
@@ -15,6 +17,10 @@ objects, catalogue data, or idempotent calculable data (like HTML pages).
 
 Replicated map nearly fully implements the `java.util.Map` interface, but it lacks the methods from `java.util.concurrent.ConcurrentMap` since
 there are no atomic guarantees to writes or reads.
+
+### Example Replicated Map Code
+
+Here is an example of replicated map code. The HazelcastInstance `getReplicatedMap` methods gets the replicated map, and the replicated map `put` creates map entries.
 
 ```java
 import com.hazelcast.core.Hazelcast;

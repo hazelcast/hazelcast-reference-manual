@@ -1,5 +1,5 @@
 
-### Replicated Map Configuration
+### Configuring Replicated Map
 
 Replicated Map can be configured using the following two ways (as with most other features in Hazelcast):
 

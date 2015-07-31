@@ -1,6 +1,6 @@
 
 
-### For Consideration
+### Read Write Considerations for Replicated Map
 
 A replicated map **does not** support ordered writes! In case of a conflict caused by two nodes simultaneously written to the
 same key, a vector clock algorithm resolves and decides on one of the values.
