@@ -73,7 +73,9 @@ Property Name | Default Value | Type | Description
 `hazelcast.initial.min.cluster.size` | 0 | int  |   Initial expected cluster size to wait before node to start completely.
 `hazelcast.initial.wait.seconds` | 0 | int  |   Initial time in seconds to wait before node to start completely.
 `hazelcast.io.balancer.interval.seconds`|20|int|Interval in seconds between IOBalancer executions.
-`hazelcast.io.thread.count` | 3 | int | Number of input and output threads.
+`hazelcast.io.input.thread.count` | 3 | int | Number of socket input threads.
+`hazelcast.io.output.thread.count` | 3 | int | Number of socket output threads.
+`hazelcast.io.thread.count` | 3 | int | Number of threads performing socket input and socket output. If, for example, the default value (3) is used, it means there are 3 threads performing input and 3 threads performing output (6 threads in total).
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
