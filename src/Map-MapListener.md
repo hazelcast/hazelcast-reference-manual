@@ -158,7 +158,7 @@ corresponding `MapPartitionLostEvent`. If only a single member crashes in the cl
 there will be no `MapPartitionLostEvent` fired for this map since backups for the partitions 
 owned by the crashed member are kept on other members. 
 
-Please refer to the [Partition Lost Listener section](#partition-lost-listener) for more 
+Please refer to [Listening for Partition Lost Events](#listening-for-partition-lost-events) for more 
 information about partition lost detection and partition lost events.
 
 

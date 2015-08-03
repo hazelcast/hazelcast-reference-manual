@@ -9,7 +9,7 @@ As a rule of thumb, your event listener should not implement heavy processes in 
 
 
 
-## Event Listeners for Hazelcast Nodes
+## Event Listeners for Hazelcast Members
 
 Hazelcast offers the following event listeners:
 
@@ -25,13 +25,15 @@ Hazelcast offers the following event listeners:
 
 
 
-### Membership Listener
+### Listening for Member Events
 
-The Membership Listener allows to get notified for the following events.
+The Membership Listener interface has methods that are invoked for the following events.
 
-- A new member is added to the cluster.
-- An existing member leaves the cluster.
-- An attribute of a member is changed. Please refer to the [Member Attributes section](#member-attributes) to learn about member attributes.
+- `memberAdded`: A new member is added to the cluster.
+- `memberRemoved`: An existing member leaves the cluster.
+- `memberAttributeChanged`: An attribute of a member is changed. Please refer to the [Member Attributes section](#member-attributes) to learn about member attributes.
+
+To write a Membership Listener class, you implement the MembershipListener interface and its methods.
 
 The following is an example Membership Listener class.
 
@@ -56,9 +58,9 @@ public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
 
 When a respective event is fired, the membership listener outputs the addresses of the members that joined and left, and also which attribute changed on which member.
 
-### Distributed Object Listener
+### Listening for Distributed Object Events
 
-The Distributed Object Listener notifies when a distributed object is created or destroyed throughout the cluster.
+The Distributed Object Listener methods `distributedObjectCreated` and `distributedObjectDestroyed` are invoked when a distributed object is created and destroyed throughout the cluster. To write a Distributed Object Listener class, you implement the DistributedObjectListener interface and its methods.
 
 The following is an example Distributed Object Listener class.
 
@@ -95,14 +97,15 @@ public class Sample implements DistributedObjectListener {
 When a respective event is fired, the distributed object listener outputs the event type, and the name, service (for example, if a Map service provides the distributed object, than it is a Map object), and ID of the object.
 
 
-### Migration Listener
+### Listening for Migration Events
 
-The Migration Listener notifies for the following events:
+The Migration Listener interface has methods that are invoked for the following events:
 
-- A partition migration is started.
-- A partition migration is completed.
-- A partition migration is failed.
+- `migrationStarted`: A partition migration is started.
+- `migrationCompleted`: A partition migration is completed.
+- `migrationFailed`: A partition migration failed.
 
+To write a Migration Listener class, you implement the DistributedObjectListener interface and its methods.
 
 The following is an example Migration Listener class.
 
@@ -131,7 +134,7 @@ Started: MigrationEvent{partitionId=98, oldOwner=Member [127.0.0.1]:5701,
 newOwner=Member [127.0.0.1]:5702 this} 
 ```
 
-### Partition Lost Listener
+### Listening for Partition Lost Events
 
 Hazelcast provides fault-tolerance by keeping multiple copies of your data. For each partition, one of your nodes become owner and some of the other nodes become replica nodes based on your configuration. Nevertheless, data loss may occur if a few nodes crash simultaneously.
 
@@ -142,6 +145,10 @@ also resides in N3.
 The Partition Lost Listener notifies for possible data loss occurrences with the information of how many replicas are lost for a partition. It listens to `PartitionLostEvent` instances. Partition lost events are dispatched per partition. 
 
 Partition loss detection is done after a node crash is detected by the other nodes and the crashed node is removed from the cluster. Please note that false-positive `PartitionLostEvent` instances may be fired on partial network split errors. 
+
+#### Writing a Partial Lost Listener Class
+
+To write a Partial Lost Listener, you implement the PartitionLostListener interface and its `partitionLost` method, which is invoked when a partition loses its owner and all backups.
 
 The following is an example of Partition Lost Listener. 
 
@@ -161,18 +168,18 @@ com.hazelcast.partition.PartitionLostEvent{partitionId=242, lostBackupCount=0,
 eventSource=Address[192.168.2.49]:5701}
 ```
 
-### Lifecycle Listener
+### Listening for Lifecycle Events
 
 The Lifecycle Listener notifies for the following events:
 
-- A member is starting.
-- A member started.
-- A member is shutting down.
-- A member's shutdown has completed.
-- A member is merging with the cluster.
-- A member's merge operation has completed.
-- A Hazelcast Client connected to the cluster.
-- A Hazelcast Client disconnected from the cluster.
+- `STARTING`: A member is starting.
+- `STARTED`: A member started.
+- `SHUTTING_DOWN`: A member is shutting down.
+- `SHUTDOWN`: A member's shutdown has completed.
+- `MERGING`: A member is merging with the cluster.
+- `MERGED`: A member's merge operation has completed.
+- `CLIENT_CONNECTED`: A Hazelcast Client connected to the cluster.
+- `CLINET_DISCONNECTED`: A Hazelcast Client disconnected from the cluster.
 
 
 The following is an example Lifecycle Listener class.
@@ -190,9 +197,12 @@ public class NodeLifecycleListener implements LifecycleListener {
 This listener is local to an individual node. It notifies the application that uses Hazelcast about the events mentioned above for a particular node. 
 
 
-### Item Listener
+### Listening for Item Events
 
-The Item Listener is used by the Hazelcast `IQueue`, `ISet` and `IList` interfaces. It notifies when an item is added or removed.
+The Item Listener is used by the Hazelcast `IQueue`, `ISet` and `IList` interfaces.
+
+To write an Item Listener class, you implement the ItemListener interface and its methods `itemAdded` and `itemRemoved`. These methods
+are invoked when an item is added or removed.
 
 The following is an example Item Listener class.
 
@@ -221,9 +231,12 @@ public class Sample implements ItemListener {
 }
 ```
 
-### Message Listener
+### Listening for Topic Messages
 
 The Message Listener is used by the `ITopic` interface. It notifies when a message is received for the registered topic.
+
+To write a Message Listener class, you implement the MessageListener interface and its method `onMessage`, which is invoked
+when a message is received for the registered topic.
 
 The following is an example Message Listener class.
 
@@ -252,21 +265,23 @@ public class Sample implements MessageListener<MyEvent> {
   }
 ```
 
-### Client Listener
+### Listening for Clients
 
-The Client Listener is used by the Hazelcast nodes. It notifies the nodes when a client is connected to or disconnected from the cluster.
+The Client Listener is used by the Hazelcast cluster members. It notifies the cluster members when a client is connected to or disconnected from the cluster.
+
+To write a Client Listener class, you implement the ClientListener interface and its methods `clientConnected` and `clientDisconnected`,
+which are invoked when a client is connected to or disconnected from the cluster.
 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *You can also add event listeners to a Hazelcast client. Please refer to [Client Listenerconfig](#client-listener-configuration) for the related information.*
 
 ## Event Listeners for Hazelcast Clients
 
-You can add event listeners to a Hazelcast Java client. You can configure the following listeners to listen to the events on the client side. Please see the respective sections under the [Event Listeners for Hazelcast Nodes section](#event-listeners-for-hazelcast-nodes) for example code.
+You can add event listeners to a Hazelcast Java client. You can configure the following listeners to listen to the events on the client side. Please see the respective sections under the [Event Listeners for Hazelcast Members section](#event-listeners-for-hazelcast-members) for example code.
 
-
-- **Lifecycle Listener**: Notifies when the client is starting, started, shutting down and shutdown.
-- **Membership Listener**: Notifies when a node joins to/leaves the cluster to which the client is connected, or when an attribute is changed in a node.
-- **DistributedObject Listener**: Notifies when a distributed object is created or destroyed throughout the cluster to which the client is connected.
+- [Lifecycle Listener](#listening-for-lifecycle-events): Notifies when the client is starting, started, shutting down, and shutdown.
+- [Membership Listener](#listening-for-member-events): Notifies when a member joins to/leaves the cluster to which the client is connected, or when an attribute is changed in a node.
+- [DistributedObject Listener](#listening-for-distributed-object-events): Notifies when a distributed object is created or destroyed throughout the cluster to which the client is connected.
 
 <br></br>
 ***RELATED INFORMATION***
