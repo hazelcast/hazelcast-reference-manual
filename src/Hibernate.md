@@ -60,6 +60,12 @@ Then add the following properties into your Hibernate configuration file (e.g. `
 	```xml
 	<property name="hibernate.cache.use_minimal_puts">true</property>
 	```
+
+-   To avoid `NullPointerException` when you have entities that have composite keys(using @IdClass):
+
+    ```xml
+	<property name="hibernate.session_factory_name">yourFactoryName</property>
+	```
 	
 ![image](images/NoteSmall.jpg) ***NOTE:*** *QueryCache is always LOCAL to the node and never distributed across Hazelcast Cluster.*
 
