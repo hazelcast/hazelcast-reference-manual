@@ -1,6 +1,6 @@
 
 
-### Distributed SQL Query
+### Querying with SQL
 
 `com.hazelcast.query.SqlPredicate` takes the regular SQL `where` clause. Here is an example:
 

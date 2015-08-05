@@ -3,7 +3,7 @@
 
 You can use the `AbstractEntryProcessor` when the same processing will be performed both on the primary and backup map entries (i.e. the same logic applies to them). If you use `EntryProcessor`, you need to apply the same logic to the backup entries separately. The `AbstractEntryProcessor` class makes this primary/backup processing easier.
 
-Please see the example code below.
+The code below is the Hazelcast AbstractEntryProcessor class. You use this to create your AbstractEntryProcessor class.
 
 ```java
 public abstract class AbstractEntryProcessor <K, V>

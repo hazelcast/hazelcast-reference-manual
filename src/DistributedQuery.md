@@ -4,13 +4,10 @@
 
 Distributed queries access data from multiple data sources stored on either the same or different computers.
 
-## Query Overview
-
-
 Hazelcast partitions your data and spreads it across cluster of servers. You can iterate over the map entries and look for certain entries (specified by predicates) you are interested in. However, this is not very efficient because you will have to bring the entire entry set and iterate locally. Instead, Hazelcast allows you to run distributed queries on your distributed map.
 
 
-### How It Works
+## How Distributed Query Works
 
 1. The requested predicate is sent to each member in the cluster.
 2. Each member looks at its own local entries and filters them according to the predicate. At this stage, key/value pairs of the entries are deserialized and then passed to the predicate.

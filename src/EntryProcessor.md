@@ -8,17 +8,19 @@ An entry processor is a good option if you perform bulk processing on an `IMap`.
 
 If you are doing the above, you should consider using entry processors. An entry processor executes a read and updates upon the member where the data resides.  This eliminates the costly network hops described previously.
 
-### Entry Processor Overview
+### Performing Fast In-Memory Map Operations
 
 An entry processor enables fast in-memory operations on your map without you having to worry about locks or concurrency issues. It can be applied to a single map entry or to all map entries. It supports choosing target entries using predicates. You do not need any explicit lock on entry: Hazelcast locks the entry, runs the EntryProcessor, and then unlocks the entry.
 
 Hazelcast sends the entry processor to each cluster member and these members apply it to map entries. Therefore, if you add more members, your processing is completed faster.
 
+#### Using OBJECT In-Memory Fomat
+
 If entry processing is the major operation for a map and if the map consists of complex objects, you should use `OBJECT` as the `in-memory-format` to minimize serialization cost. By default, the entry value is stored as a byte array (`BINARY` format). When it is stored as an object (`OBJECT` format), then the entry processor is applied directly on the object. In that case, no serialization or deserialization is performed. But if there is a defined event listener, a new entry value will be serialized when passing to the event publisher service.
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *When `in-memory-format` is `OBJECT`, old value of the updated entry will be null.*
 
-#### Entry Processing with IMap
+#### Entry Processing with IMap Methods
 
 The methods below are in the IMap interface for entry processing.
 

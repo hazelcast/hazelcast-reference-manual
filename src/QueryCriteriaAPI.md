@@ -1,7 +1,7 @@
 
 
 
-### Criteria API
+### Querying with Criteria API
 
 Criteria API is a programming interface offered by Hazelcast that is similar to the Java Persistence Query Language (JPQL). Below is the code
 for the [above example query](#employee-map-query-example).
@@ -29,7 +29,7 @@ be serializable.
 ![image](images/NoteSmall.jpg)***NOTE:*** *Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of Hazelcast distributed 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.*
 
-#### Predicates Class
+#### Predicates Class Operators
 
 The `Predicates` class offered by Hazelcast includes many operators for your query requirements. Some of them are
 explained below.
@@ -57,7 +57,7 @@ Predicates class</a> for all predicates provided.*
 
 #### Joining Predicates with AND, OR, NOT
 
-Predicates can be joined using the `and`, `or` and `not` operators, as shown in the below examples.
+You can join predicates using the `and`, `or` and `not` operators, as shown in the below examples.
 
 ```java
 public Set<Person> getWithNameAndAge( String name, int age ) {
@@ -86,7 +86,7 @@ public Set<Person> getNotWithName( String name ) {
 ```
 
 
-#### PredicateBuilder
+#### Simplifying with PredicateBuilder
 
 You can simplify predicate usage with the `PredicateBuilder` class, which offers simpler predicate building. Please see the
 below example code which selects all people with a certain name and age.
