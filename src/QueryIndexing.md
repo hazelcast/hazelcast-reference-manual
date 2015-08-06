@@ -1,13 +1,16 @@
 
 
-### Indexing
+### Indexing Queries
 
 Hazelcast distributed queries will run on each member in parallel and only results will return the conn. When a query runs on a
 member, Hazelcast will iterate through the entire owned entries and find the matching ones. This can be made faster by indexing
 the mostly queried fields, just like you would do for your database. Indexing will add overhead for each `write`
 operation but queries will be a lot faster. If you query your map a lot, make sure to add indexes for the most frequently
-queried fields. For example, if your `active and age < 30` query, make sure you add index for `active` and
-`age` fields. Here is how to do it.
+queried fields. For example, if you do an `active and age < 30` query, make sure you add an index for the `active` and
+`age` fields. The following example code does that by:
+
+- getting the map from the Hazelcast instance, and
+- adding indexes to the map with the IMap `addIndex` method.
 
 ```java
 IMap map = hazelcastInstance.getMap( "employees" );
@@ -17,8 +20,12 @@ map.addIndex( "age", true );
 map.addIndex( "active", false );
 ```
 
+#### Indexing Ranged Queries
+
 `IMap.addIndex(fieldName, ordered)` is used for adding index. For each indexed field, if you have ranged queries such as `age>30`,
 `age BETWEEN 40 AND 60`, then you should set the `ordered` parameter to `true`. Otherwise, set it to `false`.
+
+#### Configuring IMap Indexes
 
 Also, you can define `IMap` indexes in configuration. An example is shown below.
 

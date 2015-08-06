@@ -1,16 +1,18 @@
 
 
-### Paging Predicate
+### Filtering with Paging Predicates
 
 Hazelcast provides paging for defined predicates. With its `PagingPredicate` class, you can
 get a collection of keys, values, or entries page by page by filtering them with predicates and giving the size of the pages. Also, you
 can sort the entries by specifying comparators.
 
-In the example code below, the `greaterEqual` predicate gets values from the "students" map. This predicate has a filter
-to retrieve the objects with a "age" greater than or equal to 18. Then a `PagingPredicate` is
-constructed in which the page size is 5, so there will be 5 objects in each page.
+In the example code below:
 
-The first time the values are called creates the first page. You can get the subsequent pages by using the `nextPage()`
+- The `greaterEqual` predicate gets values from the "students" map. This predicate has a filter
+to retrieve the objects with a "age" greater than or equal to 18. 
+- Then a `PagingPredicate` is constructed in which the page size is 5, so there will be 5 objects in each page. 
+The first time the values are called creates the first page. 
+- It gets subsequent pages with the `nextPage()`
 method of `PagingPredicate` and querying the map again with the updated `PagingPredicate`.
 
 

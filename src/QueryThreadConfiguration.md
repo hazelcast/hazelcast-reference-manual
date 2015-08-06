@@ -1,5 +1,5 @@
 
-### Query Thread Configuration
+### Configuring Query Thread Pool
 
 You can change the size of the thread pool dedicated to query operations using the `pool-size` property. Below is an example of that declarative configuration.
 
