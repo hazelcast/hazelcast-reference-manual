@@ -3,21 +3,24 @@
 
 As you read in the [Sharding in Hazelcast section](#sharding-in-hazelcast), Hazelcast shards are called Partitions. Partitions are memory segments, where each of those segments can contain hundreds or thousands of data entries, depending on the memory capacity of your system. 
 
-By default, Hazelcast offers 271 partitions. When you start a node, that nose owns those 271 partitions. The following illustration shows the partitions in a single node Hazelcast cluster.
+By default, Hazelcast offers 271 partitions. When you start a cluster member, it starts with these 271 partitions. The following illustration shows the partitions in a Hazelcast cluster with single member.
 
 ![](images/NodePartition.jpg)
 
-When you start a second node on that cluster (creating a 2-node Hazelcast cluster), the partitions are distributed as shown in the following illustration. 
+When you start a second node on that cluster (creating a Hazelcast cluster with 2 members), the partitions are distributed as shown in the following illustration. 
 
 ![](images/BackupPartitions.jpg)
 
-In the illustration, the partitions with black text are primary partitions, and the partitions with blue text are replica partitions (backups). The first node has 135 primary partitions (black), and each of these partitions are backed up in the second node (blue). At the same time, the first node also has the replica partitions of the second node's primary partitions.
+In the illustration, the partitions with black text are primary partitions, and the partitions with blue text are replica partitions (backups). The first member has 135 primary partitions (black), and each of these partitions are backed up in the second member (blue). At the same time, the first member also has the replica partitions of the second member's primary partitions.
 
-As you add more nodes, Hazelcast one-by-one moves some of the primary and replica partitions to the new nodes, making all nodes equal and redundant. Only the minimum amount of partitions will be moved to scale out Hazelcast. The following is an illustration of the partition distributions in a 4-node Hazelcast cluster.
+As you add more members, Hazelcast one-by-one moves some of the primary and replica partitions to the new members, making all members equal and redundant. Only the minimum amount of partitions will be moved to scale out Hazelcast. The following is an illustration of the partition distributions in a Hazelcast cluster with 4 members.
 
 ![](images/4NodeCluster.jpg)
 
-Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among nodes for redundancy.
+Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among the members for redundancy.
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Partition distributions in the above illustrations are for your convenience and for a more clearer description. Normally, the partitions are not distributed in an order, they are distributed randomly.*
+
 
 ### How the Data is Partitioned
 
@@ -27,25 +30,25 @@ Hazelcast distributes data entries into the partitions using a hashing algorithm
 - this byte array is hashed, and
 - the result of the hash is mod by the number of partitions.
 
-The result of this modulo - *MOD(hash result, partition count)* -  gives the partition in which the data will be stored. 
+The result of this modulo - *MOD(hash result, partition count)* -  gives the partition in which the data will be stored, i.e. the partition ID. For ALL the members you have in your cluster, the partition ID for a given key will always be the same.
 
 ### Partition Table
 
-When you start a node, a partition table is created within it. This table stores the information for which partitions belong to which nodes. The purpose of this table is to make all nodes in the cluster aware of this information, making sure that each node knows where the data is.
+When you start a member, a partition table is created within it. This table stores the partition IDs and the cluster members they belong. The purpose of this table is to make all members in the cluster aware of this information, making sure that each member knows where the data is.
 
-The oldest node in the cluster (the one that started first) periodically sends the partition table to all nodes. In this way, each node in the cluster is informed about any changes to the partition ownership. The ownerships may be changed when, for example, a new node joins the cluster, or when a node leaves the cluster.
+The oldest member in the cluster (the one that started first) periodically sends the partition table to all members. In this way, each member in the cluster is informed about any changes to the partition ownership. The ownerships may be changed when, for example, a new member joins the cluster, or when a member leaves the cluster.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If the oldest node goes down, the next oldest node sends the partition table information to the other nodes.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If the oldest member goes down, the next oldest member sends the partition table information to the other ones.*
 
-You can configure the frequency (how often) that the node sends the partition table the information by using the `hazelcast.partition.table.send.interval` system property. The property is set to every 15 seconds by default. 
+You can configure the frequency (how often) that the member sends the partition table the information by using the `hazelcast.partition.table.send.interval` system property. The property is set to every 15 seconds by default. 
 
 ### Repartitioning
 
 Repartitioning is the process of redistribution of partition ownerships. Hazelcast performs the repartitioning in the following cases:
 
-- When a node joins to the cluster.
-- When a node leaves the cluster.
+- When a member joins to the cluster.
+- When a member leaves the cluster.
 
-In these cases, the partition table in the oldest node is updated with the new partition ownerships. 
+In these cases, the partition table in the oldest member is updated with the new partition ownerships. 
 
 
