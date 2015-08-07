@@ -11,6 +11,11 @@ When a `MapStore` implementation is provided, an entry is also put into a user d
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Data store needs to be a centralized system that is
 accessible from all Hazelcast members. Persistence to local file system is not supported.*
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *Also note that, the `MapStore` interface extends the `MapLoader` interface as you can see in the interface [code](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MapStore.java).*
+
+
+
+
 Following is a `MapStore` example.
 
 ```java
