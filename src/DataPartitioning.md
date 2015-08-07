@@ -19,7 +19,7 @@ As you add more members, Hazelcast one-by-one moves some of the primary and repl
 
 Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among the members for redundancy.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Partition distributions in the above illustrations are for your convenience and for a more clearer description. Normally, the partitions are not distributed in an order, they are distributed randomly.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Partition distributions in the above illustrations are for your convenience and for a more clearer description. Normally, the partitions are not distributed in an order (as they are shown in these illustrations), they are distributed randomly. The important point here is that Hazelcast equally distributes the partitions and their backups among the members.*
 
 
 ### How the Data is Partitioned
