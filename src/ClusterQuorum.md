@@ -25,7 +25,7 @@ Assume that you have a 5-node Hazelcast Cluster and you want to set the minimum 
 </quorum>
 
 <map name="default">
-<quorum-name>quorumRuleWithThreeNodes</quorum-name>
+<quorum-ref>quorumRuleWithThreeNodes</quorum-ref>
 </map>
 ....
 </hazelcast>
