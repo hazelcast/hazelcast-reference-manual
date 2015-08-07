@@ -1,7 +1,7 @@
 
 
 
-### MapReduce Essentials
+### Understanding MapReduce
 
 This section will give a deeper insight on the MapReduce pattern and helps you understand the semantics behind the different MapReduce phases and how they are implemented in Hazelcast.
 

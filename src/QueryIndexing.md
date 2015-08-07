@@ -2,7 +2,10 @@
 
 ### Indexing Queries
 
-Hazelcast distributed queries will run on each member in parallel and only results will return the conn. When a query runs on a
+Hazelcast distributed queries will run on each member in parallel and will return only the results to the caller.
+Then, on the caller side, the results will be merged.
+
+When a query runs on a
 member, Hazelcast will iterate through the entire owned entries and find the matching ones. This can be made faster by indexing
 the mostly queried fields, just like you would do for your database. Indexing will add overhead for each `write`
 operation but queries will be a lot faster. If you query your map a lot, make sure to add indexes for the most frequently
