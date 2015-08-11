@@ -4,10 +4,10 @@
 
 The distributed executor service is a distributed implementation of `java.util.concurrent.ExecutorService`. It allows you to execute your code in the cluster. In this section, the code examples are based on the [Echo class above](#implementing-a-callable-task) (please note that the Echo class is `Serializable`). The code examples show how Hazelcast can execute your code (`Runnable, Callable`):
 
-- echoOnTheMember: on a specific cluster member you choose with the `IExecutorService` `submitToMember` method,
-- echoOnTheMemberOwningTheKey: on the member owning the key you choose with the `IExecutorService` `submitToKeyOwner` method,
-- echoOnSomewhere: on the member Hazelcast will pick with the `IExecutorService` `submit` method, and
-- echoOnMembers: on all or a subset of the cluster members with the `IExecutorService` `submitToMembers` method.
+- `echoOnTheMember`: On a specific cluster member you choose with the `IExecutorService` `submitToMember` method.
+- `echoOnTheMemberOwningTheKey`: On the member owning the key you choose with the `IExecutorService` `submitToKeyOwner` method.
+- `echoOnSomewhere`: On the member Hazelcast picks with the `IExecutorService` `submit` method.
+- `echoOnMembers`: On all or a subset of the cluster members with the `IExecutorService` `submitToMembers` method.
 
 ```java
 import com.hazelcast.core.Member;
