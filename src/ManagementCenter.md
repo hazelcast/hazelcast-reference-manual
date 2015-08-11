@@ -188,8 +188,8 @@ When you click on a desired monitoring, the chart is loaded with the selected op
 -	**Size**: Monitors the size of the map. Y-axis is the entry count (should be multiplied by 1000).
 -	**Throughput**: Monitors get, put and remove operations performed on the map. Y-axis is the operation count.
 -	**Memory**: Monitors the memory usage on the map. Y-axis is the memory count.
--	**Backups**: It is the chart loaded when "Backup Size" is selected. Monitors the size of the backups in the map. Y-axis is the backup entry count (should be multiplied by 1000).
--	**Backup Memory**: It is the chart loaded when "Backup Mem." is selected. Monitors the memory usage of the backups. Y-axis is the memory count.
+-	**Backups**: Chart loaded when "Backup Size" is selected. Monitors the size of the backups in the map. Y-axis is the backup entry count (should be multiplied by 1000).
+-	**Backup Memory**: Chart loaded when "Backup Mem." is selected. Monitors the memory usage of the backups. Y-axis is the memory count.
 -	**Hits**: Monitors the hit count of the map.
 -	**Puts/s, Gets/s, Removes/s**: These three charts monitor the put, get and remove operations (per second) performed on the selected map.
 
