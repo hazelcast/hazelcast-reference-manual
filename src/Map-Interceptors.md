@@ -13,20 +13,20 @@ The IMap API has two methods for adding and removing an interceptor to the map: 
 
 ```java
 /**
- * Adds an interceptor for this map. Added interceptor will intercept operations
- * and execute user defined methods and will cancel operations if user defined method throw exception.
- * 
+ * Adds an interceptor for the map. Added interceptor intercepts operations
+ * and executes user defined methods and cancels operations if 
+ * user defined methods throw exceptions. 
  *
- * @param interceptor map interceptor
- * @return id of registered interceptor
+ * @param interceptor map interceptor.
+ * @return id of registered interceptor.
  */
 String addInterceptor( MapInterceptor interceptor );
 
 /**
- * Removes the given interceptor for this map. So it will not intercept operations anymore.
- * 
+ * Removes the given interceptor for this map. So it does not 
+ * intercept operations anymore. 
  *
- * @param id registration id of map interceptor
+ * @param id registration ID of the map interceptor.
  */
 void removeInterceptor( String id );
 ```
@@ -38,61 +38,61 @@ public interface MapInterceptor extends Serializable {
 
   /**
    * Intercept the get operation before it returns a value.
-   * Return another object to change the return value of get(..)
-   * Returning null will cause the get(..) operation to return the original value,
+   * Return another object to change the return value of get().
+   * Returning null causes the get() operation to return the original value,
    * namely return null if you do not want to change anything.
    * 
    *
-   * @param value the original value to be returned as the result of get(..) operation
-   * @return the new value that will be returned by get(..) operation
+   * @param value the original value to be returned as the result of get() operation.
+   * @return the new value that is returned by get() operation.
    */
   Object interceptGet( Object value );
 
   /**
-   * Called after get(..) operation is completed.
+   * Called after get() operation is completed.
    * 
    *
-   * @param value the value returned as the result of get(..) operation
+   * @param value the value returned as the result of get() operation.
    */
   void afterGet( Object value );
 
   /**
    * Intercept put operation before modifying map data.
    * Return the object to be put into the map.
-   * Returning null will cause the put(..) operation to operate as expected,
-   * namely no interception. Throwing an exception will cancel the put operation.
+   * Returning null causes the put() operation to operate as expected,
+   * namely no interception. Throwing an exception cancels the put operation.
    * 
    *
-   * @param oldValue the value currently in map
-   * @param newValue the new value to be put
-   * @return new value after intercept operation
+   * @param oldValue the value currently existing in the map.
+   * @param newValue the new value to be put.
+   * @return new value after intercept operation.
    */
   Object interceptPut( Object oldValue, Object newValue );
 
   /**
-   * Called after put(..) operation is completed.
+   * Called after put() operation is completed.
    * 
    *
-   * @param value the value returned as the result of put(..) operation
+   * @param value the value returned as the result of put() operation.
    */
   void afterPut( Object value );
 
   /**
    * Intercept remove operation before removing the data.
    * Return the object to be returned as the result of remove operation.
-   * Throwing an exception will cancel the remove operation.
+   * Throwing an exception cancels the remove operation.
    * 
    *
-   * @param removedValue the existing value to be removed
-   * @return the value to be returned as the result of remove operation
+   * @param removedValue the existing value to be removed.
+   * @return the value to be returned as the result of remove operation.
    */
   Object interceptRemove( Object removedValue );
 
   /**
-   * Called after remove(..) operation is completed.
+   * Called after remove() operation is completed.
    * 
    *
-   * @param value the value returned as the result of remove(..) operation
+   * @param value the value returned as the result of remove(.) operation
    */
   void afterRemove( Object value );
 }

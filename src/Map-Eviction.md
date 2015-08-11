@@ -79,7 +79,7 @@ Let's describe each element.
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
 - `eviction-percentage`: When `max-size` is reached, the specified percentage of the map will be evicted. For example, if set to 25, 25% of the entries will be evicted. Setting this property to a smaller value will cause eviction of a smaller number of map entries. Therefore, if map entries are inserted frequently, smaller percentage values may lead to overheads. Valid values are integers between 0 and 100. The default value is 25.
-- `min-eviction-check-millis`: The minimum time in milliseconds which should elapse before checking whether a partition of the map is evictable or not. In other terms, this property specifies the frequency of the eviction process. The default value is 100. Setting it to 0 (zero) makes the eviction process run for every put operation.
+- `min-eviction-check-millis`: Minimum time in milliseconds which should elapse before checking whether a partition of the map is evictable or not. In other terms, this property specifies the frequency of the eviction process. The default value is 100. Setting it to 0 (zero) makes the eviction process run for every put operation.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *When map entries are inserted frequently, the property `min-eviction-check-millis` should be set to a number lower than the insertion period in order not to let any entry escape from the eviction.*
 

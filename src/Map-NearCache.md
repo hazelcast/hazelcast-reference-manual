@@ -17,7 +17,7 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
     ...
     <near-cache>
       <!--
-        Maximum size of the near cache. When max size is reached,
+        Maximum size of the near cache. When max-size is reached,
         cache is evicted based on the policy defined.
         Any integer between 0 and Integer.MAX_VALUE. 0 means
         Integer.MAX_VALUE. Default is 0.
@@ -26,14 +26,14 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
       
       <!--
         Maximum number of seconds for each entry to stay in the near cache. Entries that are
-        older than <time-to-live-seconds> will get automatically evicted from the near cache.
+        older than this period is automatically evicted from the near cache.
         Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0.
       -->
       <time-to-live-seconds>0</time-to-live-seconds>
 
       <!--
-        Maximum number of seconds each entry can stay in the near cache as untouched (not-read).
-        Entries that are not read (touched) more than <max-idle-seconds> value will get removed
+        Maximum number of seconds each entry can stay in the near cache as untouched (not read).
+        Entries that are not read more than this period is removed
         from the near cache.
         Any integer between 0 and Integer.MAX_VALUE. 0 means
         Integer.MAX_VALUE. Default is 0.
@@ -51,15 +51,16 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
       <eviction-policy>LRU</eviction-policy>
 
       <!--
-        Should the cached entries get evicted if the entries are changed (updated or removed).
-        true of false. Default is true.
+        Should the cached entries are evicted if the entries are updated or removed.
+        Values can be true of false. Default is true.
       -->
       <invalidate-on-change>true</invalidate-on-change>
 
       <!--
-        You may want also local entries to be cached.
-        This is useful when in memory format for near cache is different than the map's one.
-        By default it is disabled.
+        You may also want local entries to be cached.
+        This is useful when in memory format for near cache is different from
+        the map's near cache.
+        By default it is disabled (false).
       -->
       <cache-local-entries>false</cache-local-entries>
     </near-cache>
