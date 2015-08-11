@@ -272,8 +272,8 @@ For `MultiMap` it is very similar:
 - `hz::aggregation-multimap-` and the concatenated name of the MultiMap.
 
 Knowing that (the specification of the name), we can configure the `JobTracker` as expected 
-(as described in the [Jobtracker section](#jobtracker)) using the naming spec we just learned. For more information on configuration of the 
-`JobTracker`, please see the [JobTracker Configuration section](#jobtracker-configuration). 
+(as described in [Retrieving a JobTracker Instance](#retrieving-a-jobtracker-instance)) using the naming spec we just learned. For more information on configuration of the 
+`JobTracker`, please see [Configuring Jobtracker](#configuring-jobtracker). 
 
 To finish this section, let's have a quick example for the above naming specs:
 
