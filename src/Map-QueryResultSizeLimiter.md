@@ -32,7 +32,7 @@ Besides the designated query operations, there are other operations which use pr
 
 The query result size limit is configured via the following system properties.
 
-- `hazelcast.query.result.size.limit`
-- `hazelcast.query.max.local.partition.limit.for.precheck`
+- `hazelcast.query.result.size.limit`: Result size limit for query operations on maps. This value defines the maximum number of returned elements for a single query result. If a query exceeds this number of elements, a QueryResultSizeExceededException is thrown.
+- `hazelcast.query.max.local.partition.limit.for.precheck`: Maximum value of local partitions to trigger local pre-check for TruePredicate query operations on maps.
 
-Please refer to the [System Properties section](#system-properties) for explanations of these properties.
+Please refer to the [System Properties section](#system-properties) to see the full descriptions of these properties and how to set them.
