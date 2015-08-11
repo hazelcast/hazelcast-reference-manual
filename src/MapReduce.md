@@ -24,6 +24,6 @@ The best known examples for MapReduce algorithms are text processing tools, such
  - ETL (Extract Transform Load)
  - Credit and Risk management
  - Fraud detection
- - and more...
+ - and more.
 
 

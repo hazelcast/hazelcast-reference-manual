@@ -34,19 +34,19 @@ be serializable.
 The `Predicates` class offered by Hazelcast includes many operators for your query requirements. Some of them are
 explained below.
 
-- `equal`: checks if the result of an expression is equal to a given value.
-- `notEqual`: checks if the result of an expression is not equal to a given value.
-- `instanceOf`: checks if the result of an expression has a certain type.
-- `like`: checks if the result of an expression matches some string pattern. % (percentage sign) is placeholder for many
+- `equal`: Checks if the result of an expression is equal to a given value.
+- `notEqual`: Checks if the result of an expression is not equal to a given value.
+- `instanceOf`: Checks if the result of an expression has a certain type.
+- `like`: Checks if the result of an expression matches some string pattern. % (percentage sign) is placeholder for many
 characters,  (underscore) is placeholder for only one character.
-- `greaterThan`: checks if the result of an expression is greater than a certain value.
-- `greaterEqual`: checks if the result of an expression is greater than or equal to a certain value.
-- `lessThan`: checks if the result of an expression is less than a certain value.
-- `lessEqual`: checks if the result of an expression is less than or equal to a certain value.
-- `between`: checks if the result of an expression is between 2 values (this is inclusive).
-- `in`: checks if the result of an expression is an element of a certain collection.
-- `isNot`: checks if the result of an expression is false.
-- `regex`: checks if the result of an expression matches some regular expression.
+- `greaterThan`: Checks if the result of an expression is greater than a certain value.
+- `greaterEqual`: Checks if the result of an expression is greater than or equal to a certain value.
+- `lessThan`: Checks if the result of an expression is less than a certain value.
+- `lessEqual`: Checks if the result of an expression is less than or equal to a certain value.
+- `between`: Checks if the result of an expression is between 2 values (this is inclusive).
+- `in`: Checks if the result of an expression is an element of a certain collection.
+- `isNot`: Checks if the result of an expression is false.
+- `regex`: Checks if the result of an expression matches some regular expression.
 <br></br>
 
 ***RELATED INFORMATION*** 

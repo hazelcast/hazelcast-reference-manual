@@ -80,8 +80,8 @@ The Internet is full of useful resources to find deeper information on MapReduce
 
  - <a href="http://research.google.com/archive/mapreduce.html" target="_blank">http://research.google.com/archive/mapreduce.html</a>
  - <a href="http://en.wikipedia.org/wiki/MapReduce" target="_blank">http://en.wikipedia.org/wiki/MapReduce</a>
- - <a href="http://hci.stanford.edu/courses/cs448g/a2/files/map_reduce_tutorial.pdf">http://hci.stanford.edu/courses/cs448g/a2/files/map_reduce_tutorial.pdf</a>
- - <a href="http://ksat.me/map-reduce-a-really-simple-introduction-kloudo/">http://ksat.me/map-reduce-a-really-simple-introduction-kloudo/</a>
- - <a href="http://www.slideshare.net/franebandov/an-introduction-to-mapreduce-6789635">http://www.slideshare.net/franebandov/an-introduction-to-mapreduce-6789635</a>
+ - <a href="http://hci.stanford.edu/courses/cs448g/a2/files/map_reduce_tutorial.pdf" target="_blank">http://hci.stanford.edu/courses/cs448g/a2/files/map_reduce_tutorial.pdf</a>
+ - <a href="http://ksat.me/map-reduce-a-really-simple-introduction-kloudo/" target="_blank">http://ksat.me/map-reduce-a-really-simple-introduction-kloudo/</a>
+ - <a href="http://www.slideshare.net/franebandov/an-introduction-to-mapreduce-6789635" target="_blank">http://www.slideshare.net/franebandov/an-introduction-to-mapreduce-6789635</a>
 
 
