@@ -49,6 +49,9 @@ config.addMapConfig(mapConfig);
 
 ```
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *Please refer to the [Quorum Configuration section](#quorum-configuration) for the full description of quorum configuration.*
+
+
 
 #### Quorum Listeners
 You can register quorum listeners to be notified about quorum results. Quorum listeners are local to the node that they are registered, so they receive only events that occurred on that local node.

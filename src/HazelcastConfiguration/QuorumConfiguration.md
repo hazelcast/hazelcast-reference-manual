@@ -8,6 +8,7 @@ The following are example list configurations.
 ```xml
 <quorum name="quorumRuleWithThreeNodes" enabled="true">
   <quorum-size>3</quorum-size>
+  <quorum-type>READ</quorum-type>
   <quorum-listeners>
     <quorum-listener>com.company.quorum.ThreeNodeQuorumListener</quorum-listener>
   </quorum-listeners>
@@ -22,18 +23,28 @@ QuorumConfig quorumCfg = config.getQuorumConfig();
 quorumCfg.setName( "quorumRuleWithThreeNodes" )
          .setSize( 3 )
          .setEnabled( "true")
-         .setMaxSize( "10" );
+         .setType( "READ" )
 ```
+
+To define the quorum to the map:
+
+```java
+MapConfig mapConfig = new MapConfig();
+mapConfig.setQuorumName("quorumRuleWithThreeNodes");
+
+Config config = new Config();
+config.addQuorumConfig(quorumConfig);
+config.addMapConfig(mapConfig);
+```
+
    
 
-List configuration has the following elements.
+Quorum configuration has the following elements.
 
 
-- `statistics-enabled`: True (default) if statistics gathering is enabled on the list, false otherwise.
-- `backup-count`: Number of synchronous backups. List is a non-partitioned data structure, so all entries of a List reside in one partition. When this parameter is '1', there will be 1 backup of that List in another node in the cluster. When it is '2', 2 nodes will have the backup.
-- `async-backup-count`: Number of asynchronous backups.
-- `max-size`: The maximum number of entries for this List.
-- `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values, and you can set the attribute `local` to `true` if you want to listen the items on the local node.
+- `quorum-size`: Minimum number of members required in a cluster for the cluster to remain in an operational state. If the number of members is below the defined minimum at any time, the operations are rejected and the rejected operations return a QuorumException to their callers.
+- `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
+- `quorum-listeners`: Lets you register quorum listeners to be notified about quorum results. Quorum listeners are local to the member that they are registered, so they receive only events occurred on that local member.
 
 
 
