@@ -94,9 +94,9 @@ simple but efficient way to estimate the cluster-wide cache size.
 
 All of the following calculations have a well known set of fixed variables:
 
-- `GlobalCapacity`: The user defined maximum cache size (cluster-wide).
-- `PartitionCount`: The number of partitions in the cluster (defaults to 271).
-- `BalancedPartitionSize`: The number of elements in a balanced partition state, `BalancedPartitionSize := GlobalCapacity / PartitionCount`.
+- `GlobalCapacity`: User defined maximum cache size (cluster-wide).
+- `PartitionCount`: Number of partitions in the cluster (defaults to 271).
+- `BalancedPartitionSize`: Number of elements in a balanced partition state, `BalancedPartitionSize := GlobalCapacity / PartitionCount`.
 - `Deviation`: An approximated standard deviation (tests proofed it to be pretty near), `Deviation := sqrt(BalancedPartitionSize)`.
 
 ##### Reference Caches

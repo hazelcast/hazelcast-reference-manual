@@ -62,7 +62,7 @@ This type of deployment is simple: just configure your Tomcat and launch. There 
 
 ***Sample P2P Configuration to use Hazelcast Session Replication***
 
-- Go to <a href="http://www.hazelcast.com/products/hazelcast-enterprise/" target="_blank"">hazelcast.com</a> and download the latest Hazelcast Enterprise.
+- Go to <a href="http://www.hazelcast.com/products/hazelcast-enterprise/" target="_blank">hazelcast.com</a> and download the latest Hazelcast Enterprise.
 - Unzip the Hazelcast Enterprise zip file into the folder `$HAZELCAST_ENTERPRISE_ROOT`.
 - Update `$HAZELCAST_ENTERPRISE_ROOT/bin/hazelcast.xml` with the provided Hazelcast Enterprise License Key. 
 - Put `$HAZELCAST_ENTERPRISE_ROOT/lib/hazelcast-enterprise-all-`<*version*>`.jar`,    `$HAZELCAST_

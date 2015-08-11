@@ -155,7 +155,7 @@ public class EmployeeDataSerializableFactory
 }
 ```
 
-The only method that should be implemented is `create`, as seen in the above example. It is recommended that you use a `switch`-``case` statement instead of multiple `if`-`else` blocks if you have a lot of subclasses. Hazelcast throws an exception if null is returned for `typeId`.
+The only method you should implement is `create`, as seen in the above example. It is recommended that you use a `switch-case` statement instead of multiple `if-else` blocks if you have a lot of subclasses. Hazelcast throws an exception if null is returned for `typeId`.
 
 As the last step, you need to register `EmployeeDataSerializableFactory` declaratively (declare in the configuration file `hazelcast.xml`) as shown below. Note that `factory-id` has the same value of `FACTORY_ID` in the above code. This is crucial to enable Hazelcast to find the correct factory.
 
