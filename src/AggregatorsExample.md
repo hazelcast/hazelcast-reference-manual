@@ -5,7 +5,9 @@ For the final example, imagine you are working for an international company and 
 `IMap` with all employees worldwide and a `MultiMap` for assigning employees to their certain locations or offices. In addition,
 there is another `IMap` which holds the salary per employee.
 
-Let's have a look at our data model:
+#### Setting up the Data Model
+
+Let's have a look at our data model.
 
 ```java
 class Employee implements Serializable {
@@ -59,6 +61,8 @@ MultiMap<String, String> officeAssignment = hz.getMultiMap( "office-employee" );
 
 So far, we know all the important information to work out some example aggregations. We will look into some deeper implementation
 details and how we can work around some current limitations that will be eliminated in future versions of the API.
+
+#### Average Aggregation Example
 
 Let's start with a very basic example. We want to know the average salary of all of our employees. To do this,
 we need a `PropertyExtractor` and the average aggregation for type `Integer`.
@@ -180,7 +184,7 @@ IMap<String, Employee> employees = hazelcastInstance.getMap( "employees" );
 int count = employees.size();
 ```
 
-Ok, after that quick joke, we look at the real two code lines:
+Ok, after the quick joke of the previous two code lines, we look at the real two code lines:
 
 ```java
 IMap<String, Employee> employees = hazelcastInstance.getMap( "employees" );
