@@ -22,10 +22,11 @@
 
 ```java
 Config config = new Config();
-ReplicatedMapConfig rmConfig = config.getReplicatedMapConfig();
+ReplicatedMapConfig rmConfig = config.getReplicatedMapConfig( "default" );
 
-rmConfig.setName("default").setInMemoryFormat(BINARY)
-        .setReplicationDelayMillis(100).setAsyncFillup("true");
+rmConfig.setName("default").setInMemoryFormat( InMemoryFormat.BINARY )
+        .setReplicationDelayMillis( 100 )
+        .setAsyncFillup( "true" );
 ```
 
 Replicated map configuration has the following elements.
