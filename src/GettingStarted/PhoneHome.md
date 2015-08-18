@@ -1,5 +1,5 @@
 
-## Phone Home
+## Phoning Home
 
 Hazelcast uses phone home data to learn about usage of Hazelcast.
 
