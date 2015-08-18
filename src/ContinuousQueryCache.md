@@ -8,9 +8,13 @@
 
 A continuous query cache is used to cache the result of a continuous query. After the construction of a continuous query cache, all changes on the underlying `IMap` are immediately reflected to this cache as a stream of events.
 Therefore, this cache will be an always up-to-date view of the `IMap`. 
-  
+
+### Keeping Query Results Local and Ready
+
 A continuous query cache is beneficial when you need to query the distributed `IMap` data in a very frequent and fast way. By using a continuous query cache, the result of the query will always be ready and local to the application.
-     
+
+### Accessing Continuous Query from Server Side
+
 The following code snippet shows how you can access a continuous query cache from the server side.
      
 ```java
@@ -31,7 +35,11 @@ QueryCache<Integer, String> cache = map.getQueryCache("cache-name");
 
 ```     
 
+### Accessing Continuous Query from Client Side
+
 The following code snippet shows how you can access a continuous query cache from the client side.
+The difference in this code from the server side code above is that you configure and instantiate
+a client instance instead of a member (node) instance.
 
      
 ```java

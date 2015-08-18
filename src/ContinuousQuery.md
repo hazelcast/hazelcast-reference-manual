@@ -6,6 +6,8 @@
 
 Continuous query enables you to listen to the modifications performed on specific map entries. It is an entry listener with predicates. Please see the [Listening to Map Events section](#listening-to-map-events) for information on how to add entry listeners to a map.
 
+### Listening to Predicate Map Entries
+
 As an example, let's listen to the changes made on an employee with the surname "Smith". First, let's create the `Employee` class.
 
 ```java
