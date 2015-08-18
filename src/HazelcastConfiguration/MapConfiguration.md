@@ -10,14 +10,17 @@ The following are example map configurations.
 <hazelcast>
   <map name="default">
     <in-memory-format>BINARY</in-memory-format>
+    <statistics-enabled>true</statistics-enabled>
     <backup-count>0</backup-count>
     <async-backup-count>1</async-backup-count>
     <read-backup-data>true</read-backup-data>
     <time-to-live-seconds>0</time-to-live-seconds>
     <max-idle-seconds>0</max-idle-seconds>
     <eviction-policy>LRU</eviction-policy>
+    <min-eviction-check-millis>150</min-eviction-check-millis>
     <max-size policy="PER_NODE">5000</max-size>
     <eviction-percentage>25</eviction-percentage>
+    <optimize-queries>true</optimize-queries>
     <near-cache>
        <invalidate-on-change>true</invalidate-on-change>
        <cache-local-entries>false</cache-local-entries>
@@ -44,14 +47,14 @@ The following are example map configurations.
 
 ```java
 MapConfig mapConfig = new MapConfig();
-mapConfig.setName( "default" ).setInMemoryFormat( "BINARY" );
+mapConfig.setName( "default" ).setInMemoryFormat( InMemoryFormat.BINARY );
 
-mapConfig.setBackupCount( "0" ).setAsyncBackupCount( "1" )
+mapConfig.setBackupCount( 0 ).setAsyncBackupCount( 1 )
          .setReadBackupData( "true" );
          
 MapStoreConfig mapStoreConfig = mapConfig.getMapStoreConfig();
-mapStoreConfig.setWriteDelaySeconds( "60" )
-              .setWriteBatchSize( "1000" );
+mapStoreConfig.setWriteDelaySeconds( 60 )
+              .setWriteBatchSize( 1000 );
               
 MapIndexConfig mapIndexConfig = mapConfig.getMapIndexConfig();
 mapIndexConfig.setAttribute( "id" ).setOrdered( "true" );
