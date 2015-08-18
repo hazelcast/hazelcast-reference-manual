@@ -3,7 +3,7 @@
 
 **3.5.1 Enhancements**
 
-The following are the the enhancements performed for Hazelcast 3.5.1 release.
+The following are the enhancements performed for Hazelcast 3.5.1 release.
 
 - Client instances should spawn threads with their instance names added as prefix [[#5671]](https://github.com/hazelcast/hazelcast/issues/5671).
 - The method `com.hazelcast.spi.impl.classicscheduler.ResponseThread::process` may catch throwables. When this occurs, it logs an unhelpful message, and ignores the actual exception. This method should be improved to additionally log the cause, or at least the exception class and message [[#5619]](https://github.com/hazelcast/hazelcast/issues/5619).
