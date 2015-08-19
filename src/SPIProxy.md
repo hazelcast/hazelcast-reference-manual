@@ -1,5 +1,5 @@
 
-### Placing a Remote Call - Proxy
+### Placing a Remote Call via Proxy
 
 In the previous sections for the `CounterService` example, we started `CounterService` as part of a HazelcastInstance startup.
 
@@ -22,7 +22,7 @@ public interface Counter extends DistributedObject {
 
 #### Implementing ManagedService and RemoteService
 
-Now, we need to make the `CounterService` class implement not only the `ManagedService` interface, but also the interface `com.hazelcast.spi.RemoteService`. This way, a client will be able to get a handle of a counter proxy.
+Now, we need to make the `CounterService` class implement not only the `ManagedService` interface, but also the interface `com.hazelcast.spi.RemoteService`. This way, a client will be able to get a handle of a counter proxy. You can read the [source code for RemoteService here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/RemoteService.java).
 
 
 ```java
@@ -71,7 +71,7 @@ The `CounterProxy` returned by the method `createDistributedObject` is a local r
 
 #### Implementing CounterProxy
 
-Now, it is time to implement the `CounterProxy` as shown below.
+Now, it is time to implement the `CounterProxy` as shown below. `CounterProxy` extends [AbstractDistributedObject, source code here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/AbstractDistributedObject.java). 
 
 ```java
 import com.hazelcast.spi.AbstractDistributedObject;
@@ -130,7 +130,7 @@ Let's dig deeper into the method `inc`.
 
 Hazelcast's `ExceptionUtil` is a good solution when it comes to dealing with execution exceptions. When the execution of the operation fails with an exception, an `ExecutionException` is thrown and handled with the method `ExceptionUtil.rethrow(Throwable)`. 
 
-If it is an `InterruptedException`, we have two options: Either propagating the exception or just using the `ExceptionUtil.rethrow` for all exceptions. Please see below sample.
+If it is an `InterruptedException`, we have two options: either propagate the exception or just use the `ExceptionUtil.rethrow` for all exceptions. Please see the example code below.
 
 
 ```java
@@ -146,7 +146,13 @@ If it is an `InterruptedException`, we have two options: Either propagating the 
 
 #### Implementing the PartitionAwareOperation Interface
 
-Now, let's write the `IncOperation`. It implements `PartitionAwareOperation` interface, meaning that it will be executed on the partition that hosts the counter.
+Now, let's write the `IncOperation`. It implements the `PartitionAwareOperation` interface, meaning that it will be executed on the partition that hosts the counter. See the [PartitionAwareOperation source code here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/PartitionAwareOperation.java).
+
+The method `run` does the actual execution. Since `IncOperation` will return a response, the method `returnsResponse` returns `true`. If your method is asynchronous and does not need to return a response, it is better to return `false` since it will be faster. The actual response is stored in the field `returnValue`; retrieve it with the method `getResponse`.
+
+There are two more methods in this code: `writeInternal` and `readInternal`. Since `IncOperation` needs to be serialized, these two methods are overridden, and hence, `objectId` and `amount` are serialized and available when those operations are executed. 
+
+For the deserialization, note that the operation must have a *no-arg* constructor.
 
 
 ```java
@@ -201,12 +207,6 @@ class IncOperation extends AbstractOperation implements PartitionAwareOperation 
     }
 }
 ```
-
-The method `run` does the actual execution. Since `IncOperation` will return a response, the method `returnsResponse` returns `true`. If your method is asynchronous and does not need to return a response, it is better to return `false` since it will be faster. The actual response is stored in the field `returnValue`; you can retrieve it with the method `getResponse`.
-
-There are two more methods in the above code: `writeInternal` and `readInternal`. Since `IncOperation` needs to be serialized, these two methods should be overwritten, and hence, `objectId` and `amount` will be serialized and available when those operations are executed. 
-
-For the deserialization, note that the operation must have a *no-arg* constructor.
 
 #### Running the Code
 

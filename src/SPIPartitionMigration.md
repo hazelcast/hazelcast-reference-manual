@@ -1,9 +1,11 @@
 
 ### Partition Migration
 
-In the previous section, we created a real distributed counter. Now, we need to make sure that the content of the partition containers is migrated to different cluster members when a member joins or leaves the cluster. To make this happen, first we need to add three new methods (`applyMigrationData`, `toMigrationData` and `clear`) to the `Container`, as shown below.
+In the previous section, we created a real distributed counter. Now, we need to make sure that the content of the partition containers is migrated to different cluster members when a member joins or leaves the cluster. To make this happen, first we need to add three new methods (`applyMigrationData`, `toMigrationData` and `clear`) to the `Container`.
 
-
+- `toMigrationData`: This method is called when Hazelcast wants to start the partition migration from the member owning the partition. The result of the `toMigrationData` method is the partition data in a form that can be serialized to another member.
+- `applyMigrationData`: This method is called when `migrationData` (created by the method `toMigrationData`) will be applied to the member that will be the new partition owner.
+- `clear`: This method is called when the partition migration is successfully completed and the old partition owner gets rid of all data in the partition. This method is also called when the partition migration operation fails and the to-be-the-new partition owner needs to roll back its changes.
 
 ```java
 import java.util.HashMap;
@@ -44,13 +46,12 @@ class Container {
 }
 ```
 
-- `toMigrationData`: This method is called when Hazelcast wants to start the partition migration from the member owning the partition. The result of the `toMigrationData` method is the partition data in a form that can be serialized to another member.
-- `applyMigrationData`: This method is called when `migrationData` (created by the method `toMigrationData`) will be applied to the member that will be the new partition owner.
-- `clear`: This method is called when the partition migration is successfully completed and the old partition owner gets rid of all data in the partition. This method is also called when the partition migration operation fails and the to-be-the-new partition owner needs to roll back its changes.
 
 #### Transferring migrationData
 
-After you add these three methods to the `Container`, you need to create a `CounterMigrationOperation` class that transfers `migrationData` from one member to another and calls the method `applyMigrationData` on the correct partition of the new partition owner. A sample is shown below.
+After you add these three methods to the `Container`, you need to create a `CounterMigrationOperation` class that transfers `migrationData` from one member to another and calls the method `applyMigrationData` on the correct partition of the new partition owner. 
+
+An example is shown below.
 
 ```java
 import com.hazelcast.nio.ObjectDataInput;
@@ -105,7 +106,11 @@ public class CounterMigrationOperation extends AbstractOperation {
 
 #### Letting Hazelcast Know CounterService Can Do Partition Migrations
 
-We need to make our `CounterService` class implement the `MigrationAwareService` interface. This will let Hazelcast know that the `CounterService` can perform partition migration. See the below code.
+We need to make our `CounterService` class implement the `MigrationAwareService` interface. This will let Hazelcast know that the `CounterService` can perform partition migration.
+
+With the `MigrationAwareService` interface, some additional methods are exposed. For example, the method `prepareMigrationOperation` returns all the data of the partition that is going to be moved. You can read the [MigrationAwareService source code here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/MigrationAwareService.java).
+
+The method `commitMigration` commits the data, meaning that in this case, it clears the partition container of the old owner. 
 
 ```java
 import com.hazelcast.core.DistributedObject;
@@ -191,10 +196,6 @@ public class CounterService implements ManagedService, RemoteService, MigrationA
     }
 }
 ```
-
-With the `MigrationAwareService` interface, some additional methods are exposed. For example, the method `prepareMigrationOperation` returns all the data of the partition that is going to be moved.
-
-The method `commitMigration` commits the data, meaning in this case, it clears the partition container of the old owner. 
 
 #### Running the Sample Code
 

@@ -1,9 +1,9 @@
 
 
 
-### Adding Properties
+### Adding Properties to the Service
 
-The `init` method for `CounterService` takes the `Properties` object as an argument. This means we can add properties to the service that are passed to the method `init`. You can add properties declaratively as shown below.
+The `init` method for `CounterService` takes the `Properties` object as an argument. This means we can add properties to the service that are passed to the `init` method; see [Creating the Service Class](#creating-the-service-class). You can add properties declaratively as shown below. (You likely want to name your properties something other than someproperty.)
 
 ```xml
 <service enabled="true">

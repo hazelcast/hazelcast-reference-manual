@@ -36,7 +36,13 @@ class Container {
 
 Hazelcast guarantees that a single thread will be active in a single partition. Therefore, when accessing a container, concurrency control will not be an issue. 
 
-The code in our example uses a `Container` instance per partition approach. With this approach, there will not be any mutable shared state between partitions. This approach also makes operations on partitions simpler since you do not need to filter out data that does not belong to a certain partition.
+The code in our example uses a `Container` instance per partition approach. With this approach, there will not be any mutable shared state between partitions. This approach also makes operations on partitions simpler since you do not need to filter out data that does not belong to a certain partition. 
+
+The code performs the tasks below.
+
+- It creates a container for every partition with the method `init`.
+- It creates the proxy with the method `createDistributedObject`.
+- It removes the value of the object with the method `destroyDistributedObject`, otherwise we may get an OutOfMemory exception.
 
 #### Integrating the Container in the CounterService
 
@@ -100,13 +106,13 @@ public class CounterService implements ManagedService, RemoteService {
     }
 }
 ```
-    
 
-We create a container for every partition with the method `init`. Then we create the proxy with the method `createDistributedObject`. And finally, we need to remove the value of the object with the method `destroyDistributedObject`, otherwise we may get an OutOfMemory exception.
 
 #### Connecting the IncOperation.run Method to the Container
 
 As the last step in creating a Container, we connect the method `IncOperation.run` to the Container, as shown below.
+
+`partitionId` has a range between **0** and **partitionCount** and can be used as an index for the container array. Therefore, you can use `partitionId` to retrieve the container, and once the container has been retrieved, you can access the value. 
 
 ```java
 import com.hazelcast.nio.ObjectDataInput;
@@ -167,8 +173,6 @@ class IncOperation extends AbstractOperation implements PartitionAwareOperation 
     }
 }
 ```
-
-`partitionId` has a range between **0** and **partitionCount** and can be used as an index for the container array. Therefore, you can use `partitionId` to retrieve the container, and once the container has been retrieved, you can access the value. 
 
 #### Running the Sample Code
 

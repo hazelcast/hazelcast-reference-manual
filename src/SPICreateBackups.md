@@ -1,7 +1,7 @@
 
 ### Creating Backups
 
-Finally, we make sure that the data of counter is available on another node when a member goes down. We need to have the `IncOperation` class implement the `BackupAwareOperation` interface contained in the SPI package. See the following code.
+Finally, we make sure that the counter data is available on another member when a member goes down. To do this, have the `IncOperation` class implement the `BackupAwareOperation` interface contained in the SPI package. See the following code.
 
 ```java
 class IncOperation extends AbstractOperation 
@@ -40,7 +40,8 @@ If a backup should be made and `getSyncBackupCount` returns **3**, then three `I
 
 #### Performing the Backup with IncBackupOperation
 
-Now, let's have a look at the `IncBackupOperation`.
+Now, let's have a look at the `IncBackupOperation`. It implements `BackupOperation`, you can see the
+[source code for BackupOperation here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/BackupOperation.java).
 
 ```java
 public class IncBackupOperation 

@@ -5,7 +5,7 @@
 In the case of special/custom needs, Hazelcast's SPI (Service Provider Interface) module allows users to develop their own distributed data structures and services.
 
 
-## Sample Case
+## A Counter User Defined Service
 
 Throughout this section, we create a distributed counter that will be the guide to reveal the Hazelcast SPI usage.
 
@@ -23,7 +23,7 @@ This counter will have the following features:
 - It will be scalable, meaning that the capacity for the number of counters scales with the number of cluster members.
 - It will be highly available, meaning that if a member hosting this counter goes down, a backup will be available on a different member.
 
-All these features will be realized with the steps below. In each step, a new functionality to this counter will be added.
+All these features are done with the steps below. Each step adds a new functionality to this counter.
 
 1. Create the class.
 2. Enable the class.
