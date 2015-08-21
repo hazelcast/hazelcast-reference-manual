@@ -5,7 +5,7 @@ You can listen to `CachePartitionLostEvent` instances by registering an implemen
 of `CachePartitionLostListener`, which is also a sub-interface of `java.util.EventListener`
 from `ICache`.
 
-Let`s consider the following example code:
+Let's consider the following example code:
 
 ```java
   public static void main(String[] args) {
@@ -24,12 +24,11 @@ Let`s consider the following example code:
   }
 ```
 
-Within this example code, a `CachePartitionLostListener` implementation is registered to a cache
-that is configured with 1 backup. For this particular cache and any of the partitions in the
+Within this example code, a `CachePartitionLostListener` implementation is registered to a cache and assume that this cache is configured with 1 backup. For this particular cache and any of the partitions in the
 system, if the partition owner member and its first backup member crash simultaneously, the
 given `CachePartitionLostListener` receives a
 corresponding `CachePartitionLostEvent`. If only a single member crashes in the cluster,
-there will be no `CachePartitionLostEvent` fired for this cache since backups for the partitions
+a `CachePartitionLostEvent` is not fired for this cache since backups for the partitions
 owned by the crashed member are kept on other members.
 
 Please refer to the [Partition Lost Listener section](#partition-lost-listener) for more
