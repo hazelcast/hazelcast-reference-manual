@@ -1,8 +1,8 @@
 
 
-### Sample JBoss AS 7 / EAP 6 Web Application Configuration
+### Configuring a JBoss AS 7 / EAP 6 Web Application
 
-Deployment on JBoss AS 7 or JBoss EAP 6 is a fairly straightforward process. The steps you perform are shown below. The only non-trivial step is the creation of a new JBoss module with Hazelcast libraries.     
+Deploying on JBoss AS 7 or JBoss EAP 6 is a straightforward process. The steps you perform are shown below. The only non-trivial step is the creation of a new JBoss module with Hazelcast libraries.     
 
 - Create the folder `<jboss_home>/modules/system/layers/base/com/hazelcast/main`.
 - Place the `hazelcast-`<*version*>`.jar` and `hazelcast-jca-`<*version*>`.jar` into the folder you created in the previous step.
@@ -25,7 +25,11 @@ Deployment on JBoss AS 7 or JBoss EAP 6 is a fairly straightforward process. The
 </module>
 ```
 
+#### Starting JBoss
+
 At this point, you have a new JBoss module with Hazelcast in it. You can now start JBoss and deploy the `hazelcast-jca-rar-`<*version*>`.rar` file via JBoss CLI or Administration Console.
+
+#### Using the Resource Adapter
 
 Once the Hazelcast Resource Adapter is deployed, you can start using it. The easiest way is to let a container inject `ConnectionFactory` into your beans. 
     
