@@ -33,7 +33,7 @@ The declarative configuration for ICache is a superset of the previously discuss
   - `eviction-policy`: Eviction policy which compares values to find the best matching eviction candidate. Default is `LRU`.
     - `LRU`: Less Recently Used - finds the best eviction candidate based on the lastAccessTime.
     - `LFU`: Less Frequently Used - finds the best eviction candidate based on the number of hits.
-- `partition-lost-listeners` : Defines listeners for dispatching partition lost events for the cache.For more information, please see the [ICache Partition Lost Listener section](#icache-partition-lost-listener)
+- `partition-lost-listeners` : Defines listeners for dispatching partition lost events for the cache. For more information, please see the [ICache Partition Lost Listener section](#icache-partition-lost-listener).
 
 Since `javax.cache.configuration.MutableConfiguration` misses the above additional configuration properties, Hazelcast ICache extension
 provides an extended configuration class called `com.hazelcast.config.CacheConfig`. This class is an implementation of `javax.cache.configuration.CompleteConfiguration` and all the properties shown above can be configured
