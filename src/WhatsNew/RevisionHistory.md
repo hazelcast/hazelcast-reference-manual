@@ -5,7 +5,8 @@
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Chapter 6 - Distributed Data Structures](#distributed-data-structures)|[Map](#map)|[Map Eviction](#map-eviction) section updated by adding the definition for the `min-eviction-check-millis` property. The section [Understanding Map Eviction](#understanding-map-eviction) added for a more clearer explanation of the eviction mechanism.|
-|[Chapter 13 - Transactions](#transactions)|[Local versus Two Phase](#local-versus-two-phase)| Added as a new section explaining the trade offs between these two transaction types.
+|[Chapter 11 - Transactions](#transactions)|[Local versus Two Phase](#local-versus-two-phase)| Added as a new section explaining the trade offs between these two transaction types.
+|[Chapter 12 - Hazelcast JCache](#hazelcast-jcache)|[ICache Partition Lost Listener](#icache-partition-lost-listener)| Added as a new section explaining how to listen when a partition is lost in a Hazelcast JCache implementation.
 |[Chapter 13 - Integrated Clustering](#integrated-clustering)|[Web Session Replication](#web-session-replication)|[transient-attributes](#transient-attributes) added as a new section.|
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)|[Hazelcast Clients Feature Comparison](#hazelcast-clients-feature-comparison)|Added as a new section.
 |[Chapter 23 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added [Quorum Configuration](#quorum-configuration) section.|
