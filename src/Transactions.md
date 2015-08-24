@@ -26,7 +26,7 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 TransactionOptions options = new TransactionOptions()
     .setTransactionType( TransactionType.LOCAL );
     
-TransactionContext context = hazelcastInstance.newTransactionContext( options )
+TransactionContext context = hazelcastInstance.newTransactionContext( options );
 context.beginTransaction();
 
 TransactionalQueue queue = context.getQueue( "myqueue" );
