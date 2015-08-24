@@ -12,7 +12,7 @@ All network related configuration is performed via the `network` element in the 
 
 ```xml
    <network>
-        <public-address></public-address>
+        <public-address>11.22.33.44:5555</public-address>
         <port auto-increment="true" port-count="100">5701</port>
         <outbound-ports>
             <ports>0</ports>
@@ -74,7 +74,24 @@ It has the following sub-elements which are described in the following sections.
 
 ### Public Address
 
-`public-address` overrides the public address of a node. By default, a node selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (nodes) may not be able to see/access each other. If both nodes set their public addresses to their defined addresses on NAT, then that way they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. It is optional to set and useful when you have a private cloud. Note that, the value for this element can also be given in the format *`host IP address:port number`*.
+`public-address` overrides the public address of a node. By default, a node selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (nodes) may not be able to see/access each other. If both nodes set their public addresses to their defined addresses on NAT, then that way they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. It is optional to set and useful when you have a private cloud. Note that, the value for this element should be given in the format *`host IP address:port number`*. See the following examples.
+
+**Declarative:**
+
+```xml
+<network>
+    <public-address>11.22.33.44:5555</public-address>
+</network>
+```
+
+**Programmatic:**
+
+```java
+Config config = new Config();
+config.getNetworkConfig()
+      .setPublicAddress( "11.22.33.44", "5555" ); 
+```
+
 
 ### Port
 
