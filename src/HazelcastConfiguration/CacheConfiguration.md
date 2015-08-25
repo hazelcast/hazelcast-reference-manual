@@ -27,6 +27,10 @@ Following are examples of cache configurations.
    <backup-count>1</backup-count>
    <async-backup-count>0</async-backup-count>
    <eviction size="10000" max-size-policy="ENTRY_COUNT"></eviction>
+   <partition-lost-listeners>
+      <partition-lost-listener>CachePartitionLostListenerImpl</partition-lost-listener>
+   </partition-lost-listeners>
+   <quorum-ref>quorum-name</quorum-ref>
 </cache>
 ```
 
@@ -71,4 +75,6 @@ Cache configuration has the following elements.
 		- FREE_NATIVE_MEMORY_SIZE: Maximum free native memory size in megabytes for each JVM.
 		- FREE_NATIVE_MEMORY_PERCENTAGE: Maximum free native memory size percentage for each JVM. 
 	- `eviction-policy`: Available policies are LRU (Least Recently Used) and LFU (Least Frequently Used). Default value is LRU.
+- `partition-lost-listeners` : Defines listeners for dispatching partition lost events for the cache. For more information, please see the [ICache Partition Lost Listener section](#icache-partition-lost-listener).
+- `quorum-ref` : Name of quorum configuration that you want this cache to use.
 
