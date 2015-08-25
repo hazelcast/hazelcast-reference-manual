@@ -1,8 +1,7 @@
 ### ICache Configuration
 
 As mentioned in the [JCache Declarative Configuration section](#jcache-declarative-configuration), the Hazelcast ICache extension offers
-additional configuration properties over the default JCache configuration. These additional properties include internal storage format, backup counts
-and eviction policy.
+additional configuration properties over the default JCache configuration. These additional properties include internal storage format, backup counts, eviction policy and quorum reference.
 
 The declarative configuration for ICache is a superset of the previously discussed JCache configuration:
 
@@ -16,6 +15,7 @@ The declarative configuration for ICache is a superset of the previously discuss
   <partition-lost-listeners>
      <partition-lost-listener>CachePartitionLostListenerImpl</partition-lost-listener>
  </partition-lost-listeners>
+ <quorum-ref>quorum-name</quorum-ref>
 </cache>
 ```
 
@@ -34,6 +34,7 @@ The declarative configuration for ICache is a superset of the previously discuss
     - `LRU`: Less Recently Used - finds the best eviction candidate based on the lastAccessTime.
     - `LFU`: Less Frequently Used - finds the best eviction candidate based on the number of hits.
 - `partition-lost-listeners` : Defines listeners for dispatching partition lost events for the cache. For more information, please see the [ICache Partition Lost Listener section](#icache-partition-lost-listener).
+- `quorum-ref` : Name of quorum configuration that you want this cache to use.
 
 Since `javax.cache.configuration.MutableConfiguration` misses the above additional configuration properties, Hazelcast ICache extension
 provides an extended configuration class called `com.hazelcast.config.CacheConfig`. This class is an implementation of `javax.cache.configuration.CompleteConfiguration` and all the properties shown above can be configured

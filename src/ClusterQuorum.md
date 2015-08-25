@@ -6,7 +6,7 @@ When a network partitioning happens, by default Hazelcast chooses to be availabl
 
 Hazelcast initiates a quorum when a change happens on the member list.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, cluster quorum only applies to the Map and Transactional Map, support for other data structures will be added soon. Also, lock methods in the IMap interface do not participate in a quorum.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, cluster quorum only applies to the Map, Transactional Map and Cache, support for other data structures will be added soon. Also, lock methods in the IMap interface do not participate in a quorum.*
 
 
 #### Configuration
@@ -71,7 +71,7 @@ Quorum listeners can be configured via declarative or programmatic configuration
 </quorum>
 
 <map name="default">
-  <quorum-name>quorumRuleWithThreeNodes</quorum-name>
+  <quorum-ref>quorumRuleWithThreeNodes</quorum-ref>
 </map>
 ....
 </hazelcast>
