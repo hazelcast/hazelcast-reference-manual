@@ -5,11 +5,11 @@ As another addition of Hazelcast ICache over the normal JCache specification, Ha
 all methods, returning a `com.hazelcast.core.ICompletableFuture`. By using these methods and the returned future objects, you can use JCache in a reactive way by registering zero or more callbacks on the future to prevent blocking the current thread.
 
 
-Name of the asynchronous versions of the methods append the phrase `Async` to the method name. Sample code is shown below using the method `putAsync()`.
+Name of the asynchronous versions of the methods append the phrase `Async` to the method name. Sample code is shown below using the method `getAndPutAsync()`.
 
 ```java
 ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
-ICompletableFuture<String> future = unwrappedCache.putAsync( 1, "value" );
+ICompletableFuture<String> future = unwrappedCache.getAndPutAsync( 1, "value" );
 future.andThen( new ExecutionCallback<String>() {
   public void onResponse( String response ) {
     System.out.println( "Previous value: " + response );
