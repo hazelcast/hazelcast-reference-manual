@@ -5,6 +5,7 @@
 
 The following are the issues solved for Hazelcast 3.5.2 release.
 
+- There is a performance issue: Even when the Spring boot application is doing nothing, CPU consumption is very high. A thread named ".hazelcast-wm.ensureInstance" consumes CPU around 70% because of the method `ClusteredSessionService.run()` [[#6052]](https://github.com/hazelcast/hazelcast/issues/6052).
 - MapLoader blocks the entire partition when loading a single entry [[#5818]](https://github.com/hazelcast/hazelcast/issues/5818).
 - The method `IMap.getAll` by-passes interceptors in the Hazelcast 3.3 and higher versions [[#5775]](https://github.com/hazelcast/hazelcast/issues/5775).
 - `AWSJoiner` fails for the regions except us-east-1 [[#5653]](https://github.com/hazelcast/hazelcast/issues/5653).
@@ -13,6 +14,7 @@ The following are the issues solved for Hazelcast 3.5.2 release.
 - The test code `JettyWebFilterTest.java` does not fail properly [[#5188]](https://github.com/hazelcast/hazelcast/issues/5188).
 - Management Center behaves unfriendly when map entries increase [[#4895]](https://github.com/hazelcast/hazelcast/issues/4895).
 - In `hazelcast-client.xml`, if the region is configured but `host-header` is not provided, the configuration gives a default endpoint value of `ec2.amazonaws.com`. It should give, for example, `ec2.eu-west-1.amazonaws.com` when the region is eu-west-1 and `host-header` is not provided [[#4731]](https://github.com/hazelcast/hazelcast/issues/4731).
+- Too much CPU is used when Hazelcast is idle [[#81]](https://github.com/hazelcast/hazelcast/issues/81).
 
 
 
