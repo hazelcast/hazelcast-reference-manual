@@ -5,13 +5,15 @@ Caches are generally not expected to grow to an infinite size. Implementing an [
 prevent the infinite growth, but sometimes it is hard to define a meaningful expiration timeout. Therefore, Hazelcast JCache provides the eviction feature. Eviction offers the possibility to remove entries based on the cache size or amount of used memory
 (Hazelcast Enterprise Only) and not based on timeouts.
 
-#### General Information
+#### Eviction and Runtime
 
-Since a cache is designed for high throughput and fast reads, a lot of effort went into designing the eviction system as
+Since a cache is designed for high throughput and fast reads, Hazelcast put a lot of effort into designing the eviction system to be as
 predictable as possible. All built-in implementations provide an amortized O(1) runtime. The default operation runtime is
-rendered as O(1) but can be faster than the normal runtime cost if the algorithm finds an expired entry while sampling.
+rendered as O(1), but it can be faster than the normal runtime cost if the algorithm finds an expired entry while sampling.
 
-Most importantly, in typical production system two common types of caches are found:
+#### Cache Types
+
+Most importantly, typical production systems have two common types of caches:
 
 - **Reference Caches**: Caches for reference data are normally small and are used to speed up the de-referencing as a lookup table. Those
 caches are commonly tend to be small and contain a previously known, fixed number of elements (e.g. states of the USA or
@@ -23,7 +25,7 @@ generators to cache the latest requested data.
 Hazelcast JCache eviction supports both types of caches using a slightly different approach based on the configured maximum size
 of the cache. For detailed information, please see the [Eviction Algorithm section](#eviction-algorithm).
 
-#### Eviction Policies
+#### Configuring Eviction Policies
 
 Hazelcast JCache provides two commonly known eviction policies, LRU and LFU, but loosens the rules for predictable runtime
 behavior. LRU, normally recognized as `Least Recently Used`, is implemented as `Less Recently Used`, and LFU known as `Least Frequently Used` is implemented as

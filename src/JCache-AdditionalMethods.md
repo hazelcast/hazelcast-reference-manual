@@ -1,5 +1,5 @@
 
-### Additional Methods
+### ICache Convenience Methods
 
 In addition to the operations explained in [ICache Async Methods](#icache-async-methods) and [Defining a Custom ExpiryPolicy](#defining-a-custom-expirypolicy), Hazelcast ICache also provides a set of convenience methods. These methods are not part of the JCache specification.
 

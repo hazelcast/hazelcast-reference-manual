@@ -1,5 +1,5 @@
 
-## JCache Specification Compliance
+## Testing for JCache Specification Compliance
 
 Hazelcast JCache is fully compliant with the JSR 107 TCK (Technology Compatibility Kit), therefore it is officially a JCache
 implementation. This is tested by running the TCK against the Hazelcast implementation.

@@ -17,5 +17,5 @@ ICache<Object, Object> unwrappedCache = cache.unwrap( ICache.class );
 ```
 
 After unwrapping the `Cache` instance into an `ICache` instance, you have access to all of the following operations, e.g.
-[ICache Async Methods](#icache-async-methods) and [Additional Methods](#additional-methods).
+[ICache Async Methods](#icache-async-methods) and [ICache Convenience Methods](#icache-convenience-methods).
 

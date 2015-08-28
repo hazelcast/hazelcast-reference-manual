@@ -7,7 +7,7 @@ object is big, it might prevent traffic by sending the object to the mutator and
 
 By default, Hazelcast JCache sends the complete changed value to the backup partition. Again, this can cause a lot of traffic if
 the object is big. Another option to prevent this is part of the Hazelcast ICache extension. Further information is available at
-[BackupAwareEntryProcessor](#backupawareentryprocessor).
+[Implementing BackupAwareEntryProcessor](#implementing-backupawareentryprocessor).
 
 An arbitrary number of arguments can be passed to the `Cache::invoke` and `Cache::invokeAll` methods. All of those arguments need
 to be fully serializable because in a distributed environment like Hazelcast, it is very likely that these arguments have to be passed around the cluster.
