@@ -12,7 +12,14 @@ To configure `CacheEntryListener`, add a `javax.cache.configuration.CacheEntryLi
 the JCache configuration class, as seen in the above example configuration. In addition listeners can be configured to be
 executed synchronously (blocking the calling thread) or asynchronously (fully running in parallel).
 
-In this example application, the listener is implemented to print event information on the console. That visualizes what is going on in the cache.
+In this example application, the listener is implemented to print event information on the console. That visualizes what is going on in the cache. This application performs the following tasks:
+
+- It implements CacheEntryCreatedListener.
+- It implements the `onCreated` method to call after an entry is created.
+- It implements the `onUpdated` method to call after an entry is updated.
+- It implements the `onRemoved` method to call after an entry is removed.
+- It implements the `onExpired` method to call after an entry expires.
+- It implements `printEvents` to print event information on the console.
 
 ```java
 public class UserCacheEntryListener

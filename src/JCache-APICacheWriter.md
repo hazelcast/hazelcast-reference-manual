@@ -1,12 +1,20 @@
 
 ### CacheWriter
 
-A `javax.cache.integration.CacheWriter` is used to update an external backend resource. If the cache is configured to be
-`write-through` this process is executed transparently to the users code otherwise at the current state there is no way to trigger
-writing changed entries to the external resource to a user defined point in time.
+You use a `javax.cache.integration.CacheWriter` to update an external backend resource. If the cache is configured to be
+`write-through`, this process is executed transparently to the users code. Otherwise, there is currently no way to trigger
+writing changed entries to the external resource to a user-defined point in time.
 
 If bulk operations throw an exception, `java.util.Collection` has to be cleaned of all successfully written keys so
 the cache implementation can determine what keys are written and can be applied to the cache state.
+
+The following example performs the following tasks.
+
+- It implements `CacheWriter`.
+- It overrides the `write` method to write the specified entry to the underlying store.
+- It overrides the `writeAll` method to write the specified entires to the underlying store.
+- It overrides the `delete` method to delete the key entry from the store.
+- It overrides the `deleteAll` method to delete the data and keys from the underlying store for the given collection of keys, if present.
 
 ```java
 public class UserCacheWriter

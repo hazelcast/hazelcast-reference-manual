@@ -1,11 +1,11 @@
 
 
-## Setup and Configuration
+## JCache Setup and Configuration
 
 This sub-chapter shows what is necessary to provide the JCache API and the Hazelcast JCache implementation for your application. In
 addition, it demonstrates the different configuration options as well as a description of the configuration properties.
 
-### Application Setup
+### Setting up Your Application
 
 To provide your application with this JCache functionality, your application needs the JCache API inside its classpath. This API is the bridge between the specified JCache standard and the implementation provided by Hazelcast.
 

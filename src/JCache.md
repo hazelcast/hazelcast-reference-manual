@@ -4,16 +4,16 @@
 This chapter describes the basics of JCache: the standardized Java caching layer API. The JCache
 caching API is specified by the Java Community Process (JCP) as Java Specification Request (JSR) 107.
 
-Caching keeps data in memory that either are slow to calculate/process or originate from another underlying backend system
-whereas caching is used to prevent additional request round trips for frequently used data. In both cases, caching could be used to
+Caching keeps data in memory that either are slow to calculate/process or originate from another underlying backend system.
+Caching is used to prevent additional request round trips for frequently used data. In both cases, caching could be used to
 gain performance or decrease application latencies.
 
 ## JCache Overview
 
-Starting with Hazelcast release 3.3.1, a specification compliant JCache implementation is offered. To show our commitment to this
-important specification the Java world was waiting for over a decade, we do not just provide a simple wrapper around our existing
-APIs but implemented a caching structure from ground up to optimize the behavior to the needs of JCache. As mentioned before,
-the Hazelcast JCache implementation is 100% TCK (Technology Compatibility Kit) compliant and therefore passes all specification
+Starting with Hazelcast release 3.3.1, Hazelcast offers a specification compliant JCache implementation. To show our commitment to this
+important specification that the Java world was waiting for over a decade, we do not just provide a simple wrapper around our existing
+APIs; we implemented a caching structure from the ground up to optimize the behavior to the needs of JCache.
+The Hazelcast JCache implementation is 100% TCK (Technology Compatibility Kit) compliant and therefore passes all specification
 requirements.
 
 In addition to the given specification, we added some features like asynchronous versions of almost all

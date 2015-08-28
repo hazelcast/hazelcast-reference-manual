@@ -1,5 +1,5 @@
 
-### JCache EntryProcessor
+### Implementing EntryProcessor
 
 With `javax.cache.processor.EntryProcessor`, you can apply an atomic function to a cache entry. In a distributed
 environment like Hazelcast, you can move the mutating function to the node that owns the key. If the value
@@ -11,6 +11,11 @@ the object is big. Another option to prevent this is part of the Hazelcast ICach
 
 An arbitrary number of arguments can be passed to the `Cache::invoke` and `Cache::invokeAll` methods. All of those arguments need
 to be fully serializable because in a distributed environment like Hazelcast, it is very likely that these arguments have to be passed around the cluster.
+
+The following example performs the following tasks.
+
+- It implements `EntryProcessor`.
+- It overrides the `process` method to process an entry.
 
 ```java
 public class UserUpdateEntryProcessor

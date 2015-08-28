@@ -1,18 +1,18 @@
 
 
-### JCache Configuration
+### Configuring for JCache
 
-Hazelcast JCache provides two different ways of cache configuration:
+Hazelcast JCache provides two different ways for you to perform cache configuration:
 
 - programmatically: the typical Hazelcast way, using the Config API seen above,
 - and declaratively: using `hazelcast.xml` or `hazelcast-client.xml`.
 
 #### JCache Declarative Configuration
 
-You can declare your JCache cache configuration using the `hazelcast.xml` or `hazelcast-client.xml` configuration files. Using this declarative configuration makes the creation of the `javax.cache.Cache` fully transparent and automatically ensures internal thread safety. You do not need a call to `javax.cache.Cache::createCache` in this case: you can retrieve the cache using
+You can declare your JCache cache configuration using the `hazelcast.xml` or `hazelcast-client.xml` configuration files. Using this declarative configuration makes creating the `javax.cache.Cache` fully transparent and automatically ensures internal thread safety. You do not need a call to `javax.cache.Cache::createCache` in this case: you can retrieve the cache using
 `javax.cache.Cache::getCache` overloads and by passing in the name defined in the configuration for the cache.
 
-To retrieve the cache defined in the declaration files, you need only perform a simple call (example below) because the cache is created automatically by the implementation.
+To retrieve the cache that you defined in the declaration files, you need only perform a simple call (example below) because the cache is created automatically by the implementation.
 
 ```java
 CachingProvider cachingProvider = Caching.getCachingProvider();
@@ -52,19 +52,19 @@ Note that this section only describes the JCache provided standard properties. F
 </cache>
 ```
 
-- `key-type#class-name`: Fully qualified class name of the cache key type, defaults to `java.lang.Object`.
-- `value-type#class-name`: Fully qualified class name of the cache value type, defaults to `java.lang.Object`.
+- `key-type#class-name`: Fully qualified class name of the cache key type. Its default value is `java.lang.Object`.
+- `value-type#class-name`: Fully qualified class name of the cache value type. Its default value is `java.lang.Object`.
 - `statistics-enabled`: If set to true, statistics like cache hits and misses are collected. Its default value is false.
-- `management-enabled`: If set to true, JMX beans are enabled and collected statistics are provided - It doesn't automatically enables statistics collection, defaults to false.
-- `read-through`: If set to true, enables read-through behavior of the cache to an underlying configured `javax.cache.integration.CacheLoader` which is also known as lazy-loading, defaults to false.
-- `write-through`: If set to true, enables write-through behavior of the cache to an underlying configured `javax.cache.integration.CacheWriter` which passes any changed value to the external backend resource, defaults to false.
+- `management-enabled`: If set to true, JMX beans are enabled and collected statistics are provided. It doesn't automatically enable statistics collection. Defaults to false.
+- `read-through`: If set to true, enables read-through behavior of the cache to an underlying configured `javax.cache.integration.CacheLoader` which is also known as lazy-loading. Its default value is false.
+- `write-through`: If set to true, enables write-through behavior of the cache to an underlying configured `javax.cache.integration.CacheWriter` which passes any changed value to the external backend resource. Its default value is false.
 - `cache-loader-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.integration.CacheLoader` instance to the cache.
 - `cache-writer-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.integration.CacheWriter` instance to the cache.
 - `expiry-policy-factory#-class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.expiry.ExpiryPolicy` instance to the cache.
 - `cache-entry-listener`: A set of attributes and elements, explained below, to describe a `javax.cache.event.
 CacheEntryListener`.
-  - `cache-entry-listener#old-value-required`: If set to true, previously assigned values for the affected keys will be sent to the `javax.cache.event.CacheEntryListener` implementation. Setting this attribute to true creates additional traffic, defaults to false.
-  - `cache-entry-listener#synchronous`: If set to true, the `javax.cache.event.CacheEntryListener` implementation will be called in a synchronous manner, defaults to false.
+  - `cache-entry-listener#old-value-required`: If set to true, previously assigned values for the affected keys will be sent to the `javax.cache.event.CacheEntryListener` implementation. Setting this attribute to true creates additional traffic. Its default value is false.
+  - `cache-entry-listener#synchronous`: If set to true, the `javax.cache.event.CacheEntryListener` implementation will be called in a synchronous manner. Its default value is false.
   - `cache-entry-listener/entry-listener-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.CacheEntryListener` instance.
   - `cache-entry-listener/entry-event-filter-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.
 CacheEntryEventFilter` instance.
@@ -83,20 +83,20 @@ To configure the JCache programmatically:
 only the JCache standard configuration,
 - or instantiate `com.hazelcast.config.CacheConfig` for a deeper Hazelcast integration.
 
-`com.hazelcast.config.CacheConfig` offers additional options that are specific to Hazelcast like asynchronous and synchronous backup counts.
+`com.hazelcast.config.CacheConfig` offers additional options that are specific to Hazelcast, such as asynchronous and synchronous backup counts.
 Both classes share the same supertype interface `javax.cache.configuration.
 CompleteConfiguration` which is part of the JCache
 standard.
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *To stay vendor independent, try to keep your code as near as possible to the standard JCache API. We recommend you to use declarative configuration
-and use the `javax.cache.configuration.Configuration` or `javax.cache.configuration.CompleteConfiguration` interfaces in
+![image](images/NoteSmall.jpg) ***NOTE:*** *To stay vendor independent, try to keep your code as near as possible to the standard JCache API. We recommend that you use declarative configuration
+and that you use the `javax.cache.configuration.Configuration` or `javax.cache.configuration.CompleteConfiguration` interfaces in
 your code only when you need to pass the configuration instance throughout your code.*
 <br></br>
 
-If you don't need to configure Hazelcast specific properties, it is recommended that you instantiate
+If you don't need to configure Hazelcast specific properties, we recommend that you instantiate
 `javax.cache.configuration.MutableConfiguration` and that you use the setters to configure Hazelcast as shown in the example in the
-[Quick Example section](#quick-example). Since the configurable properties are the same as the ones explained in the
+[Example JCache Application section](#example-jcache-application). Since the configurable properties are the same as the ones explained in the
 [JCache Declarative Configuration section](#jcache-declarative-configuration), they are not mentioned here. For Hazelcast specific
 properties, please read the [ICache Configuration section](#icache-configuration) section.
 
