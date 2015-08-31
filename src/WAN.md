@@ -1,6 +1,6 @@
 # WAN
 
-This chapter explains how you can replicate the state of your clusters over Wide Area Network (WAN) environmments.
+This chapter explains how you can replicate the state of your clusters over Wide Area Network (WAN) environments.
 
 ## WAN Replication
 
