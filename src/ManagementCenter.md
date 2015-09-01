@@ -77,6 +77,7 @@ You can expand and collapse menu items by clicking on them. Below is the list of
 
 -	[Caches](#caches)
 -	[Maps](#maps)
+-   [ReplicatedMaps](#replicatedmaps)
 -	[Queues](#queues)
 -	[Topics](#topics)
 -	[MultiMaps](#MultiMaps)
@@ -202,6 +203,37 @@ From left to right, this table lists the IP address and port, entry counts, memo
 Map Throughput data table provides information about the operations (get, put, remove) performed on each node in the map, as shown below.
 
 ![](images/Map-MapThroughputDataTable.jpg)
+
+From left to right, this table lists the IP address and port of each node, the put, get and remove operations on each node, the average put, get, remove latencies, and the maximum put, get, remove latencies on each node.
+
+You can select the period in the combo box placed at the top right corner of the window, for which the table data will be shown. Available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
+
+You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). To ascend or descent the order of the listings, click on the column headings.
+
+### Replicated Maps
+
+Replicated Map instances are shown under the **ReplicatedMaps** menu item on the left. When you click on a replicatedmap, a new tab for monitoring that replicated map instance opens on the right, as shown below. In this tab, you can monitor metrics and also re-configure the selected replicated map.
+
+#### Replicated Map Monitoring
+
+This section explains monitoring details and their features. All of these statistics are real-time monitoring stats.
+
+![](images/replicated-map-home.png)
+
+When you click desired monitoring, the chart is loaded with the selected option. Also you can open the chart in new window.
+
+![](images/replicated-map-stats.png)
+
+
+-	**Size**: Monitors the size of the replicated map. Y-axis is the entry count (should be multiplied by 1000).
+-	**Throughput**: Monitors get, put and remove operations performed on the replicated map. Y-axis is the operation count.
+-	**Memory**: Monitors the memory usage on the replicated map. Y-axis is the memory count.
+-	**Hits**: Monitors the hit count of the map.
+-	**Puts/s, Gets/s, Removes/s**: These three charts monitor the put, get and remove operations (per second) performed on the selected replicated map, the average put, get, remove latencies, and the maximum put, get, remove latencies on each node.
+
+Replicated Map Throughput data table provides information about operations (get,put,remove) performed on each node in the replicated map. 
+
+![](images/replicated-map-throughput.png)
 
 From left to right, this table lists the IP address and port of each node, the put, get and remove operations on each node, the average put, get, remove latencies, and the maximum put, get, remove latencies on each node.
 
