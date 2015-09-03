@@ -167,6 +167,7 @@ To set up Native Client, add the Hazelcast **group-name**, **group-password** an
 ```
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *To use Native Client, add `hazelcast-client-<version>.jar` into your classpath. Refer to [Clients](#clients) for more information.*
+![image](images/NoteSmall.jpg) ***NOTE***: *To use Native Client, add `hazelcast-all-<version>.jar` into your remote cluster's classpath.*
 
 ### Hibernate Concurrency Strategies
 
