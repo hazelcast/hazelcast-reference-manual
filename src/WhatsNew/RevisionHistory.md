@@ -7,7 +7,7 @@
 |[Chapter 6 - Distributed Data Structures](#distributed-data-structures)|[Map](#map)|[Map Eviction](#map-eviction) section updated by adding the definition for the `min-eviction-check-millis` property. The section [Understanding Map Eviction](#understanding-map-eviction) added for a more clearer explanation of the eviction mechanism.|
 |[Chapter 11 - Transactions](#transactions)|[Local versus Two Phase](#local-versus-two-phase)| Added as a new section explaining the trade offs between these two transaction types.
 |[Chapter 12 - Hazelcast JCache](#hazelcast-jcache)|[ICache Partition Lost Listener](#icache-partition-lost-listener)| Added as a new section explaining how to listen when a partition is lost in a Hazelcast JCache implementation.
-|[Chapter 13 - Integrated Clustering](#integrated-clustering)|[Web Session Replication](#web-session-replication)|[transient-attributes](#transient-attributes) added as a new section.|
+|[Chapter 13 - Integrated Clustering](#integrated-clustering)|[Web Session Replication](#web-session-replication)|[Marking Transient Attributes](#marking-transient-attributes) added as a new section.|
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)|[Hazelcast Clients Feature Comparison](#hazelcast-clients-feature-comparison)|Added as a new section.
 |[Chapter 18 - Management](#management)|[Cluster Quorum](#cluster-quorum)|Added information on quorum support for caches. Added the definition of the new configuration element `quorum-ref` to [ICache Configuration section](#icache-configuration).|
 ||[Management Center](#management-center)|A note on how to see the cache statistics on the Management Center added under the [Caches section](#caches).<br></br>[Replicated Maps](#replicated-maps) added as a new section. 

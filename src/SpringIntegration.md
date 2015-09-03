@@ -10,13 +10,13 @@ You can integrate Hazelcast with Spring and this chapter explains the configurat
 - Spring 2.5+
 
 
-### Spring Configuration
+### Configuring Spring
 
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-configuration" target="_blank">sample application</a> for Spring Configuration.*
 <br></br>
 
 
-#### Bean Declaration by Spring *beans* Namespace 
+#### Declaring Beans by Spring *beans* Namespace 
 
 ***Classpath Configuration*** 
 
@@ -26,7 +26,7 @@ This configuration requires the following jar file in the classpath:
 
 ***Bean Declaration*** 
 
-You can declare Hazelcast Objects using the default Spring *beans* namespace. You can find an example usage of Hazelcast Instance declaration as follows:
+You can declare Hazelcast Objects using the default Spring *beans* namespace. Example code for a Hazelcast Instance declaration is listed below.
 
 ```xml
 <bean id="instance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
@@ -49,9 +49,9 @@ You can declare Hazelcast Objects using the default Spring *beans* namespace. Yo
 ```
 
 
-#### Bean Declaration by *hazelcast* Namespace 
+#### Declaring Beans by *hazelcast* Namespace 
 
-***Classpath Configuration*** 
+***Configuring Classpath*** 
 
 Hazelcast-Spring integration requires the following JAR files in the classpath:
 
@@ -62,7 +62,7 @@ or
 
 - `hazelcast-all-`<*version*>`.jar`
 
-***Bean Declaration*** 
+***Declaring Beans*** 
 
 Hazelcast has its own namespace **hazelcast** for bean definitions. You can easily add the namespace declaration *xmlns:hz="http://www.hazelcast.com/schema/spring"* to the `beans` element in the context file so that *hz* namespace shortcut can be used as a bean declaration.
 
@@ -81,7 +81,7 @@ Here is an example schema definition for Hazelcast 3.3.x:
 
 #### Supported Configurations with *hazelcast* Namespace
 
-- **Hazelcast Instance Configuration**
+- **Configuring Hazelcast Instance**
 
 ```xml
 <hz:hazelcast id="instance">
@@ -108,7 +108,7 @@ Here is an example schema definition for Hazelcast 3.3.x:
 </hz:hazelcast>
 ```
 
--   **Hazelcast Client Configuration**
+-   **Configuring Hazelcast Client**
 
 ```xml
 <hz:client id="client">
@@ -180,7 +180,7 @@ Hazelcast also supports `lazy-init`, `scope` and `depends-on` bean attributes.
 </hz:client>
 ```
 
--   **MapStore and NearCache Configuration**
+-   **Configuring MapStore and NearCache**
 
 For map-store, you should set either the *class-name* or the *implementation* attribute.
 
@@ -204,15 +204,15 @@ For map-store, you should set either the *class-name* or the *implementation* at
 ```
 
 
-### Spring Managed Context with @SpringAware
+### Enabling SpringAware Objects
 
-Hazelcast Distributed Objects could be marked with @SpringAware if the object wants:
+You can mark Hazelcast Distributed Objects with @SpringAware if the object wants:
 
 - to apply bean properties,
 - to apply factory callbacks such as `ApplicationContextAware`, `BeanNameAware`,
 - to apply bean post-processing annotations such as `InitializingBean`, `@PostConstruct`.
 
-Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed object, can benefit from these features. To enable SpringAware objects, you must first configure `HazelcastInstance` using *hazelcast* namespace as explained in the [Spring Configuration section](#spring-configuration) and add `<hz:spring-aware />` tag.
+Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed object, can benefit from these features. To enable SpringAware objects, you must first configure `HazelcastInstance` using *hazelcast* namespace as explained in [Configuring Spring](#configuring-spring) and add `<hz:spring-aware />` tag.
 
 
 #### SpringAware Examples
@@ -255,7 +255,7 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
   ...
 </beans>
 ```
-**Distributed Map Example:**
+**Distributed Map SpringAware Example:**
 
 - Create a class called `SomeValue` which contains Spring Bean definitions like `ApplicationContext` and `SomeBean`.
 
@@ -310,7 +310,7 @@ SomeValue value = map.get( "key" );
 Assert.assertTrue( value.init );
 ```
 
-**ExecutorService Example:**
+**ExecutorService SpringAware Example:**
 
 - Create a Callable Class called SomeTask which contains Spring Bean definitions like `ApplicationContext`, `SomeBean`.
 
@@ -362,7 +362,7 @@ Assert.assertEquals(bean.value, f2.get().longValue());
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Spring managed properties/fields are marked as `transient`.*
 
 
-### Spring Cache
+### Adding Caching to Spring
 
 ***Sample Code***: *Please see our sample application for <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-cache-manager" target="_blank">Spring Cache</a>.*
 <br></br>
@@ -385,9 +385,9 @@ As of version 3.1, Spring Framework provides support for adding caching into an 
 ```
 
 
-#### Annotation Based Spring Cache Configuration
+#### Annotation-Based Spring Cache Configuration
 
-Annotation Based Configuration does not require any XML definition.
+Annotation-Based Configuration does not require any XML definition. To perform Annotation-Based Configuration:
 
 - Implement a `CachingConfiguration` class with related Annotations.
 
@@ -418,12 +418,12 @@ context.refresh();
 For more information about Spring Cache, please see <a href="http://static.springsource.org/spring/docs/3.1.x/spring-framework-reference/html/cache.html" target="_blank">Spring Cache Abstraction</a>.
 
 
-### Hibernate 2nd Level Cache Config
+### Configuring Hibernate Second Level Cache
 
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-hibernate-2ndlevel-cache" target="_blank">sample application</a> for Hibernate 2nd Level Cache Config.*
 <br></br>
 
-If you are using Hibernate with Hazelcast as 2nd level cache provider, you can easily create `RegionFactory` instances within Spring configuration (by Spring version 3.1). That way, you can use the same `HazelcastInstance` as Hibernate L2 cache instance.
+If you are using Hibernate with Hazelcast as a second level cache provider, you can easily create `RegionFactory` instances within Spring configuration (by Spring version 3.1). That way, you can use the same `HazelcastInstance` as Hibernate L2 cache instance.
 
 ```xml
 <hz:hibernate-region-factory id="regionFactory" instance-ref="instance"
@@ -443,7 +443,7 @@ If you are using Hibernate with Hazelcast as 2nd level cache provider, you can e
 - LOCAL
 - DISTRIBUTED 
 
-Please refer to the Hibernate [RegionFactory Options section](#regionfactory-options) for more information.
+Please refer to Hibernate [Configuring RegionFactory](#configuring-regionfactory) for more information.
 
 
 ### Best Practices

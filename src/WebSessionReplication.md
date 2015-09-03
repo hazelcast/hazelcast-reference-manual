@@ -11,7 +11,11 @@ If you are using Tomcat as your web container, please see the [Tomcat based Web 
 
 Assume that you have more than one web server (A, B, C) with a load balancer in front of it. If server A goes down, your users on that server will be directed to one of the live servers (B or C), but their sessions will be lost.
 
-We need to have all these sessions backed up somewhere if we do not want to lose the sessions upon server crashes. Hazelcast Web Manager (WM) allows you to cluster user HTTP sessions automatically. The following are required before enabling Hazelcast Session Clustering:
+We need to have all these sessions backed up somewhere if we do not want to lose the sessions upon server crashes. Hazelcast Web Manager (WM) allows you to cluster user HTTP sessions automatically. 
+
+#### Session Clustering Requirements
+
+The following are required before enabling Hazelcast Session Clustering:
 
 -   Target application or web server should support Java 1.6 or higher.
 
@@ -19,13 +23,15 @@ We need to have all these sessions backed up somewhere if we do not want to lose
 
 -   Session objects that need to be clustered have to be Serializable.
 
--   In the client/server architecture, session classes does not have to be present in the server classpath.
+-   In the client/server architecture, session classes do not have to be present in the server classpath.
 
-Here are the steps to setup Hazelcast Session Clustering:
+#### Setting Up Session Clustering
 
--	Put the `hazelcast` and `hazelcast-wm` jars in your `WEB-INF/lib` directory. Optionally, if you wish to connect to a cluster as a client, add `hazelcast-client` as well.
+To set up Hazelcast Session Clustering:
 
--	Put the following XML into `web.xml` file. Make sure Hazelcast filter is placed before all the other filters if any; for example, you can put it at the top.
+-	Put the `hazelcast` and `hazelcast-wm` jars in your `WEB-INF/lib` folder. Optionally, if you wish to connect to a cluster as a client, add `hazelcast-client` as well.
+
+-	Put the following XML into the `web.xml` file. Make sure Hazelcast filter is placed before all the other filters if any; for example, you can put it at the top.
 
 ```xml             
 <filter>
@@ -170,9 +176,9 @@ Here are the steps to setup Hazelcast Session Clustering:
 
 - Package and deploy your `war` file as you would normally do.
 
-It is that easy. All HTTP requests will go through Hazelcast `WebFilter` and it will put the session objects into Hazelcast distributed map if needed.
+It is that easy. All HTTP requests will go through Hazelcast `WebFilter` and it will put the session objects into the Hazelcast distributed map if needed.
 
-### Spring Security Support
+### Supporting Spring Security
 
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-security" target="_blank">sample application</a> for Spring Security Support.*
 <br><br/>
@@ -191,7 +197,9 @@ If Spring based security is used for your application, you should use `com.hazel
 ...
 ```
 
-`SpringAwareWebFilter` notifies Spring by publishing events to Spring context. These events are used by the `org.springframework.security.core.session.SessionRegistry` instance. 
+`SpringAwareWebFilter` notifies Spring by publishing events to Spring context. The `org.springframework.security.core.session.SessionRegistry` instance uses these events.
+
+#### Spring Security and web.xml
 
 As before, you must also define `com.hazelcast.web.SessionListener` in your `web.xml`. However, you do not need to define `org.springframework.security.web.session.HttpSessionEventPublisher` in your `web.xml` as before, since `SpringAwareWebFilter` already informs Spring about session based events like `create` or `destroy`. 
 
@@ -207,7 +215,7 @@ In the client/server architecture, if servers goes down, Hazelcast web manager w
 
 If the value for `deferred-write` is set as **true**, Hazelcast will cache the session locally and will update the local session when an attribute is set or deleted. At the end of the request, it will update the distributed map with all the updates. It will not update the distributed map upon each attribute update, but will only call it once at the end of the request. It will also cache it, i.e. whenever there is a read for the attribute, it will read it from the cache. 
 
-**Important note about `deferred-write=false` setting**:
+**Updating an attribute when `deferred-write=false`**:
 
 If `deferred-write` is **false**, any update (i.e. `setAttribute`) on the session will directly be available in the cluster. One exception to this behavior is the changes to the session attribute objects. To update an attribute cluster-wide, `setAttribute` must be called after changes are made to the attribute object.
 
@@ -223,11 +231,11 @@ session.setAttribute("myKey", list1); // changes updated in the cluster
 #### SessionId Generation
 
 SessionId generation is done by the Hazelcast Web Session Module if session replication is configured in the web application. The default cookie name for the sessionId is `hazelcast.sessionId`. This name is configurable with a `cookie-name` parameter in the `web.xml` file of the application.
-`hazelcast.sessionId` is just a UUID prefixed with “HZ” character and without “-“ character, e.g. `HZ6F2D036789E4404893E99C05D8CA70C7`.
+`hazelcast.sessionId` is just a UUID prefixed with “HZ” characters and without a “-“ character, e.g. `HZ6F2D036789E4404893E99C05D8CA70C7`.
 
 When called by the target application, the value of `HttpSession.getId()` is the same as the value of `hazelcast.sessionId`.
 
-#### Session Expiry
+#### Defining Session Expiry
 
 Hazelcast automatically removes sessions from the cluster if the sessions are expired on the Web Container. This removal is done by `com.hazelcast.web.SessionListener`, which is an implementation of `javax.servlet.http.HttpSessionListener`. 
 
@@ -241,18 +249,18 @@ Default session expiration configuration depends on the Servlet Container that i
 
 If you want to override session expiry configuration with a Hazelcast specific configuration, you can use `session-ttl-seconds` to specify TTL on the Hazelcast Session Replication Distributed Map.
 
-#### sticky-session
+#### Using Sticky Sessions
 
 Hazelcast holds whole session attributes in a distributed map and in a local HTTP session. Local session is required for fast access to data and distributed map is needed for fail-safety.
 
 - If `sticky-session` is not used, whenever a session attribute is updated in a node (in both node local session and clustered cache), that attribute should be invalidated in all other nodes' local sessions, because now they have dirty values. Therefore, when a request arrives at one of those other nodes, that attribute value is fetched from clustered cache.
 
-- To overcome the performance penalty of sending invalidation messages during updates, you can use sticky sessions. If Hazelcast knows sessions are sticky, invalidation will not be sent because Hazelcast assumes there is no other local session at the moment. When a server is down, requests belonging to a session hold in that server will routed to other server, and that server will fetch session data from clustered cache. That means, using sticky sessions, one will not suffer the  performance penalty of accessing clustered data and can benefit recover from a server failure.
+- To overcome the performance penalty of sending invalidation messages during updates, you can use sticky sessions. If Hazelcast knows sessions are sticky, invalidation will not be sent because Hazelcast assumes there is no other local session at the moment. When a server is down, requests belonging to a session hold in that server will routed to other server, and that server will fetch session data from clustered cache. That means that when using sticky sessions, you will not suffer the performance penalty of accessing clustered data and can benefit recover from a server failure.
 
-#### transient-attributes
+#### Marking Transient Attributes
 
-If you have some attributes that you do not want them to be distributed, you can mark those attributes as transient.
-Transient attributes are kept in and when the server is shutdown, you lost the attribute values.
+If you have some attributes that you do not want to be distributed, you can mark those attributes as transient.
+Transient attributes are kept in and when the server is shutdown, you lose the attribute values.
 You can set the transient attributes in your `web.xml` file.
 Here is an example:
 
