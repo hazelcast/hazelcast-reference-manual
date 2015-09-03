@@ -14,5 +14,10 @@ The following are the issues solved for Hazelcast 3.6 release.
 - Client requests are very inefficient when determining the partition ID. <a href="https://github.com/hazelcast/hazelcast/issues/4940" target="_blank">[4940]</a>
 - The method `keySet()` relies on `QueryOperation`. The `QueryOperation` does not accept `IterationType` - it always returns both keys and values. This can lead to unnecessary load and potentially even an OOM exception. <a href="https://github.com/hazelcast/hazelcast/issues/4642" target="_blank">[4642]</a>
 - Hazelcast is stuck in TIMED_WAITING when used as 2nd level cache for Hibernate. <a href="https://github.com/hazelcast/hazelcast/issues/4406" target="_blank">[4406]</a>
+- Management Center license loading problem when REST API is used. <a href="https://github.com/hazelcast/management-center/issues/189" target="_blank">[189]</a>
+- Executor monitoring in Management Center does not show the "cancelled" operations" <a href="https://github.com/hazelcast/management-center/issues/177" target="_blank">[177]</a>
+- When an alert for a data structure (map, queue, etc.) with its specific name is created, a `NullPointerException` is thrown after the cluster is reset. <a href="https://github.com/hazelcast/management-center/issues/175" target="_blank">[175]</a>
+- Default directory name is hardcoded as "mancenter3.5" and it needs to be maintained for every major release. This process should be dynamic. <a href="https://github.com/hazelcast/management-center/issues/174" target="_blank">[174]</a>
+- Throughput statistics for Map shows nothing when the `putAll()` method is used <a href="https://github.com/hazelcast/management-center/issues/159" target="_blank">[159]</a>
 
 
