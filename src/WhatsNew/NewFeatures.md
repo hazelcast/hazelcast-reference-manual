@@ -12,7 +12,7 @@ This section lists the new features and enhancements developed and bugs fixed fo
 
 The following the new features introduced with Hazelcast 3.6 release.
 
-- **???**: ???
+- **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration). 
 - **???**: ???
 - **???**: ???
 - **???**: ???
