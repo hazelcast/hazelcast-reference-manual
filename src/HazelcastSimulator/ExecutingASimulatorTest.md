@@ -2,372 +2,356 @@
 
 ## Executing a Simulator Test
 
-After you install and prepare the Hazelcast Simulator for your environment, it is time to perform a test.
+After you install and prepare the Hazelcast Simulator for your environment, it is time to perform a test. In the following sections, you are going to verify the setup by running a simple map test with strings as keys and values. 
 
-The following steps execute a Hazelcast Simulator test.
-
-1. Install the Hazelcast Simulator.
-2. Create a folder85 for your tests. Let's call it your working folder.
-3. Copy the `simulator.properties` file from the `/conf` folder of the Hazelcast Simulator to your working folder.
-4. Edit the `simulator.properties` file according to your needs.
-5. Copy the `test.properties` file from the `/simulator-tests` folder of Hazelcast Simulator to your working folder.
-6. Edit the `test.properties` file according to your needs.
-5. Execute the `run.sh` script while you are in your working folder to perform your Simulator test.
-
-In the following sections, we provide an example test and its output along with the required edits to the files `simulator.properties` and `test.properties`.
-
-### An Example Simulator Test
-
-The following example code performs `put` and `get` operations on a Hazelcast Map and verifies the key-value ownership, and it also prints the size of the map.
+You can start with creating the working folder.
 
 ```
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.logging.ILogger;
-import com.hazelcast.logging.Logger;
-import com.hazelcast.simulator.test.TestContext;
-import com.hazelcast.simulator.test.TestRunner;
-import com.hazelcast.simulator.test.annotations.*;
-import com.hazelcast.simulator.worker.selector.OperationSelectorBuilder;
-import com.hazelcast.simulator.worker.tasks.AbstractWorker;
-
-import static junit.framework.TestCase.assertEquals;
-
-public class ExampleTest {
-
-    private enum Operation {
-        PUT,
-        GET
-    }
-
-    private static final ILogger log = Logger.getLogger(ExampleTest.class);
-
-    //properties
-    public double putProb = 0.5;
-    public int maxKeys = 1000;
-
-    private TestContext testContext;
-    private IMap map;
-
-    private OperationSelectorBuilder<Operation> operationSelectorBuilder = new OperationSelectorBuilder<Operation>();
-
-    @Setup
-    public void setup(TestContext testContext) throws Exception {
-        log.info("======== SETUP =========");
-        this.testContext = testContext;
-        HazelcastInstance targetInstance = testContext.getTargetInstance();
-        map = targetInstance.getMap("exampleMap");
-
-        log.info("Map name is:" + map.getName());
-
-        operationSelectorBuilder.addOperation(Operation.PUT, putProb).addDefaultOperation(Operation.GET);
-    }
-
-    @Warmup
-    public void warmup() {
-        log.info("======== WARMUP =========");
-        log.info("Map size is:" + map.size());
-    }
-
-    @Verify
-    public void verify() {
-        log.info("======== VERIFYING =========");
-        log.info("Map size is:" + map.size());
-
-        for (int i = 0; i < maxKeys; i++) {
-            assertEquals(map.get(i), "value" + i);
-        }
-    }
-
-    @Teardown
-    public void teardown() throws Exception {
-        log.info("======== TEAR DOWN =========");
-        map.destroy();
-        log.info("======== THE END =========");
-    }
-
-    @RunWithWorker
-    public AbstractWorker<Operation> createWorker() {
-        return new Worker();
-    }
-
-    private class Worker extends AbstractWorker<Operation> {
-
-        public Worker() {
-            super(operationSelectorBuilder);
-        }
-
-        @Override
-        protected void timeStep(Operation operation) {
-            int key = randomInt(maxKeys);
-            switch (operation) {
-                case PUT:
-                    map.put(key, "value" + key);
-                    break;
-                case GET:
-                    map.get(key);
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unknown operation" + operation);
-            }
-        }
-
-    }
-
-    public static void main(String[] args) throws Throwable {
-        ExampleTest test = new ExampleTest();
-        new TestRunner<ExampleTest>(test).run();
-    }
-}
+mkdir simulator-example
 ```
 
+A path of working folder needs to be visible in the output of the provisioner/coordinator.
 
-### Editing the simulator.properties File
+### Creating and Editing Properties File
 
+You need to create the file `test.properties` in the working folder. Execute the following command to create and edit this file.
+	
+```
+cat > test.properties
+```
+
+Copy the following lines into the file `test.properties`.
+
+```
+class=com.hazelcast.simulator.tests.map.StringStringMapTest
+threadCount=10
+keyLocality=Random
+keyLength=300
+valueLength=300
+keyCount=100000
+putProb=0.2
+basename=map
+```
+
+The property `class` defines the actual test case and the rest are the properties you want to bind to your test. If a
+property is not defined in this file, the default value of the property given in your test code is used. Please see the `properties` comment in the `StringStringMapTest`. You will see the following.
+
+```
+    // properties
+    public int keyLength = 10;
+    public int valueLength = 10;
+    public int keyCount = 10000;
+    public int valueCount = 10000;
+    public String basename = "stringStringMap";
+    public KeyLocality keyLocality = KeyLocality.RANDOM;
+    public int minNumberOfMembers = 0;
+```
  
-In the case of Amazon EC2, you need to consider the following properties.
+After you created the file `test.properties` and set your properties successfully, you need to configure the simulator using the file `simulator.properties`.
+
+Execute the following command to create and edit this file.
 
 ```
+cat > simulator.properties
+```
+
+Copy the following lines into this file and set the properties.
+
+```
+CLOUD_PROVIDER=aws-ec2
 CLOUD_IDENTITY=~/ec2.identity
 CLOUD_CREDENTIAL=~/ec2.credential
+MACHINE_SPEC=hardwareId=m3.medium,locationId=us-east-1,imageId=us-east-1/ami-fb8e9292
+JDK_FLAVOR=oracle
+JDK_VERSION=7
 ```
 
-Create two text files in your home folder. The file `ec2.identity` should contain your access key and the file 
-`ec2.credential` should contain your secret key. 
-
-***NOTE:*** *For a full description of the file `simulator.properties`, please see the [Simulator.Properties File Description section](#simulator-properties-file-description).*
-
-### Editing the test.properties file
-
-You need to give the classpath of `Example` test in the file `test.properties` as shown below.
+Please refer to <a href="http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html" target="_blank">here</a> for information on `CLOUD_IDENTITY` and `CLOUD_CREDENTIAL`.
 
 
-```
-class=yourgroupid.ExampleTest
-maxKeys=5000
-putProb=0.4
-```
-
-The property `class` defines the actual test case and the rest are the properties you want to bind in your test. If a
-property is not defined in this file, the default value of the property given in your test code is used. Please see the `properties` comment in the example code above.
-
-You can also define multiple tests in the file `test.properties` as shown below.
-
-```
-foo.class=yourgroupid.ExampleTest
-foo.maxKeys=5000
-
-bar.class=yourgroupid.ExampleTest
-bar.maxKeys=5000
-
-```
-
-This is useful if you want to run multiple tests sequentially, or tests in parallel using the `coordinator --parallel` option. Please see the [Coordinator section](#coordinator) for more information.
+***NOTE:*** *For a full description of the file `simulator.properties`, please see the [Simulator.Properties File Description section](#simulator-properties-file-description). You can find the sample simulator properties in the `dist/simulator-tests/simulator.properties`. You can also copy this file to the working folder and then edit according to your needs.*
 
 ### Running the Test
 
-When you are in your working folder, execute the following command to start the test.
+When in the working folder, execute the following commands step by step to run the test.
 
+**1. Starting Instances**
 
-```
-./run.sh
-```
-
-The script `run.sh` is for your convenience. It gathers all the commands used to perform a test into one script. The following is the content of this example `run.sh` script.
+First of all, you need agents to run the test on them. Execute the following command to start 4 EC2 instances and install Java and the agents to these instances.
 
 ```
-#!/bin/bash
+provisioner --scale 4
+```
+	
+The output of the command looks like the following.
 
-set -e
+```
+INFO  09:05:06 Hazelcast Simulator Provisioner
+INFO  09:05:06 Version: 0.5, Commit: c6e82c5, Build Time: 18.06.2015 @ 11:58:06 UTC
+INFO  09:05:06 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  09:05:07 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
+INFO  09:05:07 ==============================================================
+INFO  09:05:07 Provisioning 4 aws-ec2 machines
+INFO  09:05:07 ==============================================================
+INFO  09:05:07 Current number of machines: 0
+INFO  09:05:07 Desired number of machines: 4
+INFO  09:05:07 Using init script:/disk1/hazelcast-simulator-0.5/conf/init.sh
+INFO  09:05:07 JDK spec: oracle 7
+INFO  09:05:07 Hazelcast version-spec: outofthebox
+INFO  09:05:11 Created compute
+INFO  09:05:11 Machine spec: hardwareId=m3.medium,locationId=us-east-1,imageId=us-east-1/ami-fb8e9292
+INFO  09:05:18 Created template
+INFO  09:05:18 Login name to the remote machines: simulator
+INFO  09:05:18 Security group: 'simulator' is found in region 'us-east-1'
+INFO  09:05:18 Creating machines... (can take a few minutes)
+INFO  09:06:18     54.211.146.186 LAUNCHED
+INFO  09:06:18     54.166.1.79 LAUNCHED
+INFO  09:06:18     54.147.196.63 LAUNCHED
+INFO  09:06:18     54.144.235.111 LAUNCHED
+INFO  09:06:30     54.211.146.186 JAVA INSTALLED
+INFO  09:06:32     54.166.1.79 JAVA INSTALLED
+INFO  09:06:32     54.144.235.111 JAVA INSTALLED
+INFO  09:06:34     54.147.196.63 JAVA INSTALLED
+INFO  09:06:40     54.166.1.79 SIMULATOR AGENT INSTALLED
+INFO  09:06:40 Killing Agent on: 54.166.1.79
+INFO  09:06:40 Starting Agent on: 54.166.1.79
+INFO  09:06:40     54.211.146.186 SIMULATOR AGENT INSTALLED
+INFO  09:06:40 Killing Agent on: 54.211.146.186
+INFO  09:06:40     54.166.1.79 SIMULATOR AGENT STARTED
+INFO  09:06:40 Starting Agent on: 54.211.146.186
+INFO  09:06:40     54.211.146.186 SIMULATOR AGENT STARTED
+INFO  09:06:42     54.144.235.111 SIMULATOR AGENT INSTALLED
+INFO  09:06:42 Killing Agent on: 54.144.235.111
+INFO  09:06:42 Starting Agent on: 54.144.235.111
+INFO  09:06:43     54.144.235.111 SIMULATOR AGENT STARTED
+INFO  09:06:47     54.147.196.63 SIMULATOR AGENT INSTALLED
+INFO  09:06:47 Killing Agent on: 54.147.196.63
+INFO  09:06:47 Starting Agent on: 54.147.196.63
+INFO  09:06:47     54.147.196.63 SIMULATOR AGENT STARTED
+INFO  09:06:47 Pausing for machine warmup... (10 sec)
+INFO  09:06:57 Duration: 00d 00h 01m 49s
+INFO  09:06:57 ==============================================================
+INFO  09:06:57 Successfully provisioned 4 aws-ec2 machines
+INFO  09:06:57 ==============================================================
+INFO  09:06:57 Shutting down Provisioner...
+INFO  09:06:57 Done!
+```
 
-coordinator     --memberWorkerCount 2 \
-                --workerVmOptions "-ea -server -Xms2G -Xmx2G -verbosegc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError" \
-                --hzFile            hazelcast.xml \
-                --clientWorkerCount 2 \
-                --clientWorkerVmOptions "-ea -server -Xms2G -Xmx2G -verbosegc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError" \
-                --clientHzFile      client-hazelcast.xml \
-                --workerClassPath   '../target/*.jar' \
-                --duration          5m \
-                --monitorPerformance \
-                test.properties
+You can also see the file `agents.txt` that was created automatically by the provisioner in the working folder. The file `agents.txt` includes IP addresses of the started EC2 instances. You can see this file's content using the following command.
 
+```
+less agents.txt
+```
+
+First column lists the public IP addresses and the second one lists the private IP addresses. A public IP address is used for the communication between the coordinator and agent. A private IP address is used for the communications between client and member and also between member and member. A private IP address cannot be connected to from the outside of EC2 environment.
+
+**2. Running the Test Suite**
+
+After you created the instances and agents are installed to them, execute the following command to run your test suite.
+	
+```
+coordinator test.properties
+```
+
+Please refer to the [Coordinator section](#coordinator) for detailed information about the arguments of `coordinator`.
+
+The output looks like the following.
+
+```
+INFO  09:57:17 Hazelcast Simulator Coordinator
+INFO  09:57:17 Version: 0.5, Commit: c6e82c5, Build Time: 02.07.2015 @ 09:50:21 UTC
+INFO  09:57:17 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  09:57:17 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
+INFO  09:57:17 Loading testsuite file: /disk1/exampleSandbox/test.properties
+INFO  09:57:17 Loading Hazelcast configuration: /disk1/hazelcast-simulator-0.5/conf/hazelcast.xml
+INFO  09:57:17 Loading Hazelcast client configuration: /disk1/hazelcast-simulator-0.5/conf/client-hazelcast.xml
+INFO  09:57:17 Loading Log4j configuration for worker: /disk1/hazelcast-simulator-0.5/conf/worker-log4j.xml
+INFO  09:57:17 Loading agents file: /disk1/exampleSandbox/agents.txt
+INFO  09:57:17 HAZELCAST_VERSION_SPEC: maven=3.5
+INFO  09:57:17 --------------------------------------------------------------
+INFO  09:57:17 Waiting for agents to start
+INFO  09:57:17 --------------------------------------------------------------
+INFO  09:57:17 Connect to agent 54.211.146.186 OK
+INFO  09:57:17 Connect to agent 54.166.1.79 OK
+INFO  09:57:17 Connect to agent 54.147.196.63 OK
+INFO  09:57:17 Connect to agent 54.144.235.111 OK
+INFO  09:57:17 --------------------------------------------------------------
+INFO  09:57:17 All agents are reachable!
+INFO  09:57:17 --------------------------------------------------------------
+INFO  09:57:21 Performance monitor enabled: false
+INFO  09:57:21 Total number of agents: 4
+INFO  09:57:21 Total number of Hazelcast member workers: 4
+INFO  09:57:21 Total number of Hazelcast client workers: 0
+INFO  09:57:21     Agent 54.211.146.186 members: 1 clients: 0 mode: MIXED
+INFO  09:57:21     Agent 54.166.1.79 members: 1 clients: 0 mode: MIXED
+INFO  09:57:21     Agent 54.147.196.63 members: 1 clients: 0 mode: MIXED
+INFO  09:57:21     Agent 54.144.235.111 members: 1 clients: 0 mode: MIXED
+INFO  09:57:21 Killing all remaining workers
+INFO  09:57:21 Successfully killed all remaining workers
+INFO  09:57:21 Starting 4 member workers
+INFO  09:57:41 Successfully started member workers
+INFO  09:57:41 Skipping client startup, since no clients are configured
+INFO  09:57:41 Successfully started a grand total of 4 Workers JVMs after 20120 ms
+INFO  09:57:41 Starting testsuite: 2015-07-02__09_57_17
+INFO  09:57:41 Tests in testsuite: 1
+INFO  09:57:41 Running time per test: 00d 00h 01m 00s
+INFO  09:57:41 Expected total testsuite time: 00d 00h 01m 00s
+INFO  09:57:41 Running 1 tests sequentially
+INFO  09:57:41 --------------------------------------------------------------
+Running Test:
+TestCase{
+      id=
+    , class=com.hazelcast.simulator.tests.map.StringStringMapTest
+    , keyCount=100000
+    , keyLength=300
+    , keyLocality=Random
+    , putProb=0.2
+    , threadCount=10
+    , valueLength=300
+}
+--------------------------------------------------------------
+INFO  09:57:41 Starting Test initialization
+INFO  09:57:42 Completed Test initialization
+INFO  09:57:42 Starting Test setup
+INFO  09:57:44 Completed Test setup
+INFO  09:57:44 Starting Test local warmup
+INFO  09:57:46 Waiting for localWarmup completion: 00d 00h 00m 00s
+INFO  09:57:52 Waiting for localWarmup completion: 00d 00h 00m 06s
+INFO  09:57:57 Waiting for localWarmup completion: 00d 00h 00m 12s
+INFO  09:58:03 Waiting for localWarmup completion: 00d 00h 00m 18s
+INFO  09:58:09 Waiting for localWarmup completion: 00d 00h 00m 24s
+INFO  09:58:15 Waiting for localWarmup completion: 00d 00h 00m 30s
+INFO  09:58:20 Waiting for localWarmup completion: 00d 00h 00m 35s
+INFO  09:58:26 Waiting for localWarmup completion: 00d 00h 00m 41s
+INFO  09:58:32 Completed Test local warmup
+INFO  09:58:32 Starting Test global warmup
+INFO  09:58:33 Completed Test global warmup
+INFO  09:58:33 Starting Test start
+INFO  09:58:34 Completed Test start
+INFO  09:58:34 Test will run for 00d 00h 01m 00s
+INFO  09:59:04 Running 00d 00h 00m 30s   50.00% complete
+INFO  09:59:34 Running 00d 00h 01m 00s  100.00% complete
+INFO  09:59:34 Test finished running
+INFO  09:59:34 Starting Test stop
+INFO  09:59:36 Completed Test stop
+INFO  09:59:37 Starting Test global verify
+INFO  09:59:39 Completed Test global verify
+INFO  09:59:39 Starting Test local verify
+INFO  09:59:41 Completed Test local verify
+INFO  09:59:41 Starting Test global tear down
+INFO  09:59:43 Finished Test global tear down
+INFO  09:59:43 Starting Test local tear down
+INFO  09:59:45 Completed Test local tear down
+INFO  09:59:45 Terminating workers
+INFO  09:59:45 All workers have been terminated
+INFO  09:59:45 Starting cool down (10 sec)
+INFO  09:59:55 Finished cool down
+INFO  09:59:55 Total running time: 133 seconds
+INFO  09:59:55 -----------------------------------------------------------------------------
+INFO  09:59:55 No failures have been detected!
+INFO  09:59:55 -----------------------------------------------------------------------------
+```
+
+**3. Downloading the Results**
+
+ Now you need the logs and results that the workers generated. You can get these requirements from agents via `provisioner`.  
+
+```
 provisioner --download
 ```
 
-This script performs the following.
+The output looks like the following.
 
- * Start 4 EC2 instances, install Java and the agents.
- * Upload your JARs, run the test using a 2 node test cluster and 2 client machines (the clients generate the load).
+```
+INFO  10:05:41 Hazelcast Simulator Provisioner
+INFO  10:05:41 Version: 0.5, Commit: c6e82c5, Build Time: 02.07.2015 @ 09:50:21 UTC
+INFO  10:05:41 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  10:05:41 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
+INFO  10:05:42 ==============================================================
+INFO  10:05:42 Download artifacts of 4 machines
+INFO  10:05:42 ==============================================================
+INFO  10:05:42 Downloading from 54.211.146.186
+INFO  10:05:42 Downloading from 54.166.1.79
+INFO  10:05:42 Downloading from 54.147.196.63
+INFO  10:05:42 Downloading from 54.144.235.111
+INFO  10:05:43 ==============================================================
+INFO  10:05:43 Finished Downloading Artifacts of 4 machines
+INFO  10:05:43 ==============================================================
+INFO  10:05:43 Shutting down Provisioner...
+INFO  10:05:43 Done!
+```
  
- 
-This test runs for 2 minutes. After it is completed, the artifacts (log files) are downloaded into the `workers` folder. Then, it terminates the 4 instances. If you do not want to start/terminate the instances for every run, just comment out the line `provisioner --terminate` in the script `run.sh`. This prevents the machines from being terminated. Please see the [Provisioner section](#provisioner) for more information.
+The artifacts (log files) are downloaded into the `workers` subfolder of the working folder.
 
+**4. Terminating the Instances**
+
+If want to terminate the instances, execute the following command.
+
+```
+provisioner --terminate
+```
+	
+If an EC2 machine with an agent running is idle for 2 hours, that machine will automatically terminate itself to prevent running into a big bill.
+
+The output looks like the following.
+
+```
+INFO  10:26:46 Hazelcast Simulator Provisioner
+INFO  10:26:46 Version: 0.5, Commit: c6e82c5, Build Time: 02.07.2015 @ 09:50:21 UTC
+INFO  10:26:46 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  10:26:46 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
+INFO  10:26:46 ==============================================================
+INFO  10:26:46 Terminating 4 aws-ec2 machines (can take some time)
+INFO  10:26:46 ==============================================================
+INFO  10:26:46 Current number of machines: 4
+INFO  10:26:46 Desired number of machines: 0
+INFO  10:27:10     54.211.146.186 Terminating
+INFO  10:27:10     54.147.196.63 Terminating
+INFO  10:27:10     54.144.235.111 Terminating
+INFO  10:27:10     54.166.1.79 Terminating
+INFO  10:28:13 Updating /disk1/exampleSandbox/agents.txt
+INFO  10:28:13 Duration: 00d 00h 01m 27s
+INFO  10:28:13 ==============================================================
+INFO  10:28:13 Terminated 4 of 4, remaining=0
+INFO  10:28:13 ==============================================================
+INFO  10:28:13 Shutting down Provisioner...
+INFO  10:28:13 Done!
+```
+
+### Running the Test with a Script
+
+Another option to run the test is using a script. Execute the following command to create a script called, for example, `run.sh`.
+
+```
+cat > run.sh
+```
+
+
+This option is for your convenience. It gathers all the commands used to perform a test into one script. The following is the content of this example `run.sh` script.
+
+```
+#!/bin/bash
+set -e
+provisioner --scale 4
+coordinator test.properties
+provisioner --download
+```
+
+Note that you should make the script `run.sh` executable executing the following command.
+
+```
+chmod +x run.sh
+```
+	
 <br></br>
 ***RELATED INFORMATION***
 
-*Please see the [Provisioner section](#provisioner) and the [Coordinator section](#coordinator) for the `provisioner` and `coordinator` commands you see in the script `run.sh`.*
+*Please see the [Provisioner section](#provisioner) and the [Coordinator section](#coordinator) for more `provisioner` and `coordinator` commands.*
 <br></br>
-
-The output of the test looks like the following.
-
-```
-INFO  08:40:10 Hazelcast Simulator Provisioner
-INFO  08:40:10 Version: 0.3, Commit: 2af49f0, Build Time: 13.07.2014 @ 08:37:06 EEST
-INFO  08:40:10 SIMULATOR_HOME: /home/alarmnummer/hazelcast-simulator-0.3
-INFO  08:40:10 Loading simulator.properties: /tmp/yourproject/workdir/simulator.properties
-INFO  08:40:10 ==============================================================
-INFO  08:40:10 Provisioning 4 aws-ec2 machines
-INFO  08:40:10 ==============================================================
-INFO  08:40:10 Current number of machines: 0
-INFO  08:40:10 Desired number of machines: 4
-INFO  08:40:10 GroupName: simulator-agent
-INFO  08:40:10 JDK spec: oracle 7
-INFO  08:40:10 Hazelcast version-spec: outofthebox
-INFO  08:40:12 Created compute
-INFO  08:40:12 Machine spec: hardwareId=m3.medium,locationId=us-east-1,imageId=us-east-1/ami-fb8e9292
-INFO  08:40:19 Security group: 'simulator' is found in region 'us-east-1'
-INFO  08:40:27 Created template
-INFO  08:40:27 Loginname to the remote machines: simulator
-INFO  08:40:27 Creating machines (can take a few minutes)
-INFO  08:42:10 	54.91.98.103 LAUNCHED
-INFO  08:42:10 	54.237.144.164 LAUNCHED
-INFO  08:42:10 	54.196.60.36 LAUNCHED
-INFO  08:42:10 	54.226.58.200 LAUNCHED
-INFO  08:42:24 	54.196.60.36 JAVA INSTALLED
-INFO  08:42:25 	54.237.144.164 JAVA INSTALLED
-INFO  08:42:27 	54.91.98.103 JAVA INSTALLED
-INFO  08:42:30 	54.226.58.200 JAVA INSTALLED
-INFO  08:42:57 	54.196.60.36 SIMULATOR AGENT INSTALLED
-INFO  08:42:59 	54.237.144.164 SIMULATOR AGENT INSTALLED
-INFO  08:43:01 	54.196.60.36 SIMULATOR AGENT STARTED
-INFO  08:43:02 	54.237.144.164 SIMULATOR AGENT STARTED
-INFO  08:43:06 	54.91.98.103 SIMULATOR AGENT INSTALLED
-INFO  08:43:09 	54.91.98.103 SIMULATOR AGENT STARTED
-INFO  08:43:21 	54.226.58.200 SIMULATOR AGENT INSTALLED
-INFO  08:43:25 	54.226.58.200 SIMULATOR AGENT STARTED
-INFO  08:43:25 Duration: 00d 00h 03m 15s
-INFO  08:43:25 ==============================================================
-INFO  08:43:25 Successfully provisioned 4 aws-ec2 machines
-INFO  08:43:25 ==============================================================
-INFO  08:43:25 Pausing for Machine Warm up... (10 sec)
-INFO  08:43:36 Hazelcast Simulator Coordinator
-INFO  08:43:36 Version: 0.3, Commit: 2af49f0, Build Time: 13.07.2014 @ 08:37:06 EEST
-INFO  08:43:36 SIMULATOR_HOME: /home/alarmnummer/hazelcast-simulator-0.3
-INFO  08:43:36 Loading simulator.properties: /tmp/yourproject/workdir/simulator.properties
-INFO  08:43:36 Loading testsuite file: /tmp/yourproject/workdir/../conf/test.properties
-INFO  08:43:36 Loading Hazelcast configuration: /tmp/yourproject/workdir/../conf/hazelcast.xml
-INFO  08:43:36 Loading Hazelcast client configuration: /tmp/yourproject/workdir/../conf/client-hazelcast.xml
-INFO  08:43:36 Loading agents file: /tmp/yourproject/workdir/agents.txt
-INFO  08:43:36 --------------------------------------------------------------
-INFO  08:43:36 Waiting for agents to start
-INFO  08:43:36 --------------------------------------------------------------
-INFO  08:43:36 Connect to agent 54.91.98.103 OK
-INFO  08:43:37 Connect to agent 54.237.144.164 OK
-INFO  08:43:37 Connect to agent 54.196.60.36 OK
-INFO  08:43:37 Connect to agent 54.226.58.200 OK
-INFO  08:43:37 --------------------------------------------------------------
-INFO  08:43:37 All agents are reachable!
-INFO  08:43:37 --------------------------------------------------------------
-INFO  08:43:37 Performance monitor enabled: false
-INFO  08:43:37 Total number of agents: 4
-INFO  08:43:37 Total number of Hazelcast member workers: 2
-INFO  08:43:37 Total number of Hazelcast client workers: 2
-INFO  08:43:37 Total number of Hazelcast mixed client & member workers: 0
-INFO  08:43:38 Copying workerClasspath '../target/*.jar' to agents
-INFO  08:43:49 Finished copying workerClasspath '../target/*.jar' to agents
-INFO  08:43:49 Starting workers
-INFO  08:44:03 Finished starting a grand total of 4 Workers JVM's after 14463 ms
-INFO  08:44:04 Starting testsuite: 1405230216265
-INFO  08:44:04 Tests in testsuite: 1
-INFO  08:44:05 Running time per test: 00d 00h 05m 00s 
-INFO  08:44:05 Expected total testsuite time: 00d 00h 05m 00s
-INFO  08:44:05 Running 1 tests sequentially
-INFO  08:44:05 --------------------------------------------------------------
-Running Test : 
-TestCase{
-      id=
-    , class=yourgroupid.ExampleTest
-    , maxKeys=5000
-    , putProb=0.4
-}
---------------------------------------------------------------
-INFO  08:44:06 Starting Test initialization
-INFO  08:44:07 Completed Test initialization
-INFO  08:44:08 Starting Test setup
-INFO  08:44:10 Completed Test setup
-INFO  08:44:11 Starting Test local warmup
-INFO  08:44:13 Completed Test local warmup
-INFO  08:44:14 Starting Test global warmup
-INFO  08:44:16 Completed Test global warmup
-INFO  08:44:16 Starting Test start
-INFO  08:44:18 Completed Test start
-INFO  08:44:18 Test will run for 00d 00h 05m 00s
-INFO  08:44:48 Running 00d 00h 00m 30s, 10.00 percent complete
-INFO  08:45:18 Running 00d 00h 01m 00s, 20.00 percent complete
-INFO  08:45:48 Running 00d 00h 01m 30s, 30.00 percent complete
-INFO  08:46:18 Running 00d 00h 02m 00s, 40.00 percent complete
-INFO  08:46:48 Running 00d 00h 02m 30s, 50.00 percent complete
-INFO  08:47:18 Running 00d 00h 03m 00s, 60.00 percent complete
-INFO  08:47:48 Running 00d 00h 03m 30s, 70.00 percent complete
-INFO  08:48:18 Running 00d 00h 04m 00s, 80.00 percent complete
-INFO  08:48:48 Running 00d 00h 04m 30s, 90.00 percent complete
-INFO  08:49:18 Running 00d 00h 05m 00s, 100.00 percent complete
-INFO  08:49:19 Test finished running
-INFO  08:49:19 Starting Test stop
-INFO  08:49:22 Completed Test stop
-INFO  08:49:22 Starting Test global verify
-INFO  08:49:25 Completed Test global verify
-INFO  08:49:25 Starting Test local verify
-INFO  08:49:28 Completed Test local verify
-INFO  08:49:28 Starting Test global tear down
-INFO  08:49:31 Finished Test global tear down
-INFO  08:49:31 Starting Test local tear down
-INFO  08:49:34 Completed Test local tear down
-INFO  08:49:34 Terminating workers
-INFO  08:49:35 All workers have been terminated
-INFO  08:49:35 Starting cool down (10 sec)
-INFO  08:49:45 Finished cool down
-INFO  08:49:45 Total running time: 340 seconds
-INFO  08:49:45 -----------------------------------------------------------------------------
-INFO  08:49:45 No failures have been detected!
-INFO  08:49:45 -----------------------------------------------------------------------------
-INFO  08:49:46 Hazelcast Simulator Provisioner
-INFO  08:49:46 Version: 0.3, Commit: 2af49f0, Build Time: 13.07.2014 @ 08:37:06 EEST
-INFO  08:49:46 SIMULATOR_HOME: /home/alarmnummer/hazelcast-simulator-0.3
-INFO  08:49:46 Loading simulator.properties: /tmp/yourproject/workdir/simulator.properties
-INFO  08:49:46 ==============================================================
-INFO  08:49:46 Download artifacts of 4 machines
-INFO  08:49:46 ==============================================================
-INFO  08:49:46 Downloading from 54.91.98.103
-INFO  08:49:49 Downloading from 54.237.144.164
-INFO  08:49:51 Downloading from 54.196.60.36
-INFO  08:49:53 Downloading from 54.226.58.200
-INFO  08:49:56 ==============================================================
-INFO  08:49:56 Finished Downloading Artifacts of 4 machines
-INFO  08:49:56 ==============================================================
-INFO  08:49:56 Hazelcast Simulator Provisioner
-INFO  08:49:56 Version: 0.3, Commit: 2af49f0, Build Time: 13.07.2014 @ 08:37:06 EEST
-INFO  08:49:56 SIMULATOR_HOME: /home/alarmnummer/hazelcast-simulator-0.3
-INFO  08:49:56 Loading simulator.properties: /tmp/yourproject/workdir/simulator.properties
-INFO  08:49:56 ==============================================================
-INFO  08:49:56 Terminating 4 aws-ec2 machines (can take some time)
-INFO  08:49:56 ==============================================================
-INFO  08:49:56 Current number of machines: 4
-INFO  08:49:56 Desired number of machines: 0
-INFO  08:50:29 	54.196.60.36 Terminating
-INFO  08:50:29 	54.237.144.164 Terminating
-INFO  08:50:29 	54.226.58.200 Terminating
-INFO  08:50:29 	54.91.98.103 Terminating
-INFO  08:51:16 Updating /tmp/yourproject/workdir/agents.txt
-INFO  08:51:16 Duration: 00d 00h 01m 20s
-INFO  08:51:16 ==============================================================
-INFO  08:51:16 Finished terminating 4 aws-ec2 machines, 0 machines remaining.
-INFO  08:51:16 ==============================================================
-```
 
 ### Using Maven Archetypes
 
-Alternatively, you can execute tests using the Simulator archetype. Please see the following:
+Alternatively, you can execute tests using the Simulator archetype. Please see the following.
 
 ```
 mvn archetype:generate  \
@@ -378,9 +362,9 @@ mvn archetype:generate  \
     -DartifactId=yourproject
 ```
 
-This will create a fully working Simulator project, including the test having `yourgroupid`. 
+This creates a fully working Simulator project, including the test having `yourgroupid`. 
 
-1. After this project is generated, go to the created folder and run the following command.
+1. After this project is generated, go to the created folder and execute the following command.
 
    ```
 mvn clean install
