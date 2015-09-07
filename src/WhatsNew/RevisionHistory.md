@@ -41,7 +41,7 @@
 |[Chapter 23 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added introduction paragraphs to the chapter.|
 ||[Configuration Overview](#configuration-overview)|Added a note related to the invalid configurations.
 ||[Using Variables](#using-variables)| Added as a new section explaining how to use variables in declarative configuration.|
-||[System Properties](#system-properties)|Added the new system properties `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count`. Updated the definition of `hazelcast.io.thread.count`.
+||[System Properties](#system-properties)|Added the new system properties `hazelcast.unsafe.mode`,  `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count`. Updated the definition of `hazelcast.io.thread.count`.
 ||[Enterprise WAN Replication Configuration](#enterprise-wan-replication-configuration)|Added as a new section describing the elements and attributes of Enterprise WAN Replication configuration.
 |[Chapter 25 - License Questions](#license-questions)||Added as a new chapter describing the license information of dependencies.|
 |[Chapter 26 - Common Exception Types](#common-exception-types)||Added as a new chapter.|
