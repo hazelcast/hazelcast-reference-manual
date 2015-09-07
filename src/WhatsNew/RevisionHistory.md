@@ -12,7 +12,7 @@
 |[Chapter 18 - Management](#management)|[Cluster Quorum](#cluster-quorum)|Added information on quorum support for caches. Added the definition of the new configuration element `quorum-ref` to [ICache Configuration section](#icache-configuration).|
 ||[Management Center](#management-center)|A note on how to see the cache statistics on the Management Center added under the [Caches section](#caches).<br></br>[Replicated Maps](#replicated-maps) added as a new section. 
 |[Chapter 23 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added [Quorum Configuration](#quorum-configuration) section.|
-||[System Properties](#system-properties)|Added the new system properties `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count`. Updated the definition of `hazelcast.io.thread.count`.
+||[System Properties](#system-properties)|Added the new system properties `hazelcast.unsafe.mode`,  `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count`. Updated the definition of `hazelcast.io.thread.count`.
 |[Chapter 27 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
 |[Chapter 28 - Glossary](#glossary)||Added new glossary items.|
 
