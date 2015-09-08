@@ -22,7 +22,7 @@ function init {
 	PDF_OUTPUT_DIR="pdf"
 	PDF_FILE_NAME="hazelcast-documentation-${VERSION}.pdf"
 	MANIFEST_FILE_NAME="manifest.json"
-	MERGED_FILE_NAME="hazelcast-documentation.md"
+	MERGED_FILE_NAME="index.md"
 	COPYRIGHT_FILE_NAME="copyright.txt"
 	DATE=`date +%b\ %d\,\ %Y`
 	YEAR=`date +%Y`
@@ -130,7 +130,7 @@ function createSingleHTML {
     writeManifestFile "${MANIFEST_FILE_BODY}"
 
     echo "Creating single_html documentation"
-    createHtml=$(bfdocs --theme=themes/single_html ${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${SINGLE_HTML_OUTPUT_DIR} )
+    createHtml=$(bfdocs --theme=themes/single_html ${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${SINGLE_HTML_OUTPUT_DIR})
     if [[ $? -eq 0 ]]; then
         echo "Single HTML created succesfully "
     else
