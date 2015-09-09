@@ -58,6 +58,7 @@ All network related configuration of Hazelcast Java Client is performed via the 
     <inside-aws>false</inside-aws>
     <access-key>my-access-key</access-key>
     <secret-key>my-secret-key</secret-key>
+    <iam-role>s3access</iam-role>
     <region>us-west-1</region>
     <host-header>ec2.amazonaws.com</host-header>
     <security-group-name>hazelcast-sg</security-group-name>
@@ -322,6 +323,7 @@ The example declarative and programmatic configurations below show how to config
     <inside-aws>false</inside-aws>
     <access-key>my-access-key</access-key>
     <secret-key>my-secret-key</secret-key>
+    <iam-role>s3access</iam-role>
     <region>us-west-1</region>
     <host-header>ec2.amazonaws.com</host-header>
     <security-group-name>hazelcast-sg</security-group-name>
@@ -345,11 +347,18 @@ clientAwsConfig.setInsideAws( false )
                .setSecurityGroupName( ">hazelcast-sg" )
                .setTagKey( "type" )
                .setTagValue( "hz-nodes" );
+               .setIamRole( "s3access" );
 clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
 HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If the *`inside-aws`* parameter is not set, the private addresses of nodes will always be converted to public addresses. Also, the client will use public addresses to connect to the nodes. In order to use private addresses, set the *`inside-aws`* parameter to *`true`*. Also note that, when connecting outside from AWS, setting the *`inside-aws`* parameter to *`true`* will cause the client to not be able to reach the nodes.*
+You can refer to the [aws element section](#aws-element) for the descriptions of above AWS configuration elements except `inside-aws` and `iam-role`, which are explained below.
+
+If the `inside-aws` element is not set, the private addresses of cluster members will always be converted to public addresses. Also, the client will use public addresses to connect to the members. In order to use private addresses, set the `inside-aws` parameter to `true`. Also note that, when connecting outside from AWS, setting the `inside-aws` parameter to `true` will cause the client to not be able to reach the members.
+
+IAM roles are used to make secure requests from your clients. You can provide the name of your IAM role that you created previously on your AWS console using the `iam-role` or `setIamRole()` method.
+
+
 
 ### Client Load Balancer Configuration
 
