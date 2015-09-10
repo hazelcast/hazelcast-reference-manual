@@ -41,3 +41,4 @@ public abstract class AbstractEntryProcessor <K, V>
 
 In the above example, the method `getBackupProcessor` returns an `EntryBackupProcessor` instance. This means the same processing will be applied to both the primary and backup entries. If you want to apply the processing only upon the primary entries, then make the `getBackupProcessor` method return null. 
 
+![image](images/NoteSmall.jpg) ***NOTE***: *Beware of the null issue described at the end of the [EntryProcessor Overview](#entry-processor-overview) section of this documentation. Due to an yet unsent backup from a previous operation, an `EntryBackupProcessor` may temporarily receive `null` from `Map.Entry.getValue()` even though the value actually exists in the map. If you decide to use `AbstractEntryProcessor`, make sure your code logic is not sensitive to null values, or you may encounter `NullPointerException` during runtime.*

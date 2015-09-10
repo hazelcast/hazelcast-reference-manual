@@ -97,3 +97,4 @@ public interface EntryBackupProcessor<K, V> extends Serializable {
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *EntryProcessors run via Operation Threads that are dedicated to specific partitions.  Therefore with long running EntryProcessor executions other partition operations cannot be processed, such as a 'map.put(key)'.  With this is in mind it is good practice to make your EntryProcessor executions as quick as possible*
 
+![image](images/NoteSmall.jpg) ***NOTE***: *There is a possibility that an `EntryProcessor` can see that a key exists but its backup processor may not find it at run time due to an unsent backup of a previous operation (e.g. a previous put). In those situations, Hazelcast internally/eventually will sync those owner and backup partitions so you will not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.*
