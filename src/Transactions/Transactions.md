@@ -10,7 +10,7 @@ You create a `TransactionContext` object to begin, commit, and rollback a transa
 
 Hazelcast supports two types of transactions: ONE_PHASE and TWO_PHASE. With the type, you have influence over how much guarantee you get when a member crashes while a transaction is committing. The default behavior is TWO_PHASE.
 <br><br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with Hazelcast 3.6, the transaction type `LOCAL` has been deprecated. Please use `ONE_PHASE` instead, for the Hazelcast releases 3.6 and higher.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with Hazelcast 3.6, the transaction type `LOCAL` has been deprecated. Please use `ONE_PHASE` for the Hazelcast releases 3.6 and higher.*
 <br><br>
 
 - **ONE_PHASE**: By selecting this transaction type, you execute the transactions with a single phase, that is committing the changes. Since a preparing phase does not exist, the conflicts are not detected. When a conflict happens during committing the changes (e.g. due to a member crash), it means not all the changes are written and this leaves the system in an inconsistent state.
