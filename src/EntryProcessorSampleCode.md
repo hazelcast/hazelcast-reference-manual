@@ -82,3 +82,7 @@ public class EntryProcessorTest {
 }
 ```
 
+![image](images/NoteSmall.jpg) ***NOTE***: *You should explicitly call `setValue` method of `Map.Entry` when modifying data in Entry Processor. Otherwise, Entry Processor will be accepted as read-only.*
+
+![image](images/NoteSmall.jpg) ***NOTE***: *An Entry Processor instance is not thread safe. If you are storing partition specific state between invocations, be sure to register this in a thread-local.  An Entry Processor instance can be used by multiple partition threads.*
+

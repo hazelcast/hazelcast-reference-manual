@@ -64,6 +64,9 @@ Map<K, Object> executeOnEntries( EntryProcessor entryProcessor );
 Map<K, Object> executeOnEntries( EntryProcessor entryProcessor, Predicate predicate );
 ```
 
+![image](images/NoteSmall.jpg) ***NOTE***: *Entry Processors run via Operation Threads that are dedicated to specific partitions.  Therefore, with long running Entry Processor executions, other partition operations such as `map.put(key)` cannot be processed. With this in mind, it is a good practice to make your Entry Processor executions as quick as possible.*
+
+
 #### `EntryProcessor` Interface
 
 The following is the `EntryProcessor` interface:
@@ -89,12 +92,5 @@ public interface EntryBackupProcessor<K, V> extends Serializable {
     void processBackup( Map.Entry<K, V> entry );
 }
 ```
-
-
-![image](images/NoteSmall.jpg) ***NOTE***: *You should explicitly call `setValue` method of `Map.Entry` when modifying data in Entry Processor. Otherwise, Entry Processor will be accepted as read-only.*
-
-![image](images/NoteSmall.jpg) ***NOTE***: *An Entry Processor instance is not thread safe. If you are storing partition specific state between invocations be sure to register this in a thread-local.  An Entry Processor instance can be used by multiple partition threads.*
-
-![image](images/NoteSmall.jpg) ***NOTE***: *Entry Processors run via Operation Threads that are dedicated to specific partitions.  Therefore, with long running Entry Processor executions, other partition operations such as `map.put(key)` cannot be processed. With this in mind, it is a good practice to make your Entry Processor executions as quick as possible.*
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *There is a possibility that an Entry Processor can see that a key exists but its backup processor may not find it at the run time due to an unsent backup of a previous operation (e.g. a previous put operation). In those situations, Hazelcast internally/eventually will synchronize those owner and backup partitions so you will not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.*
