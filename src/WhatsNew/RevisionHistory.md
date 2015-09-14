@@ -13,6 +13,7 @@
 ||[Client Network Configuration](#client-network-configuration)|Updated by adding the definition of the new IAM role configuration element.
 |[Chapter 18 - Management](#management)|[Cluster Quorum](#cluster-quorum)|Added information on quorum support for caches. Added the definition of the new configuration element `quorum-ref` to [ICache Configuration section](#icache-configuration).|
 ||[Management Center](#management-center)|A note on how to see the cache statistics on the Management Center added under the [Caches section](#caches).<br></br>[Replicated Maps](#replicated-maps) added as a new section.<br><br> Added the information explaining the new e-mail notification mechanism to the [Alerts section](#alerts).
+||[Monitoring with JMX](#monitoring-with-jmx)|[MBean Naming for Hazelcast Data Structures](#mbean-naming-for-hazelcast-data-structures) and [Connecting to JMX Agent](#connecting-to-jmx-agent) added as new sections.
 |[Chapter 23 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added [Quorum Configuration](#quorum-configuration) section.|
 ||[System Properties](#system-properties)|Added the new system properties `hazelcast.unsafe.mode`,  `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count`. Updated the definition of `hazelcast.io.thread.count`.
 |[Chapter 27 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
