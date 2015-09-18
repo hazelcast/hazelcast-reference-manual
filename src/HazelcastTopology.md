@@ -24,5 +24,5 @@ See the below illustration.
 Client/Server deployment has advantages including more predictable and reliable Hazelcast performance, easier identification of problem causes, and most importantly, better scalability. 
 When you need to scale in this deployment type, just add more Hazelcast server members. You can address client and server scalability concerns separately.
 
-If you want low-latency data access, as it is in the Embedded deployment, and you also want the scalability advantages of the Client/Server deployment, you can consider to define near caches for your clients. This enables the frequently used data to be kept in the client's local memory. Please refer to the [Client Near Cache Configuration section](#client-near-cache-configuration).
+If you want low-latency data access, as it is in the Embedded deployment, and you also want the scalability advantages of the Client/Server deployment, you can consider to define near caches for your clients. This enables the frequently used data to be kept in the client's local memory. Please refer to [Configuring Client Near Cache](#configuring-client-near-cache).
 

@@ -273,7 +273,7 @@ To write a Client Listener class, you implement the ClientListener interface and
 which are invoked when a client is connected to or disconnected from the cluster.
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *You can also add event listeners to a Hazelcast client. Please refer to [Client Listenerconfig](#client-listener-configuration) for the related information.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *You can also add event listeners to a Hazelcast client. Please refer to [Client Listenerconfig](#configuring-client-listeners) for the related information.*
 
 ## Event Listeners for Hazelcast Clients
 
