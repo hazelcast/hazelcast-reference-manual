@@ -75,7 +75,12 @@ Here is an example script to build with shared library:
 `g++ main.cpp -I./external/include -I./hazelcast/include -L./hazelcast/lib/shared -lHazelcastClientShared_6`
 
 #### Windows
-For Windows, there are two distributions; 32 bit and 64 bit.
+For Windows, there are two distributions; 32 bit and 64 bit. Currently release have only Visual Studio 2012 compatible libraries in the distributed zip. For others please contact with support@hazelcast.com.
+
+When compiling for Windows environment the user should specify one of the following flags:
+
+* HAZELCAST_USE_STATIC: You want the application to use the static Hazelcast library.
+* HAZELCAST_USE_SHARED: You want the application to use the shared Hazelcast library.
 
 ### Code Examples
 
