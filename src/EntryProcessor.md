@@ -6,13 +6,13 @@ Hazelcast supports entry processing. An entry processor is a function that execu
 
 An entry processor is a good option if you perform bulk processing on an `IMap`. Usually, you perform a loop of keys: executing `IMap.get(key)`, mutating the value, and finally putting the entry back in the map using `IMap.put(key,value)`.  If you perform this process from a client or from a member where the keys do not exist, you effectively perform 2 network hops for each update: the first to retrieve the data and the second to update the mutated value.
 
-If you are doing the above, you should consider using entry processors. An entry processor executes a read and updates upon the member where the data resides.  This eliminates the costly network hops described previously.
+If you are doing the process described above, you should consider using entry processors. An entry processor executes a read and updates upon the member where the data resides.  This eliminates the costly network hops described previously.
 
 ### Performing Fast In-Memory Map Operations
 
-An entry processor enables fast in-memory operations on your map without you having to worry about locks or concurrency issues. It can be applied to a single map entry or to all map entries. It supports choosing target entries using predicates. You do not need any explicit lock on entry: Hazelcast locks the entry, runs the EntryProcessor, and then unlocks the entry.
+An entry processor enables fast in-memory operations on your map without you having to worry about locks or concurrency issues. You can apply it to a single map entry or to all map entries. It supports choosing target entries using predicates. You do not need any explicit lock on entry: Hazelcast locks the entry, runs the EntryProcessor, and then unlocks the entry.
 
-Hazelcast sends the entry processor to each cluster member and these members apply it to map entries. Therefore, if you add more members, your processing is completed faster.
+Hazelcast sends the entry processor to each cluster member and these members apply it to map entries. Therefore, if you add more members, your processing completes faster.
 
 #### Using OBJECT In-Memory Format
 
@@ -81,7 +81,7 @@ public interface EntryProcessor<K, V> extends Serializable {
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *If you want to execute a task on a single key, you can also use `executeOnKeyOwner` provided by Executor Service. But, in this case, you need to perform a lock and serialization.*
 
-When using `executeOnEntries` method, if the number of entries is high and you do need the results, then returning null in `process()` method is a good practice. By this way, results of the processing is not stored in the map and hence out of memory errors are eliminated.
+When using the `executeOnEntries` method, if the number of entries is high and you do need the results, then returning null in `process()` method is a good practice. By returning null, results of the processing is not stored in the map and hence out of memory errors are eliminated.
 
 #### Processing Backup Entries
 
@@ -93,4 +93,4 @@ public interface EntryBackupProcessor<K, V> extends Serializable {
 }
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE***: *There is a possibility that an Entry Processor can see that a key exists but its backup processor may not find it at the run time due to an unsent backup of a previous operation (e.g. a previous put operation). In those situations, Hazelcast internally/eventually will synchronize those owner and backup partitions so you will not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.*
+![image](images/NoteSmall.jpg) ***NOTE***: *It is possible that an Entry Processor can see that a key exists but its backup processor may not find it at the run time due to an unsent backup of a previous operation (e.g. a previous put operation). In those situations, Hazelcast internally/eventually will synchronize those owner and backup partitions so you will not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.*

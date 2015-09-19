@@ -136,7 +136,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.socket.send.buffer.size` | 32 | int  | Socket send buffer (`SO_SNDBUF`) size in KB.
 `hazelcast.socket.server.bind.any` | true | bool | Bind server-socket to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
 `hazelcast.tcp.join.port.try.count`|3|int|The number of incremental ports, starting with the port number defined in the network configuration, that will be used to connect to a host (which is defined without a port in TCP/IP member list while a node is searching for a cluster).
-`hazelcast.unsafe.mode` | auto | string  |   Other than the default "auto", it has two other values. One of them is "disabled" to explicitly disable the `Unsafe` usage in your platform. The other one is "enforced" to enforce the usage of `Unsafe` even if your platform does not support it. The default value "auto" automatically detects whether the usage of `Unsafe` is suitable for a given platform. This property can only be set by passing a JVM-wide system property.
+`hazelcast.unsafe.mode` | auto | string  | "auto" (the default value) automatically detects whether the usage of `Unsafe` is suitable for a given platform. "disabled" explicitly disables the `Unsafe` usage in your platform. "enforced" enforces the usage of `Unsafe` even if your platform does not support it. This property can only be set by passing a JVM-wide system property.
 `hazelcast.version.check.enabled` | true | bool  |   Enable Hazelcast new version check on startup.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.
 
