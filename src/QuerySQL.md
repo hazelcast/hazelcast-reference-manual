@@ -34,6 +34,14 @@ Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) 
 <br><br>
 
 
+**IN:** `<attribute> [NOT] IN (val1, val2,...)`
+
+- `age IN ( 20, 30, 40 )`
+- `age NOT IN ( 60, 70 )`
+- `active AND ( salary >= 50000 OR ( age NOT BETWEEN 20 AND 30 ) )`
+- `age IN ( 20, 30, 40 ) AND salary BETWEEN ( 50000, 80000 )`
+<br><br>
+
 **LIKE:** `<attribute> [NOT] LIKE 'expression'`
 
 The `%` (percentage sign) is placeholder for multiple characters, an `_` (underscore) is placeholder for only one character.
@@ -44,14 +52,6 @@ The `%` (percentage sign) is placeholder for multiple characters, an `_` (unders
 - `name LIKE 'J_s%'` (true for 'Josh', 'Joseph'; false 'John', 'Joe')
 <br><br>
 
-
-**IN:** `<attribute> [NOT] IN (val1, val2,...)`
-
-- `age IN ( 20, 30, 40 )`
-- `age NOT IN ( 60, 70 )`
-- `active AND ( salary >= 50000 OR ( age NOT BETWEEN 20 AND 30 ) )`
-- `age IN ( 20, 30, 40 ) AND salary BETWEEN ( 50000, 80000 )`
-<br><br>
 
 
 
