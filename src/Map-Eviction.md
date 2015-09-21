@@ -78,6 +78,23 @@ Let's describe each element.
 
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
+	- `USED_NATIVE_MEMORY_SIZE`: Maximum used native memory size in megabytes for each JVM.
+
+		`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
+
+	- `USED_NATIVE_MEMORY_PERCENTAGE`: Maximum used native memory size percentage for each JVM.
+
+		`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
+
+	- `FREE_NATIVE_MEMORY_SIZE`: Maximum free native memory size in megabytes for each JVM.
+
+		`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
+
+	- `FREE_NATIVE_MEMORY_PERCENTAGE`: Maximum free native memory size percentage for each JVM.
+
+		`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
+
+
 - `eviction-percentage`: When `max-size` is reached, the specified percentage of the map will be evicted. For example, if set to 25, 25% of the entries will be evicted. Setting this property to a smaller value will cause eviction of a smaller number of map entries. Therefore, if map entries are inserted frequently, smaller percentage values may lead to overheads. Valid values are integers between 0 and 100. The default value is 25.
 - `min-eviction-check-millis`: Minimum time in milliseconds which should elapse before checking whether a partition of the map is evictable or not. In other terms, this property specifies the frequency of the eviction process. The default value is 100. Setting it to 0 (zero) makes the eviction process run for every put operation.
 
