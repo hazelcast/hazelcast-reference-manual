@@ -6,7 +6,7 @@
 ![](images/enterprise-onlycopy.jpg)
 
 
-You can use the native .NET client to connect to Hazelcast nodes. All you need is to add `HazelcastClient3x.dll` into your .NET project references. The API is very similar to the Java native client. 
+You can use the native .NET client to connect to Hazelcast client members. You need to add `HazelcastClient3x.dll` into your .NET project references. The API is very similar to the Java native client. 
 
 .NET Client has the following distributed objects.
 
@@ -30,7 +30,7 @@ ITransactionContext can be used to obtain:
 * `ITransactionalList<E>`, and
 * `ITransactionalSet<E>`.
 
-At present the following features are not available as in the Java Client:
+At present the following features are not available in the .NET Client as they are in the Java Client:
 
 * Distributed Executor Service
 * Replicated Map
@@ -129,13 +129,13 @@ namespace Hazelcast.Client.Example
 ```
 
 
-### Client Configuration
+### Configuring .NET Client
 You can configure the Hazelcast .NET client via API or XML. To start the client, you can pass a configuration or leave it empty to use default values.
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *.NET and Java clients are similar in terms of configuration. Therefore, you can refer to [Java Client](#hazelcast-java-client) section for configuration aspects. For information on .NET API documentation, please refer to the API document provided along with the Hazelcast Enterprise license*.
 
 
-### Client Startup
+### Starting .NET Client
 After configuration, you can obtain a client using one of the static methods of Hazelcast, as shown below.
 
 
