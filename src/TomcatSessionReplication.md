@@ -145,7 +145,7 @@ Optionally, you can add `configLocation` attribute into the `<Listener>` element
 - Add `mapName` attribute into `<Manager>` element. Its default value is *default Hazelcast Distributed Map*. Use this attribute if you have a specially configured map for special cases like WAN Replication, Eviction, MapStore, etc.
 - Add `sticky` attribute into `<Manager>` element. Its default value is *true*.
 - Add `processExpiresFrequency` attribute into `<Manager>` element. It specifies the frequency of session validity check, in seconds. Its default value is *6* and the minimum value that you can set is *1*.
-- Add `deferredWrite` attribute into `<Manager>` elemenet. Its default value is *true*.
+- Add `deferredWrite` attribute into `<Manager>` element. Its default value is *true*.
 
 <br></br>
 
