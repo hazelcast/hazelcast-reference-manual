@@ -1,7 +1,7 @@
 
 
 
-## Portable
+## Implementing Portable Serialization
 
 As an alternative to the existing serialization methods, Hazelcast offers a language/platform independent Portable serialization that has the following advantages:
 
@@ -11,11 +11,13 @@ As an alternative to the existing serialization methods, Hazelcast offers a lang
 
 In order to support these features, a serialized Portable object contains meta information like the version and the concrete location of the each field in the binary data. This way, Hazelcast navigates in the `byte[]` and de-serializes only the required field without actually de-serializing the whole object. This improves the Query performance.
 
-With multi-version support, you can have two nodes where each of them have different versions of the same object. Hazelcast will store both meta information and use the correct one to serialize and de-serialize Portable objects depending on the node. This is very helpful when you are doing a rolling upgrade without shutting down the cluster.
+With multi-version support, you can have two cluster members where each has different versions of the same object. Hazelcast will store both meta information and use the correct one to serialize and de-serialize Portable objects depending on the member. This is very helpful when you are doing a rolling upgrade without shutting down the cluster.
 
 Portable serialization is totally language independent and is used as the binary protocol between Hazelcast server and clients.
 
-A sample Portable implementation of a Foo class would look like the following.
+### Portable Serialization Example Code
+
+Here is example code for Portable implementation of a Foo class.
 
 ```java
 public class Foo implements Portable{
@@ -55,7 +57,7 @@ public class Foo implements Portable{
 
 Similar to `IdentifiedDataSerializable`, a Portable Class must provide `classId` and `factoryId`. The Factory object creates the Portable object given the `classId`.
 
-An example `Factory` could be implemented as following:
+An example `Factory` could be implemented as follows:
 
 ```java
 public class MyPortableFactory implements PortableFactory {
@@ -69,6 +71,8 @@ public class MyPortableFactory implements PortableFactory {
   }
 }            
 ```
+
+### Registering the Portable Factory
 
 The last step is to register the `Factory` to the `SerializationConfig`. Below are the programmatic and declarative configurations for this step.
 
@@ -96,9 +100,9 @@ config.getSerializationConfig().addPortableFactory( 1, new MyPortableFactory() )
 Note that the `id` that is passed to the `SerializationConfig` is the same as the `factoryId` that the `Foo` class returns.
 
 
-### Versions
+### Versioning for Portable Serialization
 
-More than one version of the same class may need to be serialized and deserialized.  For example, a client may have an older version of a class, and the node to which it is connected can have a newer version of the same class. 
+More than one version of the same class may need to be serialized and deserialized. For example, a client may have an older version of a class, and the node to which it is connected may have a newer version of the same class. 
 
 Portable serialization supports versioning. You can declare Version in the configuration file `hazelcast.xml` using the `portable-version` element, as shown below.
 
@@ -122,7 +126,7 @@ You should consider the following when you perform versioning.
 
 ### Null Portable Serialization
 
-Be careful when serializing null portables. Hazelcast lazily creates a class definition of portable internally
+Be careful with serializing null portables. Hazelcast lazily creates a class definition of portable internally
 when the user first serializes. This class definition is stored and used later for deserializing that portable class. When
 the user tries to serialize a null portable when there is no class definition at the moment, Hazelcast throws an
 exception saying that `com.hazelcast.nio.serialization.HazelcastSerializationException: Cannot write null portable
@@ -142,7 +146,7 @@ Hazelcast.newHazelcastInstance(config);
 
 ### DistributedObject Serialization
 
-Putting a `DistributedObject` (Hazelcast Semaphore, Queue, etc.) in a machine and getting it from another one is not a straightforward operation. Passing the ID and type of the `DistributedObject` can be a solution. For deserialization, you can get the object from HazelcastInstance. For instance, if your object is an instance of `IQueue`, you can either use `HazelcastInstance.getQueue(id)` or `Hazelcast.getDistributedObject`.
+Putting a `DistributedObject` (Hazelcast Semaphore, Queue, etc.) in a cluster member and getting it from another one is not a straightforward operation. Passing the ID and type of the `DistributedObject` can be a solution. For deserialization, you can get the object from HazelcastInstance. For instance, if your object is an instance of `IQueue`, you can either use `HazelcastInstance.getQueue(id)` or `Hazelcast.getDistributedObject`.
 
 You can use the `HazelcastInstanceAware` interface in the case of a deserialization of a Portable `DistributedObject` if it gets an ID to be looked up. HazelcastInstance is set after deserialization, so you first need to store the ID and then retrieve the `DistributedObject` using the `setHazelcastInstance` method. 
 

@@ -2,9 +2,11 @@
 
 
 
-## Serializable & Externalizable
+## Implementing Java Serializable and Externalizable
 
-A class often needs to implement the `java.io.Serializable` interface; native Java serialization is the easiest way to do serialization. Let's take a look at the example code below.
+A class often needs to implement the `java.io.Serializable` interface; native Java serialization is the easiest way to do serialization.
+
+Let's take a look at the example code below for Java Serializable.
 
 ```java
 public class Employee implements Serializable { 
@@ -17,7 +19,9 @@ public class Employee implements Serializable {
 }
 ```
 
-Here, the fields that are non-static and non-transient are automatically serialized. To eliminate class compatibility issues, it is recommended that you add a `serialVersionUID`, as shown above. Also, when you are using methods that perform byte-content comparisons (e.g. `IMap.replace()`) and if byte-content of equal objects is different, you may face unexpected behaviors. Therefore, if the class relies on, for example, a hash map, `replace` method may fail. The reason for this is the hash map is a serialized data structure with unreliable byte-content.
+Here, the fields that are non-static and non-transient are automatically serialized. To eliminate class compatibility issues, it is recommended that you add a `serialVersionUID`, as shown above. Also, when you are using methods that perform byte-content comparisons (e.g. `IMap.replace()`) and if byte-content of equal objects is different, you may face unexpected behaviors. For example, if the class relies on a hash map, the `replace` method may fail. The reason for this is the hash map is a serialized data structure with unreliable byte-content.
+
+### Implementing Java Externalizable
 
 Hazelcast also supports `java.io.Externalizable`. This interface offers more control on the way fields are serialized or deserialized. Compared to native Java serialization, it also can have a positive effect on performance. With `java.io.Externalizable`, there is no need to add `serialVersionUID`.
 
@@ -44,5 +48,5 @@ public class Employee implements Externalizable {
 }
 ```
 
-Writing and reading of fields are performed explicitly. Note that reading should be performed in the same order as writing.
+You explicitly perform writing and reading of fields. Perform reading in the same order as writing.
 
