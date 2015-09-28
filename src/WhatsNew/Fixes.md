@@ -5,6 +5,10 @@
 
 The following are the issues solved for Hazelcast 3.6 release.
 
+
+- The method `IndexImpl.getRecords()` fails with Null Pointer Exception due to the inconsistency between the `not(...equals())` and `notEquals()`. <a href="https://github.com/hazelcast/hazelcast/issues/5807" target="_blank">[5807]</a>
+- The method `HazelcastHttpSession.getAttribute()` for WebFilter does not work when `deferredWrite` is set to `true`. <a href="https://github.com/hazelcast/hazelcast/issues/5798" target="_blank">[5798]</a>
+- When `hazelcast.nio.faststring` is enabled, `UTFEncoderDecoder` tries to create a `FastStringCreator`. However, if the reflection is not available due to the security manager, `buildFastStringCreator` returns null and consequently `StringCreator` becomes null. <a href="https://github.com/hazelcast/hazelcast/issues/5777" target="_blank">[5777]</a>
 - `hazelcast-jca-rar/pom.xml` references to `src/main/rar/ra.xml` which does not exist. <a href="https://github.com/hazelcast/hazelcast/issues/5760" target="_blank">[5760]</a>
 - The Maven profile `mvn clean compile -Pqa` does not exist but it is documented in the README of Hazelcast. <a href="https://github.com/hazelcast/hazelcast/issues/5746" target="_blank">[5746]</a>
 - `PerformanceLogFile` only compiles if JDK 1.7 or above is used. <a href="https://github.com/hazelcast/hazelcast/issues/5729" target="_blank">[5729]</a>
