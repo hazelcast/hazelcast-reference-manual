@@ -9,8 +9,10 @@ The following are the the enhancements performed for Hazelcast 3.6 release.
 
 
 The following are the other improvements performed to solve the enhancement issues opened by the Hazelcast customers/team.
- 
-- The new client determines the partition ID for every invocation for data structures like queue and list where the partition ID is static. There is no need for this behavior. It should calculate the partition ID for once  when the proxy is created and continue to re-use it. <a href="https://github.com/hazelcast/hazelcast/issues/5848" target="_blank">[5848]</a>
+
+- Inconsistent and potentially buggy design in `BasicCompletableFuture`. <a href="https://github.com/hazelcast/hazelcast/issues/6080" target="_blank">[6080]</a>
+- Starting with "hazelcast-wm 3.3", OSGI Manifest Spring package imports should be optional. <a href="https://github.com/hazelcast/hazelcast/issues/6072" target="_blank">[6072]</a>
+ - The new client determines the partition ID for every invocation for data structures like queue and list where the partition ID is static. There is no need for this behavior. It should calculate the partition ID for once  when the proxy is created and continue to re-use it. <a href="https://github.com/hazelcast/hazelcast/issues/5848" target="_blank">[5848]</a>
 - `Map.Entry` supplied to Entry Processor is not Serializable any more. <a href="https://github.com/hazelcast/hazelcast/issues/5611" target="_blank">[5611]</a>
 - The configuration file `minimal-json` with the provided scope is not picked up by the *shade* plugin. <a href="https://github.com/hazelcast/hazelcast/issues/5543" target="_blank">[5543]</a>
 - In Spring configuration, when a boolean property is injected for *hazelcast* bean (`<hz:hazelcast:....</hz:hazelcast`)
