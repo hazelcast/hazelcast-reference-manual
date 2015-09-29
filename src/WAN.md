@@ -53,19 +53,6 @@ have a similar configurations if you want to run in Active-Active mode.
 If the New York and London cluster configurations contain the `wan-replication` element and the Tokyo cluster does not, it means
 New York and London are active endpoints and Tokyo is a passive endpoint.
 
-When using Active-Active Replication, multiple clusters can simultaneously update the same entry in a distributed data structure.
-You can configure a merge-policy to resolve these potential conflicts.
-
-```xml
-<hazelcast>
-  <wan-replication name="my-wan-cluster">
-    <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
-    ...
-  </wan-replication>
-  ...
-</hazelcast>
-```
-
 Hazelcast can configure WAN replication on a per Map basis. Imagine you have different distributed maps, however only one map should be replicated to a target cluster. To achieve this, configure map to be
 replicated by adding the `wan-replication-ref` element in the map configuration as shown below.
 
@@ -76,19 +63,19 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
   </wan-replication>
   <map name="my-shared-map">
     <wan-replication-ref name="my-wan-cluster">
-    <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+       <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
       ...
     </wan-replication-ref>
   </map>
   ...
 </hazelcast>
 ```
-
 You see that we have `my-shared-map` configured to replicate itself to the cluster targets defined in the earlier
 `wan-replication` element.
 
-You will also have to define a `merge policy` for merging replica entries and resolving conflicts during the merge
-as mentioned before.
+When using Active-Active Replication, multiple clusters can simultaneously update the same entry in a distributed data structure.
+You can configure a merge policy to resolve these potential conflicts, as shown in the above example configuration (using the `merge-policy` sub-element under the `wan-replication-ref` element).
+
 
 ### WAN Replication Additional Information
 
