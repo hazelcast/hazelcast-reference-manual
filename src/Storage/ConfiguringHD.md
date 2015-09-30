@@ -1,7 +1,7 @@
 
-### Configuring Hi-Density Memory Store
+### Configuring High-Density Memory Store
 
-To use the Hi-Density memory storage, the native memory usage must be enabled using the programmatic or declarative configuration.
+To use the High-Density memory storage, the native memory usage must be enabled using the programmatic or declarative configuration.
 Also, you can configure its size, memory allocator type, minimum block size, page size and metadata space percentage.
 
 - **size:** Size of the total native memory to allocate. Default value is **512 MB**.
