@@ -144,7 +144,7 @@ You can disable shutting down `HazelcastInstance` during `SessionFactory.close()
 
 ### Setting Client/Server for Hibernate
 
-You can set up Hazelcast to connect to the cluster as Native Client. Native client is not a member; it connects to one of the cluster members and delegates all cluster wide operations to it. When the relied cluster member dies, client will transparently switch to another live member.
+You can set up Hazelcast to connect to the cluster as Native Client. Native client is not a member; it connects to one of the cluster members and delegates all cluster wide operations to it. Client instance started in Native Client mode uses Smart Routing, when the relied cluster member dies, client will transparently switch to another live member. All client operations are Retry-able Operation meaning client will resend the request as many as 10 times in case of failure, then it will throw an exception. You cannot change routing mode and retry-able operation configurations of Native Client instance used by Hibernate 2nd Level Cache. Please see: [Smart Routing](##smart-routing) and [Retry-able Operation Failure](#retry-able-operation-failure) for more details.
 
 ```xml   
 <property name="hibernate.cache.hazelcast.use_native_client">true</property>
