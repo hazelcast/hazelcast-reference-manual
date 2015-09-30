@@ -12,11 +12,17 @@ This section lists the new features and enhancements developed and bugs fixed fo
 
 The following the new features introduced with Hazelcast 3.6 release.
 
+- **Hazelcast Discovery Service Provider Interface (SPI)**: You can use this SPI to discover  Hazelcast instances on cloud environments provided by jclouds&reg;, Kubernetes and many more. The existing discovery mechanisms that Hazelcast provides (Multicast, TCP/IP and Amazon EC2) have been re-implemented on top of this new Discovery SPI. Please refer to the [???](#???).
 - **Support for cloud providers through jclouds&reg;**: Hazelcast now supports deployments on all the well-known cloud providers through the <a href="https://jclouds.apache.org/" target="_blank">jclouds&reg;</a> open source library. Please refer to the [???](#???).
--  **Ringbuffer and Reliable Topic in Hazelcast Clients**: The data structures Ringbuffer and Reliable Topic recently introduced by Hazelcast (with the release 3.5) are now implemented for Hazelcast Clients. Please refer to the [???](#???).
+- **Hot Restart**: This new feature provides fast restarting of the Hazelcast clusters. This is achieved by storing the state of the cluster members to the disk. Please refer to the [???](#???) for more details.
+- **Ringbuffer and Reliable Topic in Hazelcast Clients**: The data structures Ringbuffer and Reliable Topic recently introduced by Hazelcast (with the release 3.5) are now implemented for Hazelcast Clients. Please refer to the [???](#???).
 - **Cluster Quorum for Hazelcast JCache**: Cluster Quorum checks are now provided for Hazelcast JCache implementations, too. Please refer to the [Cluster Quorum section](#cluster-quorum) to refresh and to the [???](#???) to learn configuring it for JCache.
-- **Split Brain Syndrome handler for Hazelcast JCache**: Now Split Brain Syndrome is handled in JCache as it is taken care in Hazelcast Map 
-- **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration). 
+- **Split Brain Syndrome handler for Hazelcast JCache**: Now Split Brain Syndrome is handled in JCache as it is taken care in Hazelcast Map. Please refer to the [???](#???).  
+- **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration).
+- **Integration with Docker**: Now you can run Hazelcast using the Docker platform. Please refer to the [???](#???).
+- **High-Density Memory Store for Hazelcast Map**: With this release, Hazelcast Map data structure is now equipped with the High-Density Memory Store, previously implemented for Hazelcast JCache. Please refer to the [???](#???).
+- **Lite Members**:
+- 
 - **???**: ???
 - **???**: ???
 - **???**: ???
