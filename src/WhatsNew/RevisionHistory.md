@@ -9,6 +9,7 @@
 ||[Creating a Transaction Interface](#creating-a-transaction-interface)|Replaced the transaction type name LOCAL with ONE_PHASE. Updated the definitions of transaction types. 
 |[Chapter 12 - Hazelcast JCache](#hazelcast-jcache)|[ICache Partition Lost Listener](#icache-partition-lost-listener)| Added as a new section explaining how to listen when a partition is lost in a Hazelcast JCache implementation.
 |[Chapter 13 - Integrated Clustering](#integrated-clustering)|[Web Session Replication](#web-session-replication)|[Marking Transient Attributes](#marking-transient-attributes) added as a new section.|
+||[Hibernate Second Level Cache](#hibernate-second-level-cache)|Added additional information related to Hibernate Native Client mode to the introduction paragraph of the [Setting Client/Server for Hibernate section](#setting-client-server-for-hibernate).|
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)|[Hazelcast Clients Feature Comparison](#hazelcast-clients-feature-comparison)|Added as a new section.
 ||[Client Network Configuration](#client-network-configuration)|Updated by adding the definition of the new IAM role configuration element.
 |[Chapter 18 - Management](#management)|[Cluster Quorum](#cluster-quorum)|Added information on quorum support for caches. Added the definition of the new configuration element `quorum-ref` to [ICache Configuration section](#icache-configuration).|
