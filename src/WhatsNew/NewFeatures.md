@@ -19,15 +19,12 @@ The following the new features introduced with Hazelcast 3.6 release.
 - **Cluster Quorum for Hazelcast JCache**: Cluster Quorum checks are now provided for Hazelcast JCache implementations, too. Please refer to the [Cluster Quorum section](#cluster-quorum) to refresh and to the [???](#???) to learn configuring it for JCache.
 - **Split Brain Syndrome handler for Hazelcast JCache**: Now Split Brain Syndrome is handled in JCache as it is taken care in Hazelcast Map. Please refer to the [???](#???).  
 - **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration).
-- **Integration with Docker**: Now you can run Hazelcast using the Docker platform. Please refer to the [???](#???).
+- **Hazelcast Docker image**: Now you can run Hazelcast using our image in the Docker platform. Please refer to the [???](#???).
 - **High-Density Memory Store for Hazelcast Map**: With this release, Hazelcast Map data structure is now equipped with the High-Density Memory Store, previously implemented for Hazelcast JCache. Please refer to the [???](#???).
-- **Lite Members**:
-- 
-- **???**: ???
-- **???**: ???
-- **???**: ???
-- **???**: ???
-- **???**: ???
-- **???**: ???
+- **Lite Members**: With the introduction of Hazelcast Lite Members, you are able to specify certain members in your cluster so that they do not store. You can use these lite members mostly for your task executions and listener registrations. Please refer to [???](#???).
+- **Indexing and querying of collections**: Hazelcast is now able to index and query the objects in a collection, e.g. queue, set and list. Please refer to the [???](#???).
+- **Integration with Spring Transaction API**: With this release, Hazelcast has extended its Spring integration by having the transactional data structures in the Spring context. Please refer to the [???](#???).
+- **Acquiring locks with a lease time**: Now, you can try to acquire locks with a lease time. Please refer to the [???](#???).
+- **Monitoring the WAN replication**: You can now monitor the state of your WAN replications using the Hazelcast Management Center. Please refer to the [???](#???).
 
 
