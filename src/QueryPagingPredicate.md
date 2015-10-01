@@ -35,8 +35,6 @@ If a comparator is not specified for `PagingPredicate`, but you want to get a co
 Paging Predicate, also known as Order & Limit, is not supported in Transactional Context.
 <br></br>
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, random page accessing is not supported.*
-
 ***RELATED INFORMATION***
 
 *Please see the
