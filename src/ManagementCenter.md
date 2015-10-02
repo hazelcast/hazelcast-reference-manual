@@ -103,7 +103,9 @@ This part of the page provides load and utilization information for the CPUs for
 
 ![](images/NonHMCCPUUtil.jpg)
 
-The first column lists the nodes with their IPs and ports. The next columns list the loads on each CPU for the last 1, 5 and 15 minutes. The last column (**Chart**) graphically shows the utilization of CPUs. When you move the mouse cursor on a desired graph, you can see the CPU utilization at the time where the cursor is placed. Graphs under this column shows the CPU utilizations approximately for the last 2 minutes.
+The first column lists the nodes with their IPs and ports. The next columns list the system load averages on each node for the last 1, 5 and 15 minutes. These average values are calculated as the sum of the count of runnable entities running on and queued to the available CPUs averaged over the last 1, 5 and 15 minutes. This calculation is operating system specific, typically a damped time-dependent average. If system load average is not available, these columns show negative values.
+
+The last column (**Chart**) graphically shows the recent load on the CPUs. When you move the mouse cursor on a chart, you can see the CPU load at the time where the cursor is placed. Charts under this column shows the CPU loads approximately for the last 2 minutes. If recent CPU load is not available, you will see a negative value.
 
 #### Memory Utilization
 
@@ -301,9 +303,9 @@ When you click on a desired monitoring, the chart loads with the selected option
 
 -	**Pending**: Monitors the pending executors. Y-axis is the executor count.
 -	**Started**: Monitors the started executors. Y-axis is the executor count.
--	**Start Lat. (msec)**: Shows the latency when executors are started. Y-axis is the duration in milliseconds.
+-	**Start Lat. (msec.)**: Shows the latency when executors are started. Y-axis is the duration in milliseconds.
 -	**Completed**: Monitors the completed executors. Y-axis is the executor count.
--	**Comp. Time (msec)**: Shows the completion period of executors. Y-axis is the duration in milliseconds.
+-	**Comp. Time (msec.)**: Shows the completion period of executors. Y-axis is the duration in milliseconds.
 
 Under these charts is the **Executor Operation Statistics** table, as shown below.
 
