@@ -117,7 +117,7 @@ The first column lists the nodes with their IPs and ports. The next columns show
 
 #### Memory Distribution
 
-This part of the page graphically provides the cluster wise breakdown of memory, as shown below. The blue area is the memory used by maps, the dark yellow area is the memory used by non-Hazelcast entities, and the green area is the free memory out of the whole cluster`s memory capacity.
+This part of the page graphically provides the cluster wise breakdown of memory, as shown below. The blue area is the memory used by maps. The dark yellow area is the memory used by both non-Hazelcast entities and all Hazelcast entities except the map (i.e. the memory used by all entities subtracted by the memory used by map). The green area is the free memory out of the whole cluster`s memory capacity.
 
 ![](images/Home-MemoryDistribution.jpg)
 
