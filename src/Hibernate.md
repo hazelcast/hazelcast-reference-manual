@@ -34,11 +34,11 @@ You can configure Hibernate RegionFactory with `HazelcastCacheRegionFactory` or 
 
 `HazelcastCacheRegionFactory` uses standard Hazelcast Distributed Maps to cache the data, so all cache operations go through the wire.
 
-	```xml    
-	<property name="hibernate.cache.region.factory_class">
-	  com.hazelcast.hibernate.HazelcastCacheRegionFactory
-	</property>
-	```
+```xml    
+<property name="hibernate.cache.region.factory_class">
+   com.hazelcast.hibernate.HazelcastCacheRegionFactory
+</property>
+```
 
 All operations like `get`, `put`, and `remove` will be performed using the Distributed Map logic. The only downside of using `HazelcastCacheRegionFactory` may be lower performance compared to `HazelcastLocalCacheRegionFactory` since operations are handled as distributed calls.
 
@@ -203,7 +203,9 @@ public class Cat implements Serializable {
 
 **Accessing underlying HazelcastInstance**
 
-If you will need to access `HazelcastInstance` used by Hibernate `SessionFactory`, you can give a name to `HazelcastInstance` in Hazelcast configuration file. Then it is possible to retrieve the instance using `getHazelcastInstanceByName` static method of `Hazelcast`.
+If you need to access `HazelcastInstance` used by Hibernate `SessionFactory`, you can give a name to the `HazelcastInstance` while configuring Hazelcast. Then it is possible to retrieve the instance using `getHazelcastInstanceByName` static method of `Hazelcast`.
+
+Please refer to the [Configuration Overview section](#configuration-overview) to learn how to create a named Hazelcast instance.
 
 **Changing/setting lock timeout value of *read-write* strategy**
 
