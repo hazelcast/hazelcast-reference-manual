@@ -1,22 +1,24 @@
 
 ## Replicated Map
 
-A replicated map is a weakly consistent, distributed key-value data structure provided by Hazelcast.
+A replicated map is a distributed key-value data structure where the data is replicated to all members in the cluster.
 
 ### Replicating Instead of Partitioning
 
 All other data structures are partitioned in design. A replicated map does not partition data
 (it does not spread data to different cluster members); instead, it replicates the data to all members.
 
-This leads to higher memory consumption. However, a replicated map has faster read and write access since the data are available on all members and
-writes take place on local members, eventually being replicated to all other members.
+This leads to higher memory consumption. However, a replicated map has faster read and write access since the data are available on all members.
 
-Weak consistency compared to eventually consistency means that replication is done on a best efforts basis. Lost or missing updates
-are neither tracked nor resent. This kind of data structure is suitable for immutable
-objects, catalogue data, or idempotent calculable data (like HTML pages).
+Writes could take place on local/remote members in order to provide write-order, eventually being replicated to all other members.
+
+Replicated map is suitable for objects, catalogue data, or idempotent calculable data (like HTML pages).
 
 Replicated map nearly fully implements the `java.util.Map` interface, but it lacks the methods from `java.util.concurrent.ConcurrentMap` since
 there are no atomic guarantees to writes or reads.
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *If Replicated Map used from a dummy client and connected to a lite member, entry listeners are cannot be registered/de-registered.*
+
 
 ### Example Replicated Map Code
 
@@ -44,5 +46,3 @@ for ( Customer customer : colCustomers ) {
 `java.util.Map` interface.
 
 The `com.hazelcast.core.ReplicatedMap` interface has some additional methods for registering entry listeners or retrieving values in an expected order.
-
-![image](images/NoteSmall.jpg) ***NOTE***: *Replicated Map is in the beta stage.*

@@ -12,7 +12,7 @@ on a local node. Events can fire at different times on different nodes.
 
 #### Example of Replicated Map EntryListener
 
-Here is a code example for using EntryListener on a replicated map. 
+Here is a code example for using EntryListener on a replicated map.
 
 The HazelcastInstance method `getReplicated` map gets a replicated map (customers), and the ReplicatedMap method
 `addEntryListener` adds an entry listener to the replicated map. Then the ReplicatedMap `put` method adds a replicated map
@@ -55,4 +55,3 @@ customers.put( "1", new Customer( "Joe", "Smith" ) ); // add event
 customers.put( "1", new Customer( "Ali", "Selam" ) ); // update event
 customers.remove( "1" ); // remove event
 ```
-
