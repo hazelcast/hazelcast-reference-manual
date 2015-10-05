@@ -203,13 +203,7 @@ public class Cat implements Serializable {
 
 **Accessing underlying HazelcastInstance**
 
-Using `com.hazelcast.hibernate.instance.HazelcastAccessor`, you can access the underlying `HazelcastInstance` used by Hibernate `SessionFactory`.
-
-```java   
-SessionFactory sessionFactory = ...;
-HazelcastInstance hazelcastInstance = HazelcastAccessor
-    .getHazelcastInstance(sessionFactory);        
-```
+If you will need to access `HazelcastInstance` used by Hibernate `SessionFactory`, you can give a name to `HazelcastInstance` in Hazelcast configuration file. Then it is possible to retrieve the instance using `getHazelcastInstanceByName` static method of `Hazelcast`.
 
 **Changing/setting lock timeout value of *read-write* strategy**
 
