@@ -5,8 +5,15 @@
 
 The following are the issues solved for Hazelcast 3.5.3 release.
 
+- `ClientInvocationFuture` may hang when the deserialized response is null. [[#6363]](https://github.com/hazelcast/hazelcast/issues/6363).
+- The method `CacheStatisticsImpl::getAverageRemoveTime()` uses the "get" count on the cache but it must use the "remove" count. [[#6314]](https://github.com/hazelcast/hazelcast/issues/6314).
+- Hazelcast `console.sh` should support changing namespaces that contain space characters. [[#6307]](https://github.com/hazelcast/hazelcast/issues/6307). 
 - The client fails to properly reconnect to a single node cluster after the Hazelcast server is restarted. [[#6168]](https://github.com/hazelcast/hazelcast/issues/6168). 
 - Transactional Queue ordering on rollback can be violated. The reason is that the `QueueContainer` does not rollback the changes in the order that is opposite to the order of the items when they were added. It is a random order due to the fact that the changes are stored in a hashmap. [[#6156]](https://github.com/hazelcast/hazelcast/issues/6156).
+- When a field, that is only available in a subclass of an interface, is indexed, Null Pointer Exception is thrown. [[#6151]](https://github.com/hazelcast/hazelcast/issues/6151).
+- Extra `\r\n` in the body of the REST API responses causing warnings. [[#6144]](https://github.com/hazelcast/hazelcast/issues/6144).
+- Near cache on the client size for replicated map does not get invalidated after replicated map changes. [[#5694]](https://github.com/hazelcast/hazelcast/issues/5508).
+- `IList.iterator()` and `listIterator()` do not support the method `iterator.remove()`. [[#5508]](https://github.com/hazelcast/hazelcast/issues/5508).
 
 
 **3.5.2 Fixes**

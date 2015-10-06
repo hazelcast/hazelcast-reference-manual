@@ -1,6 +1,14 @@
 
 ### Enhancements
 
+**3.5.3 Enhancements**
+
+The following are the enhancements performed for Hazelcast 3.5.3 release.
+
+- Cache statistics are only supported at the server side and exposed by `CacheProxy`. At the client side, cache statistics are not calculated and supported so `UnsupportedOperationException` is thrown at `ClientCacheProxy` [[#6262]](https://github.com/hazelcast/hazelcast/issues/6262).
+
+
+
 **3.5.1 Enhancements**
 
 The following are the enhancements performed for Hazelcast 3.5.1 release.
