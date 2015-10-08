@@ -5,6 +5,8 @@
 
 The following are the issues solved for Hazelcast 3.6 release.
 
+- There is a growth in heap usage caused by a memory leak in the following scenario: A node in the cluster regularly creates maps and puts entries into it, again in regular intervals. Another node removes the entries minutes after they were put, and if the map is empty, it destroys the map. <a href="https://github.com/hazelcast/hazelcast/issues/6317" target="_blank">[6317]</a>
+- Currently, there is an `EntryEvictedListener` that is notified both for expiration and eviction events. There should be a separate listener for expired entries: eviction happens due to size constraints, and expiry is once the entry has expired. <a href="https://github.com/hazelcast/hazelcast/issues/6311" target="_blank">[6311]</a>
 - `InvocationFuture`s async calls do not detect the lost operations. <a href="https://github.com/hazelcast/hazelcast/issues/6250" target="_blank">[6250]</a>
 -  When the method `setBooleanAttribute` of the class `Member` is run, Null Pointer Exception is occurred on `STDOUT`. The problem is in the method `sendMemberAttributeEvent` of the class `ClusterServiceImpl`. <a href="https://github.com/hazelcast/hazelcast/issues/6223" target="_blank">[6223]</a>
 - `IOBalancer` keeps references of all the socket reader/writers but when destroying the connection, they release the references for only the ones which has endpoints. This causes a memory leak. <a href="https://github.com/hazelcast/hazelcast/issues/6199" target="_blank">[6199]</a>
