@@ -13,7 +13,7 @@ This section lists the new features and enhancements developed and bugs fixed fo
 The following the new features introduced with Hazelcast 3.6 release.
 
 - **High-Density Memory Store for Hazelcast Map**: With this release, Hazelcast Map data structure is now equipped with the High-Density Memory Store, previously implemented for Hazelcast JCache. Please refer to the [???](#???).
-- **Hot Restart Store**: This new feature provides fast restarting of the Hazelcast clusters. This is achieved by storing the state of the cluster members to the disk. Please refer to the [???](#???) for more details.
+- **Hot Restart Store**: This new feature provides fast restarting of the Hazelcast clusters. This is achieved by storing the state of the cluster members to the disk. Please refer to the [Hot Restart Store section](#hot-restart-store) for more details.
 - **Discovery Service Provider Interface (Discovery SPI)**: You can use this SPI to discover  Hazelcast instances on cloud environments provided by jclouds&reg;, Kubernetes and many more. The existing discovery mechanisms that Hazelcast provides (Multicast, TCP/IP and Amazon EC2) have been re-implemented on top of this new Discovery SPI. Please refer to the [???](#???).
 - **Client Protocol**: This feature presents the Hazelcast's new open binary client protocol. Please refer to the [???](#???).
 - **Client Cross Version Compatibility**: Now you can upgrade your Hazelcast clients independently from servers and other clients. Please refer to the [???](#???).
@@ -24,7 +24,7 @@ The following the new features introduced with Hazelcast 3.6 release.
 - **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration).
 - **Hazelcast Docker image**: Now you can run Hazelcast using our image in the Docker platform. Please refer to the [???](#???).
 - **Quartz integration**: This feature provides an extension to store Quartz tasks in Hazelcast. Please refer to the [???](#???).
-- **Lite Members**: With the introduction of Hazelcast Lite Members, you are able to specify certain members in your cluster so that they do not store data. You can use these lite members mostly for your task executions and listener registrations. Please refer to [???](#???).
+- **Lite Members**: With the introduction of Hazelcast Lite Members, you are able to specify certain members in your cluster so that they do not store data. You can use these lite members mostly for your task executions and listener registrations. Please refer to the [Lite Member section](#lite-member).
 - **Indexing and querying of collections**: Hazelcast is now able to index and query the objects in a collection, e.g. queue, set and list. Please refer to the [???](#???).
 - **Integration with Spring Transaction API**: With this release, Hazelcast has extended its Spring integration by having the transactional data structures in the Spring context. Please refer to the [???](#???).
 - **Acquiring locks with a lease time**: Now, you can try to acquire locks with a lease time. Please refer to the [???](#???).

@@ -1,7 +1,6 @@
 ## Hot Restart Store
 
 ![](images/enterprise-onlycopy.jpg)
-
 <br></br>
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is supported for Hazelcast Enterprise 3.6 or higher.*
