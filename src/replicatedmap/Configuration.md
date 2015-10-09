@@ -8,14 +8,11 @@ Replicated Map can be configured using the following two ways (as with most othe
 
 #### Replicated Map Declarative Configuration
 
-You can declare your Replicated Map configuration in the Hazelcast configuration file `hazelcast.xml`. You can use the configuration to tune the behavior of the internal replication algorithm, such as the replication delay which batches up the replication
-for better network utilization. See the following example declarative configuration.
+You can declare your Replicated Map configuration in the Hazelcast configuration file `hazelcast.xml`. See the following example declarative configuration.
 
 ```xml
 <replicatedmap name="default">
   <in-memory-format>BINARY</in-memory-format>
-  <concurrency-level>32</concurrency-level>
-  <replication-delay-millis>100</replication-delay-millis>
   <async-fillup>true</async-fillup>
   <statistics-enabled>true</statistics-enabled>
   <entry-listeners>
@@ -27,9 +24,7 @@ for better network utilization. See the following example declarative configurat
 ```
 
 - `in-memory-format`: Internal storage format.  Please see the [In-Memory Format section](#in-memory-format-on-replicated-map). The default value is `BINARY`.
-- `concurrency-level`: Number of parallel mutexes to minimize the contention on the keys. The default value is 32, which is a good number for lots of applications. If higher contention is seen on writes to values inside the replicated map, this value can be adjusted according to the needs.
-- `replication-delay-millis`: Time in milliseconds after a put is executed that the put value is replicated to other nodes. During this time, multiple puts can be operated and the values are cached up to be sent all at once. This increases the latency for eventual consistency, but it lowers the I/O operations. The default value is 100ms before a replication is operated. If `replication-delay-millis` is set to 0, no delay is used (not cached) and all values are replicated one by one.
-- `async-fillup`: Specifies if the replicated map is available for reads before the initial replication is completed. The default value is `true`. If set to `false` (i.e. synchronous initial fill up), no exception will be thrown when the replicated map is not yet ready, but the call will block until it is finished.
+- `async-fillup`: Specifies if the replicated map is available for reads before the initial replication is completed. The default value is `true`. If set to `false` (i.e. synchronous initial fill up), no exception will be thrown when the replicated map is not yet ready, but `null` values can be seen until the initial replication is completed.
 - `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. The default value is `false`.
 - `entry-listener`: Full canonical classname of the `EntryListener` implementation.
   - `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. The default value is `true`.
@@ -48,7 +43,6 @@ ReplicatedMapConfig replicatedMapConfig =
     config.getReplicatedMapConfig( "default" );
 
 replicatedMapConfig.setInMemoryFormat( InMemoryFormat.BINARY );
-replicatedMapConfig.setConcurrencyLevel( 32 );
 ```
 
 All properties that can be configured using the declarative configuration are also available using programmatic configuration
