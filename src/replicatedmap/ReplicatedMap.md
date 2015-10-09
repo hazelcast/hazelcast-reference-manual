@@ -17,7 +17,7 @@ Replicated map is suitable for objects, catalogue data, or idempotent calculable
 Replicated map nearly fully implements the `java.util.Map` interface, but it lacks the methods from `java.util.concurrent.ConcurrentMap` since
 there are no atomic guarantees to writes or reads.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If Replicated Map used from a dummy client and connected to a lite member, entry listeners are cannot be registered/de-registered.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If Replicated Map is used from a dummy client and this dummy client is connected to a lite member, the entry listeners cannot be registered/de-registered.*
 
 
 ### Example Replicated Map Code
