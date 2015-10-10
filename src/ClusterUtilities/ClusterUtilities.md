@@ -4,9 +4,11 @@
 
 This section provides information on programmatic utilities you can use to listen to the cluster events, to check whether the cluster and/or members are safe before shutting down a member, and to define the minimum number of cluster members required for the cluster to remain up and running. It also gives information on the Hazelcast Lite Member.
 
-### Cluster Interface
+### Getting Member Events and Member Sets
 
 Hazelcast allows you to register for membership events so you will be notified when members are added or removed. You can also get the set of cluster members.
+
+The following example code does the above: registers for member events, notified when members are added or removed, and gets the set of cluster members.
 
 ```java
 import com.hazelcast.core.*;

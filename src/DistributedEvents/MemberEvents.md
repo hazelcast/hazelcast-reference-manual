@@ -5,7 +5,7 @@ The Membership Listener interface has methods that are invoked for the following
 
 - `memberAdded`: A new member is added to the cluster.
 - `memberRemoved`: An existing member leaves the cluster.
-- `memberAttributeChanged`: An attribute of a member is changed. Please refer to the [Member Attributes section](#member-attributes) to learn about member attributes.
+- `memberAttributeChanged`: An attribute of a member is changed. Please refer to [Defining Member Attributes](#defining-member-attributes) to learn about member attributes.
 
 To write a Membership Listener class, you implement the MembershipListener interface and its methods.
 

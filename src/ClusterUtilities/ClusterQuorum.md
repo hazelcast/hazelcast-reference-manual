@@ -1,15 +1,15 @@
-### Cluster Quorum
+### Defining a Cluster Quorum
 
 Hazelcast Cluster Quorum enables you to define the minimum number of machines required in a cluster for the cluster to remain in an operational state. If the number of machines is below the defined minimum at any time, the operations are rejected and the rejected operations return a `QuorumException` to their callers.
 
-When a network partitioning happens, by default Hazelcast chooses to be available. With Cluster Quorum, you can tune your Hazelcast instance towards achieving better consistency by rejecting updates with a minimum threshold. This reduces the chance that the number of concurrent will update to an entry from two partitioned clusters. Note that the consistency defined here is the best effort, not full or strong consistency.
+When a network partitioning happens, by default Hazelcast chooses to be available. With Cluster Quorum, you can tune your Hazelcast instance towards achieving better consistency by rejecting updates that do not pass a minimum threshold. This reduces the chance that the number of concurrent will update to an entry from two partitioned clusters. Note that the consistency defined here is the best effort, it is not full or strong consistency.
 
 Hazelcast initiates a quorum when a change happens on the member list.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, cluster quorum only applies to the Map, Transactional Map and Cache, support for other data structures will be added soon. Also, lock methods in the IMap interface do not participate in a quorum.*
 
 
-#### Configuration
+#### Configuring a Cluster Quorum
 
 You can set up Cluster Quorum using either declarative or programmatic configuration.
 
@@ -53,8 +53,9 @@ config.addMapConfig(mapConfig);
 
 
 
-#### Quorum Listeners
-You can register quorum listeners to be notified about quorum results. Quorum listeners are local to the node that they are registered, so they receive only events that occurred on that local node.
+#### Configuring Quorum Listeners
+
+You can register quorum listeners to be notified about quorum results. Quorum listeners are local to the node where they are registered, so they receive only events that occurred on that local node.
 
 Quorum listeners can be configured via declarative or programmatic configuration. The following examples are such configurations.
 
@@ -113,12 +114,9 @@ config.addMapConfig(mapConfig);
 
 
 
-#### Quorum Service
-Quorum service gives you the ability to query quorum results over the `Quorum` instances.
+#### Querying Quorum Results
 
-##### Quorum
-
-Quorum instances lets you query the quorum result of a particular quorum.
+Quorum service gives you the ability to query quorum results over the `Quorum` instances. Quorum instances let you query the quorum result of a particular quorum.
 
 Here is a Quorum interface that you can interact with.
 

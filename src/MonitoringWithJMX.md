@@ -11,7 +11,7 @@ To achieve this, first add the following system properties to enable <a href="ht
    - `-Dcom.sun.management.jmxremote.authenticate=false` (to disable JMX auth) (*optional*)
 
 
-Then, enable the Hazelcast property `hazelcast.jmx` (please refer to the [System Properties section](#system-properties)) using one of the following ways:
+Then enable the Hazelcast property `hazelcast.jmx` (please refer to the [System Properties section](#system-properties)) using one of the following ways:
 
 - By declarative configuration:
    
@@ -20,6 +20,7 @@ Then, enable the Hazelcast property `hazelcast.jmx` (please refer to the [System
    <property name="hazelcast.jmx">true</property>
 </properties>   
 ```
+
 - By programmatic configuration:
    
 `config.setProperty(GroupProperty.ENABLE_JMX, "true");`
@@ -43,15 +44,17 @@ Hazelcast set the naming convention for MBeans as follows:
 final ObjectName mapMBeanName = new ObjectName("com.hazelcast:instance=_hzInstance_1_dev,type=IMap,name=trial");
 ```
 
-It consists of the Hazelcast instance name, type of the data structure and that data structure's name. In the above sample, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`. 
+The MBeans name consists of the Hazelcast instance name, the type of the data structure, and that data structure's name. In the above sample, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`. 
 
 
 
 ### Connecting to JMX Agent
 
-One of the ways is using jconsole, jvisualvm (with MBean plugin) or another JMX compliant monitoring tool.
+One of the ways you can connect to JMX agent is using jconsole, jvisualvm (with MBean plugin) or another JMX compliant monitoring tool.
 
-The other way is to use a custom JMX client. First, you need to specify the URL where the Hazelcast JMX service is running. Please see the following sample code snippet. The `port` in this sample should be the one that you define while setting the JMX remote port number (if different than the default port `1099`).
+The other way to connect is to use a custom JMX client. 
+
+First, you need to specify the URL where the Hazelcast JMX service is running. Please see the following sample code snippet. The `port` in this sample should be the one that you define while setting the JMX remote port number (if different than the default port `1099`).
 
 
 ```java
@@ -61,7 +64,7 @@ String hostname = InetAddress.getLocalHost().getHostName();
 JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://" + hostname + ":" + port + "/jndi/rmi://" + hostname + ":" + port + "/jmxrmi");
 ```
 
-Then, using the URL you acquired connect to the JMX service and get the `JMXConnector` object. Using this object, you get the `MBeanServerConnection` object which will enable you to use the MBean methods. Please see the below sample code snippet.
+Then use the URL you acquired to connect to the JMX service and get the `JMXConnector` object. Using this object, get the `MBeanServerConnection` object. The `MBeanServerConnection` object will enable you to use the MBean methods. Please see the example code below.
 
 
 ```java

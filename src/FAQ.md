@@ -293,7 +293,7 @@ if (partitionService.isLocalMemberSafe()) {
 
 ***RELATED INFORMATION***
 
-*Please refer to the [Cluster-Member Safety Check section](#cluster-member-safety-check) for more information.*
+*Please refer to [Safety Checking Cluster Members](#safety-checking-cluster-members) for more information.*
 
 <br></br>
 

@@ -2,23 +2,26 @@
 
 # Management
 
-This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol and managing the cluster with useful utilities. It also includes the usage explanations of Hazelcast Management Center.
+This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol, and managing the cluster with useful utilities. It also explains how to use Hazelcast Management Center.
 
 
-## Statistics API per Node
+## Getting Member Statistics from Distributed Data Structures
 
-You can gather various statistics from your distributed data structures via Statistics API.
+You can get various statistics from your distributed data structures via the Statistics API.
 Since the data structures are distributed in the cluster, the Statistics API provides
-statistics for the local portion (1/Number of Nodes) of data on each node. 
+statistics for the local portion (1/Number of Members in the Cluster) of data on each member (or node). 
 
 ### Map Statistics
-The `IMap` interface has a `getLocalMapStats()` method which returns a
+
+To get local map statistics, use the `getLocalMapStats()` method from the `IMap` interface. This method returns a
 `LocalMapStats` object that holds local map statistics.
+
+Below is example code where the `getLocalMapStats()` method and the `getOwnedEntryCount()` method get the number of entries owned by this member.
 
 ```java
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 IMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-LocalMapStats mapStatistics = customers.getLocalMapStats();
+LocalMapStats mapStatistics = customers.getLocalMapStats;
 System.out.println( "number of entries owned on this node = "
     + mapStatistics.getOwnedEntryCount() );
 ```
@@ -84,17 +87,17 @@ long getLockedEntryCount();
 long getDirtyEntryCount();
 
 /**
- * Returns the number of put operations
+ * Returns the number of put operations.
  */
 long getPutOperationCount();
 
 /**
- * Returns the number of get operations
+ * Returns the number of get operations.
  */
 long getGetOperationCount();
 
 /**
- * Returns the number of Remove operations
+ * Returns the number of Remove operations.
  */
 long getRemoveOperationCount();
 
@@ -106,52 +109,52 @@ long getTotalPutLatency();
 
 /**
  * Returns the total latency of get operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getTotalGetLatency();
 
 /**
  * Returns the total latency of remove operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getTotalRemoveLatency();
 
 /**
  * Returns the maximum latency of put operations. To get the average latency,
- * divide by number of puts
+ * divide by the number of puts.
  */
 long getMaxPutLatency();
 
 /**
  * Returns the maximum latency of get operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getMaxGetLatency();
 
 /**
  * Returns the maximum latency of remove operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getMaxRemoveLatency();
 
 /**
- * Returns the number of Events Received
+ * Returns the number of Events Received.
  */
 long getEventOperationCount();
 
 /**
- * Returns the total number of Other Operations
+ * Returns the total number of Other Operations.
  */
 long getOtherOperationCount();
 
 /**
- * Returns the total number of total operations
+ * Returns the total number of total operations.
  */
 long total();
 
 /**
- * Cost of map & near cache  & backup in bytes
- * todo in object mode object size is zero.
+ * Cost of map & near cache & backup in bytes.
+ * todo: in object mode, object size is zero.
  */
 long getHeapCost();
 
@@ -162,8 +165,11 @@ NearCacheStats getNearCacheStats();
 ```
 
 #### Near Cache Statistics
-You can access Near Cache statistics from the `LocalMapStats` object via the
-`getNearCacheStats()` method, which returns a `NearCacheStats` object.
+
+To get Near Cache statistics, use the `getNearCacheStats()` method from the `LocalMapStats` object.
+This method returns a `NearCacheStats` object that holds Near Cache statistics.
+
+Below is example code where the `getNearCacheStats()` method and the `getRatio` method from `NearCacheStats` get a Near Cache hit/miss ratio. 
 
 ```java
 HazelcastInstance node = Hazelcast.newHazelcastInstance();
@@ -210,8 +216,12 @@ double getRatio();
 
 ### Multimap Statistics
 
-The `MultiMap` interface has a `getLocalMultiMapStats()` method which returns a
-`LocalMultiMapStats` object that holds local MultiMap statistics.
+To get MultiMap statistics, use the `getLocalMultiMapStats()` method from the `MultiMap` interface.
+This method returns a `LocalMultiMapStats` object that holds local MultiMap statistics.
+
+Below is example code where the `getLocalMultiMapStats()` method and the `getLastUpdateTime` method from `LocalMultiMapStats` get the last update time.
+
+
 ```java
 HazelcastInstance node = Hazelcast.newHazelcastInstance();
 MultiMap<String, Customer> customers = node.getMultiMap( "customers" );
@@ -275,87 +285,89 @@ long getLockedEntryCount();
 /**
  * Returns the number of entries that the member owns and are dirty (updated
  * but not persisted yet).
- * dirty entry count is meaningful when a persistence is defined.
+ * Dirty entry count is meaningful when a persistence is defined.
  */
 long getDirtyEntryCount();
 
 /**
- * Returns the number of put operations
+ * Returns the number of put operations.
  */
 long getPutOperationCount();
 
 /**
- * Returns the number of get operations
+ * Returns the number of get operations.
  */
 long getGetOperationCount();
 
 /**
- * Returns the number of Remove operations
+ * Returns the number of Remove operations.
  */
 long getRemoveOperationCount();
 
 /**
  * Returns the total latency of put operations. To get the average latency,
- * divide by number of puts
+ * divide by the number of puts.
  */
 long getTotalPutLatency();
 
 /**
  * Returns the total latency of get operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getTotalGetLatency();
 
 /**
  * Returns the total latency of remove operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getTotalRemoveLatency();
 
 /**
  * Returns the maximum latency of put operations. To get the average latency,
- * divide by number of puts
+ * divide by the number of puts.
  */
 long getMaxPutLatency();
 
 /**
  * Returns the maximum latency of get operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getMaxGetLatency();
 
 /**
  * Returns the maximum latency of remove operations. To get the average latency,
- * divide by number of gets
+ * divide by the number of gets.
  */
 long getMaxRemoveLatency();
 
 /**
- * Returns the number of Events Received
+ * Returns the number of Events Received.
  */
 long getEventOperationCount();
 
 /**
- * Returns the total number of Other Operations
+ * Returns the total number of Other Operations.
  */
 long getOtherOperationCount();
 
 /**
- * Returns the total number of total operations
+ * Returns the total number of total operations.
  */
 long total();
 
 /**
- * Cost of map & near cache  & backup in bytes
- * todo in object mode object size is zero.
+ * Cost of map & near cache  & backup in bytes.
+ * todo: in object mode, object size is zero.
  */
 long getHeapCost();
 ```
 
 ### Queue Statistics
 
-The `IQueue` interface has a `getLocalQueueStats()` method which returns a
-`LocalQueueStats` object that holds local queue statistics.
+To get local queue statistics, use the `getLocalQueueStats()` method from the `IQueue` interface.
+This method returns a `LocalQueueStats` object that holds local queue statistics.
+
+Below is example code where the `getLocalQueueStats()` method and the `getAvgAge` method from `LocalQueueStats` get the average age of items.
 
 ```java
 HazelcastInstance node = Hazelcast.newHazelcastInstance();
@@ -417,26 +429,28 @@ long getRejectedOfferOperationCount();
 long getPollOperationCount();
 
 /**
- * Returns number of null returning poll operations.
- * Poll operation might return null, if the queue is empty.
+ * Returns the number of null returning poll operations.
+ * Poll operation might return null if the queue is empty.
  */
 long getEmptyPollOperationCount();
 
 /**
- * Returns number of other operations
+ * Returns the number of other operations.
  */
 long getOtherOperationsCount();
 
 /**
- * Returns number of event operations
+ * Returns the number of event operations.
  */
 long getEventOperationCount();
 ```
 
 ### Topic Statistics
 
-The `ITopic` interface has a `getLocalTopicStats()` method which returns a
-`LocalTopicStats` object that holds local topic statistics.
+To get local topic statistics, use the `getLocalTopicStats()` method from the `ITopic` interface.
+This method returns a `LocalTopicStats` object that holds local topic statistics.
+
+Below is example code where the `getLocalTopicStats()` method and the `getPublishOperationCount` method from `LocalTopicStats` get the number of publish operations.
 
 
 ```java
@@ -451,24 +465,28 @@ Below is the list of metrics that you can access via the `LocalTopicStats` objec
 
 ```java
 /**
- * Returns the creation time of this topic on this member
+ * Returns the creation time of this topic on this member.
  */
 long getCreationTime();
 
 /**
- * Returns the total number of published messages of this topic on this member
+ * Returns the total number of published messages of this topic on this member.
  */
 long getPublishOperationCount();
 
 /**
- * Returns the total number of received messages of this topic on this member
+ * Returns the total number of received messages of this topic on this member.
  */
 long getReceiveOperationCount();
 ```
+
 ### Executor Statistics
 
-The `IExecutorService` interface has a `getLocalExecutorStats()` method which returns a
-`LocalExecutorStats` object that holds local executor statistics.
+To get local executor statistics, use the `getLocalExecutorStats()` method from the `IExecutorService` interface.
+This method returns a `LocalExecutorStats` object that holds local executor statistics.
+
+Below is example code where the `getLocalExecutorStats()` method and the `getCompletedTaskCount` method from `LocalExecutorStats` get the number of completed operations of the executor service.
+
 
 ```java
 HazelcastInstance node = Hazelcast.newHazelcastInstance();
@@ -482,32 +500,32 @@ Below is the list of metrics that you can access via the `LocalExecutorStats` ob
 
 ```java
 /**
- * Returns the number of pending operations of the executor service
+ * Returns the number of pending operations of the executor service.
  */
 long getPendingTaskCount();
 
 /**
- * Returns the number of started operations of the executor service
+ * Returns the number of started operations of the executor service.
  */
 long getStartedTaskCount();
 
 /**
- * Returns the number of completed operations of the executor service
+ * Returns the number of completed operations of the executor service.
  */
 long getCompletedTaskCount();
 
 /**
- * Returns the number of cancelled operations of the executor service
+ * Returns the number of cancelled operations of the executor service.
  */
 long getCancelledTaskCount();
 
 /**
- * Returns the total start latency of operations started
+ * Returns the total start latency of operations started.
  */
 long getTotalStartLatency();
 
 /**
- * Returns the total execution time of operations finished
+ * Returns the total execution time of operations finished.
  */
 long getTotalExecutionLatency();
 ```
