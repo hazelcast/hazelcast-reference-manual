@@ -2,7 +2,7 @@
 
 Hazelcast Cluster Quorum enables you to define the minimum number of machines required in a cluster for the cluster to remain in an operational state. If the number of machines is below the defined minimum at any time, the operations are rejected and the rejected operations return a `QuorumException` to their callers.
 
-When a network partitioning happens, by default Hazelcast chooses to be available. With Cluster Quorum, you can tune your Hazelcast instance towards achieving better consistency by rejecting updates that do not pass a minimum threshold. This reduces the chance that the number of concurrent will update to an entry from two partitioned clusters. Note that the consistency defined here is the best effort, it is not full or strong consistency.
+When a network partitioning happens, by default Hazelcast chooses to be available. With Cluster Quorum, you can tune your Hazelcast instance towards achieving better consistency by rejecting updates that do not pass a minimum threshold. This reduces the chance of concurrent updates to an entry from two partitioned clusters. Note that the consistency defined here is the best effort, it is not full or strong consistency.
 
 Hazelcast initiates a quorum when a change happens on the member list.
 
