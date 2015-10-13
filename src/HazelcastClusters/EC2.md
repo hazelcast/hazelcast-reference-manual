@@ -21,6 +21,7 @@ The following is an example declarative configuration.
   <aws enabled="true">
     <access-key>my-access-key</access-key>
     <secret-key>my-secret-key</secret-key>
+    <iam-role>s3access</iam-role>
     <region>us-west-1</region>
     <host-header>ec2.amazonaws.com</host-header>
     <security-group-name>hazelcast-sg</security-group-name>
