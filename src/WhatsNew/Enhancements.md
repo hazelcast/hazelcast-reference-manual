@@ -6,6 +6,7 @@
 The following are the enhancements performed for Hazelcast 3.5.3 release.
 
 - Cache statistics are only supported at the server side and exposed by `CacheProxy`. At the client side, cache statistics are not calculated and supported so `UnsupportedOperationException` is thrown at `ClientCacheProxy` [[#6262]](https://github.com/hazelcast/hazelcast/issues/6262).
+- Added `iam-role` support to Hazelcast Cloud module. So users can use Hazelcast Cloud module without configuring access keys. [[#6262]](https://github.com/hazelcast/hazelcast/issues/2630).
 
 
 
