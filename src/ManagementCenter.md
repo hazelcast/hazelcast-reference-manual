@@ -1,32 +1,32 @@
 ## Management Center
 
-Hazelcast Management Center enables you to monitor and manage your nodes running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dump from nodes. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your nodes.
+Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dump from members. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your members.
 
-### Installation
+### Installing Management Center
 
-You have two options for installing Hazelcast Management Center. You can either deploy the `mancenter`-*version*`.war` application into your Java application server/container or you can start Hazelcast Management Center from the command line and then have the Hazelcast nodes communicate with that web application. This means that your Hazelcast nodes should know the URL of the `mancenter` application before they start.
+You have two options for installing Hazelcast Management Center. You can either deploy the `mancenter`-*version*`.war` application into your Java application server/container or you can start Hazelcast Management Center from the command line and then have the Hazelcast cluster members communicate with that web application. This means that your members should know the URL of the `mancenter` application before they start.
 
-Here are the steps:
+Here are the steps.
 
--	Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file. 
--	You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
+1. Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file. 
+2. You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
 
-```java
-java -jar mancenter-*version*.war 8080 mancenter
-```
+        ```java
+        java -jar mancenter-*version*.war 8080 mancenter
+        ```
 
--	Or, you can deploy it to your web server (Tomcat, Jetty, etc.). Let us say it is running at `http://localhost:8080/mancenter`.
--	After you perform the above steps, make sure that `http://localhost:8080/mancenter` is up.
--	Configure your Hazelcast nodes by adding the URL of your web application to your `hazelcast.xml`. Hazelcast nodes will send their states to this URL.
+3. Or, instead of starting at the command line, you can deploy it to your web server (Tomcat, Jetty, etc.). Let us say it is running at `http://localhost:8080/mancenter`.
+4. After you perform the above steps, make sure that `http://localhost:8080/mancenter` is up.
+5. Configure your Hazelcast members by adding the URL of your web application to your `hazelcast.xml`. Hazelcast members will send their states to this URL.
 
-```xml
-<management-center enabled="true">
-  http://localhost:8080/mancenter
-</management-center>
-```
+        ```xml
+        <management-center enabled="true">
+          http://localhost:8080/mancenter
+        </management-center>
+        ```
 
--	Start your Hazelcast cluster.
--	Browse to `http://localhost:8080/mancenter` and login. **Initial login username/password is `admin/admin`**
+6. Start your Hazelcast cluster.
+7. Browse to `http://localhost:8080/mancenter` and login. **Initial login username/password is `admin/admin`**
 
 The Management Center creates a folder with the name "mancenter" under your "user/home" folder to save data files. You can change the data folder by setting the `hazelcast.mancenter.home` system property.
 
@@ -37,7 +37,7 @@ The Management Center creates a folder with the name "mancenter" under your "use
 *Please refer to the [Management Center Configuration section](#management-center-configuration) for a full description of Hazelcast Management Center configuration.*
 
 
-### Tool Overview
+### Management Center Tools
 
 Once the page is loaded after selecting a cluster, the tool's home page appears as shown below.
 
@@ -49,13 +49,13 @@ This page provides the fundamental properties of the selected cluster which are 
 
 The toolbar has the following buttons:
 
--	**Home**: Loads the home page shown above. Please see the [Home Page section](#home-page).
--	**Scripting**: Loads the page used to write and execute user`s own scripts on the cluster. Please see the [Scripting section](#scripting).
--	**Console**: Loads the page used to execute commands on the cluster. Please see the [Console section](#console).
--	**Alerts**: Creates alerts by specifying filters. Please see the [Alerts section](#alerts).
--	**Documentation**: Opens the Management Center documentation in a window inside the tool. Please see the [Documentation section](#documentation).
--	**Administration**: Used by the admin users to manage users in the system. Please see the [Administration section](#administration).
--	**Time Travel**: Sees the cluster's situation at a time in the past. Please see the [Time Travel section](#time-travel).
+-	**Home**: Loads the home page shown above. Please see [Management Center Home Page](#management-center-home-page).
+-	**Scripting**: Loads the page used to write and execute the user`s own scripts on the cluster. Please see the [Scripting section](#scripting).
+-	**Console**: Loads the page used to execute commands on the cluster. Please see the [Console section](#executing-console-commands).
+-	**Alerts**: Creates alerts by specifying filters. Please see [Setting Alerts](#creating-alerts).
+-	**Documentation**: Opens the Management Center documentation in a window inside the tool. Please see the [Documentation section](#management-center-documentation).
+-	**Administration**: Used by the admin users to manage users in the system. Please see [Administering Management Center](#administering-management-center).
+-	**Time Travel**: Sees the cluster's situation at a time in the past. Please see the [Time Travel section](#checking-past-status-with-time-travel).
 -	**Cluster Selector**: Switches between clusters. When the mouse is moved onto this item, a drop down list of clusters appears.
 
   ![](images/4ChangeCluster.jpg)
@@ -67,7 +67,7 @@ The toolbar has the following buttons:
 
 #### Menu
 
-The Home page includes a menu on the left which lists the distributed data structures in the cluster and all the cluster members (nodes), as shown below.
+The Home Page includes a menu on the left which lists the distributed data structures in the cluster and all the cluster members, as shown below.
 
 ![](images/LeftMenu.png)
 
@@ -75,13 +75,13 @@ The Home page includes a menu on the left which lists the distributed data struc
 
 You can expand and collapse menu items by clicking on them. Below is the list of menu items with links to their explanations.
 
--	[Caches](#caches)
--	[Maps](#maps)
--   [Replicated Maps](#replicated-maps)
--	[Queues](#queues)
--	[Topics](#topics)
--	[MultiMaps](#MultiMaps)
--	[Executors](#executors)
+-	[Caches](#monitoring-caches)
+-	[Maps](#managing-maps)
+-   [Replicated Maps](#monitoring-replicated-maps)
+-	[Queues](#monitoring-queues)
+-	[Topics](#monitoring-topics)
+-	[MultiMaps](#monitoring-multimaps)
+-	[Executors](#monitoring-executors)
 -	[Members](#members)
 
 #### Tabbed View
@@ -93,13 +93,13 @@ Each time you select an item from the toolbar or menu, the item is added to the 
 In the above example, *Home*, *Scripting*, *Console*, *queue1* and *map1* windows can be seen as tabs. Windows can be closed using the ![](images/CloseIcon.jpg) icon on each tab (except the Home Page; it cannot be closed).
 
 
-### Home Page
+### Management Center Home Page
 
 This is the first page appearing after logging in. It gives an overview of the connected cluster. The following subsections describe each portion of the page.
 
 #### CPU Utilization
 
-This part of the page provides load and utilization information for the CPUs for each node, as shown below.
+This part of the page provides load and utilization information for the CPUs for each node (cluster member), as shown below.
 
 ![](images/NonHMCCPUUtil.jpg)
 
@@ -109,7 +109,7 @@ The last column (**Chart**) graphically shows the recent load on the CPUs. When 
 
 #### Memory Utilization
 
-This part of the page provides information related to memory usages for each node, as shown below.
+This part of the page provides information related to memory usages for each node (cluster member), as shown below.
 
 ![](images/NonHMCMemoryUtil.jpg)
 
@@ -133,14 +133,14 @@ In the above example, you can see 49.55% of the total map memory is used by **ma
 
 #### Partition Distribution
 
-This pie chart shows what percentage of partitions each node has, as shown below.
+This pie chart shows what percentage of partitions each node (cluster member) has, as shown below.
 
 ![](images/Home-PartitionDistribution.jpg)
 
 You can see each node's partition percentages by placing the mouse cursor on the chart. In the above example, you can see the node "127.0.0.1:5708" has 5.64% of the total partition count (which is 271 by default and configurable, please see the `hazelcast.partition.count` property explained in the [System Properties section](#system-properties)).
 
 
-### Caches
+### Monitoring Caches
 
 You can monitor your caches' metrics by clicking the cache name listed on the left panel under **Caches** menu item. A new tab for monitoring that cache instance is opened on the right, as shown below.
 
@@ -148,7 +148,7 @@ You can monitor your caches' metrics by clicking the cache name listed on the le
 
 On top of the page, four charts monitor the **Gets**, **Puts**, **Removals** and **Evictions** in real-time. The X-axis of all the charts show the current system time. To open a chart as a separate dialog, click on the ![](images/MaximizeChart.jpg) button placed at the top right of each chart.
 
-Under these charts is the Cache Statistics Data Table. From left to right, this table lists the IP addresses and ports of each node, get, put, removal, eviction, hit and miss count per second in real-time.
+Under these charts is the Cache Statistics Data Table. From left to right, this table lists the IP addresses and ports of each member, and the get, put, removal, eviction, and hit and miss counts per second in real-time.
 
 You can navigate through the pages using the buttons at the bottom right of the table (**First, Previous, Next, Last**). You can ascend or descend the order of the listings in each column by clicking on column headings.
 
@@ -156,7 +156,7 @@ You can navigate through the pages using the buttons at the bottom right of the 
 
 
 
-### Maps
+### Managing Maps
 
 Map instances are listed under the **Maps** menu item on the left. When you click on a map, a new tab for monitoring that map instance opens on the right, as shown below. In this tab, you can monitor metrics and also re-configure the selected map.
 
@@ -166,24 +166,24 @@ The below subsections explain the portions of this window.
 
 #### Map Browser
 
-Map Browser is a tool you can use to retrieve properties of the entries stored in the selected map. To open it, click on the **Map Browser** button, located at the top right of the window. Once opened, the tool appears as a dialog, as shown below.
+Use the Map Browser tool to retrieve properties of the entries stored in the selected map. To open the Map Browser tool, click on the **Map Browser** button, located at the top right of the window. Once opened, the tool appears as a dialog, as shown below.
 
 ![](images/Map-MapBrowser.jpg)
 
-Once the key and key's type is specified and the **Browse** button is clicked, the key's properties along with its value are listed.
+Once the key and the key's type are specified and the **Browse** button is clicked, the key's properties along with its value are listed.
 
 #### Map Config
 
-By using the Map Config tool, you can set selected map's attributes like the backup count, TTL, and eviction policy. To open it, click on the **Map Config** button, located at the top right of the window. Once opened, the tool appears as a dialog, as shown below.
+Use the Map Config tool to set the selected map's attributes, such as the backup count, TTL, and eviction policy. To open the Map Config tool, click on the **Map Config** button, located at the top right of the window. Once opened, the tool appears as a dialog, as shown below.
 
 ![](images/Map-MapConfig.jpg)
 
-Change any attribute as required and click the **Update** button to save changes.
+You can change any attribute and click the **Update** button to save your changes.
 
 
 #### Map Monitoring
 
-Besides Map Browser and Map Config tools, this page has monitoring options explained below. All of these options perform real-time monitoring.
+Besides the Map Browser and Map Config tools, the map monitoring page has monitoring options that are explained below. All of these options perform real-time monitoring.
 
 On top of the page, small charts monitor the size, throughput, memory usage, backup size, etc. of the selected map in real-time. The X-axis of all the charts show the current system time. You can select other small monitoring charts using the ![](images/ChangeWindowIcon.jpg) button at the top right of each chart. When you click the button, the monitoring options are listed, as shown below.
 
@@ -199,23 +199,28 @@ When you click on a desired monitoring, the chart is loaded with the selected op
 -	**Hits**: Monitors the hit count of the map.
 -	**Puts/s, Gets/s, Removes/s**: These three charts monitor the put, get and remove operations (per second) performed on the selected map.
 
-Under these charts are **Map Memory** and **Map Throughput** data tables. The Map Memory data table provides memory metrics distributed over nodes, as shown below.
+Under these charts are **Map Memory** and **Map Throughput** data tables. The Map Memory data table provides memory metrics distributed over members, as shown below.
 
 ![](images/Map-MemoryDataTable.jpg)
 
-From left to right, this table lists the IP address and port, entry counts, memory used by entries, backup entry counts, memory used by backup entries, events, hits, locks and dirty entries (in the cases where *MapStore* is enabled, these are the entries that are put to/removed from the map but not written to/removed from a database yet) of each node in the map. You can navigate through the pages using the buttons at the bottom right of the table (**First, Previous, Next, Last**). You can ascend or descend the order of the listings by clicking on the column headings.
+From left to right, this table lists the IP address and port, entry counts, memory used by entries, backup entry counts, memory used by backup entries, events, hits, locks and dirty entries (in the cases where *MapStore* is enabled, these are the entries that are put to/removed from the map but not written to/removed from a database yet) of each entry in the map. You can navigate through the pages using the buttons at the bottom right of the table (**First, Previous, Next, Last**). You can ascend or descend the order of the listings by clicking on the column headings.
 
-Map Throughput data table provides information about the operations (get, put, remove) performed on each node in the map, as shown below.
+Map Throughput data table provides information about the operations (get, put, remove) performed on each member in the map, as shown below.
 
 ![](images/Map-MapThroughputDataTable.jpg)
 
-From left to right, this table lists the IP address and port of each node, the put, get and remove operations on each node, the average put, get, remove latencies, and the maximum put, get, remove latencies on each node.
+From left to right, this table lists:
+
+- the IP address and port of each member, 
+- the put, get and remove operations on each member, 
+- the average put, get, remove latencies, 
+- and the maximum put, get, remove latencies on each member.
 
 You can select the period in the combo box placed at the top right corner of the window, for which the table data will be shown. Available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
 
 You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). To ascend or descent the order of the listings, click on the column headings.
 
-### Replicated Maps
+### Monitoring Replicated Maps
 
 Replicated Map instances are shown under the **Replicated Maps** menu item on the left. When you click on a Replicated Map, a new tab for monitoring that instance opens on the right, as shown below. 
 
@@ -229,20 +234,25 @@ When you click on a desired monitoring, the chart is loaded with the selected op
 -	**Throughput**: Monitors get, put and remove operations performed on the Replicated Map. Y-axis is the operation count.
 -	**Memory**: Monitors the memory usage on the Replicated Map. Y-axis is the memory count.
 -	**Hits**: Monitors the hit count of the Replicated Map.
--	**Puts/s, Gets/s, Removes/s**: These three charts monitor the put, get and remove operations (per second) performed on the selected Replicated Map, the average put, get, remove latencies, and the maximum put, get, remove latencies on each node.
+-	**Puts/s, Gets/s, Removes/s**: These three charts monitor the put, get and remove operations (per second) performed on the selected Replicated Map, the average put, get, remove latencies, and the maximum put, get, remove latencies on each member.
 
-Replicated Map Throughput Data Table provides information about operations (get,put,remove) performed on each node in the selected Replicated Map. 
+The Replicated Map Throughput Data Table provides information about operations (get, put, remove) performed on each member in the selected Replicated Map.
 
 ![](images/replicated-map-throughput.png)
 
-From left to right, this table lists the IP address and port of each node, the put, get and remove operations on each node, the average put, get, remove latencies, and the maximum put, get, remove latencies on each node.
+From left to right, this table lists:
 
-You can select the period in the combo box placed at the top right corner of the window, for which the table data will be shown. Available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
+- the IP address and port of each member,
+- the put, get, and remove operations on each member,
+- the average put, get, and remove latencies,
+- and the maximum put, get, and remove latencies on each member.
+
+You can select the period from the combo box placed at the top right corner of the window, in which the table data is shown. Available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
 
 You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). To ascend or descent the order of the listings, click on the column headings.
 
 
-### Queues
+### Monitoring Queues
 
 Using the menu item **Queues**, you can monitor your queues data structure. When you expand this menu item and click on a queue, a new tab for monitoring that queue instance is opened on the right, as shown below.
 
@@ -254,48 +264,48 @@ On top of the page, small charts monitor the size, offers and polls of the selec
 -	**Offers**: Monitors the offers sent to the selected queue. Y-axis is the offer count.
 -	**Polls**: Monitors the polls sent to the selected queue. Y-axis is the poll count.
 
-Under these charts are **Queue Statistics** and **Queue Operation Statistics** tables. The Queue Statistics table provides item and backup item counts in the queue and age statistics of items and backup items at each node, as shown below.
+Under these charts are **Queue Statistics** and **Queue Operation Statistics** tables. The Queue Statistics table provides item and backup item counts in the queue and age statistics of items and backup items at each member, as shown below.
 
 ![](images/QueueStatistics.jpg)
 
-From left to right, this table lists the IP address and port, items and backup items on the queue of each node, and maximum, minimum and average age of items in the queue. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). The order of the listings in each column can be ascended or descended by clicking on column headings.
+From left to right, this table lists the IP address and port, items and backup items on the queue of each member, and maximum, minimum and average age of items in the queue. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). The order of the listings in each column can be ascended or descended by clicking on column headings.
 
 Queue Operations Statistics table provides information about the operations (offers, polls, events) performed on the queues, as shown below.
 
 ![](images/QueueOperationStatistics.jpg)
 
-From left to right, this table lists the IP address and port of each node, and counts of offers, rejected offers, polls, poll misses and events.
+From left to right, this table lists the IP address and port of each member, and counts of offers, rejected offers, polls, poll misses and events.
 
 You can select the period in the combo box placed at the top right corner of the window to show the table data. Available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
 
 You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). Click on the column headings to ascend or descend the order of the listings.
 
 
-### Topics
+### Monitoring Topics
 
 To monitor your topics' metrics, click the topic name listed on the left panel under the **Topics** menu item. A new tab for monitoring that topic instance opens on the right, as shown below.
 
 ![](images/ManCenter-Topics.jpg)
 
-On top of the page, two charts monitor the **Publishes** and **Receives** in real-time. They show the published and received message counts of the cluster, nodes of which are subscribed to the selected topic. The X-axis of both charts show the current system time. To open a chart as a separate dialog, click on the ![](images/MaximizeChart.jpg) button placed at the top right of each chart.
+On top of the page, two charts monitor the **Publishes** and **Receives** in real-time. They show the published and received message counts of the cluster, the members of which are subscribed to the selected topic. The X-axis of both charts show the current system time. To open a chart as a separate dialog, click on the ![](images/MaximizeChart.jpg) button placed at the top right of each chart.
 
-Under these charts is the Topic Operation Statistics table. From left to right, this table lists the IP addresses and ports of each node, and counts of message published and receives per second in real-time. You can select the period in the combo box placed at top right corner of the table to show the table data. The available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
+Under these charts is the Topic Operation Statistics table. From left to right, this table lists the IP addresses and ports of each member, and counts of message published and receives per second in real-time. You can select the period in the combo box placed at top right corner of the table to show the table data. The available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
 
 You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). Click on the column heading to ascend or descend the order of the listings.
 
 
-### MultiMaps
+### Monitoring MultiMaps
 
-MultiMap is a specialized map where you can associate a key with multiple values. This monitoring option is similar to the **Maps** option: the same monitoring charts and data tables monitor MultiMaps. The differences are that you cannot browse the MultiMaps and re-configure it. Please see the [Maps section](#maps).
+MultiMap is a specialized map where you can associate a key with multiple values. This monitoring option is similar to the **Maps** option: the same monitoring charts and data tables monitor MultiMaps. The differences are that you cannot browse the MultiMaps and re-configure it. Please see [Managing Maps](#managing-maps).
 
 
-### Executors
+### Monitoring Executors
 
 Executor instances are listed under the **Executors** menu item on the left. When you click on a executor, a new tab for monitoring that executor instance opens on the right, as shown below.
 
 ![](images/ExecutorsHome.jpg)
 
-On top of the page, small charts monitor the pending, started, completed, etc. executors in real-time. The X-axis of all the charts shows the current system time. You can select other small monitoring charts using the ![](images/ChangeWindowIcon.jpg) button placed at the top right of each chart. When it is clicked, the monitoring options are listed, as shown below.
+On top of the page, small charts monitor the pending, started, completed, etc. executors in real-time. The X-axis of all the charts shows the current system time. You can select other small monitoring charts using the ![](images/ChangeWindowIcon.jpg) button placed at the top right of each chart. Click the button to list the monitoring options, as shown below.
 
 ![](images/SelectExecMonOpt.jpg)
 
@@ -311,12 +321,12 @@ Under these charts is the **Executor Operation Statistics** table, as shown belo
 
 ![](images/ExecutorOperationStats.jpg)
 
-From left to right, this table lists the IP address and port of nodes, the counts of pending, started and completed executors per second, and the execution time and average start latency of executors on each node. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). Click on the column heading to ascend or descend the order of the listings.
+From left to right, this table lists the IP address and port of members, the counts of pending, started and completed executors per second, and the execution time and average start latency of executors on each member. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). Click on the column heading to ascend or descend the order of the listings.
 
 
-### Members
+### Monitoring Members
 
-Use this menu item to monitor each cluster member (node) and perform operations like running garbage collection (GC) and taking a thread dump. Once you select a member from the menu, a new tab for monitoring that member opens on the right, as shown below.
+Use this menu item to monitor each cluster member and perform operations like running garbage collection (GC) and taking a thread dump. Once you select a member from the menu, a new tab for monitoring that member opens on the right, as shown below.
 
 ![](images/MembersHome.png)
 
@@ -361,7 +371,7 @@ employees.get("1"); // will return "John Doe"
 ```
 
 
-### Console
+### Executing Console Commands
 
 The Management Center has a console feature that enables you to execute commands on the cluster. For example, you can perform `put`s and `get`s on a map, after you set the namespace with the command `ns <name of your map>`. The same is valid for queues, topics, etc. To execute your command, type it into the field below the console and press **Enter**. Type `help` to see all the commands that you can use.
 
@@ -370,7 +380,7 @@ Open a console window by clicking on the **Console** button located on the toolb
 ![](images/console.jpg)
 
 
-### Alerts
+### Creating Alerts
 
 You can use the alerts feature of this tool to receive alerts and/or e-mail notifications by creating filters. In these filters, you can specify criteria for cluster members or data structures. When the specified criteria are met for a filter, the related alert is shown as a pop-up message on the top right of the page or sent as an e-mail.
 
@@ -400,7 +410,7 @@ Select **Member Alerts** check box to create filters for some or all members in 
 
 Alerts can be created when:
 
--	free memory on the selected nodes is less than the specified number.
+-	free memory on the selected member nodes is less than the specified number.
 -	used heap memory is larger than the specified number.
 -	the number of active threads are less than the specified count.
 -	the number of daemon threads are larger than the specified count.
@@ -426,7 +436,7 @@ After you specify the criteria, click the **Next** button. On the next page, giv
 Click on the **Save** button; your filter will be saved and put into the **Filters** part of the page. To edit the filter, click on the ![](images/EditIcon.jpg) icon. To delete it, click on the ![](images/DeleteIcon.jpg) icon.
 
 
-### Administration
+### Administering Management Center
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users, i.e. the users who initially have ***admin*** as their both usernames and passwords.*
 
@@ -436,17 +446,17 @@ The **Admin** user can add, edit, and remove users and specify the permissions f
 
 To add a user to the system, specify the username, e-mail and password in the **Add/Edit User** part of the page. If the user to be added will have administrator privileges, select **isAdmin** checkbox. **Permissions** checkboxes have two values:
 
--	**Read Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar at that user's session. Also, users with this permission cannot update a [map configuration](#map-config), run a garbage collection and take a thread dump on a node, or shutdown a node (please see the [Members section](#members)).
--	**Read/Write**: If this permission is given to the user, *Home*, *Scripting*, *Console*, *Documentation* and *Time Travel* items will be visible. The users with this permission can update a map configuration and perform operations on the nodes.
+-	**Read Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar at that user's session. Also, users with this permission cannot update a [map configuration](#map-config), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](#monitoring-members)).
+-	**Read/Write**: If this permission is given to the user, *Home*, *Scripting*, *Console*, *Documentation* and *Time Travel* items will be visible. The users with this permission can update a map configuration and perform operations on the members.
 
 After you enter/select all fields, click **Save** button to create the user. You will see the newly created user's username on the left side, in the **Users** part of the page.
 
 To edit or delete a user, select a username listed in the **Users**. Selected user information appears on the right side of the page. To update the user information, change the fields as desired and click the **Save** button. To delete the user from the system, click the **Delete** button.
 
 
-### Time Travel
+### Checking Past Status with Time Travel
 
-Time Travel is used to check the status of the cluster at a time in the past. When this item is selected on the toolbar, a small window appears on top of the page, as shown below.
+Use the Time Travel toolbar item to check the status of the cluster at a time in the past. When this item is selected on the toolbar, a small window appears on top of the page, as shown below.
 
 ![](images/timetravel.jpg)
 
@@ -464,14 +474,14 @@ Time travel data files are created monthly. Their file name format is `[group-na
 Management Center has no automatic way of removing or archiving old time travel data files. They remain in the aforementioned folder until you delete or archive them.
 
 
-### Documentation
+### Management Center Documentation
 
 To see the documentation, click on the **Documentation** button located at the toolbar. Management Center manual will appear as a tab.
 
 
 ### Suggested Heap Size
 
-**For 2 Nodes**
+**For 2 Nodes (Cluster Members)**
 
 | Mancenter Heap Size | # of Maps | # of Queues | # of Topics |
 | -------- | --------- | ---------- | ------------ |
