@@ -10,6 +10,7 @@ A Hazelcast cluster is a network of cluster members that run Hazelcast. Cluster 
 - [Multicast](#discovering-members-by-multicast)
 - [TCP](#discovering-members-by-tcp)
 - [EC2 Cloud](#discovering-members-within-ec2-cloud)
+- [JClouds](#discovering-members_with_jclouds)
 
 Each discovery mechanism is explained in the following sections.
 
