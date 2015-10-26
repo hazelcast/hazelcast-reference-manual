@@ -1,5 +1,5 @@
 
-### Discovering Members with jclouds&reg;
+### Discovering Members with jclouds
 
 Hazelcast supports jclouds&reg; for node discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud provider.
 

@@ -4,6 +4,7 @@
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Chapter 5 - Hazelcast Clusters](#hazelcast-clusters)|[Discovering Members with jclouds](#discovering-members-with-jclouds)|Added as a new section to explain how you can enable Hazelcast to discover your members with jclouds&reg;.|
 |[Chapter 6 - Distributed Data Structures](#distributed-data-structures)|[Map](#map)|[Map Eviction](#map-eviction) section updated by adding the definition for the `min-eviction-check-millis` property. The section [Understanding Map Eviction](#understanding-map-eviction) added for a more clearer explanation of the eviction mechanism.|
 |[Chapter 9 - Distributed Query](#distributed-query)|[Filtering with Paging Predicates](#filtering-with-paging-predicates)| The note stating that the random page accessing is not supported removed, since it is now supported with this release.
 |[Chapter 11 - Transactions](#transactions)|[ONE_PHASE vs. TWO_PHASE](#one_phase-vs-two_phase)| Added as a new section explaining the trade offs between these two transaction types.
