@@ -4,7 +4,7 @@
 The following are the the enhancements performed for Hazelcast 3.6 release.
 
 - **Replicated Map improvements**: The implementation of Hazelcast replicated maps has been revisited. Please especially refer to the [Considerations for Replicated Map section](#considerations-for-replicated-map).
-- **Management Center improvements**: ???. Please refer to the [Management Center section](#management-center).
+- **Management Center improvements**: Alerting mechanism added. Please refer to the [Management Center section](#management-center).
 - **Paging Predicate improvements**: With the performed improvements, now random page accessing is supported. Please refer to the [Filtering with Paging Predicates section](#filtering-with-paging-predicates).
 - **Rule based query optimizations**: This improvement introduces a query optimizer based on static rewriting rules. The optimizer treats predicates as immutable and returns a modified copy when the optimized one is found. Please refer to the [???](#???).
 - **WAN replication improvements**: With the improvements performed on Hazelcast's WAN replication feature, you can now monitor WAN replication events for each data structure and WAN replication now supports different acknowledge types for each target cluster group. Please refer to the [WAN Replication Event Filtering API section](#wan-replication-event-filtering-api) and [WAN Replication Acknowledge Types section](#wan-replication-acknowledge-types) for more information.
