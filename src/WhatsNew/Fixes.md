@@ -5,6 +5,10 @@
 
 The following are the issues solved for Hazelcast 3.6 release.
 
+- The method `map.size()` waits indefinitely after the shutdown of a node. <a href="https://github.com/hazelcast/hazelcast/issues/6538" target="_blank">[6538]</a>
+- `HazelcastCachingProvider` does not use the specified instance (by the object) when `instance-name` is not specified. <a href="https://github.com/hazelcast/hazelcast/issues/6454" target="_blank">[6454]</a>
+- `onExecutionFailure` should be called before returning from `run`, if backup is not valid. <a href="https://github.com/hazelcast/hazelcast/issues/6420" target="_blank">[6420]</a>
+- `OperationThread.priorityPendingCount()` should return `scheduleQueue.prioritySize()` instead of `scheduleQueue.normalSize()`. <a href="https://github.com/hazelcast/hazelcast/issues/6318" target="_blank">[6318]</a>
 - There is a growth in heap usage caused by a memory leak in the following scenario: A node in the cluster regularly creates maps and puts entries into it, again in regular intervals. Another node removes the entries minutes after they were put, and if the map is empty, it destroys the map. <a href="https://github.com/hazelcast/hazelcast/issues/6317" target="_blank">[6317]</a>
 - Currently, there is an `EntryEvictedListener` that is notified both for expiration and eviction events. There should be a separate listener for expired entries: eviction happens due to size constraints, and expiry is once the entry has expired. <a href="https://github.com/hazelcast/hazelcast/issues/6311" target="_blank">[6311]</a>
 - `InvocationFuture`s async calls do not detect the lost operations. <a href="https://github.com/hazelcast/hazelcast/issues/6250" target="_blank">[6250]</a>
