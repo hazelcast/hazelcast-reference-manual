@@ -326,20 +326,20 @@ Under these charts is the **Executor Operation Statistics** table, as shown belo
 
 From left to right, this table lists the IP address and port of members, the counts of pending, started and completed executors per second, and the execution time and average start latency of executors on each member. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). Click on the column heading to ascend or descend the order of the listings.
 
-### Monitoring Wan Replication
+### Monitoring WAN Replication
 
-Wan Replication schemes are listed under the **WAN** menu item on the left. When you click on a scheme, a new tab for monitoring the targets which that scheme has will open on the right, as shown below.
+WAN Replication schemes are listed under the **WAN** menu item on the left. When you click on a scheme, a new tab for monitoring the targets which that scheme has appears on the right, as shown below.
 
 ![](images/WanPublisherStats.png)
 
-In this tab, you will be able to see **Wan Replication Operations Table** for each target which belongs to this scheme. One of the example tables is shown below.
+In this tab, you see **WAN Replication Operations Table** for each target which belongs to this scheme. One of the example tables is shown below.
 
 ![](images/WanTargetTable.png)
 
 -	**Connected**: Status of the member connection to the target.
--	**Outbound Recs (sec)**: Average number of records sent per second to target from this member.
+-	**Outbound Recs (sec)**: Average number of records sent to target per second from this member.
 -	**Outbound Lat (ms)**: Average latency of sending a record to the target from this member.
--	**Outbound Queue**: Number of records waiting in the queue for to be sent to the target.
+-	**Outbound Queue**: Number of records waiting in the queue to be sent to the target.
 -	**Action**: Stops/Resumes replication of this member's records.
 
 ### Monitoring Members

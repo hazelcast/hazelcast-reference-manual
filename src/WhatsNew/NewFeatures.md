@@ -26,6 +26,6 @@ The following the new features introduced with Hazelcast 3.6 release.
 - **Lite Members**: With the introduction of Hazelcast Lite Members, you are able to specify certain members in your cluster so that they do not store data. You can use these lite members mostly for your task executions and listener registrations. Please refer to [Enabling Lite Members](#enabling-lite-members).
 - **Indexing and querying of collections**: Hazelcast is now able to index and query the objects in a collection, e.g. queue, set and list. Please refer to the [???](#???).
 - **Acquiring locks with a lease time**: Now, you can try to acquire locks with a lease time. Please refer to the [???](#???).
-- **Monitoring the WAN replication**: You can now monitor the state of your WAN replications using the Hazelcast Management Center. Please refer to the [???](#???).
+- **Monitoring the WAN replication**: You can now monitor the state of your WAN replications using the Hazelcast Management Center. Please refer to the [Monitoring WAN Replication section](#monitoring-wan-replication).
 
 
