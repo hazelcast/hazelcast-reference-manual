@@ -4,13 +4,13 @@ You can configure your Hazelcast nodes to be a lite member using declarative or 
 
 - Declarative Configuration
 
-		```xml
-		<lite-member enabled="true" />
+```xml
+<lite-member enabled="true" />
 ```
 
 - Programmatic Configuration
 
-		```java
-		config.setLiteMember(true);
+```java
+config.setLiteMember(true);
 ```
 
