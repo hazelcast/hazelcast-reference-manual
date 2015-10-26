@@ -35,6 +35,9 @@ All network related configuration is performed via the `network` element in the 
                 <tag-key>type</tag-key>
                 <tag-value>hz-nodes</tag-value>
             </aws>
+            <discovery-strategies>
+              <discovery-strategy ... />
+            </discovery-strategies>
         </join>
         <interfaces enabled="false">
             <interface>10.10.1.*</interface>
@@ -221,6 +224,9 @@ The `join` configuration element is used to enable the Hazelcast instances to fo
                 <tag-key>type</tag-key>
                 <tag-value>hz-nodes</tag-value>
             </aws>
+            <discovery-strategies>
+              <discovery-strategy ... />
+            </discovery-strategies>
         </join>
    <network>     
 ```
@@ -277,6 +283,9 @@ The `aws` element includes parameters to allow the nodes to form a cluster on th
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you are using a cloud provider other than AWS, you can use the programmatic configuration to specify a TCP/IP cluster. The members will need to be retrieved from that provider (e.g. JClouds).*
 
+#### discovery-strategies element
+
+The `discovery-strategies` element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. For further information please refer to the Discovery SPI documentation and the vendor documentation of the used discovery strategy.
 
 ##### AWSClient Configuration
 

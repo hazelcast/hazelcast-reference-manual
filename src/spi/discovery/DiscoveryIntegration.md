@@ -1,0 +1,6 @@
+
+### DiscoveryService (Framework integration)
+
+As the `DiscoveryStrategy` is meant for cloud vendors or implementors of service discovery systems, the `DiscoveryService` is meant for integrators. Integrators in the case means people integrating Hazelcast into their own systems or frameworks. In those situations there are sometimes special requirements on how to lookup framework services like the discovery strategies or similar. Integrators can extend or implement their own `DiscoveryService` and `DiscoveryServiceProvider` and inject it using the Hazelcast Config API (`com.hazelcast.config.DiscoveryConfig`) prior to instantiating the `HazelcastInstance`. In any case integrators might have to remember, that a `DiscoveryService` might have to change behavior based on the runtime environment (Hazelcast member or client), therefore the `DiscoveryServiceSettings` provide information about the started `HazelcastInstance`.
+
+Since the implementation is heavily depending on the needs, there is no meaning in providing an example of how to implement your own `DiscoveryService`, however Hazelcast provides a default one which might act as a good base to get started, the default implementation is `com.hazelcast.spi.discovery.impl.DefaultDiscoveryService`.

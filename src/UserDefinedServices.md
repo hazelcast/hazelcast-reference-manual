@@ -1,13 +1,10 @@
 
 
-# User Defined Services
+## User Defined Services
 
 In the case of special/custom needs, Hazelcast's SPI (Service Provider Interface) module allows users to develop their own distributed data structures and services.
 
-
-## A Counter User Defined Service
-
-Throughout this section, we create a distributed counter that will be the guide to reveal the Hazelcast SPI usage.
+Throughout this section, we create an example distributed counter that will be the guide to reveal the Hazelcast Services SPI usage.
 
 Here is our counter.
 
