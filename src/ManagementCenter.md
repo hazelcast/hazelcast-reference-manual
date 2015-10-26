@@ -8,7 +8,7 @@ You have two options for installing Hazelcast Management Center. You can either 
 
 Here are the steps.
 
-1. Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file. 
+1. Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file.
 2. You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
 
         ```java
@@ -73,15 +73,18 @@ The Home Page includes a menu on the left which lists the distributed data struc
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Distributed data structures will be shown there when the proxies are created for them.*
 
+![image](images/NoteSmall.jpg) ***NOTE:*** * WAN Replication tab is only visible with enterprise license.*
+
 You can expand and collapse menu items by clicking on them. Below is the list of menu items with links to their explanations.
 
 -	[Caches](#monitoring-caches)
 -	[Maps](#managing-maps)
--   [Replicated Maps](#monitoring-replicated-maps)
+- [Replicated Maps](#monitoring-replicated-maps)
 -	[Queues](#monitoring-queues)
 -	[Topics](#monitoring-topics)
 -	[MultiMaps](#monitoring-multimaps)
 -	[Executors](#monitoring-executors)
+- [WAN](#monitoring-wan-replication)
 -	[Members](#members)
 
 #### Tabbed View
@@ -211,9 +214,9 @@ Map Throughput data table provides information about the operations (get, put, r
 
 From left to right, this table lists:
 
-- the IP address and port of each member, 
-- the put, get and remove operations on each member, 
-- the average put, get, remove latencies, 
+- the IP address and port of each member,
+- the put, get and remove operations on each member,
+- the average put, get, remove latencies,
 - and the maximum put, get, remove latencies on each member.
 
 You can select the period in the combo box placed at the top right corner of the window, for which the table data will be shown. Available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
@@ -222,7 +225,7 @@ You can navigate through the pages using the buttons placed at the bottom right 
 
 ### Monitoring Replicated Maps
 
-Replicated Map instances are shown under the **Replicated Maps** menu item on the left. When you click on a Replicated Map, a new tab for monitoring that instance opens on the right, as shown below. 
+Replicated Map instances are shown under the **Replicated Maps** menu item on the left. When you click on a Replicated Map, a new tab for monitoring that instance opens on the right, as shown below.
 
 ![](images/replicated-map-stats.png)
 
@@ -323,6 +326,21 @@ Under these charts is the **Executor Operation Statistics** table, as shown belo
 
 From left to right, this table lists the IP address and port of members, the counts of pending, started and completed executors per second, and the execution time and average start latency of executors on each member. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). Click on the column heading to ascend or descend the order of the listings.
 
+### Monitoring Wan Replication
+
+Wan Replication schemes are listed under the **WAN** menu item on the left. When you click on a scheme, a new tab for monitoring the targets which that scheme has will open on the right, as shown below.
+
+![](images/WanPublisherStats.png)
+
+In this tab, you will be able to see **Wan Replication Operations Table** for each target which belongs to this scheme. One of the example tables is shown below.
+
+![](images/WanTargetTable.png)
+
+-	**Connected**: Status of the member connection to the target.
+-	**Outbound Recs (sec)**: Average number of records sent per second to target from this member.
+-	**Outbound Lat (ms)**: Average latency of sending a record to the target from this member.
+-	**Outbound Queue**: Number of records waiting in the queue for to be sent to the target.
+-	**Action**: Stops/Resumes replication of this member's records.
 
 ### Monitoring Members
 
@@ -470,7 +488,7 @@ The historical data collected with Time Travel feature are stored in a file data
 
 Time travel data files are created monthly. Their file name format is `[group-name]-[year][month].db` and
  `[group-name]-[year][month].lg`. Time travel data is kept in the `*.db` files. The files with the extension `lg` are temporary files created internally and you do not have to worry about them.
- 
+
 Management Center has no automatic way of removing or archiving old time travel data files. They remain in the aforementioned folder until you delete or archive them.
 
 
@@ -493,7 +511,7 @@ To see the documentation, click on the **Documentation** button located at the t
 | Mancenter Heap Size | # of Maps | # of Queues | # of Topics |
 | -------- | --------- | ---------- | ------------ |
 | 256m | 50 | 30 | 30 |
-| 1024m | 2k | 1k | 1k | 
+| 1024m | 2k | 1k | 1k |
 
 **For 20 Nodes**
 
