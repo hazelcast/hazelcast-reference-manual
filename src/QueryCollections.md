@@ -15,7 +15,7 @@ class Leg {
 }
 ```
 
-In order to query a single element of a collection / array you can execute the following query:
+In order to query a single element of a collection/array, you can execute the following query:
 
 ```java
 IMap<Integer, Swaps> swap = getMap();
@@ -24,7 +24,7 @@ Predicate p = Predicates.equals('legs[0].currency', 'EUR');
 Collection<Swap> result = map.values(p);
 ```
 
-It is also possible to query a collection / array usint the `any` semantics:
+It is also possible to query a collection/array usint the `any` semantics as shown below:
 
 ```java
 IMap<Integer, Swaps> swap = getMap();
@@ -33,20 +33,21 @@ Predicate p = Predicates.equals('legs[any].currency', 'EUR');
 Collection<Swap> result = map.values(p);
 ```
 
-The exact same query may be executed using the `SqlPredicate`:
+The exact same query may be executed using the `SQLPredicate` as shown below:
 
-You can also use SQLPredicate:
+```
 Predicate p = new SQLPredicate('legs[any].currency = EUR');
 Collection<Swap> result = map.values(p);
+```
 
-`[]` notation applies to both Collections and Arrays
+`[]` notation applies to both collections and arrays.
 
-### Indexes in Collections & Arrays
+### Indexing in Collections and Arrays
 
-You can also create indexes on collections / arrays.
-Bear in mind the attribute used in the index definition has to be the same as the one used in the query:
+You can also create indexes in collections/arrays.
+Note that the attribute used in the index definition has to be the same as the one used in the query.
 
-Let's assume you have this index definition:
+Let's assume you have the following index definition:
 
 ```xml
 <indexes>
@@ -67,7 +68,7 @@ The following predicate, however, will NOT use the index:
 Predicates.equals('leg[0].currency', 'EUR')
 ```
 
-In order to use the index in the above mentioned case you would have to create another index:
+In order to use the index in the above mentioned case, you would have to create another index as shown below:
 
 ```xml
 <indexes>

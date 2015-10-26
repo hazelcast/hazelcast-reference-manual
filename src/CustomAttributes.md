@@ -2,12 +2,12 @@
 ## Custom Attributes
 
 It is possible to define custom attributes that may be used in predicates, queries and indexes.
-In order to define a custom attribute you need to implement a `com.hazelcast.query.extractor.ValueExtractor`
+In order to define a custom attribute, you need to implement a `com.hazelcast.query.extractor.ValueExtractor`
 which encompasses the extraction logic.
 
 ### Implementing ValueExtractor
 
-In order to implement your own `ValueExtractor` extend the abstract `com.hazelcast.query.extractor.ValueExtractor` class
+In order to implement your own `ValueExtractor`, extend the abstract `com.hazelcast.query.extractor.ValueExtractor` class
 and implement the `extract` method.
 
 The `ValueExtractor` interface looks as follows:
@@ -30,12 +30,11 @@ public abstract class ValueExtractor<T, R> {
     public abstract R extract(T target);
 
 }
-
 ```
 
-### Defining a Custom Attribute in Java Config
+### Configuring a Custom Attribute in Programmatically
 
-The following snippet demonstrates how to define a custom attribute using a `ValueExtractor`
+The following snippet demonstrates how to define a custom attribute using a `ValueExtractor`.
 
 ```java
 MapAttributeConfig attributeConfig = new MapAttributeConfig();
@@ -49,7 +48,7 @@ mapConfig.addMapAttributeConfig(attributeConfig);
 `currency` is the name of the custom attribute that will be extracted using the `CurrencyExtractor` class.
 
 
-### Defining a Custom Attribute in XML
+### Configuring a Custom Attribute Declaratively
 
 The following snippet demonstrates how to define a custom attribute in the Hazelcast XML Configuration.
 
@@ -67,7 +66,7 @@ Analogously to the example above, `currency` is the name of the custom attribute
 ### Indexing Custom Attributes
 
 You can also create an index on a Custom Attribute.
-The name of the attribute used in the index definition has to match the one used in the attributes config.
+The name of the attribute used in the index definition has to match the one used in the attributes configuration.
 
 
 ```xml
