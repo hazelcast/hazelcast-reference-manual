@@ -170,7 +170,7 @@ private Iterable<DiscoveryNode> mapToDiscoveryNodes( List<String> assignments ) 
   
   for ( String assignment : assignments ) {
     String address = sliceAddress( assignment );
-    String hostname = sliceAddress( assignment );
+    String hostname = sliceHostname( assignment );
     
     Map<String, Object> attributes = 
         Collections.singletonMap( "hostname", hostname );
