@@ -23,10 +23,8 @@ The following the new features introduced with Hazelcast 3.6 release.
 - **Split Brain Syndrome handler for Hazelcast JCache**: Now Split Brain Syndrome is handled in JCache as it is taken care in Hazelcast Map. Please refer to the [???](#???).  
 - **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration).
 - **Hazelcast Docker image**: Now you can run Hazelcast using our image in the Docker platform. Please refer to the [???](#???).
-- **Quartz integration**: This feature provides an extension to store Quartz tasks in Hazelcast. Please refer to the [???](#???).
 - **Lite Members**: With the introduction of Hazelcast Lite Members, you are able to specify certain members in your cluster so that they do not store data. You can use these lite members mostly for your task executions and listener registrations. Please refer to [Enabling Lite Members](#enabling-lite-members).
 - **Indexing and querying of collections**: Hazelcast is now able to index and query the objects in a collection, e.g. queue, set and list. Please refer to the [???](#???).
-- **Integration with Spring Transaction API**: With this release, Hazelcast has extended its Spring integration by having the transactional data structures in the Spring context. Please refer to the [???](#???).
 - **Acquiring locks with a lease time**: Now, you can try to acquire locks with a lease time. Please refer to the [???](#???).
 - **Monitoring the WAN replication**: You can now monitor the state of your WAN replications using the Hazelcast Management Center. Please refer to the [???](#???).
 
