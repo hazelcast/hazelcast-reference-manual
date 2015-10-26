@@ -1,13 +1,13 @@
 
-### Discovering Members with JClouds
+### Discovering Members with jclouds&reg;
 
-Hazelcast supports JClouds for node discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud provider.
+Hazelcast supports jclouds&reg; for node discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud provider.
 
-To configure your cluster to use JClouds Auto Discovery, set the following configuration elements.
+To configure your cluster to use jclouds Auto Discovery, follow the below steps:
 
-- Add the *hazelcast-jclouds.jar* dependency to your project. Note that it is also bundled inside *hazelcast-all.jar*. The Hazelcast-JClouds module depends on jclouds, please make sure necessary jars for your provider is present on classpath.
-- Disable join over multicast and TCP/IP: set the `enabled` attribute of the `multicast` element to "false", and set the `enabled` attribute of the `tcp-ip` element to "false".
-- Set the `enabled` attribute of the `hazelcast.discovery.enabled` element to "true".
+- Add the *hazelcast-jclouds.jar* dependency to your project. Note that, it is also bundled inside *hazelcast-all.jar*. The Hazelcast jclouds module depends on jclouds; please make sure the necessary JARs for your provider is present on the classpath.
+- Disable the multicast and TCP/IP join mechanisms. For this, set the `enabled` attributes of the `multicast` and `tcp-ip` elements to `false`.
+- Set the `enabled` attribute of the `hazelcast.discovery.enabled` property to `true`.
 - Within the `discovery-providers` element, provide your credentials (access and secret key), your region, etc.
 
 The following is an example declarative configuration.
