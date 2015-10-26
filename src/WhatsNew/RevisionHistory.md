@@ -4,6 +4,7 @@
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Chapter 3 - Getting Started](#getting-started)|[Phoning Home](#phoning-home)|Added as a new section to explain phone home data.|
 |[Chapter 5 - Hazelcast Clusters](#hazelcast-clusters)|[Discovering Members with jclouds](#discovering-members-with-jclouds)|Added as a new section to explain how you can enable Hazelcast to discover your members with jclouds&reg;.|
 |[Chapter 6 - Distributed Data Structures](#distributed-data-structures)|[Map](#map)|[Map Eviction](#map-eviction) section updated by adding the definition for the `min-eviction-check-millis` property. The section [Understanding Map Eviction](#understanding-map-eviction) added for a more clearer explanation of the eviction mechanism.|
 |[Chapter 9 - Distributed Query](#distributed-query)|[Filtering with Paging Predicates](#filtering-with-paging-predicates)| The note stating that the random page accessing is not supported removed, since it is now supported with this release.
@@ -14,6 +15,7 @@
 ||[Hibernate Second Level Cache](#hibernate-second-level-cache)|Added additional information related to Hibernate Native Client mode to the introduction paragraph of the [Setting Client/Server for Hibernate section](#setting-client-server-for-hibernate).|
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)|[Hazelcast Clients Feature Comparison](#hazelcast-clients-feature-comparison)|Added as a new section.
 ||[Client Network Configuration](#client-network-configuration)|Updated by adding the definition of the new IAM role configuration element.
+|[Chapter 16 - Other Client Implementations](#other-client-implementations)|[Windows C++ Client](#windows-c++-client)|Updated by adding static/dynamic library related flag information.
 |[Chapter 18 - Management](#management)|[Defining a Cluster Quorum](#defining-a-cluster-quorum)|Added information on quorum support for caches. Added the definition of the new configuration element `quorum-ref` to [ICache Configuration section](#icache-configuration).|
 ||[Management Center](#management-center)|A note on how to see the cache statistics on the Management Center added under the [Caches section](#monitoring-caches).<br></br>[Replicated Maps](#monitoring-replicated-maps) added as a new section.<br><br> Added the information explaining the new e-mail notification mechanism to [Creating Alerts](#creating-alerts).
 ||[Monitoring with JMX](#monitoring-with-jmx)|[MBean Naming for Hazelcast Data Structures](#mbean-naming-for-hazelcast-data-structures) and [Connecting to JMX Agent](#connecting-to-jmx-agent) added as new sections.
