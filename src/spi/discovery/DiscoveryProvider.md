@@ -176,9 +176,9 @@ private Iterable<DiscoveryNode> mapToDiscoveryNodes( List<String> assignments ) 
         Collections.singletonMap( "hostname", hostname );
     
     InetAddress inetAddress = mapToInetAddress( address );
-    Address address = new Address( inetAddress, NetworkConfig.DEFAULT_PORT );
+    Address addr = new Address( inetAddress, NetworkConfig.DEFAULT_PORT );
     
-    discoveredNodes.add( new SimpleDiscoveryNode( address, attributes ) );
+    discoveredNodes.add( new SimpleDiscoveryNode( addr, attributes ) );
   }
   return discoveredNodes;
 }
