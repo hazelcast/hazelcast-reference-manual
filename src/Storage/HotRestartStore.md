@@ -12,16 +12,5 @@ This chapter explains the Hazelcast's Hot Restart Store feature which provides f
 
 Hot Restart Store enables you to get your cluster up and running swiftly after a cluster restart that can be caused by member crashes, rolling upgrades or power/network interruptions.
 
-???
-
-### Understanding How It Works
-
-???
-
-
-### Configuring
-
-???
-
 
 
