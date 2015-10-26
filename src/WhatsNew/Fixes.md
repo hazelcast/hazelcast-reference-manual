@@ -39,6 +39,6 @@ listeners when client is disconnected, it should be removed too after the listen
 - Executor monitoring in Management Center does not show the "cancelled" operations" <a href="https://github.com/hazelcast/management-center/issues/177" target="_blank">[177]</a>
 - When an alert for a data structure (map, queue, etc.) with its specific name is created, a `NullPointerException` is thrown after the cluster is reset. <a href="https://github.com/hazelcast/management-center/issues/175" target="_blank">[175]</a>
 - Default directory name is hardcoded as "mancenter3.5" and it needs to be maintained for every major release. This process should be dynamic. <a href="https://github.com/hazelcast/management-center/issues/174" target="_blank">[174]</a>
-- Throughput statistics for Map shows nothing when the `putAll()` method is used <a href="https://github.com/hazelcast/management-center/issues/159" target="_blank">[159]</a>
+- Throughput statistics for Map shows nothing when the `putAll()` method is used. <a href="https://github.com/hazelcast/management-center/issues/159" target="_blank">[159]</a>
 
 
