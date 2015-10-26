@@ -16,6 +16,13 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
   <map name="my-read-mostly-map">
     ...
     <near-cache>
+
+      <!--
+         Storage type of near cache entries. Available values are BINARY, OBJECT and NATIVE.
+         NATIVE is available only for Hazelcast Enterprise. Default value is BINARY.
+      -->
+       <in-memory-format>BINARY</in-memory-format>
+
       <!--
         Maximum size of the near cache. When max-size is reached,
         cache is evicted based on the policy defined.
@@ -63,6 +70,11 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
         By default it is disabled (false).
       -->
       <cache-local-entries>false</cache-local-entries>
+
+      <!--
+        Note that you have to use this eviction config with NATIVE memory format.
+      -->
+       <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
     </near-cache>
   </map>
 </hazelcast>
