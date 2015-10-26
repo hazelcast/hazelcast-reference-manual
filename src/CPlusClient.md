@@ -57,11 +57,11 @@ For Linux, there are two distributions: 32 bit and 64 bit.
 Here is an example script to build with static library:
 
 `g++ main.cpp -pthread -I./external/include -I./hazelcast/include
-      ./hazelcast/lib/static/libHazelcastClientStatic_64.a`
+      ./hazelcast/lib/libHazelcastClientStatic_64.a`
 
 Here is an example script to build with shared library:
 
-`g++ main.cpp -lpthread -Wl,–no-as-needed -lrt -I./external/include -I./hazelcast/include -L./hazelcast/lib/shared -lHazelcastClientShared_64`
+`g++ main.cpp -lpthread -Wl,–no-as-needed -lrt -I./external/include -I./hazelcast/include -L./hazelcast/lib -lHazelcastClientShared_64`
 
 #### Mac C++ Client
 
@@ -69,15 +69,19 @@ For Mac, there is one distribution: 64 bit.
 
 Here is an example script to build with static library:
 
-`g++ main.cpp -I./external/include -I./hazelcast/include ./hazelcast/lib/static/libHazelcastClientStatic_64.a`
+`g++ main.cpp -I./external/include -I./hazelcast/include ./hazelcast/lib/libHazelcastClientStatic_64.a`
 
 Here is an example script to build with shared library:
 
-`g++ main.cpp -I./external/include -I./hazelcast/include -L./hazelcast/lib/shared -lHazelcastClientShared_6`
+`g++ main.cpp -I./external/include -I./hazelcast/include -L./hazelcast/lib -lHazelcastClientShared_64`
 
 #### Windows C++ Client
 
-For Windows, there are two distributions; 32 bit and 64 bit.
+For Windows, there are two distributions; 32 bit and 64 bit. The static library is located in a folder named "static" while the dynamic library(dll) is in the folder named as "shared".
+
+When compiling for Windows environment the user should specify one of the following flags:
+    HAZELCAST_USE_STATIC: You want the application to use the static Hazelcast library.
+    HAZELCAST_USE_SHARED: You want the application to use the shared Hazelcast library.
 
 ### C++ Client Code Examples
 
