@@ -4,8 +4,8 @@
 The following are the the enhancements performed for Hazelcast 3.6 release.
 
 - **Replicated Map improvements**: The implementation of Hazelcast replicated maps has been revisited. Please especially refer to the [Considerations for Replicated Map section](#considerations-for-replicated-map).
-- **Management Center improvements**: ???. Please refer to the [???](#???).
-- **Paging Predicate improvements**: With the performed improvements, now random page accessing is supported. Please refer to the [???](#???).
+- **Management Center improvements**: ???. Please refer to the [Management Center section](#management-center).
+- **Paging Predicate improvements**: With the performed improvements, now random page accessing is supported. Please refer to the [Filtering with Paging Predicates section](#filtering-with-paging-predicates).
 - **Rule based query optimizations**: This improvement introduces a query optimizer based on static rewriting rules. The optimizer treats predicates as immutable and returns a modified copy when the optimized one is found. Please refer to the [???](#???).
 - **WAN replication improvements**: ???. Please refer to the [???](#???).
 - **Improvements on Hazelcast's OSGI support**: ???. Please refer to the [???](#???).
@@ -13,6 +13,9 @@ The following are the the enhancements performed for Hazelcast 3.6 release.
 
 The following are the other improvements performed to solve the enhancement issues opened by the Hazelcast customers/team.
 
+- Approximate `max-size` calculation should be removed for IMap eviction. <a href="https://github.com/hazelcast/hazelcast/issues/6463" target="_blank">[6463]</a>
+- `SpringAwareWebFilter` should have a constructor which takes properties as arguments. <a href="https://github.com/hazelcast/hazelcast/issues/6438" target="_blank">[6438]</a>
+- Client side and server side cache proxies handle `putAll` operation one by one. This is not efficient. Records for this operation should be grouped as per their partitions and should be sent and processed in batches. <a href="https://github.com/hazelcast/hazelcast/issues/6367" target="_blank">[6367]</a>
 - Inconsistent and potentially buggy design in `BasicCompletableFuture`. <a href="https://github.com/hazelcast/hazelcast/issues/6080" target="_blank">[6080]</a>
 - Starting with "hazelcast-wm 3.3", OSGI Manifest Spring package imports should be optional. <a href="https://github.com/hazelcast/hazelcast/issues/6072" target="_blank">[6072]</a>
  - The new client determines the partition ID for every invocation for data structures like queue and list where the partition ID is static. There is no need for this behavior. It should calculate the partition ID for once  when the proxy is created and continue to re-use it. <a href="https://github.com/hazelcast/hazelcast/issues/5848" target="_blank">[5848]</a>
