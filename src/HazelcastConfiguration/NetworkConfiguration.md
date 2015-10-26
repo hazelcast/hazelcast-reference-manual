@@ -285,7 +285,7 @@ The `aws` element includes parameters to allow the nodes to form a cluster on th
 
 #### discovery-strategies element
 
-The `discovery-strategies` element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. For further information please refer to the Discovery SPI documentation and the vendor documentation of the used discovery strategy.
+The `discovery-strategies` element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. For further information, please refer to the [Discovery SPI section](#discovery-spi) and the vendor documentation of the used discovery strategy.
 
 ##### AWSClient Configuration
 
