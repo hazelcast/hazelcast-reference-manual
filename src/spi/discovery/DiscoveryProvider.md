@@ -210,7 +210,7 @@ To actually use the new `DiscoveryStrategy` implementation we need to configure 
             class="com.hazelcast.examples.spi.discovery.HostsDiscoveryStrategy">
             
           <properties>
-            <property name="site-domain">cluster.local</value>
+            <property name="site-domain">cluster.local</property>
           </properties>
         </discovery-strategy>
       </discovery-strategies>
