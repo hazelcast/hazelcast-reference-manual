@@ -1,5 +1,5 @@
 
-## Discovery SPI (Member Discovery Extensions)
+## Discovery SPI
 
 By default Hazelcast is bundled with multiple way to define and find other members in the same network. Commonly used, especially while development, is the Multicast discovery. This sends out a multicast request to a network segment and awaits other members to answer with their IP addresses. In addition Hazelcast supports fixed IP addresses, [JClouds](https://jclouds.apache.org/reference/providers/) or [AWS (Amazon EC2)](https://aws.amazon.com/de/ec2/) based discoveries.
   

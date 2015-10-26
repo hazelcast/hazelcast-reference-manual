@@ -1,7 +1,7 @@
 
 ### Discovery SPI Overview
 
-The Hazelcast Discovery SPI consists of multiple interfaces and abstract classes. In the following section we will have a quick look at all of them and shortly introduce the idea and use behind them. The example will follow up in the next sub-section.
+The Hazelcast Discovery SPI (Member Discovery Extensions) consists of multiple interfaces and abstract classes. In the following section we will have a quick look at all of them and shortly introduce the idea and use behind them. The example will follow up in the next sub-section.
 
 #### DiscoveryStrategy
 
