@@ -367,7 +367,7 @@ Assert.assertEquals(bean.value, f2.get().longValue());
 ***Sample Code***: *Please see our sample application for <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-cache-manager" target="_blank">Spring Cache</a>.*
 <br></br>
 
-As of version 3.1, Spring Framework provides support for adding caching into an existing Spring application. 
+As of version 3.1, Spring Framework provides support for adding caching into an existing Spring application. Spring 3.2 and later versions support JCache compliant caching providers. You can also use JCache caching backed by Hazelcast if your Spring version supports JCache.
 
 
 #### Declarative Spring Cache Configuration
@@ -384,6 +384,37 @@ As of version 3.1, Spring Framework provides support for adding caching into an 
 </bean>
 ```
 
+#### Declarative Hazelcast JCache Based Caching Configuration
+
+```xml
+<cache:annotation-driven cache-manager="cacheManager" />
+
+<hz:hazelcast id="hazelcast">
+  ...
+</hz:hazelcast>
+
+<hz:cache-manager id="hazelcastJCacheCacheManager" instance-ref="instance" name="hazelcastJCacheCacheManager"/>
+
+<bean id="cacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
+    <constructor-arg ref="hazelcastJCacheCacheManager" />
+</bean>
+```
+
+You can use JCache implementation in both server and client mode. A cache manager should be bound to an instance. Instance can be referenced by `instance-ref` attribute or provided by `hazelcast.instance.name` property which is passed to CacheManager. Instance should be specified using one of these methods.
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Instance name provided in properties overrides `instance-ref` attribute.*
+
+You can specify a uri for each cache manager with `uri` attribute.
+
+
+```xml
+<hz:cache-manager id="cacheManager2" name="cacheManager2" uri="testURI">
+    <hz:properties>
+        <hz:property name="hazelcast.instance.name">named-spring-hz-instance</hz:property>
+        <hz:property name="testProperty">testValue</hz:property>
+    </hz:properties>
+</hz:cache-manager>
+```
 
 #### Annotation-Based Spring Cache Configuration
 
