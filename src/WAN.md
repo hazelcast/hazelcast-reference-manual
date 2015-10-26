@@ -241,10 +241,9 @@ or by setting the properties inside the `hazelcast.xml` (where xxx is the reques
 
 Starting with 3.6, Enterprise WAN replication allows you to intercept WAN replication events before they are placed to
 WAN event replication queues by providing a filtering API. Using this API, you can monitor WAN replication events of each data structure
-seperately.
+separately.
 
-You can attach filters to your data structures using  `filter` property of `wan-replication-ref` configuration inside `hazelcast.xml`
-or programmatically.
+You can attach filters to your data structures using  `filter` property of `wan-replication-ref` configuration inside `hazelcast.xml` as shown in the following example configuration. You can also configure it using programmatic configuration.
 
 ```xml
 <hazelcast>
@@ -260,12 +259,12 @@ or programmatically.
 </hazelcast>
 ```
 
-As above sample configuration, you can define more than one filter. Filters are called in the order that they are introduced.
-A WAN replication event is only eligible to publish if it passes all filters.
+As shown in the above configuration, you can define more than one filter. Filters are called in the order that they are introduced.
+A WAN replication event is only eligible to publish if it passes all the filters.
 
-Map and Cache have different filter interfaces. These interfaces are
+Map and Cache have different filter interfaces. These interfaces are shown below.
 
-For map;
+**For map**:
 
 ```java
 package com.hazelcast.map.wan.filter;
@@ -290,7 +289,7 @@ public interface MapWanEventFilter {
 }
 ``` 
 
-For cache;
+**For cache**:
 
 ```java
 package com.hazelcast.cache.wan.filter;
@@ -314,22 +313,23 @@ public interface CacheWanEventFilter {
 }
 ```
 
-`filter` method takes three parameters;
-- mapName/cacheName: Name of the related data structure
-- entryView : [EntryView](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/EntryView.java) 
+The method `filter` takes three parameters:
+
+- `mapName`/`cacheName`: Name of the related data structure.
+- `entryView`: [EntryView](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/EntryView.java) 
 or [CacheEntryView](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/cache/CacheEntryView.java) depending on the data structure.
-- eventType : Enum type, `UPDATED(1)` or `REMOVED(2)` depending on the event.
+- `eventType`: Enum type - `UPDATED(1)` or `REMOVED(2)` - depending on the event.
 
 ### WAN Replication Acknowledge Types
 
-Starting from 3.6, Enterprise WAN replication supports different acknowledge (ACK) types for each target cluster group.
-Using this ACK types, you can choose from two different ACK types depending on your consistency requirements.
+Starting with 3.6, Enterprise WAN replication supports different acknowledge (ACK) types for each target cluster group.
+Using this ACK types, you can choose from two different ACK types depending on your consistency requirements. The following ACK types are supported:
  
-- `ACK_ON_TRANSMIT` Events that are received by target cluster are considered success. This option does not guarantee that the received event is actually applied but it's faster.
-- `ACK_ON_OPERATION_COMPLETE` This option guarentees that the events is received by the target cluster and it's applied. It's more time consuming 
-but the best way if you've strong consistency requirements.
+- `ACK_ON_TRANSMIT`: Events that are received by target cluster that are considered as successful. This option does not guarantee that the received event is actually applied but it is faster.
+- `ACK_ON_OPERATION_COMPLETE`: This option guarantees that the event is received by the target cluster and it is applied. It is more time consuming. But  
+but it is the best way if you have strong consistency requirements.
 
-Sample configuration;
+The following is an example configuration:
 
 ```xml
 <wan-replication name="my-wan-cluster">
@@ -340,7 +340,7 @@ Sample configuration;
 </wan-replication>
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *`acknowledge-type` configuration is optional. Default value of it is `ACK_ON_OPERATION_COMPLETE`.
+![image](images/NoteSmall.jpg) ***NOTE:*** *`acknowledge-type` configuration is optional. Default value of it is `ACK_ON_OPERATION_COMPLETE`*.
 
 
 ### Enterprise WAN Replication Additional Information
