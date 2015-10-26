@@ -78,19 +78,19 @@ Let's describe each element.
 
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
-	- `USED_NATIVE_MEMORY_SIZE`: Maximum used native memory size in megabytes for each JVM.
+	- `USED_NATIVE_MEMORY_SIZE`: (Enterprise Only) Maximum used native memory size in megabytes for each JVM.
 
 		`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
 
-	- `USED_NATIVE_MEMORY_PERCENTAGE`: Maximum used native memory size percentage for each JVM.
+	- `USED_NATIVE_MEMORY_PERCENTAGE`: (Enterprise Only) Maximum used native memory size percentage for each JVM.
 
 		`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
 
-	- `FREE_NATIVE_MEMORY_SIZE`: Maximum free native memory size in megabytes for each JVM.
+	- `FREE_NATIVE_MEMORY_SIZE`: (Enterprise Only) Maximum free native memory size in megabytes for each JVM.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
 
-	- `FREE_NATIVE_MEMORY_PERCENTAGE`: Maximum free native memory size percentage for each JVM.
+	- `FREE_NATIVE_MEMORY_PERCENTAGE`: (Enterprise Only) Maximum free native memory size percentage for each JVM.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
 
@@ -101,7 +101,7 @@ Let's describe each element.
 ![image](images/NoteSmall.jpg) ***NOTE:*** *When map entries are inserted frequently, the property `min-eviction-check-millis` should be set to a number lower than the insertion period in order not to let any entry escape from the eviction.*
 
 
-#### Example Eviction Configuration
+#### Example Eviction Configurations
 
 
 ```xml
@@ -113,6 +113,17 @@ Let's describe each element.
 ```
 
 In the above example, `documents` map starts to evict its entries from a member when the map size exceeds 10000 in that member. Then, the entries least recently used will be evicted. The entries not used for more than 60 seconds will be evicted as well.
+
+And this is an example eviction configuration for in-memory-format `NATIVE`:
+
+```xml
+<map name="nativeMap*">
+    <in-memory-format>NATIVE</in-memory-format>
+    <eviction-policy>LFU</eviction-policy>
+    <eviction-percentage>5</eviction-percentage>
+    <max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">99</max-size>
+</map>
+```
 
 
 #### Evicting Specific Entries
