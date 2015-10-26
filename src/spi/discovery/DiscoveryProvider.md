@@ -26,7 +26,7 @@ public class HostsDiscoveryConfiguration {
    * find other sub-domains of the cluster members and retrieve their assigned
    * IP addresses.
    */
-  private static final PropertyDefinition DOMAIN = new SimplePropertyDefinition(
+  public static final PropertyDefinition DOMAIN = new SimplePropertyDefinition(
     "site-domain", PropertyTypeConverter.STRING
   );
   
