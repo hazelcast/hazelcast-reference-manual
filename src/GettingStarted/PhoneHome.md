@@ -32,9 +32,9 @@ Set the `hazelcast.version.check.enabled` system property to false either in the
 
 **Phone Home URLs**
 
-For older versions( versions 1.x - 2.x): <a href="http://www.hazelcast.com:80/version.jsp" target="_blank">http://www.hazelcast.com:80/version.jsp</a>.
+For older versions( versions 1.x - 2.x): <a href="http://www.hazelcast.com/version.jsp" target="_blank">http://www.hazelcast.com/version.jsp</a>.
 
-For new versions (versions 3.x): <a href="http://version.checkhazelcast.com:80/version.jsp" target="_blank">http://version.checkhazelcast.com:80/version.jsp</a>.
+For new versions (versions 3.x): <a href="http://versioncheck.hazelcast.com/version.jsp" target="_blank">http://versioncheck.hazelcast.com/version.jsp</a>.
 
 
 
