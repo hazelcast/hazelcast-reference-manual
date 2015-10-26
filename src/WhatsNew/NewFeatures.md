@@ -24,7 +24,8 @@ The following the new features introduced with Hazelcast 3.6 release.
 - **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration).
 - **Hazelcast Docker image**: Now you can run Hazelcast using our image in the Docker platform.
 - **Lite Members**: With the introduction of Hazelcast Lite Members, you are able to specify certain members in your cluster so that they do not store data. You can use these lite members mostly for your task executions and listener registrations. Please refer to [Enabling Lite Members](#enabling-lite-members).
-- **Indexing and querying of collections**: Hazelcast is now able to index and query the objects in a collection, e.g. queue, set and list. Please refer to the [???](#???).
+- **Querying in collections and arrays**: Hazelcast is now able to query and index attributes of objects stored in a collection or array. Please refer to the [Querying in collections section](#querying-in-collections-and-arrays).
+- **Custom attributes extraction**: It is now possible to extract a value of an object's attribute using a custom extractor class. Please refer to the [Custom attributes](#custom-attributes).
 - **Acquiring locks with a lease time**: Now, you can try to acquire locks with a lease time. Please refer to the [???](#???).
 - **Monitoring the WAN replication**: You can now monitor the state of your WAN replications using the Hazelcast Management Center. Please refer to the [Monitoring WAN Replication section](#monitoring-wan-replication).
 
