@@ -133,7 +133,7 @@ Since we now have the value for our property we can implement the actual lookup 
 ```java
 private static final String HOSTS_NIX = "/etc/hosts";
 private static final String HOSTS_WINDOWS =
-                   "%SystemRoot%\system32\drivers\etc\hosts";
+                   "%SystemRoot%\\system32\\drivers\\etc\\hosts";
 
 private List<String> filterHosts() {
   String os = System.getProperty( "os.name" );
