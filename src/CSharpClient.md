@@ -3,9 +3,6 @@
 
 ## .NET Client
 
-![](images/enterprise-onlycopy.jpg)
-
-
 You can use the native .NET client to connect to Hazelcast client members. You need to add `HazelcastClient3x.dll` into your .NET project references. The API is very similar to the Java native client. 
 
 .NET Client has the following distributed objects.

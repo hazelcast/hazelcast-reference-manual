@@ -13,7 +13,6 @@ This section lists the new features and enhancements developed and bugs fixed fo
 The following the new features introduced with Hazelcast 3.6 release.
 
 - **High-Density Memory Store for Hazelcast Map**: With this release, Hazelcast Map data structure is now equipped with the High-Density Memory Store, previously implemented for Hazelcast JCache. Please refer to the [Setting In Memory Format section](#setting-in-memory-format).
-- **Hot Restart Store**: This new feature provides fast restarting of the Hazelcast clusters. This is achieved by storing the state of the cluster members to the disk. Please refer to the [Hot Restart Store section](#hot-restart-store) for more details.
 - **Discovery Service Provider Interface (Discovery SPI)**: You can use this SPI to discover  Hazelcast instances on cloud environments provided by jclouds&reg;, Kubernetes and many more. The existing discovery mechanisms that Hazelcast provides (Multicast, TCP/IP and Amazon EC2) have been re-implemented on top of this new Discovery SPI. Please refer to the [Discovery SPI section](#discovery-spi).
 - **Client Protocol**: This feature presents the Hazelcast's new open binary client protocol. Please refer to <a href="http://hazelcast.org/documentation/" target="_blank">Open Binary Client Protocol Documentation</a>.
 - **Client Cross Version Compatibility**: Now you can upgrade your Hazelcast clients independently from servers and other clients. Please refer to <a href="http://hazelcast.org/documentation/" target="_blank">Open Binary Client Protocol Documentation</a>.
