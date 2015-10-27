@@ -4,8 +4,6 @@
 
 ## C++ Client
 
-![](images/enterprise-onlycopy.jpg)
-
 
 You can use Native C++ Client to connect to Hazelcast cluster members and perform almost all operations that a member can perform. Clients differ from members in that clients do not hold data. The C++ Client is by default a smart client, i.e. it knows where the data is and asks directly for the correct node. You can disable this feature (using the `ClientConfig::setSmart` method) if you do not want the clients to connect to every member.
 
