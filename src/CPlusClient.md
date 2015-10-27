@@ -5,7 +5,7 @@
 ## C++ Client
 
 
-You can use Native C++ Client to connect to Hazelcast cluster members and perform almost all operations that a member can perform. Clients differ from members in that clients do not hold data. The C++ Client is by default a smart client, i.e. it knows where the data is and asks directly for the correct node. You can disable this feature (using the `ClientConfig::setSmart` method) if you do not want the clients to connect to every member.
+You can use Native C++ Client to connect to Hazelcast cluster members and perform almost all operations that a member can perform. Clients differ from members in that clients do not hold data. The C++ Client is by default a smart client, i.e. it knows where the data is and asks directly for the correct member. You can disable this feature (using the `ClientConfig::setSmart` method) if you do not want the clients to connect to every member.
 
 The features of C++ Clients are:
 
@@ -40,7 +40,7 @@ Each of the folders above contains the following:
 	- lib/ => Contains both shared and static library of hazelcast.
 	- include/ => Contains headers of client.
 
--	external/
+- external/
 	- include/ => Contains headers of dependencies. (boost::shared_ptr)
 
 
@@ -85,8 +85,6 @@ When compiling for Windows environment the user should specify one of the follow
 
 You can try the following C++ client code examples. You need to have a Hazelcast client member running for the code examples to work. 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *The license key should be provided in the configuration as `config->getGroupConfig().setLicenseKey(PROVIDED_ENTERPRISE_KEY);`*
-
 #### C++ Client Map Example
 
 ```cpp
@@ -97,7 +95,6 @@ using namespace hazelcast::client;
 
 int main() {
   ClientConfig clientConfig;
-  clientConfig->getGroupConfig().setLicenseKey(PROVIDED_ENTERPRISE_KEY);
   Address address( "localhost", 5701 );
   clientConfig.addAddress( address );
 
@@ -125,7 +122,6 @@ using namespace hazelcast::client;
 
 int main() {
   ClientConfig clientConfig;
-  clientConfig->getGroupConfig().setLicenseKey(PROVIDED_ENTERPRISE_KEY);
   Address address( "localhost", 5701 );
   clientConfig.addAddress( address );
 
