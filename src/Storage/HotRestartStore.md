@@ -3,6 +3,9 @@
 ![](images/enterprise-onlycopy.jpg)
 <br></br>
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is still in progress and will be fully available with the final release of Hazelcast 3.6.*
+
+
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is supported for Hazelcast Enterprise 3.6 or higher.*
 
 
