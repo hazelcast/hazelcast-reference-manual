@@ -19,13 +19,15 @@ You can use the native .NET client to connect to Hazelcast client members. You n
 * `ICountDownLatch`
 * `IAtomicLong`
 * `ITransactionContext`
+* `IRingbuffer`
 	
 ITransactionContext can be used to obtain:
 
-* `ITransactionalMap<K,V>`,
-* `ITransactionalMultiMap<K,V>`,
-* `ITransactionalList<E>`, and
-* `ITransactionalSet<E>`.
+* `ITransactionalMap<K,V>`
+* `ITransactionalMultiMap<K,V>`
+* `ITransactionalList<E>`
+* `ITransactionalSet<E>`
+* `ITransactionalQueue<E>`
 
 At present the following features are not available in the .NET Client as they are in the Java Client:
 
