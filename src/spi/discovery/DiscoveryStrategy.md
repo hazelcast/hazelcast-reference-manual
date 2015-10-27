@@ -1,9 +1,9 @@
 
-### Discovery Provider
+### Discovery Strategy
 
 This sub-section will walk through the implementation of a simple `DiscoveryStrategy` and their necessary setup.
 
-#### Discovery Provider Example
+#### Discovery Strategy Example
 
 The example strategy will use the local `/etc/hosts` (and on Windows it will use the equivalent to the \*nix hosts file named `%SystemRoot%\system32\drivers\etc\hosts`) to lookup IP addresses of different hosts. The strategy implementation expects hosts to be configured with hostname sub-groups under the same domain. So far to theory, let's get into it.
 
