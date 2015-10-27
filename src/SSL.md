@@ -63,13 +63,15 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
 Hazelcast client also has SSL support. You can configure Client SSL programmatically as shown below.
 
 ```java
-Properties props = new Properties();
-...
-ClientConfig config = new ClientConfig();
-config.getSocketOptions().setSocketFactory( new SSLSocketFactory( props ) );
+System.setProperty("javax.net.ssl.keyStore", new File("hazelcast.ks").getAbsolutePath());
+System.setProperty("javax.net.ssl.trustStore", new File("hazelcast.ts").getAbsolutePath());
+System.setProperty("javax.net.ssl.keyStorePassword", "password");
+
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.getNetworkConfig().addAddress("127.0.0.1");
 ```
 
-You can also set `keyStore` and `keyStorePassword` with the following system properties.
+As you see, you can set, for example, `keyStore` and `keyStorePassword` with the following system properties.
 
  - `javax.net.ssl.keyStore`
  - `javax.net.ssl.keyStorePassword` 
