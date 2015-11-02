@@ -7,7 +7,8 @@ Hazelcast member instances call our phone home server initially when they are st
 
 **What is sent in?**
 
-- The following  information is sent in a phone home:
+The following  information is sent in a phone home:
+
 - Hazelcast version
 - Local Hazelcast member UUID
 - Download ID 
@@ -28,7 +29,7 @@ The phone home code itself is open source. Please see <a href="https://github.co
 
 **Disabling Phone Homes**
 
-Set the `hazelcast.version.check.enabled` system property to false either in the config or on the Java command line. Please see the [System Properties section](#system-properties) for information on how to set a property. 
+Set the `hazelcast.phone.home.enabled` system property to false either in the config or on the Java command line. Please see the [System Properties section](#system-properties) for information on how to set a property. 
 
 **Phone Home URLs**
 
