@@ -19,8 +19,8 @@ As you add more members, Hazelcast one-by-one moves some of the primary and repl
 
 Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among the members for redundancy.
 
-With Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
-they can access to the partitions that are owned by the other members in the cluster.
+With Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
+they can access partitions that are owned by other members in the cluster.
 
 <br></br>
 ***RELATED INFORMATION***
@@ -60,6 +60,6 @@ Repartitioning is the process of redistribution of partition ownerships. Hazelca
 
 In these cases, the partition table in the oldest member is updated with the new partition ownerships. 
 
-Please note that if a lite member joins to a cluster or leaves it, repartitioning is not triggered since lite members do not own any partitions.
+Note that if a lite member joins or leaves a cluster, repartitioning is not triggered since lite members do not own any partitions.
 
 
