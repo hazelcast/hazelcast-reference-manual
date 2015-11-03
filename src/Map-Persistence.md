@@ -280,3 +280,5 @@ class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapS
   }
 }
 ```
+
+** Note :** Please be warned that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.
