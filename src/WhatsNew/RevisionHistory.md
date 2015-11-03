@@ -15,6 +15,7 @@
 |[Chapter 12 - Integrated Clustering](#integrated-clustering)|[Web Session Replication](#web-session-replication)|[Marking Transient Attributes](#marking-transient-attributes) added as a new section.|
 ||[Spring Integration](#spring-integration)|[Declarative Hazelcast JCache Based Caching Configuration](#declarative-hazelcast-jcache-based-caching-configuration) added as a new section.
 ||[Hibernate Second Level Cache](#hibernate-second-level-cache)|Added additional information related to Hibernate Native Client mode to the introduction paragraph of the [Setting Client/Server for Hibernate section](#setting-client-server-for-hibernate).|
+|[Chapter 13 - Storage](#storage)|[Hot Restart Store](#hot-restart-store)|Added as a new section to explain how Hazelcast's Hot Restart feature works and its design details.|
 |[Chapter 14 - Hazelcast Java Client](#hazelcast-java-client)|[Hazelcast Clients Feature Comparison](#hazelcast-clients-feature-comparison)|Added as a new section.
 ||[Client Network Configuration](#client-network-configuration)|Updated by adding the definition of the new IAM role configuration element.
 |[Chapter 15 - Other Client Implementations](#other-client-implementations)|[Windows C++ Client](#windows-c++-client)|Updated by adding static/dynamic library related flag information.
@@ -23,14 +24,15 @@
 ||[Monitoring with JMX](#monitoring-with-jmx)|[MBean Naming for Hazelcast Data Structures](#mbean-naming-for-hazelcast-data-structures) and [Connecting to JMX Agent](#connecting-to-jmx-agent) added as new sections.
 ||[Enabling Lite Members](#enabling-lite-members)|Added as a new section. Also [Data Partitioning](#data-partitioning) and [Partition Table](#partition-table) sections  updated to include Lite Member related information. 
 |[Chapter 21 - WAN](#wan)||[WAN Replication Event Filtering API section](#wan-replication-event-filtering-api) and [WAN Replication Acknowledge Types section](#wan-replication-acknowledge-types) added as new sections to explain the improvements performed for Hazelcast WAN replication feature.<br></br> A note related to the methods `clear`, `destroy` and `evictAll` added to the [WAN Replication Additional Information section](#wan-replication-additional-information).|
-|[Chapter 22 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added [Quorum Configuration](#quorum-configuration) section.|
+|[Chapter 22 - OSGI](#osgi)||Added as a new chapter.|
+|[Chapter 23 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added [Quorum Configuration](#quorum-configuration) section.|
 ||[Network Configuration](#network-configuration)|[Join](#join) section updated by adding the explanation for `discovery-strategies` element.
 ||[System Properties](#system-properties)|Added the new system properties `hazelcast.unsafe.mode`,  `hazelcast.io.input.thread.count`, `hazelcast.io.output.thread.count` and `hazelcast.query.optimizer.type`. Updated the definition of `hazelcast.io.thread.count`.
-|[Chapter 23 - Extending Hazelcast](#extending-hazelcast)||This title added as a chapter to include the section previously present as "User Defined Services".|
+|[Chapter 24 - Extending Hazelcast](#extending-hazelcast)||This title added as a chapter to include the section previously present as "User Defined Services".|
 ||[Discovery SPI](#discovery-spi)|Added as a new section.
 ||[Config Properties SPI](#config-properties-spi)|Added as a new section.
-|[Chapter 27 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
-|[Chapter 28 - Glossary](#glossary)||Added new glossary items.|
+|[Chapter 28 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
+|[Chapter 29 - Glossary](#glossary)||Added new glossary items.|
 
 
 
