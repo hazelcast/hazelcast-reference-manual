@@ -13,11 +13,51 @@ This chapter explains the Hazelcast's Hot Restart Store feature which provides f
 
 ### Overview
 
-Hot Restart Store enables you to get your cluster up and running swiftly after a cluster restart that can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage).
+Hot Restart Store enables you to get your cluster up and running swiftly after a cluster restart that can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). 
 
 ### Configuring Hot Restart
 
-Configuring Hazelcast for Hot Restart is simple: just enable it on whichever data structures need it. It is also advised to provide an explicit home directory for the storage.
+You can configure Hot Restart programmatically or declaratively. There are two configuration elements: one of them is used to enable/disable the feature and the other one is to specify the directory where the Hot Restart data will be stored. 
+
+The following are example configurations for a Hazelcast map and JCache implementation.
+
+**Declarative Configuration**:
+
+An example configuration for is shown below.
+
+```xml
+<hazelcast>
+   ...
+   <hot-restart>
+      <home-dir>hot-restart</home-dir>
+   </hot-restart>
+   ...
+   <map>
+      <hot-restart-enabled>true</hot-restart-enabled>
+   </map>
+   ...
+   <cache>
+      <hot-restart-enabled>true</hot-restart-enabled>
+   </cache>
+   ...
+</hazelcast>
+```
+
+
+**Programmatic Configuration**:
+
+The programmatic equivalent of the above declarative configuration is shown below.
+
+```java
+???
+```
+
+The following are the descriptions of configuration elements:
+
+- `hot-restart`: The configuration that includes the element `home-dir` used to specify the directory where Hot Restart data will be stored. Its default value is `hot-restart` and it is mandatory to give a value. You can use the default one or specify another directory.
+- `hot-restart-enabled`: The configuration that is used to enable or disable the Hot Restart feature. This element can be used for the supported data structures (in the above examples, you can see that it is used for `map` and `cache`).
+
+
 
 ### IP Address and Port
 
