@@ -15,6 +15,10 @@ This chapter explains the Hazelcast's Hot Restart Store feature which provides f
 
 Hot Restart Store enables you to get your cluster up and running swiftly after a cluster restart that can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). 
 
+Hot Restart feature is supported for the following restart types:
+- Restart after a rolling upgrade: The cluster is restarted intentionally member by member, for example to install an operating system patch or a new hardware.
+- Restart after a cluster crash: The cluster is restarted after its all members are crashed at the same time due to a power outage, networking interruptions, etc.
+
 ### Configuring Hot Restart
 
 You can configure Hot Restart programmatically or declaratively. There are two configuration elements: one of them is used to enable/disable the feature and the other one is to specify the directory where the Hot Restart data will be stored. 
@@ -23,7 +27,7 @@ The following are example configurations for a Hazelcast map and JCache implemen
 
 **Declarative Configuration**:
 
-An example configuration for is shown below.
+An example configuration is shown below.
 
 ```xml
 <hazelcast>
