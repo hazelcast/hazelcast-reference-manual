@@ -5,6 +5,11 @@
 
 The following are the issues solved for Hazelcast 3.6 release.
 
+- There is no need to use `CacheLoader` inside the client/server side cache proxies. <a href="https://github.com/hazelcast/hazelcast/issues/6676" target="_blank">[6676]</a>
+- There are broken XML configuration tests in the Hazelcast client package. <a href="https://github.com/hazelcast/hazelcast/issues/6633" target="_blank">[6633]</a>
+- There is a memory leak since the method `publishBathcedEvents` does not remove the events from `batchEvent`. <a href="https://github.com/hazelcast/hazelcast/issues/6618" target="_blank">[6618]</a>
+- Lite member element should be added to the Hazelcast Spring configuration. <a href="https://github.com/hazelcast/hazelcast/issues/6605" target="_blank">[6605]</a>
+- `EntryListener` shows the unprocessed value in combination with `PostProcessingMapStore`. <a href="https://github.com/hazelcast/hazelcast/issues/6588" target="_blank">[6588]</a>
 - The method `map.size()` waits indefinitely after the shutdown of a node. <a href="https://github.com/hazelcast/hazelcast/issues/6538" target="_blank">[6538]</a>
 - `HazelcastCachingProvider` does not use the specified instance (by the object) when `instance-name` is not specified. <a href="https://github.com/hazelcast/hazelcast/issues/6454" target="_blank">[6454]</a>
 - `onExecutionFailure` should be called before returning from `run`, if backup is not valid. <a href="https://github.com/hazelcast/hazelcast/issues/6420" target="_blank">[6420]</a>
