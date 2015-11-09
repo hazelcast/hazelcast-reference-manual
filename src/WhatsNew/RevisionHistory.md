@@ -5,6 +5,7 @@
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Chapter 3 - Getting Started](#getting-started)|[Phoning Home](#phoning-home)|Added as a new section to explain phone home data.|
+||[Deploying using Docker](#deploying-using-docker)|Added as a new section to describe how you can deploy your Hazelcast projects using the Docker platform.
 |[Chapter 5 - Hazelcast Clusters](#hazelcast-clusters)|[Discovering Members with jclouds](#discovering-members-with-jclouds)|Added as a new section to explain how you can enable Hazelcast to discover your members with jclouds&reg;.|
 |[Chapter 6 - Distributed Data Structures](#distributed-data-structures)|[Map](#map)|[Map Eviction](#map-eviction) section updated by adding the definition for the `min-eviction-check-millis` property. The section [Understanding Map Eviction](#understanding-map-eviction) added for a more clearer explanation of the eviction mechanism.<br> [Setting In Memory Format section](#setting-in-memory-format) updated by adding the information on how to configure Hazelcast Map to use High-Density Memory Store.|
 |[Chapter 9 - Distributed Query](#distributed-query)|[Filtering with Paging Predicates](#filtering-with-paging-predicates)| The note stating that the random page accessing is not supported removed, since it is now supported with this release.
