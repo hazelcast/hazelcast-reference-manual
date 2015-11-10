@@ -6,6 +6,7 @@
 The following are the issues solved for Hazelcast 3.6 release.
 
 - There is no need to use `CacheLoader` inside the client/server side cache proxies. <a href="https://github.com/hazelcast/hazelcast/issues/6676" target="_blank">[6676]</a>
+- Fixed wrong calculation of eviction removal size when `PER_NODE` `max-size` policy is used. <a href="https://github.com/hazelcast/hazelcast/pull/6675" target="_blank">[6675]</a>
 - There are broken XML configuration tests in the Hazelcast client package. <a href="https://github.com/hazelcast/hazelcast/issues/6633" target="_blank">[6633]</a>
 - There is a memory leak since the method `publishBathcedEvents` does not remove the events from `batchEvent`. <a href="https://github.com/hazelcast/hazelcast/issues/6618" target="_blank">[6618]</a>
 - Lite member element should be added to the Hazelcast Spring configuration. <a href="https://github.com/hazelcast/hazelcast/issues/6605" target="_blank">[6605]</a>
