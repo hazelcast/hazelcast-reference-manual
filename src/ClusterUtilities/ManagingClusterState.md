@@ -3,31 +3,31 @@
 
 ### Managing Cluster States
 
-With the release of 3.6, Hazelcast introduces two new operations to manage the states of your cluster. These operations can be performed using the new methods `changeClusterState()` and `shutdown()` which are added to the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java" target="_blank">Cluster interface</a>.
+With the release of 3.6, Hazelcast introduces two new operations to manage the states of your cluster. These operations can be performed using the new methods `changeClusterState()` and `shutdown()` which are in the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java" target="_blank">Cluster interface</a>.
 
 By changing the state of your cluster, you can allow/restrict several cluster operations or change the behavior of those operations. Hazelcast clusters have the following states:
 
 - **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 <br></br>
 - **`FROZEN`**: 
-	- In this state, partition table is frozen and partition assignments are not performed. 
-	- Cluster does not accept new members. 
-	- If a member leaves, it can join back. Its partition assignments (both primary and replica) remain the same until either it joins back or the cluster state is changed to `ACTIVE`: When it joins back to the cluster, it will own all previous partition assignments as it was. If, on the other hand, cluster state changes to `ACTIVE`, re-partitioning starts and unassigned partitions are assigned to the active members.
+	- In this state, the partition table is frozen and partition assignments are not performed. 
+	- Your cluster does not accept new members. 
+	- If a member leaves, it can join back. Its partition assignments (both primary and replica) remain the same until either it joins back or the cluster state is changed to `ACTIVE`. When it joins back to the cluster, it will own all previous partition assignments as it was. On the other hand, when the cluster state changes to `ACTIVE`, re-partitioning starts and unassigned partitions are assigned to the active members.
 	- All other operations in the cluster, except migration, continue without restrictions.
 	- You cannot change the state of a cluster to `FROZEN` when migration/replication tasks are being performed.
 <br></br>
 - **`PASSIVE`**:
-	- In this state, partition table is frozen and partition assignments are not performed. 
-	- Cluster does not accept new members.
-	- If a member leaves, while the cluster is in this state, it will be removed from the partition table if cluster state moves back to `ACTIVE`. 
+	- In this state, the partition table is frozen and partition assignments are not performed. 
+	- Your cluster does not accept new members.
+	- If a member leaves while the cluster is in this state, the member will be removed from the partition table if cluster state moves back to `ACTIVE`. 
 	- This state rejects ALL operations immediately EXCEPT the read-only operations like `map.get()` and `cache.get()`, replication and cluster heartbeat tasks. 
 	- You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
 <br></br>
 - **`IN_TRANSITION`**: 
-	- It shows that the state of the cluster is in transition. 
+	- This state shows that the state of the cluster is in transition. 
 	- You cannot set your cluster's state as `IN_TRANSITION` explicitly. 
 	- It is a temporary and intermediate state. 
-	- During this state, cluster does not accept new members and migration/replication tasks are paused.
+	- During this state, your cluster does not accept new members and migration/replication tasks are paused.
 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *All in-cluster methods are fail-fast, i.e. when a method fails in the cluster, it throws an exception immediately (it will not be retried).*
