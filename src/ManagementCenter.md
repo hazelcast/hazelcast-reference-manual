@@ -47,6 +47,8 @@ This page provides the fundamental properties of the selected cluster which are 
 
 #### Toolbar
 
+![](images/toolbar.png)
+
 The toolbar has the following buttons:
 
 -	**Home**: Loads the home page shown above. Please see [Management Center Home Page](#management-center-home-page).
@@ -55,6 +57,7 @@ The toolbar has the following buttons:
 -	**Alerts**: Creates alerts by specifying filters. Please see [Setting Alerts](#creating-alerts).
 -	**Documentation**: Opens the Management Center documentation in a window inside the tool. Please see the [Documentation section](#management-center-documentation).
 -	**Administration**: Used by the admin users to manage users in the system. Please see [Administering Management Center](#administering-management-center).
+-	**Hot Restart**: Used by the admin users to manage cluster state. Please see [Hot Restart](#hot-restart).
 -	**Time Travel**: Sees the cluster's situation at a time in the past. Please see the [Time Travel section](#checking-past-status-with-time-travel).
 -	**Cluster Selector**: Switches between clusters. When the mouse is moved onto this item, a drop down list of clusters appears.
 
@@ -456,7 +459,7 @@ Click on the **Save** button; your filter will be saved and put into the **Filte
 
 ### Administering Management Center
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users, i.e. the users who initially have ***admin*** as their both usernames and passwords.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.
 
 The **Admin** user can add, edit, and remove users and specify the permissions for the users of Management Center. To perform these operations, click on the **Administration** button located on the toolbar. The page below appears.
 
@@ -471,6 +474,40 @@ After you enter/select all fields, click **Save** button to create the user. You
 
 To edit or delete a user, select a username listed in the **Users**. Selected user information appears on the right side of the page. To update the user information, change the fields as desired and click the **Save** button. To delete the user from the system, click the **Delete** button.
 
+### Hot Restart
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.
+
+In this screen, admin user could see the cluster state, change the cluster state or shutdown cluster as seen below.
+
+![](images/HotRestart.png)
+
+**Cluster States**
+
+- **Active**: Cluster will continue to operate without any restriction. All operations are allowed. This is the default state of a cluster.
+
+- **Frozen**: New members are not allowed to join, except the members left during **this** state or **Passive** state. All other operations except migrations are allowed and will operate without any restriction.
+
+- **Passive**: New members are not allowed to join, except the members left during **this** state or **Frozen** state. All operations, except the ones marked with `AllowedDuringPassiveState`, will be rejected immediately.
+
+- **In Transition**: Shows that ClusterState is in transition. This is a temporary and intermediate state, not allowed to set explicitly.
+
+**Changing Cluster State**
+
+![](images/ChangeClusterState.png)
+
+- Click the dropdown menu and choose the state you want your cluster change to. A pop-up will appear and stay on screen until the state is successfully changed.
+
+![](images/ChangeClusterState-wait)
+
+**Shuttingdown the Cluster**
+
+- Click the shutdown button. A pop-up will appear and stay on screen until the cluster is successfully shutdown.
+
+![](images/ShutdownCluster)
+
+
+If an exception occurs during the state change or shutdown operation on the cluster, this exception message will be showed on the screen as a notification.
 
 ### Checking Past Status with Time Travel
 
