@@ -384,6 +384,30 @@ As of version 3.1, Spring Framework provides support for adding caching into an 
 </bean>
 ```
 
+Hazelcast uses its Map implementation for underlying cache. You can configure a map with your cache's name if you want to set additional configuration such as `ttl`.
+
+```xml
+<cache:annotation-driven cache-manager="cacheManager" />
+
+<hz:hazelcast id="hazelcast">
+  <hz:config>
+    ...
+
+    <hz:map name="city" time-to-live-seconds="0" in-memory-format="BINARY" />
+</hz:hazelcast>
+
+<bean id="cacheManager" class="com.hazelcast.spring.cache.HazelcastCacheManager">
+  <constructor-arg ref="instance"/>
+</bean>
+```
+
+```
+public interface IDummyBean {
+  @Cacheable("city")
+  String getCity();
+}
+```
+
 #### Declarative Hazelcast JCache Based Caching Configuration
 
 ```xml
