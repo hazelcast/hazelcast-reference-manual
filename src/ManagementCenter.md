@@ -429,7 +429,7 @@ Select **Member Alerts** check box to create filters for some or all members in 
 
 ![](images/MemberAlert1.jpg)
 
-Alerts can be created when:
+You can create alerts when:
 
 -	free memory on the selected member nodes is less than the specified number.
 -	used heap memory is larger than the specified number.
@@ -478,7 +478,7 @@ To edit or delete a user, select a username listed in the **Users**. Selected us
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.
 
-In this screen, admin user could see the cluster state, change the cluster state or shutdown cluster as seen below.
+In this screen, the admin user can see the cluster state, change the cluster state or shutdown the cluster as seen below.
 
 ![](images/HotRestart.png)
 
@@ -490,32 +490,32 @@ In this screen, admin user could see the cluster state, change the cluster state
 
 - **Passive**: New members are not allowed to join, except the members left during **this** state or **Frozen** state. All operations, except the ones marked with `AllowedDuringPassiveState`, will be rejected immediately.
 
-- **In Transition**: Shows that ClusterState is in transition. This is a temporary and intermediate state, not allowed to set explicitly.
+- **In Transition**: Shows that the cluster state is in transition. This is a temporary and intermediate state. It is not allowed to set it explicitly.
 
 **Changing Cluster State**
 
 ![](images/ChangeClusterState.png)
 
-- Click the dropdown menu and choose the state you want your cluster change to. A pop-up will appear and stay on screen until the state is successfully changed.
+- Click the dropdown menu and choose the state you want your cluster change to. A pop-up will appear and stay on the screen until the state is successfully changed.
 
-![](images/ChangeClusterState-wait)
+![](images/ChangeClusterState-wait.png)
 
-**Shuttingdown the Cluster**
+**Shutting Down the Cluster**
 
-- Click the shutdown button. A pop-up will appear and stay on screen until the cluster is successfully shutdown.
+- Click the **Shutdown** button. A pop-up will appear and stay on screen until the cluster is successfully shutdown.
 
-![](images/ShutdownCluster)
+![](images/ShutdownCluster.png)
 
 
 If an exception occurs during the state change or shutdown operation on the cluster, this exception message will be showed on the screen as a notification.
 
 ### Checking Past Status with Time Travel
 
-Use the Time Travel toolbar item to check the status of the cluster at a time in the past. When this item is selected on the toolbar, a small window appears on top of the page, as shown below.
+Use the Time Travel toolbar item to check the status of the cluster at a time in the past. When you select it on the toolbar, a small window appears on top of the page, as shown below.
 
 ![](images/timetravel.jpg)
 
-To see the cluster status in a past time, Time Travel should be enabled first. Click on the area where it says **OFF** (on the right of Time Travel window). It will turn to **ON** after it asks whether to enable the Time Travel with a dialog: click on **Enable** in the dialog to enable Time Travel.
+To see the cluster status in a past time, you should first enable the Time Travel. Click on the area where it says **OFF** (on the right of Time Travel window). It will turn to **ON** after it asks whether to enable the Time Travel with a dialog: click on **Enable** in the dialog to enable the Time Travel.
 
 Once it is **ON**, the status of your cluster will be stored on your disk as long as your web server is alive.
 
