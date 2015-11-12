@@ -13,7 +13,14 @@ To set your Hazelcast to multicast auto-discovery, set the following configurati
 The following is an example declarative configuration.
 
 ```xml
-   <network>
+<hazelcast>
+   ...
+  <properties>
+    <property name="hazelcast.discovery.enabled">true</property>
+  </properties>
+   ...
+  <network>
+    ...
         <join>
             <multicast enabled="true">
                 <multicast-group>224.2.2.3</multicast-group>
@@ -29,7 +36,7 @@ The following is an example declarative configuration.
             <aws enabled="false">
             </aws>
         </join>
-   <network>     
+  <network>     
 ```
 
 Pay attention to the `multicast-timeout-seconds` element. `multicast-timeout-seconds` specifies the time in seconds that a node should wait for a valid multicast response from another node running in the network before declaring itself as the leader node (the first node joined to the cluster) and creating its own cluster. This only applies to the startup of nodes where no leader has been assigned yet. If you specify a high value to `multicast-timeout-seconds`, such as 60 seconds, it means that until a leader is selected, each node will wait 60 seconds before moving on. Be careful when providing a high value. Also be careful not to set the value too low, or the nodes might give up too early and create their own cluster.
