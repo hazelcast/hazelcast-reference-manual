@@ -16,7 +16,7 @@ You can attach filters to your data structures using  `filter` property of `wan-
         <filter-impl>com.example.SampleFilter</filter-impl>
         <filter-impl>com.example.SampleFilter2</filter-impl>
       </filters>
-    </wan-replication-ref>\n" +
+    </wan-replication-ref>
   </map>"
 </hazelcast>
 ```
@@ -35,8 +35,11 @@ package com.hazelcast.map.wan.filter;
 /**
  * Wan event filtering interface for {@link com.hazelcast.core.IMap}
  * based wan replication events
+ *
+ * @param <K> the type of the key
+ * @param <V> the type of the value
  */
-public interface MapWanEventFilter {
+public interface MapWanEventFilter<K, V> {
 
     /**
      * This method decides whether this entry view is suitable to replicate
@@ -44,10 +47,9 @@ public interface MapWanEventFilter {
      *
      * @param mapName
      * @param entryView
-     * @param eventType
      * @return <tt>true</tt> if WAN event is not eligible for replication
      */
-    boolean filter(String mapName, EntryView entryView, WanFilterEventType eventType);
+    boolean filter(String mapName, EntryView<K, V> entryView, WanFilterEventType eventType);
 }
 ``` 
 
@@ -59,19 +61,20 @@ package com.hazelcast.cache.wan.filter;
 
 /**
  * Wan event filtering interface for cache based wan replication events
+ *
+ * @param <K> the type of the key
+ * @param <V> the type of the value
  */
-public interface CacheWanEventFilter {
+public interface CacheWanEventFilter<K, V> {
 
     /**
      * This method decides whether this entry view is suitable to replicate
      * over WAN.
-     * 
-     * @param cacheName
+     *
      * @param entryView
-     * @param eventType
      * @return <tt>true</tt> if WAN event is not eligible for replication.
      */
-    boolean filter(String cacheName, CacheEntryView entryView, WanFilterEventType eventType);
+    boolean filter(String cacheName, CacheEntryView<K, V> entryView, WanFilterEventType eventType);
 }
 ```
 
