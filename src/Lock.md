@@ -63,6 +63,8 @@ try {
 }
 ```
 
+You can also specify a lease time when trying to acquire a lock: `tryLock(time, unit, leaseTime, leaseUnit)`. In that case, it tries to acquire the lock within the specified lease time. If the lock is not available, the current thread becomes disabled for thread scheduling purposes until either it acquires the lock or the specified waiting time elapses.
+
 ### Understanding Lock Behavior
 
 - Locks are fail-safe. If a member holds a lock and some other members go down, the cluster will keep your locks safe and available.
