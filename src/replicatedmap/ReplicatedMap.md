@@ -19,6 +19,8 @@ there are no atomic guarantees to writes or reads.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If Replicated Map is used from a dummy client and this dummy client is connected to a lite member, the entry listeners cannot be registered/de-registered.*
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *You can not use Replicated Map from a lite member. A `com.hazelcast.replicatedmap.ReplicatedMapCantBeCreatedOnLiteMemberException` is thrown if `com.hazelcast.core.HazelcastInstance#getReplicatedMap(name)` is invoked on a lite member.*
+
 
 ### Example Replicated Map Code
 

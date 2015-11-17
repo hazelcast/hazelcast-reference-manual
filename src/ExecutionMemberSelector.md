@@ -16,3 +16,5 @@ public class MyMemberSelector implements MemberSelector {
      }
  }
 ```
+
+You can use `MemberSelector` instances provided via `com.hazelcast.cluster.memberselector.MemberSelectors` class. For example, you can select a lite member for running a task using `com.hazelcast.cluster.memberselector.MemberSelectors#LITE_MEMBER_SELECTOR`.
