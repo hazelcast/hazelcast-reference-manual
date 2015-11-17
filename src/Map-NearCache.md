@@ -86,3 +86,5 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you are using near cache, you should take into account that your hits to the keys in near cache are not reflected as hits to the original keys on the remote members; this has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even thought there is a hit on a key in near cache, your original key on the remote member may expire.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache works only when you access data via `map.get(k)` methods.  Data returned using a predicate is not stored in the near cache.*
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable near-cache on lite members for faster reads.*
