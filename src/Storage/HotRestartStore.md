@@ -11,13 +11,22 @@
 
 This chapter explains the Hazelcast's Hot Restart Store feature which provides fast cluster restarts by storing the states of the cluster members into the disk. This feature is currently provided for Hazelcast map data structure and Hazelcast JCache implementation.
 
-### Overview
+### Hot Restart Store Overview
 
-Hot Restart Store enables you to get your cluster up and running swiftly after a cluster restart that can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). 
+Hot Restart Store enables you to get your cluster up and running swiftly after a cluster restart that can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). For this purpose, required states for Hazelcast clusters and members are introduced. Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) for information on the cluster and member states.
 
 Hot Restart feature is supported for the following restart types:
-- Restart after a rolling upgrade: The cluster is restarted intentionally member by member, for example to install an operating system patch or a new hardware.
-- Restart after a cluster crash: The cluster is restarted after its all members are crashed at the same time due to a power outage, networking interruptions, etc.
+
+- Restart after a planned shutdown, e.g. rolling upgrade: The cluster is restarted intentionally member by member, for example to install an operating system patch or a new hardware.
+- Restart after a cluster crash: The cluster is restarted after its all members are crashed at the same time due to a power outage, networking interruptions, etc. 
+
+
+To be able to shutdown the cluster member by member as part of a planned restart, each member in the cluster should be in the `PASSIVE` state. When you send the command to shut the cluster down, i.e. `Hazelcast.getCluster().shutdown()`, the members that are not in the `PASSIVE` state change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `Hazelcast.shutdown()`. 
+	
+After the shutdown, Hazelcast starts all members. Before loading data, it waits until all members present in the partition table are started. During this particular process, no operations are allowed. Once all cluster members are started, Hazelcast changes the cluster state to `PASSIVE` and starts to load data. When all data is loaded, Hazelcast changes the cluster state to `ACTIVE` and starts to accept operations as a result of this state change.
+
+In the case of restart after a cluster crash, Hot Restart feature realizes that it was not a clean shutdown and Hazelcast restarts the cluster with the last saved data following the process explained in the above paragraphs.
+
 
 ### Configuring Hot Restart
 
@@ -59,7 +68,7 @@ The programmatic equivalent of the above declarative configuration is shown belo
 The following are the descriptions of configuration elements:
 
 - `hot-restart`: The configuration that includes the element `home-dir` used to specify the directory where Hot Restart data will be stored. Its default value is `hot-restart` and it is mandatory to give a value. You can use the default one or specify another directory.
-- `hot-restart-enabled`: The configuration that is used to enable or disable the Hot Restart feature. This element can be used for the supported data structures (in the above examples, you can see that it is used for `map` and `cache`).
+- `hot-restart-enabled`: The configuration that is used to enable or disable the Hot Restart feature. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`).
 
 
 

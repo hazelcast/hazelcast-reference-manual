@@ -1,11 +1,15 @@
 
 
 
-### Managing Cluster States
+### Managing Cluster and Member States
 
-With the release of 3.6, Hazelcast introduces two new operations to manage the states of your cluster. These operations can be performed using the new methods `changeClusterState()` and `shutdown()` which are in the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java" target="_blank">Cluster interface</a>.
+With the release of 3.6, Hazelcast introduces cluster and member states in addition to the default `ACTIVE` state. This section explains these states of Hazelcast clusters and members which you can use to allow or restrict the designated cluster/member operations.
 
-By changing the state of your cluster, you can allow/restrict several cluster operations or change the behavior of those operations. Hazelcast clusters have the following states:
+#### Cluster States
+
+By changing the state of your cluster, you can allow/restrict several cluster operations or change the behavior of those operations. You can use the methods `changeClusterState()` and `shutdown()` which are in the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java" target="_blank">Cluster interface</a> to change your cluster's state.
+
+ Hazelcast clusters have the following states:
 
 - **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 <br></br>
@@ -48,3 +52,16 @@ public interface Cluster {
 ```
 
 Please refer to the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java" target="_blank">Cluster interface</a> for information on these methods.
+
+#### Cluster Member States
+
+Hazelcast cluster members have the following states:
+
+- **`ACTIVE`**: This is the initial member state. The member can execute and process all operations. When the state of the cluster is `ACTIVE` or `FROZEN`, the members are in the `ACTIVE` state. 
+<br></br>
+- **`PASSIVE`**: In this state, member rejects all operations EXCEPT the read-only ones, replication and migration operations, heartbeat operations, and the join operations as explained in the [Cluster States section](#cluster-states) above. A member can go into this state when either of the following happens:
+	1. Until the member's shutdown process is completed after the method `Node.shutdown(boolean)` is called. Note that, when the shutdown process is completed, member's state changes to `ACTIVE`. 
+	2. Cluster's state is changed to `PASSIVE` using the method `changeClusterState()`. 
+<br></br>
+- **`SHUT_DOWN`**: A member goes into this state when the member's shutdown process is completed. The member in this state rejects all operations and invocations. A member in this state cannot be restarted.
+<br></br>
