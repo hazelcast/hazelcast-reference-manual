@@ -60,7 +60,7 @@ Hazelcast cluster members have the following states:
 - **`ACTIVE`**: This is the initial member state. The member can execute and process all operations. When the state of the cluster is `ACTIVE` or `FROZEN`, the members are in the `ACTIVE` state. 
 <br></br>
 - **`PASSIVE`**: In this state, member rejects all operations EXCEPT the read-only ones, replication and migration operations, heartbeat operations, and the join operations as explained in the [Cluster States section](#cluster-states) above. A member can go into this state when either of the following happens:
-	1. Until the member's shutdown process is completed after the method `Node.shutdown(boolean)` is called. Note that, when the shutdown process is completed, member's state changes to `ACTIVE`. 
+	1. Until the member's shutdown process is completed after the method `Node.shutdown(boolean)` is called. Note that, when the shutdown process is completed, member's state changes to `SHUT_DOWN`. 
 	2. Cluster's state is changed to `PASSIVE` using the method `changeClusterState()`. 
 <br></br>
 - **`SHUT_DOWN`**: A member goes into this state when the member's shutdown process is completed. The member in this state rejects all operations and invocations. A member in this state cannot be restarted.
