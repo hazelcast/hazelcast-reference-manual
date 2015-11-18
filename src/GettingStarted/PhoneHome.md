@@ -25,7 +25,7 @@ The following  information is sent in a phone home:
 
 **Phone Home Code**
 
-The phone home code itself is open source. Please see <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/util/VersionCheck.java" target="_blank">here</a>.
+The phone home code itself is open source. Please see <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/util/PhoneHome.java" target="_blank">here</a>.
 
 **Disabling Phone Homes**
 
