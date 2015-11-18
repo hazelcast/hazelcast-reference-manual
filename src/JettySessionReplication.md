@@ -72,18 +72,18 @@ The following steps configure a sample P2P for Hazelcast Session Replication.
 ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*jettyversion*>`-`<*version*>`.jar` in the folder `$JETTY_HOME/lib/ext`.
 6. Configure the Session ID Manager. You need to configure a `com.hazelcast.session.HazelcastSessionIdManager` instance in `jetty.xml`. Add the following lines to your `jetty.xml`.
 
-        ```xml
+ ```xml
         <Set name="sessionIdManager">
             <New id="hazelcastIdMgr" class="com.hazelcast.session.HazelcastSessionIdManager">
                 <Arg><Ref id="Server"/></Arg>
                 <Set name="configLocation">etc/hazelcast.xml</Set>
             </New>
         </Set>
-        ```
+ ```
 
 7. Configure the Session Manager. You can configure `HazelcastSessionManager` from a `context.xml` file. Each application has a context file in the `$CATALINA_HOME$/contexts` folder. You need to create this context file if it does not exist. The context filename must be the same as the application name, e.g. `example.war` should have a context file named `example.xml`. The file `context.xml` should have the following content.
 
-        ```xml
+ ```xml
         <Ref name="Server" id="Server">
             <Call id="hazelcastIdMgr" name="getSessionIdManager"/>
         </Ref>
@@ -98,13 +98,13 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*jettyversion*>`-`<*version*>`.jar` i
                 </Arg>
             </New>
         </Set>
-        ```
+ ```
 
 8. Start Jetty instances with a configured load balancer and deploy the web application.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *In Jetty 9, there is no folder with the name *`contexts`*. You have to put the file *`context.xml`* under the *`webapps`* directory. And you need to add the following lines to *`context.xml`*.*:
 
-        ```xml
+ ```xml
         <Ref name="Server" id="Server">
             <Call id="hazelcastIdMgr" name="getSessionIdManager"/>
         </Ref>
@@ -119,7 +119,7 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*jettyversion*>`-`<*version*>`.jar` i
                 </Arg>
             </New>
         </Set>
-        ```
+ ```
 
 
 #### Deploying Client/Server for Jetty
@@ -140,7 +140,7 @@ The following steps configure a sample Client/Server for Hazelcast Session Repli
 ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*jettyversion*>`-`<*version*>`.jar` in the folder `$JETTY_HOME/lib/ext`.
 6. Configure the Session ID Manager. You need to configure a `com.hazelcast.session.HazelcastSessionIdManager` instance in `jetty.xml`. Add the following lines to your `jetty.xml`.
 
-        ```xml
+ ```xml
         <Set name="sessionIdManager">
             <New id="hazelcastIdMgr" class="com.hazelcast.session.HazelcastSessionIdManager">
                 <Arg><Ref id="Server"/></Arg>
@@ -148,11 +148,11 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*jettyversion*>`-`<*version*>`.jar` i
                 <Set name="clientOnly">true</Set>
             </New>
         </Set>
-        ```
+ ```
 
 7. Configure the Session Manager. You can configure `HazelcastSessionManager` from a `context.xml` file. Each application has a context file under the `$CATALINA_HOME$/contexts` folder. You need to create this context file if it does not exist. The context filename must be the same as the application name, e.g. `example.war` should have a context file named `example.xml`.
 
-        ```xml
+ ```xml
             <Ref name="Server" id="Server">
                 <Call id="hazelcastIdMgr" name="getSessionIdManager"/>
             </Ref>    
@@ -167,11 +167,11 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*jettyversion*>`-`<*version*>`.jar` i
                     </Arg>
                 </New>
             </Set>
-        ```
+ ```
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *In Jetty 9, there is no folder with name *`contexts`*. You have to put the file *`context.xml`* file under *`webapps`* directory. And you need to add below lines to *`context.xml`*.*
 
-        ```xml
+ ```xml
             <Ref name="Server" id="Server">
                 <Call id="hazelcastIdMgr" name="getSessionIdManager"/>
             </Ref>    
@@ -186,7 +186,7 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*jettyversion*>`-`<*version*>`.jar` i
                     </Arg>
                 </New>
             </Set>
-        ```
+ ```
 
 8. Launch a Hazelcast Instance using `$HAZELCAST_ENTERPRISE_ROOT/bin/server.sh` or `$HAZELCAST_
 ENTERPRISE_ROOT/bin/server.bat`.

@@ -68,23 +68,23 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*tomcatversion*>`-`<*version*>`.jar` 
 
 5. Put a `<Listener>` element into the file `$CATALINA_HOME$/conf/server.xml` as shown below.
 
-        ```xml
+ ```xml
         <Server>
         	...
             <Listener className="com.hazelcast.session.P2PLifecycleListener"/>
             ...
         </Server>
-        ```
+```
 
 6. Put a `<Manager>` element into the file `$CATALINA_HOME$/conf/context.xml` as shown below.
 
-        ```xml
+ ```xml
         <Context>
         	...
             <Manager className="com.hazelcast.session.HazelcastSessionManager"/>
             ...
         </Context>
-        ```
+ ```
 
 7. Start Tomcat instances with a configured load balancer and deploy the web application.
 
@@ -112,22 +112,22 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*version*>`.jar` and           `$HAZE
 
 4. Put a `<Listener>` element into the `$CATALINA_HOME$/conf/server.xml` as shown below.
 
-        ```xml
+ ```xml
         <Server>
         	...
             <Listener className="com.hazelcast.session.ClientServerLifecycleListener"/>
             ...
         </Server>
-        ```
+ ```
 
 5. Update the `<Manager>` element in the `$CATALINA_HOME$/conf/context.xml` as shown below.
 
-        ```xml
+ ```xml
         <Context>
              <Manager className="com.hazelcast.session.HazelcastSessionManager"
               clientOnly="true"/>
         </Context>
-        ```
+ ```
 
 6. Launch a Hazelcast Instance using `$HAZELCAST_ENTERPRISE_ROOT/bin/server.sh` or `$HAZELCAST_
 ENTERPRISE_ROOT/bin/server.bat`.
