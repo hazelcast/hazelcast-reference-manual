@@ -38,7 +38,7 @@ Expiration is performed in two cases:
 
 - When a record is accessed, it is checked about if it is expired or not. If it is expired, it is evicted and returns `null` to caller.
 - In the background, there is an expiration task that periodically (currently 5 seconds) scans records and evicts the expired records.
-
+ 
 #### Configuring JCache Near Cache Eviction
 
 In the scope of near cache, eviction means evicting (clearing) the entries selected according to the given `eviction-policy` when the specified `max-size-policy` has been reached. Eviction is handled with `max-size policy` and `eviction-policy` elements. Please see [Configuring JCache Near Cache](#configuring-jcache-near-cache).
@@ -117,6 +117,11 @@ The following are the definitions of the configuration elements and attributes.
 	- `FREE_NATIVE_MEMORY_PERCENTAGE`.
 
 Near cache can be configured only at the client side.
+
+<br><br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *It is recommended to specify a `time-to-live-seconds` value to guarantee the eventual eviction of invalidated near cache records.*
+<br><br>
+
 
 #### Lookup for Client Near Cache Configuration
 
