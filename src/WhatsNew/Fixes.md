@@ -5,6 +5,7 @@
 
 The following are the issues solved for Hazelcast 3.6 release.
 
+- The method `destroyDistributedObject()` of `ReplicatedMapService` iterates over partition containers and record stores and destroys them. While destroying, record store calls `destroyDistributedObject()` which leads to an infinite loop. <a href="https://github.com/hazelcast/hazelcast/issues/6754" target="_blank">[6754]</a>
 - There is no need to use `CacheLoader` inside the client/server side cache proxies. <a href="https://github.com/hazelcast/hazelcast/issues/6676" target="_blank">[6676]</a>
 - Fixed wrong calculation of eviction removal size when `PER_NODE` `max-size` policy is used. <a href="https://github.com/hazelcast/hazelcast/pull/6675" target="_blank">[6675]</a>
 - There are broken XML configuration tests in the Hazelcast client package. <a href="https://github.com/hazelcast/hazelcast/issues/6633" target="_blank">[6633]</a>
