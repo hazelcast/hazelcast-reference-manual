@@ -17,20 +17,28 @@ Hot Restart Store enables you to get your cluster up and running swiftly after a
 
 Hot Restart feature is supported for the following restart types:
 
-- Restart after a planned shutdown, e.g. rolling upgrade: The cluster is restarted intentionally member by member, for example to install an operating system patch or a new hardware.
-- Restart after a cluster crash: The cluster is restarted after its all members are crashed at the same time due to a power outage, networking interruptions, etc. 
+- Restart after a planned shutdown:
+	- The cluster is shutdown completely and restarted with the exact same previous setup and data.
+
+	Cluster can be shutdown completely using `HazelcastInstance.getCluster().shutdown()` or by manually changing cluster state to `PASSIVE` and shutting down each member one by one. When you send the command to shut the cluster down, i.e. `HazelcastInstance.getCluster().shutdown()`, the members that are not in the `PASSIVE` state change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `HazelcastInstance.shutdown()`.
+
+	- Rolling upgrade: The cluster is restarted intentionally member by member, for example to install an operating system patch or a new hardware.
+
+	To be able to shutdown the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After cluster state is changed to `FROZEN` or `PASSIVE` state, each member can be shutdown manually, by calling `HazelcastInstance.shutdown()`. When that member is restarted, it will rejoin to the running cluster. After all members are restarted, cluster state can be changed to `ACTIVE` back.
+
+- Restart after a cluster crash: The cluster is restarted after its all members are crashed at the same time due to a power outage, networking interruptions, etc.
 
 
-To be able to shutdown the cluster member by member as part of a planned restart, each member in the cluster should be in the `PASSIVE` state. When you send the command to shut the cluster down, i.e. `Hazelcast.getCluster().shutdown()`, the members that are not in the `PASSIVE` state change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `Hazelcast.shutdown()`. 
-	
-After the shutdown, Hazelcast starts all members. Before loading data, it waits until all members present in the partition table are started. During this particular process, no operations are allowed. Once all cluster members are started, Hazelcast changes the cluster state to `PASSIVE` and starts to load data. When all data is loaded, Hazelcast changes the cluster state to `ACTIVE` and starts to accept operations as a result of this state change.
+During restart process, before loading data, each member waits until all members present in the partition table are started. During this particular process, no operations are allowed. Once all cluster members are started, Hazelcast changes the cluster state to `PASSIVE` and starts to load data. When all data is loaded, Hazelcast changes the cluster state to its previous known state before shutdown and starts to accept operations which are allowed by restored cluster state.
 
-In the case of restart after a cluster crash, Hot Restart feature realizes that it was not a clean shutdown and Hazelcast restarts the cluster with the last saved data following the process explained in the above paragraphs.
+If a member fails to start or join to the cluster in time or fails to load its data then that member will be terminate immediately. After fixing the problems causing the failure, that member can be restarted back. If cluster start cannot be completed in time, then all members will fail to start. Please refer to [Configuring Hot Restart](#configuring-hot-restart) section for defining timeouts.
+
+In the case of restart after a cluster crash, Hot Restart feature realizes that it was not a clean shutdown and Hazelcast tries to restart the cluster with the last saved data following the process explained in the above paragraphs. In some cases, specifically when cluster crashes while there's an ongoing partition migration process in the cluster, currently it's not possible to restore last save state.
 
 
 ### Configuring Hot Restart
 
-You can configure Hot Restart programmatically or declaratively. There are two configuration elements: one of them is used to enable/disable the feature and the other one is to specify the directory where the Hot Restart data will be stored. 
+You can configure Hot Restart programmatically or declaratively. There are two configuration elements: one of them is used to enable/disable the feature and the other one is to specify the directory where the Hot Restart data will be stored.
 
 The following are example configurations for a Hazelcast map and JCache implementation.
 
@@ -41,8 +49,10 @@ An example configuration is shown below.
 ```xml
 <hazelcast>
    ...
-   <hot-restart>
-      <home-dir>hot-restart</home-dir>
+   <hot-restart enabled="true">
+	   <home-dir>/mnt/hot-restart</home-dir>
+	   <validation-timeout-seconds>120</validation-timeout-seconds>
+	   <data-load-timeout-seconds>900</data-load-timeout-seconds>
    </hot-restart>
    ...
    <map>
@@ -62,12 +72,27 @@ An example configuration is shown below.
 The programmatic equivalent of the above declarative configuration is shown below.
 
 ```java
-???
+HotRestartConfig hotRestartConfig = new HotRestartConfig();
+hotRestartConfig.setEnabled(true);
+hotRestartConfig.setHomeDir(new File("/mnt/hot-restart"));
+hotRestartConfig.setValidationTimeoutSeconds(120);
+hotRestartConfig.setDataLoadTimeoutSeconds(900);
+config.setHotRestartConfig(hotRestartConfig);
+
+...
+MapConfig mapConfig = new MapConfig();
+mapConfig.setHotRestartEnabled(true);
+
+...
+CacheConfig cacheConfig = new CacheConfig();
+cacheConfig.setHotRestartEnabled(true);
 ```
 
 The following are the descriptions of configuration elements:
 
 - `hot-restart`: The configuration that includes the element `home-dir` used to specify the directory where Hot Restart data will be stored. Its default value is `hot-restart` and it is mandatory to give a value. You can use the default one or specify another directory.
+- `validation-timeout-seconds`: Validation timeout for hot-restart process, includes validating cluster members expected to join and partition table on all cluster.
+- `data-load-timeout-seconds`: Data load timeout for hot-restart process,all members in the cluster should complete restoring their local data before this timeout.
 - `hot-restart-enabled`: The configuration that is used to enable or disable the Hot Restart feature. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`).
 
 
@@ -75,12 +100,12 @@ The following are the descriptions of configuration elements:
 ### IP Address and Port
 
 Hazelcast relies on the IP address-port pair as a unique identifier of a cluster member. The member must restart with these settings the same as before shutdown. Otherwise, Hot Restart fails.
- 
+
 ### Hot Restart Store Design Details
 
 Hazelcast's Hot Restart Store uses the log-structured storage approach. The following is a top-level design description:
 
-- The only kind of update operation on persistent data is _appending_. 
+- The only kind of update operation on persistent data is _appending_.
 - What is appended are facts about events that happened to the data model represented by the store; either a new value was assigned to a key or a key was removed.
 - Each record associated with key K makes the previous record associated with the same key stale.
 - Stale records contribute to the amount of _garbage_ present in the persistent storage.
@@ -100,7 +125,7 @@ In order to maintain the lowest possible footprint in the update operation laten
 <br></br>
 - All GC-induced I/O competes for the same resources as the Mutator's update operations. Therefore, measures are taken to minimize the amount of I/O done during GC. Additionally measures are taken to achieve a good interleaving of Collector and Mutator operations, minimizing latency outliers perceived by the Mutator.
 <br></br>
-- I/O minimization is subject to a bet on the Weak Generational Garbage Hypothesis, which states that a new record entering the system is likely to become garbage soon. In other words, a key updated now is more likely than average to be updated again soon. 
+- I/O minimization is subject to a bet on the Weak Generational Garbage Hypothesis, which states that a new record entering the system is likely to become garbage soon. In other words, a key updated now is more likely than average to be updated again soon.
 
 The I/O minimization scheme was taken from the seminal Sprite LFS paper, [Rosenblum, Ousterhout, _The Design and Implementation of a Log-Structured File System_](http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf). The following is the outline:
 
@@ -119,4 +144,3 @@ The Cost-Benefit factor of a chunk consists of two components multiplied togethe
 The essence is in the second component: given equal amount of garbage in all chunks, it will make the young ones less attractive to the Collector. Assuming the generational garbage hypothesis, this will allow the young chunks to quickly accumulate more garbage.
 
 Sorting records by age will group young records together in a single chunk and will do the same for older records. Therefore the chunks will either tend to keep their data live for a longer time, or quickly become full of garbage.
-
