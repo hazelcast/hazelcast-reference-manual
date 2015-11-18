@@ -17,28 +17,29 @@ Hot Restart Store enables you to get your cluster up and running swiftly after a
 
 Hot Restart feature is supported for the following restart types:
 
-- Restart after a planned shutdown:
+- **Restart after a planned shutdown**:
 	- The cluster is shutdown completely and restarted with the exact same previous setup and data.
 
-	Cluster can be shutdown completely using `HazelcastInstance.getCluster().shutdown()` or by manually changing cluster state to `PASSIVE` and shutting down each member one by one. When you send the command to shut the cluster down, i.e. `HazelcastInstance.getCluster().shutdown()`, the members that are not in the `PASSIVE` state change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `HazelcastInstance.shutdown()`.
+		You can shutdown the cluster completely using the method `HazelcastInstance.getCluster().shutdown()` or manually changing the cluster state to `PASSIVE` and then shutting down each member one by one. When you send the command to shut the cluster down, i.e. `HazelcastInstance.getCluster().shutdown()`, the members that are not in the `PASSIVE` state change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `HazelcastInstance.shutdown()`.
 
 	- Rolling upgrade: The cluster is restarted intentionally member by member, for example to install an operating system patch or a new hardware.
 
-	To be able to shutdown the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After cluster state is changed to `FROZEN` or `PASSIVE` state, each member can be shutdown manually, by calling `HazelcastInstance.shutdown()`. When that member is restarted, it will rejoin to the running cluster. After all members are restarted, cluster state can be changed to `ACTIVE` back.
+		To be able to shutdown the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After cluster state is changed to `FROZEN` or `PASSIVE` state, each member can be shutdown manually, by calling the method `HazelcastInstance.shutdown()`. When that member is restarted, it will rejoin to the running cluster. After all members are restarted, cluster state can be changed to `ACTIVE` back.
 
-- Restart after a cluster crash: The cluster is restarted after its all members are crashed at the same time due to a power outage, networking interruptions, etc.
+- **Restart after a cluster crash**: The cluster is restarted after its all members are crashed at the same time due to a power outage, networking interruptions, etc.
 
 
-During restart process, before loading data, each member waits until all members present in the partition table are started. During this particular process, no operations are allowed. Once all cluster members are started, Hazelcast changes the cluster state to `PASSIVE` and starts to load data. When all data is loaded, Hazelcast changes the cluster state to its previous known state before shutdown and starts to accept operations which are allowed by restored cluster state.
+During the restart process, before loading data, each member waits until all members present in the partition table are started. During this particular process, no operations are allowed. Once all cluster members are started, Hazelcast changes the cluster state to `PASSIVE` and starts to load data. When all data is loaded, Hazelcast changes the cluster state to its previous known state before shutdown and starts to accept operations which are allowed by the restored cluster state.
 
-If a member fails to start or join to the cluster in time or fails to load its data then that member will be terminate immediately. After fixing the problems causing the failure, that member can be restarted back. If cluster start cannot be completed in time, then all members will fail to start. Please refer to [Configuring Hot Restart](#configuring-hot-restart) section for defining timeouts.
+If a member fails to start or join to the cluster in time or fails to load its data, then that member will be terminated immediately. After fixing the problems causing the failure, that member can be restarted back. If cluster start cannot be completed in time, then all members will fail to start. Please refer to the [Configuring Hot Restart section](#configuring-hot-restart) for defining timeouts.
 
-In the case of restart after a cluster crash, Hot Restart feature realizes that it was not a clean shutdown and Hazelcast tries to restart the cluster with the last saved data following the process explained in the above paragraphs. In some cases, specifically when cluster crashes while there's an ongoing partition migration process in the cluster, currently it's not possible to restore last save state.
+In the case of restart after a cluster crash, Hot Restart feature realizes that it was not a clean shutdown and Hazelcast tries to restart the cluster with the last saved data following the process explained in the above paragraphs. In some cases, specifically when cluster crashes while there is an ongoing partition migration process in the cluster, currently it is not possible to restore last saved state.
 
 
 ### Configuring Hot Restart
 
-You can configure Hot Restart programmatically or declaratively. There are two configuration elements: one of them is used to enable/disable the feature and the other one is to specify the directory where the Hot Restart data will be stored.
+You can configure Hot Restart programmatically or declaratively. The configuration includes elements to enable/disable the feature, to specify the directory where the Hot Restart data will be stored and to define timeout values.
+
 
 The following are example configurations for a Hazelcast map and JCache implementation.
 
@@ -91,8 +92,8 @@ cacheConfig.setHotRestartEnabled(true);
 The following are the descriptions of configuration elements:
 
 - `hot-restart`: The configuration that includes the element `home-dir` used to specify the directory where Hot Restart data will be stored. Its default value is `hot-restart` and it is mandatory to give a value. You can use the default one or specify another directory.
-- `validation-timeout-seconds`: Validation timeout for hot-restart process, includes validating cluster members expected to join and partition table on all cluster.
-- `data-load-timeout-seconds`: Data load timeout for hot-restart process,all members in the cluster should complete restoring their local data before this timeout.
+- `validation-timeout-seconds`: Validation timeout for Hot Restart process when validating the cluster members expected to join and the partition table on the whole cluster.
+- `data-load-timeout-seconds`: Data load timeout for Hot Restart process. All members in the cluster should complete restoring their local data before this timeout.
 - `hot-restart-enabled`: The configuration that is used to enable or disable the Hot Restart feature. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`).
 
 
