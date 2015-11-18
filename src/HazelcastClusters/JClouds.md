@@ -1,5 +1,5 @@
 
-### Discovering Members with JClouds
+### Discovering Members with jclouds
 
 Hazelcast supports jclouds&reg; for node discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud provider.
 
@@ -46,14 +46,16 @@ Property Name | Type | Description
 `regions`|String|Used to define region for a cloud service (optional) Can be used with comma separated values for multiple values.
 `tag-keys`|String|Used to filter cloud instances with tags (optional) Can be used with comma separated values for multiple values.
 `tag-values`|String|Used to filter cloud instances with tags (optional) Can be used with comma separated values for multiple values.
-`group`|String|Used for filtering instance groups. When used with aws it maps to security group.(optional)
+`group`|String|Used for filtering instance groups. When used with AWS it maps to security group.(optional)
 `hz-port`|Int|Port which hazelcast instance service on the cluster node. Default value is 5701. (optional)
-`role-name*`|String|Used for IAM role support specific to aws (optional but if defined no identity or credential should be defined in the config)
+`role-name*`|String|Used for IAM role support specific to AWS (optional but if defined no identity or credential should be defined in the config)
 `credentialPath*`|String|Used for cloud providers which requires extra JSON or P12 key file. This denotes path of that file. Only tested with google compute engine. (Required if google-compute engine is used)
 
 #### Configuring Dependencies for jclouds via Maven
-JClouds depends on many libraries internally, hazelcast-jclouds.jar does not contain any of them. If you want to use jclouds recommended way is to use it dependency management tool, here is a simple maven dependency configuration which uses
-maven assembly plugin to create an uber jar with necessary jclouds properties.
+
+jclouds depends on many libraries internally and `hazelcast-jclouds.jar` does not contain any of them. If you want to use jclouds, the recommended way is to use its dependency management tool. The following is a simple maven dependency configuration which uses
+maven assembly plugin to create an uber JAR with necessary jclouds properties.
+
 ```xml
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -111,9 +113,10 @@ maven assembly plugin to create an uber jar with necessary jclouds properties.
 ```
 
 
-#### Configuring IAM roles for AWS
+#### Configuring IAM Roles for AWS
 
-IAM roles are used to make secure requests from your clients. You can provide the name of your IAM role that you created previously on your AWS console to jclouds config. IAM roles only works in AWS and when a role name is provided other credentials properties should be empty.
+IAM roles are used to make secure requests from your clients. You can provide the name of your IAM role that you created previously on your AWS console to the jclouds configuration. IAM roles only work in AWS and when a role name is provided, other credentials properties should be empty.
+
 ```xml
  ...
   <properties>
@@ -128,7 +131,7 @@ IAM roles are used to make secure requests from your clients. You can provide th
     <discovery-providers>
         <discovery-provider class="com.hazelcast.jclouds.JCloudsDiscoveryStrategy" enabled="true">
           <properties>
-                  <property name="provider" value="aws-ec2"/>
+                  <property name="provider">aws-ec2</property>
                   <property name="role-name">i-am-role-for-node</property>
                   <property name="credential">AWS_CREDENTIAL</property>
           </properties>
@@ -138,10 +141,9 @@ IAM roles are used to make secure requests from your clients. You can provide th
 ...
 ```
 
-#### Discovering nodes on different regions
+#### Discovering Members on Different Regions
 
-You can define multiple regions in jclouds config. By default, Hazelcast Discovery SPI uses private IP addresses for node connection. If you want nodes to find each over different region, you must set `hazelcast.discovery.public.ip.enabled` system property to true,
-so that nodes on different regions can connect to each other by using public IPs.
+You can define multiple regions in the jclouds configuration. By default, Hazelcast Discovery SPI uses private IP addresses for member connection. If you want the members to find each other over a different region, you must set the system property `hazelcast.discovery.public.ip.enabled` to true. By this way, the members on different regions can connect to each other by using public IPs.
 
 ```xml
  ...
