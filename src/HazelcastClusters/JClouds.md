@@ -68,9 +68,15 @@ maven assembly plugin to create an uber JAR with necessary jclouds properties.
 
     <properties>
         <jclouds.version>latest-version</jclouds.version>
+        <hazelcast.version>latest-version</hazelcast.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-jclouds</artifactId>
+            <version>${hazelcast.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
