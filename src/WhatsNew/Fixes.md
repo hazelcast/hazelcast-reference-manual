@@ -5,6 +5,12 @@
 
 The following are the issues solved for Hazelcast 3.6 release.
 
+- When replicated map entries are migrated to a new destination; TTL eviction should be scheduled, eviction should be retried when a failure caused by the migration happens and the sync interval should be increased. <a href="https://github.com/hazelcast/hazelcast/issues/6799" target="_blank">[6799]</a>
+- There is a logical error in the method `Ringbuffer.readManyAsync()` when `minSize = 0`. In this case, the Ringbuffer is not read and nothing is returned. <a href="https://github.com/hazelcast/hazelcast/issues/6787" target="_blank">[6787]</a>
+- When a listener's registration is made from the listener configuration, an error occurs during the listener initialization. <a href="https://github.com/hazelcast/hazelcast/issues/6784" target="_blank">[6784]</a>
+- Remaining cache invalidation messages should be flushed on the `ICacheService` while the member is in the  `SHUTTING_DOWN` state. <a href="https://github.com/hazelcast/hazelcast/issues/6778" target="_blank">[6778]</a>
+- When a client cannot send a request to one of the connections, `TargetNotMemberException` is thrown. This name is confusing the Hazelcase users. <a href="https://github.com/hazelcast/hazelcast/issues/6766" target="_blank">[6766]</a>
+- `ClassCastException` is thrown when using `Timestamp` within `DataSerializable`. <a href="https://github.com/hazelcast/hazelcast/issues/6759" target="_blank">[6759]</a>
 - The method `destroyDistributedObject()` of `ReplicatedMapService` iterates over partition containers and record stores and destroys them. While destroying, record store calls `destroyDistributedObject()` which leads to an infinite loop. <a href="https://github.com/hazelcast/hazelcast/issues/6754" target="_blank">[6754]</a>
 - There is no need to use `CacheLoader` inside the client/server side cache proxies. <a href="https://github.com/hazelcast/hazelcast/issues/6676" target="_blank">[6676]</a>
 - Fixed wrong calculation of eviction removal size when `PER_NODE` `max-size` policy is used. <a href="https://github.com/hazelcast/hazelcast/pull/6675" target="_blank">[6675]</a>
