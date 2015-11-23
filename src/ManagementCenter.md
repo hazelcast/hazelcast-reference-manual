@@ -353,17 +353,17 @@ Use this menu item to monitor each cluster member and perform operations like ru
 
 The **CPU Utilization** chart shows the percentage of CPU usage on the selected member. The **Memory Utilization** chart shows the memory usage on the selected member with three different metrics (maximum, used and total memory). You can open both of these charts as separate windows using the ![](images/ChangeWindowIcon.jpg) button placed at top right of each chart; this gives you a clearer view of the chart.
 
-The window titled **Partitions** shows which partitions are assigned to the selected member. **Runtime** is a dynamically updated window tab showing the processor number, the start and up times, and the maximum, total and free memory sizes of the selected member. These values are collected from the default MXBeans provided by the Java Virtual Machine. Descriptions from the Javadocs and some explanations are below:
+The window titled **Partitions** shows which partitions are assigned to the selected member. **Runtime** is a dynamically updated window tab showing the processor number, the start and up times, and the maximum, total and free memory sizes of the selected member. These values are collected from the default MXBeans provided by the Java Virtual Machine (JVM). Descriptions from the Javadocs and some explanations are below:
 
-- **Number of Processors**: Number of processors available to the JVM.
+- **Number of Processors**: Number of processors available to the member (JVM).
 
-- **Start Time**: Start time of the JVM in milliseconds.
+- **Start Time**: Start time of the member (JVM) in milliseconds.
 
-- **Up Time**: Uptime of the JVM in milliseconds
+- **Up Time**: Uptime of the member (JVM) in milliseconds
 
-- **Maximum Memory**: Maximum amount of memory that the JVM will attempt to use.
+- **Maximum Memory**: Maximum amount of memory that the member (JVM) will attempt to use.
 
-- **Free Memory**: Amount of free memory in the JVM.
+- **Free Memory**: Amount of free memory in the member (JVM).
 
 - **Used Heap Memory**: Amount of used memory in bytes.
 
@@ -373,17 +373,17 @@ The window titled **Partitions** shows which partitions are assigned to the sele
 
 - **Max Non-Heap Memory**: Maximum amount of memory in bytes that can be used for memory management.
 
-- **Total Loaded Classes**: Total number of classes that have been loaded since the JVM has started execution.
+- **Total Loaded Classes**: Total number of classes that have been loaded since the member (JVM) has started execution.
 
-- **Current Loaded Classes**: Number of classes that are currently loaded in the JVM.
+- **Current Loaded Classes**: Number of classes that are currently loaded in the member (JVM).
 
-- **Total Unloaded Classes**: Total number of classes unloaded since the JVM has started execution.
+- **Total Unloaded Classes**: Total number of classes unloaded since the member (JVM) has started execution.
 
-- **Total Thread Count**: Total number of threads created and also started since the JVM started.
+- **Total Thread Count**: Total number of threads created and also started since the member (JVM) started.
 
 - **Active Thread Count**: Current number of live threads including both daemon and non-daemon threads.
 
-- **Peak Thread Count**: Peak live thread count since the JVM started or peak was reset.
+- **Peak Thread Count**: Peak live thread count since the member (JVM) started or peak was reset.
 
 - **Daemon Thread Count**: Current number of live daemon threads.
 
@@ -401,32 +401,32 @@ The window titled **Partitions** shows which partitions are assigned to the sele
 
 - **OS: Open File Descriptor Count**: Number of open file descriptors.
 
-- **OS: Process CPU Time**: CPU time used by the process on which the JVM is running in nanoseconds.
+- **OS: Process CPU Time**: CPU time used by the process on which the member (JVM) is running in nanoseconds.
 
-- **OS: Process CPU Load**: Recent CPU usage for the JVM process. This value is a double in the [0.0,1.0] interval. A value of 0.0 means that none of the CPUs were running threads from the JVM process during the recent period of time observed, while a value of 1.0 means that all CPUs were actively running threads from the JVM 100% of the time during the recent period being observed. Threads from the JVM include the application threads as well as the JVM internal threads.
+- **OS: Process CPU Load**: Recent CPU usage for the member (JVM) process. This is a double with a value from 0.0 to 1.0. A value of 0.0 means that none of the CPUs were running threads from the member (JVM) process during the recent period of time observed, while a value of 1.0 means that all CPUs were actively running threads from the member (JVM) 100% of the time during the recent period being observed. Threads from the member (JVM) include the application threads as well as the member (JVM) internal threads.
 
-- **OS: System Load Average**: System load average for the last minute. The system load average is the sum of the number of runnable entities queued to the available processors and the number of runnable entities running on the available processors averaged over a period of time. The way in which the load average is calculated is operating system specific but is typically a damped time-dependent average.
+- **OS: System Load Average**: System load average for the last minute. The system load average is the average over a period of time of this sum: (the number of runnable entities queued to the available processors) + (the number of runnable entities running on the available processors). The way in which the load average is calculated is operating system specific but it is typically a damped time-dependent average.
 
 - **OS: System CPU Load**:
-Recent CPU usage for the whole system. This value is a double in the [0.0,1.0] interval. A value of 0.0 means that all CPUs were idle during the recent period of time observed, while a value of 1.0 means that all CPUs were actively running 100% of the time during the recent period being observed.
+Recent CPU usage for the whole system. This is a double with a value from 0.0 to 1.0. A value of 0.0 means that all CPUs were idle during the recent period of time observed, while a value of 1.0 means that all CPUs were actively running 100% of the time during the recent period being observed.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *These descriptions may vary according to the JVM version or vendor.*
 
-Next to the **Runtime** tab, the **Properties** tab shows the system properties. The **Member Configuration** window shows the connected Hazelcast cluster's XML configuration.
+Next to the **Runtime** tab, the **Properties** tab shows the system properties. The **Member Configuration** window shows the XML configuration of the connected Hazelcast cluster.
 
 The **List of Slow Operations** gives an overview of detected slow operations which occurred on that member. The data is collected by the [SlowOperationDetector](#slowoperationdetector).
 
 ![](images/ListOfSlowOperations.png)
 
-By clicking on an entry you can open a dialog which shows the stacktrace and detailed information about each slow invocation of this operation.
+Click on an entry to open a dialog which shows the stacktrace and detailed information about each slow invocation of this operation.
 
 ![](images/SlowOperationDetail.png)
 
 Besides the aforementioned monitoring charts and windows, you can also perform operations on the selected member through this page. The operation buttons are located at the top right of the page, as explained below:
 
--	**Run GC**: When pressed, garbage collection is executed on the selected member. A notification stating that the GC execution was successful will be shown.
--	**Thread Dump**: When pressed, thread dump of the selected member is taken and shown as a separate dialog to the user.
--	**Shutdown Node**: It is used to shutdown the selected member.
+-	**Run GC**: Press this button to execute garbage collection on the selected member. A notification stating that the GC execution was successful will be shown.
+-	**Thread Dump**: Press this button to take a thread dump of the selected member and show it as a separate dialog to the user.
+-	**Shutdown Node**: Press this button to shutdown the selected member.
 
 ### Scripting
 
