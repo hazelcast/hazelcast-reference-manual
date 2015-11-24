@@ -3,7 +3,7 @@
 
 It is possible to define a custom attribute that may be referenced in predicates, queries and indexes.
 
-A custom attribute is a "synthethic" attribute which does not exist as a `field` or a `getter` in the object that it is extracted from.
+A custom attribute is a "synthetic" attribute which does not exist as a `field` or a `getter` in the object that it is extracted from.
 Thus, it is required to define the policy how the attribute is supposed to be extracted.
 Currently, the only way to extract a custom attribute is to implement a `com.hazelcast.query.extractor.ValueExtractor`
 which encompasses the extraction logic.
@@ -62,7 +62,7 @@ public abstract class ValueCollector {
 }
 ```
 
-#### Returning multiple values from a single extraction
+#### Returning Multiple Values from a Single Extraction
 
 It sounds counter-intuitive, but a single extraction may return multiple values when arrays or collections are
 involved.
@@ -83,7 +83,7 @@ wheels so there are two names too. In order to return both values from the extra
 separately using the `ValueCollector`. Collecting multiple values in such a way allows operating on these multiple
 values as if they were single-values during the evaluation of the predicates.
 
-Let's assume that we registered a custom extractor to under the name `wheelName` and executed the following query:
+Let's assume that we registered a custom extractor with the name `wheelName` and executed the following query:
 `wheelName = front-wheel`.
 
 The extraction may return up to two wheel names for each Motorbike since each Motorbike has up to two wheels.
@@ -91,11 +91,11 @@ In such a case, it is enough if a single value evaluates the predicate's conditi
 it will return a Motorbike if "any" of the wheels matches the expression.
 
 
-### Extraction arguments
+### Extraction Arguments
 
 A `ValueExtractor` may use a custom argument if it is specified in the query.
 The custom argument may be passed within the square brackets located after the name of the custom attribute,
-e.g.: `customAttribute[argument]`
+e.g. `customAttribute[argument]`.
 
 Let's have a look at the following query: `currency[incoming] == EUR`
 The `currency` is a custom attribute that uses a `com.test.CurrencyExtractor` for extraction.
@@ -103,15 +103,15 @@ The `currency` is a custom attribute that uses a `com.test.CurrencyExtractor` fo
 The string `incoming` is an argument that will be passed to the `ArgumentParser` during the extraction.
 The parser will parse the string according to the parser's custom logic and it will return a parsed object.
 The parsed object may be a single object, array, collection, or any arbitrary object.
-It's up to the `ValueExtractor` implementor's to understand the semantics of the parsed argument object.
+It's up to the `ValueExtractor`'s implementor to understand the semantics of the parsed argument object.
 
-For now, it's **not** possible to register a custom `ArgumentParser`, thus a default parser is used by default.
+For now, it's **not** possible to register a custom `ArgumentParser`, thus a default parser is used.
 It follows a `pass-through` semantic, which means that the string located in the square-brackets is passed `as-is` to
 the `ValueExtractor.extract()` method.
 
-Please note: it is not allowed to use square brackets within the argument string.
+Please note that it is not allowed to use square brackets within the argument string.
 
-### Configuring a Custom Attribute programmatically
+### Configuring a Custom Attribute Programmatically
 
 The following snippet demonstrates how to define a custom attribute using a `ValueExtractor`.
 
@@ -129,7 +129,7 @@ mapConfig.addMapAttributeConfig(attributeConfig);
 Please, bear in mind that an extractor may not be added after the map has been instantiated.
 All extractors have to be defined upfront in the map's initial configuration.
 
-### Configuring a Custom Attribute declaratively
+### Configuring a Custom Attribute Declaratively
 
 The following snippet demonstrates how to define a custom attribute in the Hazelcast XML Configuration.
 

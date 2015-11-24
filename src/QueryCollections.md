@@ -108,5 +108,5 @@ If we execute the following query `wheels[1].name = null` it may be evaluated to
 * `index == 1` is out of bound
 * `name` attribute of the wheels[1] object is `null`
 
-In order to make the query unambiguous extra conditions would have to be added, e.g.:
+In order to make the query unambiguous extra conditions would have to be added, e.g.
 `wheels != null AND wheels[1].name = null`
