@@ -112,7 +112,7 @@ String value= map.get(1);
 map.remove(1);
 ```
 
-Locality is ambiguous for the client, so `addEntryListener` and `localKeySet` are not supported. Please see the [Distributed Map section](#map) for more information.
+Locality is ambiguous for the client, so `addLocalEntryListener` and `localKeySet` are not supported. Please see the [Distributed Map section](#map) for more information.
 
 #### Using MultiMap with Java Client
 
@@ -128,7 +128,7 @@ multiMap.put(1,”veli”);
 Collection<String> values = multiMap.get(1);
 ```
 
-`addEntryListener`, `localKeySet` and  `getLocalMultiMapStats` are not supported because locality is ambiguous for the client. Please see the [Distributed MultiMap section](#multimap) for more information.
+`addLocalEntryListener`, `localKeySet` and  `getLocalMultiMapStats` are not supported because locality is ambiguous for the client. Please see the [Distributed MultiMap section](#multimap) for more information.
 
 #### Using Queue with Java Client
 
