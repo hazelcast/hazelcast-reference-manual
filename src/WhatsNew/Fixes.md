@@ -1,10 +1,12 @@
 
 ### Fixes
 
-**3.6 Fixes**
-
 The following are the issues solved for Hazelcast 3.6 release.
 
+**3.6-EA2 Fixes**
+
+
+- MapLoader may insert null values into IMap causing memory leak. <a href="https://github.com/hazelcast/hazelcast/issues/6830" target="_blank">[6830]</a>
 - When replicated map entries are migrated to a new destination; TTL eviction should be scheduled, eviction should be retried when a failure caused by the migration happens and the sync interval should be increased. <a href="https://github.com/hazelcast/hazelcast/issues/6799" target="_blank">[6799]</a>
 - There is a logical error in the method `Ringbuffer.readManyAsync()` when `minSize = 0`. In this case, the Ringbuffer is not read and nothing is returned. <a href="https://github.com/hazelcast/hazelcast/issues/6787" target="_blank">[6787]</a>
 - When a listener's registration is made from the listener configuration, an error occurs during the listener initialization. <a href="https://github.com/hazelcast/hazelcast/issues/6784" target="_blank">[6784]</a>
@@ -16,8 +18,15 @@ The following are the issues solved for Hazelcast 3.6 release.
 - Fixed wrong calculation of eviction removal size when `PER_NODE` `max-size` policy is used. <a href="https://github.com/hazelcast/hazelcast/pull/6675" target="_blank">[6675]</a>
 - There are broken XML configuration tests in the Hazelcast client package. <a href="https://github.com/hazelcast/hazelcast/issues/6633" target="_blank">[6633]</a>
 - There is a memory leak since the method `publishBathcedEvents` does not remove the events from `batchEvent`. <a href="https://github.com/hazelcast/hazelcast/issues/6618" target="_blank">[6618]</a>
+- Custom credentials class is not de-serialized on the server side. <a href="https://github.com/hazelcast/hazelcast/issues/6615" target="_blank">[6615]</a>
 - Lite member element should be added to the Hazelcast Spring configuration. <a href="https://github.com/hazelcast/hazelcast/issues/6605" target="_blank">[6605]</a>
 - `EntryListener` shows the unprocessed value in combination with `PostProcessingMapStore`. <a href="https://github.com/hazelcast/hazelcast/issues/6588" target="_blank">[6588]</a>
+- Clients cannot submit `HazelcastInstanceAware` callables. <a href="https://github.com/hazelcast/hazelcast/issues/6570" target="_blank">[6570]</a>
+
+
+**3.6-EA1 Fixes**
+
+
 - The method `map.size()` waits indefinitely after the shutdown of a node. <a href="https://github.com/hazelcast/hazelcast/issues/6538" target="_blank">[6538]</a>
 - `HazelcastCachingProvider` does not use the specified instance (by the object) when `instance-name` is not specified. <a href="https://github.com/hazelcast/hazelcast/issues/6454" target="_blank">[6454]</a>
 - `onExecutionFailure` should be called before returning from `run`, if backup is not valid. <a href="https://github.com/hazelcast/hazelcast/issues/6420" target="_blank">[6420]</a>
