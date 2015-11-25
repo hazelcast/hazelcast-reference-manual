@@ -33,7 +33,7 @@ Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");
 ringbuffer.add("someitem")
 ```
 
-Use the method `add` to returns the sequence of the inserted item; the sequence value will always be unique. You can use this as a 
+Use the method `add` to return the sequence of the inserted item; the sequence value will always be unique. You can use this as a 
 very cheap way of generating unique IDs if you are already using Ringbuffer.
 
 

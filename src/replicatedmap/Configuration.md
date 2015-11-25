@@ -23,7 +23,7 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 </replicatedmap>
 ```
 
-- `in-memory-format`: Internal storage format.  Please see the [In-Memory Format section](#in-memory-format-on-replicated-map). The default value is `BINARY`.
+- `in-memory-format`: Internal storage format.  Please see the [In-Memory Format section](#in-memory-format-on-replicated-map). The default value is `OBJECT`.
 - `async-fillup`: Specifies if the replicated map is available for reads before the initial replication is completed. The default value is `true`. If set to `false` (i.e. synchronous initial fill up), no exception will be thrown when the replicated map is not yet ready, but `null` values can be seen until the initial replication is completed.
 - `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. The default value is `false`.
 - `entry-listener`: Full canonical classname of the `EntryListener` implementation.
