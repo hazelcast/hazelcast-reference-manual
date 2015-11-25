@@ -14,8 +14,11 @@ The following are the issues solved for Hazelcast 3.6 release.
 - When a client cannot send a request to one of the connections, `TargetNotMemberException` is thrown. This name is confusing the Hazelcast users. <a href="https://github.com/hazelcast/hazelcast/issues/6766" target="_blank">[6766]</a>
 - `ClassCastException` is thrown when using `Timestamp` within `DataSerializable`. <a href="https://github.com/hazelcast/hazelcast/issues/6759" target="_blank">[6759]</a>
 - The method `destroyDistributedObject()` of `ReplicatedMapService` iterates over partition containers and record stores and destroys them. While destroying, record store calls `destroyDistributedObject()` which leads to an infinite loop. <a href="https://github.com/hazelcast/hazelcast/issues/6754" target="_blank">[6754]</a>
+- Hazelcast does not inject its instance into `HazelcastInstanceAware` registered via classname. <a href="https://github.com/hazelcast/hazelcast/pull/6697" target="_blank">[6697]</a>
+- There is a sporadic startup failure in 3.6-EA. <a href="https://github.com/hazelcast/hazelcast/pull/6684" target="_blank">[6684]</a>
 - There is no need to use `CacheLoader` inside the client/server side cache proxies. <a href="https://github.com/hazelcast/hazelcast/issues/6676" target="_blank">[6676]</a>
 - Fixed wrong calculation of eviction removal size when `PER_NODE` `max-size` policy is used. <a href="https://github.com/hazelcast/hazelcast/pull/6675" target="_blank">[6675]</a>
+- If the cluster state is not active `RepartitioningTask` should not be triggered. Otherwise, it causes infinite retries and prevents the member from shtutdown. <a href="https://github.com/hazelcast/hazelcast/pull/6663" target="_blank">[6663]</a>
 - There are broken XML configuration tests in the Hazelcast client package. <a href="https://github.com/hazelcast/hazelcast/issues/6633" target="_blank">[6633]</a>
 - There is a memory leak since the method `publishBathcedEvents` does not remove the events from `batchEvent`. <a href="https://github.com/hazelcast/hazelcast/issues/6618" target="_blank">[6618]</a>
 - Custom credentials class is not de-serialized on the server side. <a href="https://github.com/hazelcast/hazelcast/issues/6615" target="_blank">[6615]</a>
