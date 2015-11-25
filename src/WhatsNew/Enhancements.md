@@ -13,6 +13,7 @@ The following are the the enhancements performed for Hazelcast 3.6 release.
 
 The following are the other improvements performed to solve the enhancement issues opened by the Hazelcast customers/team.
 
+- There exists a misleading log entry for the method `EventServiceImpl.sendEvent`: "logFailure("IO Queue overloaded! Failed to send event packet to: %s", subscriber);". However, the failure is not about I/O queue, it is about connection drop. <a href="https://github.com/hazelcast/hazelcast/issues/6723" target="_blank">[6723]</a>
 - Approximate `max-size` calculation should be removed for IMap eviction. <a href="https://github.com/hazelcast/hazelcast/issues/6463" target="_blank">[6463]</a>
 - `SpringAwareWebFilter` should have a constructor which takes properties as arguments. <a href="https://github.com/hazelcast/hazelcast/issues/6438" target="_blank">[6438]</a>
 - Client side and server side cache proxies handle `putAll` operation one by one. This is not efficient. Records for this operation should be grouped as per their partitions and should be sent and processed in batches. <a href="https://github.com/hazelcast/hazelcast/issues/6367" target="_blank">[6367]</a>
