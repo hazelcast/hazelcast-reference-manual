@@ -144,7 +144,8 @@ The following snippet demonstrates how to define a custom attribute in the Hazel
 Analogously to the example above, `currency` is the name of the custom attribute that will be extracted using the
 `CurrencyExtractor` class.
 
-Please note that it is not allowed to use dots or square brackets in the name of a custom attribute.
+Please note that an attribute name may begin with an ascii letter [A-Za-z] or digit [0-9] and may contain
+ascii letters [A-Za-z], digits [0-9] or underscores later on.
 
 ### Indexing Custom Attributes
 
