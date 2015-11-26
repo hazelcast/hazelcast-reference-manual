@@ -93,7 +93,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.mc.max.visible.slow.operations.count`|10|int|Management Center maximum visible slow operations count.
 `hazelcast.mc.url.change.enabled` | true | bool  |   Management Center changing server url is enabled.
 `hazelcast.member.list.publish.interval.seconds` | 600 | int  |   Interval at which master node publishes a member list.
-`hazelcast.memcache.enabled`| true | bool |   Enable [Memcache](#memcache-client) client request listener service.
+`hazelcast.memcache.enabled`| false | bool |   Enable [Memcache](#memcache-client) client request listener service.
 `hazelcast.merge.first.run.delay.seconds` | 300 | int |   Initial run delay of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
 `hazelcast.merge.next.run.delay.seconds` | 120 | int |   Run interval of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
 `hazelcast.migration.min.delay.on.member.removed.seconds`|5|int|Minimum delay (in seconds) between detection of a member that has left and start of the rebalancing process.
