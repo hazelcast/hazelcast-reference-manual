@@ -1,6 +1,6 @@
 
 
-### Introduction to Aggregations API
+### Using the Aggregations API
 
 We now look into the possible options of what can be achieved using the
 Aggregations API. To work on some deeper examples, let's quickly have a look at the available classes and interfaces and
@@ -13,16 +13,17 @@ This class already provides a few different static methods to achieve the most c
 accepts all incoming values and does not apply any data extraction or transformation upon them before supplying them to
 the aggregation function itself.
 
-For filtering data sets, you have two different options by default. You can either supply a `com.hazelcast.query.Predicate`
-if you want to filter on values and / or keys, or you can supply a `com.hazelcast.mapreduce.KeyPredicate` if you can decide directly on the data
+For filtering data sets, you have two different options by default.
+- You can either supply a `com.hazelcast.query.Predicate` if you want to filter on values and / or keys, or
+- you can supply a `com.hazelcast.mapreduce.KeyPredicate` if you can decide directly on the data
 key without the need to deserialize the value.
-
-##### Basic Filtering
 
 As mentioned above, all APIs are fully Java 8 and Lambda compatible. Let's have a look on how we can do basic filtering using
 those two options.
 
-First, we have a look at a `KeyPredicate` and only accept people whose last name is "Jones".
+##### Basic Filtering with KeyPredicate
+
+First, we have a look at a `KeyPredicate` and we only accept people whose last name is "Jones".
 
 ```java
 Supplier<...> supplier = Supplier.fromKeyPredicate(
@@ -38,7 +39,9 @@ class JonesKeyPredicate implements KeyPredicate<String> {
 }
 ```
 
-Using the standard Hazelcast `Predicate` interface, you can also filter based on the value of a data entry. In the following example, you can
+##### Filtering on Values with Predicate
+
+Using the standard Hazelcast `Predicate` interface, we can also filter based on the value of a data entry. In the following example, you can
 only select values which are divisible by 4 without a remainder. 
 
 ```java
@@ -87,10 +90,10 @@ Supplier<String, Integer, String> supplier =
     );
 ```
 
-##### Implementing Based on Special Requirements
+##### Implementing Supplier with Special Requirements
 
-Last but not least, you might prefer to (or need to) implement your `Supplier` based on special
-requirements. This is a very basic task. The `Supplier` abstract class has just one method.
+You might prefer or need to implement your `Supplier` based on special
+requirements. This is a very basic task. The `Supplier` abstract class has just one method: the `apply` method.
 <br></br>
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Due to a limitation of the Java Lambda API, you cannot implement abstract classes using Lambdas. Instead it is
@@ -108,7 +111,7 @@ class MyCustomSupplier extends Supplier<String, Integer, String> {
 }
 ```
 
-`Supplier`s are expected to return null from the `apply` method whenever the input value should not be mapped to the aggregation
+The `Supplier` `apply` methods are expected to return null whenever the input value should not be mapped to the aggregation
 process. This can be used, as in the example above, to implement filter rules directly. Implementing filters using the
 `KeyPredicate` and `Predicate` interfaces might be more convenient.
 
@@ -127,7 +130,7 @@ Supplier<String, Integer, String> supplier =
 int sum = personAgeMapping.aggregate( supplier, Aggregations.count() );
 ```
 
-#### Aggregation and Aggregations
+#### Defining the Aggregation Operation
 
 The `com.hazelcast.mapreduce.aggregation.Aggregation` interface defines the aggregation operation itself. It contains a set of
 MapReduce API implementations like `Mapper`, `Combiner`, `Reducer`, and `Collator`. These implementations are normally unique to
@@ -225,7 +228,7 @@ SELECT COUNT(*) FROM person;
 ```
 
 
-#### PropertyExtractor
+#### Extracting Attribute Values with PropertyExtractor
 
 We used the `com.hazelcast.mapreduce.aggregation.PropertyExtractor` interface before when we had a look at the example
 on how to use a `Supplier` to [transform a value to another type](#extracting-and-transforming-data). It can also be used to extract attributes from values.
@@ -252,10 +255,10 @@ class AgeExtractor implements PropertyExtractor<Person, Integer> {
 
 In this example, we extract the value from the person's age attribute. The value type changes from Person to `Integer` which is reflected in the generics information to stay type safe.
 
-`PropertyExtractor`s are meant to be used for any kind of transformation of data. You might even want to have multiple
+You can use `PropertyExtractor`s for any kind of transformation of data. You might even want to have multiple
 transformation steps chained one after another.
 
-#### Aggregation Configuration
+#### Configuring Aggregations
 
 As stated before, the easiest way to configure the resources used by the underlying MapReduce framework is to supply a `JobTracker`
 to the aggregation call itself by passing it to either `IMap::aggregate` or `MultiMap::aggregate`.
@@ -272,8 +275,8 @@ For `MultiMap` it is very similar:
 - `hz::aggregation-multimap-` and the concatenated name of the MultiMap.
 
 Knowing that (the specification of the name), we can configure the `JobTracker` as expected 
-(as described in the [Jobtracker section](#jobtracker)) using the naming spec we just learned. For more information on configuration of the 
-`JobTracker`, please see the [JobTracker Configuration section](#jobtracker-configuration). 
+(as described in [Retrieving a JobTracker Instance](#retrieving-a-jobtracker-instance)) using the naming spec we just learned. For more information on configuration of the 
+`JobTracker`, please see [Configuring Jobtracker](#configuring-jobtracker). 
 
 To finish this section, let's have a quick example for the above naming specs:
 

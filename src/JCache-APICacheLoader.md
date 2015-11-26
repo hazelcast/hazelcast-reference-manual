@@ -1,15 +1,28 @@
 
-### CacheLoader
+### Implementing CacheLoader
 
-`javax.cache.integration.CacheLoader` loads cache entries from any external backend resource. If the cache is
+`javax.cache.integration.CacheLoader` loads cache entries from any external backend resource. 
+
+#### Cache read-through 
+
+If the cache is
 configured to be `read-through`, then `CacheLoader::load` is called transparently from the cache when the key or the value is not
 yet found in the cache. If no value is found for a given key, it returns null.
 
-If the cache is not configured to be `read-through`, nothing is loaded automatically. However, the user code must call `javax.cache.Cache::loadAll` to load data for the given set of keys into the cache.
+If the cache is not configured to be `read-through`, nothing is loaded automatically. The user code must call `javax.cache.Cache::loadAll` to load data for the given set of keys into the cache.
 
 For the bulk load operation (`loadAll()`), some keys may not be found in the returned result set. In this case, a `javax.cache.integration.CompletionListener` parameter can be used as an asynchronous callback after all the key-value pairs are loaded because loading many key-value pairs can take lots of time.
 
-Let's look at the `UserCacheLoader` implementation.
+#### CacheLoader Example
+
+Let's look at the `UserCacheLoader` implementation. This implementation is quite straight forward.
+
+- It implements `CacheLoader`.
+- It overrides the `load` method to compute or retrieve the value corresponding to `key`.
+- It overrides the `loadAll` method to compute or retrieve the values corresponding to `keys`.
+
+An important note is that
+any kind of exception has to be wrapped into `javax.cache.integration.CacheLoaderException`.
 
 ```java
 public class UserCacheLoader
@@ -47,7 +60,3 @@ public class UserCacheLoader
   }
 }
 ```
-
-The implementation is quite straight forward. An important note is that
-any kind of exception has to be wrapped into `javax.cache.integration.CacheLoaderException`.
-

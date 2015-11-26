@@ -1,4 +1,4 @@
-<% toc_level = (level, maxLevel, currentLevel=1) => %>
+﻿<% toc_level = (level, maxLevel, currentLevel=1) => %>
     <ol>
     <% for entry in level: %>
         <li>
@@ -12,9 +12,9 @@
 <% end %>
 	<div id="sidebar" style="overflow-y:auto">
 	    <form action="<%= @baseUrl %>search.html"><input id="search" type="text" placeholder="Search" name="q" /></form>
-	    <nav id="toc">
-	        <%= toc_level(@manifest.tableOfContent, @manifest.maxTocLevel) %>
-	    </nav>
+           <nav id="toc">
+       <%= toc_level(@manifest.tableOfContent, @manifest.maxTocLevel) %>
+   </nav>
 	    <% if @manifest.links: %>
 	    <nav id="links">
 	        <ul>

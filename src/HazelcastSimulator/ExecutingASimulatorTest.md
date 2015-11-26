@@ -66,7 +66,7 @@ JDK_FLAVOR=oracle
 JDK_VERSION=7
 ```
 
-Please refer to [here](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html) for information on `CLOUD_IDENTITY` and `CLOUD_CREDENTIAL`.
+Please refer to <a href="http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html" target="_blank">here</a> for information on `CLOUD_IDENTITY` and `CLOUD_CREDENTIAL`.
 
 
 ***NOTE:*** *For a full description of the file `simulator.properties`, please see the [Simulator.Properties File Description section](#simulator-properties-file-description). You can find the sample simulator properties in the `dist/simulator-tests/simulator.properties`. You can also copy this file to the working folder and then edit according to your needs.*
@@ -88,14 +88,14 @@ The output of the command looks like the following.
 ```
 INFO  09:05:06 Hazelcast Simulator Provisioner
 INFO  09:05:06 Version: 0.5, Commit: c6e82c5, Build Time: 18.06.2015 @ 11:58:06 UTC
-INFO  09:05:06 SIMULATOR_HOME: /disk1/hasan/hazelcast-simulator-0.5
-INFO  09:05:07 Loading simulator.properties: /disk1/hasan/exampleSandbox/simulator.properties
+INFO  09:05:06 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  09:05:07 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
 INFO  09:05:07 ==============================================================
 INFO  09:05:07 Provisioning 4 aws-ec2 machines
 INFO  09:05:07 ==============================================================
 INFO  09:05:07 Current number of machines: 0
 INFO  09:05:07 Desired number of machines: 4
-INFO  09:05:07 Using init script:/disk1/hasan/hazelcast-simulator-0.5/conf/init.sh
+INFO  09:05:07 Using init script:/disk1/hazelcast-simulator-0.5/conf/init.sh
 INFO  09:05:07 JDK spec: oracle 7
 INFO  09:05:07 Hazelcast version-spec: outofthebox
 INFO  09:05:11 Created compute
@@ -160,13 +160,13 @@ The output looks like the following.
 ```
 INFO  09:57:17 Hazelcast Simulator Coordinator
 INFO  09:57:17 Version: 0.5, Commit: c6e82c5, Build Time: 02.07.2015 @ 09:50:21 UTC
-INFO  09:57:17 SIMULATOR_HOME: /disk1/hasan/hazelcast-simulator-0.5
-INFO  09:57:17 Loading simulator.properties: /disk1/hasan/exampleSandbox/simulator.properties
-INFO  09:57:17 Loading testsuite file: /disk1/hasan/exampleSandbox/test.properties
-INFO  09:57:17 Loading Hazelcast configuration: /disk1/hasan/hazelcast-simulator-0.5/conf/hazelcast.xml
-INFO  09:57:17 Loading Hazelcast client configuration: /disk1/hasan/hazelcast-simulator-0.5/conf/client-hazelcast.xml
-INFO  09:57:17 Loading Log4j configuration for worker: /disk1/hasan/hazelcast-simulator-0.5/conf/worker-log4j.xml
-INFO  09:57:17 Loading agents file: /disk1/hasan/exampleSandbox/agents.txt
+INFO  09:57:17 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  09:57:17 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
+INFO  09:57:17 Loading testsuite file: /disk1/exampleSandbox/test.properties
+INFO  09:57:17 Loading Hazelcast configuration: /disk1/hazelcast-simulator-0.5/conf/hazelcast.xml
+INFO  09:57:17 Loading Hazelcast client configuration: /disk1/hazelcast-simulator-0.5/conf/client-hazelcast.xml
+INFO  09:57:17 Loading Log4j configuration for worker: /disk1/hazelcast-simulator-0.5/conf/worker-log4j.xml
+INFO  09:57:17 Loading agents file: /disk1/exampleSandbox/agents.txt
 INFO  09:57:17 HAZELCAST_VERSION_SPEC: maven=3.5
 INFO  09:57:17 --------------------------------------------------------------
 INFO  09:57:17 Waiting for agents to start
@@ -265,8 +265,8 @@ The output looks like the following.
 ```
 INFO  10:05:41 Hazelcast Simulator Provisioner
 INFO  10:05:41 Version: 0.5, Commit: c6e82c5, Build Time: 02.07.2015 @ 09:50:21 UTC
-INFO  10:05:41 SIMULATOR_HOME: /disk1/hasan/hazelcast-simulator-0.5
-INFO  10:05:41 Loading simulator.properties: /disk1/hasan/exampleSandbox/simulator.properties
+INFO  10:05:41 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  10:05:41 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
 INFO  10:05:42 ==============================================================
 INFO  10:05:42 Download artifacts of 4 machines
 INFO  10:05:42 ==============================================================
@@ -298,8 +298,8 @@ The output looks like the following.
 ```
 INFO  10:26:46 Hazelcast Simulator Provisioner
 INFO  10:26:46 Version: 0.5, Commit: c6e82c5, Build Time: 02.07.2015 @ 09:50:21 UTC
-INFO  10:26:46 SIMULATOR_HOME: /disk1/hasan/hazelcast-simulator-0.5
-INFO  10:26:46 Loading simulator.properties: /disk1/hasan/exampleSandbox/simulator.properties
+INFO  10:26:46 SIMULATOR_HOME: /disk1/hazelcast-simulator-0.5
+INFO  10:26:46 Loading simulator.properties: /disk1/exampleSandbox/simulator.properties
 INFO  10:26:46 ==============================================================
 INFO  10:26:46 Terminating 4 aws-ec2 machines (can take some time)
 INFO  10:26:46 ==============================================================
@@ -309,7 +309,7 @@ INFO  10:27:10     54.211.146.186 Terminating
 INFO  10:27:10     54.147.196.63 Terminating
 INFO  10:27:10     54.144.235.111 Terminating
 INFO  10:27:10     54.166.1.79 Terminating
-INFO  10:28:13 Updating /disk1/hasan/exampleSandbox/agents.txt
+INFO  10:28:13 Updating /disk1/exampleSandbox/agents.txt
 INFO  10:28:13 Duration: 00d 00h 01m 27s
 INFO  10:28:13 ==============================================================
 INFO  10:28:13 Terminated 4 of 4, remaining=0

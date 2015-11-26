@@ -50,12 +50,12 @@ Property Name | Default Value | Type | Description
 `hazelcast.client.heartbeat.interval`|10000|string|The frequency of heartbeat messages sent by the clients to members.
 `hazelcast.client.heartbeat.timeout`|300000|string|Timeout for the heartbeat messages sent by the client to members. If no messages pass between client and member within the given time via this property in milliseconds, the connection will be closed.
 `hazelcast.client.invocation.timeout.seconds`|120|string|Time to give up the invocation when a member in the member list is not reachable.
-`hazelcast.client.max.no.heartbeat.seconds`|int|300|Time after which the node assumes the client is dead and closes its connections to the client.
+`hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the node assumes the client is dead and closes its connections to the client.
 `hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same node when this property is `false`. When it is set to `true`, the client tries to connect to the nodes in the given order.
 `hazelcast.connect.all.wait.seconds` | 120 | int | Timeout to connect all other cluster members when a member is joining to a cluster.
 `hazelcast.connection.monitor.interval` | 100 | int  |   Minimum interval in milliseconds to consider a connection error as critical.
 `hazelcast.connection.monitor.max.faults` | 3 | int  |   Maximum IO error count before disconnecting from a node.
-`hazelcast.enterprise.license.key` | null | string  |   [Hazelcast Enterprise](http://www.hazelcast.com/products.jsp) license key.
+`hazelcast.enterprise.license.key` | null | string  |   <a href="http://www.hazelcast.com/products.jsp" target="_blank">Hazelcast Enterprise</a> license key.
 `hazelcast.enterprise.wanrep.batch.size`|50|int|Maximum number of WAN replication events to be drained and sent to the target cluster in a batch.
 `hazelcast.enterprise.wanrep.batchfrequency.seconds`|5|int|Batch sending frequency in seconds.
 `hazelcast.enterprise.wanrep.optimeout.millis`|60000|int|Timeout duration (in milliseconds) for a WAN replication event before retry.
@@ -73,7 +73,9 @@ Property Name | Default Value | Type | Description
 `hazelcast.initial.min.cluster.size` | 0 | int  |   Initial expected cluster size to wait before node to start completely.
 `hazelcast.initial.wait.seconds` | 0 | int  |   Initial time in seconds to wait before node to start completely.
 `hazelcast.io.balancer.interval.seconds`|20|int|Interval in seconds between IOBalancer executions.
-`hazelcast.io.thread.count` | 3 | int | Number of input and output threads.
+`hazelcast.io.input.thread.count` | 3 | int | Number of socket input threads.
+`hazelcast.io.output.thread.count` | 3 | int | Number of socket output threads.
+`hazelcast.io.thread.count` | 3 | int | Number of threads performing socket input and socket output. If, for example, the default value (3) is used, it means there are 3 threads performing input and 3 threads performing output (6 threads in total).
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
@@ -95,7 +97,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.merge.first.run.delay.seconds` | 300 | int |   Initial run delay of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
 `hazelcast.merge.next.run.delay.seconds` | 120 | int |   Run interval of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
 `hazelcast.migration.min.delay.on.member.removed.seconds`|5|int|Minimum delay (in seconds) between detection of a member that has left and start of the rebalancing process.
-`hazelcast.operation.backup.timeout.millis`|5|int|Maximum time a caller to wait for backup responses of an operation. After this timeout, operation response will be returned to the caller even no backup response is received.
+`hazelcast.operation.backup.timeout.millis`|5000|int|Maximum time a caller to wait for backup responses of an operation. After this timeout, operation response will be returned to the caller even no backup response is received.
 `hazelcast.operation.call.timeout.millis`| 60000 | int | Timeout to wait for a response when a remote call is sent, in milliseconds.
 `hazelcast.operation.generic.thread.count` | -1 | int | Number of generic operation handler threads. `-1` means CPU core count x 2.
 `hazelcast.operation.thread.count` | -1 | int | Number of partition based operation handler threads. `-1` means CPU core count x 2.
@@ -112,8 +114,9 @@ Property Name | Default Value | Type | Description
 `hazelcast.performance.monitoring.delay.seconds`||int| The delay in seconds between monitoring of the performance.
 `hazelcast.prefer.ipv4.stack` | true | bool  |   Prefer Ipv4 network interface when picking a local address.
 `hazelcast.query.max.local.partition.limit.for.precheck`|3|int|Maximum value of local partitions to trigger local pre-check for TruePredicate query operations on maps.
+`hazelcast.query.optimizer.type`|RULES|String|Type of the query optimizer. For optimizations based on static rules, set the value to `RULES`. To disable the optimization, set the value to `NONE`.
 `hazelcast.query.predicate.parallel.evaluation`|false|bool|Each Hazelcast member evaluates query predicates using a single thread by default. In most cases, the overhead of inter-thread communications overweight can benefit from parallel execution. When you have a large dataset and/or slow predicate, you may benefit from parallel predicate evaluations. Set to `true` if you are using slow predicates or have > 100,000s entries per member.
-`hazelcast.query.result.size.limit`|-1|int|Result size limit for query operations on maps. This value defines the maximum number of returned elements for a single query result. If a query exceeds this number of elements, a QueryResultSizeExceededException will be thrown. Its default value is -1, meaning it is disabled.
+`hazelcast.query.result.size.limit`|-1|int|Result size limit for query operations on maps. This value defines the maximum number of returned elements for a single query result. If a query exceeds this number of elements, a QueryResultSizeExceededException is thrown. Its default value is -1, meaning it is disabled.
 `hazelcast.rest.enabled` | true | bool |   Enable [REST](#rest-client) client request listener service.
 `hazelcast.shutdownhook.enabled` | true | bool  | Enable Hazelcast shutdownhook thread. When this is enabled, this thread terminates the Hazelcast instance without waiting to shutdown gracefully. 
 `hazelcast.slow.operation.detector.enabled`|true|bool|Enables/disables the [SlowOperationDetector](#slowoperationdetector).
@@ -134,6 +137,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.socket.send.buffer.size` | 32 | int  | Socket send buffer (`SO_SNDBUF`) size in KB.
 `hazelcast.socket.server.bind.any` | true | bool | Bind server-socket to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
 `hazelcast.tcp.join.port.try.count`|3|int|The number of incremental ports, starting with the port number defined in the network configuration, that will be used to connect to a host (which is defined without a port in TCP/IP member list while a node is searching for a cluster).
-`hazelcast.version.check.enabled` | true | bool  |   Enable Hazelcast new version check on startup.
+`hazelcast.unsafe.mode` | auto | string  | "auto" (the default value) automatically detects whether the usage of `Unsafe` is suitable for a given platform. "disabled" explicitly disables the `Unsafe` usage in your platform. "enforced" enforces the usage of `Unsafe` even if your platform does not support it. This property can only be set by passing a JVM-wide system property.
+`hazelcast.phone.home.enabled` | true | bool  |   Enable or disable the sending of phone home data to Hazelcast's phone home server.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.
 

@@ -3,7 +3,7 @@
 
 The `SlowOperationDetector` monitors the operation threads and collects information about all slow operations. An `Operation` is a task executed by a generic or partition thread (see [Operation Threading](#operation-threading)). An operation is considered as slow when it takes more computation time than the configured threshold.
 
-The `SlowOperationDetector` stores the fully qualified classname of the operation and its stacktrace as well as operation details, start time and duration of each slow invocation. All collected data is available in the [Management Center](#members).
+The `SlowOperationDetector` stores the fully qualified classname of the operation and its stacktrace as well as operation details, start time and duration of each slow invocation. All collected data is available in the [Management Center](#monitoring-members).
 
 The `SlowOperationDetector` is configured via the following system properties.
 

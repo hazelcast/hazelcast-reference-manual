@@ -1,7 +1,7 @@
 
-## Comparison Table
+## Comparing Serialization Interfaces
 
-Below table provides a comparison between the interfaces listed in the previous section to help you in deciding which interface to use in your applications.
+The table below provides a comparison between the interfaces listed in the previous section to help you in deciding which interface to use in your applications.
 
 *Serialization Interface*|*Advantages*|*Drawbacks*
 :-|:-|:-

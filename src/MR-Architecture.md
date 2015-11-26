@@ -9,7 +9,7 @@ This section explains some of the internals of the MapReduce framework. This is 
 
 To understand the following technical internals, we first have a short look at what happens in terms of an example workflow.
 
-As a simple example, think of an `IMap<String, Integer>` and emitted keys having the same types. Imagine you have a three node cluster and you initiate the MapReduce job on the first node. After you requested the JobTracker from your running / connected Hazelcast, we submit the task and retrieve the ICompletableFuture which gives us a chance to wait for the result to be calculated or to add a callback (and being more reactive).
+As a simple example, think of an `IMap<String, Integer>` and emitted keys having the same types. Imagine you have a three node cluster (a cluster with three members) and you initiate the MapReduce job on the first node. After you requested the JobTracker from your running / connected Hazelcast, we submit the task and retrieve the ICompletableFuture which gives us a chance to wait for the result to be calculated or to add a callback (and being more reactive).
 
 The example expects that the chunk size is 0 or 1, so an emitted value is directly sent to the reducers. Internally, the job is prepared, started, and executed on all nodes as shown below. The first node acts as the job owner (job emitter).
 
@@ -57,7 +57,7 @@ Node1 merges all reduced results together in a final structure and returns it
 
 The flow is quite complex but extremely powerful since everything is executed in parallel. Reducers do not wait until all values are emitted, but they immediately begin to reduce (when first chunk for an emitted key arrives).
 
-#### Internal Architecture
+#### Internal MapReduce Packages
 
 Beginning with the package level, there is one basic package: `com.hazelcast.mapreduce`. This includes the external API and the **impl** package which itself contains the internal implementation.
 

@@ -47,7 +47,7 @@ The following is an example declarative configuration for map eviction.
 Let's describe each element. 
 
 - `time-to-live`: Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.  
-- `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put` or `containsKey` is called. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
+- `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
 - `eviction-policy`: Valid values are described below.
 	- NONE: Default policy. If set, no items will be evicted and the property `max-size` will be ignored.  You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
 	- LRU: Least Recently Used.
@@ -78,13 +78,30 @@ Let's describe each element.
 
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
+	- `USED_NATIVE_MEMORY_SIZE`: (Enterprise Only) Maximum used native memory size in megabytes for each JVM.
+
+		`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
+
+	- `USED_NATIVE_MEMORY_PERCENTAGE`: (Enterprise Only) Maximum used native memory size percentage for each JVM.
+
+		`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
+
+	- `FREE_NATIVE_MEMORY_SIZE`: (Enterprise Only) Maximum free native memory size in megabytes for each JVM.
+
+		`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
+
+	- `FREE_NATIVE_MEMORY_PERCENTAGE`: (Enterprise Only) Maximum free native memory size percentage for each JVM.
+
+		`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
+
+
 - `eviction-percentage`: When `max-size` is reached, the specified percentage of the map will be evicted. For example, if set to 25, 25% of the entries will be evicted. Setting this property to a smaller value will cause eviction of a smaller number of map entries. Therefore, if map entries are inserted frequently, smaller percentage values may lead to overheads. Valid values are integers between 0 and 100. The default value is 25.
-- `min-eviction-check-millis`: The minimum time in milliseconds which should elapse before checking whether a partition of the map is evictable or not. In other terms, this property specifies the frequency of the eviction process. The default value is 100. Setting it to 0 (zero) makes the eviction process run for every put operation.
+- `min-eviction-check-millis`: Minimum time in milliseconds which should elapse before checking whether a partition of the map is evictable or not. In other terms, this property specifies the frequency of the eviction process. The default value is 100. Setting it to 0 (zero) makes the eviction process run for every put operation.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *When map entries are inserted frequently, the property `min-eviction-check-millis` should be set to a number lower than the insertion period in order not to let any entry escape from the eviction.*
 
 
-#### Example Eviction Configuration
+#### Example Eviction Configurations
 
 
 ```xml
@@ -96,6 +113,17 @@ Let's describe each element.
 ```
 
 In the above example, `documents` map starts to evict its entries from a member when the map size exceeds 10000 in that member. Then, the entries least recently used will be evicted. The entries not used for more than 60 seconds will be evicted as well.
+
+And this is an example eviction configuration for in-memory-format `NATIVE`:
+
+```xml
+<map name="nativeMap*">
+    <in-memory-format>NATIVE</in-memory-format>
+    <eviction-policy>LFU</eviction-policy>
+    <eviction-percentage>5</eviction-percentage>
+    <max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">99</max-size>
+</map>
+```
 
 
 #### Evicting Specific Entries

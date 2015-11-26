@@ -6,6 +6,8 @@
 
 A Memcache client written in any language can talk directly to a Hazelcast cluster. No additional configuration is required.
 
+### Memcache Client Code Examples
+
 Assume that your cluster members are as shown below.
 
 ```plain
@@ -29,7 +31,7 @@ Assume that you have a PHP application that uses PHP Memcache client to cache th
 ?>
 ```
 
-Notice that Memcache client connects to `10.20.17.1` and uses port`5701`. Here is a Java client code example with SpyMemcached client:
+Notice that Memcache client connects to `10.20.17.1` and uses port `5701`. Here is a Java client code example with SpyMemcached client:
 
 ```java
 MemcachedClient client = new MemcachedClient(
@@ -55,7 +57,7 @@ in a default map named *hz_memcache_default*.
 
 An entry written with a Memcache client can be read by another Memcache client written in another language.
 
-### Unsupported Operations ###
+### Unsupported Operations for Memcache
 
 - CAS operations are not supported. In operations that get CAS parameters, such as append, CAS values are ignored.
 

@@ -16,8 +16,15 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
   <map name="my-read-mostly-map">
     ...
     <near-cache>
+
       <!--
-        Maximum size of the near cache. When max size is reached,
+         Storage type of near cache entries. Available values are BINARY, OBJECT and NATIVE.
+         NATIVE is available only for Hazelcast Enterprise. Default value is BINARY.
+      -->
+       <in-memory-format>BINARY</in-memory-format>
+
+      <!--
+        Maximum size of the near cache. When max-size is reached,
         cache is evicted based on the policy defined.
         Any integer between 0 and Integer.MAX_VALUE. 0 means
         Integer.MAX_VALUE. Default is 0.
@@ -26,14 +33,14 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
       
       <!--
         Maximum number of seconds for each entry to stay in the near cache. Entries that are
-        older than <time-to-live-seconds> will get automatically evicted from the near cache.
+        older than this period is automatically evicted from the near cache.
         Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0.
       -->
       <time-to-live-seconds>0</time-to-live-seconds>
 
       <!--
-        Maximum number of seconds each entry can stay in the near cache as untouched (not-read).
-        Entries that are not read (touched) more than <max-idle-seconds> value will get removed
+        Maximum number of seconds each entry can stay in the near cache as untouched (not read).
+        Entries that are not read more than this period is removed
         from the near cache.
         Any integer between 0 and Integer.MAX_VALUE. 0 means
         Integer.MAX_VALUE. Default is 0.
@@ -51,25 +58,33 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
       <eviction-policy>LRU</eviction-policy>
 
       <!--
-        Should the cached entries get evicted if the entries are changed (updated or removed).
-        true of false. Default is true.
+        Should the cached entries are evicted if the entries are updated or removed.
+        Values can be true of false. Default is true.
       -->
       <invalidate-on-change>true</invalidate-on-change>
 
       <!--
-        You may want also local entries to be cached.
-        This is useful when in memory format for near cache is different than the map's one.
-        By default it is disabled.
+        You may also want local entries to be cached.
+        This is useful when in memory format for near cache is different from
+        the map's near cache.
+        By default it is disabled (false).
       -->
       <cache-local-entries>false</cache-local-entries>
+
+      <!--
+        Note that you have to use this eviction config with NATIVE memory format.
+      -->
+       <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
     </near-cache>
   </map>
 </hazelcast>
 ```
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Programmatically, near cache configuration is done by using the class [NearCacheConfig](https://github.com/hazelcast/hazelcast/blob/607aa5484958af706ee18a1eb15d89afd12ee7af/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java). And this class is used both in the cluster members and clients. In a client/server system, you must enable the near cache separately on the client, without needing to configure it on the server. For information on how to create a near cache on a client (native Java client), please see the [Client Near Cache Configuration section](#client-near-cache-configuration). Please note that near cache configuration is specific to the member or client itself, a map in a member may not have near cache configured while the same map in a client may have near cache configured.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Programmatically, near cache configuration is done by using the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a>. And this class is used both in the cluster members and clients. In a client/server system, you must enable the near cache separately on the client, without needing to configure it on the server. For information on how to create a near cache on a client (native Java client), please see [Configuring Client Near Cache](#configuring-client-near-cache). Please note that near cache configuration is specific to the member or client itself, a map in a member may not have near cache configured while the same map in a client may have near cache configured.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you are using near cache, you should take into account that your hits to the keys in near cache are not reflected as hits to the original keys on the remote members; this has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even thought there is a hit on a key in near cache, your original key on the remote member may expire.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache works only when you access data via `map.get(k)` methods.  Data returned using a predicate is not stored in the near cache.*
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable near-cache on lite members for faster reads.*

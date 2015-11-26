@@ -1,6 +1,6 @@
 
 
-## Clustered REST
+## Clustered REST via Management Center
 
 ![](images/enterprise-onlycopy.jpg)
 

@@ -12,7 +12,7 @@ The following are example Reliable Topic configurations.
     <statistics-enabled>true</statistics-enabled>
     <message-listeners>
         <message-listener>
-        
+        ...
         </message-listener>
     </message-listeners>
     <read-batch-size>10</read-batch-size>
@@ -39,5 +39,5 @@ Reliable Topic configuration has the following elements.
 
 Reliable Topic configuration has the following attributes.
 
-- `name`: Name of the reliable topic. Optional.
+- `name`: Name of the reliable topic.
 

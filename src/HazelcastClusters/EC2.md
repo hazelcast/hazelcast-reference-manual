@@ -13,21 +13,27 @@ To configure your cluster to use EC2 Auto Discovery, set the following configura
 The following is an example declarative configuration.
 
 ```xml
-<join>
-  <multicast enabled="false">
-  </multicast>
-  <tcp-ip enabled="false">
-  </tcp-ip>
-  <aws enabled="true">
-    <access-key>my-access-key</access-key>
-    <secret-key>my-secret-key</secret-key>
-    <region>us-west-1</region>
-    <host-header>ec2.amazonaws.com</host-header>
-    <security-group-name>hazelcast-sg</security-group-name>
-    <tag-key>type</tag-key>
-    <tag-value>hz-nodes</tag-value>
-  </aws>
-</join>
+ <hazelcast>
+   ...
+  <properties>
+    <property name="hazelcast.discovery.enabled">true</property>
+  </properties>
+   ...
+  <network>
+    ...
+    <join>
+      <multicast enabled="false"></multicast>
+      <tcp-ip enabled="false"></tcp-ip>
+      <aws enabled="true">
+        <access-key>my-access-key</access-key>
+        <secret-key>my-secret-key</secret-key>
+        <region>us-west-1</region>
+        <host-header>ec2.amazonaws.com</host-header>
+        <security-group-name>hazelcast-sg</security-group-name>
+        <tag-key>type</tag-key>
+        <tag-value>hz-nodes</tag-value>
+      </aws>
+    </join>
 ```  
 
 #### Debugging
@@ -37,7 +43,7 @@ When needed, Hazelcast can log the events for the instances that exist in a regi
 <br> </br>
 ***RELATED INFORMATION***
 
-*You can download the white paper *"Hazelcast on AWS: Best Practices for Deployment"* from [Hazelcast.com](http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/).*
+*You can download the white paper *"Hazelcast on AWS: Best Practices for Deployment"* from <a href="http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/" target="_blank">Hazelcast.com</a>.*
 <br> </br>
 
 

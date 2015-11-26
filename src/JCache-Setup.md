@@ -1,11 +1,11 @@
 
 
-## Setup and Configuration
+## JCache Setup and Configuration
 
 This sub-chapter shows what is necessary to provide the JCache API and the Hazelcast JCache implementation for your application. In
 addition, it demonstrates the different configuration options as well as a description of the configuration properties.
 
-### Application Setup
+### Setting up Your Application
 
 To provide your application with this JCache functionality, your application needs the JCache API inside its classpath. This API is the bridge between the specified JCache standard and the implementation provided by Hazelcast.
 
@@ -69,6 +69,6 @@ Maven snippet:
 ```
 
 For other build systems, e.g. ANT, the users have to download these dependencies from either the JSR-107 specification and
-Hazelcast community website ([http://www.hazelcast.org](http://www.hazelcast.org)) or from the Maven repository search page
-([http://search.maven.org](http://search.maven.org)).
+Hazelcast community website (<a href="http://www.hazelcast.org" target="_blank">http://www.hazelcast.org</a>) or from the Maven repository search page
+(<a href="http://search.maven.org" target="_blank">http://search.maven.org</a>).
 

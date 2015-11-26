@@ -8,7 +8,7 @@ There are currently three ways to connect to a running Hazelcast cluster:
 
 Native Clients enable you to perform almost all Hazelcast operations without being a member of the cluster. It connects to one of the cluster members and delegates all cluster wide operations to it (_dummy client_), or it connects to all of them and delegates operations smartly (_smart client_). When the relied cluster member dies, the client will transparently switch to another live member.
 
-There can be hundreds or even thousands of clients connected to the cluster. By default, there are *core count* * *10* threads on the server side that will handle all the requests (e.g. if the server has 4 cores, it will be 40).
+Hundreds or even thousands of clients can be connected to the cluster. By default, there are *core count* * *10* threads on the server side that will handle all the requests (e.g. if the server has 4 cores, there will be 40 threads).
 
 Imagine a trading application where all the trading data are stored and managed in a Hazelcast cluster with tens of nodes. Swing/Web applications at the traders' desktops can use Native Clients to access and modify the data in the Hazelcast cluster.
 
@@ -53,6 +53,7 @@ Hazelcast Client Protocol|Yes|Yes|Yes
 Fail Fast on Invalid Conviguration|Yes|No|No
 Sub-Listener Interfaces for Map ListenerMap|Yes|No|No
 Continuous Query Caching|Yes|No|No
+Continuous Query (Listener with Predicate)|Yes|Yes|No
 Distributed Executor Service|Yes|No|No
 Query|Yes|Yes|Yes
 Near Cache|Yes|Yes|No

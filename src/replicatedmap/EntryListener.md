@@ -1,12 +1,22 @@
 
-### EntryListener on Replicated Map
+### Using EntryListener on Replicated Map
 
 A `com.hazelcast.core.EntryListener` used on a Replicated Map serves the same purpose as it would on other
 data structures in Hazelcast. You can use it to react on add, update, and remove operations. Replicated maps do not yet support eviction.
 
+#### Difference in EntryListener on Replicated Map
+
 The fundamental difference in Replicated Map behavior, compared to the other data structures, is that an EntryListener only reflects
 changes on local data. Since replication is asynchronous, all listener events are fired only when an operation is finished
 on a local node. Events can fire at different times on different nodes.
+
+#### Example of Replicated Map EntryListener
+
+Here is a code example for using EntryListener on a replicated map.
+
+The HazelcastInstance method `getReplicated` map gets a replicated map (customers), and the ReplicatedMap method
+`addEntryListener` adds an entry listener to the replicated map. Then the ReplicatedMap `put` method adds a replicated map
+entry, then updates it, and then the `remove` method removes the entry.
 
 ```java
 import com.hazelcast.core.EntryEvent;
@@ -45,4 +55,3 @@ customers.put( "1", new Customer( "Joe", "Smith" ) ); // add event
 customers.put( "1", new Customer( "Ali", "Selam" ) ); // update event
 customers.remove( "1" ); // remove event
 ```
-

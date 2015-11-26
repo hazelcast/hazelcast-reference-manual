@@ -7,7 +7,7 @@ When Hazelcast starts up, it checks for the configuration as follows:
  
 	`- Dhazelcast.config=`*`<path to the hazelcast.xml>`*.
 	
-	The path can be a normal one or a classpath reference with the prefix `CLASSPATH`.
+	The path can be a normal one or a classpath reference with the prefix `classpath:`.
 -	If the above system property is not set, Hazelcast then checks whether there is a `hazelcast.xml` file in the working directory.
 -	If not, then it checks whether `hazelcast.xml` exists on the classpath.
 -	If none of the above works, Hazelcast loads the default configuration, i.e. `hazelcast-default.xml` that comes with `hazelcast.jar`.

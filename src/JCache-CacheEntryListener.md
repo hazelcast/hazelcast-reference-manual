@@ -6,13 +6,20 @@ The `javax.cache.event.CacheEntryListener` implementation is straight forward. `
 - `CacheEntryCreatedListener`: Fires after a cache entry is added (even on read-through by a `CacheLoader`) to the cache.
 - `CacheEntryUpdatedListener`: Fires after an already existing cache entry was updates.
 - `CacheEntryRemovedListener`: Fires after a cache entry was removed (not expired) from the cache.
-- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be parallel process, it is only required to be executed on the keys that are requested by `Cache::get` and some other operations. For a full table of expiry please see the [https://www.jcp.org/en/jsr/detail?id=107](https://www.jcp.org/en/jsr/detail?id=107) point 6.  
+- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be parallel process, it is only required to be executed on the keys that are requested by `Cache::get` and some other operations. For a full table of expiry please see the <a href="https://www.jcp.org/en/jsr/detail?id=107" target="_blank">https://www.jcp.org/en/jsr/detail?id=107</a> point 6.  
 
 To configure `CacheEntryListener`, add a `javax.cache.configuration.CacheEntryListenerConfiguration` instance to
 the JCache configuration class, as seen in the above example configuration. In addition listeners can be configured to be
 executed synchronously (blocking the calling thread) or asynchronously (fully running in parallel).
 
-In this example application, the listener is implemented to print event information on the console. That visualizes what is going on in the cache.
+In this example application, the listener is implemented to print event information on the console. That visualizes what is going on in the cache. This application performs the following tasks:
+
+- It implements CacheEntryCreatedListener.
+- It implements the `onCreated` method to call after an entry is created.
+- It implements the `onUpdated` method to call after an entry is updated.
+- It implements the `onRemoved` method to call after an entry is removed.
+- It implements the `onExpired` method to call after an entry expires.
+- It implements `printEvents` to print event information on the console.
 
 ```java
 public class UserCacheEntryListener

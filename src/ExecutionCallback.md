@@ -1,9 +1,12 @@
 
 
 
-### Execution Callback
+### Callback When Task Completes
 
-You can use the `ExecutionCallback` offered by Hazelcast to asynchronously be notified when the execution is done. 
+You can use the `ExecutionCallback` offered by Hazelcast to asynchronously be notified when the execution is done.
+
+- To be notified when your task completes without an error, implement the `onResponse` method.
+- To be notified when your task completes with an error, implement the `onFailure` method.
 
 #### Example Task to Callback
 

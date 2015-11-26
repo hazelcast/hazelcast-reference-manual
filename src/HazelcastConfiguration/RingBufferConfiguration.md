@@ -1,5 +1,5 @@
 
-## RingBuffer Configuration
+## Ringbuffer Configuration
 
 
 The following are example RingBuffer configurations.

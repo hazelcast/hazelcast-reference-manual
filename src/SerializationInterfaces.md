@@ -2,20 +2,20 @@
 
 
 
-## Serialization Interfaces
- 
-For complex objects, the following interfaces are used for serialization and deserialization.
+## Serialization Interface Types
 
-- `java.io.Serializable`
+For complex objects, use the following interfaces for serialization and deserialization.
 
-- `java.io.Externalizable`
+- `java.io.Serializable` See [Implementing Java Serializable and Externalizable](#implementing-java-serializable-and-externalizable).
 
-- `com.hazelcast.nio.serialization.DataSerializable`
+- `java.io.Externalizable` See [Implementing Java Externalizable](#implementing-java-externalizable).
 
-- `com.hazelcast.nio.serialization.IdentifiedDataSerializable`
+- `com.hazelcast.nio.serialization.DataSerializable` See [Implementing DataSerializable](#implementing-dataserializable).
+
+- `com.hazelcast.nio.serialization.IdentifiedDataSerializable` See [Implementing IdentifiedDataSerializable](#implementing-identifieddataserializable)
 
 - `com.hazelcast.nio.serialization.Portable`, and
-- Custom Serialization (using `StreamSerializer`, `ByteArraySerializer`)
+- Custom Serialization (using [StreamSerializer](#implementing-streamserializer), [ByteArraySerializer](#implementing-bytearrayserializer))
 
 
 When Hazelcast serializes an object into `Data`:
@@ -28,5 +28,5 @@ When Hazelcast serializes an object into `Data`:
 
 **(4)** If the above checks fail, Hazelcast will use Java serialization.
 
-If all of the above checks do not work, then serialization will fail. When a class implements multiple interfaces, the above steps are important to determine the serialization mechanism that Hazelcast will use. When a class definition is required for any of these serializations, all the classes needed by the application should be on the classpath because Hazelcast does not download them automatically.
+If all of the above checks do not work, then serialization will fail. When a class implements multiple interfaces, the above steps are important to determine the serialization mechanism that Hazelcast will use. When a class definition is required for any of these serializations, you need to have all the classes needed by the application on your classpath because Hazelcast does not download them automatically.
 

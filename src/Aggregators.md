@@ -13,19 +13,23 @@ achieved using pure MapReduce calls. However, using the Aggregation feature is m
 This section will quickly guide you through the basics of the Aggregations framework and some of its available classes.
 We also will implement a first base example.
 
+#### Aggregations and Map Interfaces
+
 Aggregations are available on both types of map interfaces, `com.hazelcast.core.IMap` and `com.hazelcast
 .core.MultiMap`, using
 the `aggregate` methods. Two overloaded methods are available that customize resource management of the
 underlying MapReduce framework by supplying a custom configured 
 `com.hazelcast.mapreduce.JobTracker` instance. To find out how to
-configure the MapReduce framework, please see the [JobTracker Configuration section](#jobtracker-configuration). We will
+configure the MapReduce framework, please see [Configuring JobTracker](#configuring-jobTracker). We will
 later see another way to configure the automatically used MapReduce framework if no special `JobTracker` is supplied.
+
+#### Aggregations and Java
 
 To make Aggregations more convenient to use and future proof, the API is heavily optimized for Java 8 and future versions.
 The API is still fully compatible with any Java version Hazelcast supports (Java 6 and Java 7). The biggest difference is how you
 work with the Java generics: on Java 6 and 7, the process to resolve generics is not as strong as on Java 8 and
 upcoming Java versions. In addition, the whole Aggregations API has full Java 8 Project Lambda (or Closure, 
-[JSR 335](https://jcp.org/en/jsr/detail?id=335)) support.
+<a href="https://jcp.org/en/jsr/detail?id=335" target="_blank">JSR 335</a>) support.
 
 For illustration of the differences in Java 6 and 7 in comparison to Java 8, we will have a quick look at code
 examples for both. After that, we will focus on using Java 8 syntax to keep examples short and easy to understand, and we will see some hints as to what the code looks like in Java 6 or 7.
@@ -70,7 +74,7 @@ int sum = personAgeMapping.aggregate( Supplier.all(), Aggregations.integerSum() 
 ```
 
 
-#### Quick look at the MapReduce Framework
+#### Aggregations and the MapReduce Framework
 
 As mentioned before, the Aggregations implementation is based on the Hazelcast MapReduce framework and therefore you might find
 overlaps in their APIs. One overload of the `aggregate` method can be supplied with

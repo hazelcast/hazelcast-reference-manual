@@ -164,7 +164,7 @@ public void cleanup() throws Exception {
 }
 ```
 
-For more information please [check our existing tests.](https://github.com/hazelcast/hazelcast/tree/master/hazelcast/src/test/java/com/hazelcast/cluster)
+For more information please <a href="https://github.com/hazelcast/hazelcast/tree/master/hazelcast/src/test/java/com/hazelcast/cluster" target="_blank">check our existing tests</a>.
 
 <br></br>
 
@@ -192,7 +192,7 @@ LiteMember supports task execution (distributed executor service), smart client 
 
 ## How do you give support?
 
-We have two support services: community and commercial support. Community support is provided through our [Mail Group](https://groups.google.com/forum/#!forum/hazelcast) and StackOverflow web site. For information on support subscriptions, please see [Hazelcast.com](http://hazelcast.com/support/commercial/).
+We have two support services: community and commercial support. Community support is provided through our <a href="https://groups.google.com/forum/#!forum/hazelcast" target="_blank">Mail Group</a> and <a href="www.stackoverflow.com" target="_blank">StackOverflow</a> web site. For information on support subscriptions, please see <a href="http://hazelcast.com/support/commercial/" target="_blank">Hazelcast.com</a>.
 
 <br></br>
 
@@ -293,7 +293,7 @@ if (partitionService.isLocalMemberSafe()) {
 
 ***RELATED INFORMATION***
 
-*Please refer to the [Cluster-Member Safety Check section](#cluster-member-safety-check) for more information.*
+*Please refer to [Safety Checking Cluster Members](#safety-checking-cluster-members) for more information.*
 
 <br></br>
 
@@ -331,8 +331,8 @@ In Hazelcast, socket connections are created with the `SO_KEEPALIVE` option enab
 
 For additional information please see:
 
- - [Using TCP keepalive under Linux](http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html)
- - [Microsoft TechNet](http://technet.microsoft.com/en-us/library/cc957549.aspx)
+ - <a href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html" target="_blank">Using TCP keepalive under Linux</a>
+ - <a href="http://technet.microsoft.com/en-us/library/cc957549.aspx" target="_blank">Microsoft TechNet</a>
  
  <br></br>
 

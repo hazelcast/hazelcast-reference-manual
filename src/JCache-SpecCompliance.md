@@ -1,5 +1,5 @@
 
-## JCache Specification Compliance
+## Testing for JCache Specification Compliance
 
 Hazelcast JCache is fully compliant with the JSR 107 TCK (Technology Compatibility Kit), therefore it is officially a JCache
 implementation. This is tested by running the TCK against the Hazelcast implementation.
@@ -7,7 +7,7 @@ implementation. This is tested by running the TCK against the Hazelcast implemen
 You can test Hazelcast JCache for compliance by executing the TCK. Just perform the instructions below:
 
 
-1. Checkout the TCK from [https://github.com/jsr107/jsr107tck](https://github.com/jsr107/jsr107tck).
+1. Checkout the TCK from <a href="https://github.com/jsr107/jsr107tck" target="_blank">https://github.com/jsr107/jsr107tck</a>.
 2. Change the properties in `tck-parent/pom.xml` as shown below.
 3. Run the TCK by `mvn clean install`.
 

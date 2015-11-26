@@ -1,29 +1,32 @@
-# What's New in Hazelcast 3.5
+# What's New in Hazelcast 3.6
 
 This chapter includes the release notes, information on how to upgrade Hazelcast from previous releases and the revision history for this document.
+
 
 ## Release Notes
 
 This section lists the new features and enhancements developed and bugs fixed for this release.
 
+
 ### New Features
 
-The following the new features introduced with Hazelcast 3.5 release.
+The following the new features introduced with Hazelcast 3.6 release.
 
-- **Async Back Pressure**: The Back Pressure introduced with Hazelcast 3.4 now supports async operations. For more information, please see the [Back Pressure section](#back-pressure).
-- **Client Configuration Import**: Hazelcast now supports replacing variables with system properties in the declarative configuration of Hazelcast client. Moreover, now you can compose the Hazelcast client declarative configuration out of smaller configuration snippets. For more information, please see the [Composing Declarative Configuration section](#composing-declarative-configuration).
-- **Cluster Quorum**: This feature enables you to define the minimum number of machines required in a cluster for the cluster to remain in an operational state. For more information, please see  the [Cluster Quorum section](#cluster-quorum).
-- **Hazelcast Client Protocol**: Starting with 3.5, Hazelcast introduces the support for different versions of clients in a cluster. Please keep in mind that this support is not valid for the releases before 3.5. Please see the important note at the last paragraph of the [Hazelcast Java Client chapter's](#hazelcast-java-client) introduction.
-- **Listener for Lost Partitions**: This feature notifies you for possible data loss occurrences. Please see the [Partition Lost Listener section](#partition-lost-listener) and [Listening for Lost Partitions section](#listening-for-lost-map-partitions).
-- **Increased Visibility of Slow Operations**: With the introduction of the `SlowOperationDetector` feature, slow operations are logged and can be seen on the Hazelcast Management Center. Please see the [SlowOperationDetector section](#slowoperationdetector) and [Management Center:Members section](#members).
-- **Enterprise WAN Replication**: Hazelcast Enterprise implementation of the WAN Replication. Please see the [Enterprise WAN Replication section](#enterprise-wan-replication).
-- **Sub-Listener Interfaces for Map Listener**: This feature enables you to listen to map-wide or entry-based events. With this new feature, the listener formerly known as `EntryListener` has been changed to `MapListener` and `MapListener` has sub-interfaces to catch map/entry related events. Please see the [Listening to Map Events section](#listening-to-map-events) for more information.
-- **Scalable Map Loader**: With this feature, you can load your keys incrementally if the number of your keys is large. Please see the [Loading Keys Incrementally section](#loading-keys-incrementally).
-- **Near Cache for JCache**: Now you can use a near cache with Hazelcast's JCache implementation. Please see [JCache Near Cache](#jcache-near-cache) for details. 
-- **Fail Fast on Invalid Configuration**: With this feature, Hazelcast throws a meaningful exception if there is an error in the declarative or programmatic configuration. Please see the note at the end of the [Configuration Overview section](#configuration-overview).
-- **Continuous Query Caching**: (Enterprise only, since 3.5) Provides an always up to date view of an IMap according to the given predicate. Please see the [Continuous Query Cache section](#continuous-query-cache). 
-- **Management of Unbounded Return Values**: Introduces a `QueryResultSizeLimiter`. Please see the [Preventing Out of Memory Exceptions section](#preventing-out-of-memory-exceptions).
-- Dynamic Selector Rebalancing
-
+- **High-Density Memory Store for Hazelcast Map**: With this release, Hazelcast Map data structure is now equipped with the High-Density Memory Store, previously implemented for Hazelcast JCache. Please refer to the [Setting In Memory Format section](#setting-in-memory-format).
+- **Discovery Service Provider Interface (Discovery SPI)**: You can use this SPI to discover  Hazelcast instances on cloud environments provided by jclouds&reg;, Kubernetes and many more. The existing discovery mechanisms that Hazelcast provides (Multicast, TCP/IP and Amazon EC2) have been re-implemented on top of this new Discovery SPI. Please refer to the [Discovery SPI section](#discovery-spi).
+- **Client Protocol**: This feature presents the Hazelcast's new open binary client protocol. Please refer to <a href="http://hazelcast.org/documentation/" target="_blank">Open Binary Client Protocol Documentation</a>.
+- **Client Cross Version Compatibility**: Now you can upgrade your Hazelcast clients independently from servers and other clients. Please refer to <a href="http://hazelcast.org/documentation/" target="_blank">Open Binary Client Protocol Documentation</a>.
+- **Support for cloud providers through jclouds&reg;**: Hazelcast now supports deployments on all the well-known cloud providers through the <a href="https://jclouds.apache.org/" target="_blank">jclouds&reg;</a> open source library. Please refer to the [Discovering Members with jclouds section](#discovering-members-with-jclouds).
+- **Hot Restart Store**: This new feature provides fast restarting of the Hazelcast clusters. This is achieved by storing the state of the cluster members to the disk. Please refer to the [Hot Restart Store section](#hot-restart-store) for more details.
+- **Ringbuffer and Reliable Topic in Hazelcast Clients**: The data structures Ringbuffer and Reliable Topic recently introduced by Hazelcast (with the release 3.5) are now implemented for Hazelcast Java Client. Ringbuffer has also been implemented for .NET Client.
+- **Cluster Quorum for Hazelcast JCache**: Cluster Quorum checks are now provided for Hazelcast JCache implementations, too. Please refer to the [Defining a Cluster Quorum section](#defining-a-cluster-quorum) to refresh and to the [ICache Configuration section](#icache-configuration) to learn configuring it for JCache.
+- **Split Brain Syndrome handler for Hazelcast JCache**: Now Split Brain Syndrome is handled in JCache as it is taken care in Hazelcast Map. Please refer to the [JCache Split-Brain section](#jcache-split-brain).  
+- **Partition Lost Listener for Hazelcast JCache**: You can listen to partition lost events fired in your Hazelcast JCache implementation. Please refer to the [ICache Configuration section](#icache-configuration).
+- **Hazelcast Docker image**: Now you can run Hazelcast using our image in the Docker platform. Please refer to <a href="https://hub.docker.com/r/hazelcast/" target="_blank">here</a>.
+- **Lite Members**: With the introduction of Hazelcast Lite Members, you are able to specify certain members in your cluster so that they do not store data. You can use these lite members mostly for your task executions and listener registrations. Please refer to [Enabling Lite Members](#enabling-lite-members).
+- **Querying in collections and arrays**: Hazelcast is now able to query and index attributes of objects stored in a collection or array. Please refer to the [Querying in collections section](#querying-in-collections-and-arrays).
+- **Custom attributes extraction**: It is now possible to extract a value of an object's attribute using a custom extractor class. Please refer to the [Custom attributes](#custom-attributes).
+- **Acquiring locks with a lease time**: Now, you can try to acquire locks with a lease time. Please refer to the the comment for the method `tryLock()` in [ILock code](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/ILock.java).
+- **Monitoring the WAN replication**: You can now monitor the state of your WAN replications using the Hazelcast Management Center. Please refer to the [Monitoring WAN Replication section](#monitoring-wan-replication).
 
 

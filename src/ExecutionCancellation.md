@@ -1,9 +1,9 @@
 
 
 
-### Execution Cancellation
+### Canceling an Executing Task
 
-A task in the code you execute in a cluster might take longer than expected. If you cannot stop/cancel that task, it will keep eating your resources. 
+A task in the code that you execute in a cluster might take longer than expected. If you cannot stop/cancel that task, it will keep eating your resources. 
 
 To cancel a task, you can use the standard Java executor framework's `cancel()` API. This framework encourages us to code and design for cancellations, a highly ignored part of software development.
 

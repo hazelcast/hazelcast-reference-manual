@@ -1,47 +1,33 @@
 
 ### Enhancements
 
-The following are the the enhancements performed for Hazelcast 3.5.1 release.
+The following are the the enhancements performed for Hazelcast 3.6 release.
 
-- **Eventing System Improvements**: RingBuffer and Reliable Topic structures are introduced.
-- **XA Transactions Improvements**: With this improvement, you can now obtain a Hazelcast XA Resource instance through `HazelcastInstance`. For more information, please see [XA Transactions](#xa-transactions).
-- **Query**: Predicates are now evaluated using a single thread to prevent a parallel slowdown. This has proven to be a beneficent for most use-cases. You can revert to the old behavior by setting the System Property `hazelcast.query.predicate.parallel.evaluation` to `true`.
+- **Replicated Map improvements**: The implementation of Hazelcast replicated maps has been revisited. Please especially refer to the [Considerations for Replicated Map section](#considerations-for-replicated-map).
+- **Management Center improvements**: Alerting mechanism added. Please refer to the [Management Center section](#management-center).
+- **Paging Predicate improvements**: With the performed improvements, now random page accessing is supported. Please refer to the [Filtering with Paging Predicates section](#filtering-with-paging-predicates).
+- **Rule based query optimizations**: This improvement introduces a query optimizer based on static rewriting rules. The optimizer treats predicates as immutable and returns a modified copy when the optimized one is found. Please refer to the `hazelcast.query.optimizer.type` property definition in the [System Properties section](#system-properties).
+- **WAN replication improvements**: With the improvements performed on Hazelcast's WAN replication feature, you can now monitor WAN replication events for each data structure and WAN replication now supports different acknowledge types for each target cluster group. Please refer to the [WAN Replication Event Filtering API section](#wan-replication-event-filtering-api) and [WAN Replication Acknowledge Types section](#wan-replication-acknowledge-types) for more information.
+- **Improvements on Hazelcast's OSGI support**: With this improvement, Hazelcast bundles provide OSGI services so that the users can manage (create, access, shutdown) the Hazelcast instances through this service on OSGI environments. Having the `hazelcast.osgi.start` property enabled, when an Hazelcast OSGI service is activated, a default Hazelcast instance is created automatically. These instances can be served as an OSGI service to be accessed by other bundles. Registering the created Hazelcast instances behavior is enabled by default and can be disabled using the `hazelcast.osgi.register.disabled` property. Each Hazelcast bundle provides a different OSGI service and their instances can be grouped (clustered) together to prevent possible compatibility issues between different Hazelcast versions/bundles. This grouping behavior is enabled by default and can be disabled using the `hazelcast.osgi.grouping.disabled` property. Hazelcast OSGI service's lifecycle (and also the owned/created instances' lifecycles) are the same as the owner Hazelcast bundles. When the bundle is stopped (deactivated), owned service and Hazelcast instances are also deactivated/shutdown and deregistered automatically. Then, when the bundle is re-activated, its service is registered again. In addition, the Hazelcast Enterprise JAR file is also an OSGI bundle like the Hazelcast OSS JAR file.
+
 
 The following are the other improvements performed to solve the enhancement issues opened by the Hazelcast customers/team.
- 
-- While configuring JCache, duration of the `ExpiryPolicy` can be set programmatically but not declaratively [[#5347]](https://github.com/hazelcast/hazelcast/issues/5347).
-- Since near cache is currently not supported as embedded but only supported at the client, there is no need for `NearCacheConfig` in `CacheConfig` [[#5215]](https://github.com/hazelcast/hazelcast/issues/5215).
-- Support for parametrized test is needed [[#5182]](https://github.com/hazelcast/hazelcast/issues/5182).
-- `SlowOperationDetector` should have an option to not log the stacktraces to the log file. There is no need to have the stacktraces written to the normal log file if the Hazelcast Management Center or the performance monitor is being used [[#5043]](https://github.com/hazelcast/hazelcast/issues/5043).
-- The batch launcher should include the JCache API [[#4902]](https://github.com/hazelcast/hazelcast/issues/4902).
-- There are no Spring tags available for Native Memory configuration [[#4772]](https://github.com/hazelcast/hazelcast/issues/4772).
-- In the class `BasicInvocationFuture`, there is no need to create an additional `AtomicInteger` object. It should be
-replaced with `AtomicIntegerFieldUpdater` [[#4408]](https://github.com/hazelcast/hazelcast/issues/4408).
-- There is no need to use the class `IsStillExecutingOperation` to check if an operation is running locally. One
-can directly access the scheduler [[#4407]](https://github.com/hazelcast/hazelcast/issues/4407).
-- Configuring NearCache in a Client/Server system only talks about the programmatic configuration of NearCache on the clients. The declarative configuration (XML) of the same is not mentioned [[#4376]](https://github.com/hazelcast/hazelcast/issues/4376).
-- XML schema and XML configuration validation is not compliant for AWS configuration [[#4310]](https://github.com/hazelcast/hazelcast/issues/4310).
-- The JavaDoc for the methods `KeyValueSource.hasNext/element/key` and `Iterator.hasNext/next` should emphasize the differences between each other, i.e. the state changing behavior should be clarified [[#4218]](https://github.com/hazelcast/hazelcast/issues/4218).
-- While migration is in progress, the nodes will have different partition state versions. If the query is running
-at that time, it can get results from the nodes at different stages of the migration. By adding partition state
-version to the query results, it can be checked whether the migration was happening and the query can be
-re-run [[#4206]](https://github.com/hazelcast/hazelcast/issues/4206).
-- XML Config Schema does not allow you to set a `SecurityInterceptor`
-Implementation [[#4118]](https://github.com/hazelcast/hazelcast/issues/4118).
-- Currently, certain types of remote executed calls are stored in the `executingCalls` map. The key
-(and value) is a `RemoteCallKey` object. The functionality provided is the ability to ask on the remote side
-if an operation is still executing. For a partition-aware operation, this is not needed. When an operation is
-scheduled by a partition specific operation thread, the operation can be stored in a volatile field in that
-thread [[#4079]](https://github.com/hazelcast/hazelcast/issues/4079).
-- The class `TcpIpJoinerOverAWS` fails at the recently launched AWS eu-central-1 region. The reason for the fail is that the region requires v4 signatures [[#3963]](https://github.com/hazelcast/hazelcast/issues/3963).
-- API change in `EntryListener` breaks the compatibility with the Camel Hazelcast component [[#3859]](https://github.com/hazelcast/hazelcast/issues/3859).
-- The `hazelcast-spring-<`*version*`>.xsd` should include the User Defined Services (SPI) elements and
-attributes [[#3565]](https://github.com/hazelcast/hazelcast/issues/3565).
-- XA Transactions run on multiple threads [[#3385]](https://github.com/hazelcast/hazelcast/issues/3385).
-- Hazelcast client fails to connect when you provide variables from the system properties [[#3270]](https://github.com/hazelcast/hazelcast/issues/3270).
-- Entry listeners are not called when the entries are modified by WAN replication [[#2981]](https://github.com/hazelcast/hazelcast/issues/2981).
-- Map wildcard matching is confusing. There should be a pluggable wildcard configuration
-resolver [[#2431]](https://github.com/hazelcast/hazelcast/issues/2431).
-- The method `loadAllKeys()` in map is not scalable [[#2266]](https://github.com/hazelcast/hazelcast/issues/2266).
-- Back pressure feature should be added [[#1781]](https://github.com/hazelcast/hazelcast/issues/1781).
+
+- There exists a misleading log entry for the method `EventServiceImpl.sendEvent`: "logFailure("IO Queue overloaded! Failed to send event packet to: %s", subscriber);". However, the failure is not about I/O queue, it is about connection drop. <a href="https://github.com/hazelcast/hazelcast/issues/6723" target="_blank">[6723]</a>
+- Approximate `max-size` calculation should be removed for IMap eviction. <a href="https://github.com/hazelcast/hazelcast/issues/6463" target="_blank">[6463]</a>
+- `SpringAwareWebFilter` should have a constructor which takes properties as arguments. <a href="https://github.com/hazelcast/hazelcast/issues/6438" target="_blank">[6438]</a>
+- Client side and server side cache proxies handle `putAll` operation one by one. This is not efficient. Records for this operation should be grouped as per their partitions and should be sent and processed in batches. <a href="https://github.com/hazelcast/hazelcast/issues/6367" target="_blank">[6367]</a>
+- Not requested events should not be sent to `MapListener` <a href="https://github.com/hazelcast/hazelcast/issues/6349" target="_blank">[6349]</a>
+- Inconsistent and potentially buggy design in `BasicCompletableFuture`. <a href="https://github.com/hazelcast/hazelcast/issues/6080" target="_blank">[6080]</a>
+- Starting with "hazelcast-wm 3.3", OSGI Manifest Spring package imports should be optional. <a href="https://github.com/hazelcast/hazelcast/issues/6072" target="_blank">[6072]</a>
+ - The new client determines the partition ID for every invocation for data structures like queue and list where the partition ID is static. There is no need for this behavior. It should calculate the partition ID for once  when the proxy is created and continue to re-use it. <a href="https://github.com/hazelcast/hazelcast/issues/5848" target="_blank">[5848]</a>
+- `Map.Entry` supplied to Entry Processor is not Serializable any more. <a href="https://github.com/hazelcast/hazelcast/issues/5611" target="_blank">[5611]</a>
+- The configuration file `minimal-json` with the provided scope is not picked up by the *shade* plugin. <a href="https://github.com/hazelcast/hazelcast/issues/5543" target="_blank">[5543]</a>
+- In Spring configuration, when a boolean property is injected for *hazelcast* bean (`<hz:hazelcast:....</hz:hazelcast`)
+a `SAXParse` exception is thrown. <a href="https://github.com/hazelcast/hazelcast/issues/5528" target="_blank">[5528]</a>
+- Currently, key/value pairs are deserialized prior to the execution of entry processor by default.  This leads to the need of domain object at the server side, even if entry processor never uses it. <a href="https://github.com/hazelcast/hazelcast/issues/5301" target="_blank">[5301]</a>
+- In Spring XML configuration, the attributes of `socket-options` should be of type `xs:string`. <a href="https://github.com/hazelcast/hazelcast/issues/4700" target="_blank">[4700]</a>
+- `ClientMembershipEvent` does not need to have the `member` field. <a href="https://github.com/hazelcast/hazelcast/issues/4282" target="_blank">[4282]</a>
+- Hazelcast has `lock` with lease time feature but does not support `tryLock` with lease time. <a href="https://github.com/hazelcast/hazelcast/issues/1564" target="_blank">[1564]</a>
+
 

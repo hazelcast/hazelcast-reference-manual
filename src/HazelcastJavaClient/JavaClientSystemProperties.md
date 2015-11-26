@@ -17,6 +17,6 @@ Property Name | Default Value | Type | Description
 
 ## Sample Codes for Client
 
-Please refer to [Client Code Samples](https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients).
+Please refer to <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients" target="_blank">Client Code Samples</a>.
 
 

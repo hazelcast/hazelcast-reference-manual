@@ -10,7 +10,7 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 	- [Queue](#queue): The distributed queue is an implementation of `java.util.concurrent.BlockingQueue`. You can add an item in one machine and remove it from another one.
 	- [RingBuffer](#ringbuffer): The distributed RingBuffer is implemented for reliable eventing system.
 	- [Set](#set): The distributed and concurrent implementation of `java.util.Set`. It does not allow duplicate elements and does not preserve their order.
-	- [List](#list): Very similar to Hazelcast List, except that it allows duplicate elements and preserves their order.
+	- [List](#list): Very similar to Hazelcast Set, except that it allows duplicate elements and preserves their order.
 	- [MultiMap](#multimap): This is a specialized Hazelcast map. It is distributed, where multiple values under a single key can be stored.
 	- [ReplicatedMap](#replicated-map): This does not partition data, i.e. it does not spread data to different cluster members. Instead, it replicates the data to all nodes.
 - **Topic**: Distributed mechanism for publishing messages that are delivered to multiple subscribers; this is also known as a publish/subscribe (pub/sub) messaging model. Please see the [Topic section](#topic) for more information. There is also the Reliable Topic data structure which uses the same Hazelcast Topic interface. As a difference, it is backed up by the Ringbuffer data structure. Please see the [Reliable Topic section](#reliable-topic).

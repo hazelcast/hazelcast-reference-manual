@@ -28,5 +28,6 @@ The rest of the chapter explains the configuration items listed below.
 - [Partition Group](#partition-group-configuration)
 - [Listeners](#listener-configurations)
 - [Logging](#logging-configuration)
+- [Lite Member Configuration](#lite-member-configuration)
 
 The chapter ends with the configuration via [System Properties](#system-properties).

@@ -1,7 +1,7 @@
 
-### Factory and FactoryBuilder
+### Implementing Factory and FactoryBuilder
 
-The `javax.cache.configuration.Factory` implementations are used to configure features like
+The `javax.cache.configuration.Factory` implementations configure features like
 `CacheEntryListener`, `ExpirePolicy` and `CacheLoader`s or `CacheWriter`s. These factory implementations are required to distribute the
 different features to nodes in a cluster environment like Hazelcast. Therefore, these factory implementations have to be serializable.
 
@@ -22,6 +22,6 @@ public class UserCacheEntryListenerFactory
 
 To simplify the process for the users, JCache API offers a set of helper methods collected in
 `javax.cache.
-configuration.FactoryBuilder`. In the above configuration example, `FactoryBuilder::factoryOf` is used to create a
+configuration.FactoryBuilder`. In the above configuration example, `FactoryBuilder::factoryOf` creates a
 singleton factory for the given instance.
 

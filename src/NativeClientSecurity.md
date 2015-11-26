@@ -9,7 +9,7 @@ Hazelcast's Client security includes both authentication and authorization.
 
 ### Authentication
 
-The authentication mechanism works the same as cluster member authentication. To implement client authentication, configure a Credential and one or more LoginModules. The client side does not have and does not need a factory object to create Credentials objects like `ICredentialsFactory`. Credentials must be created at the client side and sent to the connected node during the connection process.
+The authentication mechanism works the same as cluster member authentication. To implement client authentication, you configure a Credential and one or more LoginModules. The client side does not have and does not need a factory object to create Credentials objects like `ICredentialsFactory`. You must create the credentials at the client side and send them to the connected member during the connection process.
 
 ```xml
 <security enabled="true">
@@ -106,7 +106,7 @@ Hazelcast client authorization is configured by a client permission policy. Haze
 </security>
 ```
 
-Users can also define their own policy by implementing `com.hazelcast.security.IPermissionPolicy`.
+You can also define your own policy by implementing `com.hazelcast.security.IPermissionPolicy`.
 
 ```java
 package com.hazelcast.security;
@@ -127,7 +127,7 @@ public interface IPermissionPolicy {
 
 Permission policy implementations can access client-permissions in configuration by using
 `SecurityConfig.
-getClientPermissionConfigs()` during `configure(SecurityConfig securityConfig, Properties properties)` method is called by Hazelcast.
+getClientPermissionConfigs()` when the method `configure(SecurityConfig securityConfig, Properties properties)` is called by Hazelcast.
 
 The `IPermissionPolicy.getPermissions(Subject subject, Class<? extends Permission> type)` method is used to determine a client request that has been granted permission to perform a security-sensitive operation. 
 
@@ -271,6 +271,21 @@ Permission policy should return a `PermissionCollection` containing permissions 
 </countdown-latch-permission>
 ```
 	Actions: all, create, destroy, modify, read
+	
+- IdGenerator Permission
+
+```xml
+<id-generator-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</id-generator-permission>
+```
+	Actions: all, create, destroy, modify, read
+
 
 - Semaphore Permission
 

@@ -19,13 +19,13 @@ classpath (Maven does that for you). Just add the following lines to your `pom.x
 	<dependency>
 		<groupId>com.hazelcast</groupId>
 		<artifactId>hazelcast</artifactId>
-		<version>3.5.1</version>
+		<version>3.6</version>
 	</dependency>
 </dependencies>
 ```
 As an alternative, you can download and install Hazelcast yourself. You only need to:
 
--   Download `hazelcast-<`*version*`>.zip` file from [www.hazelcast.org](http://www.hazelcast.org/download/).
+-   Download `hazelcast-<`*version*`>.zip` file from <a href="www.hazelcast.org" target="_blank">hazelcast.org</a>.
 
 -   Unzip `hazelcast-<`*version*`>.zip` file.
 

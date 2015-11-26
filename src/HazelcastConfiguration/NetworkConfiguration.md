@@ -12,7 +12,7 @@ All network related configuration is performed via the `network` element in the 
 
 ```xml
    <network>
-        <public-address></public-address>
+        <public-address>11.22.33.44:5555</public-address>
         <port auto-increment="true" port-count="100">5701</port>
         <outbound-ports>
             <ports>0</ports>
@@ -35,6 +35,9 @@ All network related configuration is performed via the `network` element in the 
                 <tag-key>type</tag-key>
                 <tag-value>hz-nodes</tag-value>
             </aws>
+            <discovery-strategies>
+              <discovery-strategy ... />
+            </discovery-strategies>
         </join>
         <interfaces enabled="false">
             <interface>10.10.1.*</interface>
@@ -74,7 +77,24 @@ It has the following sub-elements which are described in the following sections.
 
 ### Public Address
 
-`public-address` overrides the public address of a node. By default, a node selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (nodes) may not be able to see/access each other. If both nodes set their public addresses to their defined addresses on NAT, then that way they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. It is optional to set and useful when you have a private cloud.
+`public-address` overrides the public address of a node. By default, a node selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (nodes) may not be able to see/access each other. If both nodes set their public addresses to their defined addresses on NAT, then that way they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. It is optional to set and useful when you have a private cloud. Note that, the value for this element should be given in the format *`host IP address:port number`*. See the following examples.
+
+**Declarative:**
+
+```xml
+<network>
+    <public-address>11.22.33.44:5555</public-address>
+</network>
+```
+
+**Programmatic:**
+
+```java
+Config config = new Config();
+config.getNetworkConfig()
+      .setPublicAddress( "11.22.33.44", "5555" ); 
+```
+
 
 ### Port
 
@@ -204,6 +224,9 @@ The `join` configuration element is used to enable the Hazelcast instances to fo
                 <tag-key>type</tag-key>
                 <tag-value>hz-nodes</tag-value>
             </aws>
+            <discovery-strategies>
+              <discovery-strategy ... />
+            </discovery-strategies>
         </join>
    <network>     
 ```
@@ -260,6 +283,9 @@ The `aws` element includes parameters to allow the nodes to form a cluster on th
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you are using a cloud provider other than AWS, you can use the programmatic configuration to specify a TCP/IP cluster. The members will need to be retrieved from that provider (e.g. JClouds).*
 
+#### discovery-strategies element
+
+The `discovery-strategies` element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. For further information, please refer to the [Discovery SPI section](#discovery-spi) and the vendor documentation of the used discovery strategy.
 
 ##### AWSClient Configuration
 
@@ -370,6 +396,6 @@ All you need is to define IPv6 addresses or interfaces in [network configuration
 
 JVM has two system properties for setting the preferred protocol stack (IPv4 or IPv6) as well as the preferred address family types (inet4 or inet6). On a dual stack machine, IPv6 stack is preferred by default, you can change this through the `java.net.preferIPv4Stack=<true|false>` system property. When querying name services, JVM prefers IPv4 addresses over IPv6 addresses and will return an IPv4 address if possible. You can change this through `java.net.preferIPv6Addresses=<true|false>` system property.
 
-Also see additional [details on IPv6 support in Java](http://docs.oracle.com/javase/1.5.0/docs/guide/net/ipv6_guide/query.html#details).
+Also see additional <a href="http://docs.oracle.com/javase/1.5.0/docs/guide/net/ipv6_guide/query.html#details" target="_blank">details on IPv6 support in Java</a>.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *IPv6 support has been switched off by default, since some platforms have issues using the IPv6 stack. Some other platforms such as Amazon AWS have no support at all. To enable IPv6 support, just set configuration property `hazelcast.prefer.ipv4.stack` to *false*. Please refer to the [System Properties section](#system-properties) for details.*

@@ -1,14 +1,14 @@
 
 ## Custom Serialization
 
-Hazelcast lets you plug a custom serializer for serializing objects. You can use `StreamSerializer` and [`ByteArraySerializer`](#bytearrayserializer) interfaces for this purpose.
+Hazelcast lets you plug in a custom serializer for serializing your objects. You can use [StreamSerializer](#implementing-streamserializer) and [ByteArraySerializer](#implementing-bytearrayserializer) interfaces for this purpose.
 
 
-### StreamSerializer
+### Implementing StreamSerializer
 
 You can use a stream to serialize and deserialize data by using `StreamSerializer`. This is a good option for your own implementations. It can also be adapted to external serialization libraries like Kryo, JSON, and protocol buffers.
 
-#### StreamSerializer Example 1
+#### StreamSerializer Example Code 1
 
 First, let's create a simple object.
 
@@ -69,7 +69,7 @@ As the last step, let's register the `EmployeeStreamSerializer` in the configura
 
 <br></br>
 
-#### StreamSerializer Example 2
+#### StreamSerializer Example Code 2
 
 Let's take a look at another example implementing `StreamSerializer`.
 
@@ -88,7 +88,7 @@ public class Foo {
 ```
 
 Assume that our custom serialization will serialize
-Foo into XML. First we need to implement a
+Foo into XML. First you need to implement a
 `com.hazelcast.nio.serialization.StreamSerializer`. A very simple one that uses XMLEncoder and XMLDecoder could look like the following:
 
 ```java
@@ -121,6 +121,8 @@ public static class FooXmlSerializer implements StreamSerializer<Foo> {
 }
 ```
 
+#### Configuring StreamSerializer
+
 Note that `typeId` must be unique because Hazelcast will use it to look up the `StreamSerializer` while it de-serializes the object. The last required step is to register the `StreamSerializer` to the Configuration. Below are the programmatic and declarative configurations for this step.
 
 ```java
@@ -143,7 +145,7 @@ config.getSerializationConfig().addSerializerConfig(sc);
 ```
 
 From now on, Hazelcast will use `FooXmlSerializer`
-to serialize Foo objects. This way one can write an adapter (StreamSerializer) for any Serialization framework and plug it into Hazelcast.
+to serialize Foo objects. This way you can write an adapter (StreamSerializer) for any Serialization framework and plug it into Hazelcast.
 
 
 <br></br>

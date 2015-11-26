@@ -1,6 +1,6 @@
 
 
-### Sample Entry Processor Code
+### Creating an Entry Processor
 
 The EntryProcessorTest class has the following methods.
 
@@ -9,8 +9,12 @@ The EntryProcessorTest class has the following methods.
    all the entries.
 
 The static class `IncrementingEntryProcessor` creates an entry processor to process the map 
-entries in the EntryProcessorTest class.
+entries in the EntryProcessorTest class. It creates the entry processor class by:
 
+- implementing the map interfaces `EntryProcessor` and `EntryBackupProcessor`.
+- implementing the `java.io.Serializable` interface.
+- implementing the `EntryProcessor` methods `process` and `getBackupProcessor`.
+- implementing the `EntryBackupProcessor` method `processBackup`.
 
 ```java
 public class EntryProcessorTest {
@@ -77,4 +81,8 @@ public class EntryProcessorTest {
   }
 }
 ```
+
+![image](images/NoteSmall.jpg) ***NOTE***: *You should explicitly call `setValue` method of `Map.Entry` when modifying data in Entry Processor. Otherwise, Entry Processor will be accepted as read-only.*
+
+![image](images/NoteSmall.jpg) ***NOTE***: *An Entry Processor instance is not thread safe. If you are storing partition specific state between invocations, be sure to register this in a thread-local.  An Entry Processor instance can be used by multiple partition threads.*
 

@@ -1,7 +1,7 @@
 
-### Roundup of Basics
+### JCache Base Classes
 
-In the [Quick Example section](#quick-example), we have already seen a couple of the base classes and explained how those work. Following are quick descriptions of them.
+In the [Example JCache Application section](#example-jcache-application), we have already seen a couple of the base classes and explained how those work. Following are quick descriptions of them.
 
 **`javax.cache.Caching`**:
 
@@ -11,7 +11,7 @@ implementation, such as Hazelcast JCache.
 **`javax.cache.spi.CachingProvider`**:
 
 The SPI that is implemented to bridge between the JCache API and the implementation itself. Hazelcast nodes and clients use different
-providers chosen as seen in the [Provider Configuration section](#provider-configuration) which enable the JCache API to
+providers chosen as seen in the [Configuring JCache Provider section](#configuring-jcache-provider) which enable the JCache API to
 interact with Hazelcast clusters.
 
 When a `javax.cache.spi.CachingProvider::getCacheManager` overload is used that takes a `java.lang.ClassLoader` argument, this
