@@ -81,6 +81,8 @@ As you can see, since the `address` field itself is `DataSerializable`, it is ca
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *`DataSerializable` is a good option if serialization is only needed for in-cluster communication.*
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *`DataSerializable` is not supported by non-java clients as it uses java reflection. If you need non-java clients please use `IdentifiedDataSerializable` or `Portable`*
+
 
 ### IdentifiedDataSerializable
 
