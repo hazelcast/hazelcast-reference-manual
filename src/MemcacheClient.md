@@ -74,3 +74,5 @@ An entry written with a Memcache client can be read by another Memcache client w
 
 <br> </br>
 
+![image](images/NoteSmall.jpg) ***NOTE***: *Memcache client request listener service is not enabled by default. You should enable it on your cluster members to use Memcache client. It can be enabled using the system property `hazelcast.memcache.enabled`. Please see the [System Properties section](#system-properties).*
+
