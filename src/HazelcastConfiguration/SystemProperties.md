@@ -55,6 +55,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.connect.all.wait.seconds` | 120 | int | Timeout to connect all other cluster members when a member is joining to a cluster.
 `hazelcast.connection.monitor.interval` | 100 | int  |   Minimum interval in milliseconds to consider a connection error as critical.
 `hazelcast.connection.monitor.max.faults` | 3 | int  |   Maximum IO error count before disconnecting from a node.
+`hazelcast.discovery.public.ip.enabled` | false | bool | Enable use of public IP address in node discovery with Discovery SPI.
 `hazelcast.enterprise.license.key` | null | string  |   <a href="http://www.hazelcast.com/products.jsp" target="_blank">Hazelcast Enterprise</a> license key.
 `hazelcast.enterprise.wanrep.batch.size`|50|int|Maximum number of WAN replication events to be drained and sent to the target cluster in a batch.
 `hazelcast.enterprise.wanrep.batchfrequency.seconds`|5|int|Batch sending frequency in seconds.
