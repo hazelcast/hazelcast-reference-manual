@@ -33,6 +33,11 @@ Support for Hazelcast is provided via <a href="https://github.com/hazelcast/haze
 
 For information on support for Hazelcast Enterprise, please see <a href="hazelcast.com/pricing" target="_blank">hazelcast.com</a>.
 
+##### Release Notes
+
+Please refer to the [Release Notes document](http://docs.hazelcast.org/docs/release-notes/) for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.
+
+
 
 ##### Contributing to Hazelcast
 
