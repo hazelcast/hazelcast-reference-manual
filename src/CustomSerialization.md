@@ -138,7 +138,7 @@ config.getSerializationConfig().addSerializerConfig(sc);
 <hazelcast>
   <serialization>
     <serializers>
-      <serializer type-class="com.www.Foo">com.www.FooXmlSerializer</serializer>
+      <serializer type-class="com.www.Foo" class-name="com.www.FooXmlSerializer" />
     </serializers>
   </serialization>
 </hazelcast>
