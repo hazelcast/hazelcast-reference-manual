@@ -1,11 +1,11 @@
 
 ## Global Serializer
 
-Global Serializer is identical to [Custom Serializers](#custom-serialization) from the implementation perspective. They are registered as a fallback serializer to handle all other objects if a serializer cannot be located for them.
+A global serializer is identical to [custom serializers](#custom-serialization) from the implementation perspective. They are registered as a fallback serializer to handle all other objects if a serializer cannot be located for them.
 
-It can be configured to be responsible from `java.io.Serializable` and `java.io.Externalizable` instances. By default the global serializer does not handle java serialization and they are handled from global serializer.
+By default, a global serializer does not handle `java.io.Serializable` and `java.io.Externalizable` instances but it can be configured to be responsible from them.
 
-A Custom serializer should be registered for a specific class type whereas a global serializer will handle all class types if all serializer search steps fail as described in [Serialization Interface Types](#serialization-interface-types).
+A custom serializer should be registered for a specific class type whereas a global serializer will handle all class types if all the steps in searching for a serializer fail as described in [Serialization Interface Types](#serialization-interface-types).
 
 
 **Use cases**
@@ -14,17 +14,17 @@ A Custom serializer should be registered for a specific class type whereas a glo
 
 * For your custom objects, you can implement a single serializer to handle all.
  
-* Replace internal java serialization by enabling overrideJavaSerialization option of Global Serializer configuration.
+* You can replace the internal Java serialization by enabling the `overrideJavaSerialization` option of global serializer configuration.
 
 
-Any Custom Serializer can be used as a Global Serializer. Please to [Custom Serializers](#custom-serialization) for implementation details.
+Any custom serializer can be used as a global serializer. Please refer to the [Custom Serialization section](#custom-serialization) for implementation details.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast needs java serializable objects handled correctly to function properly. If the global serializer is configured to handle Java Serialization, It must properly serialize/deserialize `java.io.Serializable` instances. A Global serializer not doing so will cause hazelcast malfunction*
+![image](images/NoteSmall.jpg) ***NOTE:*** *For a proper functioning, Hazelcast needs the Java serializable objects to be handled correctly. If the global serializer is configured to handle the Java serialization, it must properly serialize/deserialize the `java.io.Serializable` instances. Otherwise, it causes Hazelcast to malfunction.*
 
 
 ### Sample Global Serializer
 
-A sample global serializer to integrate a third part serializer
+A sample global serializer to integrate a third party serializer is shown below.
 
 
 ```java
@@ -61,7 +61,7 @@ public class GlobalStreamSerializer
 }
 ```
 
-Now we can register it in the configuration file `hazelcast.xml`, as shown below.
+Now, we can register it in the configuration file `hazelcast.xml`, as shown below.
 
 ```xml
 <serialization>
