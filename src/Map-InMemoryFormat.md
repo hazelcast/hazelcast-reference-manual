@@ -10,7 +10,7 @@ To set how the data will be stored in memory, set `in-memory-format` in configur
 
 - `BINARY` (default): This is the default option. The data will be stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as `put` and `get`.
 
-- `OBJECT`: The data will be stored in de-serialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost respectively high. By storing objects, entry processing will not contain the de-serialization cost.
+- `OBJECT`: The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost respectively high. By storing objects, entry processing will not contain the deserialization cost.
 
 - `NATIVE`: (Enterprise Only) The data will be stored in serialized binary form in Hazelcast High-Density Memory Store. In other in-memory-formats, Hazelcast stores your distributed data into Java heap which is subject to garbage collection (GC). As your heap gets bigger, garbage collection might cause your application to pause for tens of seconds, badly affecting your application performance and response times. Even if you have terabytes of cache in-memory with lots of updates, GC will have almost no effect; this results in more predictable latency and throughput.
     Here is an example configuration for High-Density Memory Store backed `IMap` :

@@ -21,7 +21,7 @@ The following are the issues solved for Hazelcast 3.6 release.
 - If the cluster state is not active `RepartitioningTask` should not be triggered. Otherwise, it causes infinite retries and prevents the member from shtutdown. <a href="https://github.com/hazelcast/hazelcast/pull/6663" target="_blank">[6663]</a>
 - There are broken XML configuration tests in the Hazelcast client package. <a href="https://github.com/hazelcast/hazelcast/issues/6633" target="_blank">[6633]</a>
 - There is a memory leak since the method `publishBathcedEvents` does not remove the events from `batchEvent`. <a href="https://github.com/hazelcast/hazelcast/issues/6618" target="_blank">[6618]</a>
-- Custom credentials class is not de-serialized on the server side. <a href="https://github.com/hazelcast/hazelcast/issues/6615" target="_blank">[6615]</a>
+- Custom credentials class is not deserialized on the server side. <a href="https://github.com/hazelcast/hazelcast/issues/6615" target="_blank">[6615]</a>
 - Lite member element should be added to the Hazelcast Spring configuration. <a href="https://github.com/hazelcast/hazelcast/issues/6605" target="_blank">[6605]</a>
 - `EntryListener` shows the unprocessed value in combination with `PostProcessingMapStore`. <a href="https://github.com/hazelcast/hazelcast/issues/6588" target="_blank">[6588]</a>
 - Clients cannot submit `HazelcastInstanceAware` callables. <a href="https://github.com/hazelcast/hazelcast/issues/6570" target="_blank">[6570]</a>

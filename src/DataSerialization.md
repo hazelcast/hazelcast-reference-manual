@@ -40,7 +40,7 @@ public class Address implements DataSerializable {
 Let's take a look at another example which encapsulates a `DataSerializable` field. 
 
 Since the `address` field itself is `DataSerializable`, it calls `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur 
-in the same order. When Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast de-serializes it, `className` is used to instantiate the object using reflection.
+in the same order. When Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast deserializes it, `className` is used to instantiate the object using reflection.
 
 
 ```java
@@ -75,13 +75,13 @@ public class Employee implements DataSerializable {
 }
 ```
 
-As you can see, since the `address` field itself is `DataSerializable`, it is calling `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur in the same order. While Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast de-serializes it, `className` is used to instantiate the object using reflection.
+As you can see, since the `address` field itself is `DataSerializable`, it is calling `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur in the same order. While Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast deserializes it, `className` is used to instantiate the object using reflection.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Since Hazelcast needs to create an instance during deserialization,`DataSerializable` class has a no-arg constructor.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *`DataSerializable` is a good option if serialization is only needed for in-cluster communication.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *`DataSerializable` is not supported by non-java clients as it uses java reflection. If you need non-java clients please use `IdentifiedDataSerializable` or `Portable`*
+![image](images/NoteSmall.jpg) ***NOTE:*** *`DataSerializable` is not supported by non-Java clients as it uses Java reflection. If you need non-Java clients, please use [`IdentifiedDataSerializable`](#identifieddataserializable) or [`Portable`](#implementing-portable-serialization).*
 
 
 ### IdentifiedDataSerializable

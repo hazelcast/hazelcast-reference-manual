@@ -123,7 +123,7 @@ public static class FooXmlSerializer implements StreamSerializer<Foo> {
 
 #### Configuring StreamSerializer
 
-Note that `typeId` must be unique because Hazelcast will use it to look up the `StreamSerializer` while it de-serializes the object. The last required step is to register the `StreamSerializer` to the Configuration. Below are the programmatic and declarative configurations for this step.
+Note that `typeId` must be unique because Hazelcast will use it to look up the `StreamSerializer` while it deserializes the object. The last required step is to register the `StreamSerializer` to the Configuration. Below are the programmatic and declarative configurations for this step.
 
 ```java
 SerializerConfig sc = new SerializerConfig()

@@ -65,7 +65,7 @@ public class TheQueueStore implements QueueStore<Item> {
 
 Let's explain the queue store properties.
 
-- **Binary**: By default, Hazelcast stores the queue items in serialized form, and before it inserts the queue items into datastore, it deserializes them. But if you will not reach the queue store from an external application, you might prefer that the items be inserted in binary form. Do this by setting the `binary` property to true: then you can get rid of the de-serialization step, which is a performance optimization. The `binary` property is false by default.
+- **Binary**: By default, Hazelcast stores the queue items in serialized form, and before it inserts the queue items into datastore, it deserializes them. But if you will not reach the queue store from an external application, you might prefer that the items be inserted in binary form. Do this by setting the `binary` property to true: then you can get rid of the deserialization step, which is a performance optimization. The `binary` property is false by default.
     
 - **Memory Limit**: This is the number of items after which Hazelcast will store items only to datastore. For example, if the memory limit is 1000, then the 1001st item will be put only to datastore. This feature is useful when you want to avoid out-of-memory conditions. If you want to always use memory, you can set it to `Integer.MAX_VALUE`. The default number for `memory-limit` is 1000.
     
