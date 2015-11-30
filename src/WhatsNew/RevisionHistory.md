@@ -1,6 +1,13 @@
 
 
-## Document Revision History
+# Document Revision History
+
+This chapter lists the changes made to this document from the previous release. 
+
+<br></br>
+![image](images/NoteSmall.jpg)***NOTE:*** *Please refer to the [Release Notes](http://docs.hazelcast.org/docs/release-notes/) for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.*
+
+<br></br>
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
