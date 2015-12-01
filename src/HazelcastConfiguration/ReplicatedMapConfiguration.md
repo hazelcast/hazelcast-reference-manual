@@ -1,5 +1,5 @@
 
-### ReplicatedMap Configuration
+## ReplicatedMap Configuration
 
 **Declarative:**
 
