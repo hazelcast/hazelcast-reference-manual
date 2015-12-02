@@ -62,11 +62,11 @@ Let's describe each element.
 	
 		`<max-size policy="PER_PARTITION">27100</max-size>`
 
-	- `USED_HEAP_SIZE`: Maximum used heap size in megabytes for each JVM.
+	- `USED_HEAP_SIZE`: Maximum used heap size in megabytes for each JVM. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
 	
 		`<max-size policy="USED_HEAP_SIZE">4096</max-size>`
 
-	- `USED_HEAP_PERCENTAGE`: Maximum used heap size percentage for each JVM. If, for example, JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when used heap size exceeds 100 MB.
+	- `USED_HEAP_PERCENTAGE`: Maximum used heap size percentage for each JVM. If, for example, JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when used heap size exceeds 100 MB. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
 	
 		`<max-size policy="USED_HEAP_PERCENTAGE">10</max-size>`
 
