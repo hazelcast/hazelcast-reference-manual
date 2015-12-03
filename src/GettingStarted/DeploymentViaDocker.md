@@ -1,5 +1,5 @@
 
-### Deploying using Docker
+## Deploying using Docker
 
 You can deploy your Hazelcast projects using the Docker containers. Hazelcast has three images on Docker:
 
