@@ -30,6 +30,8 @@ try {
 }
 ```
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *The method `await()` takes time value and time unit as arguments. If you specify a negative value for the time, it is interpreted as infinite.*
+
 **Consumer thread:**
        
 ```java       
