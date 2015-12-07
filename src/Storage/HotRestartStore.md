@@ -47,7 +47,7 @@ You can configure Hot Restart programmatically or declaratively. The configurati
 
 The following are the descriptions of the Hot Restart configuration elements.
 
-- `hot-restart`: The configuration that includes the element `home-dir` used to specify the directory where the Hot Restart data will be stored. Its default value is `hot-restart`. You can use the default value, or you can specify the value of another folder containing the Hot Restart configuration, but it is mandatory that this `hot-restart` element has a value.
+- `hot-restart`: The configuration that includes the element `base-dir` used to specify the directory where the Hot Restart data will be stored. Its default value is `hot-restart`. You can use the default value, or you can specify the value of another folder containing the Hot Restart configuration, but it is mandatory that this `hot-restart` element has a value. This directory will be created automatically if not exists yet.
 - `validation-timeout-seconds`: Validation timeout for the Hot Restart process when validating the cluster members expected to join and the partition table on the whole cluster.
 - `data-load-timeout-seconds`: Data load timeout for the Hot Restart process. All members in the cluster should finish restoring their local data before this timeout.
 - `hot-restart-enabled`: The configuration that enables or disables the Hot Restart feature. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`).
@@ -64,7 +64,7 @@ An example configuration is shown below.
 <hazelcast>
    ...
    <hot-restart enabled="true">
-	   <home-dir>/mnt/hot-restart</home-dir>
+	   <base-dir>/mnt/hot-restart</base-dir>
 	   <validation-timeout-seconds>120</validation-timeout-seconds>
 	   <data-load-timeout-seconds>900</data-load-timeout-seconds>
    </hot-restart>
@@ -88,7 +88,7 @@ The programmatic equivalent of the above declarative configuration is shown belo
 ```java
 HotRestartConfig hotRestartConfig = new HotRestartConfig();
 hotRestartConfig.setEnabled(true);
-hotRestartConfig.setHomeDir(new File("/mnt/hot-restart"));
+hotRestartConfig.setBaseDir(new File("/mnt/hot-restart"));
 hotRestartConfig.setValidationTimeoutSeconds(120);
 hotRestartConfig.setDataLoadTimeoutSeconds(900);
 config.setHotRestartConfig(hotRestartConfig);
