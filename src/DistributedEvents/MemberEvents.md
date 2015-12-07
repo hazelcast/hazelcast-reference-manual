@@ -32,3 +32,27 @@ public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
 
 When a respective event is fired, the membership listener outputs the addresses of the members that joined and left, and also which attribute changed on which member.
 
+#### Adding Membership Listeners
+
+After you create your class, you can configure your cluster programmatically or declaratively to include the membership listener. Below is an example of its programmatic configuration.
+
+```java
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+hazelcastInstance.getCluster().addMembershipListener( new ClusterMembershipListener() );
+```
+
+The following is an example of the equivalent declarative configuration. 
+
+```xml
+<hazelcast>
+   ...
+   <listeners>
+      <listener tpye="membership-listener">
+         com.your-package.ClusterMembershipListener
+      </listener>
+   </listeners>
+   ...
+</hazelcast>
+```
+
+
