@@ -26,9 +26,26 @@ java -jar mancenter-*version*.war 8080 mancenter
 ```
 
 6. Start your Hazelcast cluster.
-7. Browse to `http://localhost:8080/mancenter` and login. **Initial login username/password is `admin/admin`**
+7. Browse to `http://localhost:8080/mancenter` and setup your administrator account.
 
-The Management Center creates a folder with the name "mancenter" under your "user/home" folder to save data files. You can change the data folder by setting the `hazelcast.mancenter.home` system property.
+![](images/SignUp-Popup.jpg)
+
+8. After creating your administrator account, you'll be welcomed by "Select Cluster to Connect" popup which lists the clusters that are sending statistics to Management Center.
+
+![](images/ConnectCluster.jpg)
+
+In this popup, you can either select a cluster to connect or enter your Management Center license key using "Enter License" button. Management Center can be used without license if the cluster that you want to monitor have up to 2 nodes.
+You'll see below "Enter License Key" popup when you click "Enter License" button.
+
+![](images/EnterLicense.jpg)
+
+9. When you try to connect a cluster that have more 2 nodes without entering license key or if your license key is expired, below popup will be shown.
+
+![](images/ExpiredLicense.jpg)
+
+In this popup, you can either choose to connect cluster without entering license key or you can choose entering your license key. If you choose to continue without a license, management center will still continue to function but you'll only be able to monitor up to 2 nodes of your cluster.
+
+10. Management Center creates a folder with the name "mancenter" under your "user/home" folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property.
 
 <br></br>
 
