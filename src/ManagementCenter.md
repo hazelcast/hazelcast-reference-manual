@@ -32,8 +32,8 @@ java -jar mancenter-*version*.war 8080 mancenter
 
 Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
 
+<img src="images/SignUp-Popup.jpg" style="width:413px;height:345px;">
 
-![](images/SignUp-Popup.jpg)
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
 
@@ -41,17 +41,21 @@ Once you browse to `http://localhost:8080/mancenter` and since you are going to 
 It asks you to create a username and password and give a valid e-mail address of yours. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
 
 
-![](images/ConnectCluster.jpg)
+<img src="images/ConnectCluster.jpg" style="width:313px;height:243px;">
+
 
 "Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has at most 2 nodes.
 
 If you have a Management Center license and press the **Enter License** button, the following dialog box appears.
 
-![](images/EnterLicense.jpg)
+
+<img src="images/EnterLicense.jpg" style="width:312px;height:244px;">
+
 
 When you try to connect to a cluster that has more than 2 nodes without entering a license key or if your license key is expired, the following dialog box appears.
 
-![](images/ExpiredLicense.jpg)
+<img src="images/ExpiredLicense.jpg" style="width:313px;height:244px;">
+
 
 Here, you can either choose to connect to a cluster without providing a license key or to enter your license key. If you choose to continue without a license, Management Center still continues to function but you will only be able to monitor up to 2 nodes of your cluster.
 
