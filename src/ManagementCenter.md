@@ -8,16 +8,16 @@ You have two options for installing Hazelcast Management Center. You can either 
 
 Here are the steps.
 
-1. Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file.
-2. You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
+- Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file.
+- You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
 
 ```java
 java -jar mancenter-*version*.war 8080 mancenter
 ```
 
-3. Or, instead of starting at the command line, you can deploy it to your web server (Tomcat, Jetty, etc.). Let us say it is running at `http://localhost:8080/mancenter`.
-4. After you perform the above steps, make sure that `http://localhost:8080/mancenter` is up.
-5. Configure your Hazelcast members by adding the URL of your web application to your `hazelcast.xml`. Hazelcast members will send their states to this URL.
+- Or, instead of starting at the command line, you can deploy it to your web server (Tomcat, Jetty, etc.). Let us say it is running at `http://localhost:8080/mancenter`.
+- After you perform the above steps, make sure that `http://localhost:8080/mancenter` is up.
+- Configure your Hazelcast members by adding the URL of your web application to your `hazelcast.xml`. Hazelcast members will send their states to this URL.
 
 ```xml
 <management-center enabled="true">
@@ -25,27 +25,37 @@ java -jar mancenter-*version*.war 8080 mancenter
 </management-center>
 ```
 
-6. Start your Hazelcast cluster.
-7. Browse to `http://localhost:8080/mancenter` and setup your administrator account.
+- Start your Hazelcast cluster.
+- Browse to `http://localhost:8080/mancenter` and setup your [administrator account](#getting-started-to-management-center) explained in the next section.
+
+### Getting Started to Management Center
+
+Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
+
 
 ![](images/SignUp-Popup.jpg)
 
-8. After creating your administrator account, you'll be welcomed by "Select Cluster to Connect" popup which lists the clusters that are sending statistics to Management Center.
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
+
+
+It asks you to create a username and password and give a valid e-mail address of yours. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
+
 
 ![](images/ConnectCluster.jpg)
 
-In this popup, you can either select a cluster to connect or enter your Management Center license key using "Enter License" button. Management Center can be used without license if the cluster that you want to monitor have up to 2 nodes.
-You'll see below "Enter License Key" popup when you click "Enter License" button.
+"Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has at most 2 nodes.
+
+If you have a Management Center license and press the **Enter License** button, the following dialog box appears.
 
 ![](images/EnterLicense.jpg)
 
-9. When you try to connect a cluster that have more 2 nodes without entering license key or if your license key is expired, below popup will be shown.
+When you try to connect to a cluster that has more than 2 nodes without entering a license key or if your license key is expired, the following dialog box appears.
 
 ![](images/ExpiredLicense.jpg)
 
-In this popup, you can either choose to connect cluster without entering license key or you can choose entering your license key. If you choose to continue without a license, management center will still continue to function but you'll only be able to monitor up to 2 nodes of your cluster.
+Here, you can either choose to connect to a cluster without providing a license key or to enter your license key. If you choose to continue without a license, Management Center still continues to function but you will only be able to monitor up to 2 nodes of your cluster.
 
-10. Management Center creates a folder with the name "mancenter" under your "user/home" folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property.
+Management Center creates a folder with the name `mancenter` under your `user/home` folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property. Please see the [System Properties section](#system-properties) to see the description of this property and to learn how to set a system property.
 
 <br></br>
 
@@ -73,7 +83,8 @@ The toolbar has the following buttons:
 -	**Console**: Loads the page used to execute commands on the cluster. Please see the [Console section](#executing-console-commands).
 -	**Alerts**: Creates alerts by specifying filters. Please see [Setting Alerts](#creating-alerts).
 -	**Documentation**: Opens the Management Center documentation in a window inside the tool. Please see the [Documentation section](#management-center-documentation).
--	**Administration**: Used by the admin users to manage users in the system. Please see [Administering Management Center](#administering-management-center).
+-	**Administration**: Used by the admin users to manage users in the system. Please see [Administering -	Management Center](#administering-management-center).
+-	**Logout**: Closes the current user's session.
 -	**Hot Restart**: Used by the admin users to manage cluster state. Please see [Hot Restart](#hot-restart).
 -	**Time Travel**: Sees the cluster's situation at a time in the past. Please see the [Time Travel section](#checking-past-status-with-time-travel).
 -	**Cluster Selector**: Switches between clusters. When the mouse is moved onto this item, a drop down list of clusters appears.
@@ -81,7 +92,7 @@ The toolbar has the following buttons:
   ![](images/4ChangeCluster.jpg)
 
   The user can select any cluster and once selected, the page immediately loads with the selected cluster's information.
--	**Logout**: Closes the current user's session.
+  
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Some of the above listed toolbar items are not visible to users who are not admin or who have **read-only** permission. Also, some of the operations explained in the later sections cannot be performed by users with read-only permission. Please see the [Administration section](#administration) for details.*
 
