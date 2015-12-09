@@ -3,7 +3,7 @@
 
 ![](images/enterprise-onlycopy.jpg)
 
-Hazelcast allows you to use SSL socket communication among all Hazelcast members. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in network configuration.
+Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in network configuration.
 
 ```java
 public class MySSLContextFactory implements SSLContextFactory {
