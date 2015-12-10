@@ -120,7 +120,7 @@ You can expand and collapse menu items by clicking on them. Below is the list of
 -	[MultiMaps](#monitoring-multimaps)
 -	[Executors](#monitoring-executors)
 - [WAN](#monitoring-wan-replication)
--	[Members](#members)
+-	[Members](#monitoring-members)
 
 #### Tabbed View
 
