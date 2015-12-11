@@ -154,38 +154,6 @@ The downside of attaching listeners using this API is the possibility of missing
 		</hz:multimap>
 ```
 
-### ItemListener for IQueue
-
-- Declarative Configuration
-
-		```xml
-		<queue name="default">
-		  ...
-		  <item-listeners>
-	        <item-listener include-value="true">
-	            com.hazelcast.examples.ItemListener
-	        </item-listener>
-		  </item-listeners>
-		</queue>
-```
-
-- Programmatic Configuration
-
-		```java
-		queueConfig.addItemListenerConfig(
-		    new ItemListenerConfig( "com.hazelcast.examples.ItemListener", true ) );
-```
-
-- Spring XML configuration
-
-		```xml
-		<hz:queue name="default" >
-		  <hz:item-listeners>
-		    <hz:item-listener include-value="true"
-		        class-name="com.hazelcast.spring.DummyItemListener"/>
-		  </hz:item-listeners>
-		</hz:queue>
-```
 
 ### MessageListener for ITopic
 
