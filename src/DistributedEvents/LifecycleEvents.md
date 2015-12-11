@@ -27,4 +27,28 @@ public class NodeLifecycleListener implements LifecycleListener {
 
 This listener is local to an individual member (node). It notifies the application that uses Hazelcast about the events mentioned above for a particular member. 
 
+#### Adding Lifecycle Listeners
+
+After you create your class, you can configure your cluster programmatically or declaratively to include the lifecycle listener. Below is an example of its programmatic configuration.
+
+```java
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+hazelcastInstance.getLifecycleService().addLifecycleListener( new NodeLifecycleListener() );
+```
+
+The following is an example of the equivalent declarative configuration. 
+
+```xml
+<hazelcast>
+   ...
+   <listeners>
+      <listener type="membership-listener">
+         com.your-package.NodeLifecycleListener
+      </listener>
+   </listeners>
+   ...
+</hazelcast>
+```
+
+
 

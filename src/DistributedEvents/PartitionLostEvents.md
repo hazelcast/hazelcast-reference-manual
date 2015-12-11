@@ -48,7 +48,9 @@ The following is an example of the equivalent declarative configuration.
 <hazelcast>
    ...
   <partition-lost-listeners>
-     <partition-lost-listener>ConsoleLoggingPartitionLostListener</partition-lost-listener>
+     <partition-lost-listener>
+        com.your-package.ConsoleLoggingPartitionLostListener
+     </partition-lost-listener>
  </partition-lost-listeners>
    ...
 </hazelcast>
