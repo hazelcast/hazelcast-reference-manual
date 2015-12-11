@@ -173,7 +173,7 @@ Properties properties = HazelcastCachingProvider
 
 URI cacheManagerName = new URI( "my-cache-manager" );
 CacheManager cacheManager = cachingProvider
-    .getCacheManager( cacheManager, null, properties );
+    .getCacheManager( cacheManagerName, null, properties );
 ```
 
 <br></br>
