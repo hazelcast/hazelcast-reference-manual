@@ -9,13 +9,13 @@ also resides in N3.
 
 The Partition Lost Listener notifies for possible data loss occurrences with the information of how many replicas are lost for a partition. It listens to `PartitionLostEvent` instances. Partition lost events are dispatched per partition. 
 
-Partition loss detection is done after a member crash is detected by the other members and the crashed member is removed from the cluster. Please note that false-positive `PartitionLostEvent` instances may be fired on partial network split errors. 
+Partition loss detection is done after a member crash is detected by the other members and the crashed member is removed from the cluster. Please note that false-positive `PartitionLostEvent` instances may be fired on the network split errors. 
 
-#### Writing a Partial Lost Listener Class
+#### Writing a Partition Lost Listener Class
 
-To write a Partial Lost Listener, you implement the PartitionLostListener interface and its `partitionLost` method, which is invoked when a partition loses its owner and all backups.
+To write a Partition Lost Listener, you implement the PartitionLostListener interface and its `partitionLost` method, which is invoked when a partition loses its owner and all backups.
 
-The following is an example of Partition Lost Listener. 
+The following is an example Partition Lost Listener class. 
 
 ```java
     public class ConsoleLoggingPartitionLostListener implements PartitionLostListener {
@@ -32,4 +32,26 @@ When a `PartitionLostEvent` is fired, the partition lost listener given above ou
 com.hazelcast.partition.PartitionLostEvent{partitionId=242, lostBackupCount=0, 
 eventSource=Address[192.168.2.49]:5701}
 ```
+
+#### Adding Partition Lost Listeners
+
+After you create your class, you can configure your cluster programmatically or declaratively to include the partition lost listener. Below is an example of its programmatic configuration.
+
+```java
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+hazelcastInstance.getPartitionService().addPartitionLostListener( new ConsoleLoggingPartitionLostListener() );
+```
+
+The following is an example of the equivalent declarative configuration. 
+
+```xml
+<hazelcast>
+   ...
+  <partition-lost-listeners>
+     <partition-lost-listener>ConsoleLoggingPartitionLostListener</partition-lost-listener>
+ </partition-lost-listeners>
+   ...
+</hazelcast>
+```
+
 

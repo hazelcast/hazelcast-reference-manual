@@ -47,7 +47,7 @@ The following is an example of the equivalent declarative configuration.
 <hazelcast>
    ...
    <listeners>
-      <listener tpye="membership-listener">
+      <listener type="membership-listener">
          com.your-package.ClusterMembershipListener
       </listener>
    </listeners>
