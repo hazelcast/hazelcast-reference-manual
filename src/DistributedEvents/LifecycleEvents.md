@@ -65,7 +65,7 @@ And, the following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-packege.NodeLifecycleListener"/>
+   <hz:listener class-name="com.your-package.NodeLifecycleListener"/>
    <hz:listener implementation="LifecycleListener"/>
 </hz:listeners>
 ```

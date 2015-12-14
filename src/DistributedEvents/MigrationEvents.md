@@ -76,7 +76,7 @@ And, the following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-packege.ClusterMigrationListener"/>
+   <hz:listener class-name="com.your-package.ClusterMigrationListener"/>
    <hz:listener implementation="MigrationListener"/>
 </hz:listeners>
 ```
