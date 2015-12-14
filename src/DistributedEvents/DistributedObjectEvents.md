@@ -8,9 +8,9 @@ The following is an example Distributed Object Listener class.
 
 
 ```java
-public class Sample implements DistributedObjectListener {
+public class SampleDistObjListener implements DistributedObjectListener {
   public static void main(String[] args) {
-    Sample sample = new Sample();
+    SampleDistObjListener sample = new SampleDistObjListener();
 
     Config config = new Config();
     HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
@@ -37,5 +37,53 @@ public class Sample implements DistributedObjectListener {
 ```
 
 When a respective event is fired, the distributed object listener outputs the event type, and the name, service (for example, if a Map service provides the distributed object, than it is a Map object), and ID of the object.
+
+#### Adding Distributed Object Listeners
+
+
+After you create your class, you can configure your cluster to include distributed object listeners. Below is an example using the method `addDistributedObjectListener`. You can also see this portion in the above class creation.
+
+```java
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+SampleDistObjListener sample = new SampleDistObjListener();
+
+hazelcastInstance.addDistributedObjectListener( sample );
+```
+
+With the above approach, there is a possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+
+The following is an example programmatic configuration.
+
+```java
+config.addListenerConfig(
+new ListenerConfig( "com.your-package.SampleDistObjListener" ) );
+```
+
+
+The following is an example of the equivalent declarative configuration. 
+
+```xml
+<hazelcast>
+   ...
+   <listeners>
+	  <listener>
+	  com.your-package.SampleDistObjListener
+      </listener>
+   </listeners>
+   ...
+</hazelcast>
+```
+
+And, the following is an example of the equivalent Spring configuration.
+
+```
+<hz:listeners>
+   <hz:listener class-name="com.your-package.SampleDistObjListener"/>
+   <hz:listener implementation="DistributedObjectListener"/>
+</hz:listeners>
+```
+
+
+
 
 
