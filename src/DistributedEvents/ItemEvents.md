@@ -6,7 +6,7 @@ The Item Listener is used by the Hazelcast `IQueue`, `ISet` and `IList` interfac
 To write an Item Listener class, you implement the ItemListener interface and its methods `itemAdded` and `itemRemoved`. These methods
 are invoked when an item is added or removed.
 
-The following is an example Item Listener class.
+The following is an example Item Listener class for an `ISet` structure.
 
 
 ```java

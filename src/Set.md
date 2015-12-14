@@ -36,54 +36,11 @@ while ( iterator.hasNext() ) {
 }
 ```
 
-***RELATED INFORMATION***
+Hazelcast Set uses `ItemListener` to listen to events which occur when items are added and removed from the Set. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
 
+<br></br>
+***RELATED INFORMATION***
 
 *Please refer to the [Set Configuration section](#set-configuration) for a full description of Hazelcast Distributed Set configuration.*
 
-### Listening for Set Item Events
-
-Hazelcast Set uses `ItemListener` to listen to events which occur when items are added and removed from the Set.
-Use the set `addItemListener` method to create an `ItemListener`.
-
-```java
-import java.util.Queue;
-import java.util.Map; 
-import java.util.Set; 
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.ItemListener;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.EntryEvent; 
-
-public class Sample implements ItemListener {
-
-  public static void main( String[] args ) { 
-    Sample sample = new Sample();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ISet<Price> set = hazelcastInstance.getSet( "default" );
-    set.addItemListener( sample, true ); 
-        
-    Price price = new Price( 10, time1 )
-    set.add( price );
-    set.remove( price );
-  } 
-
-  public void itemAdded( Object item ) {
-    System.out.println( "Item added = " + item );
-  }
-
-  public void itemRemoved( Object item ) {
-    System.out.println( "Item removed = " + item );
-  }     
-}
-       
-```
-
-<br></br>
-
-***RELATED INFORMATION***
-
-*To learn more about the configuration of listeners please refer to the [Listener Configurations section](#listener-configurations).*
-
-<br></br>
 

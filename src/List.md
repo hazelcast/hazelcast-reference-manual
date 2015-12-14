@@ -35,53 +35,10 @@ while ( iterator.hasNext() ) {
 }
 ```
 
-### Listening for List Item Events
 
-Hazelcast List uses `ItemListener` to listen to events which occur when items are added and removed from the List.
-Use the list `addItemListener` method to create an `ItemListener`.
-
-
-```java
-import java.util.Queue;
-import java.util.Map; 
-import java.util.Set; 
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.ItemListener;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.EntryEvent; 
-
-public class Sample implements ItemListener{
-
-  public static void main( String[] args ) { 
-    Sample sample = new Sample();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    IList<Price> list = hazelcastInstance.getList( "default" );
-    list.addItemListener( sample, true ); 
-        
-    Price price = new Price( 10, time1 )
-    list.add( price );
-    list.remove( price );
-  } 
-
-  public void itemAdded( Object item ) {
-    System.out.println( "Item added = " + item );
-  }
-
-  public void itemRemoved( Object item ) {
-    System.out.println( "Item removed = " + item );
-  }     
-}
-       
-```
+Hazelcast List uses `ItemListener` to listen to events which occur when items are added and removed from the List. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
 
 <br></br>
-
-***RELATED INFORMATION***
-
-*To learn more about the configuration of listeners please refer to the [Listener Configurations section](#listener-configurations).*
-
-<br></br>
-
 ***RELATED INFORMATION***
 
 
