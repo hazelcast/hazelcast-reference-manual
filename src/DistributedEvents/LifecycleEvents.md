@@ -29,12 +29,23 @@ This listener is local to an individual member (node). It notifies the applicati
 
 #### Adding Lifecycle Listeners
 
-After you create your class, you can configure your cluster programmatically or declaratively to include the lifecycle listener. Below is an example of its programmatic configuration.
+
+After you create your class, you can configure your cluster to include lifecycle listeners. Below is an example using the method `addLifecycleListener`.
 
 ```java
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getLifecycleService().addLifecycleListener( new NodeLifecycleListener() );
 ```
+
+With the above approach, there is a possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+
+The following is an example programmatic configuration.
+
+```java
+config.addListenerConfig(
+new ListenerConfig( "com.your-package.NodeLifecycleListener" ) );
+```
+
 
 The following is an example of the equivalent declarative configuration. 
 
@@ -42,13 +53,23 @@ The following is an example of the equivalent declarative configuration.
 <hazelcast>
    ...
    <listeners>
-      <listener type="membership-listener">
-         com.your-package.NodeLifecycleListener
+	  <listener>
+	  com.your-package.NodeLifecycleListener
       </listener>
    </listeners>
    ...
 </hazelcast>
 ```
+
+And, the following is an example of the equivalent Spring configuration.
+
+```
+<hz:listeners>
+   <hz:listener class-name="com.your-packege.NodeLifecycleListener"/>
+   <hz:listener implementation="LifecycleListener"/>
+</hz:listeners>
+```
+
 
 
 
