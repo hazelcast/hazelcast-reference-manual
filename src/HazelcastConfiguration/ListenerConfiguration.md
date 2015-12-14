@@ -7,32 +7,6 @@ You can add or remove event listeners to/from the related object using the Hazel
 The downside of attaching listeners using this API is the possibility of missing events between creation of the object and registering a listener. To overcome this race condition, Hazelcast lets you register listeners in configuration. You can register listeners using either declarative, programmatic, or Spring configuration.
 
 
-### DistributedObjectListener
-
-- Declarative Configuration
-
-		```xml
-		<listeners>
-		  <listener>com.hazelcast.examples.DistributedObjectListener</listener>
-		</listeners>
-```
-
-- Programmatic Configuration
-
-		```java
-		config.addListenerConfig(
-		    new ListenerConfig( "com.hazelcast.examples.DistributedObjectListener" ) );
-```
-
-- Spring XML configuration
-
-		```xml
-		<hz:listeners>
-		  <hz:listener class-name="com.hazelcast.spring.DummyDistributedObjectListener"/>
-		  <hz:listener implementation="dummyDistributedObjectListener"/>
-		</hz:listeners>
-```
-
 
 ### EntryListener for IMap
 
