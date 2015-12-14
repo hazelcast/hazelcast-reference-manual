@@ -37,3 +37,47 @@ Started: MigrationEvent{partitionId=98, oldOwner=Member [127.0.0.1]:5701,
 newOwner=Member [127.0.0.1]:5702 this} 
 ```
 
+#### Adding Migration Listeners
+
+After you create your class, you can configure your cluster to include migration listeners. Below is an example using the method `addMigrationListener`.
+
+```java
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+
+PartitionService partitionService = hazelcastInstance.getPartitionService();
+partitionService.addMigrationListener( new ClusterMigrationListener );
+```
+
+With the above approach, there is a possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+
+The following is an example programmatic configuration.
+
+```java
+config.addListenerConfig( 
+new ListenerConfig( "com.your-package.ClusterMigrationListener" ) );
+```
+
+
+The following is an example of the equivalent declarative configuration. 
+
+```xml
+<hazelcast>
+   ...
+   <listeners>
+	  <listener>
+	  com.your-package.ClusterMigrationListener
+      </listener>
+   </listeners>
+   ...
+</hazelcast>
+```
+
+And, the following is an example of the equivalent Spring configuration.
+
+```
+<hz:listeners>
+   <hz:listener class-name="com.your-packege.ClusterMigrationListener"/>
+   <hz:listener implementation="MigrationListener"/>
+</hz:listeners>
+```
+
