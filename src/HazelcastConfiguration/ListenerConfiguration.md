@@ -33,31 +33,6 @@ The downside of attaching listeners using this API is the possibility of missing
 		</hz:listeners>
 ```
 
-### MigrationListener
-
-- Declarative Configuration
-
-		```xml
-		<listeners>
-		  <listener>com.hazelcast.examples.MigrationListener</listener>
-		</listeners>
-```
-
-- Programmatic Configuration
-
-		```java
-		config.addListenerConfig( 
-		    new ListenerConfig( "com.hazelcast.examples.MigrationListener" ) );
-```
-
-- Spring XML configuration
-
-		```xml
-		<hz:listeners>
-		  <hz:listener class-name="com.hazelcast.spring.DummyMigrationListener"/>
-		  <hz:listener implementation="dummyMigrationListener"/>
-		</hz:listeners>
-```
 
 ### LifecycleListener
 
