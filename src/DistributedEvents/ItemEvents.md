@@ -33,6 +33,11 @@ public class SampleItemListener implements ItemListener {
 }
 ```
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *You can use `ICollection` when creating any of the collection (queue, set and list) data structures, as shown above. You can also use `IQueue`, `ISet` or `IList` instead of `ICollection`.*
+<br></br>
+
+
 #### Adding Item Listeners
 
 After you create your class, you can configure your cluster to include item listeners. Below is an example using the method `addItemListener` for `ISet` (it applies also to `IQueue` and `IList`). You can also see this portion in the above class creation.
@@ -41,6 +46,7 @@ After you create your class, you can configure your cluster to include item list
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 ICollection<Price> set = hazelcastInstance.getSet( "default" );
+// or ISet<Prices> set = hazelcastInstance.getSet( "default" );
 default.addItemListener( sampleItemListener, true );
 ```
 
