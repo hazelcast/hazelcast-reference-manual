@@ -34,32 +34,6 @@ The downside of attaching listeners using this API is the possibility of missing
 ```
 
 
-### LifecycleListener
-
-- Declarative Configuration
-
-		```xml
-		<listeners>
-		  <listener>com.hazelcast.examples.LifecycleListener</listener>
-		</listeners>
-```
-
-- Programmatic Configuration
-
-		```java
-		config.addListenerConfig(
-		    new ListenerConfig( "com.hazelcast.examples.LifecycleListener" ) );
-```
-
-- Spring XML configuration
-
-		```xml
-		<hz:listeners>
-		  <hz:listener class-name="com.hazelcast.spring.DummyLifecycleListener"/>
-		  <hz:listener implementation="dummyLifecycleListener"/>
-		</hz:listeners>
-```
-
 ### EntryListener for IMap
 
 - Declarative Configuration
@@ -130,37 +104,6 @@ The downside of attaching listeners using this API is the possibility of missing
 ```
 
 
-### MessageListener for ITopic
-
-- Declarative Configuration
-
-		```xml
-		<topic name="default">
-		  <message-listeners>
-		    <message-listener>
-		        com.hazelcast.examples.MessageListener
-		    </message-listener>
-		  </message-listeners>
-		</topic>
-```
-
-- Programmatic Configuration
-
-		```java
-		topicConfig.addMessageListenerConfig(
-		    new ListenerConfig( "com.hazelcast.examples.MessageListener" ) );
-```
-
-- Spring XML configuration
-
-		```xml
-		<hz:topic name="default">
-		  <hz:message-listeners>
-		    <hz:message-listener 
-		        class-name="com.hazelcast.spring.DummyMessageListener"/>
-		  </hz:message-listeners>
-		</hz:topic>
-```
 
 ### ClientListener
 
