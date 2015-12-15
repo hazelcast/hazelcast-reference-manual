@@ -1,4 +1,4 @@
-## Hot Restart Store
+## Hot Restart Persistence
 
 ![](images/enterprise-onlycopy.jpg)
 <br></br>
@@ -9,11 +9,11 @@
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is supported for Hazelcast Enterprise 3.6 or higher.*
 
 
-This chapter explains the Hazelcast's Hot Restart Store feature which provides fast cluster restarts by storing the states of the cluster members on the disk. This feature is currently provided for the Hazelcast map data structure and the Hazelcast JCache implementation.
+This chapter explains the Hazelcast's Hot Restart Persistence feature which provides fast cluster restarts by storing the states of the cluster members on the disk. This feature is currently provided for the Hazelcast map data structure and the Hazelcast JCache implementation.
 
-### Hot Restart Store Overview
+### Hot Restart Persistence Overview
 
-Hot Restart Store enables you to get your cluster up and running swiftly after a cluster restart. A restart can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). For Hot Restart Store, required states for Hazelcast clusters and members are introduced. Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) for information on the cluster and member states.
+Hot Restart Persistence enables you to get your cluster up and running swiftly after a cluster restart. A restart can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). For Hot Restart Persistence, required states for Hazelcast clusters and members are introduced. Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) for information on the cluster and member states.
 
 #### Hot Restart Types
 
@@ -47,10 +47,10 @@ You can configure Hot Restart programmatically or declaratively. The configurati
 
 The following are the descriptions of the Hot Restart configuration elements.
 
-- `hot-restart`: The configuration that includes the element `base-dir` used to specify the directory where the Hot Restart data will be stored. Its default value is `hot-restart`. You can use the default value, or you can specify the value of another folder containing the Hot Restart configuration, but it is mandatory that this `hot-restart` element has a value. This directory will be created automatically if not exists yet.
+- `hot-restart-persistence`: The configuration that enables the Hot Restart feature and includes the element `base-dir` used to specify the directory where the Hot Restart data will be stored. Its default value is `hot-restart`. You can use the default value, or you can specify the value of another folder containing the Hot Restart configuration, but it is mandatory that this `hot-restart` element has a value. This directory will be created automatically if not exists yet.
 - `validation-timeout-seconds`: Validation timeout for the Hot Restart process when validating the cluster members expected to join and the partition table on the whole cluster.
 - `data-load-timeout-seconds`: Data load timeout for the Hot Restart process. All members in the cluster should finish restoring their local data before this timeout.
-- `hot-restart-enabled`: The configuration that enables or disables the Hot Restart feature. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`).
+- `hot-restart`: The configuration that enables or disables the Hot Restart feature per data structure. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`). Turning on `fsync` guarantees that data is persisted to the disk device when a write operation returns successful response to the caller. By default, it's turned off. That means data will be persisted to the disk device eventually, not on every disk write, which in general provides a better performance.
 
 #### Hot Restart Configuration Examples
 
@@ -63,18 +63,22 @@ An example configuration is shown below.
 ```xml
 <hazelcast>
    ...
-   <hot-restart enabled="true">
+   <hot-restart-persistence enabled="true">
 	   <base-dir>/mnt/hot-restart</base-dir>
 	   <validation-timeout-seconds>120</validation-timeout-seconds>
 	   <data-load-timeout-seconds>900</data-load-timeout-seconds>
-   </hot-restart>
+   </hot-restart-persistence>
    ...
    <map>
-      <hot-restart-enabled>true</hot-restart-enabled>
+	   <hot-restart enabled="true">
+		   <fsync>false</fsync>
+	   </hot-restart>
    </map>
    ...
    <cache>
-      <hot-restart-enabled>true</hot-restart-enabled>
+	   <hot-restart enabled="true">
+		   <fsync>false</fsync>
+	   </hot-restart>
    </cache>
    ...
 </hazelcast>
@@ -86,20 +90,20 @@ An example configuration is shown below.
 The programmatic equivalent of the above declarative configuration is shown below.
 
 ```java
-HotRestartConfig hotRestartConfig = new HotRestartConfig();
-hotRestartConfig.setEnabled(true);
-hotRestartConfig.setBaseDir(new File("/mnt/hot-restart"));
-hotRestartConfig.setValidationTimeoutSeconds(120);
-hotRestartConfig.setDataLoadTimeoutSeconds(900);
-config.setHotRestartConfig(hotRestartConfig);
+HotRestartPersistenceConfig hotRestartPersistenceConfig = new HotRestartPersistenceConfig();
+hotRestartPersistenceConfig.setEnabled(true);
+hotRestartPersistenceConfig.setBaseDir(new File("/mnt/hot-restart"));
+hotRestartPersistenceConfig.setValidationTimeoutSeconds(120);
+hotRestartPersistenceConfig.setDataLoadTimeoutSeconds(900);
+config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
 
 ...
 MapConfig mapConfig = new MapConfig();
-mapConfig.setHotRestartEnabled(true);
+mapConfig.getHotRestartConfig().setEnabled(true);
 
 ...
 CacheConfig cacheConfig = new CacheConfig();
-cacheConfig.setHotRestartEnabled(true);
+cacheConfig.getHotRestartConfig().setEnabled(true);
 ```
 
 
@@ -107,9 +111,9 @@ cacheConfig.setHotRestartEnabled(true);
 
 Hazelcast relies on the IP address-port pair as a unique identifier for a cluster member. The member must restart with these address-port settings the same as before shutdown. Otherwise, Hot Restart fails.
 
-### Hot Restart Store Design Details
+### Hot Restart Persistence Design Details
 
-Hazelcast's Hot Restart Store uses the log-structured storage approach. The following is a top-level design description:
+Hazelcast's Hot Restart Persistence uses the log-structured storage approach. The following is a top-level design description:
 
 - The only kind of update operation on persistent data is _appending_.
 - What is appended are facts about events that happened to the data model represented by the store; either a new value was assigned to a key or a key was removed.
