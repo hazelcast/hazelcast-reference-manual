@@ -1,7 +1,7 @@
 
 ### Listening for Map Events
 
-To listen to map-wide or entry-based events, implement a `MapListener` sub-interface.
+You can listen to map-wide or entry-based events using the listeners provided by the Hazelcast's eventing framework. To listen to these events, implement a `MapListener` sub-interface.
 
 A map-wide event is fired as a result of a map-wide operation: for 
 example, `IMap#clear` or `IMap#evictAll`.
