@@ -15,7 +15,3 @@ If event listeners perform a computation that takes a long time, the event queue
 <br> </br>
 
 
-***RELATED INFORMATION***
-
-*Please refer to the [Listener Configurations section](#listener-configurations) on how to configure each listener.*
-
