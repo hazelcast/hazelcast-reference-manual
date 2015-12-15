@@ -47,6 +47,8 @@ After you run the first code sample, run the `PrintMember` sample. You will see 
 
 `a -> [2, 1]`
 
+Hazelcast MultiMap uses `EntryListener` to listen to events which occur when entries are added to, updated in or removed from the MultiMap. Please refer to the [Listening for MultiMap Events section](#listening-for-multimap-events) for information on how to create an entry listener class and register it.
+
 ### Configuring MultiMap
 
 When using MultiMap, the collection type of the values can be either **Set** or **List**. You configure the collection type with the `valueCollectionType` parameter. If you choose `Set`, duplicate and null values are not allowed in your collection and ordering is irrelevant. If you choose `List`, ordering is relevant and your collection can include duplicate and null values.

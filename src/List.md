@@ -36,7 +36,7 @@ while ( iterator.hasNext() ) {
 ```
 
 
-Hazelcast List uses `ItemListener` to listen to events which occur when items are added and removed from the List. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
+Hazelcast List uses `ItemListener` to listen to events which occur when items are added to and removed from the List. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
 
 <br></br>
 ***RELATED INFORMATION***
