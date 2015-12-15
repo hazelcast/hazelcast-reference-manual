@@ -33,7 +33,7 @@ public class SampleMessageListener implements MessageListener<MyEvent> {
   }
 ```
 
-#### Adding Message Listeners
+#### Registering Message Listeners
 
 After you create your class, you can configure your cluster to include message listeners. Below is an example using the method `addMessageListener`. You can also see this portion in the above class creation.
 

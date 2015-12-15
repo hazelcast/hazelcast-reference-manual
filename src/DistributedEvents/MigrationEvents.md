@@ -37,7 +37,7 @@ Started: MigrationEvent{partitionId=98, oldOwner=Member [127.0.0.1]:5701,
 newOwner=Member [127.0.0.1]:5702 this} 
 ```
 
-#### Adding Migration Listeners
+#### Registering Migration Listeners
 
 After you create your class, you can configure your cluster to include migration listeners. Below is an example using the method `addMigrationListener`.
 

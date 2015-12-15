@@ -33,7 +33,7 @@ com.hazelcast.partition.PartitionLostEvent{partitionId=242, lostBackupCount=0,
 eventSource=Address[192.168.2.49]:5701}
 ```
 
-#### Adding Partition Lost Listeners
+#### Registering Partition Lost Listeners
 
 After you create your class, you can configure your cluster programmatically or declaratively to include the partition lost listener. Below is an example of its programmatic configuration.
 

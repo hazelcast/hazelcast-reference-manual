@@ -38,7 +38,7 @@ public class SampleDistObjListener implements DistributedObjectListener {
 
 When a respective event is fired, the distributed object listener outputs the event type, and the name, service (for example, if a Map service provides the distributed object, than it is a Map object), and ID of the object.
 
-#### Adding Distributed Object Listeners
+#### Registering Distributed Object Listeners
 
 
 After you create your class, you can configure your cluster to include distributed object listeners. Below is an example using the method `addDistributedObjectListener`. You can also see this portion in the above class creation.

@@ -38,7 +38,7 @@ public class SampleItemListener implements ItemListener {
 <br></br>
 
 
-#### Adding Item Listeners
+#### Registering Item Listeners
 
 After you create your class, you can configure your cluster to include item listeners. Below is an example using the method `addItemListener` for `ISet` (it applies also to `IQueue` and `IList`). You can also see this portion in the above class creation.
 

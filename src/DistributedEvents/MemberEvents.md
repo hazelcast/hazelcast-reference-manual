@@ -32,7 +32,7 @@ public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
 
 When a respective event is fired, the membership listener outputs the addresses of the members that joined and left, and also which attribute changed on which member.
 
-#### Adding Membership Listeners
+#### Registering Membership Listeners
 
 After you create your class, you can configure your cluster to include the membership listener. Below is an example using the method `addMembershipListener`.
 
