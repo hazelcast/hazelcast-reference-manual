@@ -8,40 +8,6 @@ The downside of attaching listeners using this API is the possibility of missing
 
 
 
-### EntryListener for IMap
-
-- Declarative Configuration
-
-		```xml
-		<map name="default">
-		  ...
-		  <entry-listeners>
-		    <entry-listener include-value="true" local="false">
-		        com.hazelcast.examples.EntryListener
-		    </entry-listener>
-		  </entry-listeners>
-		</map>
-```
-
-- Programmatic Configuration
-
-		```java
-		mapConfig.addEntryListenerConfig(
-		    new EntryListenerConfig( "com.hazelcast.examples.EntryListener", 
-		                             false, false ) );
-```
-
-- Spring XML configuration
-
-		```xml
-		<hz:map name="default">
-		  <hz:entry-listeners>
-		    <hz:entry-listener include-value="true"
-		         class-name="com.hazelcast.spring.DummyEntryListener"/>
-		    <hz:entry-listener implementation="dummyEntryListener" local="true"/>
-		  </hz:entry-listeners>
-		</hz:map>
-```
 
 ### EntryListener for MultiMap
 
