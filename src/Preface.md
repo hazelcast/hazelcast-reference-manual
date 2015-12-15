@@ -65,7 +65,7 @@ The following  information is sent in a phone home:
 - Number of connected clients bands of 5, 10, 20, 40, 60, 100, 150, 300, 600 and  > 600
 - Cluster uptime
 - Member uptime
-	- Hazelcast Enterprise specific: 
+- Hazelcast Enterprise specific: 
 	- Number of clients by language (Java, C++, C#)
 	- Flag for Hazelcast Enterprise 
 	- Hash value of license key
