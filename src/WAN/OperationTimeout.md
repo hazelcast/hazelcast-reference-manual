@@ -1,7 +1,7 @@
 
 ### WAN Replication Operation Timeout
 
-After a replication event is sent to the target cluster, the source member waits for an acknowledge that event has reached the target.
+After a replication event is sent to the target cluster, the source member waits for an acknowledgement that event has reached the target.
 If confirmation is not received inside a timeout duration window, the event is resent to the target cluster.
 
 Default value of for this duration is `5000` milliseconds.
