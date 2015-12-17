@@ -29,9 +29,9 @@ Session Replication with Hazelcast Enterprise is a container specific module tha
 
 Tomcat Web Session Replication Module has been tested against the following containers.
 
-- Tomcat 6.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-60.cgi" target="_blank">here</a>).
-- Tomcat 7.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-70.cgi" target="_blank">here</a>).
-- Tomcat 8.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-80.cgi" target="_blank">here</a>).
+- Tomcat 6.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-60.cgi" target="_blank">here</a>.
+- Tomcat 7.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-70.cgi" target="_blank">here</a>.
+- Tomcat 8.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-80.cgi" target="_blank">here</a>.
 
 The latest tested versions are **6.0.39**, **7.0.40** and **8.0.20**.
 <br></br>
