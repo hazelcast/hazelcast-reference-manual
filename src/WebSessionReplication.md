@@ -46,16 +46,6 @@ To set up Hazelcast Session Clustering:
     <param-value>my-sessions</param-value>
   </init-param>
   <!--
-    TTL value of the distributed map storing
-    your web session objects.
-    Any integer between 0 and Integer.MAX_VALUE.
-    Default is 0 which is infinite.
-  -->
-  <init-param>
-    <param-name>session-ttl-seconds</param-name>
-    <param-value>0</param-value>
-  </init-param>
-  <!--
     How is your load-balancer configured?
     sticky-session means all requests of a session
     is routed to the node where the session is first created.
@@ -246,8 +236,6 @@ Default session expiration configuration depends on the Servlet Container that i
         <session-timeout>60</session-timeout>
     </session-config>
 ```
-
-If you want to override session expiry configuration with a Hazelcast specific configuration, you can use `session-ttl-seconds` to specify TTL on the Hazelcast Session Replication Distributed Map.
 
 #### Using Sticky Sessions
 
