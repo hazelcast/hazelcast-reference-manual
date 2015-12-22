@@ -40,7 +40,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 22 - OSGI](#osgi)||Added as a new chapter.|
 |[Chapter 23 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added [Quorum Configuration](#quorum-configuration) section.|
 ||[Network Configuration](#network-configuration)|[Join](#join) section updated by adding the explanation for `discovery-strategies` element.
-||[System Properties](#system-properties)|Added the new system properties `hazelcast.unsafe.mode`,  `hazelcast.io.input.thread.count`, `hazelcast.io.output.thread.count` and `hazelcast.query.optimizer.type`. Updated the definition of `hazelcast.io.thread.count`.
+||[System Properties](#system-properties)|Added/updated system properties:<br></br> `hazelcast.unsafe.mode`,  `hazelcast.io.input.thread.count`, `hazelcast.io.output.thread.count`, `hazelcast.query.optimizer.type`, `hazelcast.io.thread.count`, `hazelcast.discovery.public.ip.enabled`.
 |[Chapter 24 - Extending Hazelcast](#extending-hazelcast)||This title added as a chapter to include the section previously present as "User Defined Services".|
 ||[Discovery SPI](#discovery-spi)|Added as a new section.
 ||[Config Properties SPI](#config-properties-spi)|Added as a new section.
