@@ -114,7 +114,7 @@ Let's describe each element.
 
 In the above example, `documents` map starts to evict its entries from a member when the map size exceeds 10000 in that member. Then, the entries least recently used will be evicted. The entries not used for more than 60 seconds will be evicted as well.
 
-And this is an example eviction configuration for in-memory-format `NATIVE`:
+And the following is an example eviction configuration for a map having `NATIVE` as the in-memory format:
 
 ```xml
 <map name="nativeMap*">

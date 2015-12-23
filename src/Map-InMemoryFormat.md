@@ -6,7 +6,7 @@
 
 IMap (and a few other Hazelcast data structures, such as ICache) has an `in-memory-format` configuration option. By default, Hazelcast stores data into memory in binary (serialized) format. But sometimes, it can be efficient to store the entries in their object form, especially in cases of local processing, such as entry processor and queries.
 
-To set how the data will be stored in memory, set `in-memory-format` in configuration. You have the following format options.
+To set how the data will be stored in memory, set `in-memory-format` in the configuration. You have the following format options.
 
 - `BINARY` (default): This is the default option. The data will be stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as `put` and `get`.
 
@@ -15,15 +15,17 @@ To set how the data will be stored in memory, set `in-memory-format` in configur
 - `NATIVE`: (Enterprise Only) The data will be stored in serialized binary form in Hazelcast High-Density Memory Store. In other in-memory-formats, Hazelcast stores your distributed data into Java heap which is subject to garbage collection (GC). As your heap gets bigger, garbage collection might cause your application to pause for tens of seconds, badly affecting your application performance and response times. Even if you have terabytes of cache in-memory with lots of updates, GC will have almost no effect; this results in more predictable latency and throughput.
     Here is an example configuration for High-Density Memory Store backed `IMap` :
 
-    ```xml
-    <map name="nativeMap*">
-        <in-memory-format>NATIVE</in-memory-format>
-    </map>
-    ```
-***Required configuration changes when using NATIVE?***
+   ```xml
+   <map name="nativeMap*">
+      <in-memory-format>NATIVE</in-memory-format>
+   </map>
+   ```
 
-Beware that eviction mechanism is different for `NATIVE` in-memory-format.
-The new eviction algorithm is described [here](JCache-Eviction.md#eviction-algorithm)
+
+#### Required configuration changes when using NATIVE
+
+Beware that eviction mechanism is different for `NATIVE` in-memory format.
+The new eviction algorithm is described [here](eviction-algorithm).
 
   - Eviction percentage has no effect.
 
@@ -33,11 +35,12 @@ The new eviction algorithm is described [here](JCache-Eviction.md#eviction-algor
       <eviction-percentage>25</eviction-percentage> <-- NO IMPACT with NATIVE
     </map>
     ```
-  - These IMap eviction max-size-policies can not be used `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
+  - These IMap eviction policies for `max-size` cannot be used: `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
 
-  - Near Cache eviction config should be changed:
+  - Near cache eviction configuration should also be changed when the in-memory format is `NATIVE`.
 
-    Existing:
+    Existing configuration for a map's near cache when the in-memory format is `BINARY`:
+    
     ```xml
         <map name="nativeMap*">
 
@@ -50,20 +53,20 @@ The new eviction algorithm is described [here](JCache-Eviction.md#eviction-algor
         </map>
      ```
 
-     Porting it to NATIVE:
+     If it is `NATIVE`, then the proper near cache configuration should be as follows:
+     ```xml
+         <map name="nativeMap*">
 
-      ```xml
-             <map name="nativeMap*">
+           <near-cache>
+             <in-memory-format>NATIVE</in-memory-format>
+             <eviction size="10000" eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_SIZE"/>   <-- Correct configuration with NATIVE
+           </near-cache>
 
-               <near-cache>
-                 <in-memory-format>NATIVE</in-memory-format>
-                 <eviction size="10000" eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_SIZE"/>   <-- Correct configuration with NATIVE
-               </near-cache>
+         </map>
+     ```
 
-             </map>
-          ```
+  - Near cache eviction policy `ENTRY_COUNT` cannot be used for `max-size-policy`.
 
-  - Near Cache eviction max-size-policy `ENTRY_COUNT` can not be used.
 
 <br></br>
 ***RELATED INFORMATION***
