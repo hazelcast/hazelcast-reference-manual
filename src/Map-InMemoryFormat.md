@@ -20,7 +20,51 @@ To set how the data will be stored in memory, set `in-memory-format` in configur
         <in-memory-format>NATIVE</in-memory-format>
     </map>
     ```
-    
+***Required configuration changes when using NATIVE?***
+
+Beware that eviction mechanism is different for `NATIVE` in-memory-format.
+The new eviction algorithm is described [here](JCache-Eviction.md#eviction-algorithm)
+
+  - Eviction percentage has no effect.
+
+    ```xml
+    <map name="nativeMap*">
+      <in-memory-format>NATIVE</in-memory-format>
+      <eviction-percentage>25</eviction-percentage> <-- NO IMPACT with NATIVE
+    </map>
+    ```
+  - These IMap eviction max-size-policies can not be used `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
+
+  - Near Cache eviction config should be changed:
+
+    Existing:
+    ```xml
+        <map name="nativeMap*">
+
+          <near-cache>
+            <in-memory-format>BINARY</in-memory-format>
+            <max-size>10000</max-size> <-- NO IMPACT with NATIVE
+            <eviction-policy>LFU</eviction-policy> <-- NO IMPACT with NATIVE
+          </near-cache>
+
+        </map>
+     ```
+
+     Porting it to NATIVE:
+
+      ```xml
+             <map name="nativeMap*">
+
+               <near-cache>
+                 <in-memory-format>NATIVE</in-memory-format>
+                 <eviction size="10000" eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_SIZE"/>   <-- Correct configuration with NATIVE
+               </near-cache>
+
+             </map>
+          ```
+
+  - Near Cache eviction max-size-policy `ENTRY_COUNT` can not be used.
+
 <br></br>
 ***RELATED INFORMATION***
 

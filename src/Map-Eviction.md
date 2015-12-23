@@ -120,7 +120,6 @@ And this is an example eviction configuration for in-memory-format `NATIVE`:
 <map name="nativeMap*">
     <in-memory-format>NATIVE</in-memory-format>
     <eviction-policy>LFU</eviction-policy>
-    <eviction-percentage>5</eviction-percentage>
     <max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">99</max-size>
 </map>
 ```
