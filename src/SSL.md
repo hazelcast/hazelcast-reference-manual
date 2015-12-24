@@ -71,7 +71,7 @@ ClientConfig clientConfig = new ClientConfig();
 clientConfig.getNetworkConfig().addAddress("127.0.0.1");
 ```
 
-As you see, you can set, for example, `keyStore` and `keyStorePassword` with the following system properties.
+For example, you can set `keyStore` and `keyStorePassword` with the following system properties.
 
  - `javax.net.ssl.keyStore`
  - `javax.net.ssl.keyStorePassword` 

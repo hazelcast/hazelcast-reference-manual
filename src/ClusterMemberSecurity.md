@@ -40,7 +40,7 @@ Hazelcast supports standard Java Security (JAAS) based authentication between cl
 </security>
 ```
 
-You can define as many as LoginModules you wanted in configuration. They are executed in the given order. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
+You can define as many as LoginModules as you want in configuration. They are executed in the order listed in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
 
 ```java
 package com.hazelcast.security;

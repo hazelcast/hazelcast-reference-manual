@@ -6,7 +6,11 @@
 ![](images/enterprise-onlycopy.jpg)
 
 
-Hazelcast allows you to intercept socket connections before a node joins to cluster or a client connects to a node. This provides the ability to add custom hooks to join and perform connection procedures (like identity checking using Kerberos, etc.). Implement `com.hazelcast.nio.MemberSocketInterceptor` for members and `com.hazelcast.nio.SocketInterceptor` for clients.
+Hazelcast allows you to intercept socket connections before a member joins a cluster or a client connects to a member of a cluster. This allow you to add custom hooks to join and perform connection procedures (like identity checking using Kerberos, etc.). 
+
+To use the socket interceptor, implement `com.hazelcast.nio.MemberSocketInterceptor` for members and `com.hazelcast.nio.SocketInterceptor` for clients.
+
+The following example code enables the socket interceptor for members.
 
 ```java
 public class MySocketInterceptor implements MemberSocketInterceptor {
@@ -15,11 +19,11 @@ public class MySocketInterceptor implements MemberSocketInterceptor {
   }
 
   void onConnect( Socket connectedSocket ) throws IOException {
-    // do something meaningful when connected
+    // do something meaningful when a member has connected to the cluster
   }
 
   public void onAccept( Socket acceptedSocket ) throws IOException {
-    // do something meaningful when accepted a connection
+    // do something meaningful when the cluster is ready to accept the member connection
   }
 }
 ```

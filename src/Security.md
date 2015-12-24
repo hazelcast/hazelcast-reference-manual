@@ -2,7 +2,7 @@
 
 # Security
 
-This chapter provides information on the security features of Hazelcast. These features allow you to perform security activities including intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level and using SSL socket communication.
+This chapter describes the security features of Hazelcast. These features allow you to perform security activities, such as intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level, and using SSL socket communication.
 
 ## Enabling Security for Hazelcast Enterprise
 
@@ -10,7 +10,10 @@ This chapter provides information on the security features of Hazelcast. These f
 
 
 
-Hazelcast has an extensible, JAAS based security feature you can use to authenticate both cluster members and clients, and to perform access control checks on client operations. Access control can be done according to endpoint principal and/or endpoint address. 
+With Hazelcast's extensible, JAAS based security feature, you can:
+
+- authenticate both cluster members and clients, 
+- and perform access control checks on client operations. Access control can be done according to endpoint principal and/or endpoint address. 
 
 You can enable security declaratively or programmatically, as shown below.
 

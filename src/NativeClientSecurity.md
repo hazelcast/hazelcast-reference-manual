@@ -37,7 +37,7 @@ The authentication mechanism works the same as cluster member authentication. To
 </security>
 ```
 
-You can define as many as `LoginModules` as you want in configuration. Those are executed in the given order. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
+You can define as many as `LoginModules` as you want in configuration. Those are executed in the order given in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
 
 ```java
 ClientConfig clientConfig = new ClientConfig();
@@ -125,13 +125,13 @@ public interface IPermissionPolicy {
 }
 ```
 
-Permission policy implementations can access client-permissions in configuration by using
+Permission policy implementations can access client-permissions that are in configuration by using
 `SecurityConfig.
-getClientPermissionConfigs()` when the method `configure(SecurityConfig securityConfig, Properties properties)` is called by Hazelcast.
+getClientPermissionConfigs()` when Hazelcast calls the method `configure(SecurityConfig securityConfig, Properties properties)`.
 
 The `IPermissionPolicy.getPermissions(Subject subject, Class<? extends Permission> type)` method is used to determine a client request that has been granted permission to perform a security-sensitive operation. 
 
-Permission policy should return a `PermissionCollection` containing permissions of the given type for the given `Subject`. The Hazelcast access controller will call `PermissionCollection.implies(Permission)` on returning `PermissionCollection` and will decide if the current `Subject` has permission to access the requested resources or not.
+Permission policy should return a `PermissionCollection` containing permissions of the given type for the given `Subject`. The Hazelcast access controller will call `PermissionCollection.implies(Permission)` on returning `PermissionCollection` and it will decide whether or not the current `Subject` has permission to access the requested resources.
 
 ### Permissions
 

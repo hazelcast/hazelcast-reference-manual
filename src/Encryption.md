@@ -5,6 +5,8 @@
 
 Hazelcast allows you to encrypt the entire socket level communication among all Hazelcast members. Encryption is based on <a href="http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html" target="_blank">Java Cryptography Architecture</a>. In symmetric encryption, each node uses the same key, so the key is shared. Here is an example configuration for symmetric encryption.
 
+You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key, and the iteration count to use when generating the secret key. You also need to set `enabled` to true.
+
 ```xml
 <hazelcast>
   ...
