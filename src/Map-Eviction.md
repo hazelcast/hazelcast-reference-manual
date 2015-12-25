@@ -78,19 +78,19 @@ Let's describe each element.
 
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
-	- `USED_NATIVE_MEMORY_SIZE`: (Enterprise Only) Maximum used native memory size in megabytes for each JVM.
+	- `USED_NATIVE_MEMORY_SIZE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size in megabytes for each JVM.
 
 		`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
 
-	- `USED_NATIVE_MEMORY_PERCENTAGE`: (Enterprise Only) Maximum used native memory size percentage for each JVM.
+	- `USED_NATIVE_MEMORY_PERCENTAGE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size percentage for each JVM.
 
 		`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
 
-	- `FREE_NATIVE_MEMORY_SIZE`: (Enterprise Only) Maximum free native memory size in megabytes for each JVM.
+	- `FREE_NATIVE_MEMORY_SIZE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum free native memory size in megabytes for each JVM.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
 
-	- `FREE_NATIVE_MEMORY_PERCENTAGE`: (Enterprise Only) Maximum free native memory size percentage for each JVM.
+	- `FREE_NATIVE_MEMORY_PERCENTAGE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum free native memory size percentage for each JVM.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
 
