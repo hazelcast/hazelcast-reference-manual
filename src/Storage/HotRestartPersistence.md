@@ -6,15 +6,7 @@
 
 
 
-This chapter explains the Hazelcast's Hot Restart Persistence feature, introduced with Hazelcast 3.6, which provides fast cluster restarts by storing the states of the cluster members on the disk. This feature is currently provided for the following Hazelcast features and implementations:
-
-- Map
-- JCache Implementation
-- High-Density (HD) Memory Store
-- Java Client, when using the near cache for client
-- Web Session Replications 
-- Hibernate 2nd Level Caching
-- Continuous Query Cache
+This chapter explains the Hazelcast's Hot Restart Persistence feature, introduced with Hazelcast 3.6, which provides fast cluster restarts by storing the states of the cluster members on the disk. This feature is currently provided for the Hazelcast map data structure and the Hazelcast JCache implementation.
 
 ### Hot Restart Persistence Overview
 

@@ -5,9 +5,18 @@ This chapter describes Hazelcast's High-Density Memory Store and its configurati
 
 ## High-Density Memory Store
 
-![](images/enterprise-onlycopy.jpg)
+<font color="##153F75">**Hazelcast Enterprise HD**</font>
+<br></br>
 
-Hazelcast High-Density Memory Store, the successor to Hazelcast Elastic Memory, is Hazelcast's new enterprise grade backend storage solution. This solution is used by JCache and IMap implementations.
+Hazelcast High-Density Memory Store, the successor to Hazelcast Elastic Memory, is Hazelcast's new enterprise grade backend storage solution. It is currently provided for the following Hazelcast features and implementations:
+
+- Map
+- JCache Implementation
+- Hot Restart Persistence
+- Java Client, when using the near cache for client
+- Web Session Replications 
+- Hibernate 2nd Level Caching
+- Continuous Query Cache
 
 
 By default, Hazelcast offers a production ready, low garbage collection (GC) pressure, storage backend. Serialized keys and values are still stored in the standard Java map, such as data structures on the heap. The data structures are stored in serialized form for the highest data compaction, and are still subject to Java Garbage Collection.
