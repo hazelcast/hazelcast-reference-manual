@@ -15,5 +15,18 @@ You can monitor your Hazelcast members via the JMX protocol.
 
    - using Hazelcast configuration (API, XML, Spring).
    - or by setting the system property `-Dhazelcast.jmx=true`
+   - or by programmatic configuration:
+    `config.setProperty(GroupProperties.PROP_ENABLE_JMX, "true");`
+
+
+
+ - If you want to use cluster-wide stats (referred as total) in [List](#List), [Map](#Map), [ReplicatedMap](#ReplicatedMap), [Queue](#Queue), [Set](#Set) and [Topic](#Topic): enable the Hazelcast property `hazelcast.jmx.detailed` (please refer to the [System Properties section](#system-properties)):
+
+  - using Hazelcast configuration (API, XML, Spring).
+  - or by setting the system property `-Dhazelcast.jmx=true`
+  - or by programmatic configuration:
+   `config.setProperty(GroupProperties.PROP_ENABLE_JMX_DETAILED, "true");`
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Note that this might cause some performance overheads since underlying structure adds listeners to get these total statistics.*
 
 - Use jconsole, jvisualvm (with mbean plugin) or another JMX compliant monitoring tool.
