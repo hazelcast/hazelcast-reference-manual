@@ -2,7 +2,9 @@
 
 ## Clustered REST via Management Center
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+<br></br>
+
 
 The Clustered REST API is exposed from Management Center to allow you to monitor clustered statistics of distributed objects.
 

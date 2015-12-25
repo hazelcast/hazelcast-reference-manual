@@ -2,7 +2,10 @@
 
 ## Clustered JMX via Management Center
 
-![](images/enterprise-onlycopy.jpg)
+
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+<br></br>
+
 
 Clustered JMX via Management Center allows you to monitor clustered statistics of distributed objects from a JMX interface.
 
