@@ -11,6 +11,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Chapter 1 - Preface](#preface)||Added Hazelcast Architecture as a new section. Renamed the section Product Naming as Hazelcast Editions and updated its content by adding the new edition "Hazelcast Enterprise HD".|
 |[Chapter 3 - Getting Started](#getting-started)|[Phone Home](#phone-home)|Added as a new section to explain phone home data.|
 ||[Deploying using Docker](#deploying-using-docker)|Added as a new section to describe how you can deploy your Hazelcast projects using the Docker platform.
 |[Chapter 5 - Hazelcast Clusters](#hazelcast-clusters)|[Discovering Members with jclouds](#discovering-members-with-jclouds)|Added as a new section to explain how you can enable Hazelcast to discover your members with jclouds&reg;.|

@@ -12,8 +12,8 @@ As the reader of this manual, you must be familiar with the Java programming lan
 This Reference Manual covers all editions of Hazelcast. Throughout this manual:
 
 - **Hazelcast** refers to the open source edition of Hazelcast in-memory data grid middleware. It is also the name of the company providing the Hazelcast product.
-- **Hazelcast Enterprise** - a commercially licensed edition of Hazelcast which provides high-value enterprise features in addition to Hazelcast.
-- **Hazelcast Enterprise HD** - a commercially licensed edition of Hazelcast which provides High-Density (HD) Memory Store and Hot Restart Persistence features in addition to Hazelcast Enterprise.
+- <font color="#3981DB">**Hazelcast Enterprise**</font> - a commercially licensed edition of Hazelcast which provides high-value enterprise features in addition to Hazelcast.
+- <font color="##153F75">**Hazelcast Enterprise HD**</font> - a commercially licensed edition of Hazelcast which provides High-Density (HD) Memory Store and Hot Restart Persistence features in addition to Hazelcast Enterprise.
 
 
 ## Hazelcast Architecture
