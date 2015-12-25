@@ -48,8 +48,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 
 *  Name ( `name` )
 *  Clear list ( `clear` )
-*  Total added item count ( `totalAddedItemCount` )
-*  Total removed item count ( `totalRemovedItemCount` )
 
 **Lock ( `ILock` )**
 
@@ -86,10 +84,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 *  Other (keySet,entrySet etc..) operation count ( `localOtherOperationCount` )
 *  Total operation count ( `localTotal` )
 *  Heap Cost ( `localHeapCost` )
-*  Total added entry count ( `totalAddedEntryCount` )
-*  Total removed entry count ( `totalRemovedEntryCount` )
-*  Total updated entry count ( `totalUpdatedEntryCount` )
-*  Total evicted entry count ( `totalEvictedEntryCount` )
 *  Clear ( `clear()` )
 *  Values ( `values(p)`)
 *  Entry Set ( `entrySet(p)` )
@@ -145,9 +139,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 *  Replication event count ( `localReplicationEventCount` )
 *  Other (keySet,entrySet etc..) operation count ( `localOtherOperationCount` )
 *  Total operation count ( `localTotal` )
-*  Total added entry count ( `totalAddedEntryCount` )
-*  Total removed entry count ( `totalRemovedEntryCount` )
-*  Total updated entry count ( `totalUpdatedEntryCount` )
 *  Clear ( `clear()` )
 *  Values ( `values()`)
 *  Entry Set ( `entrySet()` )
@@ -168,8 +159,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 *  Empty poll operation count ( `localEmptyPollOperationCount` )
 *  Other operation count ( `localOtherOperationsCount` )
 *  Event operation count ( `localEventOperationCount` )
-*  Total added item count ( `totalAddedItemCount` )
-*  Total removed item count ( `totalRemovedItemCount` )
 *  Clear ( `clear()` )
 
 **Semaphore ( `ISemaphore` )**
@@ -185,8 +174,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 
 *  Name ( `name` )
 *  Partition key ( `partitionKey` )
-*  Total added item count ( `totalAddedItemCount` )
-*  Total removed item count ( `totalRemovedItemCount` )
 *  Clear ( `clear()` )
 
 **Topic ( `ITopic` )**
@@ -196,7 +183,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 *  Creation time ( `localCreationTime` )
 *  Publish operation count ( `localPublishOperationCount` )
 *  Receive operation count ( `localReceiveOperationCount` )
-*  Total message count ( `totalMessageCount` )
 
 **Hazelcast Instance ( `HazelcastInstance` )**
 
@@ -214,18 +200,18 @@ You can find the JMX API definition below with descriptions and the API methods 
 *  Shutdown the member ( `shutdown()` )
 
 
- 
+
   *  **Node ( `HazelcastInstance.Node` )**
     *  Address ( `address` )
     *  Master address ( `masterAddress` )
-    
-    
+
+
 * **Event Service ( `HazelcastInstance.EventService` )**
    *  Event thread count  ( `eventThreadCount` )
    *  Event queue size ( `eventQueueSize` )
    *  Event queue capacity ( `eventQueueCapacity` )
-   
-   
+
+
 * **Operation Service ( `HazelcastInstance.OperationService` )**
    *  Response queue size  ( `responseQueueSize` )
    *  Operation executor queue size ( `operationExecutorQueueSize` )
