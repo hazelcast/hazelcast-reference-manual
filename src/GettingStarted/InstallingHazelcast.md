@@ -1,6 +1,6 @@
 # Getting Started
 
-This chapter explains how to install Hazelcast, start a Hazelcast member and client, and gives Hazelcast configuration fundamentals.
+This chapter explains how to install Hazelcast and start a Hazelcast member and client. It also provides the fundamentals for configuring Hazelcast and its deployment options.
 
 
 ## Installation
