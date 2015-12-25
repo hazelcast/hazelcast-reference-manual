@@ -2,12 +2,12 @@
 
 # Security
 
-This chapter describes the security features of Hazelcast. These features allow you to perform security activities, such as intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level, and using SSL socket communication.
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+<br></br>
+
+This chapter describes the security features of Hazelcast. These features allow you to perform security activities, such as intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level, and using SSL socket communication. All of the Security features explained in this chapter are the features of <font color="#3981DB">**Hazelcast Enterprise**</font> edition.
 
 ## Enabling Security for Hazelcast Enterprise
-
-![](images/enterprise-onlycopy.jpg)
-
 
 
 With Hazelcast's extensible, JAAS based security feature, you can:
@@ -40,5 +40,5 @@ SecurityConfig securityCfg = cfg.getSecurityConfig();
 securityCfg.setEnabled( true );
 ```
 
-Also, see [Setting License Key](#setting-the-license-key).
+Also, see the [Setting License Key section](#setting-the-license-key) for information on how to set your <font color="#3981DB">**Hazelcast Enterprise**</font> license.
 

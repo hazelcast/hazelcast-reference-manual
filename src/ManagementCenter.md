@@ -108,7 +108,7 @@ The Home Page includes a menu on the left which lists the distributed data struc
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Distributed data structures will be shown there when the proxies are created for them.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** * WAN Replication tab is only visible with enterprise license.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *WAN Replication tab is only visible with <font color="#3981DB">**Hazelcast Enterprise**</font> license.*
 
 You can expand and collapse menu items by clicking on them. Below is the list of menu items with links to their explanations.
 

@@ -2,7 +2,9 @@
 
 ## Native Client Security
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+<br></br>
+
 
 
 Hazelcast's Client security includes both authentication and authorization.

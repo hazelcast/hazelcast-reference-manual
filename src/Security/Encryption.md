@@ -1,7 +1,9 @@
 
 ## Encryption
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+<br></br>
+
 
 Hazelcast allows you to encrypt the entire socket level communication among all Hazelcast members. Encryption is based on <a href="http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html" target="_blank">Java Cryptography Architecture</a>. In symmetric encryption, each node uses the same key, so the key is shared. Here is an example configuration for symmetric encryption.
 

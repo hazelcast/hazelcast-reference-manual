@@ -1,17 +1,11 @@
 
 ### Jetty Based Web Session Replication
 
-![](images/enterprise-onlycopy.jpg)
-
+<font color="#3981DB">**Hazelcast Enterprise**</font>
 <br></br>
-
-![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is supported for Hazelcast Enterprise 3.4 or higher.*
-
-
-
 
 ***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/enterprise-session-replication" target="_blank">sample application</a> for Jetty Based Web Session Replication.*
-<br></br>
+
 
 #### Hazelcast Jetty Features and Requirements
 
