@@ -1,16 +1,16 @@
 
 # Storage
 
-This chapter describes Hazelcast's High-Density Memory Store and its configuration and provides information on the High-Density Memory First Generation, also known as Hazelcast Elastic Memory. It also gives recommendations on the storage sizing.
+This chapter describes Hazelcast's High-Density Memory Store and Hot Restart Persistence features along with their configurations, and gives recommendations on the storage sizing.
 
 ## High-Density Memory Store
 
 <font color="##153F75">**Hazelcast Enterprise HD**</font>
 <br></br>
 
-Hazelcast High-Density Memory Store, the successor to Hazelcast Elastic Memory, is Hazelcast's new enterprise grade backend storage solution. It is currently provided for the following Hazelcast features and implementations:
+Hazelcast High-Density Memory Store is Hazelcast's enterprise grade backend storage solution. It is currently provided for the following Hazelcast features and implementations:
 
-- Map
+- [Map](#using-high-density-memory-store-with-map)
 - JCache Implementation
 - Hot Restart Persistence
 - Java Client, when using the near cache for client
@@ -24,11 +24,4 @@ By default, Hazelcast offers a production ready, low garbage collection (GC) pre
 In <font color="##153F75">**Hazelcast Enterprise HD**</font>, the High-Density Memory Store is built around a pluggable memory manager which enables multiple memory stores. These memory stores are all accessible using a common access layer that scales up to Terabytes of main memory on a single JVM. At the same time, by further minimizing the GC pressure, High-Density Memory Store enables predictable application scaling and boosts performance and latency while minimizing pauses for Java Garbage Collection.
 
 This foundation includes, but is not limited to, storing keys and values next to the heap in a native memory region.
-
-<br></br>
-***RELATED INFORMATION***
-
-*Please refer to the [Hazelcast JCache chapter](#hazelcast-jcache) for the details of Hazelcast JCache implementation. As mentioned, High-Density Memory Store is used with Hazelcast JCache implementation.*
-<br></br>
-
 
