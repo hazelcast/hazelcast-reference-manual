@@ -5,7 +5,7 @@ When you try to read a record with the key `k`, if the current node is not the o
 Hazelcast sends a remote operation to the owner node. Each remote operation means lots of network trips. 
 If your cache is used for mostly read operations, it is advised to use a near cache storage in front of the cache itself to read cache records faster and consume less network traffic.
 <br><br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache for JCache is only available for clients NOT servers.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache for JCache is only available for clients NOT members.*
 <br><br>
 
 However, using near cache comes with some trade-off for some cases:

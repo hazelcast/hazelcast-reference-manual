@@ -62,7 +62,7 @@ The flow is quite complex but extremely powerful since everything is executed in
 Beginning with the package level, there is one basic package: `com.hazelcast.mapreduce`. This includes the external API and the **impl** package which itself contains the internal implementation.
 
  - The **impl** package contains all the default `KeyValueSource` implementations and abstract base and support classes for the exposed API.
- - The **client** package contains all classes that are needed on client and server (node) side when a client offers a MapReduce job.
+ - The **client** package contains all classes that are needed on client and member side when a client offers a MapReduce job.
  - The **notification** package contains all "notification" or event classes that notify other members about progress on operations.
  - The **operation** package contains all operations that are used by the workers or job owner to coordinate work and sync partition or reducer processing.
  - The **task** package contains all classes that execute the actual MapReduce operation. It features the supervisor, mapping phase implementation and mapping and reducing tasks.

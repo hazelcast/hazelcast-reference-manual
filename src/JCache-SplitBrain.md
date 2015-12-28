@@ -27,7 +27,7 @@ The motivation of this interface is that while merging cache entries, actual key
 
 At worst case, value is returned from the merge method as selected, meaning that in all cases, value is accessed. So even if the the conversion is done as lazy, it will be processed at this point. But by default, key and value are converted to their original types unless this `StorageTypeAwareCacheMergePolicy` is used.
 
-Another motivation for using this interface is that at the server side, there is no need to locate classes of stored entries. It means that entries can be put from the client with `BINARY` in-memory format and the classpath of the client can be different from the server. So in this case, if entries try to convert to their original types while merging, `ClassNotFoundException` is thrown here.
+Another motivation for using this interface is that at the member side, there is no need to locate classes of stored entries. It means that entries can be put from the client with `BINARY` in-memory format and the classpath of the client can be different from the member. So in this case, if entries try to convert to their original types while merging, `ClassNotFoundException` is thrown here.
 
 As a result, both for performance and for the `ClassNotFoundException` mentioned above, it is strongly recommended that you use this interface if the original values of key and values are not needed.
 

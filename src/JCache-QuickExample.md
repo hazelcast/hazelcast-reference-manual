@@ -7,7 +7,7 @@ inside an application in an easy but typesafe way.
 
 ```java
 // Retrieve the CachingProvider which is automatically backed by
-// the chosen Hazelcast server or client provider
+// the chosen Hazelcast member or client provider
 CachingProvider cachingProvider = Caching.getCachingProvider();
 
 // Create a CacheManager
