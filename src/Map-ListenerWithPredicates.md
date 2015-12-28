@@ -2,11 +2,11 @@
 
 
 
-## Continuous Query
 
-Continuous query enables you to listen to the modifications performed on specific map entries. It is an entry listener with predicates. Please see the [Listening to Map Events section](#listening-to-map-events) for information on how to add entry listeners to a map.
+### Listening to Map Entries with Predicates
 
-### Listening to Predicate Map Entries
+You can listen to the modifications performed on specific map entries. You can think of it as an entry listener with predicates. Please see the [Listening for Map Events section](#listening-for-map-events) for information on how to add entry listeners to a map.
+
 
 As an example, let's listen to the changes made on an employee with the surname "Smith". First, let's create the `Employee` class.
 
@@ -30,7 +30,7 @@ public class Employee implements Serializable {
 }
 ```
 
-Then, let's create the continuous query by adding the entry listener with the `surname` predicate.
+Then, let's create a continuous query by adding the entry listener with the `surname` predicate.
 
 ```java
 import com.hazelcast.core.*;
