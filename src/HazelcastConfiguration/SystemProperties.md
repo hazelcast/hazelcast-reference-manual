@@ -78,6 +78,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.io.thread.count` | 3 | int | Number of threads performing socket input and socket output. If, for example, the default value (3) is used, it means there are 3 threads performing input and 3 threads performing output (6 threads in total).
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
+`hazelcast.jmx.detailed` | false | bool  |   Enable cluster-wide stats for [List](#List), [Map](#Map), [ReplicatedMap](#ReplicatedMap), [Queue](#Queue), [Set](#Set) and [Topic](#Topic) in [JMX](#monitoring-with-jmx) agent.
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
 `hazelcast.map.expiry.delay.seconds`|10|int|Useful to deal with some possible edge cases. For example, when using EntryProcessor, without this delay, you may see an EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup. As a result of this, when backup promotes to owner, you will end up an unprocessed key.
 `hazelcast.map.load.chunk.size` | 1000 | int |   Chunk size for [MapLoader](#map-persistence)'s map initialization process (MapLoader.loadAllKeys()).
@@ -116,7 +117,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.query.max.local.partition.limit.for.precheck`|3|int|Maximum value of local partitions to trigger local pre-check for TruePredicate query operations on maps.
 `hazelcast.query.result.size.limit`|-1|int|Result size limit for query operations on maps. This value defines the maximum number of returned elements for a single query result. If a query exceeds this number of elements, a QueryResultSizeExceededException will be thrown. Its default value is -1, meaning it is disabled.
 `hazelcast.rest.enabled` | true | bool |   Enable [REST](#rest-client) client request listener service.
-`hazelcast.shutdownhook.enabled` | true | bool  | Enable Hazelcast shutdownhook thread. When this is enabled, this thread terminates the Hazelcast instance without waiting to shutdown gracefully. 
+`hazelcast.shutdownhook.enabled` | true | bool  | Enable Hazelcast shutdownhook thread. When this is enabled, this thread terminates the Hazelcast instance without waiting to shutdown gracefully.
 `hazelcast.slow.operation.detector.enabled`|true|bool|Enables/disables the [SlowOperationDetector](#slowoperationdetector).
 `hazelcast.slow.operation.detector.log.purge.interval.seconds`|300|int|Purge interval for slow operation logs.
 `hazelcast.slow.operation.detector.log.retention.seconds`|3600|int|Defines the retention time of invocations in slow operation logs. If an invocation is older than this value, it will be purged from the log to prevent unlimited memory usage. When all invocations are purged from a log, the log itself will be deleted.
@@ -127,7 +128,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.socket.client.bind.any` | true | bool |   Bind client-sockets to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
 `hazelcast.socket.client.receive.buffer.size`|-1|int|Hazelcast creates all connections with receive buffer size set according to the `hazelcast.socket.receive.buffer.size`. When it detects a connection opened by a client, then it adjusts the receive buffer size according to this property. It is in kilobytes and the default value is -1.
 `hazelcast.socket.client.send.buffer.size`|-1|int|Hazelcast creates all connections with send buffer size set according to the `hazelcast.socket.send.buffer.size`. When it detects a connection opened by a client, then it adjusts the send buffer size according to this property. It is in kilobytes and the default value is -1.
-`hazelcast.socket.connect.timeout.seconds`|0|int|Socket connection timeout in seconds. `Socket.connect()` will be blocked until either connection is established or connection is refused or this timeout passes. Default is 0, means infinite. 
+`hazelcast.socket.connect.timeout.seconds`|0|int|Socket connection timeout in seconds. `Socket.connect()` will be blocked until either connection is established or connection is refused or this timeout passes. Default is 0, means infinite.
 `hazelcast.socket.keep.alive` | true | bool  | Socket set keep alive (`SO_KEEPALIVE`).
 `hazelcast.socket.linger.seconds`|0|int|Set socket `SO_LINGER` option.
 `hazelcast.socket.no.delay` | true | bool  |   Socket set TCP no delay.
@@ -138,4 +139,3 @@ Property Name | Default Value | Type | Description
 `hazelcast.unsafe.mode` | auto | string  |   Other than the default "auto", it has two other values. One of them is "disabled" to explicitly disable the `Unsafe` usage in your platform. The other one is "enforced" to enforce the usage of `Unsafe` even if your platform does not support it. The default value "auto" automatically detects whether the usage of `Unsafe` is suitable for a given platform. This property can only be set by passing a JVM-wide system property.
 `hazelcast.version.check.enabled` | true | bool  |   Enable Hazelcast new version check on startup.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.
-
