@@ -54,7 +54,7 @@ QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
 
 ```
 
-### Features of Continuous Query Cache
+### Features of Continuous Query
 
 The following features of the continuous query cache is valid both for the member and client.
 
