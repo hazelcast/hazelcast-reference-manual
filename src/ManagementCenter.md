@@ -601,13 +601,13 @@ If an exception occurs during the state change or shutdown operation on the clus
 
 **Force Start the Cluster**
 
-Restart process can not complete if a node crashes permanently and can not recover from the failure since since it can not start or, fail to load its own data. In that case, you can force the cluster to clean its persisted data and make a fresh-new start. This process is called force start.
+Restart process cannot be completed if a node crashes permanently and cannot recover from the failure since it cannot start or, fail to load its own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**.
 
 ![](images/ForceStart.png)
 
-- Click the **Force Start** button. A pop-up will appear and stay on screen until the operation is triggered.
+Click the **Force Start** button. A pop-up will appear and stay on screen until the operation is triggered.
 
-If an exception occurs, this exception message will be showed on the screen as a notification. 
+If an exception occurs, this exception message will be showed on the screen as a notification.
 
 ### Checking Past Status with Time Travel
 
