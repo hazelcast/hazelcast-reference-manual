@@ -37,9 +37,11 @@ In the case of a restart after a cluster crash, the Hot Restart feature realizes
 
 ##### Force Start
 
-It can happen that a node can crash permanently and can not recover from the failure. In that case, restart process can not complete since some of the nodes do not start or fail to load their own data. In that case, you can force the cluster to clean its persisted data and make a fresh-new start. This process is called force start. 
+It can happen that a node can crash permanently and cannot recover from the failure. In that case, restart process cannot be completed since some of the members do not start or fail to load their own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**. 
    
-You can trigger force start process using management center, REST API and cluster management scripts. Force start process is managed by the master node. Therefore, you should trigger the force start on master node. 
+You can trigger the force start process using the Management Center, REST API and cluster management scripts. Force start process is managed by the master member. Therefore, you should trigger the force start on master member.
+
+Please refer to the [Hot Restart functionality](#hot-restart) of the Management Center section to learn how you can perform a force start using the Management Center.
 
 ### Configuring Hot Restart
 
