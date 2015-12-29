@@ -15,7 +15,7 @@ You can set up Cluster Quorum using either declarative or programmatic configura
 
 Assume that you have a 5-node Hazelcast Cluster and you want to set the minimum number of 3 nodes for the cluster to continue operating. The following examples are configurations for this scenario.
 
-##### Declarative Configuration
+**Declarative:**
 
 ```xml
 <hazelcast>
@@ -32,7 +32,7 @@ Assume that you have a 5-node Hazelcast Cluster and you want to set the minimum 
 
 ```
 
-##### Programmatic Configuration
+**Programmatic:**
 
 ```java
 QuorumConfig quorumConfig = new QuorumConfig();
@@ -49,7 +49,11 @@ config.addMapConfig(mapConfig);
 
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Please refer to the [Quorum Configuration section](#quorum-configuration) for the full description of quorum configuration.*
+Quorum configuration has the following elements.
+
+
+- `quorum-size`: Minimum number of members required in a cluster for the cluster to remain in an operational state. If the number of members is below the defined minimum at any time, the operations are rejected and the rejected operations return a QuorumException to their callers.
+- `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
 
 
 
@@ -59,7 +63,7 @@ You can register quorum listeners to be notified about quorum results. Quorum li
 
 Quorum listeners can be configured via declarative or programmatic configuration. The following examples are such configurations.
 
-##### Declarative Configuration
+**Declarative:**
 
 ```xml
 <hazelcast>
@@ -78,7 +82,7 @@ Quorum listeners can be configured via declarative or programmatic configuration
 </hazelcast>
 ```
 
-##### Programmatic Configuration
+**Programmatic:**
 
 ```java
 QuorumListenerConfig listenerConfig = new QuorumListenerConfig();
