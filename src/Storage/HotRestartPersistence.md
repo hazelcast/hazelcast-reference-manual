@@ -35,6 +35,11 @@ If a member fails to either start, join the cluster in time (within the timeout)
 
 In the case of a restart after a cluster crash, the Hot Restart feature realizes that it was not a clean shutdown and Hazelcast tries to restart the cluster with the last saved data following the process explained above. In some cases, specifically when the cluster crashes while it has an ongoing partition migration process, currently it is not possible to restore the last saved state.
 
+##### Force Start
+
+It can happen that a node can crash permanently and can not recover from the failure. In that case, restart process can not complete since some of the nodes do not start or fail to load their own data. In that case, you can force the cluster to clean its persisted data and make a fresh-new start. This process is called force start. 
+   
+You can trigger force start process using management center, REST API and cluster management scripts. Force start process is managed by the master node. Therefore, you should trigger the force start on master node. 
 
 ### Configuring Hot Restart
 
