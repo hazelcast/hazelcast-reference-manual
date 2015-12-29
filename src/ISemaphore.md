@@ -70,24 +70,38 @@ As can be seen, the maximum count of concurrent threads is equal or smaller than
 
 Hazelcast also provides backup support for `ISemaphore`. When a member goes down, another member can take over the semaphore with the permit information (permits are automatically released when a member goes down). To enable this, configure synchronous or asynchronous backup with the properties `backup-count` and `async-backup-count` (by default, synchronous backup is already enabled).
 
-### Example Semaphore Configuration
+### Configuring Semaphore
 
-An example configuration is shown below.
+The following are example semaphore configurations.
+
+**Declarative:**
 
 ```xml
 <semaphore name="semaphore">
-  <initial-permits>3</initial-permits>
-  <backup-count>1</backup-count>
+   <backup-count>1</backup-count>
+   <async-backup-count>0</async-backup-count>
+   <initial-permits>3</initial-permits>
 </semaphore>
 ```
+
+**Programmatic:**
+
+```java
+Config config = new Config();
+SemaphoreConfig semaphoreConfig = config.getSemaphoreConfig();
+semaphoreConfig.setName( "semaphore" ).setBackupCount( "1" )
+        .setInitialPermits( "3" );
+```
+
+Semaphore configuration has the below elements.
+
+- `initial-permits`: the thread count to which the concurrent access is limited. For example, if you set it to "3", concurrent access to the object is limited to 3 threads.
+- `backup-count`: Number of synchronous backups.
+- `async-backup-count`: Number of asynchronous backups.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If high performance is more important (than not losing the permit information), you can disable the backups by setting `backup-count` to 0.*
 
 <br></br>
 
-***RELATED INFORMATION***
-
-
-*Please refer to the [Semaphore Configuration section](#semaphore-configuration) for a full description of Hazelcast Distributed Semaphore configuration.*
 
 
