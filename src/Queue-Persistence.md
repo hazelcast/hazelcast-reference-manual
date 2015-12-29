@@ -47,7 +47,6 @@ public class TheQueueStore implements QueueStore<Item> {
     }
 ```
 
-#### Configuring Queue Store
 
 `Item` must be serializable. Following is an example queue store configuration.
 
