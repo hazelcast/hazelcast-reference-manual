@@ -1,13 +1,10 @@
-## Continuous Query Cache
+## Continuous Query 
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
 
 <br></br>
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is supported for Hazelcast Enterprise 3.5 or higher.*
-
-A continuous query cache is used to cache the result of a continuous query. After the construction of a continuous query cache, all changes on the underlying `IMap` are immediately reflected to this cache as a stream of events.
-Therefore, this cache will be an always up-to-date view of the `IMap`. 
+A continuous query cache is used to cache the result of a continuous query. After the construction of a continuous query cache, all changes on the underlying `IMap` are immediately reflected to this cache as a stream of events. Therefore, this cache will be an always up-to-date view of the `IMap`. You can create a continuous query cache either on the client or member.
 
 ### Keeping Query Results Local and Ready
 
@@ -58,6 +55,8 @@ QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
 ```
 
 ### Features of Continuous Query Cache
+
+The following features of the continuous query cache is valid both for the member and client.
 
 * You can enable/disable the initial query that is run on the existing `IMap` data during the continuous query cache construction, according to the supplied predicate via `QueryCacheConfig#setPopulate`.
 * You can index and perform queries on a continuous query cache.
