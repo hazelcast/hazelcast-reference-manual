@@ -96,7 +96,7 @@ The toolbar has the following buttons:
   ![](images/4ChangeCluster.jpg)
 
   The user can select any cluster and once selected, the page immediately loads with the selected cluster's information.
-  
+
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Some of the above listed toolbar items are not visible to users who are not admin or who have **read-only** permission. Also, some of the operations explained in the later sections cannot be performed by users with read-only permission. Please see the [Administration section](#administration) for details.*
 
@@ -597,8 +597,17 @@ In this screen, the admin user can see the cluster state, change the cluster sta
 
 ![](images/ShutdownCluster.png)
 
-
 If an exception occurs during the state change or shutdown operation on the cluster, this exception message will be showed on the screen as a notification.
+
+**Force Start the Cluster**
+
+Restart process can not complete if a node crashes permanently and can not recover from the failure since since it can not start or, fail to load its own data. In that case, you can force the cluster to clean its persisted data and make a fresh-new start. This process is called force start.
+
+![](images/ForceStart.png)
+
+- Click the **Force Start** button. A pop-up will appear and stay on screen until the operation is triggered.
+
+If an exception occurs, this exception message will be showed on the screen as a notification. 
 
 ### Checking Past Status with Time Travel
 
