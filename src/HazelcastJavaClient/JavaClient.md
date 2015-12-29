@@ -48,12 +48,13 @@ Transactional Set|Yes|Yes|Yes
 JCache|Yes|No|No
 Ringbuffer|Yes|No|No
 Reliable Topic|No|No|No
+Hot Restart|Yes (with a near cache)|No|No
 Client Configuration Import|Yes|No|No
 Hazelcast Client Protocol|Yes|Yes|Yes
 Fail Fast on Invalid Conviguration|Yes|No|No
 Sub-Listener Interfaces for Map ListenerMap|Yes|No|No
-Continuous Query Caching|Yes|No|No
-Continuous Query (Listener with Predicate)|Yes|Yes|No
+Continuous Query|Yes|No|No
+Listener with Predicate|Yes|Yes|No
 Distributed Executor Service|Yes|No|No
 Query|Yes|Yes|Yes
 Near Cache|Yes|Yes|No
