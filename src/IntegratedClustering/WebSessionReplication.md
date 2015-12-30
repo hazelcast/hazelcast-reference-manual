@@ -1,11 +1,13 @@
 
 ## Web Session Replication
 
-This section explains how you can cluster your web sessions using filter, Tomcat and Jetty based replications. Each web session clustering is explained in the following subsections.
+This section explains how you can cluster your web sessions using Servlet Filter, Tomcat and Jetty based solutions. Each web session clustering is explained in the following subsections.
 
 Please note that [Tomcat](#tomcat-based-web-session-replication) and [Jetty](#jetty-based-web-session-replication) based web session replications are <font color="#3981DB">**Hazelcast Enterprise**</font> modules. 
 
-[Filter](#filter-based-web-session-replication) based web session replication has the option to use a map with High-Density Memory Store to keep your session objects. In this case, filter based web session replication also becomes a <font color="#3981DB">**Hazelcast Enterprise**</font> module.
+[Filter](#filter-based-web-session-replication) based web session replication has the option to use a map with High-Density Memory Store to keep your session objects. Note that High-Density Memory Store is available in <font color="##153F75">**Hazelcast Enterprise HD**</font>. Please refer to the [High-Density Memory Store section](#high-density-memory-store) for details on this feature.
+
+[Filter](#filter-based-web-session-replication) based web session replication is an open source feature. But if you have <font color="#3981DB">**Hazelcast Enterprise**</font>, you can use this replication with a map that has High-Density Memory Store.
 
 
 
@@ -175,9 +177,9 @@ It is that easy. All HTTP requests will go through Hazelcast `WebFilter` and it 
 
 #### Using High-Density Memory Store
 
-<font color="#3981DB">**Hazelcast Enterprise**</font>
-
+<font color="##153F75">**Hazelcast Enterprise HD**</font>
 <br></br>
+
 As you see in the above declarative configuration snippet, you provide the name of your map which will store the web session objects:
 
 ```
@@ -187,7 +189,7 @@ As you see in the above declarative configuration snippet, you provide the name 
 </init-param>
 ```
 
-You can configure your map to use Hazelcast's High-Density Memory Store. By this way, your session replication will use a High-Density Memory Store backed map. In this case, the filter based web session replication becomes a <font color="#3981DB">**Hazelcast Enterprise**</font> module. 
+If you have <font color="##153F75">**Hazelcast Enterprise HD**</font>, you can configure your map to use Hazelcast's High-Density Memory Store. By this way, the filter based web session replication will use a High-Density Memory Store backed map. 
 
 Please refer to the [Using High-Density Memory Store with Map section](#using-high-density-memory-store-with-map) to learn how you can configure a map to use this feature.
 
