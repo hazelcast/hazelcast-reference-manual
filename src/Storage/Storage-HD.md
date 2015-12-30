@@ -14,7 +14,7 @@ Hazelcast High-Density Memory Store is Hazelcast's enterprise grade backend stor
 - JCache Implementation
 - Hot Restart Persistence
 - Java Client, when using the near cache for client
-- Web Session Replications 
+- [Web Session Replications](#using-high-density-memory-store)
 - Hibernate 2nd Level Caching
 - Continuous Query Cache
 
