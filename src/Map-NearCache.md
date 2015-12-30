@@ -88,3 +88,32 @@ If you are using near cache, you should take into account that your hits to the 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache works only when you access data via `map.get(k)` methods.  Data returned using a predicate is not stored in the near cache.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable near cache on lite members for faster reads.*
+
+
+#### Using High-Density Memory Store with Near Cache
+
+<font color="##153F75">**Hazelcast Enterprise HD**</font>
+<br></br>
+
+Hazelcast offers High-Density Memory Store for the near caches in your maps. You can enable your near cache to use the High-Density Memory Store by simply setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
+
+
+```xml
+<hazelcast>
+  ...
+  <map name="my-read-mostly-map">
+    ...
+    <near-cache>
+       ...
+       <in-memory-format>NATIVE</in-memory-format>
+       ...
+    </near-cache>
+    ...  
+  </map>
+</hazelcast>  
+```
+
+Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
+
+Note that a map and its near cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its near cache can use it.
+
