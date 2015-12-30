@@ -1,7 +1,12 @@
 
 ## Web Session Replication
 
-If you are using Tomcat as your web container, please see the [Tomcat based Web Session Replication section](#tomcat-based-web-session-replication).
+This section explains how you can cluster your web sessions using filter, Tomcat and Jetty based replications. Each web session clustering is explained in the following subsections.
+
+Please note that [Tomcat](#tomcat-based-web-session-replication) and [Jetty](#jetty-based-web-session-replication) based web session replications are <font color="#3981DB">**Hazelcast Enterprise**</font> modules. 
+
+[Filter](#filter-based-web-session-replication) based web session replication has the option to use a map with High-Density Memory Store to keep your session objects. In this case, filter based web session replication also becomes a <font color="#3981DB">**Hazelcast Enterprise**</font> module.
+
 
 
 ### Filter Based Web Session Replication
@@ -168,7 +173,26 @@ To set up Hazelcast Session Clustering:
 
 It is that easy. All HTTP requests will go through Hazelcast `WebFilter` and it will put the session objects into the Hazelcast distributed map if needed.
 
-### Supporting Spring Security
+#### Using High-Density Memory Store
+
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+
+<br></br>
+As you see in the above declarative configuration snippet, you provide the name of your map which will store the web session objects:
+
+```
+<init-param>
+   <param-name>map-name</param-name>
+   <param-value>my-sessions</param-value>
+</init-param>
+```
+
+You can configure your map to use Hazelcast's High-Density Memory Store. By this way, your session replication will use a High-Density Memory Store backed map. In this case, the filter based web session replication becomes a <font color="#3981DB">**Hazelcast Enterprise**</font> module. 
+
+Please refer to the [Using High-Density Memory Store with Map section](#using-high-density-memory-store-with-map) to learn how you can configure a map to use this feature.
+
+
+#### Supporting Spring Security
 
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-security" target="_blank">sample application</a> for Spring Security Support.*
 <br><br/>
@@ -189,7 +213,6 @@ If Spring based security is used for your application, you should use `com.hazel
 
 `SpringAwareWebFilter` notifies Spring by publishing events to Spring context. The `org.springframework.security.core.session.SessionRegistry` instance uses these events.
 
-#### Spring Security and web.xml
 
 As before, you must also define `com.hazelcast.web.SessionListener` in your `web.xml`. However, you do not need to define `org.springframework.security.web.session.HttpSessionEventPublisher` in your `web.xml` as before, since `SpringAwareWebFilter` already informs Spring about session based events like `create` or `destroy`. 
 
