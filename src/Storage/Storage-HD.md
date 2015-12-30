@@ -10,9 +10,9 @@ This chapter describes Hazelcast's High-Density Memory Store and Hot Restart Per
 
 Hazelcast High-Density Memory Store is Hazelcast's enterprise grade backend storage solution. It is currently provided for the following Hazelcast features and implementations:
 
-- [Map](#using-high-density-memory-store-with-map)
+- [Map](#using-high-density-memory-store-with-map) and [near cache](#using-high-density-memory-store-with-near-cache)
 - JCache Implementation
-- Hot Restart Persistence
+- [Hot Restart Persistence](#hot-restart-persistence)
 - Java Client, when using the near cache for client
 - [Web Session Replications](#using-high-density-memory-store)
 - Hibernate 2nd Level Caching
