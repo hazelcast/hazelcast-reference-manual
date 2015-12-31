@@ -57,10 +57,6 @@ Property Name | Default Value | Type | Description
 `hazelcast.connection.monitor.max.faults` | 3 | int  |   Maximum IO error count before disconnecting from a node.
 `hazelcast.discovery.public.ip.enabled` | false | bool | Enable use of public IP address in node discovery with Discovery SPI.
 `hazelcast.enterprise.license.key` | null | string  |   <a href="http://www.hazelcast.com/products.jsp" target="_blank">Hazelcast Enterprise</a> license key.
-`hazelcast.enterprise.wanrep.batch.size`|50|int|Maximum number of WAN replication events to be drained and sent to the target cluster in a batch.
-`hazelcast.enterprise.wanrep.batchfrequency.seconds`|5|int|Batch sending frequency in seconds.
-`hazelcast.enterprise.wanrep.optimeout.millis`|60000|int|Timeout duration (in milliseconds) for a WAN replication event before retry.
-`hazelcast.enterprise.wanrep.queue.capacity`|100000|int|Event queue capacity for WAN replication.
 `hazelcast.event.queue.capacity` | 1000000 | int | Capacity of internal event queue.
 `hazelcast.event.queue.timeout.millis` | 250 | int | Timeout to enqueue events to event queue.
 `hazelcast.event.thread.count` | 5 | int | Number of event handler threads.

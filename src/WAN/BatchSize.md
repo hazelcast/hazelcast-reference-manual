@@ -2,23 +2,33 @@
 ### WAN Replication Batch Size
 
 When `WanBatchReplication` is preferred as the replication implementation, the maximum size of events that are sent in a single batch can be changed 
-depending on your needs. Default value for batch size is `50`.
+depending on your needs. Default value for batch size is `500`.
 
-To change the `WanBatchReplication` batch size, use the `hazelcast.enterprise.wanrep.batch.size` property in Hazelcast Enterprise.
+Batch size can be set for each target cluster by modifying related `WanTargetClusterConfig`.
 
-You can do this by setting the property on the command line (where xxx is the batch size),
-
-```plain
--Dhazelcast.enterprise.wanrep.batch.size=xxx
-```
-
-or by setting the property inside the `hazelcast.xml` (where xxx is the requested batch size):
+You can change this property by XML config (where xxx is the maximum delay in milliseconds),
 
 ```xml
-<hazelcast>
-  <properties>
-    <property name="hazelcast.enterprise.wanrep.batch.size">xxx</property>
-  </properties>
-</hazelcast>
+...
+ <wan-replication name="my-wan-cluster">
+    <target-cluster group-name="london" group-password="london-pass">
+        ...
+        <batch-size>xxx</batch-size>
+        ...
+    </target-cluster>
+ </wan-replication>
+...
+```
+
+or programmatically
+
+```java
+...
+ WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
+ WanTargetClusterConfig targetClusterConfig = new WanTargetClusterConfig();
+ ...
+ targetClusterConfig.setBatchSize(xxx);
+ wanConfig.addTargetClusterConfig(targetClusterConfig)
+...
 ``` 
 
