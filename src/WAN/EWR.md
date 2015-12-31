@@ -1,8 +1,3 @@
-
-## Enterprise WAN Replication
-
-![](images/enterprise-onlycopy.jpg)
-
 ### Replication implementations
 
 Enterprise WAN replication has two different replication implementations. These are `WanNoDelayReplication` and `WanBatchReplication` implementations.

@@ -1,27 +1,36 @@
 
-### WAN Replication Batch Frequency
+### WAN Replication Batch Maximum Delay
 
 When using `WanBatchReplication` if the number of WAN replication events generated does not reach [WAN Replication Batch Size](#wan-replication-batch-size),
 they are sent to the target cluster after a certain amount of time is passed.
 
-Default value of for this duration is `5` seconds.
+Default value of for this duration is `1` seconds.
 
-To change the `WanBatchReplication` batch sending frequency, set `hazelcast.enterprise.wanrep.
-batchfrequency.seconds` property.
+Maximum delay can be set for each target cluster by modifying related `WanTargetClusterConfig`.
 
-You can set the property on the command line (where xxx is the batch sending frequency in seconds),
-
-```plain
--Dhazelcast.enterprise.wanrep.batchfrequency.seconds=xxx
-```
-
-or by setting the properties inside the `hazelcast.xml` (where xxx is the requested batch sending frequency):
+You can change this property by XML config (where xxx is the maximum delay in milliseconds),
 
 ```xml
-<hazelcast>
-  <properties>
-    <property name="hazelcast.enterprise.wanrep.batchfrequency.seconds">xxx</property>
-  </properties>
-</hazelcast>
+...
+ <wan-replication name="my-wan-cluster">
+    <target-cluster group-name="london" group-password="london-pass">
+        ...
+        <batch-max-delay-millis>xxx</batch-max-delay-millis>
+        ...
+    </target-cluster>
+ </wan-replication>
+...
+```
+
+or programmatically
+
+```java
+...
+ WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
+ WanTargetClusterConfig targetClusterConfig = new WanTargetClusterConfig();
+ ...
+ targetClusterConfig.setBatchMaxDelayMillis(xxx);
+ wanConfig.addTargetClusterConfig(targetClusterConfig)
+...
 ``` 
 
