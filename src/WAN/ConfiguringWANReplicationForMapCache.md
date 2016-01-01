@@ -17,14 +17,40 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
   <map name="my-shared-map">
     <wan-replication-ref name="my-wan-cluster">
        <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
-      ...
+       <republishing-enabled>false</republishing-enabled>
     </wan-replication-ref>
   </map>
   ...
 </hazelcast>
 ```
+
+And, the following is the equivalent programmatic configuration:
+
+```java
+Config config = new Config();
+
+WanReplicationConfig wrConfig = new WanReplicationConfig();
+WanTargetClusterConfig  wtcConfig = wrConfig.getWanTargetClusterConfig();
+
+wrConfig.setName("my-wan-cluster");
+...
+config.addWanReplicationConfig(wrConfig);
+
+WanReplicationRef wanRef = new WanReplicationRef();
+wanRef.setName("my-wan-cluster");
+wanRef.setMergePolicy(PassThroughMergePolicy.class.getName());
+wanRef.setRepublishingEnabled(false);
+config.getMapConfig("my-shared-map").setWanReplicationRef(wanRef);
+```
+
 You see that we have `my-shared-map` configured to replicate itself to the cluster targets defined in the earlier
 `wan-replication` element.
+
+`wan-replication-ref` has the following elements;
+
+- `name`: Name of `wan-replication` configuration. IMap or ICache instance uses this `wan-replication` configuration. 
+- `merge-policy`: Resolve conflicts that are occurred when target cluster already has the replicated entry key.
+- `republishing-enabled`: When enabled, an incoming event to a member is forwarded to target cluster of that member.
 
 When using Active-Active Replication, multiple clusters can simultaneously update the same entry in a distributed data structure.
 You can configure a merge policy to resolve these potential conflicts, as shown in the above example configuration (using the `merge-policy` sub-element under the `wan-replication-ref` element).
@@ -42,9 +68,45 @@ Hazelcast provides the following merge policies for IMap:
 
 **Enabling WAN Replication for ICache:**
 
+The following is a declarative configuration example for enabling WAN Replication for ICache:
 
 
-Hazelcast provides the following merge policies for IMap:
+```xml
+<wan-replication name="my-wan-cluster">
+   ...
+</wan-replication>
+<cache name="my-shared-cache">
+   <wan-replication-ref name="my-wan-cluster">
+      <merge-policy>com.hazelcast.cache.merge.PassThroughCacheMergePolicy</merge-policy>
+      <republishing-enabled>true</republishing-enabled>
+   </wan-replication-ref>
+</cache>
+```
+
+And, the following is the equivalent programmatic configuration:
+
+
+```java
+Config config = new Config();
+
+WanReplicationConfig wrConfig = new WanReplicationConfig();
+WanTargetClusterConfig  wtcConfig = wrConfig.getWanTargetClusterConfig();
+
+wrConfig.setName("my-wan-cluster");
+...
+config.addWanReplicationConfig(wrConfig);
+
+WanReplicationRef cacheWanRef = new WanReplicationRef();
+cacheWanRef.setName("my-wan-cluster");
+cacheWanRef.setMergePolicy("com.hazelcast.cache.merge.PassThroughCacheMergePolicy");
+cacheWanRef.setRepublishingEnabled(true);
+config.getCacheConfig("my-shared-cache").setWanReplicationRef(cacheWanRef);
+```
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Caches that are created dynamically do not support WAN replication functionality. Cache configurations should be defined either declaratively (by XML) or programmatically on both source and target clusters.*
+
+
+Hazelcast provides the following merge policies for ICache:
 
 - `com.hazelcast.cache.merge.HigherHitsCacheMergePolicy`: Incoming entry merges from the source cache to the target cache if the source entry has more hits than the target one.
 - `com.hazelcast.cache.merge.PassThroughCacheMergePolicy`: Incoming entry merges from the source cache to the target cache unless the incoming entry is not null.
