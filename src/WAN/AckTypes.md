@@ -1,7 +1,7 @@
 
-### WAN Replication Acknowledge Types
+### Acknowledge Types
 
-Starting with 3.6, Enterprise WAN replication supports different acknowledge (ACK) types for each target cluster group.
+Starting with 3.6, WAN replication supports different acknowledge (ACK) types for each target cluster group.
 Using this ACK types, you can choose from two different ACK types depending on your consistency requirements. The following ACK types are supported:
  
 - `ACK_ON_RECEIPT`: Events that are received by target cluster that are considered as successful. This option does not guarantee that the received event is actually applied but it is faster.
@@ -19,7 +19,7 @@ The following is an example configuration:
 </wan-replication>
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *`acknowledge-type` configuration is optional. Default value of it is `ACK_ON_RECEIPT`*.
+![image](images/NoteSmall.jpg) ***NOTE:*** *`acknowledge-type` configuration is optional. Its default value is `ACK_ON_RECEIPT`*.
 
 
 
