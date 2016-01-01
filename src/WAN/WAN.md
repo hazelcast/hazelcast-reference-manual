@@ -1,6 +1,7 @@
 # WAN
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+<br></br>
 
 This chapter explains how you can replicate the state of your clusters over Wide Area Network (WAN) environments.
 
