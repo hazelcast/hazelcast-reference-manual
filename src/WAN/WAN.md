@@ -5,6 +5,14 @@
 
 This chapter explains how you can replicate the state of your clusters over Wide Area Network (WAN) environments.
 
+<br></br>
+***RELATED INFORMATION***
+
+*You can download the white paper **Hazelcast on AWS: Best Practices for Deployment** from
+<a href="http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/" target="_blank">Hazelcast.com</a>.*
+
+<br></br>
+
 ## WAN Replication
 
 There are cases where you need to synchronize multiple clusters to the same state. Synchronization of clusters, also known as
