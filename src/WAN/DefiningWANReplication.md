@@ -48,8 +48,8 @@ The following are the definitions for the configuration elements:
 - `name`: Name for your WAN replication configuration.
 - `snapshot-enabled`: Only valid when used with `WanBatchReplication`. When set to `true`, only the latest events (based on key) are selected and sent in a batch. 
 - `target-cluster`: Configures target cluster's group name and password.
-- `replication-impl`: Name of the class implementation for the Enterprise WAN replication.
-- `end-points`: IP addresses of the cluster members for which the Enterprise WAN replication is implemented.
+- `replication-impl`: Name of the class implementation for the WAN replication.
+- `end-points`: IP addresses of the cluster members for which the WAN replication is implemented.
 
 
 And the following is the equivalent programmatic configuration snippet:
@@ -108,8 +108,8 @@ The implementation `WanNoDelayReplication` sends replication events to the targe
 
 The implementation `WanBatchReplication`, on the other hand, waits until:
 
--  a pre-defined number of replication events are generated, (please refer to the [Wan Replication Batch Size section](#wan-replication-batch-size)).
-- or a pre-defined amount of time is passed (please refer to the [Wan Replication Batch Frequency section](#wan-replication-batch-frequency)).
+-  a pre-defined number of replication events are generated, (please refer to the [Batch Size section](#batch-size)).
+- or a pre-defined amount of time is passed (please refer to the [Batch Maximum Delay section](#batch-maximum-delay)).
 
 
 
