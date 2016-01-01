@@ -17,7 +17,7 @@ The following is an example configuration:
 <wan-replication name="my-wan-cluster">
   <target-cluster group-name="test-cluster-1" group-password="test-pass">
     ...
-    <queue-full-behavior>ACK_ON_OPERATION_COMPLETE</queue-full-behavior>
+    <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
   </target-cluster>
 </wan-replication>
 ```
