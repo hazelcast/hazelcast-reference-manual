@@ -38,7 +38,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Monitoring with JMX](#monitoring-with-jmx)|[MBean Naming for Hazelcast Data Structures](#mbean-naming-for-hazelcast-data-structures) and [Connecting to JMX Agent](#connecting-to-jmx-agent) added as new sections.
 ||[Enabling Lite Members](#enabling-lite-members)|Added as a new section. Also [Data Partitioning](#data-partitioning) and [Partition Table](#partition-table) sections  updated to include Lite Member related information.
 |[Chapter 18 - Security](#security)|[SSL](#ssl)|First paragraph updated to include the information that SSL is capable of securing socket level communication between Hazelcast members and clients too.
-|[Chapter 21 - WAN](#wan)||[WAN Replication Event Filtering API section](#wan-replication-event-filtering-api) and [WAN Replication Acknowledge Types section](#wan-replication-acknowledge-types) added as new sections to explain the improvements performed for Hazelcast WAN replication feature.<br></br> A note related to the methods `clear`, `destroy` and `evictAll` added to the [WAN Replication Additional Information section](#wan-replication-additional-information).|
+|[Chapter 21 - WAN](#wan)||Whole chapter updated and new content added.|
 |[Chapter 22 - OSGI](#osgi)||Added as a new chapter.|
 |[Chapter 23 - Hazelcast Configuration](#hazelcast-configuration)||Improved by adding missing configuration elements and attributes. Added [Quorum Configuration](#quorum-configuration) section.|
 ||[Network Configuration](#network-configuration)|[Join](#join) section updated by adding the explanation for `discovery-strategies` element.
