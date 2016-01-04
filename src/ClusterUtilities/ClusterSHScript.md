@@ -1,14 +1,7 @@
-### Scripts In The Package
 
-When you download hazelcast zip/tar.gz package, you will find 3 scripts under `bin` folder.
 
-These scripts provides basic functionality for member/cluster management, These scripts are :
 
-1. `server.sh/server.bat` starts a hazelcast member with default configuration under working directory
-2. `stop.sh/stop.bat` stops the hazelcast member started in current working directory.
-3. `cluster.sh` provides basic functionality for cluster management such as getting and changing cluster state, shutting down cluster or you can force the cluster to clean its persisted data and make a fresh-new start.
-
-#### Cluster Management Script Manual
+#### Using the Script cluster.sh
 
 `cluster.sh` needs a few parameters to operate, if these parameters are not provided default values are used. Table below describes these parameters,
 
