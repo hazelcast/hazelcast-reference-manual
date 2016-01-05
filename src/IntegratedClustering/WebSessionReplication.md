@@ -53,6 +53,16 @@ To set up Hazelcast Session Clustering:
     <param-value>my-sessions</param-value>
   </init-param>
   <!--
+    TTL value of the distributed map storing
+    your web session objects.
+    Any integer between 0 and Integer.MAX_VALUE.
+    Default is 1800 which is 30 minutes.
+  -->
+  <init-param>
+    <param-name>session-ttl-seconds</param-name>
+    <param-value>10</param-value>
+  </init-param>
+  <!--
     How is your load-balancer configured?
     sticky-session means all requests of a session
     is routed to the node where the session is first created.
@@ -286,3 +296,23 @@ Here is an example:
 ...
 ```
 <br></br>
+
+#### Client/Server Configuration
+
+In client/server mode of session replication `session-ttl-seconds` config does not have any effect, because filter based session replication uses IMap and hazelcast client cannot change configuration of a distributed map.
+You should configure `max-idle-seconds` parameter in your hazelcast.xml on the server side. 
+
+ ```
+ ...
+   <map name="my-sessions">
+         <!--
+            How much seconds you want your session attributes to stored on server?
+            Default is 0.
+          -->
+        <max-idle-seconds>20</max-idle-seconds>
+   </map>
+ ...
+ ```
+ <br></br>
+ 
+ Also make sure that name of the distributed map is same as the `map-name` parameter defined in your `web.xml` config file.
