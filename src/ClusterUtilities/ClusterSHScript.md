@@ -3,60 +3,77 @@
 
 #### Using the Script cluster.sh
 
-`cluster.sh` needs a few parameters to operate, if these parameters are not provided default values are used. Table below describes these parameters,
+The script `cluster.sh` that comes with the Hazelcast package is used to get/change the state of your cluster, to shutdown your cluster and to force your cluster to clean its persisted data and make a fresh start. The latter is the Force Start operation of Hazelcast's Hot Restart Persistence feature. Please refer to the [Force Start section](#force-start).
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *The script `cluster.sh` uses `curl` command and `curl` must be installed to be able to use the script.*
+<br></br>
+
+The script `cluster.sh` needs the following parameters to operate according to your needs. If these parameters are not provided, the default values are used.
 
 Parameter | Default Value | Description
 :--------------|:------|:------------
-`-o` or `--operation`|`get-state`|Executes cluster-wide operation. Operation can be `get-state`, `change-state`, `shutdown` and `force-start`.
-`-s` or `--state`|None|Updates state of the cluster to new state. New state can be `active`, `frozen`, `passive`. Used with `change-state` operation and has no default value. A valid state should be provided.
-`-a` or `--address`|`127.0.0.1`|Defines ip address of a member who is part of a cluster. If you want to manage your cluster from a remote machine, you should provide ip address of a member to the script.
-`-p` or `--port`|`5701`|Defines which port hazelcast is running on local or remote machine. Default value is `5701`.
-`-g` or `--groupname`|`dev`|Defines group-name property of hazelcast cluster. Groupname property is used for simple authentication mechanism.
-`-P` or `--password`|`dev-pass`|Defines group password property of hazelcast cluster. Password property is used for simple authentication mechanism.
+`-o` or `--operation`|`get-state`|Executes a cluster-wide operation. Operation can be `get-state`, `change-state`, `shutdown` and `force-start`.
+`-s` or `--state`|None|Updates the state of the cluster to a new state. New state can be `active`, `frozen`, `passive`. It is used with the operation `change-state` and has no default value. You should provide a valid state.
+`-a` or `--address`|`127.0.0.1`|Defines the IP address of a cluster member. If you want to manage your cluster remotely, you should provide the IP address of a member to the script.
+`-p` or `--port`|`5701`|Defines on which port Hazelcast is running on the local or remote machine. Its default value is `5701`.
+`-g` or `--groupname`|`dev`|Defines the name of a cluster group which is used for a simple authentication. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
+`-P` or `--password`|`dev-pass`|Defines the password of a cluster group. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
 
-Script is self-documented, you can reach parameters via `sh cluster.sh -h` or `sh cluster.sh --help` command.
+The script `cluster.sh` is self-documented; you can see the parameter descriptions using the command `sh cluster.sh -h` or `sh cluster.sh --help`.
 
-#### Use Cases
+##### Example Usages for cluster.sh
 
-In this tutorial we will sample usages for script, let's say we have cluster running on remote machines and one hazelcasst member is running on ip `172.16.254.1` and on port
+Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP  `172.16.254.1` and on the port
 `5702`. Group name and password of the cluster is `test/test`.
 
-Sample usage to get cluster state :
+<br></br>
+**Getting the cluster state:**
+
+To get the state of the cluster, use the following command:
 
 `sh cluster.sh -o get-state -a 172.16.254.1 -p 5702 -g test -P test`
 
-or
+The following also gets the cluster state, using the alternative parameter names (e.g. `--port` instead of `-p`):
 
 `sh cluster.sh --operation get-state --address 172.16.254.1 --port 5702 --groupname test --password test`
 
+<br></br>
+**Changing the cluster state:**
 
-Sample usage to change cluster state to frozen state :
+To change the state of the cluster to `frozen`, use the following command:
 
 `sh cluster.sh -o change-state -s frozen -a 172.16.254.1 -p 5702 -g test -P test`
 
-or
+Similarly, you can use the following command for the same purpose:
 
 `sh cluster.sh --operation change-state --state frozen --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 
+<br></br>
+**Shutting down the cluster:**
 
-Sample usage to shutdown cluster:
+To shutdown the cluster, use the following command:
 
 `sh cluster.sh -o shutdown -a 172.16.254.1 -p 5702 -g test -P test`
 
-or
+Similarly, you can use the following command for the same purpose:
+
 
 `sh cluster.sh --operation shutdown --address 172.16.254.1 --port 5702 --groupname test --password test`
 
-Sample usage to forcing cluster to start:
+
+<br></br>
+**Force starting the cluster:**
+
+To force start the cluster, use the following command:
 
 `sh cluster.sh -o force-start -a 172.16.254.1 -p 5702 -g test -P test`
 
-or
+Similarly, you can use the following command for the same purpose:
 
 `sh cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** * `cluster.sh` script uses `curl` command and must be installed before using the script. Also there is no cluster management scripts provided for windows platform at the moment.
+![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, this script is not supported on the Windows platforms.*
 <br></br>
