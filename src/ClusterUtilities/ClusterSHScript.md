@@ -21,6 +21,11 @@ Parameter | Default Value | Description
 
 The script `cluster.sh` is self-documented; you can see the parameter descriptions using the command `sh cluster.sh -h` or `sh cluster.sh --help`.
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *You can perform the above operations using the Hot Restart tab of Hazelcast Management Center or using the REST API. Please see the [Hot Restart section](#hot-restart) and [Using REST API for Cluster Management section](#using-rest-api-for-cluster-management).*
+<br></br>
+
+
 ##### Example Usages for cluster.sh
 
 Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP  `172.16.254.1` and on the port
