@@ -39,6 +39,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Monitoring with JMX](#monitoring-with-jmx)|[MBean Naming for Hazelcast Data Structures](#mbean-naming-for-hazelcast-data-structures) and [Connecting to JMX Agent](#connecting-to-jmx-agent) added as new sections.
 ||[Enabling Lite Members](#enabling-lite-members)|Added as a new section. Also [Data Partitioning](#data-partitioning) and [Partition Table](#partition-table) sections  updated to include Lite Member related information.
 ||[Using the Script cluster.sh](#using-the-script-cluster-sh)|Added as a new section explaining this cluster management script that comes when you download Hazelcast. 
+||[Using REST API for Cluster Management](#using-rest-api-for-cluster-management)|Added as a new section explaining how you can use REST commands to manage your cluster. 
 |[Chapter 18 - Security](#security)|[SSL](#ssl)|First paragraph updated to include the information that SSL is capable of securing socket level communication between Hazelcast members and clients too.
 |[Chapter 21 - WAN](#wan)||Whole chapter updated and new content added.|
 |[Chapter 22 - OSGI](#osgi)||Added as a new chapter.|
