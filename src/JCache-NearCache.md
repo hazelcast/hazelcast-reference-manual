@@ -24,7 +24,7 @@ You can use the following system properties to configure the sending of invalida
 
 - `hazelcast.cache.invalidation.batch.enabled`: Specifies whether the cache invalidation event batch sending is enabled or not. The default value is `true`.
 - `hazelcast.cache.invalidation.batch.size`: Maximum number of cache invalidation events to be drained and sent to the event listeners in a batch. The default value is `100`.
-- `hazelcast.cache.invalidation.batchfrequency.seconds`: Cache invalidation event batch sending frequency in seconds. When event size does not reach to `hazelcast.cache.invalidation.batch.size` in the given time period, those events are gathered into a batch and sent to the target. The default value is `5` seconds.
+- `hazelcast.cache.invalidation.batchfrequency.seconds`: Cache invalidation event batch sending frequency in seconds. When event size does not reach to `hazelcast.cache.invalidation.batch.size` in the given time period, those events are gathered into a batch and sent to the target. The default value is `10` seconds.
 
 So if there are so many clients or so many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.cache.invalidation.batch.size` system property to a suitable value.
 
