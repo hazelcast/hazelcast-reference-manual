@@ -1,7 +1,7 @@
 
 
 
-#### Using the Script cluster.sh
+### Using the Script cluster.sh
 
 The script `cluster.sh` that comes with the Hazelcast package is used to get/change the state of your cluster, to shutdown your cluster and to force your cluster to clean its persisted data and make a fresh start. The latter is the Force Start operation of Hazelcast's Hot Restart Persistence feature. Please refer to the [Force Start section](#force-start).
 <br></br>
@@ -26,7 +26,7 @@ The script `cluster.sh` is self-documented; you can see the parameter descriptio
 <br></br>
 
 
-##### Example Usages for cluster.sh
+#### Example Usages for cluster.sh
 
 Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP  `172.16.254.1` and on the port
 `5702`. Group name and password of the cluster is `test/test`.

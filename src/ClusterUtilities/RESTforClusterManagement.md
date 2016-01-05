@@ -1,7 +1,7 @@
 
 
 
-#### Using REST API for Cluster Management
+### Using REST API for Cluster Management
 
 Besides the Management Center's Hot Restart tab and the script `cluster.sh`, you can also use REST API to manage your cluster's state. The following are the commands you can use.
 
