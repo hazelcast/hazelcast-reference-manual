@@ -1,5 +1,5 @@
 
-### Using the Scripts In The Package
+## Using the Scripts In The Package
 
 When you download and extract the Hazelcast ZIP or TAR.GZ package, you will see 3 scripts under the `/bin` folder which provide basic functionalities for member and cluster management.
 
