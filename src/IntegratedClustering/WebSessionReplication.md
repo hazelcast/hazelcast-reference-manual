@@ -236,6 +236,25 @@ As before, you must also define `com.hazelcast.web.SessionListener` in your `web
 Hazelcast Session Replication works as P2P by default. To switch to Client/Server architecture, you need to set the `use-client` parameter to **true**. P2P mode is more flexible and requires no configuration in advance; in Client/Server architecture, clients need to connect to an existing Hazelcast Cluster. In case of connection problems, clients will try to reconnect to the cluster. The default retry count is 3.
 In the client/server architecture, if servers goes down, Hazelcast web manager will keep the updates in the local and after servers come back, the clients will update the distributed map.
 
+Note that, in the client/server mode of session replication, `session-ttl-seconds` configuration does not have any effect. The reason is that the filter based session replication uses IMap and a Hazelcast client cannot change the configuration of a distributed map.
+Instead, you should configure the `max-idle-seconds` element in your `hazelcast.xml` on the server side. 
+
+ ```
+ ...
+   <map name="my-sessions">
+         <!--
+            How much seconds do you want your session attributes to be stored on server?
+            Default is 0.
+          -->
+        <max-idle-seconds>20</max-idle-seconds>
+   </map>
+ ...
+ ```
+ <br></br>
+ 
+Also make sure that name of the distributed map is same as the `map-name` parameter defined in your `web.xml` configuration file.
+
+
 #### Caching Locally with `deferred-write`
 
 If the value for `deferred-write` is set as **true**, Hazelcast will cache the session locally and will update the local session when an attribute is set or deleted. At the end of the request, it will update the distributed map with all the updates. It will not update the distributed map upon each attribute update, but will only call it once at the end of the request. It will also cache it, i.e. whenever there is a read for the attribute, it will read it from the cache. 
@@ -297,22 +316,3 @@ Here is an example:
 ```
 <br></br>
 
-#### Client/Server Configuration
-
-In client/server mode of session replication `session-ttl-seconds` config does not have any effect, because filter based session replication uses IMap and hazelcast client cannot change configuration of a distributed map.
-You should configure `max-idle-seconds` parameter in your hazelcast.xml on the server side. 
-
- ```
- ...
-   <map name="my-sessions">
-         <!--
-            How much seconds you want your session attributes to stored on server?
-            Default is 0.
-          -->
-        <max-idle-seconds>20</max-idle-seconds>
-   </map>
- ...
- ```
- <br></br>
- 
- Also make sure that name of the distributed map is same as the `map-name` parameter defined in your `web.xml` config file.
