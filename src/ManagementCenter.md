@@ -567,7 +567,7 @@ To edit or delete a user, select a username listed in the **Users**. Selected us
 
 ### Hot Restart
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.
+![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.*
 
 In this screen, the admin user can see the cluster state, change the cluster state or shutdown the cluster as seen below.
 
