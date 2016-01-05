@@ -550,7 +550,7 @@ Click on the **Save** button; your filter will be saved and put into the **Filte
 
 ### Administering Management Center
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.
+![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.*
 
 The **Admin** user can add, edit, and remove users and specify the permissions for the users of Management Center. To perform these operations, click on the **Administration** button located on the toolbar. The page below appears.
 
@@ -569,7 +569,7 @@ To edit or delete a user, select a username listed in the **Users**. Selected us
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.*
 
-In this screen, the admin user can see the cluster state, change the cluster state or shutdown the cluster as seen below.
+The admin user can see and change the cluster state, shutdown and force start the cluster using the operations listed in this screen as shown below.
 
 ![](images/HotRestart.png)
 
