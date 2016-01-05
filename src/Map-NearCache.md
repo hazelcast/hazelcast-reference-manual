@@ -92,18 +92,20 @@ If you are using near cache, you should take into account that your hits to the 
 
 #### Near Cache Invalidation
 
-When you enable invalidations on near cache either by programmatically via `NearCacheConfig#setInvalidateOnChange` or by declaratively via `<invalidate-on-change>true</invalidate-on-change>`, upon an update or remove of an entry from underlying IMap, to prevent stale reads, corresponding entries are removed from near caches.
-This is called near cache invalidation. Invalidation can be sent from members to client near caches or member near caches either individually or in batches.
-Default is batch. If there are lots of mutating operations such as put/remove on IMap, making invalidations in batches is advised.
+When you enable invalidations on near cache either by programmatically via `NearCacheConfig#setInvalidateOnChange` or by declaratively via `<invalidate-on-change>true</invalidate-on-change>`, upon updating or removing an entry from the underlying IMap, corresponding entries are removed from near caches to prevent stale reads.
+This is called near cache invalidation. 
+
+Invalidation can be sent from members to client near caches or member near caches either individually or in batches.
+Default behavior is sending in batches. If there are lots of mutating operations such as put/remove on IMap, making invalidations in batches is advised.
 This reduces the network traffic and keeps the eventing system less busy.
 
 You can use the following system properties to configure the near cache invalidation :
 
 - `hazelcast.map.invalidation.batch.enabled`: Enable or disable batching. Default value is true. When it is set to false, all invalidations are sent immediately.
 - `hazelcast.map.invalidation.batch.size`: Maximum number of invalidations in a batch. Default value is 100.
-- `hazelcast.map.invalidation.batchfrequency.seconds`: If we can not reach the configured batch size, a background process sends invalidations periodically. Default value is 10 seconds.
+- `hazelcast.map.invalidation.batchfrequency.seconds`: If we cannot reach the configured batch size, a background process sends invalidations periodically. Default value is 10 seconds.
 
-So if there are so many clients or so many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.map.invalidation.batch.size` system property to a suitable value.
+If there are a lot of clients or so many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.map.invalidation.batch.size` system property to a suitable value.
 
 #### Using High-Density Memory Store with Near Cache
 
