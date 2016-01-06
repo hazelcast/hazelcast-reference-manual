@@ -10,7 +10,7 @@ Default values are:
 
 You can see the example configuration snippets below. 
 
-#### Example Topic Declarative Configuration
+**Declarative:**
 
 ```xml
 <hazelcast>
@@ -26,7 +26,7 @@ You can see the example configuration snippets below.
 </hazelcast>
 ```
 
-#### Example Topic Programmatic Configuration
+**Programmatic:**
 
 ```java
 TopicConfig topicConfig = new TopicConfig();
