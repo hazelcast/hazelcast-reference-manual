@@ -41,7 +41,7 @@ Hazelcast is a registered trademark of Hazelcast, Inc. All other trademarks in t
 
 Support for Hazelcast is provided via <a href="https://github.com/hazelcast/hazelcast/issues" target="_blank">GitHub</a>, <a href="https://groups.google.com/forum/#!forum/hazelcast" target="_blank">Mail Group</a> and <a href="http://www.stackoverflow.com" target="_blank">StackOverflow</a>
 
-For information on support for Hazelcast Enterprise, please see <a href="hazelcast.com/pricing" target="_blank">hazelcast.com</a>.
+For information on the commercial support for Hazelcast and Hazelcast Enterprise, please see <a href="hazelcast.com/pricing" target="_blank">hazelcast.com</a>.
 
 ## Release Notes
 
