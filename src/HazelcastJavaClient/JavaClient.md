@@ -47,7 +47,7 @@ Transactional List|Yes|Yes|Yes
 Transactional Set|Yes|Yes|Yes
 JCache|Yes|No|No
 Ringbuffer|Yes|No|No
-Reliable Topic|No|No|No
+Reliable Topic|Yes|No|No
 Hot Restart|Yes (with a near cache)|No|No
 Client Configuration Import|Yes|No|No
 Hazelcast Client Protocol|Yes|Yes|Yes
