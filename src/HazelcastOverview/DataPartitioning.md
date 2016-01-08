@@ -19,16 +19,16 @@ As you add more members, Hazelcast one-by-one moves some of the primary and repl
 
 Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among the members for redundancy.
 
+Partition distributions in the above illustrations are for your convenience and for a more clearer description. Normally, the partitions are not distributed in an order (as they are shown in these illustrations), they are distributed randomly. The important point here is that Hazelcast equally distributes the partitions and their backups among the members.
+
 With Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
 they can access partitions that are owned by other members in the cluster.
 
 <br></br>
 ***RELATED INFORMATION***
-<br></br>
-Please refer to the [Enabling Lite Members section](#enabling-lite-members).
- 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Partition distributions in the above illustrations are for your convenience and for a more clearer description. Normally, the partitions are not distributed in an order (as they are shown in these illustrations), they are distributed randomly. The important point here is that Hazelcast equally distributes the partitions and their backups among the members.*
+*Please refer to the [Enabling Lite Members section](#enabling-lite-members).*
+<br></br> 
 
 
 ### How the Data is Partitioned
