@@ -5,7 +5,7 @@
 This chapter lists the changes made to this document from the previous release.
 
 <br></br>
-![image](images/NoteSmall.jpg)***NOTE:*** *Please refer to the [Release Notes](http://docs.hazelcast.org/docs/release-notes/) for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.*
+![image](images/NoteSmall.jpg)***NOTE:*** *Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes</a> for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.*
 
 <br></br>
 
@@ -32,7 +32,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 13 - Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added as a new section to explain how Hazelcast's Hot Restart feature works and its design details.|
 |[Chapter 14 - Hazelcast Java Client](#hazelcast-java-client)|[Hazelcast Clients Feature Comparison](#hazelcast-clients-feature-comparison)|Added as a new section.
 ||[Client Network Configuration](#client-network-configuration)|Updated by adding the definition of the new IAM role configuration element.
-|[Chapter 15 - Other Client Implementations](#other-client-implementations)|[Windows C++ Client](#windows-c++-client)|Updated by adding static/dynamic library related flag information.
+|[Chapter 15 - Other Client Implementations](#other-client-implementations)|[Windows C++ Client](#windows-c-client)|Updated by adding static/dynamic library related flag information.
 |[Chapter 16 - Serialization](#serialization)||Whole chapter reviewed after serialization improvements and [Global Serializer](#global-serializer) added as a new section.
 |[Chapter 17 - Management](#management)|[Defining a Cluster Quorum](#defining-a-cluster-quorum)|Added information on quorum support for caches. Added the definition of the new configuration element `quorum-ref` to [ICache Configuration section](#icache-configuration).|
 ||[Management Center](#management-center)|A note on how to see the cache statistics on the Management Center added under the [Caches section](#monitoring-caches).<br></br>[Replicated Maps](#monitoring-replicated-maps) added as a new section.<br><br> Added the information explaining the new e-mail notification mechanism to [Creating Alerts](#creating-alerts).<br></br>[Monitoring WAN Replication](#monitoring-wan-replication) added as a new section.<br></br>[Hot Restart](#hot-restart) added as a new section.<br></br>[Getting Started to Management Center](#getting-started-to-management-center) added as a new section to explain the licensing mechanism, selecting clusters and how to create administrator user credentials.
