@@ -106,7 +106,7 @@ In the example below, a Ringbuffer is configured with a time to live of 180 seco
 ### Setting Ringbuffer Overflow Policy
 
 Using the overflow policy, you can determine what to do if the oldest item in the Ringbuffer is not old enough to expire when
- more items than the configured RingBuffer capacity are being added. The below options are currently available.
+ more items than the configured Ringbuffer capacity are being added. The below options are currently available.
  
 * `OverflowPolicy.OVERWRITE`: The oldest item is overwritten. 
 * `OverflowPolicy.FAIL`: The call is aborted. The methods that make use of the OverflowPolicy return `-1` to indicate that adding

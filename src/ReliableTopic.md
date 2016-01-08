@@ -1,11 +1,11 @@
 ## Reliable Topic
 
 The Reliable Topic data structure has been introduced with the release of Hazelcast 3.5. The Reliable Topic uses the same `ITopic` interface
-as a regular topic. The main difference is that Reliable Topic is backed up by the RingBuffer (also introduced with Hazelcast 
+as a regular topic. The main difference is that Reliable Topic is backed up by the Ringbuffer (also introduced with Hazelcast 
 3.5) data structure. The following are the advantages of this approach:
 
-* Events are not lost since the RingBuffer is configured with 1 synchronous backup by default.
-* Each Reliable `ITopic` gets its own RingBuffer; if there is a topic with a very fast producer, it will not lead to problems at the topic that runs at a slower pace.
+* Events are not lost since the Ringbuffer is configured with 1 synchronous backup by default.
+* Each Reliable `ITopic` gets its own Ringbuffer; if there is a topic with a very fast producer, it will not lead to problems at the topic that runs at a slower pace.
 * Since the event system behind a regular `ITopic` is shared with other data structures (e.g. collection listeners), 
   you can run into isolation problems. This does not happen with the Reliable `ITopic`.
 
@@ -33,14 +33,14 @@ public class Sample implements MessageListener<MyEvent> {
 }
 ```
 
-You can configure the Reliable `ITopic` using its RingBuffer. If there is a Reliable Topic with the name `Foo`, then you can configure this topic
-by adding a `ReliableTopicConfig` for a RingBuffer with the name `Foo`. By default, a RingBuffer does not have any TTL (time to live) and
+You can configure the Reliable `ITopic` using its Ringbuffer. If there is a Reliable Topic with the name `Foo`, then you can configure this topic
+by adding a `ReliableTopicConfig` for a Ringbuffer with the name `Foo`. By default, a Ringbuffer does not have any TTL (time to live) and
 it has a limited capacity; you may want to change that configuration.
 
 By default, the Reliable `ITopic` uses a shared thread pool. If you need better isolation, you can configure a custom executor on the 
 `ReliableTopicConfig`. 
 
-Because the reads on a RingBuffer are not destructive, it is easy to apply batching. `ITopic` uses read batching and reads
+Because the reads on a Ringbuffer are not destructive, it is easy to apply batching. `ITopic` uses read batching and reads
 10 items at a time (if available) by default.
 
 ### Slow Consumers
