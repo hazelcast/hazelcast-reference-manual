@@ -22,7 +22,7 @@ You can see the features for all Hazelcast editions in the following architectur
 
 ![image](images/HazelcastArchitecture.png)
 
-For more information on Hazelcast's Architecture, please see the whitepaper [An Architect’s View of Hazelcast](https://hazelcast.com/resources/architects-view-hazelcast/).
+For more information on Hazelcast's Architecture, please see the whitepaper <a href="https://hazelcast.com/resources/architects-view-hazelcast/" target="_blank">An Architect’s View of Hazelcast</a>.
 
 
 ## Licensing
@@ -41,11 +41,12 @@ Hazelcast is a registered trademark of Hazelcast, Inc. All other trademarks in t
 
 Support for Hazelcast is provided via <a href="https://github.com/hazelcast/hazelcast/issues" target="_blank">GitHub</a>, <a href="https://groups.google.com/forum/#!forum/hazelcast" target="_blank">Mail Group</a> and <a href="http://www.stackoverflow.com" target="_blank">StackOverflow</a>
 
-For information on the commercial support for Hazelcast and Hazelcast Enterprise, please see <a href="hazelcast.com/pricing" target="_blank">hazelcast.com</a>.
+For information on the commercial support for Hazelcast and Hazelcast Enterprise, please see 
+<a href="https://hazelcast.com/pricing/" target="_blank">hazelcast.com</a>.
 
 ## Release Notes
 
-Please refer to the [Release Notes document](http://docs.hazelcast.org/docs/release-notes/) for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.
+Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes document</a> for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.
 
 
 
