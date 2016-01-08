@@ -376,7 +376,7 @@ mvn clean install
 cd <working folder>
    ```
  
-3. Edit the `simulator.properties` file as explained in the [Editing the Simulator.Properties File section](#editing-the-simulator-properties-file). 
+3. Edit the `simulator.properties` file as explained in the [Simulator.Properties File Description section](#simulator-properties-file-description). 
 
 4. Run the test from your working folder using the following command.
 

@@ -158,7 +158,7 @@ ICompletableFuture<Long> f = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
 f.get()
 ```  
       
-In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the [Overflow Policy section](#overflow-policy) 
+In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the [Overflow Policy section](#setting-ringbuffer-overflow-policy) 
 for more information.
 
 ### Reading Batched Items

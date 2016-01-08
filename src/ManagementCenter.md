@@ -74,7 +74,7 @@ Once the page is loaded after selecting a cluster, the tool's home page appears 
 
 ![](images/NonHostedMCHomePage.jpg)
 
-This page provides the fundamental properties of the selected cluster which are explained in the [Home Page](#home-page) section. The page has a toolbar on the top and a menu on the left.
+This page provides the fundamental properties of the selected cluster which are explained in the [Home Page](#management-center-home-page) section. The page has a toolbar on the top and a menu on the left.
 
 #### Toolbar
 
@@ -82,14 +82,14 @@ This page provides the fundamental properties of the selected cluster which are 
 
 The toolbar has the following buttons:
 
--	**Home**: Loads the home page shown above. Please see [Management Center Home Page](#management-center-home-page).
+-	**Home**: Loads the home page shown above. Please see the [Management Center Home Page section](#management-center-home-page).
 -	**Scripting**: Loads the page used to write and execute the user`s own scripts on the cluster. Please see the [Scripting section](#scripting).
 -	**Console**: Loads the page used to execute commands on the cluster. Please see the [Console section](#executing-console-commands).
--	**Alerts**: Creates alerts by specifying filters. Please see [Setting Alerts](#creating-alerts).
+-	**Alerts**: Creates alerts by specifying filters. Please see the [Setting Alerts section](#creating-alerts).
 -	**Documentation**: Opens the Management Center documentation in a window inside the tool. Please see the [Documentation section](#management-center-documentation).
--	**Administration**: Used by the admin users to manage users in the system. Please see [Administering -	Management Center](#administering-management-center).
+-	**Administration**: Used by the admin users to manage users in the system. Please see the [Administering Management Center section](#administering-management-center).
 -	**Logout**: Closes the current user's session.
--	**Hot Restart**: Used by the admin users to manage cluster state. Please see [Hot Restart](#hot-restart).
+-	**Hot Restart**: Used by the admin users to manage cluster state. Please see the [Hot Restart section](#hot-restart).
 -	**Time Travel**: Sees the cluster's situation at a time in the past. Please see the [Time Travel section](#checking-past-status-with-time-travel).
 -	**Cluster Selector**: Switches between clusters. When the mouse is moved onto this item, a drop down list of clusters appears.
 
@@ -98,7 +98,7 @@ The toolbar has the following buttons:
   The user can select any cluster and once selected, the page immediately loads with the selected cluster's information.
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Some of the above listed toolbar items are not visible to users who are not admin or who have **read-only** permission. Also, some of the operations explained in the later sections cannot be performed by users with read-only permission. Please see the [Administration section](#administration) for details.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Some of the above listed toolbar items are not visible to users who are not admin or who have **read-only** permission. Also, some of the operations explained in the later sections cannot be performed by users with read-only permission. Please see the [Administering Management Center section](#administering-management-center) for details.*
 
 #### Menu
 
@@ -608,6 +608,11 @@ Restart process cannot be completed if a node crashes permanently and cannot rec
 Click the **Force Start** button. A pop-up will appear and stay on screen until the operation is triggered.
 
 If an exception occurs, this exception message will be showed on the screen as a notification.
+
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *The operations explained in this section (Hot Restart) can also be performed using REST API and the script `cluster.sh`. Please refer to the [Using REST API for Cluster Management section](#using-rest-api-for-cluster-management) and [Using the Script cluster.sh section](#using-the-script-cluster-sh).*
+
+
 
 ### Checking Past Status with Time Travel
 

@@ -135,7 +135,7 @@ Hazelcast creates a separate distributed map for each Hibernate cache region. Yo
 
 Hibernate Second Level Cache can use Hazelcast in two modes: Peer-to-Peer (P2P) and Client/Server (next section).
 
-With P2P mode, each Hibernate deployment launches its own Hazelcast Instance. You can also configure Hibernate to use an existing instance, instead of creating a new `HazelcastInstance` for each `SessionFactory`. To do this, set the `hibernate.cache.hazelcast.instance_name` Hibernate property to the `HazelcastInstance`'s name. For more information, please see [Named Instance Scope](#named-instance-scope).
+With P2P mode, each Hibernate deployment launches its own Hazelcast Instance. You can also configure Hibernate to use an existing instance, instead of creating a new `HazelcastInstance` for each `SessionFactory`. To do this, set the `hibernate.cache.hazelcast.instance_name` Hibernate property to the `HazelcastInstance`'s name. For more information, please see [Named Instance Scope](#binding-to-a-named-instance).
 
 **Disabling shutdown during SessionFactory.close()**
 
@@ -144,7 +144,7 @@ You can disable shutting down `HazelcastInstance` during `SessionFactory.close()
 
 ### Setting Client/Server for Hibernate
 
-You can set up Hazelcast to connect to the cluster as Native Client. Native client is not a member; it connects to one of the cluster members and delegates all cluster wide operations to it. Client instance started in the Native Client mode uses Smart Routing: when the relied cluster member dies, the client transparently switches to another live member. All client operations are Retry-able, meaning that the client resends the request as many as 10 times in case of a failure. After the 10th retry, it throws an exception. You cannot change the routing mode and retry-able operation configurations of the Native Client instance used by Hibernate 2nd Level Cache. Please see the [Smart Routing section](##smart-routing) and [Retry-able Operation Failure section](#retry-able-operation-failure) for more details.
+You can set up Hazelcast to connect to the cluster as Native Client. Native client is not a member; it connects to one of the cluster members and delegates all cluster wide operations to it. Client instance started in the Native Client mode uses Smart Routing: when the relied cluster member dies, the client transparently switches to another live member. All client operations are Retry-able, meaning that the client resends the request as many as 10 times in case of a failure. After the 10th retry, it throws an exception. You cannot change the routing mode and retry-able operation configurations of the Native Client instance used by Hibernate 2nd Level Cache. Please see the [Smart Routing section](#setting-smart-routing) and [Retry-able Operation Failure section](#handling-retry-able-operation-failure) for more details.
 
 ```xml   
 <property name="hibernate.cache.hazelcast.use_native_client">true</property>
@@ -158,7 +158,7 @@ To set up Native Client, add the Hazelcast **group-name**, **group-password** an
 <property name="hibernate.cache.hazelcast.native_client_password">dev-pass</property>
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE***: *To use Native Client, add `hazelcast-client-<version>.jar` into your classpath. Refer to [Clients](#clients) for more information.*
+![image](images/NoteSmall.jpg) ***NOTE***: *To use Native Client, add `hazelcast-client-<version>.jar` into your classpath. Refer to [Hazelcast Java Client chapter](#hazelcast-java-client) for more information.*
 
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *To use Native Client, add `hazelcast-all-<version>.jar` into your remote cluster's classpath.*

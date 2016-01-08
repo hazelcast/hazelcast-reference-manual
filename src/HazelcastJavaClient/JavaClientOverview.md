@@ -176,7 +176,7 @@ IExecutorService executorService = client.getExecutorService("default");
 ```
 
 
-After getting an instance of `IExecutorService`, you can use the instance as the interface with the one provided on the server side. Please see the [Distributed Computing chapter](#distributed-computing) chapter for detailed usage.
+After getting an instance of `IExecutorService`, you can use the instance as the interface with the one provided on the server side. Please see the [Distributed Computing chapter](#distributed-computing) for detailed usage.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This service is only supported by the Java client.*
 

@@ -97,7 +97,7 @@ String result = future.get();
 
 Please note that the Echo callable in the above code sample also implements a Serializable interface, since it may be sent to another JVM to be processed.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *When a task is deserialized, HazelcastInstance needs to be accessed. To do this, the task should implement `HazelcastInstanceAware` interface. Please see the [HazelcastInstanceAware Interface section](#hazelcastinstanceaware-interface) for more information.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *When a task is deserialized, HazelcastInstance needs to be accessed. To do this, the task should implement `HazelcastInstanceAware` interface. Please see the [HazelcastInstanceAware Interface section](#implementing-hazelcastinstanceaware) for more information.*
 <br></br>
 
 

@@ -11,22 +11,14 @@ This chapter covers all the elements and attributes used to configure Hazelcast.
 The rest of the chapter explains the configuration items listed below.
 
 - [Network](#network-configuration) 
-- [Group](#group-configuration)
 - [Map](#map-configuration)
 - [MultiMap](#multimap-configuration)
-- [Queue](#queue-configuration)
-- [Topic](#topic-configuration)
-- [List](#list-configuration)
-- [Set](#set-configuration)
-- [Semaphore](#semaphore-configuration)
 - [Executor Service](#executor-service-configuration)
 - [Serialization](#serialization-configuration)
 - [MapReduce Jobtracker](#mapreduce-jobtracker-configuration)
 - [Services](#services-configuration)
 - [Management Center](#management-center-configuration)
-- [WAN Replication](#wan-replication-configuration)
 - [Partition Group](#partition-group-configuration)
-- [Listeners](#listener-configurations)
 - [Logging](#logging-configuration)
 - [Lite Member Configuration](#lite-member-configuration)
 

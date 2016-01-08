@@ -20,7 +20,7 @@ Aggregations are available on both types of map interfaces, `com.hazelcast.core.
 the `aggregate` methods. Two overloaded methods are available that customize resource management of the
 underlying MapReduce framework by supplying a custom configured 
 `com.hazelcast.mapreduce.JobTracker` instance. To find out how to
-configure the MapReduce framework, please see [Configuring JobTracker](#configuring-jobTracker). We will
+configure the MapReduce framework, please see [Configuring JobTracker](#configuring-jobtracker). We will
 later see another way to configure the automatically used MapReduce framework if no special `JobTracker` is supplied.
 
 #### Aggregations and Java

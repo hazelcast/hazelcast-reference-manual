@@ -4,7 +4,7 @@
 
 ## Implementing DataSerializable
 
-As mentioned in [Implementing Java Serializable & Externalizable](#implementing-java-serializable-externalizable), Java serialization is an easy mechanism. However, it does not control how fields are serialized or deserialized. Moreover, Java serialization can lead to excessive CPU loads since it keeps track of objects to handle the cycles and streams class descriptors. These are performance decreasing factors; thus, serialized data may not have an optimal size.
+As mentioned in [Implementing Java Serializable & Externalizable](#implementing-java-serializable-and-externalizable), Java serialization is an easy mechanism. However, it does not control how fields are serialized or deserialized. Moreover, Java serialization can lead to excessive CPU loads since it keeps track of objects to handle the cycles and streams class descriptors. These are performance decreasing factors; thus, serialized data may not have an optimal size.
 
 The `DataSerializable` interface of Hazelcast overcomes these issues. Here is an example of a class implementing the `com.hazelcast.nio.serialization.DataSerializable` interface.
 

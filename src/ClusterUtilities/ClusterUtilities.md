@@ -38,4 +38,4 @@ for ( Member member : setMembers ) {
 
 ***RELATED INFORMATION***
 
-*Please refer to the [Membership Listener section](#membership-listener) for more information on membership events.*
+*Please refer to the [Membership Listener section](#listening-for-member-events) for more information on membership events.*
