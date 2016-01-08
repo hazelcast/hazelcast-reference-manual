@@ -24,7 +24,7 @@ Keep in mind that you should have already enabled the High-Density Memory Store 
 #### Required configuration changes when using NATIVE
 
 Beware that eviction mechanism is different for `NATIVE` in-memory format.
-The new eviction algorithm is described [here](eviction-algorithm).
+The new eviction algorithm is described [here](#eviction-algorithm).
 
   - Eviction percentage has no effect.
 
