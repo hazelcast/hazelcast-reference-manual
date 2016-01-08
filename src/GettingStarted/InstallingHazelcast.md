@@ -25,7 +25,7 @@ classpath (Maven does that for you). Just add the following lines to your `pom.x
 ```
 As an alternative, you can download and install Hazelcast yourself. You only need to:
 
--   Download the package `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz` from <a href="www.hazelcast.org" target="_blank">hazelcast.org</a>.
+-   Download the package `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz` from <a href="http://hazelcast.org/download/" target="_blank">hazelcast.org</a>.
 
 -   Extract the downloaded `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz`.
 
