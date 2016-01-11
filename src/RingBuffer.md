@@ -268,7 +268,3 @@ Config config = new Config();
 config.addRingbufferConfig(rbConfig);
 ```        
 
-***RELATED INFORMATION***
-
-*Please refer to the [Ringbuffer Configuration section](#ringbuffer-configuration) for more information on configuring the Ringbuffer.*
-
