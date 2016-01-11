@@ -7,7 +7,7 @@
 
 ## Why 271 as the default partition count?
 
-The partition count of 271, being a prime number, is a good choice because it will be distributed to the nodes almost evenly. For a small to medium sized cluster, the count of 271 gives an almost even partition distribution and optimal-sized partitions.  As your cluster becomes bigger, you should make this count bigger to have evenly distributed partitions.
+The partition count of 271, being a prime number, is a good choice because it will be distributed to the members almost evenly. For a small to medium sized cluster, the count of 271 gives an almost even partition distribution and optimal-sized partitions.  As your cluster becomes bigger, you should make this count bigger to have evenly distributed partitions.
 
 <br></br>
 
@@ -16,16 +16,16 @@ The partition count of 271, being a prime number, is a good choice because it wi
 Yes. All Hazelcast data structures are thread safe.
 
 <br></br>
-## How do nodes discover each other?
+## How do members discover each other?
 
 
-When a node is started in a cluster, it will dynamically and automatically be discovered. There are three types of discovery.
+When a member is started in a cluster, it will dynamically and automatically be discovered. There are three types of discovery.
 
--	Multicast discovery: nodes in a cluster discover each other by multicast, by default. 
--	Discovery by TCP/IP: the first node created in the cluster (leader) will form a list of IP addresses of other joining nodes and will send this list to these nodes so the nodes will know each other.
--	If your application is placed on Amazon EC2, Hazelcast has an automatic discovery mechanism. You will give your Amazon credentials and the joining node will be discovered automatically.
+-	Multicast discovery: members in a cluster discover each other by multicast, by default. 
+-	Discovery by TCP/IP: the first member created in the cluster (leader) will form a list of IP addresses of other joining members and will send this list to these members so the members will know each other.
+-	If your application is placed on Amazon EC2, Hazelcast has an automatic discovery mechanism. You will give your Amazon credentials and the joining member will be discovered automatically.
 
-Once nodes are discovered, all the communication between them will be via TCP/IP.
+Once members are discovered, all the communication between them will be via TCP/IP.
 <br></br>
 ***RELATED INFORMATION***
 
@@ -33,11 +33,11 @@ Once nodes are discovered, all the communication between them will be via TCP/IP
 
 <br></br>
 
-## What happens when a node goes down?
+## What happens when a member goes down?
 
-Once a node is gone (crashes), the following happens since data in each node has a backup in other nodes.
+Once a member is gone (crashes), the following happens since data in each member has a backup in other members.
 
--	First, the backups in other nodes are restored.
+-	First, the backups in other members are restored.
 -	Then, data from these restored backups are recovered.
 -	And finally, backups for these recovered data are formed.
 
@@ -47,11 +47,11 @@ So eventually, no data is lost.
 
 ## How do I test the connectivity?
 
-If you notice that there is a problem with a node joining a cluster, you may want to perform a connectivity test between the node to be joined and a node from the cluster. You can use the `iperf` tool for this purpose. For example, you can execute the below command on one node (i.e. listening on port 5701).
+If you notice that there is a problem with a member joining a cluster, you may want to perform a connectivity test between the member to be joined and a member from the cluster. You can use the `iperf` tool for this purpose. For example, you can execute the below command on one member (i.e. listening on port 5701).
 
 `iperf -s -p 5701`
 
-And you can execute the below command on the other node.
+And you can execute the below command on the other member.
 
 `iperf -c` *`<IP address>`* `-d -p 5701`
 
@@ -70,7 +70,7 @@ Implementing `equals` and `hashCode` is not enough, it is also important that th
 
 ## How do I reflect value modifications?
 
-Hazelcast always return a clone copy of a value. Modifying the returned value does not change the actual value in the map (or multimap, list, set). You should put the modified value back to make changes visible to all nodes.
+Hazelcast always return a clone copy of a value. Modifying the returned value does not change the actual value in the map (or multimap, list, set). You should put the modified value back to make changes visible to all members.
 
 ```java
 V value = map.get( key );
@@ -169,16 +169,16 @@ For more information please <a href="https://github.com/hazelcast/hazelcast/tree
 <br></br>
 
 
-## Does Hazelcast support hundreds of nodes?
+## Does Hazelcast support hundreds of members?
 
-Yes. Hazelcast performed a successful test on Amazon EC2 with 200 nodes.
+Yes. Hazelcast performed a successful test on Amazon EC2 with 200 members.
 
 <br></br>
 
 
 ## Does Hazelcast support thousands of clients?
 
-Yes. However, there are some points you should consider. The environment should be LAN with a high stability and the network speed should be 10 Gbps or higher. If the number of nodes is high, the client type should be selected as Dummy, not Smart Client. In the case of Smart Clients, since each client will open a connection to the nodes, these nodes should be powerful enough (for example, more cores) to handle hundreds or thousands of connections and client requests. Also, you should consider using near caches in clients to lower the network traffic. And you should use the Hazelcast releases with the NIO implementation (which starts with Hazelcast 3.2).
+Yes. However, there are some points you should consider. The environment should be LAN with a high stability and the network speed should be 10 Gbps or higher. If the number of members is high, the client type should be selected as Dummy, not Smart Client. In the case of Smart Clients, since each client will open a connection to the members, these members should be powerful enough (for example, more cores) to handle hundreds or thousands of connections and client requests. Also, you should consider using near caches in clients to lower the network traffic. And you should use the Hazelcast releases with the NIO implementation (which starts with Hazelcast 3.2).
 
 Also, you should configure the clients attentively. Please refer to the [Java Client section](#hazelcast-java-client) section for configuration notes.
 
@@ -204,13 +204,13 @@ No. However, Hazelcast provides `MapStore` and `MapLoader` interfaces. For examp
 
 ## Can I use Hazelcast in a single server?
 
-Yes. But please note that Hazelcast's main design focus is multi-node clusters to be used as a distribution platform. 
+Yes. But please note that Hazelcast's main design focus is multi-member clusters to be used as a distribution platform. 
 
 <br></br>
 
 ## How can I monitor Hazelcast?
 
-[Hazelcast Management Center](#management-center) is what you use to monitor and manage the nodes running Hazelcast. In addition to monitoring the overall state of a cluster, you can analyze and browse data structures in detail, you can update map configurations, and you can take thread dumps from nodes. 
+[Hazelcast Management Center](#management-center) is what you use to monitor and manage the members running Hazelcast. In addition to monitoring the overall state of a cluster, you can analyze and browse data structures in detail, you can update map configurations, and you can take thread dumps from members. 
 
 Moreover, JMX monitoring is also provided. Please see the [Monitoring with JMX section](#monitoring-with-jmx) for details.
 
@@ -263,15 +263,15 @@ The line `log4j.logger.com.hazelcast=debug` is used to see debug logs for all Ha
 
 ## What is the difference between client-server and embedded topologies?
 
-In the embedded topology, nodes include both the data and application. This type of topology is the most useful if your application focuses on high performance computing and many task executions. Since application is close to data, this topology supports data locality. 
+In the embedded topology, members include both the data and application. This type of topology is the most useful if your application focuses on high performance computing and many task executions. Since application is close to data, this topology supports data locality. 
 
-In the client-server topology, you create a cluster of nodes and scale the cluster independently. Your applications are hosted on the clients, and the clients communicate with the nodes in the cluster to reach data. 
+In the client-server topology, you create a cluster of members and scale the cluster independently. Your applications are hosted on the clients, and the clients communicate with the members in the cluster to reach data. 
 
-Client-server topology fits better if there are multiple applications sharing the same data or if application deployment is significantly greater than the cluster size (for example, 500 application servers vs. 10 node cluster).
+Client-server topology fits better if there are multiple applications sharing the same data or if application deployment is significantly greater than the cluster size (for example, 500 application servers vs. 10 member cluster).
 
 <br></br>
 
-## How do I know it is safe to kill the second node?
+## How do I know it is safe to kill the second member?
 
 Below code snippet shuts down the cluster members if the cluster is safe for a member shutdown.
 
@@ -301,7 +301,7 @@ if (partitionService.isLocalMemberSafe()) {
 
 Native Memory solutions can be preferred:
 
-- when the amount of data per node is large enough to create significant garbage collection pauses.
+- when the amount of data per member is large enough to create significant garbage collection pauses.
 - when your application requires predictable latency.
 
 <br></br>
@@ -338,7 +338,7 @@ For additional information please see:
 
 ## How to get rid of "java.lang.OutOfMemoryError: unable to create new native thread"?
 
-If you encounter an error of `java.lang.OutOfMemoryError: unable to create new native thread`, it may be caused by exceeding the available file descriptors on your operating system, especially if it is Linux. This exception is usually thrown on a running node, after a period of time when the thread count exhausts the file descriptor availability.
+If you encounter an error of `java.lang.OutOfMemoryError: unable to create new native thread`, it may be caused by exceeding the available file descriptors on your operating system, especially if it is Linux. This exception is usually thrown on a running member, after a period of time when the thread count exhausts the file descriptor availability.
 
 The JVM on Linux consumes a file descriptor for each thread created.  The default number of file descriptors available in Linux is usually 1024. If you have many JVMs running on a single machine, it is possible to exceed this default number.
 
@@ -373,7 +373,7 @@ The default number of process per users is 1024. Adding the following to your `$
 
 ## Does repartitioning wait for Entry Processor?
 
-Repartitioning is the process of redistributing the partition ownerships. Hazelcast performs the repartitioning in the cases where a node leaves the cluster or joins the cluster. If a repartitioning will happen while an entry processor is active in a node processing on an entry object, the repartitioning waits for the entry processor to complete its job.
+Repartitioning is the process of redistributing the partition ownerships. Hazelcast performs the repartitioning in the cases where a member leaves the cluster or joins the cluster. If a repartitioning will happen while an entry processor is active in a member processing on an entry object, the repartitioning waits for the entry processor to complete its job.
 
 ## Why do Hazelcast instances on different machines not see each other?
 
@@ -405,7 +405,7 @@ HazelcastInstance instance = Hazelcast.newHazelcastInstance();
  
 ## What Does "Replica: 1 has no owner" Mean?
 
-When you start more nodes after the first one is started, you will see `replica: 1 has no owner` entry in the newly started node's log. There is no need to worry about it since it refers to a transitory state. It only means the replica partition is not ready/assigned yet and eventually it will be.
+When you start more members after the first one is started, you will see `replica: 1 has no owner` entry in the newly started member's log. There is no need to worry about it since it refers to a transitory state. It only means the replica partition is not ready/assigned yet and eventually it will be.
 
 
 
