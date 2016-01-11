@@ -25,6 +25,14 @@ java -jar mancenter-*version*.war 8080 mancenter
 </management-center>
 ```
 
+- You can also set a frequency (in seconds) for which Management Center will take information from the Hazelcast cluster, using the element `update-interval` as shown below. It is optional and its default value is 3 seconds.
+
+```xml
+<management-center enabled="true" update-interval="3">http://localhost:8080/
+mancenter</management-center>
+```
+
+
 - Start your Hazelcast cluster.
 - Browse to `http://localhost:8080/mancenter` and setup your [administrator account](#getting-started-to-management-center) explained in the next section.
 
