@@ -26,11 +26,3 @@ The `CounterService` is declared within the `services` configuration element.
 Note that multicast is enabled as the join mechanism. In the later sections for the `CounterService` example, we will see why.
 
 
-<br></br>
-
-***RELATED INFORMATION***
-
-
-*Please refer to the [Services Configuration section](#services-configuration) for a full description of Hazelcast SPI configuration.*
-
-
