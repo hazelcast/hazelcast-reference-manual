@@ -1,7 +1,7 @@
 
-## Serialization Configuration
+## Serialization Configuration Wrap-Up
 
-The following are example serialization configurations.
+This section summarizes the configuration of serialization options, explained in the above sections, into all-in-one examples. The following are example serialization configurations.
 
 **Declarative:**
 

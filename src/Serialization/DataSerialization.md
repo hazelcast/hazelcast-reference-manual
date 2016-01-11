@@ -192,6 +192,6 @@ As the last step, you need to register `EmployeeDataSerializableFactory` declara
 ***RELATED INFORMATION***
 
 
-*Please refer to the [Serialization Configuration section](#serialization-configuration) for a full description of Hazelcast Serialization configuration.*
+*Please refer to the [Serialization Configuration Wrap-Up section](#serialization-configuration-wrap-up) for a full description of Hazelcast Serialization configuration.*
 
  

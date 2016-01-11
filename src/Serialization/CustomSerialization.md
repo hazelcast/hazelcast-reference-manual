@@ -153,6 +153,6 @@ to serialize Foo objects. In this way, you can write an adapter (StreamSerialize
 ***RELATED INFORMATION***
 
 
-*Please refer to the [Serialization Configuration section](#serialization-configuration) for a full description of Hazelcast Serialization configuration.*
+*Please refer to the [Serialization Configuration Wrap-Up section](#serialization-configuration-wrap-up) for a full description of Hazelcast Serialization configuration.*
 
  
