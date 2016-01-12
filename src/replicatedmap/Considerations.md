@@ -2,9 +2,9 @@
 
 ### Considerations for Replicated Map
 
-If you have a large cluster or very high occurrence of updates, the replicated map may not scale linearly as expected since it has to replicate update operations to all members in the cluster.
+If you have a large cluster or very high occurrences of updates, the replicated map may not scale linearly as expected since it has to replicate update operations to all members in the cluster.
 
-It is advised that to configure [back pressure](#back-pressure) when the system has high occurrence of updates since replication of updates made in an asynchronous manner. 
+Since the replication of updates is performed in an asynchronous manner, we recommend you to enable back pressure in case your system has high occurrences of updates. Please refer to the [Back Pressure](#back-pressure) section to learn how to enable it.
 
 Replicated map has an anti-entropy system, which will converge values to a common one if some of the members are missing replication updates.
 
