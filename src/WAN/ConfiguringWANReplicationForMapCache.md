@@ -2,11 +2,11 @@
 
 ### Configuring WAN Replication for IMap and ICache
 
-Yon can configure the WAN replication for Hazelcast's IMap and ICache data structures. To enable WAN replication for an IMap or ICache instance, you can use `wan-replication-ref` element. Each IMap and ICache instance can have different WAN replication configurations.
+Yon can configure the WAN replication for Hazelcast's IMap and ICache data structures. To enable WAN replication for an IMap or ICache instance, you can use the `wan-replication-ref` element. Each IMap and ICache instance can have different WAN replication configurations.
 
 **Enabling WAN Replication for IMap:**
 
-Imagine you have different distributed maps, however only one map should be replicated to a target cluster. To achieve this, configure the map to be
+Imagine you have different distributed maps, however only one of those maps should be replicated to a target cluster. To achieve this, configure the map that you want
 replicated by adding the `wan-replication-ref` element in the map configuration as shown below.
 
 ```xml
@@ -24,7 +24,7 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
 </hazelcast>
 ```
 
-And, the following is the equivalent programmatic configuration:
+The following is the equivalent programmatic configuration:
 
 ```java
 Config config = new Config();
@@ -83,7 +83,7 @@ The following is a declarative configuration example for enabling WAN Replicatio
 </cache>
 ```
 
-And, the following is the equivalent programmatic configuration:
+The following is the equivalent programmatic configuration:
 
 
 ```java

@@ -13,14 +13,14 @@ Hazelcast initiates a quorum when a change happens on the member list.
 
 You can set up Cluster Quorum using either declarative or programmatic configuration.
 
-Assume that you have a 5-node Hazelcast Cluster and you want to set the minimum number of 3 nodes for the cluster to continue operating. The following examples are configurations for this scenario.
+Assume that you have a 5-member Hazelcast Cluster and you want to set the minimum number of 3 members for the cluster to continue operating. The following examples are configurations for this scenario.
 
 **Declarative:**
 
 ```xml
 <hazelcast>
 ....
-<quorum name="quorumRuleWithThreeNodes" enabled="true">
+<quorum name="quorumRuleWithThreeMembers" enabled="true">
   <quorum-size>3</quorum-size>
 </quorum>
 
@@ -59,7 +59,7 @@ Quorum configuration has the following elements.
 
 #### Configuring Quorum Listeners
 
-You can register quorum listeners to be notified about quorum results. Quorum listeners are local to the node where they are registered, so they receive only events that occurred on that local node.
+You can register quorum listeners to be notified about quorum results. Quorum listeners are local to the member where they are registered, so they receive only events that occurred on that local member.
 
 Quorum listeners can be configured via declarative or programmatic configuration. The following examples are such configurations.
 
@@ -68,15 +68,15 @@ Quorum listeners can be configured via declarative or programmatic configuration
 ```xml
 <hazelcast>
 ....
-<quorum name="quorumRuleWithThreeNodes" enabled="true">
+<quorum name="quorumRuleWithThreeMembers" enabled="true">
   <quorum-size>3</quorum-size>
   <quorum-listeners>
-    <quorum-listener>com.company.quorum.ThreeNodeQuorumListener</quorum-listener>
+    <quorum-listener>com.company.quorum.ThreeMemberQuorumListener</quorum-listener>
   </quorum-listeners>
 </quorum>
 
 <map name="default">
-  <quorum-ref>quorumRuleWithThreeNodes</quorum-ref>
+  <quorum-ref>quorumRuleWithThreeMembers</quorum-ref>
 </map>
 ....
 </hazelcast>
@@ -98,17 +98,17 @@ listenerConfig.setImplementation(new QuorumListener() {
             }
         });
 // Or you can give the name of the class that implements QuorumListener interface.
-listenerConfig.setClassName("com.company.quorum.ThreeNodeQuorumListener");
+listenerConfig.setClassName("com.company.quorum.ThreeMemberQuorumListener");
 
 QuorumConfig quorumConfig = new QuorumConfig();
-quorumConfig.setName("quorumRuleWithThreeNodes")
+quorumConfig.setName("quorumRuleWithThreeMembers")
 quorumConfig.setEnabled(true);
 quorumConfig.setSize(3);
 quorumConfig.addListenerConfig(listenerConfig);
 
 
 MapConfig mapConfig = new MapConfig();
-mapConfig.setQuorumName("quorumRuleWithThreeNodes");
+mapConfig.setQuorumName("quorumRuleWithThreeMembers");
 
 Config config = new Config();
 config.addQuorumConfig(quorumConfig);
