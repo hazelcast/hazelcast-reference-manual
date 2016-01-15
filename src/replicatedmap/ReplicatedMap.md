@@ -24,7 +24,7 @@ there are no atomic guarantees to writes or reads.
 
 ### Example Replicated Map Code
 
-Here is an example of replicated map code. The HazelcastInstance `getReplicatedMap` methods gets the replicated map, and the replicated map `put` creates map entries.
+Here is an example of replicated map code. The HazelcastInstance's `getReplicatedMap` method gets the replicated map, and the replicated map's `put` method creates map entries.
 
 ```java
 import com.hazelcast.core.Hazelcast;
