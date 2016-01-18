@@ -30,7 +30,7 @@ public class RacyUpdateMember {
 }
 ```
 
-If the above code is run by more than one cluster member simultaneously, there will be likely a race condition. You can solve this condition with Hazelcast using either of the following solutions.  
+If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic locking or optimistic locking. 
 
 #### Pessimistic Locking
 

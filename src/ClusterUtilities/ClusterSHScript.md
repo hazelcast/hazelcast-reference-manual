@@ -3,7 +3,7 @@
 
 ### Using the Script cluster.sh
 
-The script `cluster.sh` that comes with the Hazelcast package is used to get/change the state of your cluster, to shutdown your cluster and to force your cluster to clean its persisted data and make a fresh start. The latter is the Force Start operation of Hazelcast's Hot Restart Persistence feature. Please refer to the [Force Start section](#force-start).
+You can use the script `cluster.sh`, which comes with the Hazelcast package, to get/change the state of your cluster, to shutdown your cluster and to force your cluster to clean its persisted data and make a fresh start. The latter is the Force Start operation of Hazelcast's Hot Restart Persistence feature. Please refer to the [Force Start section](#force-start).
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *The script `cluster.sh` uses `curl` command and `curl` must be installed to be able to use the script.*
 <br></br>
@@ -13,9 +13,9 @@ The script `cluster.sh` needs the following parameters to operate according to y
 Parameter | Default Value | Description
 :--------------|:------|:------------
 `-o` or `--operation`|`get-state`|Executes a cluster-wide operation. Operation can be `get-state`, `change-state`, `shutdown` and `force-start`.
-`-s` or `--state`|None|Updates the state of the cluster to a new state. New state can be `active`, `frozen`, `passive`. It is used with the operation `change-state` and has no default value. You should provide a valid state.
-`-a` or `--address`|`127.0.0.1`|Defines the IP address of a cluster member. If you want to manage your cluster remotely, you should provide the IP address of a member to the script.
-`-p` or `--port`|`5701`|Defines on which port Hazelcast is running on the local or remote machine. Its default value is `5701`.
+`-s` or `--state`|None|Updates the state of the cluster to a new state. New state can be `active`, `frozen`, `passive`. This is used with the operation `change-state`. This parameter has no default value; when you use this, you should provide a valid state.
+`-a` or `--address`|`127.0.0.1`|Defines the IP address of a cluster member. If you want to manage your cluster remotely, you should use this parameter to provide the IP address of a member to this script.
+`-p` or `--port`|`5701`|Defines on which port Hazelcast is running on the local or remote machine. The default value is `5701`.
 `-g` or `--groupname`|`dev`|Defines the name of a cluster group which is used for a simple authentication. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
 `-P` or `--password`|`dev-pass`|Defines the password of a cluster group. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
 
@@ -29,7 +29,7 @@ The script `cluster.sh` is self-documented; you can see the parameter descriptio
 #### Example Usages for cluster.sh
 
 Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP  `172.16.254.1` and on the port
-`5702`. Group name and password of the cluster is `test/test`.
+`5702`. The group name and password of the cluster are `test' and `test`.
 
 <br></br>
 **Getting the cluster state:**

@@ -6,7 +6,7 @@ Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.
 
 ### Controlling Thread Counts with Semaphore Permits
 
-Semaphores offer **permit**s to control the thread counts in the case of performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.
+Semaphores offer **permit**s to control the thread counts when performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Semaphore with a single permit may be considered as a lock. But unlike the locks, when semaphores are used, any thread can release the permit and semaphores can have multiple permits.*
 
@@ -15,7 +15,7 @@ Semaphores offer **permit**s to control the thread counts in the case of perform
 When a permit is acquired on ISemaphore:
 
 -	if there are permits, the number of permits in the semaphore is decreased by one and the calling thread performs its activity. If there is contention, the longest waiting thread will acquire the permit before all other threads.
--	if no permits are available, the calling thread blocks until a permit becomes available. When a timeout happens during this block, the thread is interrupted. In the case where the semaphore
+-	if no permits are available, the calling thread blocks until a permit becomes available. When a timeout happens during this block, the thread is interrupted. When the semaphore
 is destroyed, an `InstanceDestroyedException` is thrown.
 
 ### Example Semaphore Code
@@ -68,7 +68,7 @@ If you execute the above `SemaphoreMember` class 5 times, the output will be sim
 
 As can be seen, the maximum count of concurrent threads is equal or smaller than 3. If you remove the semaphore acquire/release statements in `SemaphoreMember`, you will see that there is no limitation on the number of concurrent usages.
 
-Hazelcast also provides backup support for `ISemaphore`. When a member goes down, another member can take over the semaphore with the permit information (permits are automatically released when a member goes down). To enable this, configure synchronous or asynchronous backup with the properties `backup-count` and `async-backup-count` (by default, synchronous backup is already enabled).
+Hazelcast also provides backup support for `ISemaphore`. When a member goes down, you can have another member take over the semaphore with the permit information (permits are automatically released when a member goes down). To enable this, configure synchronous or asynchronous backup with the properties `backup-count` and `async-backup-count` (by default, synchronous backup is already enabled).
 
 ### Configuring Semaphore
 
@@ -99,7 +99,7 @@ Semaphore configuration has the below elements.
 - `backup-count`: Number of synchronous backups.
 - `async-backup-count`: Number of asynchronous backups.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If high performance is more important (than not losing the permit information), you can disable the backups by setting `backup-count` to 0.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If high performance is more important than not losing the permit information, you can disable the backups by setting `backup-count` to 0.*
 
 <br></br>
 

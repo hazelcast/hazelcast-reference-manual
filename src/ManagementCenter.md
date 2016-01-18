@@ -1,10 +1,12 @@
 ## Management Center
 
-Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dump from members. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your members.
+Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your members.
 
 ### Installing Management Center
 
-You have two options for installing Hazelcast Management Center. You can either deploy the `mancenter`-*version*`.war` application into your Java application server/container or you can start Hazelcast Management Center from the command line and then have the Hazelcast cluster members communicate with that web application. This means that your members should know the URL of the `mancenter` application before they start.
+You have two options for installing Hazelcast Management Center:
+- deploy the `mancenter`-*version*`.war` application into your Java application server/container,
+- or start Hazelcast Management Center from the command line and then have the Hazelcast cluster members communicate with that web application. This means that your members should know the URL of the `mancenter` application before they start.
 
 Here are the steps.
 
@@ -25,7 +27,7 @@ java -jar mancenter-*version*.war 8080 mancenter
 </management-center>
 ```
 
-- You can also set a frequency (in seconds) for which Management Center will take information from the Hazelcast cluster, using the element `update-interval` as shown below. It is optional and its default value is 3 seconds.
+- You can also set a frequency (in seconds) for which Management Center will take information from the Hazelcast cluster, using the element `update-interval` as shown below. `update-interval` is optional and its default value is 3 seconds.
 
 ```xml
 <management-center enabled="true" update-interval="3">http://localhost:8080/
@@ -577,7 +579,7 @@ To edit or delete a user, select a username listed in the **Users**. Selected us
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This toolbar item is available only to admin users.*
 
-The admin user can see and change the cluster state, shutdown and force start the cluster using the operations listed in this screen as shown below.
+The admin user can see and change the cluster state, shut down the cluster, and force start the cluster using the operations listed in this screen as shown below.
 
 ![](images/HotRestart.png)
 
@@ -585,9 +587,9 @@ The admin user can see and change the cluster state, shutdown and force start th
 
 - **Active**: Cluster will continue to operate without any restriction. All operations are allowed. This is the default state of a cluster.
 
-- **Frozen**: New members are not allowed to join, except the members left during **this** state or **Passive** state. All other operations except migrations are allowed and will operate without any restriction.
+- **Frozen**: New members are not allowed to join, except the members left in **this** state or **Passive** state. All other operations except migrations are allowed and will operate without any restriction.
 
-- **Passive**: New members are not allowed to join, except the members left during **this** state or **Frozen** state. All operations, except the ones marked with `AllowedDuringPassiveState`, will be rejected immediately.
+- **Passive**: New members are not allowed to join, except the members left in **this** state or **Frozen** state. All operations, except the ones marked with `AllowedDuringPassiveState`, will be rejected immediately.
 
 - **In Transition**: Shows that the cluster state is in transition. This is a temporary and intermediate state. It is not allowed to set it explicitly.
 
@@ -595,7 +597,7 @@ The admin user can see and change the cluster state, shutdown and force start th
 
 ![](images/ChangeClusterState.png)
 
-- Click the dropdown menu and choose the state you want your cluster change to. A pop-up will appear and stay on the screen until the state is successfully changed.
+- Click the dropdown menu and choose the state to which you want your cluster to change. A pop-up will appear and stay on the screen until the state is successfully changed.
 
 ![](images/ChangeClusterState-wait.png)
 
@@ -605,11 +607,11 @@ The admin user can see and change the cluster state, shutdown and force start th
 
 ![](images/ShutdownCluster.png)
 
-If an exception occurs during the state change or shutdown operation on the cluster, this exception message will be showed on the screen as a notification.
+If an exception occurs during the state change or shutdown operation on the cluster, this exception message will be shown on the screen as a notification.
 
 **Force Start the Cluster**
 
-Restart process cannot be completed if a node crashes permanently and cannot recover from the failure since it cannot start or, fail to load its own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**.
+Restart process cannot be completed if a node crashes permanently and cannot recover from the failure since it cannot start or it fails to load its own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**.
 
 ![](images/ForceStart.png)
 

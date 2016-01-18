@@ -1,7 +1,7 @@
 
 ## Web Session Replication
 
-This section explains how you can cluster your web sessions using Servlet Filter, Tomcat and Jetty based solutions. Each web session clustering is explained in the following subsections.
+This section explains how you can cluster your web sessions using Servlet Filter, Tomcat, and Jetty based solutions. Each web session clustering is explained in the following subsections.
 
 Please note that [Tomcat](#tomcat-based-web-session-replication) and [Jetty](#jetty-based-web-session-replication) based web session replications are <font color="#3981DB">**Hazelcast Enterprise**</font> modules. 
 
@@ -22,7 +22,7 @@ We need to have all these sessions backed up somewhere if we do not want to lose
 
 #### Session Clustering Requirements
 
-The following are required before enabling Hazelcast Session Clustering:
+The following are required before you can enable Hazelcast Session Clustering:
 
 -   Target application or web server should support Java 1.6 or higher.
 
@@ -65,7 +65,7 @@ To set up Hazelcast Session Clustering:
   <!--
     How is your load-balancer configured?
     sticky-session means all requests of a session
-    is routed to the node where the session is first created.
+    are routed to the node where the session is first created.
     This is excellent for performance.
     If sticky-session is set to false, when a session is updated
     on a node, entry for this session on all other nodes is invalidated.
@@ -98,7 +98,7 @@ To set up Hazelcast Session Clustering:
     <param-value>false</param-value>
   </init-param>
   <!--
-    Should HttpOnly attribute be set on cookie ? Default is false.
+    Should HttpOnly attribute be set on cookie? Default is false.
   -->
   <init-param>
     <param-name>cookie-http-only</param-name>
@@ -116,7 +116,7 @@ To set up Hazelcast Session Clustering:
       * as servlet resource OR
       * as classpath resource OR
       * as URL
-    Default is one of hazelcast-default.xml
+    Default is either hazelcast-default.xml
     or hazelcast.xml in classpath.
   -->
   <init-param>
@@ -243,7 +243,7 @@ Instead, you should configure the `max-idle-seconds` element in your `hazelcast.
  ...
    <map name="my-sessions">
          <!--
-            How much seconds do you want your session attributes to be stored on server?
+            How many seconds do you want your session attributes to be stored on server?
             Default is 0.
           -->
         <max-idle-seconds>20</max-idle-seconds>
@@ -302,7 +302,7 @@ Hazelcast holds whole session attributes in a distributed map and in a local HTT
 #### Marking Transient Attributes
 
 If you have some attributes that you do not want to be distributed, you can mark those attributes as transient.
-Transient attributes are kept in and when the server is shutdown, you lose the attribute values.
+Transient attributes are kept in the server and when the server is shutdown, you lose the attribute values.
 You can set the transient attributes in your `web.xml` file.
 Here is an example:
 

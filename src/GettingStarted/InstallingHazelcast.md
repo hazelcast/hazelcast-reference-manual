@@ -5,7 +5,7 @@ This chapter explains how to install Hazelcast and start a Hazelcast member and 
 
 ## Installation
 
-The following sections explains the installation of Hazelcast and Hazelcast Enterprise. 
+The following sections explain the installation of Hazelcast and Hazelcast Enterprise. 
 
 
 ### Hazelcast
