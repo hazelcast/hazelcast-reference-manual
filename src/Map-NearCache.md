@@ -83,7 +83,8 @@ Near cache is highly recommended for the maps that are read-mostly. Here is a ne
 
 Programmatically, you configure near cache by using the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a>. This class is used both in the cluster members and clients. In a client/server system, you must enable the near cache separately on the client, without you needing to configure it on the member. For information on how to create a near cache on a client (native Java client), please see [Configuring Client Near Cache](#configuring-client-near-cache). Please note that near cache configuration is specific to the member or client itself, a map in a member may not have near cache configured while the same map in a client may have near cache configured.
 
-If you are using near cache, you should take into account that your hits to the keys in near cache are not reflected as hits to the original keys on the remote members; this has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even though there is a hit on a key in near cache, your original key on the remote member may expire.
+If you are using near cache, you should take into account that your hits to the keys in near cache are not reflected as hits to the original keys on the primary members; this has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even though there is a hit on a key in near cache, your original key on the primary member may expire.
+
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache works only when you access data via `map.get(k)` methods.  Data returned using a predicate is not stored in the near cache.*
 
