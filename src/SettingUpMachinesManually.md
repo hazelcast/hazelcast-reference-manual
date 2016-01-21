@@ -1,6 +1,6 @@
 
 
-## Setting Up Machines Manually
+## Setting up Machines Manually
 
 You may want to set up Hazelcast Simulator on the environments different than your clusters placed on a cloud: for example, your local machines, a test laboratory, etc. In this case, perform the following steps.
 
@@ -43,7 +43,4 @@ You may want to set up Hazelcast Simulator on the environments different than yo
 
 7. Run the command `provisioner --restart` to verify.
 
-
 ![image](images/NoteSmall.jpg) ***NOTE***: *For the full description of the `simulator.properties` file, please refer to the [Simulator.Properties File Description section](#simulator-properties-file-description).*
-
-

@@ -1,6 +1,6 @@
 
 
-## Setting Up For Amazon EC2
+## Setting up for Amazon EC2
 
 Having installed the Simulator, this section describes how to prepare the Simulator for testing a Hazelcast cluster deployed at Amazon EC2. 
 
@@ -23,5 +23,3 @@ MACHINE_SPEC=hardwareId=c3.xlarge,imageId=us-east-1/ami-1b3b2472
 ![image](images/NoteSmall.jpg) ***NOTE***: *Creating these files in your working folder instead of just setting the access and secret keys in the `simulator.properties` file is for security reasons. It is too easy to share your credentials with the outside world; now you can safely add the `simulator.properties` file in your source repository or share it with other people.*
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *For the full description of  the `simulator.properties` file, please refer to the [Simulator.Properties File Description section](#simulator-properties-file-description).*
-
-
