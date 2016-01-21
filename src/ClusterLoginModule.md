@@ -2,7 +2,10 @@
 
 ## ClusterLoginModule
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+
+<br></br>
+
 
 
 All security attributes are carried in the `Credentials` object. `Credentials` is used by [LoginModule](http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html)s during the authentication process. User supplied attributes from `LoginModule`s are accessed by [CallbackHandler](http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html)s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.

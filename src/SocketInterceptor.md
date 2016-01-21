@@ -3,7 +3,10 @@
 
 ## Socket Interceptor
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+
+<br></br>
+
 
 
 Hazelcast allows you to intercept socket connections before a node joins to cluster or a client connects to a node. This provides the ability to add custom hooks to join and perform connection procedures (like identity checking using Kerberos, etc.). Implement `com.hazelcast.nio.MemberSocketInterceptor` for members and `com.hazelcast.nio.SocketInterceptor` for clients.

@@ -1,7 +1,7 @@
 
 ### Tomcat Based Web Session Replication
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
 
 <br></br>
 

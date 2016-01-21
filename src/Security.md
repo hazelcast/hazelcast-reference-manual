@@ -2,12 +2,15 @@
 
 # Security
 
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+
+<br></br>
+
+
 This chapter provides information on the security features of Hazelcast. These features allow you to perform security activities including intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level and using SSL socket communication.
 
 
 ## Enabling Security for Hazelcast Enterprise
-
-![](images/enterprise-onlycopy.jpg)
 
 
 

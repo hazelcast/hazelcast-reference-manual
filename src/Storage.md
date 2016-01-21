@@ -5,7 +5,10 @@ This chapter describes Hazelcast's High-Density Memory Store and its configurati
 
 ## High-Density Memory Store
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+
+<br></br>
+
 
 Hazelcast High-Density Memory Store, the successor to Hazelcast Elastic Memory, is Hazelcast's new enterprise grade backend storage solution. This solution is used with the Hazelcast JCache implementation.
 
