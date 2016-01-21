@@ -20,20 +20,18 @@ Hazelcast Simulator is available as a downloadable package on the Hazelcast <a h
 
 The following are the key concepts mentioned with Hazelcast Simulator.
 
-- **Test** -  A test class for the functionality you want to test, such as a Hazelcast map. This test class may seem like a JUnit test, but it uses custom annotations to define methods for different test phases (e.g. setup, warmup, run, verify).
+- **Test** - A test class for the functionality you want to test, e.g. a Hazelcast map. This test class looks similar to a JUnit test, but it uses custom annotations to define methods for different test phases (e.g. `@Setup`, `@Warmup`, `@Run`, `@Verify`).
 
-- **TestSuite** -  A property file that contains the name of the test class and the properties you want to set on that test class instance. In most cases, a `TestSuite` contains a single test class, but you can configure multiple tests within a single `TestSuite`.
+- **TestSuite** - A property file that contains the name of the `Test` class and the properties you want to set on that `Test` class instance. A `TestSuite` contains one or multiple tests. It can also contain the same `Test` class with different names and configurations.
 
-- **Failure** -  An indication that something has gone wrong. Failures are picked up by the `Agent` and sent back to the `Coordinator`. Please see the descriptions below for the `Agent` and `Coordinator`.
+- **Worker** - A Java Virtual Machine (JVM) responsible for running the configured `Tests`. It can be configured to spawn a Hazelcast client or member instance, which is used in the tests.
 
-- **Worker** - A Java Virtual Machine (JVM) responsible for running a `TestSuite`. It can be configured to spawn a Hazelcast client or member instance.
+- **Agent** - A JVM responsible for managing `Workers`. There is always one `Agent` per physical machine, no matter how many `Workers` are spawned on that machine. It serves as communication relay for the `Coordinator` and monitoring instance for the `Workers`.
 
-- **Agent** - A JVM installed on a piece of hardware. Its main responsibility is spawning, monitoring and terminating `Workers`.
+- **Coordinator** - A JVM that can run anywhere, such as on your local machine. The `Coordinator` is actually responsible for running the `TestSuite` using the `Agents` and `Workers`. You configure it with a list of `Agent` IP addresses, and you run it by executing a command like "run this testsuite with 10 member worker and 100 client worker JVMs for 2 hours".
 
-- **Coordinator** -  A JVM that can run anywhere, such as on your local machine. **Coordinator** is actually responsible for running the test using the `Agents`. You configure it with a list of `Agent` IP addresses, and you run it by sending a command like "run this testsuite with 10 worker JVMs for 2 hours".
+- **Provisioner** - Spawns and terminates cloud instances, and installs Hazelcast Simulator on the remote machines. It can be used in combination with EC2 (or any other cloud), but it can also be used in a static setup, such as a local machine or a cluster of machines in your data center.
 
-- **Provisioner** -  Spawns and terminates cloud instances, and installs `Agents` on the remote machines. It can be used in combination with EC2 (or any other cloud), but it can also be used in a static setup, such as a local machine or a cluster of machines in your data center.
+- **Failure** - An indication that something has gone wrong. Failures are picked up by the `Agent` and sent back to the `Coordinator`.
 
-- **Communicator** -  A JVM that enables the communication between the `Agents` and `Workers`.
-
-- `simulator.properties` - The configuration file you use to adapt the Hazelcast Simulator to your business needs (e.g. cloud selection and configuration).
+- **simulator.properties** - The configuration file you use to adapt the Hazelcast Simulator to your business needs (e.g. cloud provider, SSH username, Hazelcast version, Java profiler settings).
