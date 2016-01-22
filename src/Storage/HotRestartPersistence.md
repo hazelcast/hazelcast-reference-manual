@@ -6,7 +6,7 @@
 
 
 
-This chapter explains the Hazelcast's Hot Restart Persistence feature, introduced with Hazelcast 3.6, which provides fast cluster restarts by storing the states of the cluster members on the disk. This feature is currently provided for the Hazelcast map data structure and the Hazelcast JCache implementation.
+This chapter explains the Hazelcast's Hot Restart Persistence feature, introduced with Hazelcast 3.6. Hot Restart Persistence provides fast cluster restarts by storing the states of the cluster members on the disk. This feature is currently provided for the Hazelcast map data structure and the Hazelcast JCache implementation.
 
 ### Hot Restart Persistence Overview
 
@@ -25,7 +25,7 @@ The Hot Restart feature is supported for the following restart types:
 
 		To be able to shutdown the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After the cluster state is changed to `FROZEN` or `PASSIVE`, you can manually shutdown each member by calling the method `HazelcastInstance.shutdown()`. When that member is restarted, it will rejoin the running cluster. After all members are restarted, the cluster state can be changed back to `ACTIVE`.
 
-- **Restart after a cluster crash**: The cluster is restarted after its all members crashed at the same time due to a power outage, networking interruptions, etc.
+- **Restart after a cluster crash**: The cluster is restarted after all its members crashed at the same time due to a power outage, networking interruptions, etc.
 
 #### The Restart Process
 
@@ -37,7 +37,7 @@ In the case of a restart after a cluster crash, the Hot Restart feature realizes
 
 #### Force Start
 
-It can happen that a node can crash permanently and cannot recover from the failure. In that case, restart process cannot be completed since some of the members do not start or fail to load their own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**. 
+A member can crash permanently and then be unable to recover from the failure. In that case, restart process cannot be completed since some of the members do not start or fail to load their own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**. 
    
 You can trigger the force start process using the Management Center, REST API and cluster management scripts. Force start process is managed by the master member. Therefore, you should trigger the force start on master member.
 
@@ -51,10 +51,10 @@ You can configure Hot Restart programmatically or declaratively. The configurati
 
 The following are the descriptions of the Hot Restart configuration elements.
 
-- `hot-restart-persistence`: The configuration that enables the Hot Restart feature and includes the element `base-dir` used to specify the directory where the Hot Restart data will be stored. Its default value is `hot-restart`. You can use the default value, or you can specify the value of another folder containing the Hot Restart configuration, but it is mandatory that this `hot-restart` element has a value. This directory will be created automatically if not exists yet.
+- `hot-restart-persistence`: The configuration that enables the Hot Restart feature. It includes the element `base-dir` that is used to specify the directory where the Hot Restart data will be stored. The default value for `base-dir` is `hot-restart`. You can use the default value, or you can specify the value of another folder containing the Hot Restart configuration, but it is mandatory that this `hot-restart` element has a value. This directory will be created automatically if it does not exist.
 - `validation-timeout-seconds`: Validation timeout for the Hot Restart process when validating the cluster members expected to join and the partition table on the whole cluster.
 - `data-load-timeout-seconds`: Data load timeout for the Hot Restart process. All members in the cluster should finish restoring their local data before this timeout.
-- `hot-restart`: The configuration that enables or disables the Hot Restart feature per data structure. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`). Turning on `fsync` guarantees that data is persisted to the disk device when a write operation returns successful response to the caller. By default, it's turned off. That means data will be persisted to the disk device eventually, not on every disk write, which in general provides a better performance.
+- `hot-restart`: The configuration that enables or disables the Hot Restart feature per data structure. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`). Turning on `fsync` guarantees that data is persisted to the disk device when a write operation returns successful response to the caller. By default, `fsync` is turned off. That means data will be persisted to the disk device eventually, instead of on every disk write. This generally provides better performance.
 
 #### Hot Restart Configuration Examples
 
@@ -121,7 +121,7 @@ Hazelcast's Hot Restart Persistence uses the log-structured storage approach. Th
 
 - The only kind of update operation on persistent data is _appending_.
 - What is appended are facts about events that happened to the data model represented by the store; either a new value was assigned to a key or a key was removed.
-- Each record associated with a key makes the previous record associated with the same key stale.
+- Each record associated with a key makes stale the previous record that was associated with that key.
 - Stale records contribute to the amount of _garbage_ present in the persistent storage.
 - Measures are taken to remove garbage from the storage.
 
@@ -135,7 +135,7 @@ In order to maintain the lowest possible footprint in the update operation laten
 <br></br>
 - On each update there is metadata to be maintained; this is done asynchronously by the Collector thread. The Mutator enqueues update events to the Collector's work queue.
 <br></br>
-- The Collector keeps draining its work queue at all times, including while it goes through the GC cycle. Updates are taken into account at each stage in the GC cycle, preventing the copying of already dead records into compacted files.
+- The Collector keeps draining its work queue at all times, including the time it goes through the GC cycle. Updates are taken into account at each stage in the GC cycle, preventing the copying of already dead records into compacted files.
 <br></br>
 - All GC-induced I/O competes for the same resources as the Mutator's update operations. Therefore, measures are taken to minimize the impact of I/O done during GC:
   - data is never read from files, but from RAM;
@@ -146,7 +146,7 @@ In order to maintain the lowest possible footprint in the update operation laten
 
 The success of this scheme is subject to a bet on the Weak Generational Garbage Hypothesis, which states that a new record entering the system is likely to become garbage soon. In other words, a key updated now is more likely than average to be updated again soon.
 
-The scheme was taken from the seminal Sprite LFS paper, [Rosenblum, Ousterhout, _The Design and Implementation of a Log-Structured File System_](http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf). The following is the outline:
+The scheme was taken from the seminal Sprite LFS paper, [Rosenblum, Ousterhout, _The Design and Implementation of a Log-Structured File System_](http://www.cs.berkeley.edu/~brewer/cs262/LFS.pdf). The following is an outline of the paper:
 
 - Data is not written to one huge file, but to many files of moderate size (8 MB) called "chunks".
 - Garbage is collected incrementally, i.e. by choosing several chunks, then copying all their live data to new chunks, then deleting the old ones.
@@ -162,6 +162,6 @@ The Cost-Benefit factor of a chunk consists of two components multiplied togethe
 1. The ratio of benefit (amount of garbage that can be collected) to I/O cost (amount of live data to be written).
 2. The age of the data in the chunk, measured as the age of the youngest record it contains.
 
-The essence is in the second component: given equal amount of garbage in all chunks, it will make the young ones less attractive to the Collector. Assuming the generational garbage hypothesis, this will allow the young chunks to quickly accumulate more garbage. On the flip side, it will also ensure that even files with little garbage are GC'd eventually, removing garbage which would otherwise linger on, thinly spread across many chunk files.
+The essence is in the second component: given equal amount of garbage in all chunks, it will make the young ones less attractive to the Collector. Assuming the generational garbage hypothesis, this will allow the young chunks to quickly accumulate more garbage. On the flip side, it will also ensure that even files with little garbage are eventually garbage collected. This removes garbage which would otherwise linger on, thinly spread across many chunk files.
 
 Sorting records by age will group young records together in a single chunk and will do the same for older records. Therefore the chunks will either tend to keep their data live for a longer time, or quickly become full of garbage.

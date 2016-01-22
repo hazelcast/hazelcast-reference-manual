@@ -7,9 +7,9 @@
 <font color="##153F75">**Hazelcast Enterprise HD**</font>
 <br></br>
 
-In the `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into Java heap which is subject to garbage collection (GC). As your heap gets bigger, garbage collection might cause your application to pause for tens of seconds, badly affecting your application performance and response times. Even if you have terabytes of cache in-memory with lots of updates, GC will have almost no effect; this results in more predictable latency and throughput. 
+In the `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into Java heap. Java heap is subject to garbage collection (GC). As your heap gets bigger, garbage collection might cause your application to pause for tens of seconds, badly affecting your application performance and response times. Even if you have terabytes of cache in-memory with lots of updates, GC will have almost no effect; this results in more predictable latency and throughput. 
 
-To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can enable your map to use the High-Density Memory Store by simply setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
+To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can enable your map to use the High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
 
 
 ```xml
@@ -23,7 +23,7 @@ Keep in mind that you should have already enabled the High-Density Memory Store 
 
 #### Required configuration changes when using NATIVE
 
-Beware that eviction mechanism is different for `NATIVE` in-memory format.
+Be aware that the eviction mechanism is different for `NATIVE` in-memory format.
 The new eviction algorithm is described [here](#eviction-algorithm).
 
   - Eviction percentage has no effect.
