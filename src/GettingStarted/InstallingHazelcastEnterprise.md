@@ -41,51 +41,68 @@ Hazelcast Enterprise customers may also define dependencies, a sample of which i
 ```
 
 
-#### Setting the License Key
+### Setting the License Key
 
-To use Hazelcast Enterprise, you need to set the license key in configuration.
+To use Hazelcast Enterprise, you need to set the provided license key using one of the configuration methods shown below. 
 
--   **Declarative Configuration**
+<br></br>
+**Declarative Configuration:**
+
+Add the below line to any place you like in the file `hazelcast.xml`. This XML file offers you a declarative way to configure your Hazelcast. It is included in the Hazelcast download package. When you extract the downloaded package, you will see the file `hazelcast.xml` under the `/bin` directory.
 
 ```xml
 <hazelcast>
   ...
-  <license-key>HAZELCAST_ENTERPRISE_LICENSE_KEY</license-key>
+  <license-key>Your Enterprise License Key</license-key>
   ...
 </hazelcast>
 ```
 
--   **Client Declarative Configuration**
+<br></br>
+**Client Declarative Configuration:**
+
+Native client distributions (Java, C++, .NET) of Hazelcast are open source. However, there are some Hazelcast Enterprise features which can be used with the Java Client such as SSL, Socket Interceptors, High-Density backed Near Cache, etc. In that case, you also need to have a Hazelcast Enterprise license and you should include this license in the file `hazelcast-client-full.xml` which is located under the directory `src/main/resources` of your `hazelcast-client` package, as shown below.
 
 ```xml
 <hazelcast-client>
   ...
-  <license-key>HAZELCAST_ENTERPRISE_LICENSE_KEY</license-key>
+  <license-key>Your Enterprise License Key</license-key>
   ...
 </hazelcast-client>
 ```
 
--   **Programmatic Configuration**
+<br></br>
+**Programmatic Configuration:**
+
+Alternatively, you can set your license key programmatically as shown below.
 
 ```java
 Config config = new Config();
-config.setLicenseKey( "HAZELCAST_ENTERPRISE_LICENSE_KEY" );
+config.setLicenseKey( "Your Enterprise License Key" );
 ```
 
--   **Spring XML Configuration**
+
+<br></br>
+**Spring XML Configuration:**
+
+If you are using Spring with Hazelcast, then you can set the license key using the Spring XML schema, as shown below.
 
 ```xml
 <hz:config>
   ...
-  <hz:license-key>HAZELCAST_ENTERPRISE_LICENSE_KEY</hz:license-key>
+  <hz:license-key>Your Enterprise License Key</hz:license-key>
   ...
 </hz:config>
 ```
 
--   **JVM System Property**
+
+<br></br>
+**JVM System Property:**
+
+As another option, you can set your license key using the below command (the "-D" command line option).
 
 ```plain
--Dhazelcast.enterprise.license.key=HAZELCAST_ENTERPRISE_LICENSE_KEY
+-Dhazelcast.enterprise.license.key=Your Enterprise License Key
 ```
 
 <br> </br>
