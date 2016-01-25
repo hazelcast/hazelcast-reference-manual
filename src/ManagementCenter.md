@@ -42,9 +42,9 @@ mancenter</management-center>
 
 
 
-If you have the open source edition of Hazelcast, Management Center can be used for at most 2 members in the cluster. To use it for more members, you need to have either a Management Center license or Hazelcast Enterprise license. This license should be entered within the Management Center as described in the following paragraphs.
+If you have the open source edition of Hazelcast, Management Center can be used for at most 2 members in the cluster. To use it for more members, you need to have either a Management Center license, Hazelcast Enterprise license or Hazelcast Enterprise HD license. This license should be entered within the Management Center as described in the following paragraphs.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Even if you have a Hazelcast Enterprise license key and you set it as explained in the [Setting the License Key](#setting-the-license-key) section, you still need to enter this same license within the Management Center. Please see the following paragraphs to learn how you can enter your license.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Even if you have a Hazelcast Enterprise or Enterprise HD license key and you set it as explained in the [Setting the License Key](#setting-the-license-key) section, you still need to enter this same license within the Management Center. Please see the following paragraphs to learn how you can enter your license.*
 <br></br>
 
 
