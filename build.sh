@@ -4,7 +4,6 @@ function buildDocumentation {
     init $1
     cleanIfExists
     copyImages
-    createMultiHTML
     createMergedMarkdownFile
     createSingleHTML
     createMancenterDocumentation
@@ -16,7 +15,6 @@ function buildDocumentation {
 function init {
 	VERSION=$1
 	OUTPUT_DIR="target"
-	MULTI_HTML_OUTPUT_DIR="html"
 	SINGLE_HTML_OUTPUT_DIR="html-single"
 	MANCENTER_OUTPUT_DIR="mancenter"
 	PDF_OUTPUT_DIR="pdf"
@@ -37,8 +35,6 @@ function cleanIfExists {
 	fi
 	echo "Creating $OUTPUT_DIR"
 	mkdir ${OUTPUT_DIR}
-	echo "Creating $OUTPUT_DIR/$MULTI_HTML_OUTPUT_DIR"
-	mkdir ${OUTPUT_DIR}/${MULTI_HTML_OUTPUT_DIR}
 	echo "Creating $OUTPUT_DIR/$SINGLE_HTML_OUTPUT_DIR"
 	mkdir ${OUTPUT_DIR}/${SINGLE_HTML_OUTPUT_DIR}
 	echo "Creating $OUTPUT_DIR/$MANCENTER_OUTPUT_DIR"
@@ -73,35 +69,6 @@ function writeManifestFile {
     else
         echo "Error writing manifest file"
         echo ${writeManifest}
-        delete
-        exit -1
-    fi
-}
-
-function createMultiHTML {
-    MANIFEST_FILE_BODY="{\"title\": \"Documentation\",
-\"rootDir\": \".\",
-\"date\": \"${DATE}\",
-\"version\": \"${VERSION}\",
-\"maxTocLevel\":3,
-\"files\":"
-    MANIFEST_FILE_BODY+="["
-
-    echo "Building manifest file for multipage html"
-    for file in ${INDEX}; do
-        MANIFEST_FILE_BODY+="\"$file\","
-    done
-    MANIFEST_FILE_BODY=${MANIFEST_FILE_BODY:0: ${#MANIFEST_FILE_BODY}-1}
-    MANIFEST_FILE_BODY+="]}"
-
-    writeManifestFile "${MANIFEST_FILE_BODY}"
-
-    echo "Creating multi_html documentation"
-    createHtml=$(bfdocs --theme=themes/multi_html "./"${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${MULTI_HTML_OUTPUT_DIR})
-    if [[ $? -ge 0 ]]; then
-        echo "Multi HTML created successfully."
-    else
-        echo "Error creating Multi HTML documentation"
         delete
         exit -1
     fi

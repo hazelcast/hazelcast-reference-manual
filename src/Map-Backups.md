@@ -67,3 +67,5 @@ To enable backup reads (read local backup entries), set the value of the `read-b
 ```
 
 This feature is available when there is at least 1 sync or async backup.
+
+Please note that, if you are performing a read from a backup, you should take into account that your hits to the keys in the backups are not reflected as hits to the original keys on the primary members; this has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even though there is a hit on a key in backups, your original key on the primary member may expire.
