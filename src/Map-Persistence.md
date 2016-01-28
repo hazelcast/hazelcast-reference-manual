@@ -154,7 +154,7 @@ Here is a sample configuration:
   ...
   <map name="default">
     ...
-    <map-store enabled="true">
+    <map-store enabled="true" initial-mode="LAZY">
       <class-name>com.hazelcast.examples.DummyStore</class-name>
       <write-delay-seconds>60</write-delay-seconds>
       <write-batch-size>1000</write-batch-size>
@@ -163,12 +163,15 @@ Here is a sample configuration:
   </map>
 </hazelcast>
 ```
-<br></br>
-***RELATED INFORMATION***
 
-*Please refer to the [Map Store section](#map-store) for the full Map Store configuration description.*
+The following are the descriptions of MapStore configuration elements and attributes:
 
-<br></br>
+- `class-name`: Name of the class implementing MapLoader and/or MapStore.
+- `write-delay-seconds`: Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through so MapStore.store(key, value) will be called as soon as the entry is updated. Otherwise it is write-behind so updates will be stored after write-delay-seconds value by calling Hazelcast.storeAll(map). Default value is 0.
+- `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries will be tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
+- `write-coalescing`: In write-behind mode, by default Hazelcast coalesces updates on a specific key, i.e. applies only the last update on it. You can set this element to `false` to store all updates performed on a key to the data store.
+- `enabled`: True to enable this map-store, false to disable. Default value is true.
+- `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded.
 
 
 #### Storing Entries to Multiple Maps
@@ -290,4 +293,4 @@ class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapS
 }
 ```
 
-** Note :** Please be warned that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.
+![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.*
