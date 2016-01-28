@@ -165,3 +165,27 @@ The Cost-Benefit factor of a chunk consists of two components multiplied togethe
 The essence is in the second component: given equal amount of garbage in all chunks, it will make the young ones less attractive to the Collector. Assuming the generational garbage hypothesis, this will allow the young chunks to quickly accumulate more garbage. On the flip side, it will also ensure that even files with little garbage are eventually garbage collected. This removes garbage which would otherwise linger on, thinly spread across many chunk files.
 
 Sorting records by age will group young records together in a single chunk and will do the same for older records. Therefore the chunks will either tend to keep their data live for a longer time, or quickly become full of garbage.
+
+### Hot Restart Performance Considerations
+
+In this section you can find a performance test summary which is a result of benchmark tests performed on a single Hazelcast member running on a physical server. This member has an IMap data structure with High-Density Memory Store. Its data size is changed for each test, started from 10 GB to 500 GB (each map entry has a value of 1 KB). The tests investigate the write and read performance of Hot Restart Persistence.
+
+Tests are performed on HP ProLiant servers with RHEL 7 operating system using Hazelcast Simulator. 
+
+The following are the spefications of the server hardware used for the test:
+
+* CPU: 2x Intel(R) Xeon(R) CPU E5-2687W v3 @ 3.10GHz – with 10 cores per processor. Total 20 cores, 40 with hyper threading enabled.
+* Memory: 768GB 2133 MHz memory 24x HP 32GB 4Rx4 PC4-2133P-L Kit
+
+The following are the storage media used for the test:
+
+* A hot-pluggable 2.5 inch HDD with 1 TB capacity and 10K RPM.
+* An SSD, Light Endurance PCle Workload Accelerator.
+
+The below table shows the test results.
+
+![image](images/HotRestartPerf.png) 
+
+
+
+
