@@ -10,13 +10,14 @@ You have two options for installing Hazelcast Management Center:
 
 Here are the steps.
 
-- Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file.
+- Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file under the directory `mancenter`.
 - You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
 
 ```java
 java -jar mancenter-*version*.war 8080 mancenter
 ```
 
+- You can also start it using the scripts `startManCenter.bat` or `startManCenter.sh` located in the directory `mancenter`.
 - Or, instead of starting at the command line, you can deploy it to your web server (Tomcat, Jetty, etc.). Let us say it is running at `http://localhost:8080/mancenter`.
 - After you perform the above steps, make sure that `http://localhost:8080/mancenter` is up.
 - Configure your Hazelcast members by adding the URL of your web application to your `hazelcast.xml`. Hazelcast members will send their states to this URL.
