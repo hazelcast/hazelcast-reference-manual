@@ -23,15 +23,15 @@ The following is an example declarative configuration.
     </multicast>
     <tcp-ip enabled="false">
     </tcp-ip>
-    <discovery-providers>
-        <discovery-provider class="com.hazelcast.jclouds.JCloudsDiscoveryStrategy" enabled="true">
+    <discovery-strategies>
+        <discovery-strategy class="com.hazelcast.jclouds.JCloudsDiscoveryStrategy" enabled="true">
           <properties>
            <property name="provider">aws-ec2</property>
            <property name="identity">AWS_IDENTITY</property>
            <property name="credential">AWS_CREDENTIAL</property>
           </properties>
-        </discovery-provider>
-    </discovery-providers>
+        </discovery-strategy>
+    </discovery-strategies>
 </join>
 ...
 ```
