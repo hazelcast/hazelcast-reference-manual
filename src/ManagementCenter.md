@@ -209,7 +209,7 @@ Under these charts is the Cache Statistics Data Table. From left to right, this 
 
 You can navigate through the pages using the buttons at the bottom right of the table (**First, Previous, Next, Last**). You can ascend or descend the order of the listings in each column by clicking on column headings.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *You need to enable the statistics for caches to monitor them in the Management Center. Use the `<statistics-enabled>` element or `setStatisticsEnabled()` method in declarative or programmatic configuration, respectively, to enable the statistics. Please refer to the [Cache Configuration section] for more information.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *You need to enable the statistics for caches to monitor them in the Management Center. Use the `<statistics-enabled>` element or `setStatisticsEnabled()` method in declarative or programmatic configuration, respectively, to enable the statistics. Please refer to the [Cache Configuration section](#icache-configuration) for more information.*
 
 
 
