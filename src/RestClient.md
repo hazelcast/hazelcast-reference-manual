@@ -11,6 +11,11 @@ Hazelcast provides a REST interface, i.e. it provides an HTTP service in each cl
 
 For the operations to be performed, standard REST conventions for HTTP calls are used.
 
+<br> </br>
+![image](images/NoteSmall.jpg) ***NOTE***: *REST client request listener service is not enabled by default. You should enable it on your cluster members to use REST client. It can be enabled using the system property `hazelcast.rest.enabled`. Please refer to the [System Properties section](#system-properties) for the definition of this property and how to set a system property.*
+
+
+
 ### REST Client GET/POST/DELETE Examples
 
 In the following GET, POST, and DELETE examples, assume that your cluster members are as shown below.
@@ -223,7 +228,6 @@ AllConnectionCount: 20
 
 RESTful access is provided through any member of your cluster. You can even put an HTTP load-balancer in front of your cluster members for load balancing and fault tolerance.
 
-![image](images/NoteSmall.jpg) ***NOTE***: *REST client request listener service is not enabled by default. You should enable it on your cluster members to use REST client. It can be enabled using the system property `hazelcast.rest.enabled`. Please refer to the [System Properties section](#system-properties) for the definition of this property and how to set a system property.*
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *You need to handle the failures on REST polls as there is no transactional guarantee.*
 
