@@ -10,7 +10,7 @@ If you are doing the process described above, you should consider using entry pr
 
 ### Performing Fast In-Memory Map Operations
 
-An entry processor enables fast in-memory operations on your map without you having to worry about locks or concurrency issues. You can apply it to a single map entry or to all map entries. It supports choosing target entries using predicates. You do not need any explicit lock on entry: Hazelcast locks the entry, runs the EntryProcessor, and then unlocks the entry.
+An entry processor enables fast in-memory operations on your map without you having to worry about locks or concurrency issues. You can apply it to a single map entry or to all map entries. It supports choosing target entries using predicates. You do not need any explicit lock on entry thanks to the isolated threading model: Hazelcast runs the EntryProcessor for all entries on a `partitionThread` so there will NOT be any interleaving of the EntryProcessor and other mutations.
 
 Hazelcast sends the entry processor to each cluster member and these members apply it to map entries. Therefore, if you add more members, your processing completes faster.
 
