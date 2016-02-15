@@ -5,43 +5,41 @@
 <br></br>
 
 
-Hazelcast allows you to encrypt the entire socket level communication among all Hazelcast members. Encryption is based on <a href="http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html" target="_blank">Java Cryptography Architecture</a>. In symmetric encryption, each node uses the same key, so the key is shared. Here is an example configuration for symmetric encryption.
+Hazelcast allows you to encrypt the entire socket level communication among all Hazelcast members and clients. Encryption is based on <a href="http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html" target="_blank">Java Cryptography Architecture</a>. 
 
-You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key, and the iteration count to use when generating the secret key. You also need to set `enabled` to true.
+Hazelcast provides symmetric and asymmetric encryption. For asymmetric encryption, SSL/TLS cryptographic protocols are used. For symmetric encryption, the following algorithms are used.
+
+* DES/ECB/PKCS5Padding
+* PBEWithMD5AndDES
+* Blowfish
+* DESede
+
+Hazelcast uses MD5 message-digest algorithm as the cryptographic hash function. You can also use the salting process by giving a salt and password which are then concatenated and processed with MD5, and the resulting output is stored with the salt.
+
+
+In symmetric encryption, each member uses the same key, so the key is shared. Here is an example configuration for symmetric encryption.
+
 
 ```xml
 <hazelcast>
   ...
   <network>
     ...
-    <!--
-      Make sure to set enabled=true
-      Make sure this configuration is exactly the same on
-      all members
-    -->
     <symmetric-encryption enabled="true">
-      <!--
-        encryption algorithm such as
-        DES/ECB/PKCS5Padding,
-        PBEWithMD5AndDES,
-        Blowfish,
-        DESede
-      -->
       <algorithm>PBEWithMD5AndDES</algorithm>
-
-      <!-- salt value to use when generating the secret key -->
       <salt>thesalt</salt>
-
-      <!-- pass phrase to use when generating the secret key -->
       <password>thepass</password>
-
-      <!-- iteration count to use when generating the secret key -->
       <iteration-count>19</iteration-count>
     </symmetric-encryption>
   </network>
   ...
 </hazelcast>
 ```
+
+You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key, and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
+
+
+
 
 <br> </br>
 
