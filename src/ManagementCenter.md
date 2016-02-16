@@ -2,7 +2,7 @@
 
 Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your members.
 
-### Installing Management Center
+### Installing Management Centerc
 
 You have two options for installing Hazelcast Management Center:
 - deploy the `mancenter`-*version*`.war` application into your Java application server/container,
@@ -209,7 +209,7 @@ Under these charts is the Cache Statistics Data Table. From left to right, this 
 
 You can navigate through the pages using the buttons at the bottom right of the table (**First, Previous, Next, Last**). You can ascend or descend the order of the listings in each column by clicking on column headings.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *You need to enable the statistics for caches to monitor them in the Management Center. Use the `<statistics-enabled>` element or `setStatisticsEnabled()` method in declarative or programmatic configuration, respectively, to enable the statistics. Please refer to the [Cache Configuration section](#icache-configuration) for more information.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *You need to enable the statistics for caches to monitor them in the Management Center. Use the `<statistics-enabled>` element or `setStatisticsEnabled()` method in declarative or programmatic configuration, respectively, to enable the statistics. Please refer to the [JCache Declarative Configuration section](#jcache-declarative-configuration) for more information.*
 
 
 
