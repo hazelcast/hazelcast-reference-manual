@@ -1,12 +1,12 @@
 
 ### Discovering Members with jclouds
 
-Hazelcast supports jclouds&reg; for cluster member discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud providers. However currently, for AWS EC2 which is also based on jclouds, you still need to configure your cluster using the <aws> element as described in the above [Discovering Members within EC2 Cloud](#discovering-members-within-ec2-cloud) section.
+Hazelcast members and native clients support jclouds&reg; for discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud providers. However currently, for AWS EC2 which is also based on jclouds, you still need to configure your cluster using the <aws> element as described in the above [Discovering Members within EC2 Cloud](#discovering-members-within-ec2-cloud) section.
 
 To configure your cluster to use jclouds Auto Discovery, follow these steps:
 
 - Add the *hazelcast-jclouds.jar* dependency to your project. Note that this is also bundled inside *hazelcast-all.jar*. The Hazelcast jclouds module depends on jclouds; please make sure the necessary JARs for your provider are present on the classpath.
-- Disable the multicast and TCP/IP join mechanisms. To do this, set the `enabled` attributes of the `multicast` and `tcp-ip` elements to `false`.
+- Disable the multicast and TCP/IP join mechanisms. To do this, set the `enabled` attributes of the `multicast` and `tcp-ip` elements to `false` in your `hazelcast.xml` configuration file
 - Set the `enabled` attribute of the `hazelcast.discovery.enabled` property to `true`.
 - Within the `discovery-providers` element, provide your credentials (access and secret key), your region, etc.
 
@@ -23,18 +23,20 @@ The following is an example declarative configuration.
     </multicast>
     <tcp-ip enabled="false">
     </tcp-ip>
-    <discovery-providers>
-        <discovery-provider class="com.hazelcast.jclouds.JCloudsDiscoveryStrategy" enabled="true">
+    <discovery-strategies>
+        <discovery-strategy class="com.hazelcast.jclouds.JCloudsDiscoveryStrategy" enabled="true">
           <properties>
            <property name="provider">google-compute-engine</property>
            <property name="identity">GCE_IDENTITY</property>
            <property name="credential">GCE_CREDENTIAL</property>
           </properties>
-        </discovery-provider>
-    </discovery-providers>
+        </discovery-strategy>
+    </discovery-strategies>
 </join>
 ...
 ```
+As stated in the first paragraph of this section, Hazelcast native clients also support jclouds for discovery. It means you can also configure your `hazelcast-client.xml` configuration file to include the <discovery-strategies> element in the same way as it is with `hazelcast.xml`.
+
 The table below lists the jclouds configuration properties with their descriptions.
 
 Property Name | Type | Description
