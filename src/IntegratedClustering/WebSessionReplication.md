@@ -146,7 +146,7 @@ To set up Hazelcast Session Clustering:
   -->
   <init-param>
     <param-name>client-config-location</param-name>
-    <param-value>/WEB-INF/hazelcast-client.properties</param-value>
+    <param-value>/WEB-INF/hazelcast-client.xml</param-value>
   </init-param>
   <!--
     Do you want to shutdown HazelcastInstance during
