@@ -45,8 +45,3 @@ using its corresponding setter methods.
 ![image](images/NoteSmall.jpg) ***NOTE:*** *At the client side, ICache can be configured only programmatically.*
 <br></br>
 
-
-
-***RELATED INFORMATION***
-
-*Please refer to the [Cache Configuration section](#cache-configuration) for a full description of ICache configuration.*
