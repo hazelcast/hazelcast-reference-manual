@@ -1,7 +1,7 @@
 
 ### Discovering Members with jclouds
 
-Hazelcast supports jclouds&reg; for cluster member discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud providers.
+Hazelcast supports jclouds&reg; for cluster member discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud providers. However currently, for AWS EC2 which is also based on jclouds, you still need to configure your cluster using the <aws> element as described in the above [Discovering Members within EC2 Cloud](#discovering-members-within-ec2-cloud) section.
 
 To configure your cluster to use jclouds Auto Discovery, follow these steps:
 
@@ -26,9 +26,9 @@ The following is an example declarative configuration.
     <discovery-strategies>
         <discovery-strategy class="com.hazelcast.jclouds.JCloudsDiscoveryStrategy" enabled="true">
           <properties>
-           <property name="provider">aws-ec2</property>
-           <property name="identity">AWS_IDENTITY</property>
-           <property name="credential">AWS_CREDENTIAL</property>
+           <property name="provider">google-compute-engine</property>
+           <property name="identity">GCE_IDENTITY</property>
+           <property name="credential">GCE_CREDENTIAL</property>
           </properties>
         </discovery-strategy>
     </discovery-strategies>
