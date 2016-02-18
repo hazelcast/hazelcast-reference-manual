@@ -84,3 +84,59 @@ This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sur
 - Hazelcast IMap also provides locking support on the entry level with the method `IMap.lock(key)`. Although the same infrastructure 
 is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it directly.
 
+
+
+### Synchronizing Threads with ICondition
+
+`ICondition` is the distributed implementation of the `notify`, `notifyAll` and `wait` operations on the Java object. You can use it to synchronize
+threads across the cluster. More specifically, you use `ICondition` when a thread's work depends on another thread's output. A good example
+can be producer/consumer methodology. 
+
+Please see the below code examples for a producer/consumer implementation.
+
+**Producer thread:**
+
+```java
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Lock lock = hazelcastInstance.getLock( "myLockId" );
+ICondition condition = lock.newCondition( "myConditionId" );
+
+lock.lock();
+try {
+  while ( !shouldProduce() ) {
+    condition.await(); // frees the lock and waits for signal
+                       // when it wakes up it re-acquires the lock
+                       // if available or waits for it to become
+                       // available
+  }
+  produce();
+  condition.signalAll();
+} finally {
+  lock.unlock();
+}
+```
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *The method `await()` takes time value and time unit as arguments. If you specify a negative value for the time, it is interpreted as infinite.*
+
+**Consumer thread:**
+       
+```java       
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Lock lock = hazelcastInstance.getLock( "myLockId" );
+ICondition condition = lock.newCondition( "myConditionId" );
+
+lock.lock();
+try {
+  while ( !canConsume() ) {
+    condition.await(); // frees the lock and waits for signal
+                       // when it wakes up it re-acquires the lock if 
+                       // available or waits for it to become
+                       // available
+  }
+  consume();
+  condition.signalAll();
+} finally {
+  lock.unlock();
+}
+```
+
