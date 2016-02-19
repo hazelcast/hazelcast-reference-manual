@@ -59,33 +59,59 @@
 
 </head>
 <body>
-    <div id="page">
-        <a name="top" />
-        <div id="sitebar">
-    <div class="content">
-      <p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
-      </div>
-  </div>
-
-        <header id="header">
+	<div id="page">
+		<a name="top" />
+		<div id="sitebar">
 			<div class="content">
+				<p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
+			</div>
+		</div>
+	<header id="header">
+		<div class="content">
 			<div style="overflow:hidden">
 				<div style="float:left">
-                    <a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
-					
+					<a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
 				</div>	
 				<div style="float:left;padding-top: 15px;padding-left: 30px;">
-<h1><a href="<%= @baseUrl %>"><%= @manifest.title or @title %> <span style="font-size:12px"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span></a></h1>
+					<h1><a href="<%= @baseUrl %>"><%= @manifest.title or @title %> <span style="font-size:12px"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span></a></h1>
 				</div>
 			</div>
+		</div>
+	</header>
+	<div class="content">
+		<%- @include "_sidebar.html" %>
+		<div id="content">
+			<%- @content %>
+			<div id="hz-feedback">
+				<div id="contact-thankyou" style="display: none;">
+					Thank you.  We have received your feedback.
+				</div>
+				<div id="hz-form">
+					<form id="hz-contactform" action="#" method="post">
+						<ul >
+							<li>
+								<label for="hz-name">Your Name*</label> <input type="text" name="hz-name" class="required" id="hz-name" value="">
+							</li>
+							<li>
+								<label for="hz-email">E-mail*</label> <input type="text" name="hz-email" class="required" id="hz-email" value="">
+							</li>
+							<li>
+								<label for="hz-message">Comment*</label>
+								<textarea class="required" id="hz-message" name="hz-message"  rows="8" cols="30"></textarea>
+							</li>
+						</ul>
+						<input type="submit" value="Send" id="hz-sendbutton" name="hz-sendbutton">
+						<a id="hz-sendusfixbutton" href="https://github.com/hazelcast/hazelcast-reference-manual/issues/new" target="_blank">
+							Or, Send us a fix!
+						</a> 
+					</form>
+				</div>
+				<div id="hz-img-control"></div>
 			</div>
-        </header>
-        <div class="content">
-	        <%- @include "_sidebar.html" %>
-	        <div id="content">
-	            <%- @content %>
-	        </div>	
-	        </div>		
+			<link type="text/css" rel="stylesheet" href="<%= @baseUrl %>assets/css/feedback-form.css">
+			<script type="text/javascript" src="<%= @baseUrl %>assets/js/feedback-form.js"></script>
+		</div>
+	</div>		
     </div>
 </body>
 </html>
