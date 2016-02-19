@@ -2,7 +2,7 @@
 
 ## User Defined Services
 
-In the case of special/custom needs, Hazelcast's SPI (Service Provider Interface) module allows users to develop their own distributed data structures and services.
+In the case of special/custom needs, you can use Hazelcast's SPI (Service Provider Interface) module to develop your own distributed data structures and services on top of Hazelcast. Hazelcast SPI is an internal, low-level API which is expected to change in each release except for the patch releases. Your structures and services evolve as the SPI changes. 
 
 Throughout this section, we create an example distributed counter that will be the guide to reveal the Hazelcast Services SPI usage.
 
