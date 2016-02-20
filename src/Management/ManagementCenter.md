@@ -2,7 +2,7 @@
 
 Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your members.
 
-### Installing Management Centerc
+### Installing Management Center
 
 You have two options for installing Hazelcast Management Center:
 - deploy the `mancenter`-*version*`.war` application into your Java application server/container,

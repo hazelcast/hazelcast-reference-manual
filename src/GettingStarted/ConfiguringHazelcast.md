@@ -42,13 +42,15 @@ When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazel
             <tcp-ip enabled="false">
 ```
 
-For most users, default configuration should be fine. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
+For most users, the default configuration in this XML file should be fine. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
 
-Besides declarative configuration, you can configure your cluster programmatically. Just instantiate a `Config` object and add/remove/modify properties.
+For details about all the elements and attributes used to configure Hazelcast, please refer to the [Hazelcast Configuration chapter](#hazelcast-configuration). This chapter contains information for configuring networks, caches, partitions, and so on. It also has links to sections for configuring maps, serialization, Management Center, etc.
+
+Besides declarative configuration, you can configure your cluster programmatically. Just instantiate a `Config` object and add/remove/modify properties. Please refer to the Programmatic Configuration section in [Configuration Overview](#configuration-overview) for a code example.
 
 You can also use wildcards while configuring Hazelcast. Please refer to the [Using Wildcard section](#using-wildcard) for details.
 
-Hazelcast also offers System Properties to tune some aspects of it. Please refer to the [System Properties section](#system-properties) for details.
+Hazelcast also offers System Properties to tune some aspects of Hazelcast. Please refer to the [System Properties section](#system-properties) for details.
 
 <br></br>
 
