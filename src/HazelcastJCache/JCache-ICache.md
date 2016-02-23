@@ -78,11 +78,11 @@ You can set this on the command line.
 -Dmy-placeholder=classpath://my-configs/scoped-hazelcast.xml
 ```
 
-There are a few points about name of the hazelcast instance when config file location is specified by `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` (which resolves to `hazelcast.config.location`):
+You should consider the following rules about the Hazelcast instance name when you specify the configuration file location using `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` (which resolves to `hazelcast.config.location`):
 
-* If there is also specified `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) property, even though there is configured instance name in the config file, this property is used as instance name.
-* If there is no specified instance name property but there is configured instance name in config file by `<instance-name>` tag, configured instance name is used.
-* Otherwise (no instance name specified via property or in the config file), URL of config file location is used as instance name.
+* If you also specified `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) property, this property is used as instance name even though you configured the instance name in the configuration file.
+* If you do not specify `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` but you configure the instance name in the configuration file using the element `<instance-name>`, this element's value will be used as the instance name.
+* Otherwise (you do not specify an instance name via property or in the configuration file), the URL of the configuration file location is used as the instance name.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *No check is performed to prevent creating multiple `CacheManager`s with the same cluster
