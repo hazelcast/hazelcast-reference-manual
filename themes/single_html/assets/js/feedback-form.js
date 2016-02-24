@@ -32,7 +32,7 @@ $(window).load(function() {
 	$img_control.vAlign()
 	//animate the form
 	.toggleClick(function(){
-		$hz_feedback.animate({'right':'-2px'},1000);
+		$hz_feedback.animate({'right':'-270px'},1000);
 	}, function(){
 		$hz_feedback.animate({'right':'-'+$hz_feedback.outerWidth()},1000);
 	});
