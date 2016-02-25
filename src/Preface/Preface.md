@@ -20,7 +20,7 @@ This Reference Manual covers all editions of Hazelcast. Throughout this manual:
 
 You can see the features for all Hazelcast editions in the following architecture diagram.
 
-![image](images/HazelcastArchitecture.png)
+![Hazelcast Architecture](images/HazelcastArchitecture.png)
 
 For more information on Hazelcast's Architecture, please see the whitepaper <a href="https://hazelcast.com/resources/architects-view-hazelcast/" target="_blank">An Architect’s View of Hazelcast</a>.
 
