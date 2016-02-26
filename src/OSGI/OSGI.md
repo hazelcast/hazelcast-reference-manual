@@ -40,7 +40,7 @@ Each `HazelcastOSGiService` instance has a different service ID as the combinati
 
 `HazelcastOSGiService` instance lifecycle is the same with the owner Hazelcast bundle. This means that when the owner bundle is deactivated, the owned `HazelcastOSGiService` instance is deactivated, and all active Hazelcast instances that are created and served by that `HazelcastOSGiService` instance are also shutdown and deregistered. When the Hazelcast bundle is re-activated, its `HazelcastOSGiService` instance is registered again as the OSGI service.
 
-![](images/osgi_design.png)
+![](images/OSGI/Design.png)
 
 ## Using Hazelcast OSGI Service
 

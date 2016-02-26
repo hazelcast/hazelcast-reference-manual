@@ -242,7 +242,7 @@ Besides the Map Browser and Map Config tools, the map monitoring page has monito
 
 On top of the page, small charts monitor the size, throughput, memory usage, backup size, etc. of the selected map in real-time. The X-axis of all the charts show the current system time. You can select other small monitoring charts using the ![](images/ManagementCenter/ChangeWindowIcon.jpg) button at the top right of each chart. When you click the button, the monitoring options are listed, as shown below.
 
-![Monitoring Options for Map](images/MonitoringOptionsMap.jpg)
+![Monitoring Options for Map](images/ManagementCenter/MonitoringOptionsMap.jpg)
 
 When you click on a desired monitoring, the chart is loaded with the selected option. To open a chart as a separate dialog, click on the ![](images/ManagementCenter/MaximizeChart.jpg) button placed at the top right of each chart. The monitoring charts below are available:
 
