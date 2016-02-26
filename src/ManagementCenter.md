@@ -51,7 +51,7 @@ If you have the open source edition of Hazelcast, Management Center can be used 
 
 Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
 
-<img src="images/SignUp-Popup.jpg" style="width:413px;height:345px;">
+![Signing Up](images/ManagementCenter/Signup.png)
 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
@@ -59,21 +59,19 @@ Once you browse to `http://localhost:8080/mancenter` and since you are going to 
 
 It asks you to create a username and password and give a valid e-mail address of yours. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
 
-
-<img src="images/ConnectCluster.jpg" style="width:313px;height:243px;">
+![Selecting Cluster to Connect](images/ManagementCenter/ConnectCluster.png)
 
 
 "Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has at most 2 members.
 
 If you have a Management Center license or Hazelcast Enterprise license, you can enter it in the dialog box that appears once you press the **Enter License** button, as shown below.
 
-
-<img src="images/EnterLicense.jpg" style="width:312px;height:244px;">
+![Providing License for Management Center](images/ManagementCenter/EnterLicense.png)
 
 
 When you try to connect to a cluster that has more than 2 members without entering a license key or if your license key is expired, the following dialog box appears.
 
-<img src="images/ExpiredLicense.jpg" style="width:313px;height:244px;">
+![Management Center License Warning](images/ManagementCenter/ExpiredLicense.png)
 
 
 Here, you can either choose to connect to a cluster without providing a license key or to enter your license key. If you choose to continue without a license, Management Center still continues to function but you will only be able to monitor up to 2 members of your cluster.
@@ -91,13 +89,13 @@ Management Center creates a folder with the name `mancenter` under your `user/ho
 
 Once the page is loaded after selecting a cluster, the tool's home page appears as shown below.
 
-![](images/NonHostedMCHomePage.jpg)
+![Management Center Home Page](images/ManagementCenter/ManagementCenterHomePage.jpg)
 
 This page provides the fundamental properties of the selected cluster which are explained in the [Home Page](#management-center-home-page) section. The page has a toolbar on the top and a menu on the left.
 
 #### Toolbar
 
-![](images/toolbar.png)
+![Management Center Toolbar](images/ManagementCenter/Toolbar.png)
 
 The toolbar has the following buttons:
 
@@ -112,7 +110,7 @@ The toolbar has the following buttons:
 -	**Time Travel**: Sees the cluster's situation at a time in the past. Please see the [Time Travel section](#checking-past-status-with-time-travel).
 -	**Cluster Selector**: Switches between clusters. When the mouse is moved onto this item, a drop down list of clusters appears.
 
-  ![](images/4ChangeCluster.jpg)
+  ![Changing Cluster](images/ManagementCenter/ChangingCluster.jpg)
 
   The user can select any cluster and once selected, the page immediately loads with the selected cluster's information.
 
@@ -123,7 +121,7 @@ The toolbar has the following buttons:
 
 The Home Page includes a menu on the left which lists the distributed data structures in the cluster and all the cluster members, as shown below.
 
-![](images/LeftMenu.png)
+![Management Center Menu](images/ManagementCenter/Menu.png)
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Distributed data structures will be shown there when the proxies are created for them.*
 
@@ -145,7 +143,7 @@ You can expand and collapse menu items by clicking on them. Below is the list of
 
 Each time you select an item from the toolbar or menu, the item is added to the main view as a tab, as shown below.
 
-![](images/NonHMCTabbedView.jpg)
+![Tabbed View](images/ManagementCenter/TabbedView.jpg)
 
 In the above example, *Home*, *Scripting*, *Console*, *queue1* and *map1* windows can be seen as tabs. Windows can be closed using the ![](images/CloseIcon.jpg) icon on each tab (except the Home Page; it cannot be closed).
 

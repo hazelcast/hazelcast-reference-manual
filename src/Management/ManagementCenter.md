@@ -51,6 +51,9 @@ If you have the open source edition of Hazelcast, Management Center can be used 
 
 Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
 
+![Sign Up](images/Signup-New.jpg)
+
+
 <img src="images/SignUp-Popup.jpg" style="width:413px;height:345px;">
 
 
