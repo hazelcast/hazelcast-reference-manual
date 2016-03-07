@@ -184,9 +184,9 @@ Also, you should configure the clients attentively. Please refer to the [Java Cl
 
 <br></br>
 
-## What is the difference between old LiteMember and new Smart Client?
+## Difference between Lite Member and Smart Client?
 
-LiteMember supports task execution (distributed executor service), smart client does not. Also, LiteMember is highly coupled with cluster, smart client is not.
+Lite member supports task execution (distributed executor service), smart client does not. Also, Lite Member is highly coupled with cluster, smart client is not.
 
 <br></br>
 
@@ -261,7 +261,7 @@ The line `log4j.logger.com.hazelcast=debug` is used to see debug logs for all Ha
 
 <br></br>
 
-## What is the difference between client-server and embedded topologies?
+## Client-server vs. embedded topologies?
 
 In the embedded topology, members include both the data and application. This type of topology is the most useful if your application focuses on high performance computing and many task executions. Since application is close to data, this topology supports data locality. 
 
@@ -325,7 +325,7 @@ Hazelcast allows you to set some socket options such as `SO_KEEPALIVE`, `SO_SNDB
 
 <br></br>
 
-## I periodically see client disconnections during idle time?
+## Client disconnections during idle time?
 
 In Hazelcast, socket connections are created with the `SO_KEEPALIVE` option enabled by default. In most operating systems, default keep-alive time is 2 hours. If you have a firewall between clients and servers which is configured to reset idle connections/sessions, make sure that the firewall's idle timeout is greater than the TCP keep-alive defined in the OS.
 
@@ -336,7 +336,7 @@ For additional information please see:
  
  <br></br>
 
-## How to get rid of "java.lang.OutOfMemoryError: unable to create new native thread"?
+## OOME: Unable to create new native thread?
 
 If you encounter an error of `java.lang.OutOfMemoryError: unable to create new native thread`, it may be caused by exceeding the available file descriptors on your operating system, especially if it is Linux. This exception is usually thrown on a running member, after a period of time when the thread count exhausts the file descriptor availability.
 
@@ -375,7 +375,7 @@ The default number of process per users is 1024. Adding the following to your `$
 
 Repartitioning is the process of redistributing the partition ownerships. Hazelcast performs the repartitioning in the cases where a member leaves the cluster or joins the cluster. If a repartitioning will happen while an entry processor is active in a member processing on an entry object, the repartitioning waits for the entry processor to complete its job.
 
-## Why do Hazelcast instances on different machines not see each other?
+## Instances on different machines cannot see each other?
 
 Assume you have two instances on two different machines and you develop a configuration as shown below.
 

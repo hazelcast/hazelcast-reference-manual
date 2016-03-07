@@ -5,7 +5,7 @@
 This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol, and managing the cluster with useful utilities. It also explains how to use Hazelcast Management Center.
 
 
-## Getting Member Statistics from Distributed Data Structures
+## Getting Member Statistics
 
 You can get various statistics from your distributed data structures via the Statistics API.
 Since the data structures are distributed in the cluster, the Statistics API provides

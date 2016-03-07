@@ -1,6 +1,6 @@
 
 
-### Configuring a JBoss AS 7 / EAP 6 Web Application
+### Configuring a JBoss AS 7/EAP 6 Web App
 
 Deploying on JBoss AS 7 or JBoss EAP 6 is a straightforward process. The steps you perform are shown below. The only non-trivial step is the creation of a new JBoss module with Hazelcast libraries.     
 
