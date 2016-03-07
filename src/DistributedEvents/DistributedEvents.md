@@ -7,6 +7,8 @@ An Event is created only if you registered an event listener. If no listener is 
 
 As a rule of thumb, your event listener should not implement heavy processes in its event methods which block the thread for a long time. If needed, you can use `ExecutorService` to transfer long running processes to another thread and thus offload the current listener thread.
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *In a failover scenario, events are not highly available and may get lost. Eventing mechanism is being improved for failover scenarios.*
+
 
 
 ## Event Listeners for Hazelcast Members
