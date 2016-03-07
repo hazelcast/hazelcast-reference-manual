@@ -11,6 +11,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Chapter 1 - Preface](#preface)|[Hazelcast Architecture](#hazelcast-architecture)|Updated the architecture diagram.|
 |[Chapter 11 - Hazelcast JCache](#hazelcast-jcache)|[ICache Configuration](#icache-configuration)|Added the description of new element <disable-per-entry-invalidation-events>.|
 
 
