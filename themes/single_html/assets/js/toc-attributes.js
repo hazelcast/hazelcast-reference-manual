@@ -7,7 +7,7 @@
 						scrollTo: 5, 
 						smoothScroll: false, 
 						highlightOnScroll: true
-						// extendPage: true,
-						// extendPageOffset: 100,
+						//extendPage: true,
+						//extendPageOffset: 100,
 						});
               });
