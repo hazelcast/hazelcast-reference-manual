@@ -11,8 +11,12 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
-|[Chapter 1 - Preface](#preface)|[Hazelcast Architecture](#hazelcast-architecture)|Updated the architecture diagram.|
-|[Chapter 11 - Hazelcast JCache](#hazelcast-jcache)|[ICache Configuration](#icache-configuration)|Added the description of new element <disable-per-entry-invalidation-events>.|
+|[Preface](#preface)|[Hazelcast Architecture](#hazelcast-architecture)|Updated the architecture diagram.|
+|[Hazelcast JCache](#hazelcast-jcache)|[ICache Configuration](#icache-configuration)|Added the description of new element <disable-per-entry-invalidation-events>.|
+|[Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added the new section [Hot Restart Performance Considerations](#hot-restart-performance-considerations) to summarize the results of performance tests of Hot Restart Persistence.|
+
+
+
 
 
 <br> </br>
