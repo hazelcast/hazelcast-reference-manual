@@ -11,17 +11,24 @@ import com.hazelcast.core.Hazelcast;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
-queue.put( new MyTask() );
-MyTask task = queue.take();
+public class SampleQueue {
 
-boolean offered = queue.offer( new MyTask(), 10, TimeUnit.SECONDS );
-task = queue.poll( 5, TimeUnit.SECONDS );
-if ( task != null ) {
-  //process task
+  public static void main(String[] args) throws Exception {
+
+   HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+   BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
+   queue.put( new MyTask() );
+   MyTask task = queue.take();
+
+   boolean offered = queue.offer( new MyTask(), 10, TimeUnit.SECONDS );
+   task = queue.poll( 5, TimeUnit.SECONDS );
+   if ( task != null ) {
+     //process task
+   }
+  }
 }
 ```
+
 
 FIFO ordering will apply to all queue operations across the cluster. User objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
 
