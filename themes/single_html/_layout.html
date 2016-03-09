@@ -17,18 +17,18 @@
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.scrollUp.min.js"></script>
 
     <script type="text/javascript"> 
-  	$(function () {
-  $.scrollUp({
-    scrollName: 'scrollUp', // Element ID
-    topDistance: '300', // Distance from top before showing element (px)
-    topSpeed: 100, // Speed back to top (ms)
-    animation: 'fade', // Fade, slide, none
-    animationInSpeed: 100, // Animation in speed (ms)
-    animationOutSpeed: 100, // Animation out speed (ms)
-    scrollText: 'Back to Top', // Text for element
-    activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'
-  });
-});
+	$(function () {
+		$.scrollUp({
+			scrollName: 'scrollUp', // Element ID
+			topDistance: '300', // Distance from top before showing element (px)
+			topSpeed: 100, // Speed back to top (ms)
+			animation: 'fade', // Fade, slide, none
+			animationInSpeed: 100, // Animation in speed (ms)
+			animationOutSpeed: 100, // Animation out speed (ms)
+			scrollText: 'Back to Top', // Text for element
+			activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+		});
+	});
     </script>
 
     <% if @manifest.options.embedly: %>
@@ -73,33 +73,31 @@
 
 </head>
 <body>
-    <div id="page">
-        <a name="top" />
-        <div id="sitebar">
-    <div class="content">
-      <p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
-      </div>
-  </div>
-
-        <header id="header">
-			<div class="content">
-			<div style="overflow:hidden">
-				<div style="float:left">
-                    <a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
-					
-				</div>	
-				<div style="float:left;padding-top: 15px;padding-left: 30px;">
-<h1><a href="<%= @baseUrl %>"><%= @manifest.title or @title %> <span style="font-size:12px"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span></a></h1>
+	<div id="page">
+		<a name="top" />
+			<div id="sitebar">
+				<div class="content">
+					<p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
 				</div>
 			</div>
+		<header id="header">
+			<div class="content">
+				<div style="overflow:hidden">
+					<div style="float:left">
+						<a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
+					</div>
+					<div style="float:left;padding-top: 15px;padding-left: 30px;">
+						<h1><a href="<%= @baseUrl %>"><%= @manifest.title or @title %> <span style="font-size:12px"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span></a></h1>
+					</div>
+				</div>
 			</div>
-        </header>
-        <div class="content">
-	        <%- @include "_sidebar.html" %>
-	        <div id="content">
-	            <%- @content %>
-	        </div>	
-	        </div>
-    </div>
+		</header>
+		<div class="content">
+			<%- @include "_sidebar.html" %>
+				<div id="content">
+					<%- @content %>
+				</div>
+		</div>
+	</div>
 </body>
 </html>
