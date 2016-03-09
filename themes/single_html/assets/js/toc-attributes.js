@@ -6,8 +6,7 @@
 						hideEffectSpeed: "fast",
 						scrollTo: 5, 
 						smoothScroll: false, 
+						showAndHide: true, 
 						highlightOnScroll: true
-						//extendPage: true,
-						//extendPageOffset: 100,
 						});
               });
