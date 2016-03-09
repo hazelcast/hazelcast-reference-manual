@@ -15,10 +15,6 @@ The following is an example declarative configuration.
 ```xml
  <hazelcast>
    ...
-  <properties>
-    <property name="hazelcast.discovery.enabled">true</property>
-  </properties>
-   ...
   <network>
     ...
     <join>
