@@ -16,7 +16,22 @@
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/lunr.min.js"></script>
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.tocify/libs/jqueryui/jquery-ui-1.9.1.custom.min.js"></script>
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.tocify/src/javascripts/jquery.tocify.min.js"></script>
-    
+    <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.scrollUp.min.js"></script>
+
+    <script type="text/javascript"> 
+  	$(function () {
+  $.scrollUp({
+    scrollName: 'scrollUp', // Element ID
+    topDistance: '300', // Distance from top before showing element (px)
+    topSpeed: 100, // Speed back to top (ms)
+    animation: 'fade', // Fade, slide, none
+    animationInSpeed: 100, // Animation in speed (ms)
+    animationOutSpeed: 100, // Animation out speed (ms)
+    scrollText: 'Back to Top', // Text for element
+    activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'
+  });
+});
+    </script>    
 
     <% if @manifest.options.embedly: %>
         <script type="text/javascript" src="http://scripts.embed.ly/jquery.embedly.min.js"></script>
