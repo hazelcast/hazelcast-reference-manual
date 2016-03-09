@@ -23,7 +23,7 @@ Then enable the Hazelcast property `hazelcast.jmx` (please refer to the [System 
 
 - By programmatic configuration:
    
-`config.setProperty("hazelcast.jmx", "true");`
+`config.setProperty(GroupProperty.ENABLE_JMX, "true");`
    
 - By Spring XML configuration:
    

@@ -60,7 +60,7 @@ This is required to use a Hazelcast client.
 - The following code starts a Hazelcast Client, connects to our cluster, 
 and prints the size of the `customers` map.
 
-```java    
+```java
 package com.hazelcast.test;
 
 import com.hazelcast.client.config.ClientConfig;

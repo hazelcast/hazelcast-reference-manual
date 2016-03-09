@@ -66,14 +66,14 @@ Hazelcast member instances call our phone home server initially when they are st
 
 **What is sent in?**
 
-The following  information is sent in a phone home:
+The following information is sent in a phone home:
 
 - Hazelcast version
 - Local Hazelcast member UUID
 - Download ID 
 - A hash value of the cluster ID
 - Cluster size bands for 5, 10, 20, 40, 60, 100, 150, 300, 600 and > 600
-- Number of connected clients bands of 5, 10, 20, 40, 60, 100, 150, 300, 600 and  > 600
+- Number of connected clients bands of 5, 10, 20, 40, 60, 100, 150, 300, 600 and > 600
 - Cluster uptime
 - Member uptime
 - Hazelcast Enterprise specific: 
@@ -111,7 +111,7 @@ Below table shows the conventions used in this manual.
 |`monospace`|- Indicates files, folders, class and library names, code snippets, and inline code words in a sentence.|
 |***RELATED INFORMATION***|- Indicates a resource that is relevant to the topic, usually with a link or cross-reference.|
 |![image](images/NoteSmall.jpg) ***NOTE***| Indicates information that is of special interest or importance, e.g. an additional action required only in certain circumstances.|
-|element & attribute|Mostly used in the context of declarative configuration, i.e. configuration performed by the Hazelcast XML file.  Element refers to an XML tag used to configure a Hazelcast feature. Attribute is a parameter owned by an element, contributing into the declaration of that element's configuration. Please see the following example.<br></br>`<port port-count="100">5701</port>`<br></br> In this example, `port-count` is an **attribute** of the `port` **element**.
+|element & attribute|Mostly used in the context of declarative configuration, i.e. configuration performed by the Hazelcast XML file. Element refers to an XML tag used to configure a Hazelcast feature. Attribute is a parameter owned by an element, contributing into the declaration of that element's configuration. Please see the following example.<br></br>`<port port-count="100">5701</port>`<br></br> In this example, `port-count` is an **attribute** of the `port` **element**.
 
 
 <br></br>

@@ -130,7 +130,7 @@ function createSingleHTML {
     writeManifestFile "${MANIFEST_FILE_BODY}"
 
     echo "Creating single_html documentation"
-    createHtml=$(bfdocs --theme=themes/single_html ${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${SINGLE_HTML_OUTPUT_DIR})
+    createHtml=$(bfdocs --theme=themes/single_html ${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${SINGLE_HTML_OUTPUT_DIR} )
     if [[ $? -eq 0 ]]; then
         echo "Single HTML created succesfully "
     else
