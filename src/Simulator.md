@@ -24,9 +24,13 @@ The following are the key concepts mentioned with Hazelcast Simulator.
 
 - **TestSuite** - A property file that contains the name of the `Test` class and the properties you want to set on that `Test` class instance. A `TestSuite` contains one or multiple tests. It can also contain the same `Test` class with different names and configurations.
 
-- **Worker** - A Java Virtual Machine (JVM) responsible for running the configured `Tests`. It can be configured to spawn a Hazelcast client or member instance, which is used in the tests.
+- **Worker** - This term `Worker` is used twice in Simulator. 
 
-- **Agent** - A JVM responsible for managing `Workers`. There is always one `Agent` per physical machine, no matter how many `Workers` are spawned on that machine. It serves as communication relay for the `Coordinator` and monitoring instance for the `Workers`.
+  - **Simulator Worker** - A Java Virtual Machine (JVM) responsible for running the configured `Tests`. It can be configured to spawn a Hazelcast client or member instance, which is used in the tests. We refer to this `Worker` in the context of a Simulator component like `Agent` and `Coordinator`.
+  
+  - **Test Worker** - A Runnable implementation to increase the test workload by spawning several threads in each `Test` instance. We refer to this `Worker` in the context of a `Test`, e.g. how many worker threads a `Test` should create.
+
+- **Agent** - A JVM responsible for managing client and member `Workers`. There is always one `Agent` per physical machine, no matter how many `Workers` are spawned on that machine. It serves as communication relay for the `Coordinator` and monitoring instance for the `Workers`.
 
 - **Coordinator** - A JVM that can run anywhere, such as on your local machine. The `Coordinator` is actually responsible for running the `TestSuite` using the `Agents` and `Workers`. You configure it with a list of `Agent` IP addresses, and you run it by executing a command like "run this testsuite with 10 member worker and 100 client worker JVMs for 2 hours".
 
