@@ -29,7 +29,7 @@ The script `cluster.sh` is self-documented; you can see the parameter descriptio
 #### Example Usages for cluster.sh
 
 Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP  `172.16.254.1` and on the port
-`5702`. The group name and password of the cluster are `test' and `test`.
+`5702`. The group name and password of the cluster are `test` and `test`.
 
 <br></br>
 **Getting the cluster state:**
