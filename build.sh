@@ -8,7 +8,9 @@ function buildDocumentation {
     createMergedMarkdownFile
     createSingleHTML
     createMancenterDocumentation
-    createPDF
+    if [ "$2" != "--skipPDF" ]; then
+        createPDF
+    fi
     delete
     echo "Done"
 }
@@ -212,4 +214,4 @@ function delete {
     $(rm -rf "./src/images")
 }
 
-buildDocumentation $1
+buildDocumentation $@
