@@ -14,15 +14,16 @@ Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) 
 **AND/OR:** `<expression> AND <expression> AND <expression>... `
 
 - `active AND age>30`
-- `active=false OR age = 45 OR name = 'Joe' `
-- `active AND ( age > 20 OR salary < 60000 ) `
+- `active=false OR age = 45 OR name = ‘Joe‘`
+- `active AND ( age > 20 OR salary < 60000 )`
 <br><br>
+
 
 **Equality:** `=, !=, <, <=, >, >=`
 
 - `<expression> = value`
 - `age <= 30`
-- `name = "Joe"`
+- `name = ‘Joe‘`
 - `salary != 50000`
 <br><br>
 
@@ -42,29 +43,27 @@ Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) 
 - `age IN ( 20, 30, 40 ) AND salary BETWEEN ( 50000, 80000 )`
 <br><br>
 
-**LIKE:** `<attribute> [NOT] LIKE 'expression'`
+
+**LIKE:** `<attribute> [NOT] LIKE "expression"`
 
 The `%` (percentage sign) is placeholder for multiple characters, an `_` (underscore) is placeholder for only one character.
 
-- `name LIKE 'Jo%'` (true for 'Joe', 'Josh', 'Joseph' etc.)
-- `name LIKE 'Jo_'` (true for 'Joe'; false for 'Josh')
-- `name NOT LIKE 'Jo_'` (true for 'Josh'; false for 'Joe')
-- `name LIKE 'J_s%'` (true for 'Josh', 'Joseph'; false 'John', 'Joe')
+- `name LIKE ‘Jo%‘` (true for 'Joe', 'Josh', 'Joseph' etc.)
+- `name LIKE ‘Jo_‘` (true for 'Joe'; false for 'Josh')
+- `name NOT LIKE ‘Jo_‘` (true for 'Josh'; false for 'Joe')
+- `name LIKE ‘J_s%‘` (true for 'Josh', 'Joseph'; false 'John', 'Joe')
 <br><br>
 
 
-
-
-**ILIKE:** `<attribute> [NOT] ILIKE ‘expression’ `
+**ILIKE:** `<attribute> [NOT] ILIKE ‘expression’`
 
 Similar to LIKE predicate but in a case-insensitive manner.
 
-- `name ILIKE 'Jo%'` (true for 'Joe', 'joe', 'jOe','Josh','joSH', etc.)
-- `name ILIKE 'Jo_'` (true for 'Joe' or 'jOE'; false for 'Josh')
+- `name ILIKE ‘Jo%‘` (true for 'Joe', 'joe', 'jOe','Josh','joSH', etc.)
+- `name ILIKE ‘Jo_‘` (true for 'Joe' or 'jOE'; false for 'Josh')
 <br><br>
-
 
 
 **REGEX**: `<attribute> [NOT] REGEX ‘expression’`
  
-- `name REGEX  'abc-.*’` (true for 'abc-123'; false for 'abx-123')
+- `name REGEX ‘abc-.*‘` (true for 'abc-123'; false for 'abx-123')
