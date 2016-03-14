@@ -1,25 +1,54 @@
 
-
 ## Setting up for Amazon EC2
 
-Having installed the Simulator, this section describes how to prepare the Simulator for testing a Hazelcast cluster deployed at Amazon EC2. 
+Having installed Simulator, this section describes how to prepare Simulator for testing a Hazelcast cluster deployed at Amazon EC2.
 
-To do this, copy the file `SIMULATOR_HOME/conf/simulator.properties` to your working folder and edit this file. You should set the values for the following parameters that are included in this file.
+Simulator provides support to create and terminate EC2 instances via the [Provisioner](#provisioner). If you want to create and setup the EC2 instances by yourself, please use the configuration as described in [Setting up for Static Setup](#setting-up-for-static-setup).
 
-- CLOUD_PROVIDER: Maven artifact ID of the cloud provider. In this case it is `aws-ec2` for Amazon EC2. Please refer to the [Simulator.Properties File Description section](#simulator-properties-file-description) for a full list of cloud providers.
-- CLOUD_IDENTITY: The path to the file that contains your EC2 access key. 
-- CLOUD_CREDENTIAL: The path to the file that contains your EC2 secret key. 
-- MACHINE_SPEC: The parameter by which you can specify the EC2 instance type, operating system of the instance, EC2 region, etc. 
+The Provisioner uses AWS access keys (access key ID and secret access key) for authentication (see [Types of Security Credentials](http://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html)). Please see [Creating, Disabling, and Deleting Access Keys for your AWS Account](http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) to generate and download your access keys.
 
-The following is an example of a `simulator.properties` file with the parameters explained above. For this example, you should have created the files `~/ec2.identity` and `~/ec2.credential` that contain your EC2 access key and secret key, respectively.
+For security reasons we store the cloud credentials outside of the working directory (e.g. to prevent an accidental commit into your project files). The default locations for the credentials are
 
-```
-CLOUD_PROVIDER=aws-ec2
-CLOUD_IDENTITY=~/ec2.identity
-CLOUD_CREDENTIAL=~/ec2.credential
-MACHINE_SPEC=hardwareId=c3.xlarge,imageId=us-east-1/ami-1b3b2472
-``` 
+- `~/ec2.identity` for the access key ID
+- `~/ec2.credential` for the secret access key
 
-![image](images/NoteSmall.jpg) ***NOTE***: *Creating these files in your working folder instead of just setting the access and secret keys in the `simulator.properties` file is for security reasons. It is too easy to share your credentials with the outside world; now you can safely add the `simulator.properties` file in your source repository or share it with other people.*
+You can store the credentials in a different location, but then you need to configure the `simulator.properties` later.
 
-![image](images/NoteSmall.jpg) ***NOTE***: *For the full description of  the `simulator.properties` file, please refer to the [Simulator.Properties File Description section](#simulator-properties-file-description).*
+- Create a working directory for your Simulator TestSuite. Use the Simulator Wizard to create an example setup for you and change into the directory.
+
+  ```
+  simulator-wizard --createWorkDir tests --cloudProvider aws-ec2
+  cd tests
+  ```
+
+- If you stored your AWS credentials in a different location please update the paths of `CLOUD_IDENTITY` and `CLOUD_CREDENTIALS` in your `simulator.properties` file.
+
+- You can also change the `MACHINE_SPEC` to change the instance type, EC2 region and operating system (AMI) of the created AWS instances.
+
+- Execute the created `prepare` script to create the EC2 instances and install Simulator on them.
+
+  ```
+  ./prepare
+  ```
+
+- Execute the created `run` script to run the TestSuite.
+
+  ```
+  ./run
+  ```
+
+- Execute the created `download` script to download the log files from the Workers.
+
+  ```
+  ./download
+  ```
+
+- Execute the following command to destroy the created EC2 instances.
+
+  ```
+  provisioner --terminate
+  ```
+
+Congratulations, you successfully ran Simulator on Amazon EC2!
+
+![image](images/NoteSmall.jpg) ***NOTE***: *Creating the credential files in your home directory instead of directly setting the access key ID and secret access key in the `simulator.properties` file is for security reasons. It is too easy to share your credentials with the outside world. Now you can safely add the `simulator.properties` file in your source repository or share it with other people.*
