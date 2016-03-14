@@ -24,8 +24,8 @@ function init {
 	MANIFEST_FILE_NAME="manifest.json"
 	MERGED_FILE_NAME="index.md"
 	COPYRIGHT_FILE_NAME="copyright.txt"
-	DATE=`date +%b\ %d\,\ %Y`
-	YEAR=`date +%Y`
+	DATE=`LANG=en_EN date +%b\ %d\,\ %Y`
+	YEAR=`LANG=en_EN date +%Y`
 	INDEX=`awk '{gsub(/^[ \t]+|^([#]+.*)|[ \t]+([#]+.*)\$/,""); print;}' documentation.index`
 	MANCENTER_INDEX=`awk '{gsub(/^[ \t]+|([#]+.*)|[ \t]+([#]+.*)\$/,""); print;}' mancenter.index`
 }
@@ -69,7 +69,7 @@ function writeManifestFile {
 
     writeManifest=$( echo $1 >> ${MANIFEST_FILE_NAME})
     if [[ $? -eq 0 ]]; then
-        echo "Manifest file succesfully written."
+        echo "Manifest file successfully written"
     else
         echo "Error writing manifest file"
         echo ${writeManifest}
@@ -99,7 +99,7 @@ function createMultiHTML {
     echo "Creating multi_html documentation"
     createHtml=$(bfdocs --theme=themes/multi_html "./"${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${MULTI_HTML_OUTPUT_DIR})
     if [[ $? -ge 0 ]]; then
-        echo "Multi HTML created successfully."
+        echo "Multi HTML created successfully"
     else
         echo "Error creating Multi HTML documentation"
         delete
@@ -112,7 +112,7 @@ function createMergedMarkdownFile {
 	    $(rm -rf "./$MERGED_FILE_NAME")
     fi
 
-    echo "Creating concatenated markdown file for pdf/single html."
+    echo "Creating concatenated markdown file for pdf/single html"
     for file in ${INDEX}; do
         cat ${file} >> ${MERGED_FILE_NAME}
         printf "\n\n\n" >> ${MERGED_FILE_NAME}
@@ -132,7 +132,7 @@ function createSingleHTML {
     echo "Creating single_html documentation"
     createHtml=$(bfdocs --theme=themes/single_html ${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${SINGLE_HTML_OUTPUT_DIR} )
     if [[ $? -eq 0 ]]; then
-        echo "Single HTML created succesfully "
+        echo "Single HTML created successfully"
     else
         echo "Error creating Single HTML documentation"
         delete
@@ -161,7 +161,7 @@ function createMancenterDocumentation {
     echo "Creating Management Center documentation"
     createHtml=$(bfdocs --theme=themes/no_header ${MANIFEST_FILE_NAME} "./"${OUTPUT_DIR}/${MANCENTER_OUTPUT_DIR} )
     if [[ $? -eq 0 ]]; then
-        echo "Management Center documentation created succesfully"
+        echo "Management Center documentation created successfully"
     else
         echo "Error creating Management Center documentation"
         delete
@@ -192,7 +192,7 @@ and this paragraph appear in all copies." >> ${COPYRIGHT_FILE_NAME}
     echo "Creating PDF Documentation"
     createPDF=$( pandoc title.txt ${MERGED_FILE_NAME} -o ${PDF_FILE_NAME} --toc --toc-depth=3 --chapters --number-sections --tab-stop=2 -V papersize:"a4paper" -H themes/margin.sty  --include-before-body=${COPYRIGHT_FILE_NAME} )
     if [[ $? -eq 0 ]]; then
-        echo "PDF created successfully."
+        echo "PDF created successfully"
     else
         echo "Error creating PDF documentation"
         echo ${createPDF}
