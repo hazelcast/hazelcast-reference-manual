@@ -1,7 +1,15 @@
 
 ## Replicated Map
 
-A replicated map is a distributed key-value data structure where the data is replicated to all members in the cluster.
+A replicated map is a distributed key-value data structure where the data is replicated to all members in the cluster. It provides full replication of entries to all members for high speed access. The following are its features:
+
+- When you have a replicated map in the  cluster, your clients can communicate with any cluster member.
+- All cluster members are able to perform write operations.
+- It supports all methods of the interface `java.util.Map`.
+- It supports automatic initial fill up when a new member is started.
+- It provides statistics for entry access, write and update so that you can monitor it using Hazelcast Management Center.
+- New members joining to the cluster pull all the data from the existing members.
+- You can listen to entry events using listeners. Please refer to [Using EntryListener on Replicated Map](#using-entrylistener-on-replicated-map). 
 
 ### Replicating Instead of Partitioning
 
@@ -12,14 +20,12 @@ This leads to higher memory consumption. However, a replicated map has faster re
 
 Writes could take place on local/remote members in order to provide write-order, eventually being replicated to all other members.
 
-Replicated map is suitable for objects, catalogue data, or idempotent calculable data (like HTML pages).
-
-Replicated map nearly fully implements the `java.util.Map` interface, but it lacks the methods from `java.util.concurrent.ConcurrentMap` since
+Replicated map is suitable for objects, catalogue data, or idempotent calculable data (like HTML pages). It fully implements the `java.util.Map` interface, but it lacks the methods from `java.util.concurrent.ConcurrentMap` since
 there are no atomic guarantees to writes or reads.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If Replicated Map is used from a dummy client and this dummy client is connected to a lite member, the entry listeners cannot be registered/de-registered.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If replicated map is used from a dummy client and this dummy client is connected to a lite member, the entry listeners cannot be registered/de-registered.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot use Replicated Map from a lite member. A `com.hazelcast.replicatedmap.ReplicatedMapCantBeCreatedOnLiteMemberException` is thrown if `com.hazelcast.core.HazelcastInstance#getReplicatedMap(name)` is invoked on a lite member.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot use replicated map from a lite member. A `com.hazelcast.replicatedmap.ReplicatedMapCantBeCreatedOnLiteMemberException` is thrown if `com.hazelcast.core.HazelcastInstance#getReplicatedMap(name)` is invoked on a lite member.*
 
 
 ### Example Replicated Map Code
@@ -75,7 +81,7 @@ There are several technical design decisions you should consider when you config
 **Initial provisioning**
 
 If a new member joins, there are two ways you can handle the initial provisioning that is executed to replicate all existing
-values to the new member. Each involves how you configure for async fill up.
+values to the new member. Each involves how you configure the async fill up.
 
 First, you can configure async fill up to true, which does not block reads while the fill up operation is underway. That way,
 you have immediate access on the new member, but it will take time until all values are eventually accessible. Not yet
@@ -88,14 +94,11 @@ fill up operation is finished. Use this with caution since it might block your a
 
 ### Configuring Replicated Map
 
-Replicated Map can be configured using the following two ways (as with most other features in Hazelcast):
-
-- Programmatic: the typical Hazelcast way, using the Config API seen above.
-- Declarative: using `hazelcast.xml`.
+Replicated map can be configured programmatically or declaratively.
 
 #### Replicated Map Declarative Configuration
 
-You can declare your Replicated Map configuration in the Hazelcast configuration file `hazelcast.xml`. See the following example declarative configuration.
+You can declare your replicated map configuration in the Hazelcast configuration file `hazelcast.xml`. Please see the following example.
 
 ```xml
 <replicatedmap name="default">
@@ -119,9 +122,9 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 
 #### Replicated Map Programmatic Configuration
 
-You can use the Config API for programmatic configuration, as you can for all other data structures in Hazelcast. You must create the configuration upfront, when you instantiate the `HazelcastInstance`.
+You can configure a replicated map programmatically, as you can do for all other data structures in Hazelcast. You must create the configuration upfront, when you instantiate the `HazelcastInstance`.
 
-A basic example on how to configure the Replicated Map using the programmatic approach is shown in the following snippet.
+A basic example on how to configure the replicated map using the programmatic approach is shown in the following snippet.
 
 ```java
 Config config = new Config();
@@ -137,7 +140,7 @@ by transforming the tag names into getter or setter names.
 
 #### In-Memory Format on Replicated Map
 
-Currently, two `in-memory-format` values are usable with the Replicated Map.
+Currently, two `in-memory-format` values are usable with the replicated map.
 
 - `OBJECT` (default): The data will be stored in deserialized form. This configuration is the default choice since
 the data replication is mostly used for high speed access. Please be aware that changing the values without a `Map::put` is
@@ -151,12 +154,12 @@ not explicitly `Map::put` into the map again.
 
 ### Using EntryListener on Replicated Map
 
-A `com.hazelcast.core.EntryListener` used on a Replicated Map serves the same purpose as it would on other
+A `com.hazelcast.core.EntryListener` used on a replicated map serves the same purpose as it would on other
 data structures in Hazelcast. You can use it to react on add, update, and remove operations. Replicated maps do not yet support eviction.
 
 #### Difference in EntryListener on Replicated Map
 
-The fundamental difference in Replicated Map behavior, compared to the other data structures, is that an EntryListener only reflects
+The fundamental difference in replicated map behavior, compared to the other data structures, is that an EntryListener only reflects
 changes on local data. Since replication is asynchronous, all listener events are fired only when an operation is finished
 on a local node. Events can fire at different times on different nodes.
 
@@ -164,9 +167,8 @@ on a local node. Events can fire at different times on different nodes.
 
 Here is a code example for using EntryListener on a replicated map.
 
-The HazelcastInstance method `getReplicated` map gets a replicated map (customers), and the ReplicatedMap method
-`addEntryListener` adds an entry listener to the replicated map. Then the ReplicatedMap `put` method adds a replicated map
-entry, then updates it, and then the `remove` method removes the entry.
+The `HazelcastInstance`'s `getReplicatedMap` method gets a replicated map (customers), and the `ReplicatedMap`'s `addEntryListener` method adds an entry listener to the replicated map. Then, the `ReplicatedMap`'s `put` method adds a replicated map
+entry and updates it. The method `remove` removes the entry.
 
 ```java
 import com.hazelcast.core.EntryEvent;
