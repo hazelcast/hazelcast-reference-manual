@@ -91,7 +91,13 @@ The client executes each operation through the already established connection to
 
 While sending the requests to related nodes, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, set the `redoOperation` to `true`. Please see [Enabling Redo Operation](#enabling-redo-operation).
 
-The number of retries is given with the property `hazelcast.client.request.retry.count` in `ClientProperties`. The client will resend the request as many as RETRY-COUNT, then it will throw an exception. Please see the [Client System Properties section](#client-system-properties).
+You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. Client will retry an operation within this given period, of course if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes: 
+
+- Member throws an exception.
+- Connection between the client and member is closed.
+- Client's heartbeat requests are timed out.
+
+Please see the [Client System Properties section](#client-system-properties).
 
 
 ### Using Supported Distributed Data Structures
