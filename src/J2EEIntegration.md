@@ -52,6 +52,13 @@ try {
 %>
 ```
 
+
+Sometimes Hazelcast class loader might not be able to find the classes you provide, i.e. your class loader might be different than that of Hazelcast. In this case, you need to specify the class loader through `Config` to be used internally by Hazelcast.
+
+Assume that Hazelcast is embedded in a container and you want to run your own `Runnable` through `IExecutorService`. Here, Hazelcast class loader and your class loader are different. Therefore, Hazelcast class loader does not know your `Runnable` class.
+You need to tell Hazelcast to use a specified class loader to lookup classes internally. A sample code line for this could be `config.setClassLoader(getClass().getClassLoader())`. 
+
+
 ### Sample Code for J2EE Integration
 
 Please see our sample application for <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/jca-ra" target="_blank">J2EE Integration</a>.
