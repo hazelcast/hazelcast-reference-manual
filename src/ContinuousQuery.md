@@ -56,15 +56,15 @@ QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
 
 ### Features of Continuous Query
 
-The following features of the continuous query cache is valid both for the member and client.
+The following features of continuous query cache are valid for both the member and client.
 
-* You can enable/disable the initial query that is run on the existing `IMap` data during the continuous query cache construction, according to the supplied predicate via `QueryCacheConfig#setPopulate`.
-* You can index and perform queries on a continuous query cache.
-* A continuous query cache is evictable. Note that a continuous query cache has a default maximum capacity of 10000. If you need a non-evictable cache, you should configure the eviction via `QueryCacheConfig#setEvictionConfig`.
-* You can listen to a continuous query cache using `QueryCache#addEntryListener`.
-* The events on the `IMap` are reflected in a continuous query cache, keeping the same order of those events. Note that the order of the events implies the order in a partition. Therefore, you can only expect ordered events from the same partition. You can listen to the event losses using `EventLostListener` and events can be recoverable with the method `QueryCache#tryRecover`. If your buffer size on the node side is large enough, you can recover from a possible event loss scenario. 
-Currently, setting the size of `QueryCacheConfig#setBufferSize` is the only option for recovery since the events which feed a continuous query cache have no backups.
-You can use the following example code for a recovery case. 
+* The initial query that is run on the existing `IMap` data during the continuous query cache construction can be enabled/disabled according to the supplied predicate via `QueryCacheConfig#setPopulate`
+* Continuous query cache allows you to run queries with indexes, perform event batching and coalescing
+* A continuous query cache is evictable. Note that a continuous query cache has a default maximum capacity of 10000. If you need a non-evictable cache, you should configure the eviction via `QueryCacheConfig#setEvictionConfig`
+* A listener can be added to a continuous query cache using `QueryCache#addEntryListener`
+* `IMap` events are reflected in continuous query cache in the same order as they were generated on map entries. Since events are created on entries stored in partitions, ordering of events is maintained based on the ordering within the partition. You can add listener to capture lost events using `EventLostListener` and lost events can be recovered with the method `QueryCache#tryRecover`.
+Recovery of lost events largely depends on the size of the buffer on Hazelcast members. Default buffer size is 16 per partition i.e. 16 events per partition can be maintained in the buffer. If the event generation is high, setting the buffer size to a higher number will provide better chances of recovering lost events. Buffer size can be set by `QueryCacheConfig#setBufferSize`.
+You can use the following example code for a recovery case.
 
     ```java
        
@@ -77,9 +77,8 @@ You can use the following example code for a recovery case.
        }, false);
     ```
    
-* You can perform event batching and coalescing on a continuous query cache.
-* You can configure a continuous query cache declaratively or programmatically.
-* You can populate a continuous query cache with only the keys of its entries and you can retrieve the subsequent values directly via `QueryCache#get` from the underlying `IMap`. This helps to decrease the initial population time when the values are very large. 
+* Continuous query cache can be configured declaratively or programmatically.
+* You can populate a continuous query cache with only the keys of its entries and retrieve the subsequent values directly via `QueryCache#get` from the underlying `IMap`. This helps to decrease the initial population time when the values are very large.
 <br></br>
 
 

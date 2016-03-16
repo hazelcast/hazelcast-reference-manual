@@ -7,9 +7,11 @@
 <font color="##153F75">**Hazelcast Enterprise HD**</font>
 <br></br>
 
-In the `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into Java heap. Java heap is subject to garbage collection (GC). As your heap gets bigger, garbage collection might cause your application to pause for tens of seconds, badly affecting your application performance and response times. Even if you have terabytes of cache in-memory with lots of updates, GC will have almost no effect; this results in more predictable latency and throughput. 
+Hazelcast instances are Java programs. In case of `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into the heap of its server instances. Java heap is subject to garbage collection (GC). In case of larger heaps, garbage collection might cause your application to pause for tens of seconds (even minutes for really large heaps), badly affecting your application performance and response times.
 
-To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can enable your map to use the High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
+As the data gets bigger, you either run the application with larger heap, which would result in longer GC pauses or run multiple instances with smaller heap which can turn into an operational nightmare if the number of such instances becomes very high.
+
+To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can configure your map to use High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
 
 
 ```xml
@@ -18,13 +20,13 @@ To overcome this challenge, Hazelcast offers High-Density Memory Store for your 
 </map>
 ```
 
-Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
+Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
 
 
 #### Required configuration changes when using NATIVE
 
-Be aware that the eviction mechanism is different for `NATIVE` in-memory format.
-The new eviction algorithm is described [here](#eviction-algorithm).
+Note that the eviction mechanism is different for `NATIVE` in-memory format.
+The new eviction algorithm for map with HD store is similar to that of JCache with HD and is described [here](#eviction-algorithm).
 
   - Eviction percentage has no effect.
 
@@ -36,9 +38,9 @@ The new eviction algorithm is described [here](#eviction-algorithm).
     ```
   - These IMap eviction policies for `max-size` cannot be used: `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
 
-  - Near cache eviction configuration should also be changed when the in-memory format is `NATIVE`.
+  - Near cache eviction configuration is also different for `NATIVE` in-memory format.
 
-    Existing configuration for a map's near cache when the in-memory format is `BINARY`:
+    For a near cache configuration with in-memory format set to `BINARY`:
     
     ```xml
         <map name="nativeMap*">
@@ -52,7 +54,7 @@ The new eviction algorithm is described [here](#eviction-algorithm).
         </map>
      ```
 
-     If it is `NATIVE`, then the proper near cache configuration should be as follows:
+     the equivalent configuration for `NATIVE` in-memory format would be similar to the following:
      ```xml
          <map name="nativeMap*">
 
