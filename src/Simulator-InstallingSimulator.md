@@ -53,7 +53,7 @@ After the installation you can already use Simulator on the local machine.
   ./run
   ```
 
-Congratulations, you successfully ran Simulator for the first time!
+Congratulations, you successfully ran Simulator for the first time! Please refer to the [Customizing your Simulator Setup section](#customizing-your-simulator-setup) to learn how to configure your test setup.
 
 ### Preparations to setup Remote Machines
 

@@ -49,6 +49,6 @@ You can store the credentials in a different location, but then you need to conf
   provisioner --terminate
   ```
 
-Congratulations, you successfully ran Simulator on Amazon EC2!
+Congratulations, you successfully ran Simulator on Amazon EC2! Please refer to the [Customizing your Simulator Setup section](#customizing-your-simulator-setup) to learn how to configure your test setup.
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *Creating the credential files in your home directory instead of directly setting the access key ID and secret access key in the `simulator.properties` file is for security reasons. It is too easy to share your credentials with the outside world. Now you can safely add the `simulator.properties` file in your source repository or share it with other people.*
