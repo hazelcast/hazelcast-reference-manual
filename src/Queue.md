@@ -4,7 +4,7 @@ Hazelcast distributed queue is an implementation of `java.util.concurrent.Blocki
 
 ### Getting a Queue and Putting Items
 
-Use the HazelcastInstance `getQueue` method to get the queue, then use the queue `put` method to put items into the queue.
+Use the Hazelcast instance's `getQueue` method to get the queue, then use the queue's `put` method to put items into the queue.
 
 ```java
 import com.hazelcast.core.Hazelcast;
@@ -29,8 +29,8 @@ public class SampleQueue {
 } 
 ```
 
-FIFO ordering will apply to all queue operations across the cluster. User objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
+FIFO ordering will apply to all queue operations across the cluster. The user objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
 
 Hazelcast distributed queue performs no batching while iterating over the queue. All items will be copied locally and iteration will occur locally.
 
-Hazelcast distributed queue uses `ItemListener` to listen to events which occur when items are added to and removed from the Queue. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
+Hazelcast distributed queue uses `ItemListener` to listen to the events which occur when items are added to and removed from the queue. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
