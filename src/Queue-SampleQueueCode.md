@@ -88,3 +88,16 @@ Consumer 18
 In the case of a lot of producers and consumers for the queue, using a list of queues may solve the queue bottlenecks. In this case, be aware that the order of the messages sent to different queues is not guaranteed. Since in most cases strict ordering is not important, a list of queues is a good solution.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *The items are taken from the queue in the same order they were put on the queue. However, if there is more than one consumer, this order is not guaranteed.*
+
+#### ItemIDs When Offering Items
+
+Hazelcast gives an `itemId` for each item you offer, which is an incrementing sequence identification for the queue items. You should consider the following to understand the `itemId` assignment behavior; these considerations are for queues with or without a persistent data store:
+
+- When a Hazelcast member with a queue, that is configured to have at least one backup, is restarted, the `itemId` assignment resumes from the last known highest `itemId` before the restart; `itemId` assignment does not start from the beginning for the new items.
+- When the whole cluster is restarted, the same behavior explained in the above consideration applies. The `itemId` for the new items are given starting from the last known highest `itemId` before the restart. 
+- The above two considerations mean there will be no duplicated `itemId`s in the memory or in the persistent data store.
+
+
+
+
+ 
