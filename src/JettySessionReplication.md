@@ -24,9 +24,7 @@ Jetty Web Session Replication with Hazelcast Enterprise is a container specific 
 
 Jetty Web Session Replication Module has been tested against the following containers.
 
-- Jetty 7  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-7/dist/" target="_blank">here</a>.
-- Jetty 8  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-8/dist/" target="_blank">here</a>.
-- Jetty 9  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-9/dist/" target="_blank">here</a>.
+- Jetty 7, 8 and 9  - They can be downloaded from <a href="http://download.eclipse.org/jetty/" target="_blank">here</a>.
 
 Latest tested versions are **7.6.16.v20140903**, **8.1.16.v20140903** and **9.2.3.v20140905**
 
