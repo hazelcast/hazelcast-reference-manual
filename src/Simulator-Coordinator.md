@@ -1,83 +1,107 @@
 
-
 ## Coordinator
 
-The Coordinator is responsible for actually running the test using the agents.
+The Coordinator is responsible for actually running the Simulator Tests.
 
-You can deploy your test on the workers using the following command.
-
-```
-coordinator yourtest.properties.
-```
-
-This command creates a single worker per agent and runs the test for 60 seconds (the default duration for a Hazelcast Simulator test).
-
-If your test properties file is called `test.properties`, then you can use the following command to have the coordinator pick up your `test.properties` file automatically.
+You can start the Coordinator without any parameters.
 
 ```
 coordinator
 ```
 
-### Controlling Hazelcast Declarative Configuration
+This command will use default values for all mandatory parameters, e.g. the file `test.properties` as TestSuite, a single member Worker as cluster layout and 60 seconds for the test duration.
 
-By default, the coordinator uses the files `SIMULATOR_HOME/conf/hazelcast.xml` and `SIMULATOR_HOME/conf/
-client-hazelcast.xml`
-to generate the correct Hazelcast configuration. To use your own configuration files instead, use the following arguments:
+### Controlling the TestSuite
+
+You can specify the used TestSuite file by adding a single non-option argument (an argument without an `--option`).
 
 ```
-coordinator --clientHzFile=your-client-hazelcast.xml --hzFile your-hazelcast.xml ....
+coordinator small-testsuite.properties
 ```
 
+### Controlling the Test Duration
 
+You can control the duration of the test execution by using the `--duration` argument. The default duration is 60 seconds. You can specify the time unit for this argument by using
 
-### Controlling Test Duration
+- `s` for seconds
+- `m` for minutes
+- `h` for hours
+- `d` for days
 
-You can control the duration of a single test using the `--duration` argument. The default duration is 60 seconds. You can specify your own durations using *m* for minutes, *d* for days or *s* for seconds with this argument.
+If you omit the time unit the value will be parsed as seconds.
 
 You can see the usage of the `--duration` argument in the following example commands.
 
 ```
-coordinator --duration 90s  map.properties
+coordinator --duration 90s
+coordinator --duration 3m
+coordinator --duration 12h
+coordinator --duration 2d
 ```
 
-```
-coordinator --duration 3m  map.properties
-```
+The duration is used the run phase of a Simulator Test (that's the actual test execution). If you have long running warmup or verify phases, the total runtime of the TestSuite will be longer.
+
+There is another option for the use case that you want to run a Simulator Test until some event occurs (which is not time bound), e.g. stop after five million operations have been done. In this case the test code must stop the `TestContext` itself. Use the following command to let Coordinator wait indefinitely.
 
 ```
-coordinator --duration 12h  map.properties
+coordinator --waitForTestCaseCompletion
 ```
 
-```
-coordinator --duration 2d  map.properties
-```
+### Controlling the Cluster Layout
 
-### Controlling Client And Workers
+Hazelcast has two basic instance types: member and client. The member instances form the cluster and client instances connect to an existing cluster. Hazelcast Simulator can spawn Workers for both instance types. You can configure the number of member and client Workers and also their distribution on the available remote machines. Available remote machines are the ones, that are configured in the `agents.txt` file (either manually in static setups or via Provisioner in cloud setups).
 
-By default, the provisioner starts the cluster members. You can also use the `--memberWorkerCount` and `--clientWorkerCount` arguments to control how many members and clients you want to have.
-
-The following command creates a 4 node Hazelcast cluster and 8 clients, and all load will be generated through the clients. It also runs the `map.properties` test for a duration of 12 hours. 
+Use the options `--memberWorkerCount` and `--clientWorkerCount` to control how many member and client Workers you want to have. The following command creates a cluster with four member Workers and eight client Workers (which connect to that cluster).
 
 ```
-coordinator --memberWorkerCount 4 --clientWorkerCount 8 --duration 12h  map.properties
+coordinator --memberWorkerCount 4 --clientWorkerCount 8
 ```
 
-Profiles are usually configured with some clients and some members. If you want to have members and no clients:
+A setup without client Workers is fine, but out of the box it won't work without member Workers.
+
+The Workers will be distributed among the available remote machines with a round robin selection. Per default the machines will be mixed with member and client Workers. You can reserve machines for member Workers. The distribution of machines will then be limited to the according group of remote machines. Use the following command to specify the number of dedicated member machines:
 
 ```
-coordinator --memberWorkerCount 12  --duration 12h  map.properties
+coordinator --dedicatedMemberMachines 2
 ```
 
-If you want to have a JVM with embedded client plus member and all communication goes through the client:
+You cannot specify more dedicated member machines than you have available. If you define client Workers, there must be at least a single remote machine left (e.g. with three remote machines you can specify a maximum of two dedicated member machines). The round robin assignment will be done in the two sub-groups of remote machines.
+
+If you need more control over the cluster layout you can create a file `cluster.xml` in your working directory and manually specify the layout per remote machine. This is not necessary for normal use cases, but can be an option for very complex setups.
+ 
+```
+<clusterConfiguration>
+    <workerConfiguration name="memberWorker361" type="MEMBER" hzVersion="maven=3.6.1"/>
+    <workerConfiguration name="clientWorker361" type="CLIENT" hzVersion="maven=3.6.1"/>
+    <nodeConfiguration>
+        <workerGroup configuration="memberWorker361" count="2"/>
+        <workerGroup configuration="clientWorker361" count="8"/>
+    </nodeConfiguration>
+    <nodeConfiguration>
+        <workerGroup configuration="memberWorker361" count="4"/>
+    </nodeConfiguration>
+    <nodeConfiguration>
+        <workerGroup configuration="memberWorker361" count="50"/>
+    </nodeConfiguration>
+</clusterConfiguration>
+```
+
+In this case you need to have exactly three available remote machines. First we define two different types of Workers (`workerConfiguration`). In this case a member and a client type with Hazelcast version 3.6.1. Then we define how many Workers of which type are created on each machine (`nodeConfiguration`). In this case a mixed, a member only and a client only machine. With the `cluster.xml` file you can also configure different Hazelcast versions to test cross version compatibility.
+
+### Controlling the Load Generation
+
+Beside the cluster layout you can also control which Workers will execute their RUN phase. The default is that client Workers are preferred over member Workers. That means if client Workers are used, they will create the load in the cluster, otherwise the member Workers will be used. In addition you can limit the number of Workers which will generate the load.
 
 ```
-coordinator --mixedWorkerCount 12  --duration 12h  map.properties
+coordinator --targetType MEMBER --targetCount 2
 ```
 
-If you want to run 2 member JVMs per machine:
+This will limit the load generation to two member Workers, regardless if client Workers are available or not. Please have a look at command line help via `coordinator --help` to see all allowed values for these arguments.
+
+### Controlling the Hazelcast Configuration
+
+By default Coordinator uses the files `${SIMULATOR_HOME}/conf/hazelcast.xml` and `${SIMULATOR_HOME}/conf/client-hazelcast.xml` to configure the created Hazelcast instances. You can override these files by placing a `hazelcast.xml` or `client-hazelcast.xml` in your working directory. You can also specify a path (outside your working directory) with the following arguments.
 
 ```
-coordinator --memberWorkerCount 24  --duration 12h  map.properties
+coordinator --hzFile your-hazelcast.xml --clientHzFile=your-client-hazelcast.xml
 ```
-
-As you notice, you can play with the actual deployment.
