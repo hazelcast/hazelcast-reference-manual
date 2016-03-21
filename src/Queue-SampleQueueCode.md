@@ -91,10 +91,10 @@ In the case of a lot of producers and consumers for the queue, using a list of q
 
 #### ItemIDs When Offering Items
 
-Hazelcast gives an `itemId` for each item you offer, which is an incrementing sequence identification for the queue items. You should consider the following to understand the `itemId` assignment behavior; these considerations are for queues with or without a persistent data store:
+Hazelcast gives an `itemId` for each item you offer, which is an incrementing sequence identification for the queue items. You should consider the following to understand the `itemId` assignment behavior:
 
 - When a Hazelcast member with a queue, that is configured to have at least one backup, is restarted, the `itemId` assignment resumes from the last known highest `itemId` before the restart; `itemId` assignment does not start from the beginning for the new items.
-- When the whole cluster is restarted, the same behavior explained in the above consideration applies. The `itemId` for the new items are given starting from the last known highest `itemId` before the restart. 
+- When the whole cluster is restarted, the same behavior explained in the above consideration applies if your queue has a persistent data store (`QueueStore`). If the queue has `QueueStore`, the `itemId` for the new items are given starting from the highest `itemId` found in the IDs returned by the method `loadAllKeys`. If the method `loadAllKeys` does not return anything, the `itemId`s will started from the beginning after a cluster restart.
 - The above two considerations mean there will be no duplicated `itemId`s in the memory or in the persistent data store.
 
 
