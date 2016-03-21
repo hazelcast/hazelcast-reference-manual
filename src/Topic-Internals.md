@@ -8,13 +8,13 @@ The behavior of a topic varies depending on the value of the configuration param
 
 #### Ordering Messages as Published
 
-If `globalOrderEnabled` is disabled, messages are ordered: listeners (subscribers) process the messages in the order that the messages are published. If cluster member M publishes messages *m1, m2, m3, ..., mn* to a topic **T**, then Hazelcast makes sure that all of the subscribers of topic **T** will receive and process *m1, m2, m3, ..., mn* in the given order.
+If `globalOrderEnabled` is disabled, messages are not ordered: listeners (subscribers) process the messages in the order that the messages are published. If cluster member M publishes messages *m1, m2, m3, ..., mn* to a topic **T**, then Hazelcast makes sure that all of the subscribers of topic **T** will receive and process *m1, m2, m3, ..., mn* in the given order.
 
 Here is how it works. Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
 	
 In this example, *member1* publishes two messages: `a1` and `a2`, and *member3* publishes two messages: `c1` and `c2`. When *member1* and *member3* publish a message, they will check their local list for registered members, and they will discover that *member1* and *member2* are in their lists, then they will fire messages to those members. One possible order of the messages received can be the following.
 
-*member1* -> `c1`, `b1`, `a2`, `c2`
+*member1* -> `c1`, `a1`, `a2`, `c2`
 
 *member2* -> `c1`, `c2`, `a1`, `a2`
 
