@@ -40,7 +40,7 @@ After the download is completed, follow the below steps.
 
 After the installation you can already use Simulator on the local machine.
 
-- Create a working directory for your Simulator TestSuite. Use the Simulator Wizard to create an example setup for you and change into that directory.
+- Create a working directory for your Simulator TestSuite. Use the Simulator Wizard to create an example setup for you and change to that directory.
 
   ```
   simulator-wizard --createWorkDir tests

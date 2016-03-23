@@ -3,7 +3,7 @@
 
 
 - **Removal of deprecated static methods:**
-The static methods of Hazelcast class reaching Hazelcast data components have been removed. The functionality of these methods can be reached from HazelcastInstance interface. Namely you should replace following:
+The static methods of Hazelcast class reaching Hazelcast data components have been removed. The functionality of these methods can be reached from the HazelcastInstance interface. You should replace the following:
 
 ```java
 Map<Integer, String> customers = Hazelcast.getMap( "customers" );
@@ -19,7 +19,7 @@ Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
 ```
 
 - **Renaming "instance" to "distributed object":**
-Before 3.0 there was a confusion for the term "instance". It was used for both the cluster members and the distributed objects (map, queue, topic, etc. instances). Starting 3.0, the term instance will be only used for Hazelcast instances, namely cluster members. We will use the term "distributed object" for map, queue, etc. instances. So you should replace the related methods with the new renamed ones. As 3.0 clients are smart client that they know in which node the data is located, you can replace your lite members with native clients.
+Before 3.0 there was confusion about the term "instance": it was used for both the cluster members and the distributed objects (map, queue, topic, etc. instances). Starting with 3.0, the term instance will be only used for Hazelcast instances, namely cluster members. We will use the term "distributed object" for map, queue, etc. instances. You should replace the related methods with the new renamed ones. 3.0 clients are smart client in that they know in which node the data is located, so you can replace your lite members with native clients.
 
 ```java
 public static void main( String[] args ) throws InterruptedException {
@@ -54,7 +54,7 @@ PartitionService has been moved to package `com.hazelcast.core` from `com.hazelc
 
 
 - **Listener API change:**
-Before 3.0, `removeListener` methods was taking the Listener object as parameter. But, it causes confusion as same listener object may be used as parameter for different listener registrations. So we have changed the listener API. `addListener` methods return you an unique ID and you can remove listener by using this ID. So you should do following replacement if needed:
+Before 3.0, `removeListener` methods were taking the Listener object as a parameter. But this caused confusion because same listener object may be used as a parameter for different listener registrations. So we have changed the listener API. `addListener` methods returns a unique ID and you can remove a listener by using this ID. So you should do the following replacement if needed:
 
 ```java
 IMap map = hazelcastInstance.getMap( "map" );
@@ -85,7 +85,7 @@ map.removeEntryListener( listenerId );
 Also MergePolicy interface has been renamed to MapMergePolicy and also returning null from the implemented `merge()` method causes the existing entry to be removed.
 
 - **IQueue changes:**
-There is no change on IQueue API but there are changes on how `IQueue` is configured. With Hazelcast 3.0 there will not be backing map configuration for queue. Settings like backup count will be directly configured on queue config. For queue configuration details, please see the [Queue section](#queue).
+There is no change on IQueue API but there are changes on how `IQueue` is configured. With Hazelcast 3.0 there will be no backing map configuration for queue. Settings like backup count will be directly configured on queue config. For queue configuration details, please see the [Queue section](#queue).
 - **Transaction API change:**
 In Hazelcast 3.0, transaction API is completely different. Please see the [Transactions chapter](#transactions).
 - **ExecutorService API change:**

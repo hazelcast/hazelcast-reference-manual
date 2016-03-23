@@ -22,7 +22,7 @@ For security reasons we store the cloud credentials outside of the working direc
 
 You can store the credentials in a different location, but then you need to configure the `simulator.properties` later.
 
-- Create a working directory for your Simulator TestSuite. Use the Simulator Wizard to create an example setup for you and change into the directory.
+- Create a working directory for your Simulator TestSuite. Use the Simulator Wizard to create an example setup for you and change to that directory.
 
   ```
   simulator-wizard --createWorkDir tests --cloudProvider google-compute-engine

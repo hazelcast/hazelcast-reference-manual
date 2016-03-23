@@ -80,9 +80,9 @@ You can set this on the command line.
 
 You should consider the following rules about the Hazelcast instance name when you specify the configuration file location using `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` (which resolves to `hazelcast.config.location`):
 
-* If you also specified `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) property, this property is used as instance name even though you configured the instance name in the configuration file.
+* If you also specified the `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) property, this property is used as the instance name even though you configured the instance name in the configuration file.
 * If you do not specify `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` but you configure the instance name in the configuration file using the element `<instance-name>`, this element's value will be used as the instance name.
-* Otherwise (you do not specify an instance name via property or in the configuration file), the URL of the configuration file location is used as the instance name.
+* If you do not specify an instance name via property or in the configuration file, the URL of the configuration file location is used as the instance name.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *No check is performed to prevent creating multiple `CacheManager`s with the same cluster

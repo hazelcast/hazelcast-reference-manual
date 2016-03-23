@@ -7,8 +7,8 @@ Before the release 3.5, Hazelcast uses `SpringManagedContext` to scan `SpringAwa
 This behavior has been changed with the release of Hazelcast 3.5. `SpringAware` annotations are disabled by default. By introducing the `spring-aware` element, now it is possible to enable it by adding the `<hz:spring-aware />` tag to the configuration. Please see the [Spring Integration section](#spring-integration).
 
 - **Introducing new configuration options for WAN replication:**
-Starting with the release 3.6, WAN replication related system properties, that are configured per member basis, can now be configured per target cluster.
-Below 4 system properties are no more valid;
+Starting with the release 3.6, WAN replication related system properties, which are configured on a per member basis, can now be configured per target cluster.
+The 4 system properties below are no longer valid.
 
 	* `hazelcast.enterprise.wanrep.batch.size`, please see the [WAN Replication Batch Size](http://docs.hazelcast.org/docs/latest-dev/manual/html-single/index.html#batch-size). 
 

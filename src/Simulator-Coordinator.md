@@ -9,7 +9,7 @@ You can start the Coordinator without any parameters.
 coordinator
 ```
 
-This command will use default values for all mandatory parameters, e.g. the file `test.properties` as TestSuite, a single member Worker as cluster layout and 60 seconds for the test duration.
+This command will use default values for all mandatory parameters, e.g. the file `test.properties` as TestSuite, a single member Worker as cluster layout, and 60 seconds for the test duration.
 
 ### Controlling the TestSuite
 
@@ -39,9 +39,9 @@ coordinator --duration 12h
 coordinator --duration 2d
 ```
 
-The duration is used the run phase of a Simulator Test (that's the actual test execution). If you have long running warmup or verify phases, the total runtime of the TestSuite will be longer.
+The duration is used as the run phase of a Simulator Test (that's the actual test execution). If you have long running warmup or verify phases, the total runtime of the TestSuite will be longer.
 
-There is another option for the use case that you want to run a Simulator Test until some event occurs (which is not time bound), e.g. stop after five million operations have been done. In this case the test code must stop the `TestContext` itself. Use the following command to let Coordinator wait indefinitely.
+There is another option for the use case where you want to run a Simulator Test until some event occurs (which is not time bound), e.g. stop after five million operations have been done. In this case, the test code must stop the `TestContext` itself. Use the following command to let Coordinator wait indefinitely.
 
 ```
 coordinator --waitForTestCaseCompletion
@@ -59,7 +59,7 @@ coordinator --memberWorkerCount 4 --clientWorkerCount 8
 
 A setup without client Workers is fine, but out of the box it won't work without member Workers.
 
-The Workers will be distributed among the available remote machines with a round robin selection. Per default the machines will be mixed with member and client Workers. You can reserve machines for member Workers. The distribution of machines will then be limited to the according group of remote machines. Use the following command to specify the number of dedicated member machines:
+The Workers will be distributed among the available remote machines with a round robin selection. By default, the machines will be mixed with member and client Workers. You can reserve machines for member Workers. The distribution of machines will then be limited to the according group of remote machines. Use the following command to specify the number of dedicated member machines:
 
 ```
 coordinator --dedicatedMemberMachines 2
@@ -67,7 +67,7 @@ coordinator --dedicatedMemberMachines 2
 
 You cannot specify more dedicated member machines than you have available. If you define client Workers, there must be at least a single remote machine left (e.g. with three remote machines you can specify a maximum of two dedicated member machines). The round robin assignment will be done in the two sub-groups of remote machines.
 
-If you need more control over the cluster layout you can create a file `cluster.xml` in your working directory and manually specify the layout per remote machine. This is not necessary for normal use cases, but can be an option for very complex setups.
+If you need more control over the cluster layout, you can create a file `cluster.xml` in your working directory and manually specify the layout per remote machine. This is not necessary for normal use cases, but can be an option for very complex setups.
  
 ```
 <clusterConfiguration>
@@ -86,7 +86,7 @@ If you need more control over the cluster layout you can create a file `cluster.
 </clusterConfiguration>
 ```
 
-In this case you need to have exactly three available remote machines. First we define two different types of Workers (`workerConfiguration`). In this case a member and a client type with Hazelcast version 3.6.1. Then we define how many Workers of which type are created on each machine (`nodeConfiguration`). In this case a mixed, a member only and a client only machine. With the `cluster.xml` file you can also configure different Hazelcast versions to test cross version compatibility.
+In this case you need to have exactly three available remote machines. First we define two different types of Workers (`workerConfiguration`): in this case, a member and a client type with Hazelcast version 3.6.1. Then we define how many Workers of which type are created on each machine (`nodeConfiguration`): in this case, a mixed, a member only, and a client only machine. With the `cluster.xml` file you can also configure different Hazelcast versions to test cross version compatibility.
 
 ### Controlling the Load Generation
 
