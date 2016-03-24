@@ -37,10 +37,6 @@ All network related configuration of Hazelcast Java Client is performed via the 
 Here is an example of configuring network for Java Client declaratively.
 
 ```xml
-<hazelcast-client xsi:schemaLocation=
-    "https://hazelcast.com/schema/client-config hazelcast-client-config-<version>.xsd"
-                  xmlns="https://hazelcast.com/schema/client-config"
-                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 ...
 <network>
   <cluster-members>

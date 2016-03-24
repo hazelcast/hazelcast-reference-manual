@@ -22,13 +22,8 @@ You can set `hazelcast.logging.type` through declarative configuration, programm
 **Declarative Configuration**
 
 ```xml
-<hazelcast xsi:schemaLocation="https://hazelcast.com/schema/config
-    https://hazelcast.com/schema/config/hazelcast-config-3.0.xsd"
-    xmlns="https://hazelcast.com/schema/config"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
+<hazelcast>
   ....
-
   <properties>
     <property name="hazelcast.logging.type">jdk</property>
     ....
