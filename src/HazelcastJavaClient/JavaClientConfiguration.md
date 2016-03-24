@@ -38,8 +38,8 @@ Here is an example of configuring network for Java Client declaratively.
 
 ```xml
 <hazelcast-client xsi:schemaLocation=
-    "http://www.hazelcast.com/schema/client-config hazelcast-client-config-<version>.xsd"
-                  xmlns="http://www.hazelcast.com/schema/client-config"
+    "https://hazelcast.com/schema/client-config hazelcast-client-config-<version>.xsd"
+                  xmlns="https://hazelcast.com/schema/client-config"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 ...
 <network>
