@@ -17,8 +17,8 @@ When Hazelcast starts up, it checks for the configuration as follows:
 When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazelcast.xml` in the `/bin` folder. This is the declarative configuration file for Hazelcast. Part of this XML file is shown below.
 
 ```xml
-<hazelcast xsi:schemaLocation="https://hazelcast.com/schema/config hazelcast-config-3.5.xsd"
-           xmlns="https://hazelcast.com/schema/config"
+<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.5.xsd"
+           xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <group>
         <name>dev</name>

@@ -64,18 +64,18 @@ or
 
 ***Declaring Beans*** 
 
-Hazelcast has its own namespace **hazelcast** for bean definitions. You can easily add the namespace declaration *xmlns:hz="https://hazelcast.com/schema/spring"* to the `beans` element in the context file so that *hz* namespace shortcut can be used as a bean declaration.
+Hazelcast has its own namespace **hazelcast** for bean definitions. You can easily add the namespace declaration *xmlns:hz="http://www.hazelcast.com/schema/spring"* to the `beans` element in the context file so that *hz* namespace shortcut can be used as a bean declaration.
 
 Here is an example schema definition for Hazelcast 3.3.x:
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:hz="https://hazelcast.com/schema/spring"
+       xmlns:hz="http://www.hazelcast.com/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                https://hazelcast.com/schema/spring
-                https://hazelcast.com/schema/spring/hazelcast-spring.xsd">
+                http://www.hazelcast.com/schema/spring
+                http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd">
 ```
 
 
@@ -224,13 +224,13 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:hz="https://hazelcast.com/schema/spring"
+       xmlns:hz="http://www.hazelcast.com/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                 http://www.springframework.org/schema/context
                 http://www.springframework.org/schema/context/spring-context-3.0.xsd
-                https://hazelcast.com/schema/spring
-                https://hazelcast.com/schema/spring/hazelcast-spring.xsd">
+                http://www.hazelcast.com/schema/spring
+                http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd">
 
   <context:annotation-config />
 
