@@ -1,4 +1,4 @@
-## Continuous Query 
+## Continuous Query Cache
 
 <font color="#3981DB">**Hazelcast Enterprise**</font>
 
