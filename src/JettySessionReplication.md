@@ -50,7 +50,7 @@ Jetty Web Session Replication runs in two different modes:
 
 #### Deploying P2P (Peer-to-Peer) for Jetty
 
-P2P deployment launches embedded Hazelcast Node in each server instance.
+P2P deployment launches embedded Hazelcast member in each server instance.
 
 This type of deployment is simple: just configure your Jetty and launch. There is no need for an external Hazelcast cluster.
 
@@ -226,9 +226,9 @@ Based on Tomcat configuration or `sessionTimeout` setting in `web.xml`, the sess
 `HazelcastSessionIdManager` can work in sticky and non-sticky setups.
 
 The clustered session mechanism works in conjunction with a load balancer that supports stickiness. Stickiness can be based on various data items, such as source IP address, or characteristics of the session ID, or a load-balancer specific mechanism. 
-For those load balancers that examine the session ID, `HazelcastSessionIdManager` appends a node ID to the session ID, which can be used for routing.
+For those load balancers that examine the session ID, `HazelcastSessionIdManager` appends a member ID to the session ID, which can be used for routing.
 You must configure the `HazelcastSessionIdManager` with a `workerName` that is unique across the cluster. 
-Typically the name relates to the physical node on which the instance is executed. If this name is not unique, your load balancer might fail to distribute your sessions correctly.
+Typically the name relates to the physical member on which the instance is executed. If this name is not unique, your load balancer might fail to distribute your sessions correctly.
 If sticky sessions are enabled, the `workerName` parameter has to be set, as shown below.
 
 

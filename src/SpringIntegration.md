@@ -290,7 +290,7 @@ public class SomeValue implements Serializable, ApplicationContextAware {
 }
 ```
 
-- Get `SomeValue` Object from Context and put it into Hazelcast Distributed Map on Node-1.
+- Get `SomeValue` Object from Context and put it into Hazelcast Distributed Map on the first member.
 
 ```java
 HazelcastInstance hazelcastInstance = 

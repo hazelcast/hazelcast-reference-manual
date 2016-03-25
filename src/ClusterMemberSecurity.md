@@ -47,7 +47,7 @@ You can define as many as LoginModules as you want in configuration. They are ex
 package com.hazelcast.security;
 /**
  * ICredentialsFactory is used to create Credentials objects to be used
- * during node authentication before connection accepted by master node.
+ * during member authentication before connection accepted by master member.
  */
 public interface ICredentialsFactory {
 
@@ -59,4 +59,4 @@ public interface ICredentialsFactory {
 }
 ```
 
-Properties defined in configuration are passed to the `ICredentialsFactory.configure()` method as java.util.Properties and to the `LoginModule.initialize()` method as java.util.Map.
+Properties defined in the configuration are passed to the `ICredentialsFactory.configure()` method as `java.util.Properties` and to the `LoginModule.initialize()` method as `java.util.Map`.

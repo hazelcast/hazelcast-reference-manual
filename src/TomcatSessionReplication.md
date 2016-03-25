@@ -49,7 +49,7 @@ Tomcat Web Sessions run in two different modes:
 
 #### Deploying P2P (Peer-to-Peer) for Tomcat
 
-P2P deployment launches an embedded Hazelcast Node in each server instance.
+P2P deployment launches an embedded Hazelcast member in each server instance.
 
 This type of deployment is simple: just configure your Tomcat and launch. There is no need for an external Hazelcast cluster.
 

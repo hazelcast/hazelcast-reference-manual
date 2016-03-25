@@ -26,7 +26,7 @@ public interface PartitionService {
 }
 ```
 
-The method `isClusterSafe` checks whether the cluster is in a safe state. It returns `true` if there are no active partition migrations and there are sufficient backups for each partition. Once it returns `true`, the cluster is safe and a node can be shut down without data loss.
+The method `isClusterSafe` checks whether the cluster is in a safe state. It returns `true` if there are no active partition migrations and there are sufficient backups for each partition. Once it returns `true`, the cluster is safe and a member can be shut down without data loss.
 
 The method `isMemberSafe` checks whether a specific member is in a safe state. This check controls if the first backups of partitions of the given member are synced with the primary ones. Once it returns `true`, the given member is safe and it can be shut down without data loss. 
 

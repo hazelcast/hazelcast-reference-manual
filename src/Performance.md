@@ -4,7 +4,7 @@ This chapter provides information on the performance features of Hazelcast inclu
 
 ## Data Affinity
 
-Data affinity ensures that related entries exist on the same node. If related data is on the same node, operations can be executed without the cost of extra network calls and extra wire data. This feature is provided by using the same partition keys for related data.
+Data affinity ensures that related entries exist on the same member. If related data is on the same member, operations can be executed without the cost of extra network calls and extra wire data. This feature is provided by using the same partition keys for related data.
 
 **Co-location of related data and computation**
 
@@ -32,7 +32,7 @@ hazelcastInstance.getLock( "key1" ).lock();
 hazelcastInstance.getExecutorService().executeOnKeyOwner( runnable, "key1" );
 ```
 
-When the keys are the same, entries are stored on the same node. But we sometimes want to have related entries stored on the same node, such as a customer and his/her order entries. We would have a customers map with customerId as the key and an orders map with orderId as the key. Since customerId and orderId are different keys, a customer and his/her orders may fall into different members/nodes in your cluster. So how can we have them stored on the same node? We create an affinity between customer and orders. If we make them part of the same partition then these entries will be co-located. We achieve this by making orderIds `PartitionAware`.
+When the keys are the same, entries are stored on the same member. But we sometimes want to have related entries stored on the same member, such as a customer and his/her order entries. We would have a customers map with customerId as the key and an orders map with orderId as the key. Since customerId and orderId are different keys, a customer and his/her orders may fall into different members in your cluster. So how can we have them stored on the same member? We create an affinity between customer and orders. If we make them part of the same partition then these entries will be co-located. We achieve this by making orderIds `PartitionAware`.
 
 ```java
 public class OrderKey implements Serializable, PartitionAware {
@@ -67,7 +67,7 @@ public class OrderKey implements Serializable, PartitionAware {
 }
 ```
 
-Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`. This will make sure that the `Customer` entry and its `Order`s will be stored on the same node.
+Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`. This will make sure that the `Customer` entry and its `Order`s will be stored on the same member.
 
 ```java
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();

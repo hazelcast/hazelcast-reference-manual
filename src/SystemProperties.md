@@ -36,7 +36,7 @@ The table below lists the system properties with their descriptions in alphabeti
 
 Property Name | Default Value | Type | Description
 :--------------|:---------------|:------|:------------
-`hazelcast.application.validation.token`||string|This property can be used to verify that Hazelcast nodes only join when their application level configuration is the same.
+`hazelcast.application.validation.token`||string|This property can be used to verify that Hazelcast members only join when their application level configuration is the same.
 `hazelcast.backpressure.backoff.timeout.millis`|60000|int|Controls the maximum timeout in milliseconds to wait for an invocation space to be available. The value needs to be equal to or larger than 0.
 `hazelcast.backpressure.enabled`|false|bool|Enable back pressure.
 `hazelcast.backpressure.max.concurrent.invocations.per.partition`|100|int|The maximum number of concurrent invocations per partition.
@@ -50,12 +50,12 @@ Property Name | Default Value | Type | Description
 `hazelcast.client.heartbeat.interval`|10000|string|The frequency of heartbeat messages sent by the clients to members.
 `hazelcast.client.heartbeat.timeout`|300000|string|Timeout for the heartbeat messages sent by the client to members. If no messages pass between client and member within the given time via this property in milliseconds, the connection will be closed.
 `hazelcast.client.invocation.timeout.seconds`|120|string|Time to give up the invocation when a member in the member list is not reachable.
-`hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the node assumes the client is dead and closes its connections to the client.
-`hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same node when this property is `false`. When it is set to `true`, the client tries to connect to the nodes in the given order.
+`hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the member assumes the client is dead and closes its connections to the client.
+`hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same member when this property is `false`. When it is set to `true`, the client tries to connect to the members in the given order.
 `hazelcast.connect.all.wait.seconds` | 120 | int | Timeout to connect all other cluster members when a member is joining to a cluster.
 `hazelcast.connection.monitor.interval` | 100 | int  |   Minimum interval in milliseconds to consider a connection error as critical.
-`hazelcast.connection.monitor.max.faults` | 3 | int  |   Maximum IO error count before disconnecting from a node.
-`hazelcast.discovery.public.ip.enabled` | false | bool | Enable use of public IP address in node discovery with Discovery SPI.
+`hazelcast.connection.monitor.max.faults` | 3 | int  |   Maximum IO error count before disconnecting from a member.
+`hazelcast.discovery.public.ip.enabled` | false | bool | Enable use of public IP address in member discovery with Discovery SPI.
 `hazelcast.enterprise.license.key` | null | string  |   <a href="http://www.hazelcast.com/products.jsp" target="_blank">Hazelcast Enterprise</a> license key.
 `hazelcast.event.queue.capacity` | 1000000 | int | Capacity of internal event queue.
 `hazelcast.event.queue.timeout.millis` | 250 | int | Timeout to enqueue events to event queue.
@@ -67,8 +67,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.icmp.enabled` | false | bool  |   Enable ICMP ping.
 `hazelcast.icmp.timeout` | 1000 | int |   ICMP timeout in milliseconds.
 `hazelcast.icmp.ttl` | 0 | int |   ICMP TTL (maximum numbers of hops to try).
-`hazelcast.initial.min.cluster.size` | 0 | int  |   Initial expected cluster size to wait before node to start completely.
-`hazelcast.initial.wait.seconds` | 0 | int  |   Initial time in seconds to wait before node to start completely.
+`hazelcast.initial.min.cluster.size` | 0 | int  |   Initial expected cluster size to wait before member to start completely.
+`hazelcast.initial.wait.seconds` | 0 | int  |   Initial time in seconds to wait before member to start completely.
 `hazelcast.io.balancer.interval.seconds`|20|int|Interval in seconds between IOBalancer executions.
 `hazelcast.io.input.thread.count` | 3 | int | Number of socket input threads.
 `hazelcast.io.output.thread.count` | 3 | int | Number of socket output threads.
@@ -80,17 +80,17 @@ Property Name | Default Value | Type | Description
 `hazelcast.map.expiry.delay.seconds`|10|int|Useful to deal with some possible edge cases. For example, when using EntryProcessor, without this delay, you may see an EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup. As a result of this, when backup promotes to owner, you will end up an unprocessed key.
 `hazelcast.map.load.chunk.size` | 1000 | int |   Chunk size for [MapLoader](#loading-and-storing-persistent-data)'s map initialization process (MapLoader.loadAllKeys()).
 `hazelcast.map.replica.wait.seconds.for.scheduled.tasks`|10|int|Scheduler delay for map tasks those will be executed on backup members.
-`hazelcast.map.write.behind.queue.capacity`|50000|string|Maximum write-behind queue capacity per node. It is the total of all write-behind queue sizes in a node including backups. Its maximum value is `Integer.MAX_VALUE`. The value of this property is taken into account only if the `write-coalescing` element of the Map Store configuration is `false`. Please refer to the [Map Store section](#map-store) for the description of the `write-coalescing` element.
-`hazelcast.master.confirmation.interval.seconds` | 30 | int  |   Interval at which nodes send master confirmation.
+`hazelcast.map.write.behind.queue.capacity`|50000|string|Maximum write-behind queue capacity per member. It is the total of all write-behind queue sizes in a member including backups. Its maximum value is `Integer.MAX_VALUE`. The value of this property is taken into account only if the `write-coalescing` element of the Map Store configuration is `false`. Please refer to the [Map Store section](#map-store) for the description of the `write-coalescing` element.
+`hazelcast.master.confirmation.interval.seconds` | 30 | int  |   Interval at which members send master confirmation.
 `hazelcast.max.join.merge.target.seconds`|20|int|Split-brain merge timeout for a specific target.
 `hazelcast.max.join.seconds`|300|int| Join timeout, maximum time to try to join before giving.
-`hazelcast.max.no.heartbeat.seconds` | 300 | int  |   Maximum timeout of heartbeat in seconds for a node to assume it is dead.
-`hazelcast.max.no.master.confirmation.seconds` | 450 | int  |   Max timeout of master confirmation from other nodes.
+`hazelcast.max.no.heartbeat.seconds` | 300 | int  |   Maximum timeout of heartbeat in seconds for a member to assume it is dead.
+`hazelcast.max.no.master.confirmation.seconds` | 450 | int  |   Max timeout of master confirmation from other members.
 `hazelcast.max.wait.seconds.before.join` | 20 | int  |   Maximum wait time before join operation.
 `hazelcast.mc.max.visible.instance.count` | 100 | int  |   Management Center maximum visible instance count.
 `hazelcast.mc.max.visible.slow.operations.count`|10|int|Management Center maximum visible slow operations count.
 `hazelcast.mc.url.change.enabled` | true | bool  |   Management Center changing server url is enabled.
-`hazelcast.member.list.publish.interval.seconds` | 600 | int  |   Interval at which master node publishes a member list.
+`hazelcast.member.list.publish.interval.seconds` | 600 | int  |   Interval at which master member publishes a member list.
 `hazelcast.memcache.enabled`| false | bool |   Enable [Memcache](#memcache-client) client request listener service.
 `hazelcast.merge.first.run.delay.seconds` | 300 | int |   Initial run delay of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
 `hazelcast.merge.next.run.delay.seconds` | 120 | int |   Run interval of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
@@ -101,7 +101,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.operation.thread.count` | -1 | int | Number of partition based operation handler threads. `-1` means CPU core count x 2.
 `hazelcast.partition.backup.sync.interval`|30|int|Interval for syncing backup replicas.
 `hazelcast.partition.count` | 271 | int  |   Total partition count.
-`hazelcast.partition.max.parallel.replications`|5|int|Maximum number of parallel partition backup replication operations per node. When a partition backup ownership changes or a backup inconsistency is detected, the nodes start to sync their backup partitions. This parameter limits the maximum running replication operations in parallel.
+`hazelcast.partition.max.parallel.replications`|5|int|Maximum number of parallel partition backup replication operations per member. When a partition backup ownership changes or a backup inconsistency is detected, the members start to sync their backup partitions. This parameter limits the maximum running replication operations in parallel.
 `hazelcast.partition.migration.interval` | 0 | int |   Interval to run partition migration tasks in seconds.
 `hazelcast.partition.migration.timeout` | 300 | int  |   Timeout for partition migration tasks in seconds.
 `hazelcast.partition.table.send.interval`|15|int|Interval for publishing partition table periodically to all cluster members.
@@ -110,7 +110,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.performance.monitor.max.rolled.file.size.mb`|10|int|The performance monitor uses a rolling file approach to prevent eating too much disk space. This property sets the maximum size in MB for a single file. Every HazelcastInstance gets its own history of log files.
 `hazelcast.performance.monitoring.enabled`||bool|Enable the performance monitor, a tool which allows you to see internal performance metrics. These metrics are written to a dedicated log file.
 `hazelcast.performance.monitor.delay.seconds`||int| The period between successive entries in the performance monitor's log file.
-`hazelcast.prefer.ipv4.stack` | true | bool  |   Prefer Ipv4 network interface when picking a local address.
+`hazelcast.prefer.ipv4.stack` | true | bool  |   Prefer IPv4 network interface when picking a local address.
 `hazelcast.query.max.local.partition.limit.for.precheck`|3|int|Maximum value of local partitions to trigger local pre-check for TruePredicate query operations on maps.
 `hazelcast.query.optimizer.type`|RULES|String|Type of the query optimizer. For optimizations based on static rules, set the value to `RULES`. To disable the optimization, set the value to `NONE`.
 `hazelcast.query.predicate.parallel.evaluation`|false|bool|Each Hazelcast member evaluates query predicates using a single thread by default. In most cases, the overhead of inter-thread communications overweight can benefit from parallel execution. When you have a large dataset and/or slow predicate, you may benefit from parallel predicate evaluations. Set to `true` if you are using slow predicates or have > 100,000s entries per member.
@@ -134,7 +134,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.socket.receive.buffer.size` | 32 | int | Socket receive buffer (`SO_RCVBUF`) size in KB. If you have a very fast network (e.g. 10gbit) and/or you have large entries, then you may benefit from increasing sender/receiver buffer sizes. Use this property and the next one below tune the size. For example, a send/receive buffer size of 1024 kB is a safe starting point for a 10gbit network.
 `hazelcast.socket.send.buffer.size` | 32 | int  | Socket send buffer (`SO_SNDBUF`) size in KB.
 `hazelcast.socket.server.bind.any` | true | bool | Bind server-socket to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
-`hazelcast.tcp.join.port.try.count`|3|int|The number of incremental ports, starting with the port number defined in the network configuration, that will be used to connect to a host (which is defined without a port in TCP/IP member list while a node is searching for a cluster).
+`hazelcast.tcp.join.port.try.count`|3|int|The number of incremental ports, starting with the port number defined in the network configuration, that will be used to connect to a host (which is defined without a port in TCP/IP member list while a member is searching for a cluster).
 `hazelcast.unsafe.mode` | auto | string  | "auto" (the default value) automatically detects whether the usage of `Unsafe` is suitable for a given platform. "disabled" explicitly disables the `Unsafe` usage in your platform. "enforced" enforces the usage of `Unsafe` even if your platform does not support it. This property can only be set by passing a JVM-wide system property.
 `hazelcast.phone.home.enabled` | true | bool  |   Enable or disable the sending of phone home data to Hazelcast's phone home server.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.

@@ -10,7 +10,7 @@ Native Clients enable you to perform almost all Hazelcast operations without bei
 
 Hundreds or even thousands of clients can be connected to the cluster. By default, there are *core count* * *10* threads on the server side that will handle all the requests (e.g. if the server has 4 cores, there will be 40 threads).
 
-Imagine a trading application where all the trading data are stored and managed in a Hazelcast cluster with tens of nodes. Swing/Web applications at the traders' desktops can use Native Clients to access and modify the data in the Hazelcast cluster.
+Imagine a trading application where all the trading data are stored and managed in a Hazelcast cluster with tens of members. Swing/Web applications at the traders' desktops can use Native Clients to access and modify the data in the Hazelcast cluster.
 
 Currently, Hazelcast has Native Java, C++ and .NET Clients available. This chapter describes the Java Client.
 

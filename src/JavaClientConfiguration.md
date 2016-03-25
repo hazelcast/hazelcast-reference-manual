@@ -65,7 +65,7 @@ Here is an example of configuring network for Java Client declaratively.
     <host-header>ec2.amazonaws.com</host-header>
     <security-group-name>hazelcast-sg</security-group-name>
     <tag-key>type</tag-key>
-    <tag-value>hz-nodes</tag-value>
+    <tag-value>hz-members</tag-value>
   </aws>
 </network>
 ```
@@ -81,7 +81,7 @@ ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 
 #### Configuring Address List
 
-Address List is the initial list of cluster addresses to which the client will connect. The client uses this list to find an alive node. Although it may be enough to give only one address of a node in the cluster (since all nodes communicate with each other), it is recommended that you give the addresses for all the nodes.
+Address List is the initial list of cluster addresses to which the client will connect. The client uses this list to find an alive member. Although it may be enough to give only one address of a member in the cluster (since all members communicate with each other), it is recommended that you give the addresses for all the members.
 
 **Declarative**:
 
@@ -163,7 +163,7 @@ Default is *disabled*.
 
 #### Setting Connection Timeout
 
-Connection timeout is the timeout value in milliseconds for nodes to accept client connection requests. The following are the example configurations.
+Connection timeout is the timeout value in milliseconds for members to accept client connection requests. The following are the example configurations.
 
 **Declarative**:
 
@@ -316,7 +316,7 @@ socketOptions.setLingerSeconds(3);
 
 
 
-You can use SSL to secure the connection between the client and the nodes. If you want SSL enabled for the client-cluster connection, you should set `SSLConfig`. Once set, the connection (socket) is established out of an SSL factory defined either by a factory class name or factory implementation. Please see the `SSLConfig` class in the `com.hazelcast.config` package at the JavaDocs page of the <a href="http://www.hazelcast.org/documentation" target="_blank">Hazelcast Documentation</a> web site.
+You can use SSL to secure the connection between the client and the members. If you want SSL enabled for the client-cluster connection, you should set `SSLConfig`. Once set, the connection (socket) is established out of an SSL factory defined either by a factory class name or factory implementation. Please see the `SSLConfig` class in the `com.hazelcast.config` package at the JavaDocs page of the <a href="http://www.hazelcast.org/documentation" target="_blank">Hazelcast Documentation</a> web site.
 
 #### Configuring Client for AWS
 
@@ -336,7 +336,7 @@ The example declarative and programmatic configurations below show how to config
     <host-header>ec2.amazonaws.com</host-header>
     <security-group-name>hazelcast-sg</security-group-name>
     <tag-key>type</tag-key>
-    <tag-value>hz-nodes</tag-value>
+    <tag-value>hz-members</tag-value>
   </aws>
 ...
 </network>
@@ -354,7 +354,7 @@ clientAwsConfig.setInsideAws( false )
                .setHostHeader( "ec2.amazonaws.com" )
                .setSecurityGroupName( ">hazelcast-sg" )
                .setTagKey( "type" )
-               .setTagValue( "hz-nodes" );
+               .setTagValue( "hz-members" );
                .setIamRole( "s3access" );
 clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
 HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
@@ -395,7 +395,7 @@ clientConfig.setLoadBalancer(yourLoadBalancer);
 
 ### Configuring Client Near Cache
 
-Hazelcast distributed map has a Near Cache feature to reduce network latencies. Since the client always requests data from the cluster nodes, it can be helpful for some of your use cases to configure a near cache on the client side.
+Hazelcast distributed map has a Near Cache feature to reduce network latencies. Since the client always requests data from the cluster members, it can be helpful for some of your use cases to configure a near cache on the client side.
 The client supports the same Near Cache that is used in Hazelcast distributed map.
 
 You can create Near Cache on the client side by providing a configuration per map name, as shown below.

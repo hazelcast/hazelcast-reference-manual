@@ -25,7 +25,7 @@ Assume that you have a 5-member Hazelcast Cluster and you want to set the minimu
 </quorum>
 
 <map name="default">
-<quorum-ref>quorumRuleWithThreeNodes</quorum-ref>
+<quorum-ref>quorumRuleWithThreeMembers</quorum-ref>
 </map>
 ....
 </hazelcast>
@@ -36,12 +36,12 @@ Assume that you have a 5-member Hazelcast Cluster and you want to set the minimu
 
 ```java
 QuorumConfig quorumConfig = new QuorumConfig();
-quorumConfig.setName("quorumRuleWithThreeNodes")
+quorumConfig.setName("quorumRuleWithThreeMembers")
 quorumConfig.setEnabled(true);
 quorumConfig.setSize(3);
 
 MapConfig mapConfig = new MapConfig();
-mapConfig.setQuorumName("quorumRuleWithThreeNodes");
+mapConfig.setQuorumName("quorumRuleWithThreeMembers");
 
 Config config = new Config();
 config.addQuorumConfig(quorumConfig);

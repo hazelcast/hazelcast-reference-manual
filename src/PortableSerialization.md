@@ -102,7 +102,7 @@ Note that the `id` that is passed to the `SerializationConfig` is the same as th
 
 ### Versioning for Portable Serialization
 
-More than one version of the same class may need to be serialized and deserialized. For example, a client may have an older version of a class, and the node to which it is connected may have a newer version of the same class. 
+More than one version of the same class may need to be serialized and deserialized. For example, a client may have an older version of a class, and the member to which it is connected may have a newer version of the same class. 
 
 Portable serialization supports versioning. It is a global versioning, meaning that all portable classes that are serialized through a member get the globally configured portable version.
 

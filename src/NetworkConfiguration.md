@@ -33,7 +33,7 @@ All network related configuration is performed via the `network` element in the 
                 <host-header>ec2.amazonaws.com</host-header>
                 <security-group-name>hazelcast-sg</security-group-name>
                 <tag-key>type</tag-key>
-                <tag-value>hz-nodes</tag-value>
+                <tag-value>hz-members</tag-value>
             </aws>
             <discovery-strategies>
               <discovery-strategy ... />
@@ -60,7 +60,7 @@ Network netConfig = new NetworkConfig();
 netConfig.setReuseAddress( false );
 
 AwsConfig awsConfig = new AwsConfig();
-awsConfig.setTagKey( "5551234" ).setTagValue( "Node1234" );
+awsConfig.setTagKey( "5551234" ).setTagValue( "Member1234" );
 ```
 
 It has the following sub-elements which are described in the following sections.
@@ -77,7 +77,7 @@ It has the following sub-elements which are described in the following sections.
 
 ### Public Address
 
-`public-address` overrides the public address of a node. By default, a node selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (nodes) may not be able to see/access each other. If both nodes set their public addresses to their defined addresses on NAT, then that way they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. It is optional to set and useful when you have a private cloud. Note that, the value for this element should be given in the format *`host IP address:port number`*. See the following examples.
+`public-address` overrides the public address of a member. By default, a member selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (members) may not be able to see/access each other. If both members set their public addresses to their defined addresses on NAT, then that way they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. It is optional to set and useful when you have a private cloud. Note that, the value for this element should be given in the format *`host IP address:port number`*. See the following examples.
 
 **Declarative:**
 
@@ -222,7 +222,7 @@ The `join` configuration element is used to enable the Hazelcast instances to fo
                 <host-header>ec2.amazonaws.com</host-header>
                 <security-group-name>hazelcast-sg</security-group-name>
                 <tag-key>type</tag-key>
-                <tag-value>hz-nodes</tag-value>
+                <tag-value>hz-members</tag-value>
             </aws>
             <discovery-strategies>
               <discovery-strategy ... />
@@ -253,8 +253,8 @@ The `multicast` element includes parameters to fine tune the multicast join mech
 - `multicast-group`: The multicast group IP address. Specify it when you want to create clusters within the same network. Values can be between 224.0.0.0 and 239.255.255.255. Default value is 224.2.2.3.
 - `multicast-port`: The multicast socket port that the Hazelcast member listens to and sends discovery messages through. Default value is 54327.
 - `multicast-time-to-live`: Time-to-live value for multicast packets sent out to control the scope of multicasts. See more information [here](http://www.tldp.org/HOWTO/Multicast-HOWTO-2.html).
-- `multicast-timeout-seconds`: Only when the nodes are starting up, this timeout (in seconds) specifies the period during which a node waits for a multicast response from another node. For example, if you set it as 60 seconds, each node will wait for 60 seconds until a leader node is selected. Its default value is 2 seconds. 
-- `trusted-interfaces`: Includes IP addresses of trusted members. When a node wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (\*) on the last digit of IP address (e.g. 192.168.1.\* or 192.168.1.100-110).
+- `multicast-timeout-seconds`: Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another member. For example, if you set it as 60 seconds, each member will wait for 60 seconds until a leader member is selected. Its default value is 2 seconds. 
+- `trusted-interfaces`: Includes IP addresses of trusted members. When a member wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (\*) on the last digit of IP address (e.g. 192.168.1.\* or 192.168.1.100-110).
 	
 #### tcp-ip element 
 
@@ -270,14 +270,14 @@ The `tcp-ip` element includes parameters to fine tune the TCP/IP join mechanism.
 
 #### aws element 
 
-The `aws` element includes parameters to allow the nodes to form a cluster on the Amazon EC2 environment.
+The `aws` element includes parameters to allow the members to form a cluster on the Amazon EC2 environment.
 
 - `enabled`: Specifies whether the EC2 discovery is enabled or not, `true` or `false`.
 - `access-key`, `secret-key`: Access and secret keys of your account on EC2.
-- `region`: The region where your nodes are running. Default value is `us-east-1`. You need to specify this if the region is other than the default one.
+- `region`: The region where your members are running. Default value is `us-east-1`. You need to specify this if the region is other than the default one.
 - `host-header`: The URL that is the entry point for a web service. It is optional.
-- `security-group-name`: Name of the security group you specified at the EC2 management console. It is used to narrow the Hazelcast nodes to be within this group. It is optional.
-- `tag-key`, `tag-value`: To narrow the members in the cloud down to only Hazelcast nodes, you can set these parameters as the ones you specified in the EC2 console. They are optional.
+- `security-group-name`: Name of the security group you specified at the EC2 management console. It is used to narrow the Hazelcast members to be within this group. It is optional.
+- `tag-key`, `tag-value`: To narrow the members in the cloud down to only Hazelcast members, you can set these parameters as the ones you specified in the EC2 console. They are optional.
 - `connection-timeout-seconds`: The maximum amount of time Hazelcast will try to connect to a well known member before giving up. Setting this value too low could mean that a member is not able to connect to a cluster. Setting the value too high means that member startup could slow down because of longer timeouts (for example, when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5.
 
 
@@ -313,7 +313,7 @@ public static void main( String[] args )throws Exception{
 
 ### Interfaces
 
-You can specify which network interfaces that Hazelcast should use. Servers mostly have more than one network interface, so you may want to list the valid IPs. Range characters ('\*' and '-') can be used for simplicity. For instance, 10.3.10.\* refers to IPs between 10.3.10.0 and 10.3.10.255. Interface 10.3.10.4-18 refers to IPs between 10.3.10.4 and 10.3.10.18 (4 and 18 included). If network interface configuration is enabled (it is disabled by default) and if Hazelcast cannot find an matching interface, then it will print a message on the console and will not start on that node.
+You can specify which network interfaces that Hazelcast should use. Servers mostly have more than one network interface, so you may want to list the valid IPs. Range characters ('\*' and '-') can be used for simplicity. For instance, 10.3.10.\* refers to IPs between 10.3.10.0 and 10.3.10.255. Interface 10.3.10.4-18 refers to IPs between 10.3.10.4 and 10.3.10.18 (4 and 18 included). If network interface configuration is enabled (it is disabled by default) and if Hazelcast cannot find an matching interface, then it will print a message on the console and will not start on that member.
 
 The following are example configurations.
 

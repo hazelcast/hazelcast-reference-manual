@@ -1,6 +1,6 @@
 ## Java Client Overview
 
-The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast and Hazelcast Enterprise.  The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast node. It can access and change distributed data, and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
+The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast and Hazelcast Enterprise.  The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data, and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
 
 
 ### Including Dependencies for Java Clients
@@ -66,12 +66,12 @@ client.shutdown();
 
 The client has two operation modes because of the distributed nature of the data and cluster.
 
-**Smart Client**: In smart mode, clients connect to each cluster node. Since each data partition uses the well known and consistent hashing algorithm, each client can send an operation to the relevant cluster node, which increases the overall throughput and efficiency. Smart mode is the default mode.
+**Smart Client**: In smart mode, clients connect to each cluster member. Since each data partition uses the well known and consistent hashing algorithm, each client can send an operation to the relevant cluster member, which increases the overall throughput and efficiency. Smart mode is the default mode.
 
 
-**Dummy Client**: For some cases, the clients can be required to connect to a single node instead of to each node in the cluster. Firewalls, security, or some custom networking issues can be the reason for these cases.
+**Dummy Client**: For some cases, the clients can be required to connect to a single member instead of to each member in the cluster. Firewalls, security, or some custom networking issues can be the reason for these cases.
 
-In dummy client mode, the client will only connect to one of the configured addresses. This single node will behave as a gateway to the other nodes. For any operation requested from the client, it will redirect the request to the relevant node and return the response back to the client returned from this node.
+In dummy client mode, the client will only connect to one of the configured addresses. This single member will behave as a gateway to the other members. For any operation requested from the client, it will redirect the request to the relevant member and return the response back to the client returned from this member.
 
 ### Handling Failures
 
@@ -89,7 +89,7 @@ The client executes each operation through the already established connection to
 
 #### Handling Retry-able Operation Failure
 
-While sending the requests to related nodes, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, set the `redoOperation` to `true`. Please see [Enabling Redo Operation](#enabling-redo-operation).
+While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, set the `redoOperation` to `true`. Please see [Enabling Redo Operation](#enabling-redo-operation).
 
 You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client will retry an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes: 
 
@@ -154,7 +154,7 @@ myQueue.offer(“ali”)
 
 #### Using Other Supported Distributed Structures
 
-The distributed data structures listed below are also supported by the client. Since their logic is the same in both the node side and client side, you can refer to their sections as listed below.
+The distributed data structures listed below are also supported by the client. Since their logic is the same in both the member side and client side, you can refer to their sections as listed below.
 
 - [Replicated Map](#replicated-map)
 - [MapReduce](#mapreduce)
@@ -189,7 +189,7 @@ After getting an instance of `IExecutorService`, you can use the instance as the
 
 #### Listening to Client Connection
 
-If you need to track clients and you want to listen to their connection events, you can use the `clientConnected` and `clientDisconnected` methods of the `ClientService` class. This class must be run on the **node** side. The following is an example code.
+If you need to track clients and you want to listen to their connection events, you can use the `clientConnected` and `clientDisconnected` methods of the `ClientService` class. This class must be run on the **member** side. The following is an example code.
 
 ```java
 final ClientService clientService = hazelcastInstance.getClientService();

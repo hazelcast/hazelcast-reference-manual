@@ -51,7 +51,7 @@ Object name starts with `ManagementCenter` prefix. Then it has the cluster name 
 
 -	`name` is the name of object.
 
--	`member` is the node address of object (only required if the statistics are local to the node).
+-	`member` is the member address of object (only required if the statistics are local to the member).
 
 
 A sample bean is shown below.
@@ -244,7 +244,7 @@ jmx:
       - attributes: PutOperationCount, GetOperationCount, RemoveOperationCount, Hits,\ 
             BackupEntryCount, OwnedEntryCount, LastAccessTime, LastUpdateTime
         type: simple
-  - object_name: ManagementCenter[clustername]:type=Members,name="node address in\
+  - object_name: ManagementCenter[clustername]:type=Members,name="member address in\
         double quotes"
     metrics:
       - attributes: OwnedPartitionCount

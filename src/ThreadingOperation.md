@@ -50,8 +50,8 @@ till one of the partitions is finished, even though there are other free partiti
 
 **Example:**
 
-Take a 3 node cluster. Two members will have 90 primary partitions and one member will have 91 primary partitions. Let's
-say you have one CPU and 4 cores per CPU. By default, 4 operation threads will be allocated to serve 90 or 91 partitions.
+Take a cluster with three members. Two members will have 90 primary partitions and one member will have 91 primary partitions. Let's
+say you have one CPU and four cores per CPU. By default, four operation threads will be allocated to serve 90 or 91 partitions.
 
 #### Operations that are Not Partition-aware
 
