@@ -6,7 +6,7 @@ depending on your needs. Default value for batch size is `500`.
 
 Batch size can be set for each target cluster by modifying related `WanTargetClusterConfig`.
 
-You can change this property using the declarative configuration as shown below.
+Below is the declarative configuration for changing the value of the property:
 
 ```xml
 ...
@@ -20,7 +20,7 @@ You can change this property using the declarative configuration as shown below.
 ...
 ```
 
-And, the following is the equivalent programmatic configuration:
+And, following is the equivalent programmatic configuration:
 
 ```java
 ...
