@@ -1,15 +1,15 @@
 
 ### Defining WAN Replication
 
-The current WAN Replication implementation supports two different operation modes.
+Hazelcast supports two different operation modes of WAN Replication:
 
 - **Active-Passive:** This mode is mostly used for failover scenarios where you want to replicate an active cluster to one
   or more passive clusters, for the purpose of maintaining a backup.
 
-- **Active-Active:** Every cluster is equal, each cluster replicate to all other clusters. This is normally used to connect
+- **Active-Active:** Every cluster is equal, each cluster replicates to all other clusters. This is normally used to connect
   different clients to different clusters for the sake of the shortest path between client and server.
 
-Let's see how we can declaratively configure WAN Replication from the New York cluster to target the London and Tokyo clusters:
+Below is an example of declarative configuration of WAN Replication from New York cluster to target the London and Tokyo clusters:
 
 ```xml
 <hazelcast>
@@ -43,9 +43,9 @@ Let's see how we can declaratively configure WAN Replication from the New York c
 </hazelcast>
 ```
 
-The following are the definitions for the configuration elements:
+Following are the definitions of configuration elements:
 
-- `name`: Name for your WAN replication configuration.
+- `name`: Name of your WAN replication configuration.
 - `snapshot-enabled`: Only valid when used with `WanBatchReplication`. When set to `true`, only the latest events (based on key) are selected and sent in a batch. 
 - `target-cluster`: Configures target cluster's group name and password.
 - `replication-impl`: Name of the class implementation for the WAN replication.
@@ -88,7 +88,7 @@ config.addWanReplicationConfig(wrConfig);
 ```
 
 
-Using this configuration, the cluster running in New York is replicating to Tokyo and London. The Tokyo and London clusters should
+Using this configuration, the cluster running in New York will replicate to Tokyo and London. The Tokyo and London clusters should
 have similar configurations if you want to run in Active-Active mode.
 
 If the New York and London cluster configurations contain the `wan-replication` element and the Tokyo cluster does not, it means
