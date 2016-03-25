@@ -19,7 +19,7 @@ Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
 ```
 
 - **Renaming "instance" to "distributed object":**
-Before 3.0 there was confusion about the term "instance": it was used for both the cluster members and the distributed objects (map, queue, topic, etc. instances). Starting with 3.0, the term instance will be only used for Hazelcast instances, namely cluster members. We will use the term "distributed object" for map, queue, etc. instances. You should replace the related methods with the new renamed ones. 3.0 clients are smart client in that they know in which node the data is located, so you can replace your lite members with native clients.
+Before 3.0 there was confusion about the term "instance": it was used for both the cluster members and the distributed objects (map, queue, topic, etc. instances). Starting with 3.0, the term instance will be only used for Hazelcast instances, namely cluster members. We will use the term "distributed object" for map, queue, etc. instances. You should replace the related methods with the new renamed ones. 3.0 clients are smart clients in that they know in which cluster member the data is located, so you can replace your lite members with native clients.
 
 ```java
 public static void main( String[] args ) throws InterruptedException {

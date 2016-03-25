@@ -17,9 +17,9 @@ We can conclude that an ideal cache would combine TTL and write-through features
 
 Hazelcast, a brand new approach to data, is designed around the concept of distribution. Hazelcast shares data around the cluster for flexibility and performance. It is an in-memory data grid for clustering and highly scalable data distribution.
 
-One of the main features of Hazelcast is not having a master node. Each node in the cluster is configured to be the same in terms of functionality. The oldest node (the first node created in the node cluster) manages the cluster members, i.e. automatically performs the data assignment to nodes. If the oldest node dies, the second oldest node will manage the cluster members.
+One of the main features of Hazelcast is not having a master member. Each cluster member is configured to be the same in terms of functionality. The oldest member (the first member created in the cluster) manages the cluster members, i.e. automatically performs the data assignment to members. If the oldest member dies, the second oldest member will manage the cluster members.
 
-Another main feature is the data being held entirely in-memory. This is fast. In the case of a failure, such as a node crash, no data will be lost since Hazelcast distributes copies of data across all the nodes of cluster.
+Another main feature is the data being held entirely in-memory. This is fast. In the case of a failure, such as a member crash, no data will be lost since Hazelcast distributes copies of data across all the cluster members.
 
 As shown in the feature list in the [Hazelcast Overview](#hazelcast-overview), Hazelcast supports a number of distributed data structures and distributed computing utilities. This provides powerful ways of accessing distributed clustered memory and accessing CPUs for true distributed computing. 
 
@@ -30,10 +30,10 @@ As shown in the feature list in the [Hazelcast Overview](#hazelcast-overview), H
 * It is a small JAR file. You do not need to install software.
 * It is a library, it does not impose an architecture on Hazelcast users.
 * It provides out of the box distributed data structures (i.e. Map, Queue, MultiMap, Topic, Lock, Executor, etc.).
-* There is no "master", so no single point of failure in Hazelcast cluster; each node in the cluster is configured to be functionally the same.
-* When the size of your memory and compute requirement increases, new nodes can be dynamically joined to the cluster to scale elastically.
-* Data is resilient to node failure. Data backups are distributed across the cluster. This is a big benefit when a node in the cluster crashes: data will not be lost.
-* Nodes are always aware of each other: they communicate, unlike traditional key-value caching solutions.
+* There is no "master", so no single point of failure in Hazelcast cluster; each member in the cluster is configured to be functionally the same.
+* When the size of your memory and compute requirement increases, new members can be dynamically joined to the cluster to scale elastically.
+* Data is resilient to member failure. Data backups are distributed across the cluster. This is a big benefit when a member in the cluster crashes: data will not be lost.
+* Members are always aware of each other: they communicate, unlike traditional key-value caching solutions.
 * You can build your own custom distributed data structures using the Service Programming Interface (SPI) if you are not happy with the data structures provided.
 
 Finally, Hazelcast has a vibrant open source community enabling it to be continuously developed.
@@ -48,5 +48,5 @@ Hazelcast is a fit when you need:
 -	publish/subscribe communication at highest speed and scalability between applications,
 -	applications that need to scale elastically in distributed and cloud environments,
 -	a highly available distributed cache for applications,
--	an alternative to Coherence, Gemfire and Terracotta.
+-	an alternative to Coherence, and and Terracotta.
 

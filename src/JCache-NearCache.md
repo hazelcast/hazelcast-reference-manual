@@ -1,8 +1,8 @@
 ### JCache Near Cache
 
 Cache entries in Hazelcast are stored as partitioned across the cluster. 
-When you try to read a record with the key `k`, if the current node is not the owner of that key (i.e. not the owner of partition that the key belongs to), 
-Hazelcast sends a remote operation to the owner node. Each remote operation means lots of network trips. 
+When you try to read a record with the key `k`, if the current member is not the owner of that key (i.e. not the owner of partition that the key belongs to), 
+Hazelcast sends a remote operation to the owner member. Each remote operation means lots of network trips. 
 If your cache is used for mostly read operations, it is advised to use a near cache storage in front of the cache itself to read cache records faster and consume less network traffic.
 <br><br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache for JCache is only available for clients NOT members.*
@@ -16,7 +16,7 @@ However, using near cache comes with some trade-off for some cases:
 
 #### Configuring Invalidation Event Sending
 
-Invalidation is the process of removing an entry from the near cache since the entry is not valid anymore (its value is updated or it is removed from actual cache). Near cache invalidation happens asynchronously at the cluster level, but synchronously in real-time at the current node. This means when an entry is updated (explicitly or via entry processor) or removed (deleted explicitly or via entry processor, evicted, expired), it is invalidated from all near caches asynchronously within the whole cluster but updated/removed at/from the current node synchronously. Generally, whenever the state of an entry changes in the record store by updating its value or removing it, the invalidation event is sent for that entry.
+Invalidation is the process of removing an entry from the near cache since the entry is not valid anymore (its value is updated or it is removed from actual cache). Near cache invalidation happens asynchronously at the cluster level, but synchronously in real-time at the current member. This means when an entry is updated (explicitly or via entry processor) or removed (deleted explicitly or via entry processor, evicted, expired), it is invalidated from all near caches asynchronously within the whole cluster but updated/removed at/from the current member synchronously. Generally, whenever the state of an entry changes in the record store by updating its value or removing it, the invalidation event is sent for that entry.
 
 Invalidation events can be sent either individually or in batches. If there are lots of mutating operations such as put/remove on the cache, sending the events in batches is advised. This reduces the network traffic and keeps the eventing system less busy. 
 

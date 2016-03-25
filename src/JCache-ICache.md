@@ -11,7 +11,7 @@ It has two sets of extensions:
 
 ### Scoping to Join Clusters
 
-As mentioned before, you can scope a `CacheManager` in the case of client to connect to multiple clusters. In the case of an embedded node, you can scope a `CacheManager` to join different clusters at the same time. This process is called scoping. To apply scoping, request
+As mentioned before, you can scope a `CacheManager` in the case of client to connect to multiple clusters. In the case of an embedded member, you can scope a `CacheManager` to join different clusters at the same time. This process is called scoping. To apply scoping, request
 a `CacheManager` by passing a `java.net.URI` instance to `CachingProvider::getCacheManager`. The `java.net.URI` instance must point to either a Hazelcast configuration or to the name of a named
 `com.hazelcast.core.HazelcastInstance` instance.
 

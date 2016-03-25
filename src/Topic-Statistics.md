@@ -14,7 +14,7 @@ myTopic.getLocalTopicStats().getReceiveOperationCount();
 ```
 
 
-`getPublishOperationCount` and `getReceiveOperationCount` returns the total number of published and received messages since the start of this node, respectively. Please note that these values are not backed up, so if the node goes down, these values will be lost.
+`getPublishOperationCount` and `getReceiveOperationCount` returns the total number of published and received messages since the start of this member, respectively. Please note that these values are not backed up, so if the member goes down, these values will be lost.
 
 You can disable this feature with topic configuration. Please see the [Configuring Topic section](#configuring-topic).
 

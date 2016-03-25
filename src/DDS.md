@@ -12,7 +12,7 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 	- [Set](#set): The distributed and concurrent implementation of `java.util.Set`. It does not allow duplicate elements and does not preserve their order.
 	- [List](#list): Very similar to Hazelcast Set, except that it allows duplicate elements and preserves their order.
 	- [MultiMap](#multimap): This is a specialized Hazelcast map. It is distributed, where multiple values under a single key can be stored.
-	- [ReplicatedMap](#replicated-map): This does not partition data, i.e. it does not spread data to different cluster members. Instead, it replicates the data to all nodes.
+	- [ReplicatedMap](#replicated-map): This does not partition data, i.e. it does not spread data to different cluster members. Instead, it replicates the data to all members.
 - **Topic**: Distributed mechanism for publishing messages that are delivered to multiple subscribers; this is also known as a publish/subscribe (pub/sub) messaging model. Please see the [Topic section](#topic) for more information. There is also the Reliable Topic data structure which uses the same Hazelcast Topic interface. As a difference, it is backed up by the Ringbuffer data structure. Please see the [Reliable Topic section](#reliable-topic).
 - **Concurrency utilities**:
 	- [Lock](#lock): Distributed implementation of `java.util.concurrent.locks.Lock`. When you lock using Hazelcast Lock, the critical section that it guards is guaranteed to be executed by only one thread in the entire cluster.
@@ -25,8 +25,8 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 Common Features of all Hazelcast Data Structures:
 
 
-- If a member goes down, its backup replica (which holds the same data) will dynamically redistribute the data, including the ownership and locks on them, to the remaining live nodes. As a result, no data will be lost.
-- There is no single cluster master that can cause single point of failure. Every node in the cluster has equal rights and responsibilities. No single node is superior. There is no dependency on an external 'server' or 'master'.
+- If a member goes down, its backup replica (which holds the same data) will dynamically redistribute the data, including the ownership and locks on them, to the remaining live members. As a result, no data will be lost.
+- There is no single cluster master that can cause single point of failure. Every member in the cluster has equal rights and responsibilities. No single member is superior. There is no dependency on an external 'server' or 'master'.
 
 Here is an example of how you can retrieve existing data structure instances (map, queue, set, lock, topic, etc.) and how you can listen for instance events, such as an instance being created or destroyed.
 

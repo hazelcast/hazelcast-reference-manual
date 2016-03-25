@@ -70,8 +70,8 @@ CacheEntryListener`.
 CacheEntryEventFilter` instance.
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *The JMX MBeans provided by Hazelcast JCache show statistics of the local node only.
-To show the cluster-wide statistics, the user should collect statistic information from all nodes and accumulate them to
+![image](images/NoteSmall.jpg) ***NOTE:*** *The JMX MBeans provided by Hazelcast JCache show statistics of the local member only.
+To show the cluster-wide statistics, the user should collect statistic information from all members and accumulate them to
 the overall statistics.*
 <br></br>
 

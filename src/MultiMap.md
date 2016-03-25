@@ -98,7 +98,7 @@ placed on 1 other member. If it is 2, it will be placed on 2 other members.
 - `value-collection-type`: Type of the value collection. It can be `Set` or `List`.
 - `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 include-value to true if you want the item event to contain the entry values, and you can set
-local to true if you want to listen to the entries on the local node.
+local to true if you want to listen to the entries on the local member.
 
 
 

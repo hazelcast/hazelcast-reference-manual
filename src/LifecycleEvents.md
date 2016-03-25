@@ -25,7 +25,7 @@ public class NodeLifecycleListener implements LifecycleListener {
 }
 ```
 
-This listener is local to an individual member (node). It notifies the application that uses Hazelcast about the events mentioned above for a particular member. 
+This listener is local to an individual member. It notifies the application that uses Hazelcast about the events mentioned above for a particular member. 
 
 #### Registering Lifecycle Listeners
 

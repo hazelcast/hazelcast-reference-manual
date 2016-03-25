@@ -29,7 +29,7 @@ When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazel
         <port auto-increment="true" port-count="100">5701</port>
         <outbound-ports>
             <!--
-            Allowed port range when connecting to other nodes.
+            Allowed port range when connecting to other members.
             0 or * means use system provided port.
             -->
             <ports>0</ports>

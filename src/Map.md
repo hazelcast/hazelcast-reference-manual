@@ -45,7 +45,7 @@ Now, let's create a second member by running the above code again. This will cre
 
 ![Map Entries with Backups in Two Members](images/2Nodes.png)
 
-As you see, when a new member joins the cluster, it takes ownership and loads some of the data in the cluster. Eventually, it will carry almost "(1/n `*` total-data) + backups" of the data, reducing the load on other nodes.
+As you see, when a new member joins the cluster, it takes ownership and loads some of the data in the cluster. Eventually, it will carry almost "(1/n `*` total-data) + backups" of the data, reducing the load on other members.
 
 `HazelcastInstance::getMap` returns an instance of `com.hazelcast.core.IMap` which extends 
 the `java.util.concurrent.ConcurrentMap` interface. Methods like 

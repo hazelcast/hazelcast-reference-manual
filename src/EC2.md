@@ -27,7 +27,7 @@ The following is an example declarative configuration.
         <host-header>ec2.amazonaws.com</host-header>
         <security-group-name>hazelcast-sg</security-group-name>
         <tag-key>type</tag-key>
-        <tag-value>hz-nodes</tag-value>
+        <tag-value>hz-members</tag-value>
       </aws>
     </join>
 ```  

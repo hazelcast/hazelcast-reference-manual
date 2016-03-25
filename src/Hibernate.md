@@ -52,7 +52,7 @@ With `HazelcastCacheRegionFactory`, all of the following caches are distributed 
 
 ##### HazelcastLocalCacheRegionFactory
 
-You can use `HazelcastLocalCacheRegionFactory` which stores data in a local node and sends invalidation messages when an entry is updated/deleted locally.
+You can use `HazelcastLocalCacheRegionFactory` which stores data in a local member and sends invalidation messages when an entry is updated/deleted locally.
 
 ```xml
 <property name="hibernate.cache.region.factory_class">
@@ -70,15 +70,15 @@ If your operations are mostly reads, then this option gives better performance.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you use `HazelcastLocalCacheRegionFactory`, you cannot see your maps on [Management Center](#management-center).*
 
-With `HazelcastLocalCacheRegionFactory`, all of the following caches are not distributed and are kept locally in the Hazelcast Node.
+With `HazelcastLocalCacheRegionFactory`, all of the following caches are not distributed and are kept locally in the Hazelcast member.
 
 - Entity Cache
 - Collection Cache
 - Timestamp Cache
 
-Entity and Collection are invalidated on update. When they are updated on a node, an invalidation message is sent to all other nodes in order to remove the entity from their local cache. When needed, each node reads that data from the underlying DB. 
+Entity and Collection are invalidated on update. When they are updated on a member, an invalidation message is sent to all other members in order to remove the entity from their local cache. When needed, each member reads that data from the underlying DB. 
 
-Timestamp cache is replicated. On every update, a replication message is sent to all the other nodes.
+Timestamp cache is replicated. On every update, a replication message is sent to all the other members.
 
 Eviction support is limited to maximum size of the map (defined by `max-size` configuration element) and TTL only. When maximum size is hit, 20% of the entries will be evicted automatically.
 
@@ -102,7 +102,7 @@ Eviction support is limited to maximum size of the map (defined by `max-size` co
 	<property name="hibernate.session_factory_name">yourFactoryName</property>
 	```
 	
-![image](images/NoteSmall.jpg) ***NOTE:*** *QueryCache is always LOCAL to the node and never distributed across Hazelcast Cluster.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *QueryCache is always LOCAL to the member and never distributed across Hazelcast Cluster.*
 
 ### Configuring Hazelcast for Hibernate
 

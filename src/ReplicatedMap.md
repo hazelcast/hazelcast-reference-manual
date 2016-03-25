@@ -144,7 +144,7 @@ Currently, two `in-memory-format` values are usable with the replicated map.
 
 - `OBJECT` (default): The data will be stored in deserialized form. This configuration is the default choice since
 the data replication is mostly used for high speed access. Please be aware that changing the values without a `Map::put` is
-not reflected on the other nodes but is visible on the changing nodes for later value accesses.
+not reflected on the other members but is visible on the changing members for later value accesses.
 
 - `BINARY`: The data is stored in serialized binary format and has to be deserialized on every request. This
 option offers higher encapsulation since changes to values are always discarded as long as the newly changed object is
@@ -161,7 +161,7 @@ data structures in Hazelcast. You can use it to react on add, update, and remove
 
 The fundamental difference in replicated map behavior, compared to the other data structures, is that an EntryListener only reflects
 changes on local data. Since replication is asynchronous, all listener events are fired only when an operation is finished
-on a local node. Events can fire at different times on different nodes.
+on a local member. Events can fire at different times on different members.
 
 #### Example of Replicated Map EntryListener
 

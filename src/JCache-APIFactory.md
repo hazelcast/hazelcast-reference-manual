@@ -3,7 +3,7 @@
 
 The `javax.cache.configuration.Factory` implementations configure features like
 `CacheEntryListener`, `ExpirePolicy` and `CacheLoader`s or `CacheWriter`s. These factory implementations are required to distribute the
-different features to nodes in a cluster environment like Hazelcast. Therefore, these factory implementations have to be serializable.
+different features to members in a cluster environment like Hazelcast. Therefore, these factory implementations have to be serializable.
 
 `Factory` implementations are easy to do: they follow the default Provider- or Factory-Pattern. The sample class
 `UserCacheEntryListenerFactory` shown below implements a custom JCache `Factory`.
