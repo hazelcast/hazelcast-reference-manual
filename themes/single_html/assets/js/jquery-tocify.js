@@ -60,3 +60,62 @@
             highlightDefault: true
         },
 
+
+        // _Create
+        _create: function() {
+            var self = this;
+            self.extendPageScroll = true;
+
+            // Internal array that keeps track of all TOC items (Helps to recognize if there are duplicate TOC item strings)
+            self.items = [];
+
+            // Generates the HTML for the dynamic table of contents
+            self._generateToc();
+
+            // Adds CSS classes to the newly generated table of contents HTML
+            self._addCSSClasses();
+
+            self.webkit = (function() {
+                for(var prop in window) {
+                    if(prop) {
+                        if(prop.toLowerCase().indexOf("webkit") !== -1) {
+                            return true;
+                        }
+
+                    }
+
+                }
+
+                return false;
+
+            }());
+
+           // Adds jQuery event handlers to the newly generated table of contents
+            self._setEventHandlers();
+
+            // Binding to the Window load event to make sure the correct scrollTop is calculated
+            $(window).load(function() {
+
+                // Sets the active TOC item
+                self._setActiveElement(true);
+
+                // Once all animations on the page are complete, this callback function will be called
+                $("html, body").promise().done(function() {
+
+                    setTimeout(function() {
+
+                        self.extendPageScroll = false;
+
+                    },0);
+
+                });
+
+            });
+
+        },
+
+        // _generateToc
+        _generateToc: function() {
+
+            // Stores the plugin context in the self variable
+            var self = this,
