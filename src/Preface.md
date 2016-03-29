@@ -4,14 +4,14 @@
 
 Welcome to the Hazelcast Reference Manual. This manual includes concepts, instructions and samples to guide you on how to use Hazelcast and build Hazelcast applications.
 
-As the reader of this manual, you must be familiar with the Java programming language and you should have installed your preferred IDE.
+As the reader of this manual, you must be familiar with the Java programming language and you should have installed your preferred Integrated Development Environment (IDE).
 
 
 ## Hazelcast Editions
 
 This Reference Manual covers all editions of Hazelcast. Throughout this manual:
 
-- **Hazelcast** refers to the open source edition of Hazelcast in-memory data grid middleware. It is also the name of the company providing the Hazelcast product.
+- **Hazelcast** refers to the open source edition of Hazelcast in-memory data grid middleware. It is also the name of the company (Hazelcast, Inc.) providing the Hazelcast product.
 - <font color="#3981DB">**Hazelcast Enterprise**</font> - a commercially licensed edition of Hazelcast which provides high-value enterprise features in addition to Hazelcast.
 - <font color="##153F75">**Hazelcast Enterprise HD**</font> - a commercially licensed edition of Hazelcast which provides High-Density (HD) Memory Store and Hot Restart Persistence features in addition to Hazelcast Enterprise.
 
@@ -22,7 +22,7 @@ You can see the features for all Hazelcast editions in the following architectur
 
 ![Hazelcast Architecture](images/HazelcastArchitecture.png)
 
-For more information on Hazelcast's Architecture, please see the whitepaper <a href="https://hazelcast.com/resources/architects-view-hazelcast/" target="_blank">An Architect’s View of Hazelcast</a>.
+For more information on Hazelcast's Architecture, please see the white paper <a href="https://hazelcast.com/resources/architects-view-hazelcast/" target="_blank">An Architect’s View of Hazelcast</a>.
 
 
 ## Licensing
@@ -46,7 +46,7 @@ For information on the commercial support for Hazelcast and Hazelcast Enterprise
 
 ## Release Notes
 
-Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes document</a> for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.
+Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes document</a> for the new features, enhancements and fixes performed for each Hazelcast release.
 
 
 
