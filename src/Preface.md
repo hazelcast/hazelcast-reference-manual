@@ -46,7 +46,7 @@ For information on the commercial support for Hazelcast and Hazelcast Enterprise
 
 ## Release Notes
 
-Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes document</a> for the new features, enhancements and fixes performed for each Hazelcast release. You can also find information on upgrading Hazelcast from previous releases in the Release Notes document.
+Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes document</a> for the new features, enhancements and fixes performed for each Hazelcast release.
 
 
 
