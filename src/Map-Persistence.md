@@ -192,30 +192,21 @@ mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
 });
 ```
 
-To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the `MapLoaderLifecycleSupport` interface. See the following example code.
+To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the `MapLoaderLifecycleSupport` interface. This interface has the methods `init()` and `destroy()` as shown below.
 
 ```java
 public interface MapLoaderLifecycleSupport {
 
-  /**
-   * Initializes this MapLoader implementation. Hazelcast will call
-   * this method when the map is first used on the
-   * HazelcastInstance. Implementation can
-   * initialize required resources for implementing
-   * MapLoader such as reading a configuration file and/or creating
-   * a database connection.
-   */
   void init( HazelcastInstance hazelcastInstance, Properties properties, String mapName );
 
-  /**
-   * Hazelcast will call this method before shutting down.
-   * This method can be overridden to cleanup the resources
-   * held by this MapLoader implementation, such as closing the
-   * database connections, etc.
-   */
   void destroy();
 }
 ```
+
+The method `init()` initializes the `MapLoader` implementation. Hazelcast calls this method when the map is first used on the Hazelcast instance. The `MapLoader` implementation can initialize the required resources for implementing `MapLoader` such as reading a configuration file or creating a database connection.
+
+Hazelcast calls the method `destroy()` before shutting down. You can override this method  to cleanup the resources held by this `MapLoader` implementation, such as closing the database connections.
+
 
 
 #### Initializing Map on Startup
