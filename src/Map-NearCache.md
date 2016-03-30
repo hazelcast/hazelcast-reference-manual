@@ -8,77 +8,44 @@ Map entries in Hazelcast are partitioned across the cluster. Suppose you read th
 - If invalidation is turned on and entries are updated frequently, then invalidations will be costly.
 - Near cache breaks the strong consistency guarantees; you might be reading stale data.
 
-Near cache is highly recommended for the maps that are read-mostly. Here is a near cache configuration for a map:
+Near cache is highly recommended for the maps that are read-mostly. The following is the configuration example for map's near cache in the Hazelcast configuration file.
 
 ```xml
 <hazelcast>
   ...
   <map name="my-read-mostly-map">
     ...
-    <near-cache>
-
-      <!--
-         Storage type of near cache entries. Available values are BINARY, OBJECT and NATIVE.
-         NATIVE is available only for Hazelcast Enterprise. Default value is BINARY.
-      -->
-       <in-memory-format>BINARY</in-memory-format>
-
-      <!--
-        Maximum size of the near cache. When max-size is reached,
-        cache is evicted based on the policy defined.
-        Any integer between 0 and Integer.MAX_VALUE. 0 means
-        Integer.MAX_VALUE. Default is 0.
-      -->
+    <near-cache name="default">
+      <in-memory-format>BINARY</in-memory-format>
       <max-size>5000</max-size>
-      
-      <!--
-        Maximum number of seconds for each entry to stay in the near cache. Entries that are
-        older than this period is automatically evicted from the near cache.
-        Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0.
-      -->
       <time-to-live-seconds>0</time-to-live-seconds>
-
-      <!--
-        Maximum number of seconds each entry can stay in the near cache as untouched (not read).
-        Entries that are not read more than this period is removed
-        from the near cache.
-        Any integer between 0 and Integer.MAX_VALUE. 0 means
-        Integer.MAX_VALUE. Default is 0.
-      -->
       <max-idle-seconds>60</max-idle-seconds>
-
-      <!--
-        Valid values are:
-        NONE (no extra eviction, <time-to-live-seconds> may still apply),
-        LRU  (Least Recently Used),
-        LFU  (Least Frequently Used).
-        NONE is the default.
-        Regardless of the eviction policy used, <time-to-live-seconds> will still apply.
-      -->
       <eviction-policy>LRU</eviction-policy>
-
-      <!--
-        Should the cached entries are evicted if the entries are updated or removed.
-        Values can be true of false. Default is true.
-      -->
       <invalidate-on-change>true</invalidate-on-change>
-
-      <!--
-        You may also want local entries to be cached.
-        This is useful when in memory format for near cache is different from
-        the map's near cache.
-        By default it is disabled (false).
-      -->
       <cache-local-entries>false</cache-local-entries>
-
-      <!--
-        Note that you have to use this eviction config with NATIVE memory format.
-      -->
-       <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
     </near-cache>
   </map>
 </hazelcast>
 ```
+
+The element `<near-cache>` has an optional attribute "name" whose default value is `default`. Following are the descriptions of all configuration elements:
+
+- `<max-size>`: Maximum size of the near cache. When this is reached, near cache is evicted based on the policy defined. Any integer between 0 and Integer.MAX_VALUE. 0 means `Integer.MAX_VALUE`. Its default value is 0.
+- `<time-to-live-seconds>`: Maximum number of seconds for each entry to stay in the near cache. Entries that are older than this period are automatically evicted from the near cache. Regardless of the eviction policy used, `<time-to-live-seconds>` still applies. Any integer between 0 and `Integer.MAX_VALUE`. 0 means infinite. Its default value is 0.
+- `<max-idle-seconds>`: Maximum number of seconds each entry can stay in the near cache as untouched (not read). Entries that are not read more than this period are removed from the near cache. Any integer between 0 and `Integer.MAX_VALUE`. 0 means `Integer.MAX_VALUE`. Its default value is 0.
+- `<eviction-policy>`: Eviction policy configuration. Its default values is NONE. Available values are as follows:
+	- NONE: No items will be evicted and the property max-size will be ignored. You still can combine it with time-to-live-seconds and max-idle-seconds.
+	- LRU: 	Least Recently Used.
+	- LFU: 	Least Frequently Used.
+- `<invalidate-on-change>`: Specifies whether the cached entries are evicted when the entries are updated or removed. Its default value is true.
+- `<in-memory-format>`: Specifies in which format data will be stored in your near cache. Note that a map's in-memory format can be different from that of its near cache. Available values are as follows:
+	- BINARY: Data will be stored in serialized binary format. It is the default option.
+	- OBJECT: Data will be stored in deserialized form.
+	- NATIVE: Data will be stored in the near cache that uses Hazelcast's High-Density Memory Store feature. This option is available only in Hazelcast Enterprise HD. Note that a map and its near cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its near cache can use it.
+- `<cache-local-entries>`: Specifies whether the local entries will be cached. It can be useful when in-memory format for near cache is different from that of the map. By default, it is disabled.
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you use High-Density Memory Store for your near cache, you need to use the element `<eviction>` to specify the eviction behavior. Please refer to the [Using High-Density Memory Store with Near Cache section](using-high-density-memory-store-with-near-cache).*
+<br></br>
 
 
 Programmatically, you configure near cache by using the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a>. This class is used both in the cluster members and clients. In a client/server system, you must enable the near cache separately on the client, without you needing to configure it on the member. For information on how to create a near cache on a client (native Java client), please see [Configuring Client Near Cache](#configuring-client-near-cache). Please note that near cache configuration is specific to the member or client itself, a map in a member may not have near cache configured while the same map in a client may have near cache configured.
@@ -89,6 +56,50 @@ If you are using near cache, you should take into account that your hits to the 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache works only when you access data via `map.get(k)` methods.  Data returned using a predicate is not stored in the near cache.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable near cache on lite members for faster reads.*
+
+#### Using High-Density Memory Store with Near Cache
+
+<font color="##153F75">**Hazelcast Enterprise HD**</font>
+<br></br>
+
+Hazelcast offers High-Density Memory Store for the near caches in your maps. You can enable your near cache to use the High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
+
+
+```xml
+<hazelcast>
+  ...
+  <map name="my-read-mostly-map">
+    ...
+    <near-cache>
+       ...
+       <in-memory-format>NATIVE</in-memory-format>
+       <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
+       ...
+    </near-cache>
+    ...  
+  </map>
+</hazelcast>  
+```
+
+The element `<eviction>` is used to specify the eviction behavior when you use High-Density Memory Store for your near cache. It has the following attributes:
+
+- `size`: Maximum size (entry count) of the near cache.
+- `max-size-policy`: Maximum size policy for eviction of the near cache. Available values are as follows:
+	* ENTRY_COUNT: Maximum entry count per member.
+	* USED_NATIVE_MEMORY_SIZE: Maximum used native memory size in megabytes.
+	* USED_NATIVE_MEMORY_PERCENTAGE: Maximum used native memory percentage.
+	* FREE_NATIVE_MEMORY_SIZE: Minimum free native memory size to trigger cleanup.
+	* FREE_NATIVE_MEMORY_PERCENTAGE: Minimum free native memory percentage to trigger cleanup.
+- `eviction-policy`: Eviction policy configuration. Its default values is NONE. Available values are as follows:
+	- NONE: No items will be evicted and the property max-size will be ignored. You still can combine it with time-to-live-seconds and max-idle-seconds.
+	- LRU: 	Least Recently Used.
+	- LFU: 	Least Frequently Used.
+
+Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
+
+Note that a map and its near cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its near cache can use it.
+
+
 
 
 #### Near Cache Invalidation
@@ -107,31 +118,4 @@ You can use the following system properties to configure the near cache invalida
 - `hazelcast.map.invalidation.batchfrequency.seconds`: If we cannot reach the configured batch size, a background process sends invalidations periodically. Default value is 10 seconds.
 
 If there are a lot of clients or many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.map.invalidation.batch.size` system property to a suitable value.
-
-#### Using High-Density Memory Store with Near Cache
-
-<font color="##153F75">**Hazelcast Enterprise HD**</font>
-<br></br>
-
-Hazelcast offers High-Density Memory Store for the near caches in your maps. You can enable your near cache to use the High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
-
-
-```xml
-<hazelcast>
-  ...
-  <map name="my-read-mostly-map">
-    ...
-    <near-cache>
-       ...
-       <in-memory-format>NATIVE</in-memory-format>
-       ...
-    </near-cache>
-    ...  
-  </map>
-</hazelcast>  
-```
-
-Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
-
-Note that a map and its near cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its near cache can use it.
 
