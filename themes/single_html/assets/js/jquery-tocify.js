@@ -119,3 +119,81 @@
 
             // Stores the plugin context in the self variable
             var self = this,
+                firstElem,
+                ul,
+                ignoreSelector = self.options.ignoreSelector;
+             if(this.options.selectors.indexOf(",") !== -1) {
+                 // Grabs the first selector from the string
+                 firstElem = $(this.options.context).find(this.options.selectors.replace(/ /g,"").substr(0, this.options.selectors.indexOf(",")));
+             }
+             else {
+                 firstElem = $(this.options.context).find(this.options.selectors.replace(/ /g,""));
+             }
+
+            if(!firstElem.length) {
+                self.element.addClass(hideTocClassName);
+                return;
+            }
+
+            self.element.addClass(tocClassName);
+
+            // Loops through each top level selector
+            firstElem.each(function(index) {
+
+                if($(this).is(ignoreSelector)) {
+                    return;
+                }
+
+                ul = $("<ul/>", {
+                    "id": headerClassName + index,
+                    "class": headerClassName
+                }).
+
+                // Appends a top level list item HTML element to the previously created HTML header
+                append(self._nestElements($(this), index));
+
+                // Add the created unordered list element to the HTML element calling the plugin
+                self.element.append(ul);
+
+                // Finds all of the HTML tags between the header and subheader elements
+                $(this).nextUntil(this.nodeName.toLowerCase()).each(function() {
+
+                    // If there are no nested subheader elemements
+                    if($(this).find(self.options.selectors).length === 0) {
+
+                        // Loops through all of the subheader elements
+                        $(this).filter(self.options.selectors).each(function() {
+
+                            //If the element matches the ignoreSelector then we skip it
+                            if($(this).is(ignoreSelector)) {
+                                return;
+                            }
+
+                            self._appendSubheaders.call(this, self, ul);
+
+                        });
+
+                    }
+
+                    // If there are nested subheader elements
+                    else {
+
+                        // Loops through all of the subheader elements
+                        $(this).find(self.options.selectors).each(function() {
+
+                            //If the element matches the ignoreSelector then we skip it
+                            if($(this).is(ignoreSelector)) {
+                                return;
+                            }
+
+                            self._appendSubheaders.call(this, self, ul);
+
+                        });
+
+                    }
+
+                });
+
+            });
+
+        },
