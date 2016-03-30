@@ -44,7 +44,7 @@ The element `<near-cache>` has an optional attribute "name" whose default value 
 	- NATIVE: Data will be stored in the near cache that uses Hazelcast's High-Density Memory Store feature. This option is available only in Hazelcast Enterprise HD. Note that a map and its near cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its near cache can use it.
 - `<cache-local-entries>`: Specifies whether the local entries will be cached. It can be useful when in-memory format for near cache is different from that of the map. By default, it is disabled.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If you use High-Density Memory Store for your near cache, the elements `<max-size>` and `<eviction-policy>` does not have any impact. In this case, you need to use the element `<eviction>` to specify the eviction behavior. Please refer to the [Using High-Density Memory Store with Near Cache section](using-high-density-memory-store-with-near-cache).*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you use High-Density Memory Store for your near cache, the elements `<max-size>` and `<eviction-policy>` do not have any impact. In this case, you need to use the element `<eviction>` to specify the eviction behavior. Please refer to the [Using High-Density Memory Store with Near Cache section](using-high-density-memory-store-with-near-cache).*
 <br></br>
 
 
