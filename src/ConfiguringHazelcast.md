@@ -17,9 +17,6 @@ When Hazelcast starts up, it checks for the configuration as follows:
 When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazelcast.xml` in the `/bin` folder. This is the declarative configuration file for Hazelcast. Part of this XML file is shown below.
 
 ```xml
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.5.xsd"
-           xmlns="http://www.hazelcast.com/schema/config"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <group>
         <name>dev</name>
         <password>dev-pass</password>
@@ -30,7 +27,7 @@ When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazel
         <outbound-ports>
             <!--
             Allowed port range when connecting to other members.
-            0 or * means use system provided port.
+            0 or * means the port provided by the system.
             -->
             <ports>0</ports>
         </outbound-ports>
