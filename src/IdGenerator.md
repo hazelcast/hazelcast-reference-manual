@@ -6,7 +6,7 @@ Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Gener
 
 ### Generating Cluster-Wide IDs
 
-ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 1 million identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 1 million. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 1 million IDs. By this way, only one time of network traffic is needed, meaning that 999,999 identifiers are generated in memory instead of over the network. This is fast.
+ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10 thousand identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10 thousand. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 10 thousand IDs. By this way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.
 
 Let's write a sample identifier generator.
 
@@ -41,9 +41,9 @@ Members [2] {
   Member [127.0.0.1]:5701
   Member [127.0.0.1]:5702 this
 }
-Id: 1000001
-Id: 1000002
-Id: 1000003
+Id: 10001
+Id: 10002
+Id: 10003
 ```
 
 ### Unique IDs and Duplicate IDs
