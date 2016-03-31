@@ -2,7 +2,7 @@
 ### Implementing EntryProcessor
 
 With `javax.cache.processor.EntryProcessor`, you can apply an atomic function to a cache entry. In a distributed
-environment like Hazelcast, you can move the mutating function to the node that owns the key. If the value
+environment like Hazelcast, you can move the mutating function to the member that owns the key. If the value
 object is big, it might prevent traffic by sending the object to the mutator and sending it back to the owner to update it.
 
 By default, Hazelcast JCache sends the complete changed value to the backup partition. Again, this can cause a lot of traffic if

@@ -3,13 +3,18 @@
 
 
 ## REST Client
-Hazelcast provides a REST interface, i.e. it provides an HTTP service in each cluster member (node) so that you can access your `map` and `queue` using HTTP protocol. Assuming `mapName` and `queueName` are already configured in your Hazelcast, its structure is shown below.
+Hazelcast provides a REST interface, i.e. it provides an HTTP service in each cluster member so that you can access your `map` and `queue` using HTTP protocol. Assuming `mapName` and `queueName` are already configured in your Hazelcast, its structure is shown below.
 
-`http://node IP address:port/hazelcast/rest/maps/mapName/key`
+`http://member IP address:port/hazelcast/rest/maps/mapName/key`
 
-`http://node IP address:port/hazelcast/rest/queues/queueName`
+`http://member IP address:port/hazelcast/rest/queues/queueName`
 
 For the operations to be performed, standard REST conventions for HTTP calls are used.
+
+<br> </br>
+![image](images/NoteSmall.jpg) ***NOTE***: *REST client request listener service is not enabled by default. You should enable it on your cluster members to use REST client. It can be enabled using the system property `hazelcast.rest.enabled`. Please refer to the [System Properties section](#system-properties) for the definition of this property and how to set a system property.*
+
+
 
 ### REST Client GET/POST/DELETE Examples
 

@@ -7,11 +7,11 @@ As an alternative to the existing serialization methods, Hazelcast offers a lang
 
 -   Supports multi-version of the same object type.
 -   Fetches individual fields without having to rely on reflection.
--   Queries and indexing support without de-serialization and/or reflection.
+-   Queries and indexing support without deserialization and/or reflection.
 
-In order to support these features, a serialized Portable object contains meta information like the version and the concrete location of the each field in the binary data. This way, Hazelcast navigates in the `byte[]` and de-serializes only the required field without actually de-serializing the whole object. This improves the Query performance.
+In order to support these features, a serialized Portable object contains meta information like the version and the concrete location of the each field in the binary data. This way, Hazelcast navigates in the `byte[]` and deserializes only the required field without actually deserializing the whole object. This improves the Query performance.
 
-With multi-version support, you can have two cluster members where each has different versions of the same object. Hazelcast will store both meta information and use the correct one to serialize and de-serialize Portable objects depending on the member. This is very helpful when you are doing a rolling upgrade without shutting down the cluster.
+With multi-version support, you can have two cluster members where each has different versions of the same object. Hazelcast will store both meta information and use the correct one to serialize and deserialize Portable objects depending on the member. This is very helpful when you are doing a rolling upgrade without shutting down the cluster.
 
 Portable serialization is totally language independent and is used as the binary protocol between Hazelcast server and clients.
 
@@ -102,7 +102,7 @@ Note that the `id` that is passed to the `SerializationConfig` is the same as th
 
 ### Versioning for Portable Serialization
 
-More than one version of the same class may need to be serialized and deserialized. For example, a client may have an older version of a class, and the node to which it is connected may have a newer version of the same class. 
+More than one version of the same class may need to be serialized and deserialized. For example, a client may have an older version of a class, and the member to which it is connected may have a newer version of the same class. 
 
 Portable serialization supports versioning. It is a global versioning, meaning that all portable classes that are serialized through a member get the globally configured portable version.
 
@@ -174,7 +174,7 @@ You can use the `HazelcastInstanceAware` interface in the case of a deserializat
 ***RELATED INFORMATION***
 
 
-*Please refer to the [Serialization Configuration section](#serialization-configuration) for a full description of Hazelcast Serialization configuration.*
+*Please refer to the [Serialization Configuration Wrap-Up section](#serialization-configuration-wrap-up) for a full description of Hazelcast Serialization configuration.*
 
  
 

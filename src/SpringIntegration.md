@@ -290,7 +290,7 @@ public class SomeValue implements Serializable, ApplicationContextAware {
 }
 ```
 
-- Get `SomeValue` Object from Context and put it into Hazelcast Distributed Map on Node-1.
+- Get `SomeValue` Object from Context and put it into Hazelcast Distributed Map on the first member.
 
 ```java
 HazelcastInstance hazelcastInstance = 
@@ -424,7 +424,7 @@ public interface IDummyBean {
 </bean>
 ```
 
-You can use JCache implementation in both server and client mode. A cache manager should be bound to an instance. Instance can be referenced by `instance-ref` attribute or provided by `hazelcast.instance.name` property which is passed to CacheManager. Instance should be specified using one of these methods.
+You can use JCache implementation in both member and client mode. A cache manager should be bound to an instance. Instance can be referenced by `instance-ref` attribute or provided by `hazelcast.instance.name` property which is passed to CacheManager. Instance should be specified using one of these methods.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Instance name provided in properties overrides `instance-ref` attribute.*
 

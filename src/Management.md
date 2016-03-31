@@ -5,11 +5,11 @@
 This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol, and managing the cluster with useful utilities. It also explains how to use Hazelcast Management Center.
 
 
-## Getting Member Statistics from Distributed Data Structures
+## Getting Member Statistics
 
 You can get various statistics from your distributed data structures via the Statistics API.
 Since the data structures are distributed in the cluster, the Statistics API provides
-statistics for the local portion (1/Number of Members in the Cluster) of data on each member (or node). 
+statistics for the local portion (1/Number of Members in the Cluster) of data on each member. 
 
 ### Map Statistics
 
@@ -22,7 +22,7 @@ Below is example code where the `getLocalMapStats()` method and the `getOwnedEnt
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 IMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
 LocalMapStats mapStatistics = customers.getLocalMapStats;
-System.out.println( "number of entries owned on this node = "
+System.out.println( "number of entries owned on this member = "
     + mapStatistics.getOwnedEntryCount() );
 ```
 
@@ -179,8 +179,10 @@ NearCacheStats nearCacheStatistics = mapStatistics.getNearCacheStats();
 System.out.println( "near cache hit/miss ratio= "
     + nearCacheStatistics.getRatio() );
 ```
+
 Below is the list of metrics that you can access via the `NearCacheStats` object.
-This behavior applies to both client and node near caches.
+This behavior applies to both client and member near caches.
+
 
 ```java
 /**
@@ -229,7 +231,9 @@ LocalMultiMapStats multiMapStatistics = customers.getLocalMultiMapStats();
 System.out.println( "last update time =  "
     + multiMapStatistics.getLastUpdateTime() );
 ```
+
 Below is the list of metrics that you can access via the `LocalMultiMapStats` object.
+
 
 ```java
 /**

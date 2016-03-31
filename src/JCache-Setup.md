@@ -54,7 +54,7 @@ If you use `hazelcast.jar`:
 The users of other build systems have to adjust the way of
 defining the dependency to their needs.
 
-#### Connecting Clients to Remote Server
+#### Connecting Clients to Remote Member
 
 When the users want to use Hazelcast clients to connect to a remote cluster, the `hazelcast-client.jar` dependency is also required
 on the client side applications. This JAR is already included in `hazelcast-all.jar`. Or, you can add it to the classpath using the following

@@ -2,7 +2,7 @@
 
 ### Locking Maps
 
-Hazelcast Distributed Map (IMap) is thread-safe to meet your thread safety requirements. When these requirements increase or you want to have more control on the concurrency, consider the following Hazelcast features and solutions.
+Hazelcast Distributed Map (IMap) is thread-safe to meet your thread safety requirements. When these requirements increase or you want to have more control on the concurrency, consider the following Hazelcast solutions.
 
 Let's work on a sample case as shown below.
 
@@ -30,11 +30,11 @@ public class RacyUpdateMember {
 }
 ```
 
-If the above code is run by more than one cluster member simultaneously, there will be likely a race condition. You can solve this with Hazelcast.
+If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic locking or optimistic locking. 
 
 #### Pessimistic Locking
 
-One way to solve the race issue is with pessimistic locking: lock the map entry until you are finished with it.
+One way to solve the race issue is using pessimistic locking: lock the map entry until you are finished with it.
 
 To perform pessimistic locking, use the lock mechanism provided by Hazelcast distributed map, i.e. the `map.lock` and `map.unlock` methods. See the below example code.
 
@@ -75,7 +75,7 @@ Another way to solve the race issue can be acquiring a predictable `Lock` object
 
 #### Optimistic Locking
 
-In Hazelcast, you can apply the optimistic locking strategy with the map `replace` method. This method compares values in object or data forms depending on the in-memory format configuration. If the values are equal, it replaces the old value with the new one. If you want to use your defined `equals` method, `in-memory-format` should be `OBJECT`. Otherwise, Hazelcast serializes objects to `BINARY` forms and compares them.
+In Hazelcast, you can apply the optimistic locking strategy with the map's `replace` method. This method compares values in object or data forms depending on the in-memory format configuration. If the values are equal, it replaces the old value with the new one. If you want to use your defined `equals` method, `in-memory-format` should be `OBJECT`. Otherwise, Hazelcast serializes objects to `BINARY` forms and compares them.
 
 See the below example code. 
 

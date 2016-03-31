@@ -35,56 +35,48 @@ while ( iterator.hasNext() ) {
 }
 ```
 
-### Listening for List Item Events
 
-Hazelcast List uses `ItemListener` to listen to events which occur when items are added and removed from the List.
-Use the list `addItemListener` method to create an `ItemListener`.
+Hazelcast List uses `ItemListener` to listen to events which occur when items are added to and removed from the List. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
+
+### Configuring List
 
 
-```java
-import java.util.Queue;
-import java.util.Map; 
-import java.util.Set; 
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.ItemListener;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.EntryEvent; 
+The following are example list configurations.
 
-public class Sample implements ItemListener{
+**Declarative:**
 
-  public static void main( String[] args ) { 
-    Sample sample = new Sample();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    IList<Price> list = hazelcastInstance.getList( "default" );
-    list.addItemListener( sample, true ); 
-        
-    Price price = new Price( 10, time1 )
-    list.add( price );
-    list.remove( price );
-  } 
-
-  public void itemAdded( Object item ) {
-    System.out.println( "Item added = " + item );
-  }
-
-  public void itemRemoved( Object item ) {
-    System.out.println( "Item removed = " + item );
-  }     
-}
-       
+```xml
+<list name="default">
+   <backup-count>1</backup-count>
+   <async-backup-count>0</async-backup-count>
+   <max-size>10</max-size>
+   <item-listeners>
+      <item-listener>
+          com.hazelcast.examples.ItemListener
+      </item-listener>
+   </item-listeners>
+</list>
 ```
 
-<br></br>
+**Programmatic:**
 
-***RELATED INFORMATION***
+```java
+Config config = new Config();
+CollectionConfig collectionList = config.getCollectionConfig();
+collectionList.setName( "MyList" ).setBackupCount( "1" )
+        .setMaxSize( "10" );
+```
+   
 
-*To learn more about the configuration of listeners please refer to the [Listener Configurations section](#listener-configurations).*
-
-<br></br>
-
-***RELATED INFORMATION***
+List configuration has the following elements.
 
 
-*Please refer to the [List Configuration section](#list-configuration) for a full description of Hazelcast Distributed List configuration.*
+- `statistics-enabled`: True (default) if statistics gathering is enabled on the list, false otherwise.
+- `backup-count`: Number of synchronous backups. List is a non-partitioned data structure, so all entries of a List reside in one partition. When this parameter is '1', there will be 1 backup of that List in another member in the cluster. When it is '2', 2 members will have the backup.
+- `async-backup-count`: Number of asynchronous backups.
+- `max-size`: The maximum number of entries for this List.
+- `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values, and you can set the attribute `local` to `true` if you want to listen the items on the local member.
+
+
 
 

@@ -35,7 +35,7 @@ public class FillMapMember {
 
 When you run this code, a cluster member is created with a map whose entries are distributed across the members's partitions. See the below illustration. For now, this is a single member cluster.
 
-![](images/1Node.jpg)
+![Map Entries in a Single Member](images/1Node.png)
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that some of the partitions will not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the [System Properties section](#system-properties).*
 
@@ -43,9 +43,9 @@ When you run this code, a cluster member is created with a map whose entries are
 
 Now, let's create a second member by running the above code again. This will create a cluster with 2 members. This is also where backups of entries are created; remember the backup partitions mentioned in the [Hazelcast Overview section](#hazelcast-overview). The following illustration shows two members and how the data and its backup is distributed.
 
-![](images/2Nodes.jpg)
+![Map Entries with Backups in Two Members](images/2Nodes.png)
 
-As you see, when a new member joins the cluster, it takes ownership and loads some of the data in the cluster. Eventually, it will carry almost "(1/n `*` total-data) + backups" of the data, reducing the load on other nodes.
+As you see, when a new member joins the cluster, it takes ownership and loads some of the data in the cluster. Eventually, it will carry almost "(1/n `*` total-data) + backups" of the data, reducing the load on other members.
 
 `HazelcastInstance::getMap` returns an instance of `com.hazelcast.core.IMap` which extends 
 the `java.util.concurrent.ConcurrentMap` interface. Methods like 

@@ -6,7 +6,7 @@ Amazon Web Services (AWS) platform can be an unpredictable environment compared 
 
 ### Selecting EC2 Instance Type
 
-Hazelcast is an in-memory data grid that distributes the data and computation to the nodes that are connected with a network, making Hazelcast very sensitive to the network. Not all EC2 Instance types are the same in terms of the network performance. It is recommended that you choose instances that have **10 Gigabit** or **High** network performance for Hazelcast deployments. Please see the below table for the recommended instances.
+Hazelcast is an in-memory data grid that distributes the data and computation to the members that are connected with a network, making Hazelcast very sensitive to the network. Not all EC2 Instance types are the same in terms of the network performance. It is recommended that you choose instances that have **10 Gigabit** or **High** network performance for Hazelcast deployments. Please see the below table for the recommended instances.
 
 Instance Type|Network Performance
 -|-

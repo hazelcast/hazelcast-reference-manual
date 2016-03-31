@@ -123,7 +123,7 @@ public static class FooXmlSerializer implements StreamSerializer<Foo> {
 
 #### Configuring StreamSerializer
 
-Note that `typeId` must be unique because Hazelcast will use it to look up the `StreamSerializer` while it de-serializes the object. The last required step is to register the `StreamSerializer` to the Configuration. Below are the programmatic and declarative configurations for this step.
+Note that `typeId` must be unique because Hazelcast will use it to look up the `StreamSerializer` while it deserializes the object. The last required step is to register the `StreamSerializer` in your Hazelcast configuration. Below are the programmatic and declarative configurations for this step.
 
 ```java
 SerializerConfig sc = new SerializerConfig()
@@ -138,14 +138,14 @@ config.getSerializationConfig().addSerializerConfig(sc);
 <hazelcast>
   <serialization>
     <serializers>
-      <serializer type-class="com.www.Foo">com.www.FooXmlSerializer</serializer>
+      <serializer type-class="com.www.Foo" class-name="com.www.FooXmlSerializer" />
     </serializers>
   </serialization>
 </hazelcast>
 ```
 
-From now on, Hazelcast will use `FooXmlSerializer`
-to serialize Foo objects. This way you can write an adapter (StreamSerializer) for any Serialization framework and plug it into Hazelcast.
+From now on, this Hazelcast example will use `FooXmlSerializer`
+to serialize Foo objects. In this way, you can write an adapter (StreamSerializer) for any Serialization framework and plug it into Hazelcast.
 
 
 <br></br>
@@ -153,6 +153,6 @@ to serialize Foo objects. This way you can write an adapter (StreamSerializer) f
 ***RELATED INFORMATION***
 
 
-*Please refer to the [Serialization Configuration section](#serialization-configuration) for a full description of Hazelcast Serialization configuration.*
+*Please refer to the [Serialization Configuration Wrap-Up section](#serialization-configuration-wrap-up) for a full description of Hazelcast Serialization configuration.*
 
  

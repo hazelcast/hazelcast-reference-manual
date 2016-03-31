@@ -1,17 +1,16 @@
 # You can now add comments using a hash-sign upfront the line :)
 src/Preface.md
-src/WhatsNew/NewFeatures.md
-	src/WhatsNew/Enhancements.md
-	src/WhatsNew/Fixes.md
-	src/WhatsNew/UpgradingFrom2x.md
-	src/WhatsNew/UpgradingFrom3x.md
-	src/WhatsNew/RevisionHistory.md
-src/GettingStarted/InstallingHazelcast.md
-	src/GettingStarted/InstallingHazelcastEnterprise.md
-	src/GettingStarted/StartingMemberAndClient.md
-	src/GettingStarted/DeployingOnAmazonEC2.md
-	src/GettingStarted/ConfiguringHazelcast.md
-	src/GettingStarted/PhoneHome.md
+src/RevisionHistory.md
+src/InstallingHazelcast.md
+	src/InstallingHazelcastEnterprise.md
+	src/LicenseKeys.md
+	src/UpgradingFrom3x.md
+	src/UpgradingFrom2x.md
+	src/StartingMemberAndClient.md
+	src/UsingTheScripts.md
+	src/ConfiguringHazelcast.md
+	src/DeployingOnAmazonEC2.md
+	src/DeploymentViaDocker.md
 src/HazelcastOverview.md
 	src/ShardingInHazelcast.md
 	src/HazelcastTopology.md
@@ -19,22 +18,24 @@ src/HazelcastOverview.md
 	src/DataPartitioning.md
 	src/UseCases.md
 	src/Resources.md
-src/HazelcastClusters/HazelcastClusters.md
-	src/HazelcastClusters/Multicast.md
-	src/HazelcastClusters/TCP.md
-	src/HazelcastClusters/EC2.md
-	src/HazelcastClusters/JClouds.md
-	src/HazelcastClusters/CreateClusterGroups.md
+src/HazelcastClusters.md
+	src/Multicast.md
+	src/TCP.md
+	src/EC2.md
+	src/JClouds.md
+	src/CreateClusterGroups.md
 src/DDS.md
 	src/Map.md
 		src/Map-Backups.md
 		src/Map-Eviction.md
 		src/Map-InMemoryFormat.md
+		src/Map-UsingHD.md
 		src/Map-Persistence.md
 		src/Map-NearCache.md
 		src/Map-Locks.md
 		src/Map-EntryStatistics.md
 		src/Map-MapListener.md
+		src/Map-ListenerWithPredicates.md
 		src/Map-Interceptors.md
 		src/Map-QueryResultSizeLimiter.md
 	src/Queue.md
@@ -47,33 +48,30 @@ src/DDS.md
 	src/List.md
 	src/RingBuffer.md
 	src/Topic.md
-		src/TopicStatistics.md
-		src/TopicInternals.md
-		src/TopicConfiguration.md
+		src/Topic-Statistics.md
+		src/Topic-Internals.md
+		src/Topic-Configuration.md
 	src/ReliableTopic.md
 	src/Lock.md
-		src/LockICondition.md
 	src/IAtomicLong.md
 	src/ISemaphore.md
 	src/IAtomicReference.md
 	src/ICountDownLatch.md
 	src/IdGenerator.md
-    src/replicatedmap/ReplicatedMap.md
-        src/replicatedmap/Considerations.md
-        src/replicatedmap/TechnicalDesign.md
-        src/replicatedmap/Configuration.md
-        src/replicatedmap/EntryListener.md
-src/DistributedEvents/DistributedEvents.md
-	src/DistributedEvents/MemberEvents.md
-	src/DistributedEvents/DistributedObjectEvents.md
-	src/DistributedEvents/MigrationEvents.md
-	src/DistributedEvents/PartitionLostEvents.md
-	src/DistributedEvents/LifecycleEvents.md
-	src/DistributedEvents/ItemEvents.md
-	src/DistributedEvents/TopicMessages.md
-	src/DistributedEvents/ListeningClients.md
-	src/DistributedEvents/EventListenersforClients.md
-	src/DistributedEvents/GlobalEventConfiguration.md
+    	src/ReplicatedMap.md
+src/DistributedEvents.md
+	src/MemberEvents.md
+	src/DistributedObjectEvents.md
+	src/MigrationEvents.md
+	src/PartitionLostEvents.md
+	src/LifecycleEvents.md
+	src/MapEvents.md
+	src/MultiMapEvents.md
+	src/ItemEvents.md
+	src/TopicMessages.md
+	src/ListeningClients.md
+	src/EventListenersforClients.md
+	src/GlobalEventConfiguration.md
 src/DistributedComputing.md
 		src/Execution.md
 		src/ExecutionCancellation.md
@@ -98,15 +96,14 @@ src/DistributedQuery.md
 		src/AggregatorsIntroduction.md
 		src/AggregatorsExample.md
 		src/AggregatorsImplementation.md
-	src/ContinuousQuery.md
 	src/ContinuousQueryCache.md
-src/Transactions/Transactions.md
-	src/Transactions/XATransactions.md
-	src/Transactions/J2EEIntegration.md
-		src/Transactions/ResourceAdapterConfiguration.md
-		src/Transactions/SampleGlassfishConfiguration.md
-		src/Transactions/SampleJBossConfiguration.md
-		src/Transactions/SampleJBoss7Configuration.md
+src/Transactions.md
+	src/XATransactions.md
+	src/J2EEIntegration.md
+		src/ResourceAdapterConfiguration.md
+		src/SampleGlassfishConfiguration.md
+		src/SampleJBossConfiguration.md
+		src/SampleJBoss7Configuration.md
 src/JCache.md
 	src/JCache-Setup.md
 	src/JCache-QuickExample.md
@@ -141,15 +138,16 @@ src/IntegratedClustering.md
 		src/TomcatSessionReplication.md
 		src/JettySessionReplication.md
 	src/SpringIntegration.md
-src/Storage/Storage-HD.md
-	src/Storage/ConfiguringHD.md
-	src/Storage/SizingPractices.md
-	src/Storage/HotRestartStore.md
-src/HazelcastJavaClient/JavaClient.md
-src/HazelcastJavaClient/JavaClientOverview.md
-src/HazelcastJavaClient/JavaClientConfiguration.md
-src/HazelcastJavaClient/JavaClientSystemProperties.md
-src/OtherClientImplementations.md
+src/Storage-HD.md
+	src/ConfiguringHD.md
+	src/SizingPractices.md
+	src/HotRestartPersistence.md
+src/JavaClient.md
+src/JavaClientOverview.md
+src/JavaClientConfiguration.md
+src/JavaClientSystemProperties.md
+src/JavaClientHD.md
+src/ChapterIntro.md
 	src/CPlusClient.md
 	src/CSharpClient.md
 	src/RestClient.md
@@ -162,23 +160,23 @@ src/Serialization.md
 	src/PortableSerialization.md
 	src/CustomSerialization.md
 		src/ByteArraySerializer.md
+	src/GlobalSerializer.md
 	src/HazelcastInstanceAware.md
+	src/SerializationConfigurationWrapUp.md
 src/Management.md
-	src/JMXAPIPerNode.md
+	src/JMXAPIPerMember.md
 	src/MonitoringWithJMX.md
-	src/ClusterUtilities/ClusterUtilities.md
-		src/ClusterUtilities/ManagingClusterState.md
-		src/ClusterUtilities/LiteMember.md
-		src/ClusterUtilities/MemberAttributes.md
-		src/ClusterUtilities/ClusterMemberSafetyCheck.md
-		src/ClusterUtilities/ClusterQuorum.md
+	src/ClusterUtilities.md
+		src/ManagingClusterState.md
+		src/ClusterSHScript.md
+		src/RESTforClusterManagement.md
+		src/LiteMember.md
+		src/MemberAttributes.md
+		src/ClusterMemberSafetyCheck.md
+		src/ClusterQuorum.md
 	src/ManagementCenter.md
 	src/ClusteredJMX.md
 	src/ClusteredREST.md
-#src/ServerProtocols.md
-#	src/HazelcastNetworkProtocol.md
-#	src/MemcacheServer.md
-#	src/REST.md
 src/Security.md
 	src/SocketInterceptor.md
 	src/SecurityInterceptor.md
@@ -196,83 +194,53 @@ src/Performance.md
 		src/ThreadingOperation.md
 	src/SlowOperationDetector.md
 	src/HazelcastPerformanceOnAWS.md
-src/HazelcastSimulator/SimulatorOverview.md
-	src/HazelcastSimulator/InstallingSimulator.md
-	src/HazelcastSimulator/SettingUpForEC2.md
-	src/HazelcastSimulator/SettingUpForGCE.md
-	src/HazelcastSimulator/SettingUpMachinesManually.md
-	src/HazelcastSimulator/ExecutingASimulatorTest.md
-	src/HazelcastSimulator/Provisioner.md
-	src/HazelcastSimulator/Coordinator.md
-	src/HazelcastSimulator/Communicator.md
-	src/HazelcastSimulator/SimulatorProperties.md
-	src/HazelcastSimulator/PerformanceAndBenchmarking.md
-src/WAN/WAN.md
-	src/WAN/ConfiguringWAN.md
-	src/WAN/AdditionalInfo.md
-	src/WAN/EWR.md
-	src/WAN/BatchSize.md
-	src/WAN/BatchFrequency.md
-	src/WAN/OperationTimeout.md
-	src/WAN/QueueCapacity.md
-	src/WAN/EventFiltering.md
-	src/WAN/AckTypes.md
-	src/WAN/EWRAdditionalInfo.md
+src/Simulator.md
+	src/Simulator-InstallingSimulator.md
+	src/Simulator-SettingUpForStaticSetup.md
+	src/Simulator-SettingUpForEC2.md
+	src/Simulator-SettingUpForGCE.md
+	src/Simulator-CustomizingYourSimulatorSetup.md
+	src/Simulator-Provisioner.md
+	src/Simulator-Coordinator.md
+	src/Simulator-SimulatorProperties.md
+src/WAN.md
+	src/DefiningWANReplication.md
+	src/ConfiguringWANReplicationForMapCache.md
+	src/BatchSize.md
+	src/BatchMaximumDelay.md
+	src/ResponseTimeout.md
+	src/QueueCapacity.md
+	src/QueueFullBehavior.md
+	src/EventFiltering.md
+	src/AckTypes.md
+	src/WANReplicationAdditionalInfo.md
 src/OSGI.md
-src/HazelcastConfiguration/HazelcastConfiguration.md
-	src/HazelcastConfiguration/ConfigurationOverview.md
-	src/HazelcastConfiguration/UsingWildcard.md
-	src/HazelcastConfiguration/UsingVariables.md
-	src/HazelcastConfiguration/ComposingXML.md
-	src/HazelcastConfiguration/NetworkConfiguration.md
-	src/HazelcastConfiguration/GroupConfiguration.md
-	src/HazelcastConfiguration/MapConfiguration.md
-	src/HazelcastConfiguration/MultiMapConfiguration.md
-	src/HazelcastConfiguration/QueueConfiguration.md
-	src/HazelcastConfiguration/TopicConfiguration.md
-	src/HazelcastConfiguration/ReliableTopicConfiguration.md
-	src/HazelcastConfiguration/ListConfiguration.md
-	src/HazelcastConfiguration/SetConfiguration.md
-	src/HazelcastConfiguration/RingBufferConfiguration.md
-	src/HazelcastConfiguration/SemaphoreConfiguration.md
-	src/HazelcastConfiguration/ReplicatedMapConfiguration.md
-	src/HazelcastConfiguration/ExecServiceConfiguration.md
-	src/HazelcastConfiguration/CacheConfiguration.md
-	src/HazelcastConfiguration/SerializationConfiguration.md
-	src/HazelcastConfiguration/JobTrackerConfiguration.md
-	src/HazelcastConfiguration/ServicesConfiguration.md
-	src/HazelcastConfiguration/MgtCenterConfiguration.md
-	src/HazelcastConfiguration/WANReplConfiguration.md
-	src/HazelcastConfiguration/EnterpriseWanReplicationConfiguration.md
-	src/HazelcastConfiguration/QuorumConfiguration.md
-	src/HazelcastConfiguration/PartitionGroupConfig.md
-	src/HazelcastConfiguration/ListenerConfig.md
-	src/HazelcastConfiguration/Logging.md
-	src/HazelcastConfiguration/SystemProperties.md
-	src/HazelcastConfiguration/LiteMemberConfiguration.md
-src/ExtendingHazelcast/ExtendingHazelcast.md
-	src/ExtendingHazelcast/UserDefinedServices/UserDefinedServices.md
-		src/ExtendingHazelcast/UserDefinedServices/SPICreateClass.md
-		src/ExtendingHazelcast/UserDefinedServices/SPIEnableClass.md
-		src/ExtendingHazelcast/UserDefinedServices/SPIAddProperties.md
-		src/ExtendingHazelcast/UserDefinedServices/SPIStartService.md
-		src/ExtendingHazelcast/UserDefinedServices/SPIProxy.md
-		src/ExtendingHazelcast/UserDefinedServices/SPICreateContainer.md
-		src/ExtendingHazelcast/UserDefinedServices/SPIPartitionMigration.md
-		src/ExtendingHazelcast/UserDefinedServices/SPICreateBackups.md
-	src/ExtendingHazelcast/SPIWaitNotifyService.md
-	src/ExtendingHazelcast/Discovery/DiscoverySPI.md
-		src/ExtendingHazelcast/Discovery/DiscoveryOverview.md
-		src/ExtendingHazelcast/Discovery/DiscoveryStrategy.md
-		src/ExtendingHazelcast/Discovery/DiscoveryIntegration.md
-	src/ExtendingHazelcast/ConfigProperties/Config-Properties.md
-src/NetworkPartitioning/NetworkPartitioning.md
-	src/NetworkPartitioning/PartitionRecreation.md
-	src/NetworkPartitioning/BackupPartitionRecreation.md
-	src/NetworkPartitioning/UpdateOverwrite.md
-	src/NetworkPartitioning/AfterNetworkFailure.md
-	src/NetworkPartitioning/Merging.md
-	src/NetworkPartitioning/MergePolicies.md
+src/HazelcastConfiguration.md
+	src/ConfigurationOverview.md
+	src/UsingWildcard.md
+	src/UsingVariables.md
+	src/ComposingXML.md
+	src/NetworkConfiguration.md
+	src/PartitionGroupConfig.md
+	src/Logging.md
+	src/SystemProperties.md
+src/ExtendingHazelcast.md
+	src/UserDefinedServices.md
+		src/SPICreateClass.md
+		src/SPIEnableClass.md
+		src/SPIAddProperties.md
+		src/SPIStartService.md
+		src/SPIProxy.md
+		src/SPICreateContainer.md
+		src/SPIPartitionMigration.md
+		src/SPICreateBackups.md
+	src/SPIWaitNotifyService.md
+	src/DiscoverySPI.md
+		src/DiscoveryOverview.md
+		src/DiscoveryStrategy.md
+		src/DiscoveryIntegration.md
+	src/Config-Properties.md
+src/NetworkPartitioning.md
 src/Licenses.md
 src/CommonExceptionTypes.md
 src/FAQ.md

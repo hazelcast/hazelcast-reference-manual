@@ -1,9 +1,11 @@
 
 ## SSL
 
-![](images/enterprise-onlycopy.jpg)
+<font color="#3981DB">**Hazelcast Enterprise**</font>
+<br></br>
 
-Hazelcast allows you to use SSL socket communication among all Hazelcast members. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in network configuration.
+
+Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in network configuration.
 
 ```java
 public class MySSLContextFactory implements SSLContextFactory {
@@ -71,7 +73,7 @@ ClientConfig clientConfig = new ClientConfig();
 clientConfig.getNetworkConfig().addAddress("127.0.0.1");
 ```
 
-As you see, you can set, for example, `keyStore` and `keyStorePassword` with the following system properties.
+For example, you can set `keyStore` and `keyStorePassword` with the following system properties.
 
  - `javax.net.ssl.keyStore`
  - `javax.net.ssl.keyStorePassword` 

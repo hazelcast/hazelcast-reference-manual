@@ -75,7 +75,7 @@ locks are immediately available for live members.
  able to require this lock, the owner of the lock must call `unlock` as many times as the owner called `lock`.
 
 - In the split-brain scenario, the cluster behaves as if it were two different clusters. Since two separate clusters are not aware of each other,
-two nodes from different clusters can acquire the same lock.
+two members from different clusters can acquire the same lock.
 For more information on places where split brain syndrome can be handled, please see [split brain syndrome](#network-partitioning-split-brain-syndrome).
 
 - Locks are not automatically removed. If a lock is not used anymore, Hazelcast will not automatically garbage collect the lock. 
@@ -83,4 +83,60 @@ This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sur
 
 - Hazelcast IMap also provides locking support on the entry level with the method `IMap.lock(key)`. Although the same infrastructure 
 is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it directly.
+
+
+
+### Synchronizing Threads with ICondition
+
+`ICondition` is the distributed implementation of the `notify`, `notifyAll` and `wait` operations on the Java object. You can use it to synchronize
+threads across the cluster. More specifically, you use `ICondition` when a thread's work depends on another thread's output. A good example
+can be producer/consumer methodology. 
+
+Please see the below code examples for a producer/consumer implementation.
+
+**Producer thread:**
+
+```java
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Lock lock = hazelcastInstance.getLock( "myLockId" );
+ICondition condition = lock.newCondition( "myConditionId" );
+
+lock.lock();
+try {
+  while ( !shouldProduce() ) {
+    condition.await(); // frees the lock and waits for signal
+                       // when it wakes up it re-acquires the lock
+                       // if available or waits for it to become
+                       // available
+  }
+  produce();
+  condition.signalAll();
+} finally {
+  lock.unlock();
+}
+```
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *The method `await()` takes time value and time unit as arguments. If you specify a negative value for the time, it is interpreted as infinite.*
+
+**Consumer thread:**
+       
+```java       
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Lock lock = hazelcastInstance.getLock( "myLockId" );
+ICondition condition = lock.newCondition( "myConditionId" );
+
+lock.lock();
+try {
+  while ( !canConsume() ) {
+    condition.await(); // frees the lock and waits for signal
+                       // when it wakes up it re-acquires the lock if 
+                       // available or waits for it to become
+                       // available
+  }
+  consume();
+  condition.signalAll();
+} finally {
+  lock.unlock();
+}
+```
 

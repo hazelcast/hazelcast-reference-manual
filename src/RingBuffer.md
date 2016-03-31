@@ -106,7 +106,7 @@ In the example below, a Ringbuffer is configured with a time to live of 180 seco
 ### Setting Ringbuffer Overflow Policy
 
 Using the overflow policy, you can determine what to do if the oldest item in the Ringbuffer is not old enough to expire when
- more items than the configured RingBuffer capacity are being added. The below options are currently available.
+ more items than the configured Ringbuffer capacity are being added. The below options are currently available.
  
 * `OverflowPolicy.OVERWRITE`: The oldest item is overwritten. 
 * `OverflowPolicy.FAIL`: The call is aborted. The methods that make use of the OverflowPolicy return `-1` to indicate that adding
@@ -158,7 +158,7 @@ ICompletableFuture<Long> f = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
 f.get()
 ```  
       
-In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the [Overflow Policy section](#overflow-policy) 
+In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the [Overflow Policy section](#setting-ringbuffer-overflow-policy) 
 for more information.
 
 ### Reading Batched Items
@@ -267,8 +267,4 @@ RingbufferConfig rbConfig = new RingbufferConfig("rb")
 Config config = new Config();
 config.addRingbufferConfig(rbConfig);
 ```        
-
-***RELATED INFORMATION***
-
-*Please refer to the [Ringbuffer Configuration section](#ringbuffer-configuration) for more information on configuring the Ringbuffer.*
 

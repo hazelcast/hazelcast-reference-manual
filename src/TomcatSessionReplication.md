@@ -1,17 +1,12 @@
 
 ### Tomcat Based Web Session Replication
 
-![](images/enterprise-onlycopy.jpg)
-
+<font color="#3981DB">**Hazelcast Enterprise**</font>
 <br></br>
-
-![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is supported for Hazelcast Enterprise 3.3 or higher.*
-
-
 
 
 ***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/enterprise-session-replication" target="_blank">sample application</a> for Tomcat Based Web Session Replication.*
-<br></br>
+
 
 #### Hazelcast Tomcat Features and Requirements
 
@@ -29,9 +24,9 @@ Session Replication with Hazelcast Enterprise is a container specific module tha
 
 Tomcat Web Session Replication Module has been tested against the following containers.
 
-- Tomcat 6.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-60.cgi" target="_blank">here</a>).
-- Tomcat 7.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-70.cgi" target="_blank">here</a>).
-- Tomcat 8.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-80.cgi" target="_blank">here</a>).
+- Tomcat 6.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-60.cgi" target="_blank">here</a>.
+- Tomcat 7.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-70.cgi" target="_blank">here</a>.
+- Tomcat 8.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-80.cgi" target="_blank">here</a>.
 
 The latest tested versions are **6.0.39**, **7.0.40** and **8.0.20**.
 <br></br>
@@ -54,7 +49,7 @@ Tomcat Web Sessions run in two different modes:
 
 #### Deploying P2P (Peer-to-Peer) for Tomcat
 
-P2P deployment launches an embedded Hazelcast Node in each server instance.
+P2P deployment launches an embedded Hazelcast member in each server instance.
 
 This type of deployment is simple: just configure your Tomcat and launch. There is no need for an external Hazelcast cluster.
 

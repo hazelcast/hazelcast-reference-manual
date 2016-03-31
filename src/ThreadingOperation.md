@@ -10,7 +10,7 @@ Each of these operation types has a different threading model explained in the f
 
 #### Partition-aware Operations
 
-To execute partition-aware operations, an array of operation threads is created. The size of this array has a default value of two times the number of cores and a minimum value of 2. This value can be changed using the `hazelcast.operation.thread.count` property.
+To execute partition-aware operations, an array of operation threads is created. The default value of this array's size is the number of cores and it has a minimum value of 2. This value can be changed using the `hazelcast.operation.thread.count` property.
 
 Each operation thread has its own work queue and it consumes messages from this work queue. If a partition-aware 
 operation needs to be scheduled, the right thread is found using the formula below.
@@ -50,8 +50,8 @@ till one of the partitions is finished, even though there are other free partiti
 
 **Example:**
 
-Take a 3 node cluster. Two members will have 90 primary partitions and one member will have 91 primary partitions. Let's
-say you have one CPU and 4 cores per CPU. By default, 8 operation threads will be allocated to serve 90 or 91 partitions.
+Take a cluster with three members. Two members will have 90 primary partitions and one member will have 91 primary partitions. Let's
+say you have one CPU and four cores per CPU. By default, four operation threads will be allocated to serve 90 or 91 partitions.
 
 #### Operations that are Not Partition-aware
 

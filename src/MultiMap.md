@@ -47,6 +47,8 @@ After you run the first code sample, run the `PrintMember` sample. You will see 
 
 `a -> [2, 1]`
 
+Hazelcast MultiMap uses `EntryListener` to listen to events which occur when entries are added to, updated in or removed from the MultiMap. Please refer to the [Listening for MultiMap Events section](#listening-for-multimap-events) for information on how to create an entry listener class and register it.
+
 ### Configuring MultiMap
 
 When using MultiMap, the collection type of the values can be either **Set** or **List**. You configure the collection type with the `valueCollectionType` parameter. If you choose `Set`, duplicate and null values are not allowed in your collection and ordering is irrelevant. If you choose `List`, ordering is relevant and your collection can include duplicate and null values.
@@ -55,11 +57,54 @@ You can also enable statistics for your MultiMap with the `statisticsEnabled` pa
 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, eviction is not supported for the MultiMap data structure.*
-
 <br></br>
 
-***RELATED INFORMATION***
+The following are the example MultiMap configurations.
 
-*Please refer to the [MultiMap Configuration section](#multimap-configuration) for a full description of Hazelcast Distributed MultiMap configuration.*
+**Declarative:**
+
+```xml
+<hazelcast>
+  <multimap name="default">
+    <backup-count>0</backup-count>
+    <async-backup-count>1</async-backup-count>
+    <value-collection-type>SET</value-collection-type>
+    <entry-listeners>
+        <entry-listener include-value="false" local="false">
+           com.hazelcast.examples.EntryListener
+        </entry-listener>
+    </entry-listeners>   
+  </map>
+</hazelcast>
+```
+
+**Programmatic:**
+
+```java
+MultiMapConfig mmConfig = new MultiMapConfig();
+mmConfig.setName( "default" );
+
+mmConfig.setBackupCount( "0" ).setAsyncBackupCount( "1" );
+         
+mmConfig.setValueCollectionType( "SET" );
+```
+
+The following are the configuration elements and their descriptions:
+
+- `backup-count`: Defines the number of asynchronous backups. For example, if it is set to 1, backup of a partition will be
+placed on 1 other member. If it is 2, it will be placed on 2 other members.
+- `async-backup-count`: The number of synchronous backups. Behavior is the same as that of the `backup-count` element.
+- `statistics-enabled`: You can retrieve some statistics like owned entry count, backup entry count, last update time, locked entry count by setting this parameter's value as "true". The method for retrieving the statistics is `getLocalMultiMapStats()`.
+- `value-collection-type`: Type of the value collection. It can be `Set` or `List`.
+- `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
+include-value to true if you want the item event to contain the entry values, and you can set
+local to true if you want to listen to the entries on the local member.
+
+
+
+
+
+
+
 
 

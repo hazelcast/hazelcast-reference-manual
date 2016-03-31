@@ -53,6 +53,6 @@ As usual, let's register the `EmployeeByteArraySerializer` in the configuration 
 ***RELATED INFORMATION***
 
 
-*Please refer to the [Serialization Configuration section](#serialization-configuration) for a full description of Hazelcast Serialization configuration.*
+*Please refer to the [Serialization Configuration Wrap-Up section](#serialization-configuration-wrap-up) for a full description of Hazelcast Serialization configuration.*
 
  

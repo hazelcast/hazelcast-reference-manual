@@ -6,10 +6,10 @@ Hazelcast Set is a distributed and concurrent implementation of `java.util.Set`.
 
 * Hazelcast Set does not allow duplicate elements.
 * Hazelcast Set does not preserve the order of elements.
-* Hazelcast Set is a non-partitioned data structure: all the data that belongs to a set will live on one single partition in that node.
-* Hazelcast Set cannot be scaled beyond the capacity of a single machine. Since the whole set lives on a single partition, storing large amount of data on a single set may cause memory pressure. Therefore, you should use multiple sets to store large amount of data; this way all the sets will be spread across the cluster, hence sharing the load.
-* A backup of Hazelcast Set is stored on a partition of another node in the cluster so that data is not lost in the event of a primary node failure.
-* All items are copied to the local node and iteration occurs locally.
+* Hazelcast Set is a non-partitioned data structure: all the data that belongs to a set will live on one single partition in that member.
+* Hazelcast Set cannot be scaled beyond the capacity of a single machine. Since the whole set lives on a single partition, storing large amount of data on a single set may cause memory pressure. Therefore, you should use multiple sets to store large amount of data; this way, all the sets will be spread across the cluster, hence sharing the load.
+* A backup of Hazelcast Set is stored on a partition of another member in the cluster so that data is not lost in the event of a primary member failure.
+* All items are copied to the local member and iteration occurs locally.
 * The equals method implemented in Hazelcast Set uses a serialized byte version of objects, as opposed to `java.util.HashSet`.
 
 ### Getting a Set and Putting Items
@@ -36,54 +36,45 @@ while ( iterator.hasNext() ) {
 }
 ```
 
-***RELATED INFORMATION***
+Hazelcast Set uses `ItemListener` to listen to events that occur when items are added to and removed from the Set. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
+
+### Configuring Set
+
+The following are the example set configurations.
 
 
-*Please refer to the [Set Configuration section](#set-configuration) for a full description of Hazelcast Distributed Set configuration.*
+**Declarative:**
 
-### Listening for Set Item Events
-
-Hazelcast Set uses `ItemListener` to listen to events which occur when items are added and removed from the Set.
-Use the set `addItemListener` method to create an `ItemListener`.
-
-```java
-import java.util.Queue;
-import java.util.Map; 
-import java.util.Set; 
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.ItemListener;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.EntryEvent; 
-
-public class Sample implements ItemListener {
-
-  public static void main( String[] args ) { 
-    Sample sample = new Sample();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ISet<Price> set = hazelcastInstance.getSet( "default" );
-    set.addItemListener( sample, true ); 
-        
-    Price price = new Price( 10, time1 )
-    set.add( price );
-    set.remove( price );
-  } 
-
-  public void itemAdded( Object item ) {
-    System.out.println( "Item added = " + item );
-  }
-
-  public void itemRemoved( Object item ) {
-    System.out.println( "Item removed = " + item );
-  }     
-}
-       
+```xml
+<set name="default">
+   <backup-count>1</backup-count>
+   <async-backup-count>0</async-backup-count>
+   <max-size>10</max-size>
+   <item-listeners>
+      <item-listener>
+          com.hazelcast.examples.ItemListener
+      </item-listener>
+   <item-listeners>
+</set>
 ```
 
-<br></br>
+**Programmatic:**
 
-***RELATED INFORMATION***
+```java
+Config config = new Config();
+CollectionConfig collectionSet = config.getCollectionConfig();
+collectionSet.setName( "MySet" ).setBackupCount( "1" )
+        .setMaxSize( "10" );
+```
+   
 
-*To learn more about the configuration of listeners please refer to the [Listener Configurations section](#listener-configurations).*
+Set configuration has the following elements.
 
-<br></br>
+
+- `statistics-enabled`: True (default) if statistics gathering is enabled on the set, false otherwise.
+- `backup-count`: Count of synchronous backups. Set is a non-partitioned data structure, so all entries of a Set reside in one partition. When this parameter is '1', it means there will be 1 backup of that Set in another member in the cluster. When it is '2', 2 members will have the backup.
+- `async-backup-count`: Count of asynchronous backups.
+- `max-size`: The maximum number of entries for this Set.
+- `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attributes `include-value` to `true` if you want the item event to contain the item values, and you can set `local` to `true` if you want to listen to the items on the local member.
+
 

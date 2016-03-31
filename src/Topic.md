@@ -6,7 +6,7 @@ When a member subscribes to a topic, it is actually registering for messages pub
 including the new members that joined after you add the listener.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Publish operation is async. It does not wait for operations to run in
-remote nodes, it works as fire and forget.*
+remote members, it works as fire and forget.*
 
 ### Getting a Topic and Publishing Messages
 
@@ -44,5 +44,7 @@ public class Sample implements MessageListener<MyEvent> {
   private final Executor messageExecutor = Executors.newSingleThreadExecutor();
 }
 ```
+
+Hazelcast Topic uses the `MessageListener` interface to listen for events that occur when a message is received. Please refer to the [Listening for Topic Messages section](#listening-for-topic-messages) for information on how to create a message listener class and register it.
 
 

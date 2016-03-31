@@ -10,12 +10,12 @@ implementation, such as Hazelcast JCache.
 
 **`javax.cache.spi.CachingProvider`**:
 
-The SPI that is implemented to bridge between the JCache API and the implementation itself. Hazelcast nodes and clients use different
+The SPI that is implemented to bridge between the JCache API and the implementation itself. Hazelcast members and clients use different
 providers chosen as seen in the [Configuring JCache Provider section](#configuring-jcache-provider) which enable the JCache API to
 interact with Hazelcast clusters.
 
 When a `javax.cache.spi.CachingProvider::getCacheManager` overload is used that takes a `java.lang.ClassLoader` argument, this
-classloader will be part of the scope of the created `java.cache.Cache` and it is not possible to retrieve it on other nodes.
+classloader will be part of the scope of the created `java.cache.Cache` and it is not possible to retrieve it on other members.
 We advise not to use those overloads, those are not meant to be used in distributed environments!
 
 **`javax.cache.CacheManager`**:

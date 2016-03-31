@@ -5,30 +5,30 @@ As you read in the [Sharding in Hazelcast section](#sharding-in-hazelcast), Haze
 
 By default, Hazelcast offers 271 partitions. When you start a cluster member, it starts with these 271 partitions. The following illustration shows the partitions in a Hazelcast cluster with single member.
 
-![](images/NodePartition.jpg)
+![Single Member with Partitions](images/HazelcastOverview/NodePartition.jpg)
 
-When you start a second node on that cluster (creating a Hazelcast cluster with 2 members), the partitions are distributed as shown in the following illustration. 
+When you start a second member on that cluster (creating a Hazelcast cluster with 2 members), the partitions are distributed as shown in the following illustration. 
 
-![](images/BackupPartitions.jpg)
+![Cluster with Two Members - Backups are Created](images/HazelcastOverview/BackupPartitions.jpg)
 
 In the illustration, the partitions with black text are primary partitions, and the partitions with blue text are replica partitions (backups). The first member has 135 primary partitions (black), and each of these partitions are backed up in the second member (blue). At the same time, the first member also has the replica partitions of the second member's primary partitions.
 
 As you add more members, Hazelcast one-by-one moves some of the primary and replica partitions to the new members, making all members equal and redundant. Only the minimum amount of partitions will be moved to scale out Hazelcast. The following is an illustration of the partition distributions in a Hazelcast cluster with 4 members.
 
-![](images/4NodeCluster.jpg)
+![Cluster with Four Members](images/HazelcastOverview/4NodeCluster.jpg)
 
 Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among the members for redundancy.
+
+Partition distributions in the above illustrations are for your convenience and for a more clearer description. Normally, the partitions are not distributed in an order (as they are shown in these illustrations), they are distributed randomly. The important point here is that Hazelcast equally distributes the partitions and their backups among the members.
 
 With Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
 they can access partitions that are owned by other members in the cluster.
 
 <br></br>
 ***RELATED INFORMATION***
-<br></br>
-Please refer to the [Enabling Lite Members section](#enabling-lite-members).
- 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Partition distributions in the above illustrations are for your convenience and for a more clearer description. Normally, the partitions are not distributed in an order (as they are shown in these illustrations), they are distributed randomly. The important point here is that Hazelcast equally distributes the partitions and their backups among the members.*
+*Please refer to the [Enabling Lite Members section](#enabling-lite-members).*
+<br></br> 
 
 
 ### How the Data is Partitioned

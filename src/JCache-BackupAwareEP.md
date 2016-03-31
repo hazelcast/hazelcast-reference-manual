@@ -4,7 +4,7 @@
 Another feature, especially interesting for distributed environments like Hazelcast, is the JCache specified
 `javax.cache.processor.EntryProcessor`. For more general information, please see the [Implementing EntryProcessor section](#implementing-entryprocessor).
 
-Since Hazelcast provides backups of cached entries on other nodes, the default way to backup an object changed by an
+Since Hazelcast provides backups of cached entries on other members, the default way to backup an object changed by an
 `EntryProcessor` is to serialize the complete object and send it to the backup partition. This can be a huge network overhead for big objects.
 
 Hazelcast offers a sub-interface for `EntryProcessor` called `com.hazelcast.cache.BackupAwareEntryProcessor`. This allows you to create or pass another `EntryProcessor` to run on backup

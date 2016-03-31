@@ -66,7 +66,7 @@ account to prevent network operations and concurrent accesses.
 
 As an explanation of how the algorithm works, let's examine the following flowchart step by step.
 
-![](images/eviction/eviction-flowchart.png)
+![Hazelcast JCache Eviction Algorithm](images/JCache/Flowchart.png)
 
 1. A new cache is created. Without any special settings, the eviction is configured to kick in when the **cache** exceeds 10.000
 elements and an LRU (Less Recently Used) policy is set up.
@@ -88,7 +88,7 @@ To prevent network operations and concurrent access, as mentioned earlier, the c
 currently handled partition. Due to the imbalanced partitions, the single partitions might start to evict
 earlier than the other partitions.
 
-As mentioned in the [General Information section](#general-information), typically two types of caches are found in the production systems. For small caches,
+As mentioned in the [Cache Types section](#cache-types), typically two types of caches are found in the production systems. For small caches,
 referred to as *Reference Caches*, the eviction algorithm has a special set of rules depending on the maximum configured cache
 size. Please see the [Reference Caches section](#reference-caches) for details. The other type of cache is referred to as *Active DataSet Cache*,
 which in most cases makes heavy use of the eviction to keep the most active data set in the memory. Those kinds of caches using a very

@@ -7,7 +7,7 @@ From Wikipedia: Distributed computing refers to the use of distributed systems t
 
 One of the coolest features of Java 1.5 is the Executor framework, which allows you to asynchronously execute your tasks (logical units of work), such as database query, complex calculation, and image rendering.
 
-The default implementation of this framework (`ThreadPoolExecutor`) is designed to run within a single JVM. In distributed systems, this implementation is not desired since you may want a task submitted in one JVM and processed in another one. Hazelcast offers `IExecutorService` for you to use in distributed environments: it implements `java.util.concurrent.ExecutorService` to serve the applications requiring computational and data processing power.
+The default implementation of this framework (`ThreadPoolExecutor`) is designed to run within a single JVM (cluster member). In distributed systems, this implementation is not desired since you may want a task submitted in one JVM and processed in another one. Hazelcast offers `IExecutorService` for you to use in distributed environments: it implements `java.util.concurrent.ExecutorService` to serve the applications requiring computational and data processing power.
 
 With `IExecutorService`, you can execute tasks asynchronously and perform other useful tasks. If your task execution takes longer than expected, you can cancel the task execution. Tasks should be `Serializable` since they will be distributed.
 
@@ -95,9 +95,9 @@ Future<String> future = executorService.submit( new Echo( "myinput") );
 String result = future.get();
 ```
 
-Please note that the Echo callable in the above code sample also implements a Serializable interface, since it may be sent to another JVM to be processed.
+Please note that the Echo callable in the above code sample also implements a Serializable interface, since it may be sent to another member to be processed.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *When a task is deserialized, HazelcastInstance needs to be accessed. To do this, the task should implement `HazelcastInstanceAware` interface. Please see the [HazelcastInstanceAware Interface section](#hazelcastinstanceaware-interface) for more information.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *When a task is deserialized, HazelcastInstance needs to be accessed. To do this, the task should implement `HazelcastInstanceAware` interface. Please see the [HazelcastInstanceAware Interface section](#implementing-hazelcastinstanceaware) for more information.*
 <br></br>
 
 
@@ -150,23 +150,6 @@ public class MasterMember {
 }
 ```
 
-### Configuring Executor Threads
-
-By default, Executor is configured to have 8 threads in the pool. You can change that with the `pool-size` property in the declarative configuration (`hazelcast.xml`). An example is shown below (using the above Executor).
-
-```xml
-<executor-service name="exec">
-  <pool-size>1</pool-size>
-</executor-service>
-```
-
-<br></br>
-
-***RELATED INFORMATION***
-
-
-*Please refer to the [Executor Service Configuration section](#executor-service-configuration) for a full description of Hazelcast Distributed Executor Service configuration.*
-
 
 ### Scaling The Executor Service
 
@@ -174,7 +157,7 @@ By default, Executor is configured to have 8 threads in the pool. You can change
 You can scale the Executor service both vertically (scale up) and horizontally (scale out).
 
 
-To scale up, you should improve the processing capacity of the JVM. You can do this by increasing the `pool-size` property mentioned in [Configuring Executor Threads](#configuring-executor-threads) (i.e., increasing the thread count). However, please be aware of your JVM's capacity. If you think it cannot handle such an additional load caused by increasing the thread count, you may want to consider improving the JVM's resources (CPU, memory, etc.). As an example, set the `pool-size` to 5 and run the above `MasterMember`. You will see that `EchoTask` is run as soon as it is produced.
+To scale up, you should improve the processing capacity of the cluster member (JVM). You can do this by increasing the `pool-size` property mentioned in [Configuring Executor Service](#configuring-executor-service) (i.e., increasing the thread count). However, please be aware of your member's capacity. If you think it cannot handle such an additional load caused by increasing the thread count, you may want to consider improving the member's resources (CPU, memory, etc.). As an example, set the `pool-size` to 5 and run the above `MasterMember`. You will see that `EchoTask` is run as soon as it is produced.
 
 
-To scale out, more JVMs should be added instead of increasing only one JVM's capacity. In reality, you may want to expand your cluster by adding more physical or virtual machines. For example, in the EchoTask example in the [Runnable section](#implementing-a-runnable-task), you can create another Hazelcast instance. That instance will automatically get involved in the executions started in `MasterMember` and start processing.
+To scale out, more members should be added instead of increasing only one member's capacity. In reality, you may want to expand your cluster by adding more physical or virtual machines. For example, in the EchoTask example in the [Runnable section](#implementing-a-runnable-task), you can create another Hazelcast instance. That instance will automatically get involved in the executions started in `MasterMember` and start processing.

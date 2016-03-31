@@ -4,7 +4,7 @@
 
 ## Implementing DataSerializable
 
-As mentioned in [Implementing Java Serializable & Externalizable](#implementing-java-serializable-externalizable), Java serialization is an easy mechanism. However, it does not have a control on how fields are serialized or deserialized. Moreover, this mechanism can lead to excessive CPU loads since it keeps track of objects to handle the cycles and streams class descriptors. These are performance decreasing factors; thus, serialized data may not have an optimal size.
+As mentioned in [Implementing Java Serializable & Externalizable](#implementing-java-serializable-and-externalizable), Java serialization is an easy mechanism. However, it does not control how fields are serialized or deserialized. Moreover, Java serialization can lead to excessive CPU loads since it keeps track of objects to handle the cycles and streams class descriptors. These are performance decreasing factors; thus, serialized data may not have an optimal size.
 
 The `DataSerializable` interface of Hazelcast overcomes these issues. Here is an example of a class implementing the `com.hazelcast.nio.serialization.DataSerializable` interface.
 
@@ -40,7 +40,7 @@ public class Address implements DataSerializable {
 Let's take a look at another example which encapsulates a `DataSerializable` field. 
 
 Since the `address` field itself is `DataSerializable`, it calls `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur 
-in the same order. When Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast de-serializes it, `className` is used to instantiate the object using reflection.
+in the same order. When Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast deserializes it, `className` is used to instantiate the object using reflection.
 
 
 ```java
@@ -75,11 +75,13 @@ public class Employee implements DataSerializable {
 }
 ```
 
-As you can see, since the `address` field itself is `DataSerializable`, it is calling `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur in the same order. While Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast de-serializes it, `className` is used to instantiate the object using reflection.
+As you can see, since the `address` field itself is `DataSerializable`, it calls `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur in the same order. While Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast deserializes it, `className` is used to instantiate the object using reflection.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Since Hazelcast needs to create an instance during deserialization,`DataSerializable` class has a no-arg constructor.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *`DataSerializable` is a good option if serialization is only needed for in-cluster communication.*
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *`DataSerializable` is not supported by non-Java clients as it uses Java reflection. If you need non-Java clients, please use [`IdentifiedDataSerializable`](#identifieddataserializable) or [`Portable`](#implementing-portable-serialization).*
 
 
 ### IdentifiedDataSerializable
@@ -190,6 +192,6 @@ As the last step, you need to register `EmployeeDataSerializableFactory` declara
 ***RELATED INFORMATION***
 
 
-*Please refer to the [Serialization Configuration section](#serialization-configuration) for a full description of Hazelcast Serialization configuration.*
+*Please refer to the [Serialization Configuration Wrap-Up section](#serialization-configuration-wrap-up) for a full description of Hazelcast Serialization configuration.*
 
  

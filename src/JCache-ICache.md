@@ -6,12 +6,12 @@ Hazelcast provides extension methods to Cache API through the interface `com.haz
 
 It has two sets of extensions:
 
-* Asynchronous version of all cache operations. See [Async Operations](#async-operations).
-* Cache operations with custom `ExpiryPolicy` parameter to apply on that specific operation. See [Custom ExpiryPolicy](#custom-expirypolicy).
+* Asynchronous version of all cache operations. See [Async Operations](#icache-async-methoods).
+* Cache operations with custom `ExpiryPolicy` parameter to apply on that specific operation. See [Custom ExpiryPolicy](#defining-a-custom-expirypolicy).
 
 ### Scoping to Join Clusters
 
-As mentioned before, you can scope a `CacheManager` in the case of client to connect to multiple clusters. In the case of an embedded node, you can scope a `CacheManager` to join different clusters at the same time. This process is called scoping. To apply scoping, request
+As mentioned before, you can scope a `CacheManager` in the case of client to connect to multiple clusters. In the case of an embedded member, you can scope a `CacheManager` to join different clusters at the same time. This process is called scoping. To apply scoping, request
 a `CacheManager` by passing a `java.net.URI` instance to `CachingProvider::getCacheManager`. The `java.net.URI` instance must point to either a Hazelcast configuration or to the name of a named
 `com.hazelcast.core.HazelcastInstance` instance.
 
@@ -77,6 +77,12 @@ You can set this on the command line.
 ```plain
 -Dmy-placeholder=classpath://my-configs/scoped-hazelcast.xml
 ```
+
+You should consider the following rules about the Hazelcast instance name when you specify the configuration file location using `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` (which resolves to `hazelcast.config.location`):
+
+* If you also specified the `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) property, this property is used as the instance name even though you configured the instance name in the configuration file.
+* If you do not specify `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` but you configure the instance name in the configuration file using the element `<instance-name>`, this element's value will be used as the instance name.
+* If you do not specify an instance name via property or in the configuration file, the URL of the configuration file location is used as the instance name.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *No check is performed to prevent creating multiple `CacheManager`s with the same cluster
@@ -173,7 +179,7 @@ Properties properties = HazelcastCachingProvider
 
 URI cacheManagerName = new URI( "my-cache-manager" );
 CacheManager cacheManager = cachingProvider
-    .getCacheManager( cacheManager, null, properties );
+    .getCacheManager( cacheManagerName, null, properties );
 ```
 
 <br></br>

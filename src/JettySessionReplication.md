@@ -1,17 +1,11 @@
 
 ### Jetty Based Web Session Replication
 
-![](images/enterprise-onlycopy.jpg)
-
+<font color="#3981DB">**Hazelcast Enterprise**</font>
 <br></br>
-
-![image](images/NoteSmall.jpg) ***NOTE:*** *This feature is supported for Hazelcast Enterprise 3.4 or higher.*
-
-
-
 
 ***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/enterprise-session-replication" target="_blank">sample application</a> for Jetty Based Web Session Replication.*
-<br></br>
+
 
 #### Hazelcast Jetty Features and Requirements
 
@@ -30,9 +24,7 @@ Jetty Web Session Replication with Hazelcast Enterprise is a container specific 
 
 Jetty Web Session Replication Module has been tested against the following containers.
 
-- Jetty 7  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-7/dist/" target="_blank">here</a>.
-- Jetty 8  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-8/dist/" target="_blank">here</a>.
-- Jetty 9  - It can be downloaded <a href="http://download.eclipse.org/jetty/stable-9/dist/" target="_blank">here</a>.
+- Jetty 7, 8 and 9  - They can be downloaded from <a href="http://download.eclipse.org/jetty/" target="_blank">here</a>.
 
 Latest tested versions are **7.6.16.v20140903**, **8.1.16.v20140903** and **9.2.3.v20140905**
 
@@ -58,7 +50,7 @@ Jetty Web Session Replication runs in two different modes:
 
 #### Deploying P2P (Peer-to-Peer) for Jetty
 
-P2P deployment launches embedded Hazelcast Node in each server instance.
+P2P deployment launches embedded Hazelcast member in each server instance.
 
 This type of deployment is simple: just configure your Jetty and launch. There is no need for an external Hazelcast cluster.
 
@@ -234,9 +226,9 @@ Based on Tomcat configuration or `sessionTimeout` setting in `web.xml`, the sess
 `HazelcastSessionIdManager` can work in sticky and non-sticky setups.
 
 The clustered session mechanism works in conjunction with a load balancer that supports stickiness. Stickiness can be based on various data items, such as source IP address, or characteristics of the session ID, or a load-balancer specific mechanism. 
-For those load balancers that examine the session ID, `HazelcastSessionIdManager` appends a node ID to the session ID, which can be used for routing.
+For those load balancers that examine the session ID, `HazelcastSessionIdManager` appends a member ID to the session ID, which can be used for routing.
 You must configure the `HazelcastSessionIdManager` with a `workerName` that is unique across the cluster. 
-Typically the name relates to the physical node on which the instance is executed. If this name is not unique, your load balancer might fail to distribute your sessions correctly.
+Typically the name relates to the physical member on which the instance is executed. If this name is not unique, your load balancer might fail to distribute your sessions correctly.
 If sticky sessions are enabled, the `workerName` parameter has to be set, as shown below.
 
 

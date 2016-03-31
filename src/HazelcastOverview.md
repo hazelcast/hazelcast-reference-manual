@@ -31,13 +31,13 @@ and you can start building scalable applications.
 **Hazelcast is Peer-to-Peer**
 
 Unlike many NoSQL solutions, Hazelcast is peer-to-peer. There is no master and slave; there is no single point of
-failure. All nodes store equal amounts of data and do equal amounts of processing. You can embed Hazelcast in your
-existing application or use it in client and server mode where your application is a client to Hazelcast nodes.
+failure. All members store equal amounts of data and do equal amounts of processing. You can embed Hazelcast in your
+existing application or use it in client and server mode where your application is a client to Hazelcast members.
 
 **Hazelcast is scalable**
 
-Hazelcast is designed to scale up to hundreds and thousands of nodes. Simply add new nodes and they will
-automatically discover the cluster and will linearly increase both memory and processing capacity. The nodes maintain
+Hazelcast is designed to scale up to hundreds and thousands of members. Simply add new members and they will
+automatically discover the cluster and will linearly increase both memory and processing capacity. The members maintain
 a TCP connection between each other and all communication is performed through this layer.
 
 **Hazelcast is fast**
@@ -46,6 +46,6 @@ Hazelcast stores everything in-memory. It is designed to perform very fast reads
 
 **Hazelcast is redundant**
 
-Hazelcast keeps the backup of each data entry on multiple nodes. On a node failure, the data is restored from the
+Hazelcast keeps the backup of each data entry on multiple members. On a member failure, the data is restored from the
 backup and the cluster will continue to operate without downtime.
 

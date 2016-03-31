@@ -69,7 +69,7 @@ Supplier<String, Integer, String> supplier = Supplier.all(
 );
 ```
 
-You can see a Java 6 / 7 example in the [Aggregations Examples section](#aggregation-examples).
+You can see a Java 6 / 7 example in the [Aggregations Examples section](#aggregations-examples).
 
 Apart from the fact we transformed the input value of type `int` (or Integer) to a string, we can see that the generic information
 of the resulting `Supplier` has changed as well. This indicates that we now have an aggregation working on string values.
