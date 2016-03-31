@@ -154,7 +154,7 @@ Here is a sample configuration:
   ...
   <map name="default">
     ...
-    <map-store enabled="true">
+    <map-store enabled="true" initial-mode="LAZY">
       <class-name>com.hazelcast.examples.DummyStore</class-name>
       <write-delay-seconds>60</write-delay-seconds>
       <write-batch-size>1000</write-batch-size>
@@ -163,12 +163,15 @@ Here is a sample configuration:
   </map>
 </hazelcast>
 ```
-<br></br>
-***RELATED INFORMATION***
 
-*Please refer to the [Map Store section](#map-store) for the full Map Store configuration description.*
+The following are the descriptions of MapStore configuration elements and attributes:
 
-<br></br>
+- `class-name`: Name of the class implementing MapLoader and/or MapStore.
+- `write-delay-seconds`: Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through so MapStore.store(key, value) will be called as soon as the entry is updated. Otherwise it is write-behind so updates will be stored after write-delay-seconds value by calling Hazelcast.storeAll(map). Default value is 0.
+- `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries will be tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
+- `write-coalescing`: In write-behind mode, by default Hazelcast coalesces updates on a specific key, i.e. applies only the last update on it. You can set this element to `false` to store all updates performed on a key to the data store.
+- `enabled`: True to enable this map-store, false to disable. Default value is true.
+- `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded.
 
 
 #### Storing Entries to Multiple Maps
@@ -189,30 +192,21 @@ mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
 });
 ```
 
-To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the `MapLoaderLifecycleSupport` interface. See the following example code.
+To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the `MapLoaderLifecycleSupport` interface. This interface has the methods `init()` and `destroy()` as shown below.
 
 ```java
 public interface MapLoaderLifecycleSupport {
 
-  /**
-   * Initializes this MapLoader implementation. Hazelcast will call
-   * this method when the map is first used on the
-   * HazelcastInstance. Implementation can
-   * initialize required resources for implementing
-   * MapLoader such as reading a configuration file and/or creating
-   * a database connection.
-   */
   void init( HazelcastInstance hazelcastInstance, Properties properties, String mapName );
 
-  /**
-   * Hazelcast will call this method before shutting down.
-   * This method can be overridden to cleanup the resources
-   * held by this MapLoader implementation, such as closing the
-   * database connections, etc.
-   */
   void destroy();
 }
 ```
+
+The method `init()` initializes the `MapLoader` implementation. Hazelcast calls this method when the map is first used on the Hazelcast instance. The `MapLoader` implementation can initialize the required resources for implementing `MapLoader` such as reading a configuration file or creating a database connection.
+
+Hazelcast calls the method `destroy()` before shutting down. You can override this method  to cleanup the resources held by this `MapLoader` implementation, such as closing the database connections.
+
 
 
 #### Initializing Map on Startup
@@ -241,7 +235,7 @@ Here is the `MapLoader` initialization flow:
 
 If the number of keys to load is large, it is more efficient to load them incrementally than loading them all at once. To support incremental loading, the `MapLoader.loadAllKeys()` method returns an `Iterable` which can be lazily populated with the results of a database query. 
 
-Hazelcast iterates over the `Iterable` and, while doing so, sends out the keys to their respective owner nodes. The `Iterator` obtained from `MapLoader.loadAllKeys()` may also implement the `Closeable` interface, in which case `Iterator` is closed once the iteration is over. This is intended for releasing resources such as closing a JDBC result set. 
+Hazelcast iterates over the `Iterable` and, while doing so, sends out the keys to their respective owner members. The `Iterator` obtained from `MapLoader.loadAllKeys()` may also implement the `Closeable` interface, in which case `Iterator` is closed once the iteration is over. This is intended for releasing resources such as closing a JDBC result set. 
 
 #### Forcing All Keys To Be Loaded
 
@@ -290,4 +284,4 @@ class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapS
 }
 ```
 
-** Note :** Please be warned that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.
+![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.*
