@@ -59,6 +59,8 @@ The element `<eviction>` has the following attributes:
 
 Keep in mind that you should have already enabled the High-Density Memory Store usage for your client, using the `<native-memory>` element in the client's configuration.
 
+Please see the [High-Density Memory Store section](#high-density-memory-store) for more information on Hazelcast's High-Density Memory Store feature.
+
 
 
 
