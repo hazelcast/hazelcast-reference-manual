@@ -119,6 +119,11 @@ public class MyEntryListener implements EntryListener{
 ...
 ```
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that the method `IMap.clear()` does not fire an "EntryRemoved" event, but fires a "MapCleared" event.*
+<br></br>
+
+
 #### Partitions and Entry Listeners
 
 A map listener runs on the event threads that are also used by the other listeners: for 
