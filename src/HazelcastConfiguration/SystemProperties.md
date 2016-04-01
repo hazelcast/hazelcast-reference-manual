@@ -69,6 +69,12 @@ Property Name | Default Value | Type | Description
 `hazelcast.io.thread.count` | 3 | int | Number of threads performing socket input and socket output. If, for example, the default value (3) is used, it means there are 3 threads performing input and 3 threads performing output (6 threads in total).
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
+<<<<<<< Updated upstream:src/HazelcastConfiguration/SystemProperties.md
+=======
+`hazelcast.jmx.update.interval.seconds` | 5 | int | Changes the [JMX](#monitoring-with-jmx) update interval since statistics creation might be costly.
+`hazelcast.management.iterating.map.stats.enabled` | true | bool | If set to `false`, disables the calculation of `hits`, `lastAccessTime`, `lastUpdateTime` and `lockedEntryCount` values, in order to increase performance of `LocalMapStats` construction.
+`hazelcast.lock.max.lease.time.seconds`|Long.MAX_VALUE | long | All locks which are acquired without an explicit lease time use this value (in seconds) as the lease time. When you want to set an explicit lease time for your locks, you cannot set it to a longer time than this value.
+>>>>>>> Stashed changes:src/SystemProperties.md
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
 `hazelcast.mancenter.home` | mancenter | string |  Folder where Management Center data files are stored (license information, time travel information, etc.).
 `hazelcast.map.expiry.delay.seconds`|10|int|Useful to deal with some possible edge cases. For example, when using EntryProcessor, without this delay, you may see an EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup. As a result of this, when backup promotes to owner, you will end up an unprocessed key.
@@ -132,4 +138,3 @@ Property Name | Default Value | Type | Description
 `hazelcast.unsafe.mode` | auto | string  | "auto" (the default value) automatically detects whether the usage of `Unsafe` is suitable for a given platform. "disabled" explicitly disables the `Unsafe` usage in your platform. "enforced" enforces the usage of `Unsafe` even if your platform does not support it. This property can only be set by passing a JVM-wide system property.
 `hazelcast.phone.home.enabled` | true | bool  |   Enable or disable the sending of phone home data to Hazelcast's phone home server.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.
-
