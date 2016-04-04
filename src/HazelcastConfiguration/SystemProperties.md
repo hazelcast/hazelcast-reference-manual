@@ -69,13 +69,10 @@ Property Name | Default Value | Type | Description
 `hazelcast.io.thread.count` | 3 | int | Number of threads performing socket input and socket output. If, for example, the default value (3) is used, it means there are 3 threads performing input and 3 threads performing output (6 threads in total).
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
-<<<<<<< Updated upstream:src/HazelcastConfiguration/SystemProperties.md
-=======
 `hazelcast.jmx.update.interval.seconds` | 5 | int | Changes the [JMX](#monitoring-with-jmx) update interval since statistics creation might be costly.
-`hazelcast.management.iterating.map.stats.enabled` | true | bool | If set to `false`, disables the calculation of `hits`, `lastAccessTime`, `lastUpdateTime` and `lockedEntryCount` values, in order to increase performance of `LocalMapStats` construction.
 `hazelcast.lock.max.lease.time.seconds`|Long.MAX_VALUE | long | All locks which are acquired without an explicit lease time use this value (in seconds) as the lease time. When you want to set an explicit lease time for your locks, you cannot set it to a longer time than this value.
->>>>>>> Stashed changes:src/SystemProperties.md
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
+`hazelcast.management.iterating.map.stats.enabled` | true | bool | If set to `false`, disables the calculation of `hits`, `lastAccessTime`, `lastUpdateTime` and `lockedEntryCount` values, in order to increase performance of `LocalMapStats` construction.
 `hazelcast.mancenter.home` | mancenter | string |  Folder where Management Center data files are stored (license information, time travel information, etc.).
 `hazelcast.map.expiry.delay.seconds`|10|int|Useful to deal with some possible edge cases. For example, when using EntryProcessor, without this delay, you may see an EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup. As a result of this, when backup promotes to owner, you will end up an unprocessed key.
 `hazelcast.map.load.chunk.size` | 1000 | int |   Chunk size for [MapLoader](#loading-and-storing-persistent-data)'s map initialization process (MapLoader.loadAllKeys()).
