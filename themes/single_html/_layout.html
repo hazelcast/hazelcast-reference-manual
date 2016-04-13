@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Hazelcast <%= @manifest.title or @title %> Version: <%= @manifest.options.version %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="Hazelcast, IMDG, In-Memory Data Grid, Scalable, Clustering, Partitioning, Distributed, Open Source, distributed map, queue, topic, ringbuffer, executor service, transactions, high-density memory, jcache, mapreduce, aggregators, Java client, serialization">
+    <meta name="description" content="Hazelcast Reference Manual explains all in-memory data grid features provided by Hazelcast in detail with code samples and configuration options.">
+    <title>Hazelcast <%= @manifest.options.version %> Reference Manual</title>
 
     <link type="text/css" rel="stylesheet" href="<%= @baseUrl %>assets/css/reset.css">
     <link type="text/css" rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/<%= @manifest.options.codeHighlightTheme || 'github' %>.min.css">
@@ -14,8 +17,6 @@
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.sticky-kit.js"></script>
     <script type="text/javascript" src="http://yandex.st/highlightjs/6.1/highlight.min.js"></script>
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/lunr.min.js"></script>
-    <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.tocify/libs/jqueryui/jquery-ui-1.9.1.custom.min.js"></script>
-    <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.tocify/src/javascripts/jquery.tocify.min.js"></script>
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.scrollUp.min.js"></script>
 
     <script type="text/javascript"> 
@@ -74,33 +75,31 @@
 
 </head>
 <body>
-    <div id="page">
-        <a name="top" />
-        <div id="sitebar">
-    <div class="content">
-      <p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
-      </div>
-  </div>
-
-        <header id="header">
-			<div class="content">
-			<div style="overflow:hidden">
-				<div style="float:left">
-                    <a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
-					
-				</div>	
-				<div style="float:left;padding-top: 15px;padding-left: 30px;">
-<h1><a href="<%= @baseUrl %>"><%= @manifest.title or @title %> <span style="font-size:12px"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span></a></h1>
+	<div id="page">
+		<a name="top" />
+			<div id="sitebar">
+				<div class="content">
+					<p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
 				</div>
 			</div>
+		<header id="header">
+			<div class="content">
+				<div style="overflow:hidden">
+					<div style="float:left">
+						<a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
+					</div>
+					<div style="float:left;padding-top: 30px;padding-left: 30px;">
+					<a href="<%= @baseUrl %>"></a> <span style="font-size:36px;color:white"> Reference Manual </span> <span style="font-size:12px;color:white"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span>
+					</div>
+				</div>
 			</div>
-        </header>
-        <div class="content">
-	        <%- @include "_sidebar.html" %>
-	        <div id="content">
-	            <%- @content %>
-	        </div>	
-	        </div>		
-    </div>
+		</header>
+		<div class="content">
+			<%- @include "_sidebar.html" %>
+				<div id="content">
+					<%- @content %>
+				</div>
+		</div>
+	</div>
 </body>
 </html>
