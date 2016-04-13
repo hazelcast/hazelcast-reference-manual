@@ -354,8 +354,9 @@ clientAwsConfig.setInsideAws( false )
                .setHostHeader( "ec2.amazonaws.com" )
                .setSecurityGroupName( ">hazelcast-sg" )
                .setTagKey( "type" )
-               .setTagValue( "hz-members" );
-               .setIamRole( "s3access" );
+               .setTagValue( "hz-members" )
+               .setIamRole( "s3access" )
+               .setEnabled( true );
 clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
 HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 ```
