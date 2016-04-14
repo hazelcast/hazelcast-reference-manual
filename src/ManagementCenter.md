@@ -28,6 +28,16 @@ java -jar mancenter-*version*.war 8080 mancenter
 </management-center>
 ```
 
+- If you have deployed mancenter-*version*.war in your already SSL enabled web container, configure `hazelcast.xml` as follows. If you are using an untrusted certificate for your container, which you created yourself, you need to add that certificate to your JVM first. Download the certificate from the browser, after this you can add it to JVM as follows.
+
+`keytool -import -noprompt -trustcacerts -alias <AliasName> -file <certificateFile> -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass <Password>`
+
+```xml
+<management-center enabled="true">
+    https://localhost:sslPortNumber/mancenter
+</management-center>
+```
+
 - You can also set a frequency (in seconds) for which Management Center will take information from the Hazelcast cluster, using the element `update-interval` as shown below. `update-interval` is optional and its default value is 3 seconds.
 
 ```xml
