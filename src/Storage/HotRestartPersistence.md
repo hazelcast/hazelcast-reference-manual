@@ -191,7 +191,7 @@ The following are the storage media used for the test:
 
 The below table shows the test results.
 
-![image](images/HotRestartPerf.png)
+![Performance on a Physical Server](images/HotRestartPerf.png)
 
 
 #### Performance on AWS R3
@@ -214,6 +214,6 @@ The following are the AWS storage types used for the test:
 
 The below table shows the test results.
 
-![image](images/HotRestartPerf2.png)
+![Performance on AWS](images/HotRestartPerf2.png)
 
 

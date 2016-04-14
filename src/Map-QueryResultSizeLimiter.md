@@ -26,7 +26,7 @@ Since the local pre-check can increase the latency of a `QueryOperation` you can
 
 Besides the designated query operations, there are other operations which use predicates internally. Those method calls will throw the `QueryResultSizeExceededException` as well. Please see the following matrix to see the methods that are covered by the query result size limit.
 
-![](images/Map-QueryResultSizeLimiterScope.png)
+![Methods Covered by Query Result Size Limit](images/Map-QueryResultSizeLimiterScope.png)
 
 ##### Configuring Query Result Size
 

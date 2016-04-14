@@ -64,7 +64,7 @@ With `HazelcastLocalCacheRegionFactory`, each cluster member has a local map and
 
 An illustration of the above logic is shown below.
 
-![image](images/HZLocalCacheRgnFactory.jpg)
+![HazelcastLocalCacheRegionFactory Invalidation](images/HZLocalCacheRgnFactory.jpg)
 
 If your operations are mostly reads, then this option gives better performance.
 
