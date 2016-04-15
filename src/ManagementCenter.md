@@ -1,12 +1,13 @@
 ## Management Center
 
-Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. With its scripting and console module, you can run scripts (JavaScript, Groovy, etc.) and commands on your members.
+Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring the overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. Uou can run scripts (JavaScript, Groovy, etc.) and commands on your members with its scripting and console modules.
 
 ### Installing Management Center
 
 You have two options for installing Hazelcast Management Center:
-- deploy the `mancenter`-*version*`.war` application into your Java application server/container,
-- or start Hazelcast Management Center from the command line and then have the Hazelcast cluster members communicate with that web application. This means that your members should know the URL of the `mancenter` application before they start.
+
+1. Deploy the file `mancenter`-*version*`.war` on your Java application server/container.
+2. Start Hazelcast Management Center from the command line and then have the Hazelcast cluster members communicate with it. This means that your members should know the URL of the `mancenter` application before they start.
 
 Here are the steps.
 
@@ -28,15 +29,17 @@ java -jar mancenter-*version*.war 8080 mancenter
 </management-center>
 ```
 
-- If you have deployed mancenter-*version*.war in your already SSL enabled web container, configure `hazelcast.xml` as follows. If you are using an untrusted certificate for your container, which you created yourself, you need to add that certificate to your JVM first. Download the certificate from the browser, after this you can add it to JVM as follows.
-
-`keytool -import -noprompt -trustcacerts -alias <AliasName> -file <certificateFile> -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass <Password>`
+- If you have deployed `mancenter-*version*.war` in your already-SSL-enabled web container, configure `hazelcast.xml` as follows. 
 
 ```xml
 <management-center enabled="true">
     https://localhost:sslPortNumber/mancenter
 </management-center>
 ```
+
+If you are using an untrusted certificate for your container, which you created yourself, you need to add that certificate to your JVM first. Download the certificate from the browser, after this you can add it to JVM as follows.
+
+`keytool -import -noprompt -trustcacerts -alias <AliasName> -file <certificateFile> -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass <Password>`
 
 - You can also set a frequency (in seconds) for which Management Center will take information from the Hazelcast cluster, using the element `update-interval` as shown below. `update-interval` is optional and its default value is 3 seconds.
 
