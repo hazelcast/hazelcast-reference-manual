@@ -39,7 +39,7 @@ Hazelcast distributes data entries into the partitions using a hashing algorithm
 - this byte array is hashed, and
 - the result of the hash is mod by the number of partitions.
 
-The result of this modulo - *MOD(hash result, partition count)* -  gives the partition in which the data will be stored, i.e. the partition ID. For ALL the members you have in your cluster, the partition ID for a given key will always be the same.
+The result of this modulo - *MOD(hash result, partition count)* -  is the partition in which the data will be stored, that is the **partition ID**. For ALL members you have in your cluster, the partition ID for a given key will always be the same.
 
 ### Partition Table
 
