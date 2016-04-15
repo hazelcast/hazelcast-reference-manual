@@ -5,17 +5,17 @@ As you read in the [Sharding in Hazelcast section](#sharding-in-hazelcast), Haze
 
 By default, Hazelcast offers 271 partitions. When you start a cluster member, it starts with these 271 partitions. The following illustration shows the partitions in a Hazelcast cluster with single member.
 
-![Partitions](images/NodePartition.jpg)
+![Single Member with Partitions](images/HazelcastOverview/NodePartition.jpg)
 
-When you start a second node on that cluster (creating a Hazelcast cluster with 2 members), the partitions are distributed as shown in the following illustration. 
+When you start a second member on that cluster (creating a Hazelcast cluster with 2 members), the partitions are distributed as shown in the following illustration. 
 
-![Backup Partitions](images/BackupPartitions.jpg)
+![Cluster with Two Members - Backups are Created](images/HazelcastOverview/BackupPartitions.jpg)
 
 In the illustration, the partitions with black text are primary partitions, and the partitions with blue text are replica partitions (backups). The first member has 135 primary partitions (black), and each of these partitions are backed up in the second member (blue). At the same time, the first member also has the replica partitions of the second member's primary partitions.
 
 As you add more members, Hazelcast one-by-one moves some of the primary and replica partitions to the new members, making all members equal and redundant. Only the minimum amount of partitions will be moved to scale out Hazelcast. The following is an illustration of the partition distributions in a Hazelcast cluster with 4 members.
 
-![Partition Distribution in a Cluster](images/4NodeCluster.jpg)
+![Cluster with Four Members](images/HazelcastOverview/4NodeCluster.jpg)
 
 Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among the members for redundancy.
 
@@ -39,7 +39,7 @@ Hazelcast distributes data entries into the partitions using a hashing algorithm
 - this byte array is hashed, and
 - the result of the hash is mod by the number of partitions.
 
-The result of this modulo - *MOD(hash result, partition count)* -  gives the partition in which the data will be stored, i.e. the partition ID. For ALL the members you have in your cluster, the partition ID for a given key will always be the same.
+The result of this modulo - *MOD(hash result, partition count)* -  is the partition in which the data will be stored, that is the **partition ID**. For ALL members you have in your cluster, the partition ID for a given key will always be the same.
 
 ### Partition Table
 
