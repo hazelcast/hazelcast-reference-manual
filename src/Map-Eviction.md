@@ -3,11 +3,17 @@
 
 Unless you delete the map entries manually or use an eviction policy, they will remain in the map. Hazelcast supports policy based eviction for distributed maps. Currently supported policies are LRU (Least Recently Used) and LFU (Least Frequently Used).
 
-Map eviction works based on the size of a partition. For example, once you specify a size using the `PER_NODE` attribute for `max-size` (please see [Configuring Map Eviction](#configuring-map-eviction)), Hazelcast internally calculates the maximum size for every partition. The eviction process starts according to this calculated per-partition maximum size when you try to put an entry. The section below gives an example scenario.
-
 #### Understanding Map Eviction
 
-Assume that you have the following figures:
+Hazelcast Map performs eviction based on partitions. For example, when you specify a size using the `PER_NODE` attribute for `max-size` (please see [Configuring Map Eviction](#configuring-map-eviction)), Hazelcast internally calculates the maximum size for every partition. Hazelcast uses the following equation to calculate the maximum size of a partition:
+
+```
+partition maximum size = max-size * member-count / partition-count
+```
+
+The eviction process starts according to this calculated partition maximum size when you try to put an entry. When entry count in that partition exceeds partition maximum size, eviction starts on that partition.
+
+Assume that you have the following figures as examples:
 
 * Partition count: 200
 * Entry count for each partition: 100
