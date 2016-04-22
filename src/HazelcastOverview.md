@@ -5,7 +5,7 @@ Hazelcast is an open source In-Memory Data Grid (IMDG).
 It provides elastically scalable distributed In-Memory computing, widely recognized as the fastest and most scalable
 approach to application performance. Hazelcast does this in open source.
 More importantly, Hazelcast makes distributed computing simple by offering distributed implementations of many
-developer friendly interfaces from Java such as Map, Queue, ExecutorService, Lock, and JCache. For example, the Map
+developer-friendly interfaces from Java such as Map, Queue, ExecutorService, Lock, and JCache. For example, the Map
 interface provides an In-Memory Key Value store which confers many of the advantages of NoSQL in terms of developer
 friendliness and developer productivity.
 
@@ -22,11 +22,11 @@ implemented in Java and has clients for Java, C/C++, .NET and REST. Hazelcast al
 If you are looking for In-Memory speed, elastic scalability, and the developer friendliness of NoSQL, Hazelcast is a
 great choice.
 
-**Hazelcast is simple**
+**Hazelcast is Simple**
 
 Hazelcast is written in Java with no other dependencies. It exposes the same API from the familiar Java util package,
-exposing the same interfaces. Just add `hazelcast.jar` to your classpath, and you can quickly enjoy JVMs clustering
-and you can start building scalable applications.
+exposing the same interfaces. Just add `hazelcast.jar` to your classpath and you can quickly enjoy JVMs clustering
+and start building scalable applications.
 
 **Hazelcast is Peer-to-Peer**
 
@@ -34,17 +34,17 @@ Unlike many NoSQL solutions, Hazelcast is peer-to-peer. There is no master and s
 failure. All members store equal amounts of data and do equal amounts of processing. You can embed Hazelcast in your
 existing application or use it in client and server mode where your application is a client to Hazelcast members.
 
-**Hazelcast is scalable**
+**Hazelcast is Scalable**
 
 Hazelcast is designed to scale up to hundreds and thousands of members. Simply add new members and they will
 automatically discover the cluster and will linearly increase both memory and processing capacity. The members maintain
 a TCP connection between each other and all communication is performed through this layer.
 
-**Hazelcast is fast**
+**Hazelcast is Fast**
 
 Hazelcast stores everything in-memory. It is designed to perform very fast reads and updates.
 
-**Hazelcast is redundant**
+**Hazelcast is Redundant**
 
 Hazelcast keeps the backup of each data entry on multiple members. On a member failure, the data is restored from the
 backup and the cluster will continue to operate without downtime.
