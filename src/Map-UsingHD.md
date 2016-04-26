@@ -7,9 +7,11 @@
 <font color="##153F75">**Hazelcast Enterprise HD**</font>
 <br></br>
 
-In the `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into Java heap which is subject to garbage collection (GC). As your heap gets bigger, garbage collection might cause your application to pause for tens of seconds, badly affecting your application performance and response times. Even if you have terabytes of cache in-memory with lots of updates, GC will have almost no effect; this results in more predictable latency and throughput. 
+Hazelcast instances are Java programs. In case of `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into the heap of its server instances. Java heap is subject to garbage collection (GC). In case of larger heaps, garbage collection might cause your application to pause for tens of seconds (even minutes for really large heaps), badly affecting your application performance and response times.
 
-To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can enable your map to use the High-Density Memory Store by simply setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
+As the data gets bigger, you either run the application with larger heap, which would result in longer GC pauses or run multiple instances with smaller heap which can turn into an operational nightmare if the number of such instances becomes very high.
+
+To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can configure your map to use High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
 
 
 ```xml
