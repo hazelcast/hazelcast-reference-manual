@@ -86,5 +86,4 @@ Also see:
 
 - [Data Affinity section](#data-affinity).
 - [Map Configuration with wildcards](#using-wildcard).
-- [Map Configuration section](#map-configuration) for a full description of Hazelcast Distributed Map configuration.
 
