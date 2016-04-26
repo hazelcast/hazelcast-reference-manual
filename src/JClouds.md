@@ -35,13 +35,13 @@ The following is an example declarative configuration.
 </join>
 ...
 ```
-As stated in the first paragraph of this section, Hazelcast native clients also support jclouds for discovery. It means you can also configure your `hazelcast-client.xml` configuration file to include the <discovery-strategies> element in the same way as it is with `hazelcast.xml`.
+As stated in the first paragraph of this section, Hazelcast native clients also support jclouds for discovery. It means you can also configure your `hazelcast-client.xml` configuration file to include the <discovery-strategies> element in the same way as with `hazelcast.xml`.
 
 The table below lists the jclouds configuration properties with their descriptions.
 
 Property Name | Type | Description
 :--------------|:------|:------------
-`provider`|String|String value which is used to identify ComputeService provider. For example, "google-compute-engine" is used for Google Cloud services. See the <a href="https://jclouds.apache.org/reference/providers/#compute " target="_blank">full provider list here</a>.
+`provider`|String|String value that is used to identify ComputeService provider. For example, "google-compute-engine" is used for Google Cloud services. See the <a href="https://jclouds.apache.org/reference/providers/#compute " target="_blank">full provider list here</a>.
 `identity`|String|Cloud Provider identity, can be thought of as a user name for cloud services.
 `credential`|String|Cloud Provider credential, can be thought of as a password for cloud services.
 `zones`|String|Defines zone for a cloud service (optional). Can be used with comma separated values for multiple values.
@@ -51,11 +51,11 @@ Property Name | Type | Description
 `group`|String|Filters instance groups (optional). When used with AWS it maps to security group.
 `hz-port`|Int|Port which the hazelcast instance service uses on the cluster member. Default value is 5701. (optional)
 `role-name*`|String|Used for IAM role support specific to AWS (optional, but if defined, no identity or credential should be defined in the configuration).
-`credentialPath*`|String|Used for cloud providers which require an extra JSON or P12 key file. This denotes the path of that file. Only tested with google compute engine. (Required if google-compute engine is used.)
+`credentialPath*`|String|Used for cloud providers which require an extra JSON or P12 key file. This denotes the path of that file. Only tested with Google Compute Engine. (Required if Google Compute Engine is used.)
 
 #### Configuring Dependencies for jclouds via Maven
 
-jclouds depends on many libraries internally and `hazelcast-jclouds.jar` does not contain any of them. If you want to use jclouds, the recommended way is to use its dependency management tool. The following is a simple maven dependency configuration which uses
+jclouds depends on many libraries internally and `hazelcast-jclouds.jar` does not contain any of them. If you want to use jclouds, we recommend that you use its dependency management tool. The following is a simple maven dependency configuration that uses the
 maven assembly plugin to create an uber JAR with the necessary jclouds properties.
 
 ```xml
@@ -128,7 +128,7 @@ maven assembly plugin to create an uber JAR with the necessary jclouds propertie
 
 #### Configuring IAM Roles for AWS
 
-IAM roles are used to make secure requests from your clients. You can provide the name of your IAM role that you created previously on your AWS console to the jclouds configuration. IAM roles only work in AWS and when a role name is provided, the other credentials properties should be empty.
+IAM roles are used to make secure requests from your clients. You can provide the name of your IAM role that you created previously on your AWS console to the jclouds configuration. IAM roles only work in AWS and when a role name is provided, the other credentials' properties should be empty.
 
 ```xml
  ...
