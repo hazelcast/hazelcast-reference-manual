@@ -1,4 +1,4 @@
-## Continuous Query 
+## Continuous Query Cache
 
 <font color="#3981DB">**Hazelcast Enterprise**</font>
 
@@ -10,7 +10,7 @@ A continuous query cache is used to cache the result of a continuous query. Afte
 
 A continuous query cache is beneficial when you need to query the distributed `IMap` data in a very frequent and fast way. By using a continuous query cache, the result of the query will always be ready and local to the application.
 
-### Accessing Continuous Query from Member
+### Accessing Continuous Query Cache from Member
 
 The following code snippet shows how you can access a continuous query cache from a member.
      
@@ -32,7 +32,7 @@ QueryCache<Integer, String> cache = map.getQueryCache("cache-name");
 
 ```     
 
-### Accessing Continuous Query from Client Side
+### Accessing Continuous Query Cache from Client Side
 
 The following code snippet shows how you can access a continuous query cache from the client side.
 The difference in this code from the member side code above is that you configure and instantiate
@@ -54,7 +54,7 @@ QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
 
 ```
 
-### Features of Continuous Query
+### Features of Continuous Query Cache
 
 The following features of the continuous query cache is valid both for the member and client.
 
