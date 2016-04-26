@@ -6,7 +6,7 @@ Hazelcast supports EC2 Auto Discovery. It is useful when you do not want to prov
 To configure your cluster to use EC2 Auto Discovery, set the following configuration elements. Please refer to the [aws element section](#aws-element) for the full description of the EC2 Auto Discovery configuration elements.
 
 - Add the *hazelcast-cloud.jar* dependency to your project. Note that it is also bundled inside *hazelcast-all.jar*. The Hazelcast cloud module does not depend on any other third party modules.
-- Disable join over multicast and TCP/IP: set the `enabled` attribute of the `multicast` element to "false", and set the `enabled` attribute of the `tcp-ip` element to "false".
+- Disable join over multicast and TCP/IP by seting the `enabled` attribute of the `multicast` element to "false", and set the `enabled` attribute of the `tcp-ip` element to "false".
 - Set the `enabled` attribute of the `aws` element to "true".
 - Within the `aws` element, provide your credentials (access and secret key), your region, etc.
 
