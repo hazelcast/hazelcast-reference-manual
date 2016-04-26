@@ -156,7 +156,7 @@ IAM roles are used to make secure requests from your clients. You can provide th
 
 #### Discovering Members on Different Regions
 
-You can define multiple regions in your jclouds configuration. By default, Hazelcast Discovery SPI uses private IP addresses for member connection. If you want the members to find each other over a different region, you must set the system property `hazelcast.discovery.public.ip.enabled` to `true`. In this way, the members on different regions can connect to each other by using public IPs.
+You can define multiple regions in your jclouds configuration. By default, Hazelcast Discovery SPI uses private IP addresses for member connections. If you want the members to find each other over a different region, you must set the system property `hazelcast.discovery.public.ip.enabled` to `true`. In this way, the members on different regions can connect to each other by using public IPs.
 
 ```xml
  ...
