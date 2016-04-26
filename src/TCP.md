@@ -38,7 +38,7 @@ The following is an example declarative configuration.
 
 As shown above, you can provide IP addresses or hostnames for `member` elements. You can also give a range of IP addresses, such as `192.168.1.0-7`.
 
-Instead of providing members line by line as shown above, you also have the option to use the `members` element and write comma-separated IP addresses, as shown below.
+Instead of providing members line-by-line as shown above, you also have the option to use the `members` element and write comma-separated IP addresses, as shown below.
 
 `<members>192.168.1.0-7,192.168.1.21</members>`
 
