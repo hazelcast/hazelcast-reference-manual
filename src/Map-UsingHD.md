@@ -20,13 +20,13 @@ To overcome this challenge, Hazelcast offers High-Density Memory Store for your 
 </map>
 ```
 
-Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
+Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
 
 
 #### Required configuration changes when using NATIVE
 
-Beware that eviction mechanism is different for `NATIVE` in-memory format.
-The new eviction algorithm is described [here](#eviction-algorithm).
+Note that the eviction mechanism is different for `NATIVE` in-memory format.
+The new eviction algorithm for map with High-Density Memory Store is similar to that of JCache with High-Density Memory Store and is described [here](#eviction-algorithm).
 
   - Eviction percentage has no effect.
 
@@ -38,9 +38,9 @@ The new eviction algorithm is described [here](#eviction-algorithm).
     ```
   - These IMap eviction policies for `max-size` cannot be used: `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
 
-  - Near cache eviction configuration should also be changed when the in-memory format is `NATIVE`.
+  - Near cache eviction configuration is also different for `NATIVE` in-memory format.
 
-    Existing configuration for a map's near cache when the in-memory format is `BINARY`:
+    For a near cache configuration with in-memory format set to `BINARY`:
     
     ```xml
         <map name="nativeMap*">
@@ -54,7 +54,7 @@ The new eviction algorithm is described [here](#eviction-algorithm).
         </map>
      ```
 
-     If it is `NATIVE`, then the proper near cache configuration should be as follows:
+     the equivalent configuration for `NATIVE` in-memory format would be similar to the following:
      ```xml
          <map name="nativeMap*">
 
