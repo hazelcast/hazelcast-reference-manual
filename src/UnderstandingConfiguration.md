@@ -1,17 +1,7 @@
 
 # Understanding Configuration
 
-
-
-This chapter describes ....
-
-## Ways of Configuration
-
-????
-????
-????
-
-When Hazelcast starts up, it checks for the configuration as follows:
+When you start a Hazelcast member, Hazelcast checks its configuration as follows:
 
 -	First, it looks for the `hazelcast.config` system property. If it is set, its value is used as the path. This is useful if you want to be able to change your Hazelcast configuration; you can do this because it is not embedded within the application. You can set the `config` option with the following command:
  
@@ -51,7 +41,7 @@ When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazel
 
 For most users, the default configuration in this XML file should be fine. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
 
-For details about all elements and attributes used to configure Hazelcast, please refer to `hazelcast-full-example.xml` file in the `/bin` folder of your Hazelcast working directory.
+For details about all elements and attributes used to configure Hazelcast, please refer to `hazelcast-fhttps://hazelcast.slack.com/archives/github-mancenterull-example.xml` file in the `/bin` folder of your Hazelcast working directory.
 
 Besides declarative configuration, you can configure your cluster programmatically. Just instantiate a `Config` object and add/remove/modify properties. Please refer to the Programmatic Configuration section in [Configuration Overview](#configuration-overview) for a configuration code example.
 

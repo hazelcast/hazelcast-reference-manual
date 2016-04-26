@@ -26,7 +26,7 @@ Keep in mind that you should have already enabled the High-Density Memory Store 
 #### Required configuration changes when using NATIVE
 
 Note that the eviction mechanism is different for `NATIVE` in-memory format.
-The new eviction algorithm for map with HD store is similar to that of JCache with HD and is described [here](#eviction-algorithm).
+The new eviction algorithm for map with High-Density Memory Store is similar to that of JCache with High-Density Memory Store and is described [here](#eviction-algorithm).
 
   - Eviction percentage has no effect.
 
