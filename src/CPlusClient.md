@@ -180,6 +180,29 @@ for (size_t i = 0; i < entries->size(); ++i) {
     std::cout << "Finished" << std::endl;
 ```
 
+Raw pointer API uses the DataArray and EntryArray interfaces which allows late de-serialization of objects. This means that the entry in the returned array is de-serialized only when it is accessed. E.g.:
+```
+// No de-serialization here
+std::auto_ptr<hazelcast::client::DataArray<std::string> > vals = map.values(); 
+
+// de-serializes the item at index 0 assuming that there are at least 1 items in the array
+const std::string *value = vals->get(0);
+
+// no de-serialization here since it was already de-serialized
+value = vals->get(0);
+
+// no de-serialization here since it was already de-serialized
+value = (*vals)[0];
+
+// releases the value so that you can keep this object pointer in your application at some other place
+std::auto_ptr<std::string> releasedValue = vals->release(0);
+
+// de-serialization occurs again since the value was released already
+value = vals->get(0);
+```
+
+Using raw pointer based API may improve performance if you are using the API returning multiple values such as values, keySet, entrySet etc., since the cost of de-serialization is delayed until the item is actually accessed.
+
 ### Query API
 
 C++ client API allows you to query map values, keys and entries using predicates. It also allows you to use Hazelcast Map's `executeOnKey` and `executeOnEntries` methods with predicates. You can run a processor on a subset of entries with these methods. 

@@ -54,7 +54,7 @@ Hazelcast Client Protocol|Yes|Yes|Yes
 Fail Fast on Invalid Conviguration|Yes|No|No
 Sub-Listener Interfaces for Map ListenerMap|Yes|No|No
 Continuous Query|Yes|No|No
-Listener with Predicate|Yes|Yes|No
+Listener with Predicate|Yes|Yes|Yes
 Distributed Executor Service|Yes|No|No
 Query|Yes|Yes|Yes
 Near Cache|Yes|Yes|No
