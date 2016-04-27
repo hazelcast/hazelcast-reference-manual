@@ -1,9 +1,9 @@
 
 ## Logging Configuration
 
-Hazelcast has a flexible logging configuration and does not depend on any logging framework except JDK logging. It has built-in adaptors for a number of logging frameworks and it also supports custom loggers by providing logging interfaces.
+Hazelcast has a flexible logging configuration and does not depend on any logging framework except JDK logging. It has built-in adapters for a number of logging frameworks and it also supports custom loggers by providing logging interfaces.
 
-To use built-in adaptors, set the `hazelcast.logging.type` property to one of the predefined types below.
+To use built-in adapters, set the `hazelcast.logging.type` property to one of the predefined types below.
 
 -   **jdk**: JDK logging (default)
 
