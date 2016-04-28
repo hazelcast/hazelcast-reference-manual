@@ -133,7 +133,10 @@ This function should return the same ID with its serializer. This ID is used to 
 
 After you implement your serializer, you can register it using `SerializationConfig` as shown below:
 
-```    clientConfig.getSerializationConfig().registerSerializer(boost::shared_ptr<hazelcast::client::serialization::SerializerBase>(new MyCustomSerializer());
+```
+clientConfig.getSerializationConfig().
+registerSerializer(boost::shared_ptr<hazelcast::client::
+serialization::SerializerBase>(new MyCustomSerializer());
 ```
 
 ### Raw Pointer API
