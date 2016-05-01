@@ -11,9 +11,12 @@ This chapter describes the options to configure your Hazelcast applications and 
 ## Configuring Declaratively
 
 
-This is the configuration option where you use an XML configuration file. Hazelcast provides  the file `hazelcast.xml`.
+This is the configuration option where you use an XML configuration file. When you download and unzip `hazelcast-<version>.zip`, you will see the following files exist in `/bin` folder, which are standard XML-formatted configuration files:
 
-When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazelcast.xml` in the `/bin` folder. This is the declarative configuration file for Hazelcast. Part of this XML file is shown below.
+* `hazelcast.xml`: Default declarative configuration file for Hazelcast. The configuration in this XML file should be fine for most of the Hazelcast users. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
+* `hazelcast-full-example.xml`: Configuration file which includes all Hazelcast configuration elements and attributes with their descriptions. It is the "superset" of `hazelcast.xml`. You can use `hazelcast-full-example.xml` as a reference document to learn about any element or attribute, or you can change its name to `hazelcast.xml` and start to use it as your Hazelcast configuration file.
+
+A part of `hazelcast.xml` is shown as an example below.
 
 ```xml
     <group>
@@ -38,9 +41,7 @@ When you download and unzip `hazelcast-<`*version*`>.zip`, you will see a `hazel
             <tcp-ip enabled="false">
 ```
 
-For most users, the default configuration in this XML file should be fine. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
 
-For details about all elements and attributes used to configure Hazelcast, please refer to `hazelcast-full-example.xml` file in the `/bin` folder of your Hazelcast working directory.
 
 ## Configuring Programmatically
 
