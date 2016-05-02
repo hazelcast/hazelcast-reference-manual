@@ -183,28 +183,29 @@ for (size_t i = 0; i < entries->size(); ++i) {
     std::cout << "Finished" << std::endl;
 ```
 
-Raw pointer API uses the DataArray and EntryArray interfaces which allows late de-serialization of objects. This means that the entry in the returned array is de-serialized only when it is accessed. E.g.:
+Raw pointer API uses the DataArray and EntryArray interfaces which allow late deserialization of objects. The entry in the returned array is deserialized only when it is accessed. Please see the example code below:
+
 ```
-// No de-serialization here
+// No deserialization here
 std::auto_ptr<hazelcast::client::DataArray<std::string> > vals = map.values(); 
 
-// de-serializes the item at index 0 assuming that there are at least 1 items in the array
+// deserializes the item at index 0 assuming that there are at least 1 items in the array
 const std::string *value = vals->get(0);
 
-// no de-serialization here since it was already de-serialized
+// no deserialization here since it was already de-serialized
 value = vals->get(0);
 
-// no de-serialization here since it was already de-serialized
+// no deserialization here since it was already de-serialized
 value = (*vals)[0];
 
 // releases the value so that you can keep this object pointer in your application at some other place
 std::auto_ptr<std::string> releasedValue = vals->release(0);
 
-// de-serialization occurs again since the value was released already
+// deserialization occurs again since the value was released already
 value = vals->get(0);
 ```
 
-Using raw pointer based API may improve performance if you are using the API returning multiple values such as values, keySet, entrySet etc., since the cost of de-serialization is delayed until the item is actually accessed.
+Using raw pointer based API may improve performance if you are using the API to return multiple values such as values, keySet, and entrySet. In this case, cost of deserialization is delayed until the item is actually accessed.
 
 ### Query API
 
