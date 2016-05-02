@@ -1,5 +1,5 @@
 
-# Hazelcast Clusters
+# Setting Up Clusters
 
 This chapter describes Hazelcast clusters and the methods cluster members use to form a Hazelcast cluster. 
 

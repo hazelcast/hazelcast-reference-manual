@@ -22,13 +22,7 @@ You can set `hazelcast.logging.type` through declarative configuration, programm
 **Declarative Configuration**
 
 ```xml
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config
-    http://www.hazelcast.com/schema/config/hazelcast-config-3.0.xsd"
-    xmlns="http://www.hazelcast.com/schema/config"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
   ....
-
   <properties>
     <property name="hazelcast.logging.type">jdk</property>
     ....
@@ -45,8 +39,8 @@ config.setProperty( "hazelcast.logging.type", "log4j" );
 
 **System Property**
 
-	-	Using JVM parameter: `java -Dhazelcast.logging.type=slf4j`
-	-	Using System class: `System.setProperty( "hazelcast.logging.type", "none" );`
+- Using JVM parameter: `java -Dhazelcast.logging.type=slf4j`
+- Using System class: `System.setProperty( "hazelcast.logging.type", "none" );`
 
 
 If the provided logging mechanisms are not satisfactory, you can implement your own using the custom logging feature. To use it, implement the `com.hazelcast.logging.LoggerFactory` and `com.hazelcast.logging.ILogger` interfaces and set the system property `hazelcast.logging.class` as your custom `LoggerFactory` class name.
