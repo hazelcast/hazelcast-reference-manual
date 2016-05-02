@@ -5,13 +5,13 @@ This chapter describes the options to configure your Hazelcast applications and 
 
 * the declarative way
 * the programmatic way
-* using system properties
+* using Hazelcast system properties
 * within the Spring context
 
 ## Configuring Declaratively
 
 
-This is the configuration option where you use an XML configuration file. When you download and unzip `hazelcast-<version>.zip`, you will see the following files exist in `/bin` folder, which are standard XML-formatted configuration files:
+This is the configuration option where you use an XML configuration file. When you download and unzip `hazelcast-<version>.zip`, you will see the following files present in `/bin` folder, which are standard XML-formatted configuration files:
 
 * `hazelcast.xml`: Default declarative configuration file for Hazelcast. The configuration in this XML file should be fine for most of the Hazelcast users. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
 * `hazelcast-full-example.xml`: Configuration file which includes all Hazelcast configuration elements and attributes with their descriptions. It is the "superset" of `hazelcast.xml`. You can use `hazelcast-full-example.xml` as a reference document to learn about any element or attribute, or you can change its name to `hazelcast.xml` and start to use it as your Hazelcast configuration file.
@@ -19,43 +19,109 @@ This is the configuration option where you use an XML configuration file. When y
 A part of `hazelcast.xml` is shown as an example below.
 
 ```xml
-    <group>
-        <name>dev</name>
-        <password>dev-pass</password>
-    </group>
-    <management-center enabled="false">http://localhost:8080/mancenter</management-center>
-    <network>
-        <port auto-increment="true" port-count="100">5701</port>
-        <outbound-ports>
-            <!--
-            Allowed port range when connecting to other members.
-            0 or * means the port provided by the system.
-            -->
-            <ports>0</ports>
-        </outbound-ports>
-        <join>
-            <multicast enabled="true">
-                <multicast-group>224.2.2.3</multicast-group>
-                <multicast-port>54327</multicast-port>
-            </multicast>
-            <tcp-ip enabled="false">
+<group>
+	<name>dev</name>
+	<password>dev-pass</password>
+</group>
+<management-center enabled="false">http://localhost:8080/mancenter</management-center>
+<network>
+	<port auto-increment="true" port-count="100">5701</port>
+	<outbound-ports>
+		<!--
+		Allowed port range when connecting to other members.
+		0 or * means the port provided by the system.
+		-->
+		<ports>0</ports>
+	</outbound-ports>
+	<join>
+		<multicast enabled="true">
+		<multicast-group>224.2.2.3</multicast-group>
+		<multicast-port>54327</multicast-port>
+		</multicast>
+		<tcp-ip enabled="false">
 ```
 
 
 
 ## Configuring Programmatically
 
-???
+Besides declarative configuration, you can configure your cluster programmatically. For this you can create a `Config` object, set/change its properties and attributes, and use this `Config` object to create a new Hazelcast member. Following is an example code which configures some network and Hazelcast Map properties.
 
-Besides declarative configuration, you can configure your cluster programmatically. Just instantiate a `Config` object and add/remove/modify properties. Please refer to the Programmatic Configuration section in [Configuration Overview](#configuration-overview) for a configuration code example.
+```java
+Config config = new Config();
+config.getNetworkConfig().setPort( 5900 )
+					.setPortAutoIncrement( false );
+                
+MapConfig mapConfig = new MapConfig();
+mapConfig.setName( "testMap" )
+					.setBackupCount( 2 );
+					.setTimeToLiveSeconds( 300 );
+        
+config.addMapConfig( mapConfig );
+```
+
+To create a Hazelcast member with the above example configuration, pass the configuration object as shown below:
+
+```
+HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance( config );
+```
+
+You can also create a named Hazelcast member. In this case, you should set `instanceName` of `Config` object as shown below:
+
+```java
+Config config = new Config();
+config.setInstanceName( "my-instance" );
+Hazelcast.newHazelcastInstance( config );
+```
+
+To retrieve an existing Hazelcast member by its name, use the following:
+    
+```
+Hazelcast.getHazelcastInstanceByName( "my-instance" );
+```
+
+To retrieve all existing Hazelcast members, use the following:
+
+```
+Hazelcast.getAllHazelcastInstances();
+```
+
+<br><br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast performs schema validation through the file `hazelcast-config-<version>.xsd` which comes with your Hazelcast libraries. Hazelcast throws a meaningful exception if there is an error in the declarative or programmatic configuration.*
 
 ## Configuring with System Properties
 
-???
+You can use system properties to configure some aspects of Hazelcast. You set these properties as name and value pairs through declarative configuration, programmatic configuration or JVM system property. Following are examples for each option.
 
-Hazelcast also offers system properties to fine tune some aspects of Hazelcast. Please refer to the [System Properties section](#system-properties) for details.
+**Declaratively:**
 
-???
+```xml
+  ....
+  <properties>
+    <property name="hazelcast.property.foo">value</property>
+    ....
+  </properties>
+</hazelcast>
+```
+
+**Programmatically:**
+
+```java
+Config config = new Config() ;
+config.setProperty( "hazelcast.property.foo", "value" );
+```
+
+**Using JVM's `System` class or `-D` argument:**
+
+`System.setProperty( "hazelcast.property.foo", "value" );`
+
+or
+
+`java -Dhazelcast.property.foo=value`
+
+You will see Hazelcast system properties mentioned throughout this Reference Manual as required in some of the chapters and sections. All Hazelcast system properties are listed in the [System Properties appendix](#system-properties) with their descriptions, default values and property types as a reference for you.
+
+
 
 ## Configuring within Spring Context
 

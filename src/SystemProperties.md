@@ -5,11 +5,6 @@ Hazelcast has system properties to tune some aspects of Hazelcast. You can set t
 **Declarative Configuration**
 
 ```xml
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config
-    http://www.hazelcast.com/schema/config/hazelcast-config-3.0.xsd"
-    xmlns="http://www.hazelcast.com/schema/config"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
   ....
   <properties>
     <property name="hazelcast.property.foo">value</property>
