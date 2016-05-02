@@ -41,6 +41,109 @@ A part of `hazelcast.xml` is shown as an example below.
 		<tcp-ip enabled="false">
 ```
 
+### Composing Declarative Configuration
+
+You can compose the declarative configuration of your Hazelcast member or Hazelcast client from multiple declarative configuration snippets. In order to compose a declarative configuration, you can use the `<import/>` element to load different declarative configuration files.
+
+Let's say you want to compose the declarative configuration for Hazelcast out of two configurations: `development-group-config.xml` and `development-network-config.xml`. These two configurations are shown below.
+
+`development-group-config.xml`:
+
+```xml
+<hazelcast>
+  <group>
+      <name>dev</name>
+      <password>dev-pass</password>
+  </group>
+</hazelcast>
+```
+<br></br>
+
+`development-network-config.xml`:
+
+```xml
+<hazelcast>
+  <network>
+    <port auto-increment="true" port-count="100">5701</port>
+    <join>
+        <multicast enabled="true">
+            <multicast-group>224.2.2.3</multicast-group>
+            <multicast-port>54327</multicast-port>
+        </multicast>
+    </join>
+  </network>
+</hazelcast>
+```
+
+To get your example Hazelcast declarative configuration out of the above two, use the `<import/>` element as shown below.
+
+
+```xml
+<hazelcast>
+  <import resource="development-group-config.xml"/>
+  <import resource="development-network-config.xml"/>
+</hazelcast>
+```
+
+This feature also applies to the declarative configuration of Hazelcast client. Please see the following examples.
+
+
+`client-group-config.xml`:
+
+```xml
+<hazelcast-client>
+  <group>
+      <name>dev</name>
+      <password>dev-pass</password>
+  </group>
+</hazelcast-client>
+```
+<br></br>
+
+`client-network-config.xml`:
+
+```xml
+<hazelcast-client>
+    <network>
+        <cluster-members>
+            <address>127.0.0.1:7000</address>
+        </cluster-members>
+    </network>
+</hazelcast-client>
+```
+
+To get a Hazelcast client declarative configuration from the above two examples, use the `<import/>` element as shown below.
+
+```xml
+<hazelcast-client>
+  <import resource="client-group-config.xml"/>
+  <import resource="client-network-config.xml"/>
+</hazelcast>
+```
+
+
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Use `<import/>` element on top level of the XML hierarchy.*
+<br></br>
+
+Using the element `<import>`, you can also load XML resources from classpath and file system:
+
+```xml
+<hazelcast>
+  <import resource="file:///etc/hazelcast/development-group-config.xml"/> <!-- loaded from filesystem -->
+  <import resource="classpath:development-network-config.xml"/>  <!-- loaded from classpath -->
+</hazelcast>
+```
+
+The element `<import>` supports placeholders too. Please see the following example snippet:
+
+```xml
+<hazelcast>
+  <import resource="${environment}-group-config.xml"/>
+  <import resource="${environment}-network-config.xml"/>
+</hazelcast>
+```
+
 
 
 ## Configuring Programmatically
@@ -125,111 +228,25 @@ You will see Hazelcast system properties mentioned throughout this Reference Man
 
 ## Configuring within Spring Context
 
-???
+If you use Hazelcast with [Spring](https://spring.io/) you can declare beans using the namespace `hazelcast`. When you add the namespace declaration to the element `beans` in the Spring context file, you can start to use the namespace shortcut `hz` to be used as a bean declaration. Following is an example Hazelcast configuration when integrated with Spring:
 
-
-## Composing Declarative Configuration
-
-You can compose the declarative configuration of your Hazelcast or Hazelcast Client from multiple declarative configuration snippets. In order to compose a declarative configuration, you can use the `<import/>` element to load different declarative configuration files. Please see the following examples.
-
-Let's say you want to compose the declarative configuration for Hazelcast out of two configurations: `development-group-config.xml` and `development-network-config.xml`. These two configurations are shown below.
-
-`development-group-config.xml`:
-
-```xml
-<hazelcast>
-  <group>
-      <name>dev</name>
-      <password>dev-pass</password>
-  </group>
-</hazelcast>
 ```
-<br></br>
-
-`development-network-config.xml`:
-
-```xml
-<hazelcast>
-  <network>
-    <port auto-increment="true" port-count="100">5701</port>
-    <join>
-        <multicast enabled="true">
-            <multicast-group>224.2.2.3</multicast-group>
-            <multicast-port>54327</multicast-port>
-        </multicast>
-    </join>
-  </network>
-</hazelcast>
+<hz:hazelcast id="instance">
+  <hz:config>
+    <hz:group name="dev" password="password"/>
+    <hz:network port="5701" port-auto-increment="false">
+      <hz:join>
+        <hz:multicast enabled="false"/>
+        <hz:tcp-ip enabled="true">
+          <hz:members>10.10.1.2, 10.10.1.3</hz:members>
+        </hz:tcp-ip>
+      </hz:join>
+    </hz:network>
+  </hz:config>
+</hz:hazelcast>
 ```
 
-To get your example Hazelcast declarative configuration out of the above two, use the `<import/>` element as shown below.
-
-
-```xml
-<hazelcast>
-  <import resource="development-group-config.xml"/>
-  <import resource="development-network-config.xml"/>
-</hazelcast>
-```
-
-This feature also applies to the declarative configuration of Hazelcast Client. Please see the following examples.
-
-
-`client-group-config.xml`:
-
-```xml
-<hazelcast-client>
-  <group>
-      <name>dev</name>
-      <password>dev-pass</password>
-  </group>
-</hazelcast-client>
-```
-<br></br>
-
-`client-network-config.xml`:
-
-```xml
-<hazelcast-client>
-    <network>
-        <cluster-members>
-            <address>127.0.0.1:7000</address>
-        </cluster-members>
-    </network>
-</hazelcast-client>
-```
-
-To get a Hazelcast Client declarative configuration from the above two examples, use the `<import/>` element as shown below.
-
-```xml
-<hazelcast-client>
-  <import resource="client-group-config.xml"/>
-  <import resource="client-network-config.xml"/>
-</hazelcast>
-```
-
-
-<br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *You can only use `<import/>` element on top level of the XML hierarchy.*
-<br></br>
-
-- XML resources can be loaded from classpath and filesystem. Please see the following example.
-
-```xml
-<hazelcast>
-  <import resource="file:///etc/hazelcast/development-group-config.xml"/> <!-- loaded from filesystem -->
-  <import resource="classpath:development-network-config.xml"/>  <!-- loaded from classpath -->
-</hazelcast>
-```
-
-- You can use property placeholders in the `<import/>` elements. Please see the following example.
-
-```xml
-<hazelcast>
-  <import resource="${environment}-group-config.xml"/>
-  <import resource="${environment}-network-config.xml"/>
-</hazelcast>
-```
+Please see the [Spring Integration section](#spring-integration) for more information on Hazelcast-Spring integration.
 
 
 ## Checking Configuration
@@ -243,7 +260,7 @@ When you start a Hazelcast member, Hazelcast checks its configuration as follows
 	The path can be a regular one or a classpath reference with the prefix `classpath:`.
 -	If the above system property is not set, Hazelcast then checks whether there is a `hazelcast.xml` file in the working directory.
 -	If not, it then checks whether `hazelcast.xml` exists on the classpath.
--	If none of the above works, Hazelcast loads the default configuration (`hazelcast-default.xml`) that comes with `hazelcast.jar`.
+-	If none of the above works, Hazelcast loads the default configuration (`hazelcast.xml`) that comes with your Hazelcast package.
 
 
 
