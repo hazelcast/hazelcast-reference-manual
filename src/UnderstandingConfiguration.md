@@ -189,8 +189,20 @@ To retrieve all existing Hazelcast members, use the following:
 Hazelcast.getAllHazelcastInstances();
 ```
 
-<br><br>
+<br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast performs schema validation through the file `hazelcast-config-<version>.xsd` which comes with your Hazelcast libraries. Hazelcast throws a meaningful exception if there is an error in the declarative or programmatic configuration.*
+
+<br>
+
+If you want to specify your own configuration file to create `Config`, Hazelcast supports several ways including filesystem, classpath, InputStream, and URL:
+
+- `Config cfg = new XmlConfigBuilder(xmlFileName).build();`
+- `Config cfg = new XmlConfigBuilder(inputStream).build();`
+- `Config cfg = new ClasspathXmlConfig(xmlFileName);`
+- `Config cfg = new FileSystemXmlConfig(configFilename);`
+- `Config cfg = new UrlXmlConfig(url);`
+- `Config cfg = new InMemoryXmlConfig(xml);`
+
 
 ## Configuring with System Properties
 
@@ -251,7 +263,7 @@ Please see the [Spring Integration section](#spring-integration) for more inform
 
 ## Checking Configuration
 
-When you start a Hazelcast member, Hazelcast checks its configuration as follows:
+When you start a Hazelcast member without passing a `Config` object as explained in the [Configuring Programmatically section](#configuring-programmatically), Hazelcast checks the member's configuration as follows:
 
 -	First, it looks for the `hazelcast.config` system property. If it is set, its value is used as the path. This is useful if you want to be able to change your Hazelcast configuration; you can do this because it is not embedded within the application. You can set the `config` option with the following command:
  
@@ -262,14 +274,15 @@ When you start a Hazelcast member, Hazelcast checks its configuration as follows
 -	If not, it then checks whether `hazelcast.xml` exists on the classpath.
 -	If none of the above works, Hazelcast loads the default configuration (`hazelcast.xml`) that comes with your Hazelcast package.
 
+Before configuring Hazelcast, please try to work with the default configuration to see if it works for you. This default configuration should be fine for most of the users. If not, you can consider to modify the configuration to be more suitable for your environment.
 
 
 
 ## Using Wildcards
 
-Hazelcast supports wildcard configuration for all distributed data structures that can be configured using `Config` (i.e. for all except `IAtomicLong`, `IAtomicReference`). Using an asterisk (\*) character in the name, different instances of maps, queues, topics, semaphores, etc. can be configured by a single configuration.
+Hazelcast supports wildcard configuration for all distributed data structures that can be configured using `Config`, that is, for all except `IAtomicLong`, `IAtomicReference`. Using an asterisk (\*) character in the name, different instances of maps, queues, topics, semaphores, etc. can be configured by a single configuration.
 
-A single (only one) asterisk (\*) can be placed anywhere inside the configuration name.
+A single asterisk (\*) can be placed anywhere inside the configuration name.
 
 For instance, a map named `com.hazelcast.test.mymap` can be configured using one of the following configurations.
 
@@ -293,6 +306,7 @@ For instance, a map named `com.hazelcast.test.mymap` can be configured using one
 ...
 </map>
 ```
+
 Or a queue '`com.hazelcast.test.myqueue`':
 
 ```xml
