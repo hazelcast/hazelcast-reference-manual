@@ -2,19 +2,7 @@
 ## Other Network Configurations
 
 
-All network related configuration is performed via the `network` element in the Hazelcast XML configuration file or the class `NetworkConfig` when using programmatic configuration. 
-
-It has the following sub-elements which are described in the following sections.
-
-- [Public Address](#public-address)
-- [Port](#port)
-- [Outbound Ports](#outbound-ports)
-- [Reuse Address](#reuse-address)
-- [Join](#join)
-- [Interfaces](#interfaces)
-- [SSL](#ssl)
-- [Socket Interceptor](#socket-interceptor)
-- [Symmetric Encryption](#symmetric-encryption)
+All network related configurations are performed via the `network` element in the Hazelcast XML configuration file or the class `NetworkConfig` when using programmatic configuration. Following subsections describe the available configurations that you can perform under the `network` element.
 
 ### Public Address
 
@@ -135,7 +123,7 @@ networkConfig.setReuseAddress( true );
 
 ### Join
 
-The `join` configuration element is used to enable the Hazelcast instances to form a cluster, i.e. to join the members. Three ways can be used to join the members: discovery by TCP/IP, by multicast, and by discovery on AWS (EC2 auto-discovery). The following are example configurations.
+The `join` configuration element is used to discover Hazelcast members and enable them to form a cluster. Hazelcast provides multicast, TCP/IP, EC2, and jclouds&reg; discovery mechanisms. These mechanisms are explained the [Discovering Cluster Members section](#discovering-cluster-members). This section describes all the sub-elements and attributes of `join` element. The following are example configurations.
 
 **Declarative:**
 
@@ -286,19 +274,6 @@ interface.setEnabled( true )
 ```
 
 
-
-
-### SSL
-
-This is a Hazelcast Enterprise feature, please see the [Security chapter](#security).
-
-### Socket Interceptor
-
-This is a Hazelcast Enterprise feature, please see the [Security chapter](#security).
-
-### Symmetric Encryption
-
-This is a Hazelcast Enterprise feature, please see the [Security chapter](#security).
 
 ### IPv6 Support
 

@@ -3,10 +3,10 @@
 
 This chapter describes the options to configure your Hazelcast applications and explains the utilities which you can make use of while configuring. You can configure Hazelcast using one or mix of the following options: 
 
-* the declarative way
-* the programmatic way
-* using Hazelcast system properties
-* within the Spring context
+* Declarative way
+* Programmatic way
+* Using Hazelcast system properties
+* Within the Spring context
 
 ## Configuring Declaratively
 
@@ -263,7 +263,7 @@ Please see the [Spring Integration section](#spring-integration) for more inform
 
 ## Checking Configuration
 
-When you start a Hazelcast member without passing a `Config` object as explained in the [Configuring Programmatically section](#configuring-programmatically), Hazelcast checks the member's configuration as follows:
+When you start a Hazelcast member without passing a `Config` object, as explained in the [Configuring Programmatically section](#configuring-programmatically), Hazelcast checks the member's configuration as follows:
 
 -	First, it looks for the `hazelcast.config` system property. If it is set, its value is used as the path. This is useful if you want to be able to change your Hazelcast configuration; you can do this because it is not embedded within the application. You can set the `config` option with the following command:
  
@@ -365,10 +365,3 @@ builder.setProperties(properties)
 Config config = builder.build();
 HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 ```
-
-
-
-
-???
-???
-????
