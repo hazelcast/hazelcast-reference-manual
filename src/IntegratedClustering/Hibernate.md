@@ -207,7 +207,7 @@ public class Cat implements Serializable {
 
 If you need to access `HazelcastInstance` used by Hibernate `SessionFactory`, you can give a name to the `HazelcastInstance` while configuring Hazelcast. Then it is possible to retrieve the instance using `getHazelcastInstanceByName` static method of `Hazelcast`.
 
-Please refer to the [Configuration Overview section](#configuration-overview) to learn how to create a named Hazelcast instance.
+Please refer to the [Configuring Programmatically section](#configuring-programmatically) to learn how to create a named Hazelcast instance.
 
 **Changing/setting lock timeout value of *read-write* strategy**
 
