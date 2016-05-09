@@ -571,3 +571,280 @@
             }
 
         },
+        
+       // Show
+        // ----
+        //      Opens the current sub-header
+        show: function(elem, scroll) {
+
+            // Stores the plugin context in the `self` variable
+            var self = this,
+                element = elem;
+
+            // If the sub-header is not already visible
+            if (!elem.is(":visible")) {
+
+                // If the current element does not have any nested subheaders, is not a header, and its parent is not visible
+                if(!elem.find(subheaderClass).length && !elem.parent().is(headerClass) && !elem.parent().is(":visible")) {
+
+                    // Sets the current element to all of the subheaders within the current header
+                    elem = elem.parents(subheaderClass).add(elem);
+
+                }
+
+                // If the current element does not have any nested subheaders and is not a header
+                else if(!elem.children(subheaderClass).length && !elem.parent().is(headerClass)) {
+
+                    // Sets the current element to the closest subheader
+                    elem = elem.closest(subheaderClass);
+
+                }
+
+                //Determines what jQuery effect to use
+                switch (self.options.showEffect) {
+
+                    //Uses `no effect`
+                    case "none":
+
+                        elem.show();
+
+                    break;
+
+                    //Uses the jQuery `show` special effect
+                    case "show":
+
+                        elem.show(self.options.showEffectSpeed);
+
+                    break;
+
+                    //Uses the jQuery `slideDown` special effect
+                    case "slideDown":
+
+                        elem.slideDown(self.options.showEffectSpeed);
+
+                    break;
+
+                    //Uses the jQuery `fadeIn` special effect
+                    case "fadeIn":
+
+                        elem.fadeIn(self.options.showEffectSpeed);
+
+                    break;
+
+                    //If none of the above options were passed, then a `jQueryUI show effect` is expected
+                    default:
+
+                        elem.show();
+
+                    break;
+
+                }
+
+            }
+
+            // If the current subheader parent element is a header
+            if(elem.parent().is(headerClass)) {
+
+                // Hides all non-active sub-headers
+                self.hide($(subheaderClass).not(elem));
+
+            }
+
+            // If the current subheader parent element is not a header
+            else {
+
+                // Hides all non-active sub-headers
+                self.hide($(subheaderClass).not(elem.closest(headerClass).find(subheaderClass).not(elem.siblings())));
+
+            }
+
+            // Maintains chainablity
+            return self;
+
+        },
+
+        // Hide
+        // ----
+        //      Closes the current sub-header
+        hide: function(elem) {
+
+            // Stores the plugin context in the `self` variable
+            var self = this;
+
+            //Determines what jQuery effect to use
+            switch (self.options.hideEffect) {
+
+                // Uses `no effect`
+                case "none":
+
+                    elem.hide();
+
+                break;
+
+                // Uses the jQuery `hide` special effect
+                case "hide":
+
+                    elem.hide(self.options.hideEffectSpeed);
+
+                break;
+
+                // Uses the jQuery `slideUp` special effect
+                case "slideUp":
+
+                    elem.slideUp(self.options.hideEffectSpeed);
+
+                break;
+
+                // Uses the jQuery `fadeOut` special effect
+                case "fadeOut":
+
+                    elem.fadeOut(self.options.hideEffectSpeed);
+
+                break;
+
+                // If none of the above options were passed, then a `jqueryUI hide effect` is expected
+                default:
+
+                    elem.hide();
+
+                break;
+
+            }
+
+            // Maintains chainablity
+            return self;
+        },
+
+        // _triggerShow
+        // ------------
+        //      Determines what elements get shown on scroll and click
+        _triggerShow: function(elem, scroll) {
+
+            var self = this;
+
+            // If the current element's parent is a header element or the next element is a nested subheader element
+            if(elem.parent().is(headerClass) || elem.next().is(subheaderClass)) {
+
+                // Shows the next sub-header element
+                self.show(elem.next(subheaderClass), scroll);
+
+            }
+
+            // If the current element's parent is a subheader element
+            else if(elem.parent().is(subheaderClass)) {
+
+                // Shows the parent sub-header element
+                self.show(elem.parent(), scroll);
+
+            }
+
+            // Maintains chainability
+            return self;
+
+        },
+
+        // _addCSSClasses
+        // --------------
+        //      Adds CSS classes to the newly generated table of contents HTML
+        _addCSSClasses: function() {
+
+            // If the user wants a jqueryUI theme
+            if(this.options.theme === "jqueryui") {
+
+                this.focusClass = "ui-state-default";
+
+                this.hoverClass = "ui-state-hover";
+
+                //Adds the default styling to the dropdown list
+                this.element.addClass("ui-widget").find(".toc-title").addClass("ui-widget-header").end().find("li").addClass("ui-widget-content");
+
+            }
+
+            // If the user wants a twitterBootstrap theme
+            else if(this.options.theme === "bootstrap") {
+
+                this.element.find(headerClass + "," + subheaderClass).addClass("nav nav-list");
+
+                this.focusClass = "active";
+
+            }
+
+            // If a user does not want a prebuilt theme
+            else {
+
+                // Adds more neutral classes (instead of jqueryui)
+
+                this.focusClass = tocFocusClassName;
+
+                this.hoverClass = tocHoverClassName;
+
+            }
+
+            //Maintains chainability
+            return this;
+
+        },
+
+        // setOption
+        // ---------
+        //      Sets a single Tocify option after the plugin is invoked
+        setOption: function() {
+
+            // Calls the jQueryUI Widget Factory setOption method
+            $.Widget.prototype._setOption.apply(this, arguments);
+
+        },
+
+        // setOptions
+        // ----------
+        //      Sets a single or multiple Tocify options after the plugin is invoked
+        setOptions: function() {
+
+            // Calls the jQueryUI Widget Factory setOptions method
+            $.Widget.prototype._setOptions.apply(this, arguments);
+
+        },
+
+        // _scrollTo
+        // ---------
+        //      Scrolls to a specific element
+        _scrollTo: function(elem) {
+
+            var self = this,
+                duration = self.options.smoothScroll || 0,
+                scrollTo = self.options.scrollTo,
+                currentDiv = $('div[data-unique="' + elem.attr("data-unique") + '"]');
+
+            if(!currentDiv.length) {
+
+                return self;
+
+            }
+
+            // Once all animations on the page are complete, this callback function will be called
+            $("html, body").promise().done(function() {
+
+                // Animates the html and body element scrolltops
+                $("html, body").animate({
+
+                    // Sets the jQuery `scrollTop` to the top offset of the HTML div tag that matches the current list item's `data-unique` tag
+                    "scrollTop": currentDiv.offset().top - ($.isFunction(scrollTo) ? scrollTo.call() : scrollTo) + "px"
+
+                }, {
+
+                    // Sets the smoothScroll animation time duration to the smoothScrollSpeed option
+                    "duration": duration
+
+                });
+
+            });
+
+            // Maintains chainability
+            return self;
+
+        }
+
+    });
+
+})); 
+        
