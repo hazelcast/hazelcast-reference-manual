@@ -33,7 +33,7 @@ public class FillMapMember {
 }
 ```
 
-When you run this code, a cluster member is created with a map whose entries are distributed across the members's partitions. See the below illustration. For now, this is a single member cluster.
+When you run this code, a cluster member is created with a map whose entries are distributed across the members' partitions. See the below illustration. For now, this is a single member cluster.
 
 ![Map Entries in a Single Member](images/1Node.png)
 
@@ -41,7 +41,7 @@ When you run this code, a cluster member is created with a map whose entries are
 
 #### Creating A Member for Map Backup
 
-Now, let's create a second member by running the above code again. This will create a cluster with 2 members. This is also where backups of entries are created; remember the backup partitions mentioned in the [Hazelcast Overview section](#hazelcast-overview). The following illustration shows two members and how the data and its backup is distributed.
+Now let's create a second member by running the above code again. This will create a cluster with two members. This is also where backups of entries are created--remember the backup partitions mentioned in the [Hazelcast Overview section](#hazelcast-overview). The following illustration shows two members and how the data and its backup is distributed.
 
 ![Map Entries with Backups in Two Members](images/2Nodes.png)
 
