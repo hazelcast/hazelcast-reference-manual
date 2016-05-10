@@ -4,7 +4,7 @@
 
 As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers distributed implementations of Java interfaces. Below is the list of these implementations with links to the corresponding sections in this manual.
 
-- **Standard utility collections:**
+- **Standard utility collections**
 
 	- [Map](#map) is the distributed implementation of `java.util.Map`. It lets you read from and write to a Hazelcast map with methods such as `get` and `put`.
 	- [Queue](#queue) is the distributed implementation of `java.util.concurrent.BlockingQueue`. You can add an item in one member and remove it from another one.
@@ -16,7 +16,7 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 
 - **Topic** is the distributed mechanism for publishing messages that are delivered to multiple subscribers. It is also known as the publish/subscribe (pub/sub) messaging model. Please see the [Topic section](#topic) for more information. Hazelcast also has a structure called Reliable Topic which uses the same interface of Hazelcast Topic. The difference is that it is backed up by the Ringbuffer data structure. Please see the [Reliable Topic section](#reliable-topic).
 
-- **Concurrency utilities**:
+- **Concurrency utilities**
 
 	- [Lock](#lock) is the distributed implementation of `java.util.concurrent.locks.Lock`. When you use lock, the critical section that Hazelcast Lock guards is guaranteed to be executed by only one thread in the entire cluster.
 	- [Semaphore](#isemaphore) is the distributed implementation of `java.util.concurrent.Semaphore`. When performing concurrent activities, semaphores offer permits to control the thread counts.
@@ -25,7 +25,7 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 	- [IdGenerator](#idgenerator) is used to generate cluster-wide unique identifiers. ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`.
 	- [CountdownLatch](#icountdownlatch) is the distributed implementation of `java.util.concurrent.CountDownLatch`. Hazelcast CountDownLatch is a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
 
-Common Features of all Hazelcast Data Structures:
+Common Features of all Hazelcast Data Structures
 
 
 - If a member goes down, its backup replica (which holds the same data) will dynamically redistribute the data, including the ownership and locks on them, to the remaining live members. As a result, there will not be any data loss.
