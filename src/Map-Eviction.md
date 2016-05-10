@@ -1,7 +1,7 @@
 
 ### Evicting Map Entries
 
-Unless you delete the map entries manually or use an eviction policy, they will remain in the map. Hazelcast supports policy based eviction for distributed maps. Currently supported policies are LRU (Least Recently Used) and LFU (Least Frequently Used).
+Unless you delete the map entries manually or use an eviction policy, they will remain in the map. Hazelcast supports policy-based eviction for distributed maps. Currently supported policies are LRU (Least Recently Used) and LFU (Least Frequently Used).
 
 #### Understanding Map Eviction
 
@@ -20,15 +20,15 @@ Assume that you have the following figures as examples:
 * `max-size` (PER_NODE): 20000
 * `eviction-percentage` (please see [Configuring Map Eviction](#configuring-map-eviction)):  10%
 
-The total number of entries here is 20000 (partition count * entry count for each partition). This means you are at the eviction threshold since you set the `max-size` to 20000. When you try to put an entry:
+The total number of entries here is 20000 (partition count * entry count for each partition). This means you are at the eviction threshold since you set the `max-size` to 20000. When you try to put an entry
 
-1. The entry goes to the relevant partition.
-2. The partition checks whether the eviction threshold is reached (`max-size`).
-3. If reached, approximately 10 (100 * 10%) entries are evicted from that particular partition.
+1. the entry goes to the relevant partition;
+2. the partition checks whether the eviction threshold is reached (`max-size`);
+3. if reached, approximately 10 (100 * 10%) entries are evicted from that particular partition.
 
 As a result of this eviction process, when you check the size of your map, it is ~19990 (20000 - ~10). After this eviction, subsequent put operations will not trigger the next eviction until the map size is again close to the `max-size`.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *The above scenario is just an example to describe how the eviction process works. Hazelcast finds the most optimum number of entries to be evicted according to your cluster size and selected policy.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *The above scenario is simply an example that describes how the eviction process works. Hazelcast finds the most optimum number of entries to be evicted according to your cluster size and selected policy.*
 
 
 #### Configuring Map Eviction
@@ -50,61 +50,61 @@ The following is an example declarative configuration for map eviction.
 </hazelcast>
 ```
 
-Let's describe each element.
+Let's describe each element:
 
-- `time-to-live`: Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
-- `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
-- `eviction-policy`: Valid values are described below.
+- `time-to-live`. Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
+- `max-idle-seconds`. Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
+- `eviction-policy`. Valid values are described below.
 	- NONE: Default policy. If set, no items will be evicted and the property `max-size` will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
 	- LRU: Least Recently Used.
 	- LFU: Least Frequently Used.
 
-- `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
-	- `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than the partition count (which is 271 by default).		
+- `max-size`. Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
+	- `PER_NODE`. Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than the partition count (which is 271 by default).		
 
 		`<max-size policy="PER_NODE">5000</max-size>`
 
-	- `PER_PARTITION`: Maximum number of map entries within each partition. Storage size depends on the partition count in a cluster member. This attribute should not be used often. Avoid using this attribute with a small cluster: if the cluster is small it will be hosting more partitions, and therefore map entries, than that of a larger cluster. Thus, for a small cluster, eviction of the entries will decrease performance (the number of entries is large).
+	- `PER_PARTITION`. Maximum number of map entries within each partition. Storage size depends on the partition count in a cluster member. This attribute should not be used often. For instance, avoid using this attribute with a small cluster. If the cluster is small, it will be hosting more partitions, and therefore map entries, than that of a larger cluster. Thus, for a small cluster, eviction of the entries will decrease performance (the number of entries is large).
 
 		`<max-size policy="PER_PARTITION">27100</max-size>`
 
-	- `USED_HEAP_SIZE`: Maximum used heap size in megabytes per map for each Hazelcast instance. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
+	- `USED_HEAP_SIZE`. Maximum used heap size in megabytes per map for each Hazelcast instance. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
 
 		`<max-size policy="USED_HEAP_SIZE">4096</max-size>`
 
-	- `USED_HEAP_PERCENTAGE`: Maximum used heap size percentage per map for each Hazelcast instance. If, for example, JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when used heap size exceeds 100 MB. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
+	- `USED_HEAP_PERCENTAGE`. Maximum used heap size percentage per map for each Hazelcast instance. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when used heap size exceeds 100 MB. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
 
 		`<max-size policy="USED_HEAP_PERCENTAGE">10</max-size>`
 
-	- `FREE_HEAP_SIZE`: Minimum free heap size in megabytes for each JVM.
+	- `FREE_HEAP_SIZE`. Minimum free heap size in megabytes for each JVM.
 
 		`<max-size policy="FREE_HEAP_SIZE">512</max-size>`
 
-	- `FREE_HEAP_PERCENTAGE`: Minimum free heap size percentage for each JVM. If, for example, JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when free heap size is below 100 MB.
+	- `FREE_HEAP_PERCENTAGE`. Minimum free heap size percentage for each JVM. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when free heap size is below 100 MB.
 
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
-	- `USED_NATIVE_MEMORY_SIZE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size in megabytes per map for each Hazelcast instance.
+	- `USED_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size in megabytes per map for each Hazelcast instance.
 
 		`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
 
-	- `USED_NATIVE_MEMORY_PERCENTAGE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size percentage per map for each Hazelcast instance.
+	- `USED_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size percentage per map for each Hazelcast instance.
 
 		`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
 
-	- `FREE_NATIVE_MEMORY_SIZE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Minimum free native memory size in megabytes for each Hazelcast instance.
+	- `FREE_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Minimum free native memory size in megabytes for each Hazelcast instance.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
 
-	- `FREE_NATIVE_MEMORY_PERCENTAGE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Minimum free native memory size percentage for each Hazelcast instance.
+	- `FREE_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Minimum free native memory size percentage for each Hazelcast instance.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
 
 
-- `eviction-percentage`: When `max-size` is reached, the specified percentage of the map will be evicted. For example, if set to 25, 25% of the entries will be evicted. Setting this property to a smaller value will cause eviction of a smaller number of map entries. Therefore, if map entries are inserted frequently, smaller percentage values may lead to overheads. Valid values are integers between 0 and 100. The default value is 25.
-- `min-eviction-check-millis`: Minimum time in milliseconds which should elapse before checking whether a partition of the map is evictable or not. In other terms, this property specifies the frequency of the eviction process. The default value is 100. Setting it to 0 (zero) makes the eviction process run for every put operation.
+- `eviction-percentage`. When `max-size` is reached, the specified percentage of the map will be evicted. For example, if set to 25, 25% of the entries will be evicted. Setting this property to a smaller value will cause eviction of a smaller number of map entries. Therefore, if map entries are inserted frequently, smaller percentage values may lead to overheads. Valid values are integers between 0 and 100. The default value is 25.
+- `min-eviction-check-millis`. Minimum time in milliseconds that should elapse before checking whether a partition of the map is evictable or not. In other terms, this property specifies the frequency of the eviction process. The default value is 100. Setting it to 0 makes the eviction process run for every put operation.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *When map entries are inserted frequently, the property `min-eviction-check-millis` should be set to a number lower than the insertion period in order not to let any entry escape from the eviction.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *When map entries are inserted frequently, the property `min-eviction-check-millis` should be set to a number lower than the insertion period so that no entry can escape from the eviction.*
 
 
 #### Example Eviction Configurations
@@ -118,7 +118,7 @@ Let's describe each element.
 </map>
 ```
 
-In the above example, `documents` map starts to evict its entries from a member when the map size exceeds 10000 in that member. Then, the entries least recently used will be evicted. The entries not used for more than 60 seconds will be evicted as well.
+In the above example, `documents` map starts to evict its entries from a member when the map size exceeds 10000 in that member. Then the entries least recently used will be evicted. The entries not used for more than 60 seconds will be evicted as well.
 
 And the following is an example eviction configuration for a map having `NATIVE` as the in-memory format:
 
@@ -137,7 +137,7 @@ And the following is an example eviction configuration for a map having `NATIVE`
 The eviction policies and configurations explained above apply to all the entries of a map. The entries that meet the specified eviction conditions are evicted.
 
 
-But you may want to evict some specific map entries.  In this case, you can use the `ttl` and `timeunit` parameters of the method `map.put()`. An example code line is given below.
+You may also want to evict some specific map entries.  To do this, you can use the `ttl` and `timeunit` parameters of the method `map.put()`. An example code line is given below.
 
 `myMap.put( "1", "John", 50, TimeUnit.SECONDS )`
 
