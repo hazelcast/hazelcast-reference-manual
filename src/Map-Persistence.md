@@ -9,9 +9,9 @@ When you provide a `MapLoader` implementation and request an entry (`IMap.get()`
 When a `MapStore` implementation is provided, an entry is also put into a user defined data store. 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Data store needs to be a centralized system that is
-accessible from all Hazelcast members. Persistence to local file system is not supported.*
+accessible from all Hazelcast members. Persistence to a local file system is not supported.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Also note that, the `MapStore` interface extends the `MapLoader` interface as you can see in the interface [code](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MapStore.java).*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Also note that the `MapStore` interface extends the `MapLoader` interface as you can see in the interface [code](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MapStore.java).*
 
 
 
@@ -88,19 +88,19 @@ public class PersonMapStore implements MapStore<Long, Person> {
 }
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *During the initial loading process, MapStore uses a thread different than the partition threads that is used by the ExecutorService. After the initialization is completed, the `map.get` method looks up any inexistent value from the database in a partition thread or the `map.put` method looks up the database to return the previously associated value for a key also in a partition thread.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *During the initial loading process, MapStore uses a thread different from the partition threads that are used by the ExecutorService. After the initialization is completed, the `map.get` method looks up any nonexistent value from the database in a partition thread, or the `map.put` method looks up the database to return the previously associated value for a key also in a partition thread.*
 
 <br></br>
 ***RELATED INFORMATION***
 
-*For more MapStore/MapLoader code samples please see <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java" target="_blank">here</a>.*
+*For more MapStore/MapLoader code samples, please see <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java" target="_blank">here</a>.*
 <br></br>
 
-Hazelcast supports read-through, write-through, and write-behind persistence modes which are explained in the subsections below.
+Hazelcast supports read-through, write-through, and write-behind persistence modes, which are explained in the subsections below.
 
 #### Using Read-Through Persistence
 
-If an entry does not exist in the memory when an application asks for it, Hazelcast asks your loader implementation to load that entry from the data store.  If the entry exists there, the loader implementation gets it, hands it to Hazelcast, and Hazelcast puts it into the memory. This is read-through persistence mode.
+If an entry does not exist in memory when an application asks for it, Hazelcast asks the loader implementation to load that entry from the data store.  If the entry exists there, the loader implementation gets it, hands it to Hazelcast, and Hazelcast puts it into memory. This is read-through persistence mode.
 
 
 
@@ -124,7 +124,7 @@ You can configure `MapStore` as write-behind by setting the `write-delay-seconds
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *In write-behind mode, Hazelcast coalesces updates on a specific key by default, which means it applies only the last update on that key. However, you can set `MapStoreConfig#setWriteCoalescing` to `FALSE` and you can store all updates performed on a key to the data store.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *When you set `MapStoreConfig#setWriteCoalescing` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception will be thrown to prevent uncontrolled grow of write-behind queues. You can set per node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the [System Properties section](#system-properties) for information on this property and how to set the system properties.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *When you set `MapStoreConfig#setWriteCoalescing` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception will be thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the [System Properties section](#system-properties) for information on this property and how to set the system properties.*
 
 
 In write-behind mode, when the `map.put(key,value)` call returns:
@@ -141,7 +141,7 @@ If `MapStore` throws an exception, then Hazelcast tries to store the entry again
 For batch write operations, which are only allowed in write-behind mode, Hazelcast will call `MapStore.storeAll(map)` and `MapStore.deleteAll(collection)` to do all writes in a single call.
 <br></br>
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If a map entry is marked as dirty, meaning that it is waiting to be persisted to the `MapStore` in a write-behind scenario, the eviction process forces the entry to be stored. By this way, you will have control on the number of entries waiting to be stored, and thus you can prevent a possible OutOfMemory exception.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If a map entry is marked as dirty, meaning that it is waiting to be persisted to the `MapStore` in a write-behind scenario, the eviction process forces the entry to be stored. This way you have control over the number of entries waiting to be stored, and thus you can prevent a possible OutOfMemory exception.*
 <br></br>
 
 
@@ -215,7 +215,7 @@ To pre-populate the in-memory map when the map is first touched/used, use the `M
 
 If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the `hot` keys. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
 
-The `InitialLoadMode` configuration parameter in the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapStoreConfig.java" target="_blank">MapStoreConfig</a> has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, the whole data is loaded while the map is created and everything becomes ready to use. Also, if you add indices to your map with the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapIndexConfig.java" target="_blank">MapIndexConfig</a> class or the [`addIndex`](#indexing-queries) method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
+The `InitialLoadMode` configuration parameter in the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapStoreConfig.java" target="_blank">MapStoreConfig</a> has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created, and everything becomes ready to use. Also, if you add indices to your map with the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapIndexConfig.java" target="_blank">MapIndexConfig</a> class or the [`addIndex`](#indexing-queries) method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
 
 Here is the `MapLoader` initialization flow:
 
@@ -225,7 +225,7 @@ Here is the `MapLoader` initialization flow:
 4. Each member will load values of all its owned keys by calling `MapLoader.loadAll(keys)`.
 5. Each member puts its owned entries into the map by calling `IMap.putTransient(key,value)`.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If the load mode is `LAZY` and when the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since the whole data is not loaded for this case (`LAZY` mode), please note that there may be still entries in your datastore.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If the load mode is `LAZY` and the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since all the data is not loaded in this case (`LAZY` mode), please note that there may still be entries in your datastore.*
 <br></br>
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *The return type of `loadAllKeys()` is changed from `Set` to `Iterable` with the release of Hazelcast 3.5. MapLoader implementations from previous releases are also supported and do not need to be adapted.*
@@ -233,7 +233,7 @@ Here is the `MapLoader` initialization flow:
 <br></br>
 #### Loading Keys Incrementally
 
-If the number of keys to load is large, it is more efficient to load them incrementally than loading them all at once. To support incremental loading, the `MapLoader.loadAllKeys()` method returns an `Iterable` which can be lazily populated with the results of a database query. 
+If the number of keys to load is large, it is more efficient to load them incrementally rather than loading them all at once. To support incremental loading, the `MapLoader.loadAllKeys()` method returns an `Iterable` which can be lazily populated with the results of a database query. 
 
 Hazelcast iterates over the `Iterable` and, while doing so, sends out the keys to their respective owner members. The `Iterator` obtained from `MapLoader.loadAllKeys()` may also implement the `Closeable` interface, in which case `Iterator` is closed once the iteration is over. This is intended for releasing resources such as closing a JDBC result set. 
 
@@ -268,9 +268,9 @@ public class LoadAll {
 #### Post-Processing Objects in Map Store
 
 In some scenarios, you may need to modify the object after storing it into the map store.
-For example, you can get an ID or version auto-generated by your database and then you need to modify your object stored in the distributed map but not to break the synchronization between database and data grid. 
+For example, you can get an ID or version auto-generated by your database and then need to modify your object stored in the distributed map, but not to break the synchronization between the database and the data grid. 
 
-To post-process an object in the map store, implement the `PostProcessingMapStore` interface to put the modified object into the distributed map. That causes an extra step of `Serialization`, so use it only when needed. (This is only valid when using the `write-through` map store configuration.)
+To post-process an object in the map store, implement the `PostProcessingMapStore` interface to put the modified object into the distributed map. This will trigger an extra step of `Serialization`, so use it only when needed. (This is only valid when using the `write-through` map store configuration.)
 
 Here is an example of post processing map store:
 
