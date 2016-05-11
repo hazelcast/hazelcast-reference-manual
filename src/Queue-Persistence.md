@@ -48,7 +48,7 @@ public class TheQueueStore implements QueueStore<Item> {
 ```
 
 
-`Item` must be serializable. Following is an example queue store configuration.
+`Item` must be serializable. The following is an example queue store configuration.
 
 
 ```xml
