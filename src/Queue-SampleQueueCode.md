@@ -27,7 +27,7 @@ public class ProducerMember {
 }
 ``` 
 
-`Producer` puts a **-1** on the queue to show that the `put`'s are finished. 
+`Producer` puts a **-1** on the queue to show that the `put`s are finished. 
 
 #### Taking Items off the Queue
 
@@ -57,13 +57,13 @@ public class ConsumerMember {
 }
 ```
 
-As seen in the above example code, `Consumer` waits 5 seconds before it consumes the next message. It stops once it receives **-1**. Also note that `Consumer` puts **-1** back on the queue before the loop is ended. 
+As seen in the above example code, `Consumer` waits five seconds before it consumes the next message. It stops once it receives **-1**. Also note that `Consumer` puts **-1** back on the queue before the loop is ended. 
 
 When you first start `Producer` and then start `Consumer`, items produced on the queue will be consumed from the same queue.
 
 #### Balancing the Queue Operations
 
-From the above example code, you can see that an item is produced every second, and consumed every 5 seconds. Therefore, the consumer keeps growing. To balance the produce/consume operation, let's start another consumer. By this way, consumption is distributed to these two consumers, as seen in the sample outputs below. 
+From the above example code, you can see that an item is produced every second and consumed every five seconds. Therefore, the consumer keeps growing. To balance the produce/consume operation, let's start another consumer. This way, consumption is distributed to these two consumers, as seen in the sample outputs below. 
 
 The second consumer is started. After a while, here is the first consumer output:
 
