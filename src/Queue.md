@@ -33,4 +33,4 @@ FIFO ordering will apply to all queue operations across the cluster. The user ob
 
 Hazelcast distributed queue performs no batching while iterating over the queue. All items will be copied locally and iteration will occur locally.
 
-Hazelcast distributed queue uses `ItemListener` to listen to the events which occur when items are added to and removed from the queue. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
+Hazelcast distributed queue uses `ItemListener` to listen to the events that occur when items are added to and removed from the queue. Please refer to the [Listening for Item Events section](#listening-for-item-events) for information on how to create an item listener class and register it.
