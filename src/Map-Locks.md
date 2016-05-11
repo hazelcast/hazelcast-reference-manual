@@ -2,7 +2,7 @@
 
 ### Locking Maps
 
-Hazelcast Distributed Map (IMap) is thread-safe to meet your thread safety requirements. When these requirements increase or you want to have more control on the concurrency, consider the following Hazelcast solutions.
+Hazelcast Distributed Map (IMap) is thread-safe to meet your thread safety requirements. When these requirements increase or you want to have more control on the concurrency, consider the Hazelcast solutions described here.
 
 Let's work on a sample case as shown below.
 
@@ -34,9 +34,9 @@ If the above code is run by more than one cluster member simultaneously, a race 
 
 #### Pessimistic Locking
 
-One way to solve the race issue is using pessimistic locking: lock the map entry until you are finished with it.
+One way to solve the race issue is by using pessimistic locking--lock the map entry until you are finished with it.
 
-To perform pessimistic locking, use the lock mechanism provided by Hazelcast distributed map, i.e. the `map.lock` and `map.unlock` methods. See the below example code.
+To perform pessimistic locking, use the lock mechanism provided by the Hazelcast distributed map, i.e., the `map.lock` and `map.unlock` methods. See the below example code.
 
 ```java
 public class PessimisticUpdateMember {
@@ -70,7 +70,7 @@ The IMap lock will automatically be collected by the garbage collector when the 
 
 The IMap lock is reentrant, but it does not support fairness.
 
-Another way to solve the race issue can be acquiring a predictable `Lock` object from Hazelcast. This way, every value in the map can be given a lock or you can create a stripe of locks.
+Another way to solve the race issue is by acquiring a predictable `Lock` object from Hazelcast. This way, every value in the map can be given a lock, or you can create a stripe of locks.
 
 
 #### Optimistic Locking
@@ -125,18 +125,18 @@ public class OptimisticMember {
 
 #### Pessimistic vs. Optimistic Locking
 
-Depending on your locking requirements, you can pick one locking strategy.
+The locking strategy you choose will depend on your locking requirements.
 
 Optimistic locking is better for mostly read-only systems. It has a performance boost over pessimistic locking.
 
 Pessimistic locking is good if there are lots of updates on the same key. It is more robust than optimistic locking from the perspective of data consistency.
 
-In Hazelcast, use `IExecutorService` to submit a task to a key owner, or to a member or members. This is the recommended way to perform task executions, rather than using pessimistic or optimistic locking techniques. `IExecutorService` will have less network hops and less data over wire, and tasks will be executed very near to the data. Please refer to the [Data Affinity section](#data-affinity).
+In Hazelcast, use `IExecutorService` to submit a task to a key owner, or to a member or members. This is the recommended way to perform task executions, rather than using pessimistic or optimistic locking techniques. `IExecutorService` will have fewer network hops and less data over wire, and tasks will be executed very near to the data. Please refer to the [Data Affinity section](#data-affinity).
 
 #### Solving the ABA Problem
 
 The ABA problem occurs in environments when a shared resource is open to change by multiple threads. Even if one thread sees the same value for a particular key in consecutive reads, it does not mean that nothing has changed between the reads. Another thread may change the value, do work, and change the value back, while the first thread thinks that nothing has changed.
 
-To prevent these kind of problems, one solution is to use a version number and to check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields will be equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy, and it is used in environments which do not expect intensive concurrent changes on a specific key.
+To prevent these kind of problems, you can assign a version number and check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields will be equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy, and it is used in environments that do not expect intensive concurrent changes on a specific key.
 
 In Hazelcast, you can apply the [optimistic locking](#optimistic-locking) strategy with the map `replace` method.
