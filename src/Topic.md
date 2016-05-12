@@ -6,7 +6,7 @@ When a member subscribes to a topic, it is actually registering for messages pub
 including the new members that joined after you add the listener.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Publish operation is async. It does not wait for operations to run in
-remote members, it works as fire and forget.*
+remote members; it works as fire and forget.*
 
 ### Getting a Topic and Publishing Messages
 
