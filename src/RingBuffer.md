@@ -42,12 +42,12 @@ very cheap way of generating unique IDs if you are already using Ringbuffer.
 Hazelcast Ringbuffer can sometimes be a better alternative than an Hazelcast IQueue. Unlike IQueue, Ringbuffer does not remove the items, it only
 reads items using a certain position. There are many advantages to this approach:
 
-* The same item can be read multiple times by the same thread; this is useful for realizing semantics of read-at-least-once or 
+* The same item can be read multiple times by the same thread. This is useful for realizing semantics of read-at-least-once or 
 read-at-most-once.
 * The same item can be read by multiple threads. Normally you could use an IQueue per thread for the same semantic, but this is 
 less efficient because of the increased remoting. A take from an IQueue is destructive, so the change needs to be applied for backup 
 also, which is why a `queue.take()` is more expensive than a `ringBuffer.read(...)`.
-* Reads are extremely cheap since there is no change in the Ringbuffer, therefore no replication is required. 
+* Reads are extremely cheap since there is no change in the Ringbuffer. Therefore no replication is required. 
 * Reads and writes can be batched to speed up performance. Batching can dramatically improve the performance of Ringbuffer.
  
 
@@ -55,7 +55,7 @@ also, which is why a `queue.take()` is more expensive than a `ringBuffer.read(..
 
 By default, a Ringbuffer is configured with a `capacity` of 10000 items. This creates an array with a size of 10000. If 
 a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item. 
-In a lot of cases, you may want to change this `capacity` number to something that better fits your needs. 
+In a lot of cases you may want to change this `capacity` number to something that better fits your needs. 
 
 Below is a declarative configuration example of a Ringbuffer with a `capacity` of 2000 items.
 
@@ -71,9 +71,9 @@ Currently, Hazelcast Ringbuffer is not a partitioned data structure; its data is
 
 ### Backing Up Ringbuffer
 
-Hazelcast Ringbuffer has 1 single synchronous backup by default. You can control the Ringbuffer backup just like most of the other Hazelcast 
-distributed data structures by setting the synchronous and asynchronous backups: `backup-count` and `async-backup-count`. In the example below, a Ringbuffer is configured with 0
-synchronous backups and 1 asynchronous backup:
+Hazelcast Ringbuffer has a single synchronous backup by default. You can control the Ringbuffer backup just like most of the other Hazelcast 
+distributed data structures by setting the synchronous and asynchronous backups: `backup-count` and `async-backup-count`. In the example below, a Ringbuffer is configured with no
+synchronous backups and one asynchronous backup:
 
 ```xml
 <ringbuffer name="rb">
@@ -91,7 +91,7 @@ methods if you need high performance but do not want to give up on consistency.
 
 You can configure Hazelcast Ringbuffer with a time to live in seconds. Using this setting, you can control how long the items remain in 
 the Ringbuffer before they are expired. By default, the time to live is set to 0, meaning that unless the item is overwritten, 
-it will remain in the Ringbuffer indefinitely. If you set a time to live and an item is added, then depending on the Overflow Policy, 
+it will remain in the Ringbuffer indefinitely. If you set a time to live and an item is added, then, depending on the Overflow Policy, 
 either the oldest item is overwritten, or the call is rejected. 
 
 In the example below, a Ringbuffer is configured with a time to live of 180 seconds.
@@ -131,7 +131,7 @@ for (; ; ) {
 
 ### Configuring Ringbuffer In-Memory Format
 
-You can configure Hazelcast Ringbuffer with an in-memory format which controls the format of the Ringbuffer's stored items. By default, `BINARY` in-memory format is used, 
+You can configure Hazelcast Ringbuffer with an in-memory format that controls the format of the Ringbuffer's stored items. By default, `BINARY` in-memory format is used, 
 meaning that the object is stored in a serialized form. You can select the `OBJECT` in-memory format, which is useful when filtering is 
 applied or when the `OBJECT` in-memory format has a smaller memory footprint than `BINARY`. 
 
@@ -146,8 +146,8 @@ In the declarative configuration example below, a Ringbuffer is configured with 
 
 ### Adding Batched Items
 
-In the previous examples, the method `ringBuffer.add()` is used to add an item to the Ringbuffer. The problem with this method 
-is that it always overwrites and that it does not support batching. Batching can have a huge
+In the previous examples, the method `ringBuffer.add()` is used to add an item to the Ringbuffer. The problems with this method 
+are that it always overwrites and that it does not support batching. Batching can have a huge
 impact on the performance. You can use the method `addAllAsync` to support batching. 
 
 Please see the following example code.
