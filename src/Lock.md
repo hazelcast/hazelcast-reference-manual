@@ -2,13 +2,13 @@
 
 ## Lock
 
-ILock is the distributed implementation of `java.util.concurrent.locks.Lock`. Meaning if you lock using an ILock, the critical
+ILock is the distributed implementation of `java.util.concurrent.locks.Lock`, meaning that if you lock using an ILock, the critical
 section that it guards is guaranteed to be executed by only one thread in the entire cluster. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
 
 ### Using Try-Catch Blocks with Locks
 
-Always use locks with *try*-*catch* blocks. It will ensure that locks will be released if an exception is thrown from
-the code in a critical section. Also note that the `lock` method is outside the *try*-*catch* block, because we do not want to unlock
+Always use locks with *try*-*catch* blocks. This will ensure that locks are released if an exception is thrown from
+the code in a critical section. Also note that the `lock` method is outside the *try*-*catch* block because we do not want to unlock
 if the lock operation itself fails.
 
 ```java
@@ -45,7 +45,7 @@ if ( lock.tryLock ( 10, TimeUnit.SECONDS ) ) {
 
 ### Avoiding Waiting Threads with Lease Time
 
-You can also avoid indefinitely waiting threads by using lock with lease time: the lock will be released in the given lease time. Lock can be safely unlocked before the lease time expires. Note that the unlock operation can
+You can also avoid indefinitely waiting threads by using lock with lease time--the lock will be released in the given lease time. The lock can be safely unlocked before the lease time expires. Note that the unlock operation can
 throw an `IllegalMonitorStateException` if the lock is released because the lease time expires. If that is the case, critical section guarantee is broken.
 
 Please see the below example.
@@ -73,7 +73,7 @@ You can also specify a lease time when trying to acquire a lock: `tryLock(time, 
 Moreover, when a member leaves the cluster, all the locks acquired by that dead member will be removed so that those
 locks are immediately available for live members.
 
-- Locks are re-entrant: the same thread can lock multiple times on the same lock. Note that for other threads to be
+- Locks are re-entrant. The same thread can lock multiple times on the same lock. Note that for other threads to be
  able to require this lock, the owner of the lock must call `unlock` as many times as the owner called `lock`.
 
 - In the split-brain scenario, the cluster behaves as if it were two different clusters. Since two separate clusters are not aware of each other,
@@ -92,7 +92,7 @@ is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it di
 
 `ICondition` is the distributed implementation of the `notify`, `notifyAll` and `wait` operations on the Java object. You can use it to synchronize
 threads across the cluster. More specifically, you use `ICondition` when a thread's work depends on another thread's output. A good example
-can be producer/consumer methodology. 
+is producer/consumer methodology. 
 
 Please see the below code examples for a producer/consumer implementation.
 
