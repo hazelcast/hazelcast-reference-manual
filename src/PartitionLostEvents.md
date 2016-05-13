@@ -1,10 +1,10 @@
 
 ### Listening for Partition Lost Events
 
-Hazelcast provides fault-tolerance by keeping multiple copies of your data. For each partition, one of your cluster members become owner and some of the other members become replica members based on your configuration. Nevertheless, data loss may occur if a few members crash simultaneously.
+Hazelcast provides fault-tolerance by keeping multiple copies of your data. For each partition, one of your cluster members becomes the owner and some of the other members become replica members, based on your configuration. Nevertheless, data loss may occur if a few members crash simultaneously.
 
-Let`s consider the following example with three members: N1, N2, N3 for a given partition-0. N1 is owner of partition-0, N2 and N3 are the first and second replicas respectively. If N1 and N2 crash simultaneously, partition-0 loses its data that is configured with less than 2 backups.
-For instance, if we configure a map with 1 backup, that map loses its data in partition-0 since both owner and first replica of partition-0 have crashed. However, if we configure our map with 2 backups, it does not lose any data since a copy of partition-0's data for the given map
+Let`s consider the following example with three members: N1, N2, N3 for a given partition-0. N1 is owner of partition-0, and N2 and N3 are the first and second replicas respectively. If N1 and N2 crash simultaneously, partition-0 loses its data that is configured with less than two backups.
+For instance, if we configure a map with one backup, that map loses its data in partition-0 since both owner and first replica of partition-0 have crashed. However, if we configure our map with two backups, it does not lose any data since a copy of partition-0's data for the given map
 also resides in N3. 
 
 The Partition Lost Listener notifies for possible data loss occurrences with the information of how many replicas are lost for a partition. It listens to `PartitionLostEvent` instances. Partition lost events are dispatched per partition. 
@@ -26,7 +26,7 @@ The following is an example Partition Lost Listener class.
     } 
 ```
 
-When a `PartitionLostEvent` is fired, the partition lost listener given above outputs the partition ID, the replica index that is lost and the member that has detected the partition loss. The following is an example output.
+When a `PartitionLostEvent` is fired, the partition lost listener given above outputs the partition ID, the replica index that is lost, and the member that has detected the partition loss. The following is an example output.
 
 ```
 com.hazelcast.partition.PartitionLostEvent{partitionId=242, lostBackupCount=0, 
