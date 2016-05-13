@@ -1,7 +1,7 @@
 
 ## IAtomicLong
 
-Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and hence their performances differ from AtomicLong.
+Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and thus their performances differ from AtomicLong.
 
 
 The following example code creates an instance, increments it by a million, and prints the count.
@@ -41,10 +41,10 @@ private static class Add2Function implements Function <Long, Long> {
 
 You can use the following methods to execute functions on IAtomicLong.
 
-- `apply`: It applies the function to the value in IAtomicLong without changing the actual value and returning the result.
-- `alter`: It alters the value stored in the IAtomicLong by applying the function. It will not send back a result.
-- `alterAndGet`: It alters the value stored in the IAtomicLong by applying the function, storing the result in the IAtomicLong and returning the result.
-- `getAndAlter`: It alters the value stored in the IAtomicLong by applying the function and returning the original value.
+- `apply`: Applies the function to the value in IAtomicLong without changing the actual value and returning the result.
+- `alter`: Alters the value stored in the IAtomicLong by applying the function. It will not send back a result.
+- `alterAndGet`: Alters the value stored in the IAtomicLong by applying the function, storing the result in the IAtomicLong and returning the result.
+- `getAndAlter`: Alters the value stored in the IAtomicLong by applying the function and returning the original value.
 
 The following sample code includes these methods.
 
@@ -80,5 +80,5 @@ public class Member {
 
 The reason for using a function instead of a simple code line like `atomicLong.set(atomicLong.get() + 2));` is that the IAtomicLong read and write operations are not atomic. Since `IAtomicLong` is a distributed implementation, those operations can be remote ones, which may lead to race problems. By using functions, the data is not pulled into the code, but the code is sent to the data. This makes it more scalable.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *IAtomicLong has 1 synchronous backup and no asynchronous backups. Its backup count is not configurable.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *IAtomicLong has one synchronous backup and no asynchronous backups. Its backup count is not configurable.*
 
