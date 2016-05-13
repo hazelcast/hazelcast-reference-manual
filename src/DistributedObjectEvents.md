@@ -74,7 +74,7 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ```
 
-And, the following is an example of the equivalent Spring configuration.
+The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
