@@ -3,10 +3,10 @@
 
 You can listen to map-wide or entry-based events using the listeners provided by the Hazelcast's eventing framework. To listen to these events, implement a `MapListener` sub-interface.
 
-A map-wide event is fired as a result of a map-wide operation: for 
+A map-wide event is fired as a result of a map-wide operation. For 
 example, `IMap#clear` or `IMap#evictAll`.
 An entry-based event is fired after the operations that affect a 
-specific entry: for example, `IMap#remove` or `IMap#evict`.
+specific entry. For example, `IMap#remove` or `IMap#evict`.
 
 #### Catching a Map Event
 
@@ -15,9 +15,9 @@ implement a corresponding sub-interface of a `MapListener`,
 such as `EntryAddedListener` or `MapClearedListener`. 
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *`EntryListener` interface still can be implemented, 
-we kept that for backward compatibility reasons. However, if you need to listen to a 
-different event which is not available in the `EntryListener` interface, you should also 
+![image](images/NoteSmall.jpg) ***NOTE:*** * The `EntryListener` interface still can be implemented (we kept
+it for backward compatibility reasons). However, if you need to listen to a 
+different event, one that is not available in the `EntryListener` interface, you should also 
 implement a relevant `MapListener` sub-interface.*
 <br></br>
 
@@ -126,7 +126,7 @@ public class MyEntryListener implements EntryListener{
 
 #### Partitions and Entry Listeners
 
-A map listener runs on the event threads that are also used by the other listeners: for 
+A map listener runs on the event threads that are also used by the other listeners. For 
 example, the collection listeners and pub/sub message listeners. This means that the entry 
 listeners can access other partitions. Consider this when you run long tasks, since listening 
 to those tasks may cause the other map/event listeners to starve.
@@ -158,7 +158,7 @@ Let`s consider the following example code:
 ```
 
 Within this example code, a `MapPartitionLostListener` implementation is registered to a map 
-that is configured with 1 backup. For this particular map and any of the partitions in the 
+that is configured with one backup. For this particular map and any of the partitions in the 
 system, if the partition owner member and its first backup member crash simultaneously, the 
 given `MapPartitionLostListener` receives a 
 corresponding `MapPartitionLostEvent`. If only a single member crashes in the cluster, 
@@ -180,7 +180,7 @@ IMap<String, String> map = hz.getMap( "somemap" );
 map.addEntryListener( new MyEntryListener(), true );
 ```
 
-With the above approach, there is a possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -208,7 +208,7 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ```
 
-And, the following is an example of the equivalent Spring configuration.
+The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:map name="somemap">
@@ -222,6 +222,6 @@ And, the following is an example of the equivalent Spring configuration.
 
 #### Map Listener Attributes
 
-As you see, there are attributes of the map listeners in the above examples: `include-value` and `local`. The attribute `include-value` is a boolean attribute which is optional to use and if you set it to `true`, the map event will contain the map value. Its default value is `true`.
+As you see, there are attributes of the map listeners in the above examples: `include-value` and `local`. The attribute `include-value` is a boolean attribute that is optional, and if you set it to `true`, the map event will contain the map value. Its default value is `true`.
 
-The attribute `local` is also a boolean attribute which is optional to use and if you set it to `true`, you can listen to the map on the local member. Its default value is `false`.
+The attribute `local` is also a boolean attribute that is optional, and if you set it to `true`, you can listen to the map on the local member. Its default value is `false`.
