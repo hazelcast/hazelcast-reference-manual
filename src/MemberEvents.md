@@ -41,7 +41,7 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getCluster().addMembershipListener( new ClusterMembershipListener() );
 ```
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
