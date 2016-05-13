@@ -50,7 +50,7 @@ ICollection<Price> set = hazelcastInstance.getSet( "default" );
 default.addItemListener( sampleItemListener, true );
 ```
 
-With the above approach, there is a possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -74,7 +74,7 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ```
 
-And, the following is an example of the equivalent Spring configuration.
+The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:set name="default" >
@@ -87,6 +87,6 @@ And, the following is an example of the equivalent Spring configuration.
 
 #### Item Listener Attributes
 
-As you see, there is an attribute in the above examples: `include-value`. It is a boolean attribute which is optional to use and if you set it to `true`, the item event will contain the item value. Its default value is `true`.
+As you see, there is an attribute in the above examples: `include-value`. It is a boolean attribute that is optional, and if you set it to `true`, the item event will contain the item value. Its default value is `true`.
 
-There is also another attribute called `local`, which is not shown in the above examples. It is also a boolean attribute which is optional to use and if you set it to `true`, you can listen to the items on the local member. Its default value is `false`.
+There is also another attribute called `local`, which is not shown in the above examples. It is also a boolean attribute that is optional, and if you set it to `true`, you can listen to the items on the local member. Its default value is `false`.
