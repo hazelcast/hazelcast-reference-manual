@@ -37,7 +37,7 @@ MultiMap<String, String> map = hz.getMultiMap( "somemap" );
 map.addEntryListener( new MyEntryListener(), true );
 ```
 
-With the above approach, there is a possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -65,7 +65,7 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ```
 
-And, the following is an example of the equivalent Spring configuration.
+The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:multimap name="default" value-collection-type="LIST">
@@ -79,7 +79,7 @@ And, the following is an example of the equivalent Spring configuration.
 
 #### MultiMap Listener Attributes
 
-As you see, there are attributes of the MultiMap listeners in the above examples: `include-value` and `local`. The attribute `include-value` is a boolean attribute which is optional to use and if you set it to `true`, the MultiMap event will contain the map value. Its default value is `true`.
+As you see, there are attributes of the MultiMap listeners in the above examples: `include-value` and `local`. The attribute `include-value` is a boolean attribute that is optional, and if you set it to `true`, the MultiMap event will contain the map value. Its default value is `true`.
 
-The attribute `local` is also a boolean attribute which is optional to use and if you set it to `true`, you can listen to the MultiMap on the local member. Its default value is `false`.
+The attribute `local` is also a boolean attribute that is optional, and if you set it to `true`, you can listen to the MultiMap on the local member. Its default value is `false`.
 
