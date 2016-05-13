@@ -44,7 +44,7 @@ ITopic topic = hazelcastInstance.getTopic( "default" );
 topic.addMessageListener( sample );
 ```
 
-With the above approach, there is a possibility of missing messaging events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register this listener in configuration. You can register it using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing messaging events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register this listener in the configuration. You can register it using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -70,7 +70,7 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ```
 
-And, the following is an example of the equivalent Spring configuration.
+The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:topic name="default">
