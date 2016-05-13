@@ -8,7 +8,7 @@ Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.
 
 Semaphores offer **permit**s to control the thread counts when performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Semaphore with a single permit may be considered as a lock. But unlike the locks, when semaphores are used, any thread can release the permit and semaphores can have multiple permits.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Semaphore with a single permit may be considered a lock. Unlike the locks, however, when semaphores are used, any thread can release the permit, and semaphores can have multiple permits.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast Semaphore does not support fairness.*
 
@@ -44,7 +44,7 @@ public class SemaphoreMember {
 }
 ```
 
-Let's limit the concurrent access to this resource by allowing at most 3 threads. You can configure it declaratively by setting the `initial-permits` property, as shown below.
+Let's limit the concurrent access to this resource by allowing at most three threads. You can configure it declaratively by setting the `initial-permits` property, as shown below.
 
 ```xml
 <semaphore name="semaphore"> 
@@ -66,7 +66,7 @@ If you execute the above `SemaphoreMember` class 5 times, the output will be sim
 
 `At iteration: 4, Active Threads: 3`
 
-As can be seen, the maximum count of concurrent threads is equal or smaller than 3. If you remove the semaphore acquire/release statements in `SemaphoreMember`, you will see that there is no limitation on the number of concurrent usages.
+As you can see, the maximum count of concurrent threads is equal or smaller than three. If you remove the semaphore acquire/release statements in `SemaphoreMember`, you will see that there is no limitation on the number of concurrent usages.
 
 Hazelcast also provides backup support for `ISemaphore`. When a member goes down, you can have another member take over the semaphore with the permit information (permits are automatically released when a member goes down). To enable this, configure synchronous or asynchronous backup with the properties `backup-count` and `async-backup-count` (by default, synchronous backup is already enabled).
 
