@@ -20,7 +20,7 @@ The following is the equivalent declarative configuration.
 </listeners>
 ```
 
-And, the following is the equivalent configuration in the Spring context.
+The following is the equivalent configuration in the Spring context.
 
 ```xml
 <hz:listeners>
