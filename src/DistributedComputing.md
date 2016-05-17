@@ -5,15 +5,15 @@ From Wikipedia: Distributed computing refers to the use of distributed systems t
 
 ## Executor Service
 
-One of the coolest features of Java 1.5 is the Executor framework, which allows you to asynchronously execute your tasks (logical units of work), such as database query, complex calculation, and image rendering.
+One of the coolest features of Java 1.5 is the Executor framework, which allows you to asynchronously execute your tasks (logical units of work), such as database queries, complex calculations, and image rendering.
 
-The default implementation of this framework (`ThreadPoolExecutor`) is designed to run within a single JVM (cluster member). In distributed systems, this implementation is not desired since you may want a task submitted in one JVM and processed in another one. Hazelcast offers `IExecutorService` for you to use in distributed environments: it implements `java.util.concurrent.ExecutorService` to serve the applications requiring computational and data processing power.
+The default implementation of this framework (`ThreadPoolExecutor`) is designed to run within a single JVM (cluster member). In distributed systems, this implementation is not desired since you may want a task submitted in one JVM and processed in another one. Hazelcast offers `IExecutorService` for you to use in distributed environments. It implements `java.util.concurrent.ExecutorService` to serve the applications requiring computational and data processing power.
 
 With `IExecutorService`, you can execute tasks asynchronously and perform other useful tasks. If your task execution takes longer than expected, you can cancel the task execution. Tasks should be `Serializable` since they will be distributed.
 
 In the Java Executor framework, you implement tasks two ways: Callable or Runnable.
 
-* Callable: If you need to return a value and submit to Executor, implement the task as `java.util.concurrent.Callable`.
+* Callable: If you need to return a value and submit it to Executor, implement the task as `java.util.concurrent.Callable`.
 * Runnable: If you do not need to return a value, implement the task as `java.util.concurrent.Runnable`.
 
 ### Implementing a Callable Task
@@ -160,4 +160,4 @@ You can scale the Executor service both vertically (scale up) and horizontally (
 To scale up, you should improve the processing capacity of the cluster member (JVM). You can do this by increasing the `pool-size` property mentioned in [Configuring Executor Service](#configuring-executor-service) (i.e., increasing the thread count). However, please be aware of your member's capacity. If you think it cannot handle such an additional load caused by increasing the thread count, you may want to consider improving the member's resources (CPU, memory, etc.). As an example, set the `pool-size` to 5 and run the above `MasterMember`. You will see that `EchoTask` is run as soon as it is produced.
 
 
-To scale out, more members should be added instead of increasing only one member's capacity. In reality, you may want to expand your cluster by adding more physical or virtual machines. For example, in the EchoTask example in the [Runnable section](#implementing-a-runnable-task), you can create another Hazelcast instance. That instance will automatically get involved in the executions started in `MasterMember` and start processing.
+To scale out, add more members instead of increasing only one member's capacity. In reality, you may want to expand your cluster by adding more physical or virtual machines. For example, in the EchoTask example in the [Runnable section](#implementing-a-runnable-task), you can create another Hazelcast instance. That instance will automatically get involved in the executions started in `MasterMember` and start processing.
