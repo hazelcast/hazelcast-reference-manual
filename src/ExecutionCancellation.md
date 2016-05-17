@@ -41,7 +41,7 @@ public class Fibonacci<Long> implements Callable<Long>, Serializable {
 
 #### Example Method to Execute and Cancel the Task
 
-The `fib()` method below submits the Fibonacci calculation task above for number 'n' and waits a maximum of 3 seconds for the result. If the execution does not completed in 3 seconds, `future.get()` will throw a `TimeoutException` and upon catching it, we cancel the execution, saving some CPU cycles.
+The `fib()` method below submits the Fibonacci calculation task above for number 'n' and waits a maximum of 3 seconds for the result. If the execution does not completed in three seconds, `future.get()` will throw a `TimeoutException` and upon catching it, we cancel the execution, saving some CPU cycles.
 
 ```java
 long fib( int n ) throws Exception {
