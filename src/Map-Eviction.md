@@ -1,4 +1,8 @@
 
+### Map Eviction
+
+As of version 3.7, IMap uses a new eviction mechanism based on sampling of entries, [here](#eviction-algorithm) you can find details for eviction algorithm.
+
 ### Evicting Map Entries
 
 Unless you delete the map entries manually or use an eviction policy, they will remain in the map. Hazelcast supports policy-based eviction for distributed maps. Currently supported policies are LRU (Least Recently Used) and LFU (Least Frequently Used).
@@ -182,3 +186,90 @@ public class EvictAll {
 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Only EVICT_ALL event is fired for any registered listeners.*
+
+
+#### Custom Eviction Policy
+
+As of version 3.7, apart from out of the box provided eviction policies like LRU, LFU, you can also plug your own eviction policy implementation.
+You need to provide an implementation of `MapEvictionPolicy` as in the `OddEvictor` example below and need to add it either via `MapConfig#setMapEvictionPolicy`
+programmatically or via XML declaratively:
+
+```
+public class MapCustomEvictionPolicy {
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        config.getMapConfig("test")
+                .setMapEvictionPolicy(new OddEvictor())
+                .getMaxSizeConfig()
+                .setMaxSizePolicy(PER_NODE).setSize(10000);
+
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
+        IMap<Integer, Integer> map = instance.getMap("test");
+
+        final Queue<Integer> oddKeys = new ConcurrentLinkedQueue<Integer>();
+        final Queue<Integer> evenKeys = new ConcurrentLinkedQueue<Integer>();
+
+        map.addEntryListener(new EntryEvictedListener<Integer, Integer>() {
+            @Override
+            public void entryEvicted(EntryEvent<Integer, Integer> event) {
+                Integer key = event.getKey();
+                if (key % 2 == 0) {
+                    evenKeys.add(key);
+                } else {
+                    oddKeys.add(key);
+                }
+            }
+        }, false);
+
+        // wait some more time to receive evicted-events.
+        parkNanos(SECONDS.toNanos(5));
+
+        for (int i = 0; i < 15000; i++) {
+            map.put(i, i);
+        }
+
+        String msg = "IMap uses sampling based eviction. After eviction is completed, we are expecting " +
+                "number of evicted-odd-keys should be greater than number of evicted-even-keys" +
+                "\nNumber of evicted-odd-keys = %d, number of evicted-even-keys = %d";
+        out.println(format(msg, oddKeys.size(), evenKeys.size()));
+
+        instance.shutdown();
+    }
+
+    /**
+     * Odd evictor tries to evict odd keys first.
+     */
+    private static class OddEvictor extends MapEvictionPolicy {
+
+        @Override
+        public int compare(EntryView o1, EntryView o2) {
+            Integer key = (Integer) o1.getKey();
+            if (key % 2 != 0) {
+                return -1;
+            }
+
+            return 1;
+        }
+    }
+}
+
+```
+
+It is also possible to introduce custom eviction policy via declarative configuration.
+
+Hazelcast XML:
+```
+<map name="test">
+   ...
+   <map-eviction-policy-class-name>com.package.OddEvictor</map-eviction-policy-class-name>
+   ....
+</map>
+```
+
+Spring XML:
+```
+<hz:map name="test">
+    <hz:map-eviction-policy class-name="com.package.OddEvictor"/>
+</hz:map>
+```
