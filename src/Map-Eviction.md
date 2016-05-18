@@ -1,7 +1,9 @@
 
 ### Map Eviction
 
-As of version 3.7, IMap uses a new eviction mechanism based on sampling of entries, [here](#eviction-algorithm) you can find details for eviction algorithm.
+![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with Hazelcast 3.7, Hazelcast Map uses a new eviction mechanism which is based on the sampling of entries. Please see the [Eviction Algorithm section](#eviction-algorithm) for details.*
+
+
 
 ### Evicting Map Entries
 
@@ -190,11 +192,14 @@ public class EvictAll {
 
 #### Custom Eviction Policy
 
-As of version 3.7, apart from out of the box provided eviction policies like LRU, LFU, you can also plug your own eviction policy implementation.
-You need to provide an implementation of `MapEvictionPolicy` as in the `OddEvictor` example below and need to add it either via `MapConfig#setMapEvictionPolicy`
-programmatically or via XML declaratively:
+![image](images/NoteSmall.jpg) ***NOTE:*** *This section is valid for Hazelcast 3.7 and higher releases.*
 
-```
+
+Apart from the policies such as LRU and LFU, which Hazelcast provides out of the box, you can develop and use your own eviction policy. 
+
+To achieve this, you need to provide an implementation of `MapEvictionPolicy` as in the following `OddEvictor` example:
+
+```java
 public class MapCustomEvictionPolicy {
 
     public static void main(String[] args) {
@@ -222,7 +227,7 @@ public class MapCustomEvictionPolicy {
             }
         }, false);
 
-        // wait some more time to receive evicted-events.
+        // Wait some more time to receive evicted events.
         parkNanos(SECONDS.toNanos(5));
 
         for (int i = 0; i < 15000; i++) {
@@ -253,13 +258,12 @@ public class MapCustomEvictionPolicy {
         }
     }
 }
-
 ```
 
-It is also possible to introduce custom eviction policy via declarative configuration.
+Then you can enable your policy by setting it via the method `MapConfig#setMapEvictionPolicy`
+programmatically or via XML declaratively. Following is the example declarative configuration for the eviction policy `OddEvictor` implemented above:
 
-Hazelcast XML:
-```
+```xml
 <map name="test">
    ...
    <map-eviction-policy-class-name>com.package.OddEvictor</map-eviction-policy-class-name>
@@ -267,7 +271,8 @@ Hazelcast XML:
 </map>
 ```
 
-Spring XML:
+If you Hazelcast with Spring, you can enable your policy as shown below.
+
 ```
 <hz:map name="test">
     <hz:map-eviction-policy class-name="com.package.OddEvictor"/>
