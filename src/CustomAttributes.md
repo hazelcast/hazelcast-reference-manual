@@ -8,6 +8,8 @@ Thus, it is required to define the policy how the attribute is supposed to be ex
 Currently, the only way to extract a custom attribute is to implement a `com.hazelcast.query.extractor.ValueExtractor`
 which encompasses the extraction logic.
 
+Custom Attributes are compatible with all Hazelcast serialisation methods, including the Portable serialisation.
+
 ### Implementing a ValueExtractor
 
 In order to implement a `ValueExtractor` just extend the abstract `com.hazelcast.query.extractor.ValueExtractor` class
@@ -60,6 +62,52 @@ public abstract class ValueCollector {
     public abstract void addObject(Object value);
 
 }
+```
+
+#### ValueExtractor with Portable serialisation
+
+Portable serialisation is a special kind of serialisation where there is no need to have the Class of the serialised object on the
+classpath in order to read its attributes. That is the reason why the target object passed to the `ValueExtractor.extract()`
+method will not be of the exact type that has been stored. Instead, an instance of a `com.hazelcast.query.extractor.ValueReader` will be passed.
+`ValueReader` enables reading the attributes of a Portable object in a generic and type-agnostic way.
+It contains two methods:
+
+ * `read(String path, ValueCollector<T> collector)` - enables passing all results directly to the `ValueCollector`.
+ * `read(String path, ValueCallback<T> callback)` - enables filtering, transforming and grouping the result of the read operation and manually passing it to the ValueCollector.
+
+Here's the `ValueReader` contract:
+
+```java
+/**
+ * Enables reading the value of the attribute specified by the path
+ * <p>
+ * The path may be:
+ * - simple -> it includes a single attribute only, like "name"
+ * - nested -> it includes more then a single attribute separated with a dot (.), e.g. person.address.city
+ * <p>
+ * The path may also includes array cells:
+ * - specific quantifier, like person.leg[1] -> returns the leg with index 1
+ * - wildcard quantifier, like person.leg[any] -> returns all legs
+ * <p>
+ * The wildcard quantifier may be used a couple of times, like person.leg[any].finger[any] which returns all fingers
+ * from all legs.
+ */
+public abstract class ValueReader {
+
+    /**
+     * Read the value of the attribute specified by the path and returns the result via the callback.
+     *
+     */
+    public abstract <T> void read(String path, ValueCallback<T> callback) throws ValueReadingException;
+
+    /**
+     * Read the value of the attribute specified by the path and returns the result directly to the collector.
+     *
+     */
+    public abstract <T> void read(String path, ValueCollector<T> collector) throws ValueReadingException;
+
+}
+
 ```
 
 #### Returning Multiple Values from a Single Extraction

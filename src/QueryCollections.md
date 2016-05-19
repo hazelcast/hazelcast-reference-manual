@@ -2,6 +2,8 @@
 ## Querying in Collections and Arrays
 
 Hazelcast allows querying in collections and arrays.
+Querying in Collections and Arrays is compatible all Hazelcast serialisation methods, including the Portable serialisation.
+
 
 Let's have a look at the following data structure expressed in pseudo-code:
 
