@@ -26,10 +26,10 @@ When you start other instances with the code above, you will see the count as *m
 
 ### Sending Functions to IAtomicLong
 
-You can send functions to an IAtomicLong. `Function` is a Hazelcast owned, single method interface. The following sample `Function` implementation doubles the original value.
+You can send functions to an IAtomicLong. `IFunction` is a Hazelcast owned, single method interface. The following sample `IFunction` implementation adds two to the original value.
 
 ```java
-private static class Add2Function implements Function <Long, Long> { 
+private static class Add2Function implements IFunction <Long, Long> { 
   @Override
   public Long apply( Long input ) { 
     return input + 2;
