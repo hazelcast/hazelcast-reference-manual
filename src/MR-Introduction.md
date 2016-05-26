@@ -4,18 +4,18 @@
 
 This section explains the basics of the Hazelcast MapReduce framework. While walking through the different API classes, we will build the [word count example that was discussed earlier](#understanding-mapreduce) and create it step by step.
 
-The Hazelcast API for MapReduce operations consists of a fluent DSL-like configuration syntax to build and submit jobs. `JobTracker` is the basic entry point to all MapReduce operations and is retrieved from `com.hazelcast.core.HazelcastInstance` by calling `getJobTracker` and supplying the name of the required `JobTracker` configuration. The configuration for `JobTracker`s will be discussed later, for now we focus on the API itself.
+The Hazelcast API for MapReduce operations consists of a fluent DSL-like configuration syntax to build and submit jobs. `JobTracker` is the basic entry point to all MapReduce operations and is retrieved from `com.hazelcast.core.HazelcastInstance` by calling `getJobTracker` and supplying the name of the required `JobTracker` configuration. The configuration for `JobTracker`s will be discussed later; for now we focus on the API itself.
 In addition, the complete submission part of the API is built to support a fully reactive way of programming.
 
 To give an easy introduction to people used to Hadoop, we created the class names to be as familiar as possible to their counterparts on Hadoop. That means while most users will recognize a lot of similar sounding classes, the way to configure the jobs is more fluent due to the DSL-like styled API.
 
-While building the example, we will go through as many options as possible, e.g. we create a specialized `JobTracker` configuration (at the end). Special `JobTracker` configuration is not required, because for all other Hazelcast features you can use "default" as the configuration name. However, special configurations offer better options to predict behavior of the framework execution.
+While building the example, we will go through as many options as possible, e.g., we will create a specialized `JobTracker` configuration (at the end). Special `JobTracker` configuration is not required, because for all other Hazelcast features you can use "default" as the configuration name. However, special configurations offer better options to predict behavior of the framework execution.
 
 The full example is available <a href="http://github.com/noctarius/hz-map-reduce" target="_blank">here</a> as a ready to run Maven project.
 
 #### Retrieving a JobTracker Instance
 
-`JobTracker` creates Job instances, whereas every instance of `com.hazelcast.mapreduce.Job` defines a single MapReduce configuration. The same Job can be submitted multiple times, no matter if it is executed in parallel or after the previous execution is finished.
+`JobTracker` creates Job instances, whereas every instance of `com.hazelcast.mapreduce.Job` defines a single MapReduce configuration. The same Job can be submitted multiple times regardless of whether it is executed in parallel or after the previous execution is finished.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *After retrieving the `JobTracker`, be aware that it should only be used with data structures derived from the same HazelcastInstance. Otherwise, you can get unexpected behavior.*
 
@@ -33,13 +33,13 @@ The next step will be to create a new `Job` and configure it to execute our firs
 
 #### Creating a Job
 
-As mentioned in [Retrieving a JobTracker Instance](#retrieving-a-jobtracker-instance), you create a Job using the retrieved `JobTracker` instance. A Job defines exactly one configuration of a MapReduce task. Mapper, combiner and reducers will be defined per job. However, since the Job instance is only a configuration, it can be submitted multiple times, no matter if executions happen in parallel or one after the other.
+As mentioned in [Retrieving a JobTracker Instance](#retrieving-a-jobtracker-instance), you create a Job using the retrieved `JobTracker` instance. A Job defines exactly one configuration of a MapReduce task. Mapper, combiner and reducers will be defined per job. However, since the Job instance is only a configuration, it can be submitted multiple times, regardless of whether executions happen in parallel or one after the other.
 
 A submitted job is always identified using a unique combination of the `JobTracker`'s name and a jobId generated on submit-time. The way to retrieve the jobId will be shown in one of the later sections.
 
 To create a Job, a second class `com.hazelcast.mapreduce.KeyValueSource` is necessary. We will have a deeper look at the `KeyValueSource` class in the next section. `KeyValueSource` is used to wrap any kind of data or data structure into a well defined set of key-value pairs.
 
-The example code below is a direct follow up of the example in [Retrieving a JobTracker Instance](#retrieving-a-jobTracker-instance). The example reuses the already created HazelcastInstance and `JobTracker` instances.
+The example code below is a direct follow up to the example in [Retrieving a JobTracker Instance](#retrieving-a-jobTracker-instance), and it reuses the already created HazelcastInstance and `JobTracker` instances.
 
 The example starts by retrieving an instance of our data map, and then it creates the Job instance. Implementations used to configure the Job will be discussed while walking further through the API documentation.
 
@@ -63,7 +63,7 @@ future.andThen( buildCallback() );
 Map<String, Long> result = future.get();
 ```
 
-As seen above, we create the Job instance and define a mapper, combiner, reducer. Then we submit the request to the cluster. The `submit` method returns an ICompletableFuture that can be used to attach our callbacks or to wait for the result to be processed in a blocking fashion.
+As seen above, we create the Job instance and define a mapper, combiner, and reducer. Then we submit the request to the cluster. The `submit` method returns an ICompletableFuture that can be used to attach our callbacks or to wait for the result to be processed in a blocking fashion.
 
 There are more options available for job configurations, such as defining a general chunk size or on what keys the operation will operate. For more information, please refer to the [Hazelcast source code for Job.java](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/mapreduce/Job.java).
 
@@ -71,9 +71,9 @@ There are more options available for job configurations, such as defining a gene
 
 `KeyValueSource` can either wrap Hazelcast data structures (like IMap, MultiMap, IList, ISet) into key-value pair input sources, or build your own custom key-value input source. The latter option makes it possible to feed Hazelcast MapReduce with all kinds of data, such as just-in-time downloaded web page contents or data files. People familiar with Hadoop will recognize similarities with the Input class.
 
-You can imagine a `KeyValueSource` as a bigger `java.util.Iterator` implementation. Whereas most methods are required to be implemented, the `getAllKeys` method is optional to implement. If implementation is able to gather all keys upfront, it should be implemented and `isAllKeysSupported` must return `true`. That way, Job configured KeyPredicates are able to evaluate keys upfront before sending them to the cluster. Otherwise, they are serialized and transferred as well, to be evaluated at execution time.
+You can imagine a `KeyValueSource` as a bigger `java.util.Iterator` implementation. Whereas most methods must be implemented, implementing the `getAllKeys` method is optional. If implementation is able to gather all keys upfront, it should be implemented and `isAllKeysSupported` must return `true`. That way, Job configured KeyPredicates are able to evaluate keys upfront before sending them to the cluster. Otherwise they are serialized and transferred as well, to be evaluated at execution time.
 
-As shown in the example above, the abstract `KeyValueSource` class provides a number of static methods to easily wrap Hazelcast data structures into `KeyValueSource` implementations already provided by Hazelcast. The data structures' generics are inherited into the resulting `KeyValueSource` instance. For data structures like IList or ISet, the key type is always String. While mapping, the key is the data structure's name whereas
+As shown in the example above, the abstract `KeyValueSource` class provides a number of static methods to easily wrap Hazelcast data structures into `KeyValueSource` implementations already provided by Hazelcast. The data structures' generics are inherited by the resulting `KeyValueSource` instance. For data structures like IList or ISet, the key type is always String. While mapping, the key is the data structure's name, whereas
 the value type and value itself are inherited from the IList or ISet itself.
 
 ```java
@@ -107,9 +107,9 @@ multiple times but once per partitionId.
 
 #### Implementing Mapping Logic with Mapper
 
-Using the `Mapper` interface, you will implement the mapping logic. Mappers can transform, split, calculate, and aggregate data from data sources. In Hazelcast, you can also integrate data from more than the KeyValueSource data source by implementing `com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps, list, and/or sets.
+Using the `Mapper` interface, you will implement the mapping logic. Mappers can transform, split, calculate, and aggregate data from data sources. In Hazelcast you can also integrate data from more than the KeyValueSource data source by implementing `com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps, list, and/or sets.
 
-The mappers `map` function is called once per available entry in the data structure. If you work on distributed data structures that operate in a partition based fashion, then multiple mappers work in parallel on the different cluster members, on the members' assigned partitions. Mappers then prepare and maybe transform the input key-value pair and emit zero or more key-value pairs for reducing phase.
+The mappers `map` function is called once per available entry in the data structure. If you work on distributed data structures that operate in a partition-based fashion, multiple mappers work in parallel on the different cluster members on the members' assigned partitions. Mappers then prepare and maybe transform the input key-value pair and emit zero or more key-value pairs for the reducing phase.
 
 For our word count example, we retrieve an input document (a text document) and we transform it by splitting the text into the available words. After that, as discussed in the [pseudo code](#mapreduce-workflow-example), we emit every single word with a key-value pair with the word as the key and 1 as the value.
 
@@ -129,7 +129,7 @@ public class TokenizerMapper implements Mapper<String, String, String, Long> {
 }
 ```
 
-The code splits the mapped texts into their tokens, iterates over the tokenizer as long as there are more tokens, and emits a pair per word. Note that we're not yet collecting multiple occurrences of the same word, we just fire every word on its own.
+This code splits the mapped texts into their tokens, iterates over the tokenizer as long as there are more tokens, and emits a pair per word. Note that we're not yet collecting multiple occurrences of the same word, we just fire every word on its own.
 
 **LifecycleMapper / LifecycleMapperAdapter**
 
@@ -141,9 +141,9 @@ Only special algorithms might need those additional lifecycle events to prepare,
 
 As stated in the introduction, a Combiner is used to minimize traffic between the different cluster members when transmitting mapped values from mappers to the reducers. It does this by aggregating multiple values for the same emitted key. This is a fully optional operation, but using it is highly recommended.
 
-Combiners can be seen as an intermediate reducer. The calculated value is always assigned back to the key for which the combiner initially was created. Since combiners are created per emitted key, the Combiner implementation itself is not defined in the jobs configuration; instead, a CombinerFactory is created that is able to create the expected Combiner instance.
+Combiners can be seen as an intermediate reducer. The calculated value is always assigned back to the key for which the combiner initially was created. Since combiners are created per emitted key, the Combiner implementation itself is not defined in the jobs configuration; instead, a CombinerFactory that is able to create the expected Combiner instance is created.
 
-Because Hazelcast MapReduce is executing mapping and reducing phase in parallel, the Combiner implementation must be able to deal with chunked data. Therefore, you must reset its internal state whenever you call `finalizeChunk`. Calling the `finalizeChunk` method creates a chunk of intermediate data to be grouped (shuffled) and sent to the reducers.
+Because Hazelcast MapReduce is executing the mapping and reducing phases in parallel, the Combiner implementation must be able to deal with chunked data. Therefore, you must reset its internal state whenever you call `finalizeChunk`. Calling the `finalizeChunk` method creates a chunk of intermediate data to be grouped (shuffled) and sent to the reducers.
 
 Combiners can override `beginCombine` and `finalizeCombine` to perform preparation or cleanup work.
 
@@ -187,7 +187,7 @@ Reducers do the last bit of algorithm work. This can be aggregating values, calc
 
 Since values arrive in chunks, the `reduce` method is called multiple times for every emitted value of the creation key. This also can happen multiple times per chunk if no Combiner implementation was configured for a job configuration.
 
-Different from combiners, a reducers `finalizeReduce` method is only called once per reducer (which means once per key). Therefore, a reducer does not need to reset its internal state at any time.
+Unlike combiners, a reducer's `finalizeReduce` method is only called once per reducer (which means once per key). Therefore, a reducer does not need to reset its internal state at any time.
 
 Reducers can override `beginReduce` to perform preparation work.
 
@@ -219,7 +219,7 @@ public class WordCountReducerFactory implements ReducerFactory<String, Long, Lon
 
 ##### Reducers Switching Threads
 
-Different from combiners, reducers tend to switch threads if running out of data to prevent blocking threads from the `JobTracker` configuration. They are rescheduled at a later point when new data to be processed arrives but are unlikely to be executed on the same thread as before. As of Hazelcast version 3.3.3 the guarantee for memory visibility on the new thread is ensured by the framework. This means the previous requirement for making fields volatile is dropped.
+Unlike combiners, reducers tend to switch threads if running out of data to prevent blocking threads from the `JobTracker` configuration. They are rescheduled at a later point when new data to be processed arrives, but are unlikely to be executed on the same thread as before. As of Hazelcast version 3.3.3 the guarantee for memory visibility on the new thread is ensured by the framework. This means the previous requirement for making fields volatile is dropped.
 
 #### Modifying the Result with Collator
 
@@ -250,7 +250,7 @@ The definition of the input type is a bit strange, but because Combiner and Redu
 
 You can use `KeyPredicate` to pre-select whether or not a key should be selected for mapping in the mapping phase. If the `KeyValueSource` implementation is able to know all keys prior to execution, the keys are filtered before the operations are divided among the different cluster members.
 
-A `KeyPredicate` can also be used to select only a special range of data (e.g. a time-frame) or similar use cases.
+A `KeyPredicate` can also be used to select only a special range of data (e.g., a time frame), or in similar use cases.
 
 A basic `KeyPredicate` implementation that only maps keys containing the word "hazelcast" might look like the following code example:
 
@@ -329,8 +329,8 @@ The following snippet shows a typical `JobTracker` configuration. The configurat
 ```
 
 - **max-thread-size:** Maximum thread pool size of the JobTracker.
-- **queue-size:** Maximum number of tasks that are able to wait to be processed. A value of 0 means an unbounded queue. Very low numbers can prevent successful execution since job might not be correctly scheduled or intermediate chunks might be lost.
-- **retry-count:** Currently not used. Reserved for later use where the framework will automatically try to restart / retry operations from an available save point.
+- **queue-size:** Maximum number of tasks that are able to wait to be processed. A value of 0 means an unbounded queue. Very low numbers can prevent successful execution since the job might not be correctly scheduled or intermediate chunks might be lost.
+- **retry-count:** Currently not used. Reserved for later use where the framework will automatically try to restart/retry operations from an available save point.
 - **chunk-size:** Number of emitted values before a chunk is sent to the reducers. If your emitted values are big or you want to better balance your work, you might want to change this to a lower or higher value. A value of 0 means immediate transmission, but remember that low values mean higher traffic costs. A very high value might cause an OutOfMemoryError to occur if the emitted values do not fit into heap memory before
 being sent to the reducers. To prevent this, you might want to use a combiner to pre-reduce values on mapping members.
 - **communicate-stats:** Specifies whether the statistics (for example, statistics about processed entries) are transmitted to the job emitter. This can show progress to a user inside of an UI system, but it produces additional traffic. If not needed, you might want to deactivate this.
