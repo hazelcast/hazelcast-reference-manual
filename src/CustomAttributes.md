@@ -3,16 +3,16 @@
 
 It is possible to define a custom attribute that may be referenced in predicates, queries and indexes.
 
-A custom attribute is a "synthetic" attribute which does not exist as a `field` or a `getter` in the object that it is extracted from.
-Thus, it is required to define the policy how the attribute is supposed to be extracted.
-Currently, the only way to extract a custom attribute is to implement a `com.hazelcast.query.extractor.ValueExtractor`
-which encompasses the extraction logic.
+A custom attribute is a "synthetic" attribute that does not exist as a `field` or a `getter` in the object that it is extracted from.
+Thus, it is necessary to define the policy on how the attribute is supposed to be extracted.
+Currently the only way to extract a custom attribute is to implement a `com.hazelcast.query.extractor.ValueExtractor`
+that encompasses the extraction logic.
 
 Custom Attributes are compatible with all Hazelcast serialisation methods, including the Portable serialisation.
 
 ### Implementing a ValueExtractor
 
-In order to implement a `ValueExtractor` just extend the abstract `com.hazelcast.query.extractor.ValueExtractor` class
+In order to implement a `ValueExtractor`, extend the abstract `com.hazelcast.query.extractor.ValueExtractor` class
 and implement the `extract()` method.
 
 The `ValueExtractor` interface looks as follows:
@@ -127,8 +127,8 @@ class Wheel {
 ```
 
 Let's assume that we want to extract the names of all wheels from a single motorbike object. Each motorbike has two
-wheels so there are two names too. In order to return both values from the extraction operation just collect them
-separately using the `ValueCollector`. Collecting multiple values in such a way allows operating on these multiple
+wheels so there are two names for each bike. In order to return both values from the extraction operation, collect them
+separately using the `ValueCollector`. Collecting multiple values in this way allows you to operate on these multiple
 values as if they were single-values during the evaluation of the predicates.
 
 Let's assume that we registered a custom extractor with the name `wheelName` and executed the following query:
@@ -157,7 +157,7 @@ For now, it's **not** possible to register a custom `ArgumentParser`, thus a def
 It follows a `pass-through` semantic, which means that the string located in the square-brackets is passed `as-is` to
 the `ValueExtractor.extract()` method.
 
-Please note that it is not allowed to use square brackets within the argument string.
+Please note that using square brackets within the argument string is not allowed.
 
 ### Configuring a Custom Attribute Programmatically
 
@@ -174,7 +174,7 @@ mapConfig.addMapAttributeConfig(attributeConfig);
 
 `currency` is the name of the custom attribute that will be extracted using the `CurrencyExtractor` class.
 
-Please, bear in mind that an extractor may not be added after the map has been instantiated.
+Bear in mind that an extractor may not be added after the map has been instantiated.
 All extractors have to be defined upfront in the map's initial configuration.
 
 ### Configuring a Custom Attribute Declaratively
@@ -189,7 +189,7 @@ The following snippet demonstrates how to define a custom attribute in the Hazel
 </map>
 ```
 
-Analogously to the example above, `currency` is the name of the custom attribute that will be extracted using the
+Analogous to the example above, `currency` is the name of the custom attribute that will be extracted using the
 `CurrencyExtractor` class.
 
 Please note that an attribute name may begin with an ascii letter [A-Za-z] or digit [0-9] and may contain
@@ -201,7 +201,7 @@ You can create an index using a custom attribute.
 
 The name of the attribute used in the index definition has to match the one used in the attributes configuration.
 
-It is allowed to define indexes with extraction arguments, as shown in the example below:
+Defining indexes with extraction arguments is allowed, as shown in the example below:
 
 ```xml
 <indexes>
