@@ -18,7 +18,7 @@ class Wheel {
 }
 ```
 
-In order to query a single element of a collection / array, you can execute the following query:
+In order to query a single element of a collection/array, you can execute the following query:
 
 ```java
 // it matches all motorbikes where the zero wheel's name is 'front-wheel'
@@ -26,7 +26,7 @@ Predicate p = Predicates.equals('wheels[0].name', 'front-wheel');
 Collection<Motorbike> result = map.values(p);
 ```
 
-It is also possible to query a collection / array using the `any` semantic as shown below:
+It is also possible to query a collection/array using the `any` semantic as shown below:
 
 ```java
 // it matches all motorbikes where any wheel's name is 'front-wheel'
@@ -45,7 +45,7 @@ Collection<Motorbike> result = map.values(p);
 
 ### Indexing in Collections and Arrays
 
-You can also create an index using a query in collections / arrays.
+You can also create an index using a query in collections/arrays.
 
 Please note that in order to leverage the index, the attribute name used in the query has to be the same as the one used
 in the index definition.
@@ -72,7 +72,7 @@ was used in the index:
 Predicates.equals('wheels[0].name', 'front-wheel')
 ```
 
-In order to use the index in the above mentioned case you have to create another index as shown below:
+In order to use the index in the case mentioned above, you have to create another index, as shown below:
 
 ```xml
 <indexes>
@@ -82,10 +82,10 @@ In order to use the index in the above mentioned case you have to create another
 
 ### Corner cases
 
-Handling of corner cases may be a bit different than the one used in programming language, like `Java`.
+Handling of corner cases may be a bit different than in a programming language, like `Java`.
 
 Let's have a look at the following examples in order to understand the differences.
-To make the analysis simpler let's assume that there is only one `Motorbike` object stored in an IMap.
+To make the analysis simpler, let's assume that there is only one `Motorbike` object stored in an IMap.
 
 | Id  | Query                                                 | Data state                          | Extraction Result | Match |
 | --- | ----------------------------------------------------- | ----------------------------------- | ----------------- | ----- |
@@ -99,16 +99,16 @@ To make the analysis simpler let's assume that there is only one `Motorbike` obj
 |  8  | Predicates.equals('wheels[0].name', null)             | wheels == null                      | null              | Yes   |
 
 
-As you can see **no** `NullPointerException`s or `IndexOutOfBoundException`s are thrown in the extraction process even
+As you can see, **no** `NullPointerException`s or `IndexOutOfBoundException`s are thrown in the extraction process, even
 though parts of the expression are `null`.
 
-Looking at examples 4, 6 and 8 we can also easily notice that it is impossible to distinguish which part of the
+Looking at examples 4, 6 and 8, we can also easily notice that it is impossible to distinguish which part of the
 expression was null.
-If we execute the following query `wheels[1].name = null` it may be evaluated to true because:
+If we execute the following query `wheels[1].name = null`, it may be evaluated to true because:
 
-* `wheels` collection / array is null
+* `wheels` collection/array is null
 * `index == 1` is out of bound
 * `name` attribute of the wheels[1] object is `null`
 
-In order to make the query unambiguous extra conditions would have to be added, e.g.
+In order to make the query unambiguous, extra conditions would have to be added, e.g.,
 `wheels != null AND wheels[1].name = null`
