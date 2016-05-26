@@ -26,7 +26,7 @@ applied to the `employee` map using the `map.values(predicate)` method. This met
 and merges the results coming from them. Since the predicate is communicated between the members, it needs to
 be serializable.
 
-![image](images/NoteSmall.jpg)***NOTE:*** *Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of Hazelcast distributed 
+![image](images/NoteSmall.jpg)***NOTE:*** *Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of the Hazelcast distributed 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.*
 
 #### Predicates Class Operators
@@ -37,13 +37,13 @@ explained below.
 - `equal`: Checks if the result of an expression is equal to a given value.
 - `notEqual`: Checks if the result of an expression is not equal to a given value.
 - `instanceOf`: Checks if the result of an expression has a certain type.
-- `like`: Checks if the result of an expression matches some string pattern. % (percentage sign) is placeholder for many
+- `like`: Checks if the result of an expression matches some string pattern. % (percentage sign) is the placeholder for many
 characters,  (underscore) is placeholder for only one character.
 - `greaterThan`: Checks if the result of an expression is greater than a certain value.
 - `greaterEqual`: Checks if the result of an expression is greater than or equal to a certain value.
 - `lessThan`: Checks if the result of an expression is less than a certain value.
 - `lessEqual`: Checks if the result of an expression is less than or equal to a certain value.
-- `between`: Checks if the result of an expression is between 2 values (this is inclusive).
+- `between`: Checks if the result of an expression is between two values (this is inclusive).
 - `in`: Checks if the result of an expression is an element of a certain collection.
 - `isNot`: Checks if the result of an expression is false.
 - `regex`: Checks if the result of an expression matches some regular expression.
@@ -57,7 +57,7 @@ Predicates class</a> for all predicates provided.*
 
 #### Joining Predicates with AND, OR, NOT
 
-You can join predicates using the `and`, `or` and `not` operators, as shown in the below examples.
+You can join predicates using the `and`, `or`, and `not` operators, as shown in the below examples.
 
 ```java
 public Set<Person> getWithNameAndAge( String name, int age ) {
