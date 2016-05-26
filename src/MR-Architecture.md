@@ -9,7 +9,7 @@ This section explains some of the internals of the MapReduce framework. This is 
 
 To understand the following technical internals, we first have a short look at what happens in terms of an example workflow.
 
-As a simple example, think of an `IMap<String, Integer>` and emitted keys having the same types. Imagine you have a cluster with three members, and you initiate the MapReduce job on the first member. After you requested the JobTracker from your running / connected Hazelcast, we submit the task and retrieve the ICompletableFuture which gives us a chance to wait for the result to be calculated or to add a callback (and being more reactive).
+As a simple example, think of an `IMap<String, Integer>` and emitted keys having the same types. Imagine you have a cluster with three members, and you initiate the MapReduce job on the first member. After you requested the JobTracker from your running/connected Hazelcast, we submit the task and retrieve the ICompletableFuture, which gives us a chance to wait for the result to be calculated or to add a callback (and being more reactive).
 
 The example expects that the chunk size is 0 or 1, so an emitted value is directly sent to the reducers. Internally, the job is prepared, started, and executed on all members as shown below. The first member acts as the job owner (job emitter).
 
@@ -55,21 +55,21 @@ Member1 sees all partitions processed and requests reducing from all members
 Member1 merges all reduced results together in a final structure and returns it
 ```
 
-The flow is quite complex but extremely powerful since everything is executed in parallel. Reducers do not wait until all values are emitted, but they immediately begin to reduce (when first chunk for an emitted key arrives).
+The flow is quite complex but extremely powerful since everything is executed in parallel. Reducers do not wait until all values are emitted, but they immediately begin to reduce (when the first chunk for an emitted key arrives).
 
 #### Internal MapReduce Packages
 
-Beginning with the package level, there is one basic package: `com.hazelcast.mapreduce`. This includes the external API and the **impl** package which itself contains the internal implementation.
+Beginning with the package level, there is one basic package: `com.hazelcast.mapreduce`. This includes the external API and the **impl** package, which itself contains the internal implementation.
 
  - The **impl** package contains all the default `KeyValueSource` implementations and abstract base and support classes for the exposed API.
- - The **client** package contains all classes that are needed on client and member side when a client offers a MapReduce job.
+ - The **client** package contains all classes that are needed on the client and member sides when a client offers a MapReduce job.
  - The **notification** package contains all "notification" or event classes that notify other members about progress on operations.
  - The **operation** package contains all operations that are used by the workers or job owner to coordinate work and sync partition or reducer processing.
- - The **task** package contains all classes that execute the actual MapReduce operation. It features the supervisor, mapping phase implementation and mapping and reducing tasks.
+ - The **task** package contains all classes that execute the actual MapReduce operation. It features the supervisor, mapping phase implementation, and mapping and reducing tasks.
 
 #### MapReduce Job Walk-Through
 
-And now to the technical walk-through: a MapReduce Job is always retrieved from a named `JobTracker`, which is implemented in `NodeJobTracker` (extends `AbstractJobTracker`) and is configured using the configuration DSL. All of the internal implementation is completely ICompletableFuture-driven and mostly non-blocking in design.
+Now to the technical walk-through: A MapReduce Job is always retrieved from a named `JobTracker`, which is implemented in `NodeJobTracker` (extends `AbstractJobTracker`) and is configured using the configuration DSL. All of the internal implementation is completely ICompletableFuture-driven and mostly non-blocking in design.
 
 On submit, the Job creates a unique UUID which afterwards acts as a jobId and is combined with the JobTracker's name to be uniquely identifiable inside the cluster. Then, the preparation is sent around the cluster and every member prepares its execution by creating a JobSupervisor, MapCombineTask, and ReducerTask. The job-emitting JobSupervisor gains special capabilities to synchronize and control JobSupervisors on other members for the same job.
 
