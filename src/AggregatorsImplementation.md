@@ -7,7 +7,7 @@ stop reading here and come back later when you need to know how to implement you
 aggregation.
 
 An `Aggregation` implementation is defining a MapReduce task, but with a small difference: the `Mapper`
-is always expected to work on a `Supplier` that filters and / or transforms the mapped input value to some output value.
+is always expected to work on a `Supplier` that filters and/or transforms the mapped input value to some output value.
 
 #### Aggregation Methods
 
@@ -35,7 +35,7 @@ For more information on how you implement mappers, combiners, reducers, and coll
 For best speed and traffic usage, as mentioned in the [MapReduce section](#mapreduce), you should add a `Combiner` to your aggregation
 whenever it is possible to do some kind of pre-reduction step.
 
-Your implementation also should use `DataSerializable` or `IdentifiedDataSerializable` for best compatibility and speed / stream-size
+Your implementation also should use `DataSerializable` or `IdentifiedDataSerializable` for best compatibility and speed/stream-size
 reasons.
 
 <br></br>
