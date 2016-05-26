@@ -3,7 +3,7 @@
 
 For the final example, imagine you are working for an international company and you have an employee database stored in Hazelcast
 `IMap` with all employees worldwide and a `MultiMap` for assigning employees to their certain locations or offices. In addition,
-there is another `IMap` which holds the salary per employee.
+there is another `IMap` that holds the salary per employee.
 
 #### Setting up the Data Model
 
@@ -75,14 +75,14 @@ int avgSalary = salaries.aggregate( Supplier.all( extractor ),
                                     Aggregations.integerAvg() );
 ```
 
-That's it. Internally, we created a MapReduce task based on the predefined aggregation and fired it up immediately. Currently, all
+That's it. Internally, we created a MapReduce task based on the predefined aggregation and fired it up immediately. Currently all
 aggregation calls are blocking operations, so it is not yet possible to execute the aggregation in a reactive way (using
-`com.hazelcast.core.ICompletableFuture`) but this will be part of an upcoming version.
+`com.hazelcast.core.ICompletableFuture`), but this will be part of an upcoming version.
 
 #### Map Join Example
 
-The following example is a little more complex. We only want to have our US based employees selected into the average
-salary calculation, so we need to execute some kind of a join operation between the employees and salaries maps.
+The following example is a little more complex. We only want to have our US-based employees selected into the average
+salary calculation, so we need to execute a join operation between the employees and salaries maps.
 
 ```java
 class USEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAware {
@@ -175,7 +175,7 @@ for ( String office : officeAssignment.keySet() ) {
 
 #### Simple Count Example
 
-After the previous example, we want to end this section by executing one final and easy aggregation. We
+We want to end this section by executing one final and easy aggregation. We
 want to know how many employees we currently have on a worldwide basis. Before reading the next lines of example code, you
 can try to do it on your own to see if you understood how to execute aggregations.
 
