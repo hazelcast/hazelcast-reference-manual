@@ -8,7 +8,7 @@ Thus, it is necessary to define the policy on how the attribute is supposed to b
 Currently the only way to extract a custom attribute is to implement a `com.hazelcast.query.extractor.ValueExtractor`
 that encompasses the extraction logic.
 
-Custom Attributes are compatible with all Hazelcast serialisation methods, including the Portable serialisation.
+Custom Attributes are compatible with all Hazelcast serialization methods, including the Portable serialization.
 
 ### Implementing a ValueExtractor
 
@@ -40,11 +40,11 @@ public abstract class ValueExtractor<T, A> {
 }
 ```
 
-The `extract()` method does not return any value since the extracted value is collected by the ValueCollector.
-In order to return multiple results from a single extraction just invoke the `ValueCollector.collect()` method
+The `extract()` method does not return any value since the extracted value is collected by the `ValueCollector`.
+In order to return multiple results from a single extraction, invoke the `ValueCollector.collect()` method
 multiple times, so that the collector collects all results.
 
-Here's the `ValueCollector` contract:
+Here is the `ValueCollector` contract:
 
 ```java
 /**
@@ -64,18 +64,18 @@ public abstract class ValueCollector {
 }
 ```
 
-#### ValueExtractor with Portable serialisation
+#### ValueExtractor with Portable Serialization
 
-Portable serialisation is a special kind of serialisation where there is no need to have the Class of the serialised object on the
+Portable serialization is a special kind of serialization where there is no need to have the class of the serialized object on the
 classpath in order to read its attributes. That is the reason why the target object passed to the `ValueExtractor.extract()`
 method will not be of the exact type that has been stored. Instead, an instance of a `com.hazelcast.query.extractor.ValueReader` will be passed.
 `ValueReader` enables reading the attributes of a Portable object in a generic and type-agnostic way.
 It contains two methods:
 
  * `read(String path, ValueCollector<T> collector)` - enables passing all results directly to the `ValueCollector`.
- * `read(String path, ValueCallback<T> callback)` - enables filtering, transforming and grouping the result of the read operation and manually passing it to the ValueCollector.
+ * `read(String path, ValueCallback<T> callback)` - enables filtering, transforming and grouping the result of the read operation and manually passing it to the `ValueCollector`.
 
-Here's the `ValueReader` contract:
+Here is the `ValueReader` contract:
 
 ```java
 /**
@@ -129,21 +129,21 @@ class Wheel {
 Let's assume that we want to extract the names of all wheels from a single motorbike object. Each motorbike has two
 wheels so there are two names for each bike. In order to return both values from the extraction operation, collect them
 separately using the `ValueCollector`. Collecting multiple values in this way allows you to operate on these multiple
-values as if they were single-values during the evaluation of the predicates.
+values as if they were single values during the evaluation of the predicates.
 
 Let's assume that we registered a custom extractor with the name `wheelName` and executed the following query:
 `wheelName = front-wheel`.
 
-The extraction may return up to two wheel names for each Motorbike since each Motorbike has up to two wheels.
+The extraction may return up to two wheel names for each `Motorbike` since each `Motorbike` has up to two wheels.
 In such a case, it is enough if a single value evaluates the predicate's condition to true to return a match, so
-it will return a Motorbike if "any" of the wheels matches the expression.
+it will return a `Motorbike` if "any" of the wheels matches the expression.
 
 
 ### Extraction Arguments
 
 A `ValueExtractor` may use a custom argument if it is specified in the query.
 The custom argument may be passed within the square brackets located after the name of the custom attribute,
-e.g. `customAttribute[argument]`.
+e.g., `customAttribute[argument]`.
 
 Let's have a look at the following query: `currency[incoming] == EUR`
 The `currency` is a custom attribute that uses a `com.test.CurrencyExtractor` for extraction.
@@ -151,10 +151,10 @@ The `currency` is a custom attribute that uses a `com.test.CurrencyExtractor` fo
 The string `incoming` is an argument that will be passed to the `ArgumentParser` during the extraction.
 The parser will parse the string according to the parser's custom logic and it will return a parsed object.
 The parsed object may be a single object, array, collection, or any arbitrary object.
-It's up to the `ValueExtractor`'s implementor to understand the semantics of the parsed argument object.
+It is up to the `ValueExtractor`'s implementor to understand the semantics of the parsed argument object.
 
-For now, it's **not** possible to register a custom `ArgumentParser`, thus a default parser is used.
-It follows a `pass-through` semantic, which means that the string located in the square-brackets is passed `as-is` to
+For now it is **not** possible to register a custom `ArgumentParser`, thus a default parser is used.
+It follows a `pass-through` semantic, which means that the string located in the square brackets is passed "as is" to
 the `ValueExtractor.extract()` method.
 
 Please note that using square brackets within the argument string is not allowed.
@@ -174,7 +174,7 @@ mapConfig.addMapAttributeConfig(attributeConfig);
 
 `currency` is the name of the custom attribute that will be extracted using the `CurrencyExtractor` class.
 
-Bear in mind that an extractor may not be added after the map has been instantiated.
+Keep in mind that an extractor may not be added after the map has been instantiated.
 All extractors have to be defined upfront in the map's initial configuration.
 
 ### Configuring a Custom Attribute Declaratively
@@ -192,8 +192,8 @@ The following snippet demonstrates how to define a custom attribute in the Hazel
 Analogous to the example above, `currency` is the name of the custom attribute that will be extracted using the
 `CurrencyExtractor` class.
 
-Please note that an attribute name may begin with an ascii letter [A-Za-z] or digit [0-9] and may contain
-ascii letters [A-Za-z], digits [0-9] or underscores later on.
+Please note that an attribute name may begin with an ASCII letter [A-Za-z] or digit [0-9] and may contain
+ASCII letters [A-Za-z], digits [0-9] or underscores later on.
 
 ### Indexing Custom Attributes
 

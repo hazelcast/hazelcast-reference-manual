@@ -2,7 +2,7 @@
 ## Querying in Collections and Arrays
 
 Hazelcast allows querying in collections and arrays.
-Querying in Collections and Arrays is compatible all Hazelcast serialisation methods, including the Portable serialisation.
+Querying in collections and arrays is compatible with all Hazelcast serialization methods, including the Portable serialization.
 
 
 Let's have a look at the following data structure expressed in pseudo-code:
@@ -45,7 +45,7 @@ Collection<Motorbike> result = map.values(p);
 
 ### Indexing in Collections and Arrays
 
-You can also create an index using a query in collections/arrays.
+You can also create an index using a query in collections and arrays.
 
 Please note that in order to leverage the index, the attribute name used in the query has to be the same as the one used
 in the index definition.
@@ -82,10 +82,10 @@ In order to use the index in the case mentioned above, you have to create anothe
 
 ### Corner cases
 
-Handling of corner cases may be a bit different than in a programming language, like `Java`.
+Handling of corner cases may be a bit different than in a programming language like `Java`.
 
 Let's have a look at the following examples in order to understand the differences.
-To make the analysis simpler, let's assume that there is only one `Motorbike` object stored in an IMap.
+To make the analysis simpler, let's assume that there is only one `Motorbike` object stored in a Hazelcast Map.
 
 | Id  | Query                                                 | Data state                          | Extraction Result | Match |
 | --- | ----------------------------------------------------- | ----------------------------------- | ----------------- | ----- |
@@ -106,9 +106,9 @@ Looking at examples 4, 6 and 8, we can also easily notice that it is impossible 
 expression was null.
 If we execute the following query `wheels[1].name = null`, it may be evaluated to true because:
 
-* `wheels` collection/array is null
-* `index == 1` is out of bound
-* `name` attribute of the wheels[1] object is `null`
+* `wheels` collection/array is null.
+* `index == 1` is out of bound.
+* `name` attribute of the wheels[1] object is `null`.
 
 In order to make the query unambiguous, extra conditions would have to be added, e.g.,
-`wheels != null AND wheels[1].name = null`
+`wheels != null AND wheels[1].name = null`.
