@@ -115,7 +115,7 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 
 - `in-memory-format`: Internal storage format.  Please see the [In-Memory Format section](#in-memory-format-on-replicated-map). The default value is `OBJECT`.
 - `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. The default value is `true`. If set to `false` (i.e., synchronous initial fill up), no exception will be thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
-- `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. The default value is `false`.
+- `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. The default value is `true`.
 - `entry-listener`: Full canonical classname of the `EntryListener` implementation.
   - `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. The default value is `true`.
   - `entry-listener#local`: Not used for Replicated Map since listeners are always local.
