@@ -2,7 +2,7 @@
     <ol>
     <% for entry in level: %>
         <li>
-            <a href="<%= @baseUrl %><%- entry.slug %>.html"><%= entry.title %></a>
+             <a href="<%= @baseUrl %><%- entry.slug %>.html#<%= entry.anchor %>"><%= entry.title %></a>
             <% if entry.childs and currentLevel < maxLevel: %>
                 <%= toc_level(entry.childs, maxLevel, currentLevel + 1) %>
             <% end %>
@@ -24,10 +24,5 @@
 	            <% end %>
 	        </ul>
 	    </nav>
-	    <% end %>
-		<div id="copyright">
-			Powered by <a href="http://github.com/maximebf/beautiful-docs">beautiful-docs</a> -
-	        <a href="#top">Back to top</a>
-		</div>
-	
+	    <% end %>	
 	</div>
