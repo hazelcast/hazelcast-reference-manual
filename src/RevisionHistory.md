@@ -20,6 +20,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 10 - Distributed Query](#distributed-query)|[ValueExtractor with Portable Serialization](#valueExtractor-with-portable-serialization)| Added as a new section.
 |[Chapter 11 - Transactions](#transactions)|[Integrating into J2EE](#integrating-into-j2ee)| Added information related to class loaders.
 |[Chapter 12 - Hazelcast JCache](#hazelcast-jcache)|[ICache Configuration](#icache-configuration)| Added description of the new element `disable-per-entry-invalidation-events`.
+||[JCache - Hazelcast Instance Integration](#jcache-hazelcast-instance-integration)| Added as a new section.
 |[Chapter 14 - Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added the new section [Hot Restart Performance Considerations](#hot-restart-performance-considerations) to summarize the results of performance tests of Hot Restart Persistence.
 ||[Configuring High-Density Memory Store](#configuring-high-density-memory-store)|Enhanced the content for `allocator-type` configuration element.
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)||Enhanced the definition for the property `hazelcast.client.invocation.timeout.seconds`.
