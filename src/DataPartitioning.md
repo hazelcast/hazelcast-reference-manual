@@ -21,7 +21,7 @@ Hazelcast distributes the partitions equally among the members of the cluster. H
 
 Partition distributions in the above illustrations are for your convenience and descriptive purposes. Normally, the partitions are not distributed in an order (as they are shown in these illustrations), but are distributed randomly. The important point here is that Hazelcast equally distributes the partitions and their backups among the members.
 
-With Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
+Starting with Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
 they can access partitions that are owned by other members in the cluster.
 
 <br></br>

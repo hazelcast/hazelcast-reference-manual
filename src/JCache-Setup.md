@@ -38,7 +38,7 @@ If you use `hazelcast-all.jar`:
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast-all</artifactId>
-  <version>"your Hazelcast version, e.g. 3.6.2"</version>
+  <version>"your Hazelcast version, e.g. 3.7"</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ If you use `hazelcast.jar`:
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast</artifactId>
-  <version>"your Hazelcast version, e.g. 3.6.2"</version>
+  <version>"your Hazelcast version, e.g. 3.7"</version>
 </dependency>
 ```
 The users of other build systems have to adjust the way of
@@ -64,7 +64,7 @@ Maven snippet:
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast-client</artifactId>
-  <version>"your Hazelcast version, e.g. 3.6.2"</version>
+  <version>"your Hazelcast version, e.g. 3.7"</version>
 </dependency>
 ```
 

@@ -71,22 +71,22 @@ If you need more control over the cluster layout, you can create a file `cluster
  
 ```
 <clusterConfiguration>
-    <workerConfiguration name="memberWorker361" type="MEMBER" hzVersion="maven=3.6.1"/>
-    <workerConfiguration name="clientWorker361" type="CLIENT" hzVersion="maven=3.6.1"/>
+    <workerConfiguration name="memberWorker37" type="MEMBER" hzVersion="maven=3.7"/>
+    <workerConfiguration name="clientWorker37" type="CLIENT" hzVersion="maven=3.7"/>
     <nodeConfiguration>
-        <workerGroup configuration="memberWorker361" count="2"/>
-        <workerGroup configuration="clientWorker361" count="8"/>
+        <workerGroup configuration="memberWorker37" count="2"/>
+        <workerGroup configuration="clientWorker37" count="8"/>
     </nodeConfiguration>
     <nodeConfiguration>
-        <workerGroup configuration="memberWorker361" count="4"/>
+        <workerGroup configuration="memberWorker37" count="4"/>
     </nodeConfiguration>
     <nodeConfiguration>
-        <workerGroup configuration="memberWorker361" count="50"/>
+        <workerGroup configuration="memberWorker37" count="50"/>
     </nodeConfiguration>
 </clusterConfiguration>
 ```
 
-In this case you need to have exactly three available remote machines. First we define two different types of Workers (`workerConfiguration`): in this case, a member and a client type with Hazelcast version 3.6.1. Then we define how many Workers of which type are created on each machine (`nodeConfiguration`): in this case, a mixed, a member only, and a client only machine. With the `cluster.xml` file you can also configure different Hazelcast versions to test cross version compatibility.
+In this case you need to have exactly three available remote machines. First we define two different types of Workers (`workerConfiguration`): in this case, a member and a client type with Hazelcast version 3.7. Then we define how many Workers of which type are created on each machine (`nodeConfiguration`): in this case, a mixed, a member only, and a client only machine. With the `cluster.xml` file you can also configure different Hazelcast versions to test cross version compatibility.
 
 ### Controlling the Load Generation
 
