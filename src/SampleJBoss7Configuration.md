@@ -6,7 +6,7 @@ Deploying on JBoss AS 7 or JBoss EAP 6 is a straightforward process. The steps y
 
 - Create the folder `<jboss_home>/modules/system/layers/base/com/hazelcast/main`.
 - Place the `hazelcast-`<*version*>`.jar` and `hazelcast-jca-`<*version*>`.jar` into the folder you created in the previous step.
-- Create the file `module.xml` and place it in the same folder. This file should have the following content.
+- Create the file `module.xml` and place it in the same folder. This file should have the following content:
 
   ```xml
 <module xmlns="urn:jboss:module:1.0" name="com.hazelcast">
