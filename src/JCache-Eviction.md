@@ -48,6 +48,102 @@ And to configure the use of the LFU (Less Frequently Used) policy:
 
 The default eviction policy is LRU. Therefore, Hazelcast JCache does not offer the possibility to perform no eviction.
 
+##### Custom Eviction Policies
+
+Users are also be able to specify their custom eviction policies (besides out of the box supplied ones which are *LFU* and *LRU*) 
+through eviction configuration either programmatically or declaratively.
+
+User is only expected to provide `com.hazelcast.cache.CacheEvictionPolicyComparator` implementation for comparing `com.hazelcast.cache.CacheEntryView`s. 
+Supplied `CacheEvictionPolicyComparator` is used to compare cache entry views to select the one with higher priority to evict.
+
+Here is an example for custom eviction policy comparator implementation for JCache:
+
+```java
+public class MyCacheEvictionPolicyComparator
+        extends CacheEvictionPolicyComparator<Long, String> {
+
+    @Override
+    public int compare(CacheEntryView<Long, String> e1, CacheEntryView<Long, String> e2) {
+        long id1 = e1.getKey();
+        long id2 = e2.getKey();
+        if (id1 > id2) {
+            return FIRST_ENTRY_HAS_HIGHER_PRIORITY_TO_BE_EVICTED; // -1
+        } else if (id1 < id2) {
+            return SECOND_ENTRY_HAS_HIGHER_PRIORITY_TO_BE_EVICTED; // +1
+        } else {
+            return BOTH_OF_ENTRIES_HAVE_SAME_PRIORITY_TO_BE_EVICTED; // 0
+        }
+    }
+
+}
+```
+
+###### Configuration
+
+Custom eviction policy comparator is able to be specified through eviction configuration 
+by giving full class name of the `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near-cache) 
+implementation or by specifying its instance itself.
+
+**Programmatic:**
+
+Full class name of the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near-cache) implementation 
+can be specified through `EvictionConfig`. This approach is useful when eviction configuration is specified at client side 
+and the custom `EvictionPolicyComparator` implementation class itself is not exist at client but at server.
+
+```java
+CacheConfig cacheConfig = new CacheConfig();
+...
+EvictionConfig evictionConfig = 
+    new EvictionConfig(50000, 
+                       MaxSizePolicy.ENTRY_COUNT, 
+                       "com.mycompany.MyEvictionPolicyComparator");
+cacheConfig.setEvictionConfig(evictionConfig);
+```
+
+Custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near-cache) instance itself 
+can be specified directly through `EvictionConfig`. 
+
+```java
+CacheConfig cacheConfig = new CacheConfig();
+...
+EvictionConfig evictionConfig = 
+    new EvictionConfig(50000, 
+                       MaxSizePolicy.ENTRY_COUNT, 
+                       new MyEvictionPolicyComparator());
+cacheConfig.setEvictionConfig(evictionConfig);
+```
+
+**Declarative:**
+
+Full class name of the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near-cache) implementation 
+can be specified in the `<eviction>` tag through `comparator-class-name` attribute in the Hazelcast configuration XML file.
+
+```xml
+<cache name="cacheWithCustomEvictionPolicyComparator"> 
+    <eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/> 
+</cache>
+```
+
+**Declarative for Spring:**
+
+Full class name of the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near-cache) implementation 
+can be specified in the `<eviction>` tag through `comparator-class-name` attribute in the Hazelcast *Spring* configuration XML file.
+
+```xml
+<hz:cache name="cacheWithCustomEvictionPolicyComparator">
+    <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/>
+</hz:cache>
+```
+
+Custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near-cache) bean can be specified in the `<eviction>` tag 
+by referencing through `comparator-bean` attribute in the Hazelcast *Spring* configuration XML file
+
+```xml
+<hz:cache name="cacheWithCustomEvictionPolicyComparator">
+    <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-bean="myEvictionPolicyComparatorBean"/>
+</hz:cache>
+```
+
 #### Eviction Strategy
 
 Eviction strategies implement the logic of selecting one or more eviction candidates from the underlying storage implementation and
