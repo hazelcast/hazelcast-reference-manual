@@ -96,6 +96,27 @@ Here is the list of attributes that are exposed from the Clustered JMX interface
   * OwnedEntryCount
   * PutOperationCount
   * RemoveOperationCount
+*  ReplicatedMaps
+  * Cluster
+  * Name
+  * BackupEntryCount
+  * BackupEntryMemoryCost
+  * CreationTime
+  * DirtyEntryCount
+  * Events
+  * GetOperationCount
+  * HeapCost
+  * Hits
+  * LastAccessTime
+  * LastUpdateTime
+  * LockedEntryCount
+  * MaxGetLatency
+  * MaxPutLatency
+  * MaxRemoveLatency
+  * OtherOperationCount
+  * OwnedEntryCount
+  * PutOperationCount
+  * RemoveOperationCount
 *  Members
   * ConnectedClientCount
   * HeapFreeMemory
@@ -241,7 +262,7 @@ enabled: true
 jmx:
   - object_name: ManagementCenter[clustername]:type=Maps,name=mapname
     metrics:
-      - attributes: PutOperationCount, GetOperationCount, RemoveOperationCount, Hits,\ 
+      - attributes: PutOperationCount, GetOperationCount, RemoveOperationCount, Hits,\
             BackupEntryCount, OwnedEntryCount, LastAccessTime, LastUpdateTime
         type: simple
   - object_name: ManagementCenter[clustername]:type=Members,name="member address in\
@@ -271,23 +292,23 @@ Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
 Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric OwnedPartitionCount : 68
 Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
-    JMX Service : MBeans query ManagementCenter[dev]:type=Maps,name=orders, 
+    JMX Service : MBeans query ManagementCenter[dev]:type=Maps,name=orders,
     matches 1
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric Hits : 46,593
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric BackupEntryCount : 1,100
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric OwnedEntryCount : 1,100
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric RemoveOperationCount : 0
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric PutOperationCount : 118,962
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric GetOperationCount : 0
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric LastUpdateTime : 1,401,962,426,811
-Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER: 
+Jun 5, 2014 14:18:43 +0300 [72696 62] com.newrelic.agent.jmx.JmxService FINER:
     Recording JMX metric LastAccessTime : 1,401,962,426,811
 ```
 
