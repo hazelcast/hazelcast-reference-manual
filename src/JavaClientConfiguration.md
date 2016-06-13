@@ -104,7 +104,7 @@ Address List is the initial list of cluster addresses to which the client will c
 ```java
 ClientConfig clientConfig = new ClientConfig();
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
-networkConfig().addAddress("10.1.1.21", "10.1.1.22:5703");
+networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703");
 ```
 
 If the port part is omitted, then 5701, 5702, and 5703 will be tried in random order.
