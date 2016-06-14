@@ -5,6 +5,11 @@
 <br></br>
 
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot use SSL when [Hazelcast Encryption](#encryption) is enabled.*
+
+
+### SSL for Hazelcast Members
+
 Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in network configuration.
 
 ```java
@@ -62,7 +67,14 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
 </hazelcast>
 ```
 
-Hazelcast client also has SSL support. You can configure Client SSL programmatically as shown below.
+You can set `keyStore` and `keyStorePassword` also using the following system properties.
+
+ - `javax.net.ssl.keyStore`
+ - `javax.net.ssl.keyStorePassword` 
+
+### SSL for Hazelcast Clients
+
+Hazelcast Java and .NET clients also have SSL support. Following is a programmatic configuration for Java client:
 
 ```java
 System.setProperty("javax.net.ssl.keyStore", new File("hazelcast.ks").getAbsolutePath());
@@ -73,9 +85,4 @@ ClientConfig clientConfig = new ClientConfig();
 clientConfig.getNetworkConfig().addAddress("127.0.0.1");
 ```
 
-For example, you can set `keyStore` and `keyStorePassword` with the following system properties.
-
- - `javax.net.ssl.keyStore`
- - `javax.net.ssl.keyStorePassword` 
-
-![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot use SSL when [Hazelcast Encryption](#encryption) is enabled.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *When you use SSL with the Java client, it will have a throughput that is 50% of a non-SSL Java client with the same configuration. If it is a .NET client, it will have a throughput that is 46% of a non-SSL .NET client.*
