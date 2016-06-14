@@ -46,7 +46,7 @@ Transactional Queue|Yes|Yes|Yes
 Transactional List|Yes|Yes|Yes
 Transactional Set|Yes|Yes|Yes
 JCache|Yes|No|No
-Ringbuffer|Yes|No|No
+Ringbuffer|Yes|Yes|No
 Reliable Topic|Yes|No|No
 Hot Restart|Yes (with a near cache)|No|No
 Client Configuration Import|Yes|No|No
@@ -61,7 +61,7 @@ Near Cache|Yes|Yes|No
 Heartbeat|Yes|Yes|Yes
 Declarative Configuration|Yes|Yes|No
 Programmatic Configuration|Yes|Yes|Yes
-SSL Support|Yes|No|No
+SSL Support|Yes|Yes|No
 XA Transactions|Yes|No|No
 Smart Client|Yes|Yes|Yes
 Dummy Client|Yes|Yes|Yes
