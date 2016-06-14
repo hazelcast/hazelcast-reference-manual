@@ -1,20 +1,19 @@
 
 ### Tomcat Based Web Session Replication
 
-<font color="#3981DB">**Hazelcast Enterprise**</font>
 <br></br>
 
-
-***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/enterprise-session-replication" target="_blank">sample application</a> for Tomcat Based Web Session Replication.*
+***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/manager-based-session-replication" target="_blank">sample application</a> for Tomcat Based Web Session Replication.*
 
 
 #### Hazelcast Tomcat Features and Requirements
 
-Session Replication with Hazelcast Enterprise is a container specific module that enables session replication for JEE Web Applications without requiring changes to the application.
+<a href="https://github.com/hazelcast/hazelcast-tomcat-sessionmanager" target="_blank">Hazelcast Tomcat Session Manager</a> is a container specific module that enables session replication for JEE Web Applications without requiring changes to the application.
+
 
 ***Features***
 
-- Seamless Tomcat 6, 7 & 8 integration. (Tomcat 8 is supported for Hazelcast Enterprise 3.5 or higher.)
+- Seamless Tomcat 6, 7 & 8 integration.
 - Support for sticky and non-sticky sessions.
 - Tomcat failover.
 - Deferred write for performance boost.
@@ -38,7 +37,7 @@ The latest tested versions are **6.0.39**, **7.0.40** and **8.0.20**.
 
 #### How Tomcat Session Replication Works
 
-Tomcat Session Replication in Hazelcast Enterprise is a Hazelcast Module where each created `HttpSession` Object is kept in the Hazelcast Distributed Map. If configured with Sticky Sessions, each Tomcat Instance has its own local copy of the session for performance boost. 
+Hazelcast Tomcat Session Manager is a Hazelcast Module where each created `HttpSession` Object is kept in the Hazelcast Distributed Map. If configured with Sticky Sessions, each Tomcat Instance has its own local copy of the session for performance boost. 
 
 Since the sessions are in Hazelcast Distributed Map, you can use all the available features offered by Hazelcast Distributed Map implementation, such as MapStore and WAN Replication.
 
@@ -55,11 +54,10 @@ This type of deployment is simple: just configure your Tomcat and launch. There 
 
 The following steps configure a sample P2P for Hazelcast Session Replication.
 
-1. Go to <a href="http://www.hazelcast.com/products/hazelcast-enterprise/" target="_blank">hazelcast.com</a> and download the latest Hazelcast Enterprise.
-2. Unzip the Hazelcast Enterprise zip file into the folder `$HAZELCAST_ENTERPRISE_ROOT`.
-3. Update `$HAZELCAST_ENTERPRISE_ROOT/bin/hazelcast.xml` with the provided Hazelcast Enterprise License Key. 
-4. Put `$HAZELCAST_ENTERPRISE_ROOT/lib/hazelcast-enterprise-all-`<*version*>`.jar`,    `$HAZELCAST_
-ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*tomcatversion*>`-`<*version*>`.jar` and `hazelcast.xml` in the folder `$CATALINA_HOME/lib/`.
+1. Go to <a href="http://www.hazelcast.org/" target="_blank">hazelcast.org</a> and download the latest Hazelcast.
+2. Unzip the Hazelcast zip file into the folder `$HAZELCAST_ROOT`.
+3. Go to <a href="https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/releases" target="_blank">hazelcast-tomcat-sessionmanager</a> repository and download the latest version.
+4. Put `$HAZELCAST_ROOT/lib/hazelcast-all-`<*version*>`.jar`,   and `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
 
 5. Put a `<Listener>` element into the file `$CATALINA_HOME$/conf/server.xml` as shown below.
 
@@ -100,12 +98,12 @@ In this deployment type, Tomcat instances work as clients on an existing Hazelca
 
 The following steps configure a sample Client/Server for Hazelcast Session Replication.
 
-1. Go to <a href="http://www.hazelcast.com/products/hazelcast-enterprise/" target="_blank">hazelcast.com</a> and download the latest Hazelcast Enterprise.
-2. Unzip the Hazelcast Enterprise zip file into the folder `$HAZELCAST_ENTERPRISE_ROOT`.
-3. Put `$HAZELCAST_ENTERPRISE_ROOT/lib/hazelcast-client-`<*version*>`.jar`,            `$HAZELCAST_
-ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*version*>`.jar` and           `$HAZELCAST_ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*tomcatversion*>`-`<*version*>`.jar` in the folder `$CATALINA_HOME/lib/`.
+1. Go to <a href="http://www.hazelcast.org/" target="_blank">hazelcast.org</a> and download the latest Hazelcast.
+2. Unzip the Hazelcast zip file into the folder `$HAZELCAST_ROOT`.
+3. Go to <a href="https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/releases" target="_blank">hazelcast-tomcat-sessionmanager</a> repository and download the latest version.
+4. Put `$HAZELCAST_ROOT/lib/hazelcast-all-`<*version*>`.jar`,   and `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
 
-4. Put a `<Listener>` element into the `$CATALINA_HOME$/conf/server.xml` as shown below.
+5. Put a `<Listener>` element into the `$CATALINA_HOME$/conf/server.xml` as shown below.
 
  ```xml
         <Server>
@@ -115,7 +113,7 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*version*>`.jar` and           `$HAZE
         </Server>
  ```
 
-5. Update the `<Manager>` element in the `$CATALINA_HOME$/conf/context.xml` as shown below.
+6. Update the `<Manager>` element in the `$CATALINA_HOME$/conf/context.xml` as shown below.
 
  ```xml
         <Context>
@@ -124,8 +122,7 @@ ENTERPRISE_ROOT/lib/hazelcast-enterprise-`<*version*>`.jar` and           `$HAZE
         </Context>
  ```
 
-6. Launch a Hazelcast Instance using `$HAZELCAST_ENTERPRISE_ROOT/bin/server.sh` or `$HAZELCAST_
-ENTERPRISE_ROOT/bin/server.bat`.
+7. Launch a Hazelcast Instance using `$HAZELCAST_ROOT/bin/server.sh` or `$HAZELCAST_ROOT/bin/server.bat`.
 
 7. Start Tomcat instances with a configured load balancer and deploy the web application.
 
