@@ -58,6 +58,11 @@ You can contribute to the Hazelcast code, report a bug, or request an enhancemen
 - <a href="https://hazelcast.atlassian.net/wiki/display/COM/Hazelcast+Contributor+Agreement" target="_blank">Hazelcast Contributor Agreement form</a>: Form that each contributing developer needs to fill and send back to Hazelcast.
 - <a href="https://github.com/hazelcast/hazelcast" target="_blank">Hazelcast on GitHub</a>: Hazelcast repository where the code is developed, issues and pull requests are managed.
 
+## Partners
+
+Hazelcast partners with leading hardware and software technologies, system integrators, resellers and OEMs including Amazon Web Services, Vert.x, Azul Systems, C2B2. Please see the [Partners](https://hazelcast.com/partners/) page for the full list of and information on our partners.
+
+
 ## Phone Home
 
 Hazelcast uses phone home data to learn about usage of Hazelcast.
