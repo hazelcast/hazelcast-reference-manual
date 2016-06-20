@@ -14,6 +14,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 1 - Preface](#preface)||Updated the architecture diagram.|
 |[Chapter 5 - Understanding Configuration](#understanding-configuration)||Added as a new chapter to provide the fundamentals of Hazelcast configuration.
 |[Chapter 6 - Setting Up Clusters](#setting-up-clusters)||Added as a new chapter to provide all Hazelcast clusters related information.
+||[Discovering Native Clients](#discovering-native-clients)|Added as a new section to explain Hazelcast's multicast discovery plugin.
 |[Chapter 7 - Distributed Data Structures](#distributed-data-structures)|[Replicated Map](#replicated-map)|[Replicating instead of Partitioning](#replicating-instead-of-partitioning) updated by adding a note related to replicated map usage in a lite member. The whole section enhanced.
 ||[Lock](#lock)| Added explanations related to the maximum lease time for locks.
 ||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.
