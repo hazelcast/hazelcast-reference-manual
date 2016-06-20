@@ -1,13 +1,13 @@
 
-### Discovering Members with Multicast Plugin
+### Discovering Native Clients
 
-Hazelcast members and native clients can find each other with Multicast Discovery Plugin. This plugin is implemented using Hazelcast Discovery SPI. In order to use multicast discovery both hazelcast members and clients should configure plugin.
+Hazelcast members and native clients can find each other with multicast discovery plugin. This plugin is implemented using [Hazelcast Discovery SPI](#discovery-spi). You should configure the plugin both at Hazelcast members and clients in order to use multicast discovery.
 
-To configure your cluster for Multicast Plugin follow these steps:
+To configure your cluster to have the multicast discovery plugin, follow these steps:
 
 - Disable the multicast and TCP/IP join mechanisms. To do this, set the `enabled` attributes of the `multicast` and `tcp-ip` elements to `false` in your `hazelcast.xml` configuration file
 - Set the `enabled` attribute of the `hazelcast.discovery.enabled` property to `true`.
-- Add multicast discovery strategy configuration to your xml file.  
+- Add multicast discovery strategy configuration to your XML file, i.e., `<discovery-strategies>` element.
 
 The following is an example declarative configuration.
 
@@ -34,9 +34,9 @@ The following is an example declarative configuration.
 ...
 ```
 
-The table below lists the multicast plugin configuration properties with their descriptions.
+The table below lists the multicast discovery plugin configuration properties with their descriptions.
 
 Property Name | Type | Description
 :--------------|:------|:------------
-`group`|String|String value that is used to set multicast group. So that you can isolate clusters.
-`port`|Integer|Integer value that is used to set multicast port.
+`group`|String|String value that is used to set the multicast group, so that you can isolate your clusters.
+`port`|Integer|Integer value that is used to set the multicast port.

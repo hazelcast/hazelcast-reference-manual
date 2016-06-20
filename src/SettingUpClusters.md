@@ -1,7 +1,7 @@
 
 # Setting Up Clusters
 
-This chapter describes Hazelcast clusters and the methods cluster members use to form a Hazelcast cluster. 
+This chapter describes Hazelcast clusters and the methods cluster members and native clients use to form a Hazelcast cluster. 
 
 ## Discovering Cluster Members
 
