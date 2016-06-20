@@ -3,7 +3,7 @@
 
 Hazelcast members and native clients support jclouds&reg; for discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud providers. However currently, for AWS EC2 which is also based on jclouds, you still need to configure your cluster using the <aws> element as described in the above [Discovering Members within EC2 Cloud](#discovering-members-within-ec2-cloud) section.
 
-To configure your cluster to use jclouds Auto Discovery, follow these steps:
+To configure your cluster to use jclouds auto-discovery, follow these steps:
 
 - Add the *hazelcast-jclouds.jar* dependency to your project. Note that this is also bundled inside *hazelcast-all.jar*. The Hazelcast jclouds module depends on jclouds; please make sure the necessary JARs for your provider are present on the classpath.
 - Disable the multicast and TCP/IP join mechanisms. To do this, set the `enabled` attributes of the `multicast` and `tcp-ip` elements to `false` in your `hazelcast.xml` configuration file

@@ -1,9 +1,9 @@
 
 ### Discovering Members within EC2 Cloud
 
-Hazelcast supports EC2 Auto Discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses. 
+Hazelcast supports EC2 auto-discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses. 
 
-To configure your cluster to use EC2 Auto Discovery, set the following configuration elements. Please refer to the [aws element section](#aws-element) for the full description of the EC2 Auto Discovery configuration elements.
+To configure your cluster to use EC2 auto-discovery, set the following configuration elements. Please refer to the [aws element section](#aws-element) for the full description of the EC2 auto-discovery configuration elements.
 
 - Add the *hazelcast-cloud.jar* dependency to your project. Note that it is also bundled inside *hazelcast-all.jar*. The Hazelcast cloud module does not depend on any other third party modules.
 - Disable join over multicast and TCP/IP by setting the `enabled` attribute of the `multicast` element to "false", and set the `enabled` attribute of the `tcp-ip` element to "false".
