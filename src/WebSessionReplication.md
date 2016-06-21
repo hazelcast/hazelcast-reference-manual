@@ -7,9 +7,6 @@ Please note that [Tomcat](#tomcat-based-web-session-replication) and [Jetty](#je
 
 [Filter](#filter-based-web-session-replication) based web session replication has the option to use a map with High-Density Memory Store to keep your session objects. Note that High-Density Memory Store is available in <font color="##153F75">**Hazelcast Enterprise HD**</font>. Please refer to the [High-Density Memory Store section](#high-density-memory-store) for details on this feature.
 
-[Filter](#filter-based-web-session-replication) based web session replication is an open source feature. But if you have <font color="#3981DB">**Hazelcast Enterprise**</font>, you can use this replication with a map that has High-Density Memory Store.
-
-
 
 ### Filter Based Web Session Replication
 
