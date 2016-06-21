@@ -209,7 +209,7 @@ Hazelcast calls the method `destroy()` before shutting down. You can override th
 
 
 
-#### Initializing Map on Startup
+#### Initializing Map on Startup - LAZY/EAGER
 
 To pre-populate the in-memory map when the map is first touched/used, use the `MapLoader.loadAllKeys` API.
 
@@ -225,10 +225,13 @@ Here is the `MapLoader` initialization flow:
 4. Each member will load values of all its owned keys by calling `MapLoader.loadAll(keys)`.
 5. Each member puts its owned entries into the map by calling `IMap.putTransient(key,value)`.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If the load mode is `LAZY` and when the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since the whole data is not loaded for this case (`LAZY` mode), please note that there may be still entries in your datastore.*
+If the load mode is `LAZY` and when the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since the whole data is not loaded for this case (`LAZY` mode), please note that there may be still entries in your datastore.
 <br></br>
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *The return type of `loadAllKeys()` is changed from `Set` to `Iterable` with the release of Hazelcast 3.5. MapLoader implementations from previous releases are also supported and do not need to be adapted.*
+<br></br>
+
+While implementing a `MapLoader` you can either set a `className` and Hazelcast will create an instance for you OR you can set directly an instance. When you set `className` and Hazelcast creates an instance for you, then the instance is set back to your `MapConfig`. Before Hazelcast 3.6.3, this injection happens immediately when you create a proxy regardless of the LAZY/EAGER configuration. Starting with Hazelcast 3.6.3, the instance is set only after the map is touched for first time (when in LAZY mode). There is no behavior change in EAGER mode.
 
 <br></br>
 #### Loading Keys Incrementally
