@@ -21,7 +21,7 @@ For complex objects, use the following interfaces for serialization and deserial
 - Global Serializer: Please see the [Global Serializer section](#global-serializer) for details.
 
 
-**When Hazelcast serializes an object into `Data`:
+When Hazelcast serializes an object into `Data`:
 
 **(1)** It first checks whether the object is `null`.
 
