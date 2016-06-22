@@ -23,7 +23,7 @@ Hazelcast optimizes the serialization for the basic types and their array types.
 
 * Byte, Boolean, Character, Short, Integer, Long, Float, Double, String
 * byte[], boolean[], char[], short[], int[], long[], float[], double[], String[]
-* `java.util.Date`, `java.math.BigInteger`, `java.math.BigDecimal`, `java.lang.Class`, `java.lang.Enum`
+* `java.util.Date`, `java.math.BigInteger`, `java.math.BigDecimal`, `java.lang.Class`
 
 <br><br>
 Hazelcast optimizes all of the above object types. You do not need to worry about their (de)serializations.
