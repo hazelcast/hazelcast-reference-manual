@@ -29,6 +29,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)||Enhanced the definition for the property `hazelcast.client.invocation.timeout.seconds`.
 ||[Feature Comparison](#hazelcast-clients-feature-comparison)|Updated to reflect the latest feature developments.
 |[Chapter 16 - Other Client Implementations](#other-client-implementations)|[C++ Client](#c-client)|Added the new sections [Serialization Support](#serialization-support) and [Raw Pointer API](#raw-pointer-api).
+|[Chapter 17 - Serialization](#serialization)||Removed `java.lang.Enum` from the default types since it is not among the default serializers.
 |[Chapter 18 - Management](#management)|[Management Center](#management-center)|Added information explaining how to configure Hazelcast Management Center when it is deployed onto an SSL-enabled web container.<br></br>Added information explaining the "Update License" button.
 ||[Clustered JMX via Management Center](#clustered-jmx-via-management-center)| List of attributes updated by adding the Replicated Map attributes.
 |[Chapter 19 - Security](#security)|[SSL](#ssl)|Added information explaining the performance overhead for the clients when they use SSL.
