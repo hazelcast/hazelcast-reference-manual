@@ -33,6 +33,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 18 - Management](#management)|[Management Center](#management-center)|Added information explaining how to configure Hazelcast Management Center when it is deployed onto an SSL-enabled web container.<br></br>Added information explaining the "Update License" button.
 ||[Clustered JMX via Management Center](#clustered-jmx-via-management-center)| List of attributes updated by adding the Replicated Map attributes.
 |[Chapter 19 - Security](#security)|[SSL](#ssl)|Added information explaining the performance overhead for the clients when they use SSL.
+|[Chapter 22 - WAN](#wan)||Updated to reflect the improvement which is the ability of generic WAN replication endpoint configurations.
 |[Chapter 26 - System Properties](#system-properties)||Added definition for the new property `hazelcast.partition.migration.stale.read.disabled`.|
 |[Chapter 29 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
 |[Chapter 30 - Glossary](#glossary)||Added new glossary items.|
