@@ -11,14 +11,16 @@ Following is an example configuration:
 
 ```xml
 <wan-replication name="my-wan-cluster">
-  <target-cluster group-name="test-cluster-1" group-password="test-pass">
+  <wan-publisher group-name="test-cluster-1">
     ...
-    <acknowledge-type>ACK_ON_OPERATION_COMPLETE</acknowledge-type>
-  </target-cluster>
+    <properties>
+        <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
+    </properties>
+  </wan-publisher>
 </wan-replication>
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *`acknowledge-type` configuration is optional. Its default value is `ACK_ON_RECEIPT`*.
+![image](images/NoteSmall.jpg) ***NOTE:*** *`ack.type` configuration is optional. Its default value is `ACK_ON_RECEIPT`*.
 
 
 
