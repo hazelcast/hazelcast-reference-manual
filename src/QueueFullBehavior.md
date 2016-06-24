@@ -15,10 +15,10 @@ The following is an example configuration:
 
 ```xml
 <wan-replication name="my-wan-cluster">
-  <target-cluster group-name="test-cluster-1" group-password="test-pass">
+  <wan-publisher group-name="test-cluster-1">
     ...
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
-  </target-cluster>
+  </wan-publisher>
 </wan-replication>
 ```
 
