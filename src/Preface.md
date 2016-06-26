@@ -26,6 +26,10 @@ You can see the features for all Hazelcast editions in the following architectur
 
 For more information on Hazelcast's Architecture, please see the white paper <a href="https://hazelcast.com/resources/architects-view-hazelcast/" target="_blank">An Architect’s View of Hazelcast</a>.
 
+## Hazelcast Plugins
+
+You can extend Hazelcast's functionality by using its plugins. These plugins have their own lifecycles. Please see <a href="http://hazelcast.org/plugins/" target="_blank">Plugins page</a> to learn about Hazelcast plugins you can use.
+
 
 ## Licensing
 
