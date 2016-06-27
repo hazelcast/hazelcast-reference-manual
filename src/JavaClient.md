@@ -21,7 +21,7 @@ Currently, Hazelcast has Native Java, C++ and .NET Clients available. This chapt
 
 ## Hazelcast Clients Feature Comparison
 
-Before detailing the Java Client, this section provides the below comparison matrix to show which features are supported by the Hazelcast clients.
+Before detailing the Java Client, this section provides the below comparison matrix to show which features are supported by the Hazelcast **native** clients.
 
 
 Feature|Java Client|.NET Client|C++ Client
