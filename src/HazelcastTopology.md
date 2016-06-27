@@ -9,7 +9,7 @@ executions, then Embedded deployment is useful. In Embedded deployment, members 
 
 See the below illustration.
 
-![Embedded Deployment](images/HazelcastOverview/P2Pcluster.jpg)
+![Embedded Deployment](images/hazelcastoverview/P2Pcluster.jpg)
 
 
 
@@ -19,7 +19,7 @@ these members to reach to Hazelcast data and services on them. Hazelcast provide
 clients and REST clients. 
 See the illustration at the end of this section.
 
-![Client/Server Deployment](images/HazelcastOverview/CSCluster.jpg)
+![Client/Server Deployment](images/hazelcastoverview/CSCluster.jpg)
 
 Client/Server deployment has advantages including more predictable and reliable Hazelcast performance, easier identification of problem causes, and most importantly, better scalability. 
 When you need to scale in this deployment type, just add more Hazelcast server members. You can address client and server scalability concerns separately.

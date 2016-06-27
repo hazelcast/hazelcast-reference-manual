@@ -63,7 +63,7 @@ Beside the local setup, there are also static setups (fixed list of given remote
 
 Please ensure that all remote machines are reachable via TCP ports 22, 9000 and 5701 to 57xx on their external network interface (e.g. `eth0`). The first two ports are used by Hazelcast Simulator. The other ports are used by Hazelcast itself. Ports 9001 to 90xx are used on the loopback device on all remote machines for local communication.
 
-![](images/HazelcastSimulator/Network.png)
+![](images/hazelcastsimulator/Network.png)
 
 - Port 22 is used for SSH connections to install Simulator on remote machines, to start the Agent and to download test result and log files. If you use any other port for SSH, you can configure Simulator to use it via the `SSH_OPTIONS` property in the `simulator.properties` file.
 - Port 9000 is used for the communication between Coordinator and Agent. You can configure this port via the `AGENT_PORT` property in the `simulator.properties` file.

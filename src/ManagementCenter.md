@@ -64,7 +64,7 @@ If you have the open source edition of Hazelcast, Management Center can be used 
 
 Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
 
-![Signing Up](images/ManagementCenter/Signup.png)
+![Signing Up](images/managementcenter/Signup.png)
 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
@@ -72,19 +72,19 @@ Once you browse to `http://localhost:8080/mancenter` and since you are going to 
 
 It asks you to create a username and password and give a valid e-mail address of yours. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
 
-![Selecting Cluster to Connect](images/ManagementCenter/ConnectCluster.png)
+![Selecting Cluster to Connect](images/managementcenter/ConnectCluster.png)
 
 
 "Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has at most 2 members.
 
 If you have a Management Center license or Hazelcast Enterprise license, you can enter it in the dialog box that appears once you press the **Enter License** button, as shown below.
 
-![Providing License for Management Center](images/ManagementCenter/EnterLicense.png)
+![Providing License for Management Center](images/managementcenter/EnterLicense.png)
 
 
 When you try to connect to a cluster that has more than 2 members without entering a license key or if your license key is expired, the following dialog box appears.
 
-![Management Center License Warning](images/ManagementCenter/ExpiredLicense.png)
+![Management Center License Warning](images/managementcenter/ExpiredLicense.png)
 
 
 Here, you can either choose to connect to a cluster without providing a license key or to enter your license key. If you choose to continue without a license, Management Center still continues to function but you will only be able to monitor up to 2 members of your cluster.
@@ -102,13 +102,13 @@ Management Center creates a folder with the name `mancenter` under your `user/ho
 
 Once the page is loaded after selecting a cluster, the tool's home page appears as shown below.
 
-![Management Center Home Page](images/ManagementCenter/ManagementCenterHomePage.jpg)
+![Management Center Home Page](images/managementcenter/ManagementCenterHomePage.jpg)
 
 This page provides the fundamental properties of the selected cluster which are explained in the [Home Page](#management-center-home-page) section. The page has a toolbar on the top and a menu on the left.
 
 #### Toolbar
 
-![Management Center Toolbar](images/ManagementCenter/Toolbar.png)
+![Management Center Toolbar](images/managementcenter/Toolbar.png)
 
 The toolbar has the following buttons:
 
@@ -123,7 +123,7 @@ The toolbar has the following buttons:
 -	**Time Travel**: Sees the cluster's situation at a time in the past. Please see the [Time Travel section](#checking-past-status-with-time-travel).
 -	**Cluster Selector**: Switches between clusters. When the mouse is moved onto this item, a drop down list of clusters appears.
 
-  ![Changing Cluster](images/ManagementCenter/ChangingCluster.jpg)
+  ![Changing Cluster](images/managementcenter/ChangingCluster.jpg)
 
   The user can select any cluster and once selected, the page immediately loads with the selected cluster's information.
 
@@ -134,7 +134,7 @@ The toolbar has the following buttons:
 
 The Home Page includes a menu on the left which lists the distributed data structures in the cluster and all the cluster members, as shown below.
 
-![Management Center Menu](images/ManagementCenter/Menu.png)
+![Management Center Menu](images/managementcenter/Menu.png)
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Distributed data structures will be shown there when the proxies are created for them.*
 
@@ -156,9 +156,9 @@ You can expand and collapse menu items by clicking on them. Below is the list of
 
 Each time you select an item from the toolbar or menu, the item is added to the main view as a tab, as shown below.
 
-![Tabbed View](images/ManagementCenter/TabbedView.jpg)
+![Tabbed View](images/managementcenter/TabbedView.jpg)
 
-In the above example, *Home*, *Scripting*, *Console*, *queue1* and *map1* windows can be seen as tabs. Windows can be closed using the ![](images/ManagementCenter/CloseIcon.jpg) icon on each tab (except the Home Page; it cannot be closed).
+In the above example, *Home*, *Scripting*, *Console*, *queue1* and *map1* windows can be seen as tabs. Windows can be closed using the ![](images/managementcenter/CloseIcon.jpg) icon on each tab (except the Home Page; it cannot be closed).
 
 
 ### Management Center Home Page
@@ -169,7 +169,7 @@ This is the first page appearing after logging in. It gives an overview of the c
 
 This part of the page provides load and utilization information for the CPUs for each cluster member, as shown below.
 
-![CPU Utilization](images/ManagementCenter/CPUUtilization.jpg)
+![CPU Utilization](images/managementcenter/CPUUtilization.jpg)
 
 The first column lists the members with their IPs and ports. The next columns list the system load averages on each member for the last 1, 5 and 15 minutes. These average values are calculated as the sum of the count of runnable entities running on and queued to the available CPUs averaged over the last 1, 5 and 15 minutes. This calculation is operating system specific, typically a damped time-dependent average. If system load average is not available, these columns show negative values.
 
@@ -179,7 +179,7 @@ The last column (**Chart**) graphically shows the recent load on the CPUs. When 
 
 This part of the page provides information related to memory usages for each member, as shown below.
 
-![Memory Utilization](images/ManagementCenter/MemoryUtilization.jpg)
+![Memory Utilization](images/managementcenter/MemoryUtilization.jpg)
 
 The first column lists the members with their IPs and ports. The next columns show the used and free memories out of the total memory reserved for Hazelcast usage, in real-time. The **Max** column lists the maximum memory capacity of each member and the **Percent** column lists the percentage value of used memory out of the maximum memory. The last column (**Chart**) shows the memory usage of members graphically. When you move the mouse cursor on a desired graph, you can see the memory usage at the time where the cursor is placed. Graphs under this column shows the memory usages approximately for the last 2 minutes.
 
@@ -187,7 +187,7 @@ The first column lists the members with their IPs and ports. The next columns sh
 
 This part of the page graphically provides the cluster wise breakdown of memory, as shown below. The blue area is the memory used by maps. The dark yellow area is the memory used by both non-Hazelcast entities and all Hazelcast entities except the map (i.e. the memory used by all entities subtracted by the memory used by map). The green area is the free memory out of the whole cluster`s memory capacity.
 
-![Memory Distribution of Cluster](images/ManagementCenter//MemoryDistribution.jpg)
+![Memory Distribution of Cluster](images/managementcenter//MemoryDistribution.jpg)
 
 In the above example, you can see 0.32% of the total memory is used by Hazelcast maps (it can be seen by placing the mouse cursor on it), 58.75% is used by non-Hazelcast entities and 40.85% of the total memory is free.
 
@@ -195,7 +195,7 @@ In the above example, you can see 0.32% of the total memory is used by Hazelcast
 
 This part is the breakdown of the blue area shown in the **Memory Distribution** graph explained above. It provides the percentage values of the memories used by each map, out of the total cluster memory reserved for all Hazelcast maps.
 
-![Memory Distribution of Map](images/ManagementCenter/MapMemoryDistribution.jpg)
+![Memory Distribution of Map](images/managementcenter/MapMemoryDistribution.jpg)
 
 In the above example, you can see 49.55% of the total map memory is used by **map1** and 49.55% is used by **map2**.
 
@@ -212,9 +212,9 @@ You can see each member's partition percentages by placing the mouse cursor on t
 
 You can monitor your caches' metrics by clicking the cache name listed on the left panel under **Caches** menu item. A new tab for monitoring that cache instance is opened on the right, as shown below.
 
-![Monitoring Caches](images/ManagementCenter/MonitoringCaches.png)
+![Monitoring Caches](images/managementcenter/MonitoringCaches.png)
 
-On top of the page, four charts monitor the **Gets**, **Puts**, **Removals** and **Evictions** in real-time. The X-axis of all the charts show the current system time. To open a chart as a separate dialog, click on the ![](images/ManagementCenter/MaximizeChart.jpg) button placed at the top right of each chart.
+On top of the page, four charts monitor the **Gets**, **Puts**, **Removals** and **Evictions** in real-time. The X-axis of all the charts show the current system time. To open a chart as a separate dialog, click on the ![](images/managementcenter/MaximizeChart.jpg) button placed at the top right of each chart.
 
 Under these charts is the Cache Statistics Data Table. From left to right, this table lists the IP addresses and ports of each member, and the entry, get, put, removal, eviction, and hit and miss counts per second in real-time.
 
@@ -237,7 +237,7 @@ You can select the period in the combo box placed at the top right corner of the
 
 Map instances are listed under the **Maps** menu item on the left. When you click on a map, a new tab for monitoring that map instance opens on the right, as shown below. In this tab, you can monitor metrics and also re-configure the selected map.
 
-![Monitoring Maps](images/ManagementCenter/MonitoringMaps.jpg)
+![Monitoring Maps](images/managementcenter/MonitoringMaps.jpg)
 
 The below subsections explain the portions of this window.
 
@@ -245,7 +245,7 @@ The below subsections explain the portions of this window.
 
 Use the Map Browser tool to retrieve properties of the entries stored in the selected map. To open the Map Browser tool, click on the **Map Browser** button, located at the top right of the window. Once opened, the tool appears as a dialog, as shown below.
 
-![Map Browser](images/ManagementCenter/MapBrowser.jpg)
+![Map Browser](images/managementcenter/MapBrowser.jpg)
 
 Once the key and the key's type are specified and the **Browse** button is clicked, the key's properties along with its value are listed.
 
@@ -253,7 +253,7 @@ Once the key and the key's type are specified and the **Browse** button is click
 
 Use the Map Config tool to set the selected map's attributes, such as the backup count, TTL, and eviction policy. To open the Map Config tool, click on the **Map Config** button, located at the top right of the window. Once opened, the tool appears as a dialog, as shown below.
 
-![Map Config Tool](images/ManagementCenter/MapConfig.jpg)
+![Map Config Tool](images/managementcenter/MapConfig.jpg)
 
 You can change any attribute and click the **Update** button to save your changes.
 
@@ -262,11 +262,11 @@ You can change any attribute and click the **Update** button to save your change
 
 Besides the Map Browser and Map Config tools, the map monitoring page has monitoring options that are explained below. All of these options perform real-time monitoring.
 
-On top of the page, small charts monitor the size, throughput, memory usage, backup size, etc. of the selected map in real-time. The X-axis of all the charts show the current system time. You can select other small monitoring charts using the ![](images/ManagementCenter/ChangeWindowIcon.jpg) button at the top right of each chart. When you click the button, the monitoring options are listed, as shown below.
+On top of the page, small charts monitor the size, throughput, memory usage, backup size, etc. of the selected map in real-time. The X-axis of all the charts show the current system time. You can select other small monitoring charts using the ![](images/managementcenter/ChangeWindowIcon.jpg) button at the top right of each chart. When you click the button, the monitoring options are listed, as shown below.
 
-![Monitoring Options for Map](images/ManagementCenter/MonitoringOptionsMap.jpg)
+![Monitoring Options for Map](images/managementcenter/MonitoringOptionsMap.jpg)
 
-When you click on a desired monitoring, the chart is loaded with the selected option. To open a chart as a separate dialog, click on the ![](images/ManagementCenter/MaximizeChart.jpg) button placed at the top right of each chart. The monitoring charts below are available:
+When you click on a desired monitoring, the chart is loaded with the selected option. To open a chart as a separate dialog, click on the ![](images/managementcenter/MaximizeChart.jpg) button placed at the top right of each chart. The monitoring charts below are available:
 
 -	**Size**: Monitors the size of the map. Y-axis is the entry count (should be multiplied by 1000).
 -	**Throughput**: Monitors get, put and remove operations performed on the map. Y-axis is the operation count.
@@ -278,13 +278,13 @@ When you click on a desired monitoring, the chart is loaded with the selected op
 
 Under these charts are **Map Memory** and **Map Throughput** data tables. The Map Memory data table provides memory metrics distributed over members, as shown below.
 
-![Map Memory Data Table](images/ManagementCenter/MemoryDataTable.jpg)
+![Map Memory Data Table](images/managementcenter/MemoryDataTable.jpg)
 
 From left to right, this table lists the IP address and port, entry counts, memory used by entries, backup entry counts, memory used by backup entries, events, hits, locks and dirty entries (in the cases where *MapStore* is enabled, these are the entries that are put to/removed from the map but not written to/removed from a database yet) of each entry in the map. You can navigate through the pages using the buttons at the bottom right of the table (**First, Previous, Next, Last**). You can ascend or descend the order of the listings by clicking on the column headings.
 
 Map Throughput data table provides information about the operations (get, put, remove) performed on each member in the map, as shown below.
 
-![Map Throughput Data Table](images/ManagementCenter/MapThroughputDataTable.jpg)
+![Map Throughput Data Table](images/managementcenter/MapThroughputDataTable.jpg)
 
 From left to right, this table lists:
 
@@ -301,7 +301,7 @@ You can navigate through the pages using the buttons placed at the bottom right 
 
 Replicated Map instances are shown under the **Replicated Maps** menu item on the left. When you click on a Replicated Map, a new tab for monitoring that instance opens on the right, as shown below.
 
-![Monitoring Replicated Maps](images/ManagementCenter/MonitoringReplicatedMaps.png)
+![Monitoring Replicated Maps](images/managementcenter/MonitoringReplicatedMaps.png)
 
 In this tab, you can monitor metrics and also re-configure the selected Replicated Map. All of the statistics are real-time monitoring statistics.
 
@@ -315,7 +315,7 @@ When you click on a desired monitoring, the chart is loaded with the selected op
 
 The Replicated Map Throughput Data Table provides information about operations (get, put, remove) performed on each member in the selected Replicated Map.
 
-![Replicated Map Throughput Data Table](images/ManagementCenter/ReplicatedMapThroughput.png)
+![Replicated Map Throughput Data Table](images/managementcenter/ReplicatedMapThroughput.png)
 
 From left to right, this table lists:
 
@@ -333,9 +333,9 @@ You can navigate through the pages using the buttons placed at the bottom right 
 
 Using the menu item **Queues**, you can monitor your queues data structure. When you expand this menu item and click on a queue, a new tab for monitoring that queue instance is opened on the right, as shown below.
 
-![Monitoring Queues](images/ManagementCenter/MonitoringQueues.jpg)
+![Monitoring Queues](images/managementcenter/MonitoringQueues.jpg)
 
-On top of the page, small charts monitor the size, offers and polls of the selected queue in real-time. The X-axis of all the charts shows the current system time. To open a chart as a separate dialog, click on the ![](images/ManagementCenter/MaximizeChart.jpg) button placed at the top right of each chart. The monitoring charts below are available:
+On top of the page, small charts monitor the size, offers and polls of the selected queue in real-time. The X-axis of all the charts shows the current system time. To open a chart as a separate dialog, click on the ![](images/managementcenter/MaximizeChart.jpg) button placed at the top right of each chart. The monitoring charts below are available:
 
 -	**Size**: Monitors the size of the queue. Y-axis is the entry count (should be multiplied by 1000).
 -	**Offers**: Monitors the offers sent to the selected queue. Y-axis is the offer count.
@@ -343,13 +343,13 @@ On top of the page, small charts monitor the size, offers and polls of the selec
 
 Under these charts are **Queue Statistics** and **Queue Operation Statistics** tables. The Queue Statistics table provides item and backup item counts in the queue and age statistics of items and backup items at each member, as shown below.
 
-![Queue Statistics](images/ManagementCenter/QueueStatistics.jpg)
+![Queue Statistics](images/managementcenter/QueueStatistics.jpg)
 
 From left to right, this table lists the IP address and port, items and backup items on the queue of each member, and maximum, minimum and average age of items in the queue. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). The order of the listings in each column can be ascended or descended by clicking on column headings.
 
 Queue Operations Statistics table provides information about the operations (offers, polls, events) performed on the queues, as shown below.
 
-![Queue Operation Statistics](images/ManagementCenter/QueueOperationStatistics.jpg)
+![Queue Operation Statistics](images/managementcenter/QueueOperationStatistics.jpg)
 
 From left to right, this table lists the IP address and port of each member, and counts of offers, rejected offers, polls, poll misses and events.
 
@@ -362,9 +362,9 @@ You can navigate through the pages using the buttons placed at the bottom right 
 
 To monitor your topics' metrics, click the topic name listed on the left panel under the **Topics** menu item. A new tab for monitoring that topic instance opens on the right, as shown below.
 
-![Monitoring Topics](images/ManagementCenter/MonitoringTopics.jpg)
+![Monitoring Topics](images/managementcenter/MonitoringTopics.jpg)
 
-On top of the page, two charts monitor the **Publishes** and **Receives** in real-time. They show the published and received message counts of the cluster, the members of which are subscribed to the selected topic. The X-axis of both charts show the current system time. To open a chart as a separate dialog, click on the ![](images/ManagementCenter/MaximizeChart.jpg) button placed at the top right of each chart.
+On top of the page, two charts monitor the **Publishes** and **Receives** in real-time. They show the published and received message counts of the cluster, the members of which are subscribed to the selected topic. The X-axis of both charts show the current system time. To open a chart as a separate dialog, click on the ![](images/managementcenter/MaximizeChart.jpg) button placed at the top right of each chart.
 
 Under these charts is the Topic Operation Statistics table. From left to right, this table lists the IP addresses and ports of each member, and counts of message published and receives per second in real-time. You can select the period in the combo box placed at top right corner of the table to show the table data. The available values are **Since Beginning**, **Last Minute**, **Last 10 Minutes** and **Last 1 Hour**.
 
@@ -380,13 +380,13 @@ MultiMap is a specialized map where you can associate a key with multiple values
 
 Executor instances are listed under the **Executors** menu item on the left. When you click on a executor, a new tab for monitoring that executor instance opens on the right, as shown below.
 
-![Monitoring Executors](images/ManagementCenter/MonitoringExecutors.jpg)
+![Monitoring Executors](images/managementcenter/MonitoringExecutors.jpg)
 
-On top of the page, small charts monitor the pending, started, completed, etc. executors in real-time. The X-axis of all the charts shows the current system time. You can select other small monitoring charts using the ![](images/ManagementCenter/ChangeWindowIcon.jpg) button placed at the top right of each chart. Click the button to list the monitoring options, as shown below.
+On top of the page, small charts monitor the pending, started, completed, etc. executors in real-time. The X-axis of all the charts shows the current system time. You can select other small monitoring charts using the ![](images/managementcenter/ChangeWindowIcon.jpg) button placed at the top right of each chart. Click the button to list the monitoring options, as shown below.
 
-![Monitoring Options for Executor](images/ManagementCenter/MonitoringOptionsExecutor.jpg)
+![Monitoring Options for Executor](images/managementcenter/MonitoringOptionsExecutor.jpg)
 
-When you click on a desired monitoring, the chart loads with the selected option. To open a chart as a separate dialog, click on the ![](images/ManagementCenter/MaximizeChart.jpg) button placed at top right of each chart. The below monitoring charts are available:
+When you click on a desired monitoring, the chart loads with the selected option. To open a chart as a separate dialog, click on the ![](images/managementcenter/MaximizeChart.jpg) button placed at top right of each chart. The below monitoring charts are available:
 
 -	**Pending**: Monitors the pending executors. Y-axis is the executor count.
 -	**Started**: Monitors the started executors. Y-axis is the executor count.
@@ -396,7 +396,7 @@ When you click on a desired monitoring, the chart loads with the selected option
 
 Under these charts is the **Executor Operation Statistics** table, as shown below.
 
-![Executor Operation Statistics](images/ManagementCenter/ExecutorOperationStats.jpg)
+![Executor Operation Statistics](images/managementcenter/ExecutorOperationStats.jpg)
 
 From left to right, this table lists the IP address and port of members, the counts of pending, started and completed executors per second, and the execution time and average start latency of executors on each member. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). Click on the column heading to ascend or descend the order of the listings.
 
@@ -404,11 +404,11 @@ From left to right, this table lists the IP address and port of members, the cou
 
 WAN Replication schemes are listed under the **WAN** menu item on the left. When you click on a scheme, a new tab for monitoring the targets which that scheme has appears on the right, as shown below.
 
-![Monitoring WAN Replication](images/ManagementCenter/WanPublisherStats.png)
+![Monitoring WAN Replication](images/managementcenter/WanPublisherStats.png)
 
 In this tab, you see **WAN Replication Operations Table** for each target which belongs to this scheme. One of the example tables is shown below.
 
-![WAN Replication Operations Table](images/ManagementCenter/WanTargetTable.png)
+![WAN Replication Operations Table](images/managementcenter/WanTargetTable.png)
 
 -	**Connected**: Status of the member connection to the target.
 -	**Outbound Recs (sec)**: Average number of records sent to target per second from this member.
@@ -420,9 +420,9 @@ In this tab, you see **WAN Replication Operations Table** for each target which 
 
 Use this menu item to monitor each cluster member and perform operations like running garbage collection (GC) and taking a thread dump. Once you select a member from the menu, a new tab for monitoring that member opens on the right, as shown below.
 
-![Monitoring Members](images/ManagementCenter/MonitoringMembers.png)
+![Monitoring Members](images/managementcenter/MonitoringMembers.png)
 
-The **CPU Utilization** chart shows the percentage of CPU usage on the selected member. The **Memory Utilization** chart shows the memory usage on the selected member with three different metrics (maximum, used and total memory). You can open both of these charts as separate windows using the ![](images/ManagementCenter/ChangeWindowIcon.jpg) button placed at top right of each chart; this gives you a clearer view of the chart.
+The **CPU Utilization** chart shows the percentage of CPU usage on the selected member. The **Memory Utilization** chart shows the memory usage on the selected member with three different metrics (maximum, used and total memory). You can open both of these charts as separate windows using the ![](images/managementcenter/ChangeWindowIcon.jpg) button placed at top right of each chart; this gives you a clearer view of the chart.
 
 The window titled **Partitions** shows which partitions are assigned to the selected member. **Runtime** is a dynamically updated window tab showing the processor number, the start and up times, and the maximum, total and free memory sizes of the selected member. These values are collected from the default MXBeans provided by the Java Virtual Machine (JVM). Descriptions from the Javadocs and some explanations are below:
 
@@ -487,11 +487,11 @@ Next to the **Runtime** tab, the **Properties** tab shows the system properties.
 
 The **List of Slow Operations** gives an overview of detected slow operations which occurred on that member. The data is collected by the [SlowOperationDetector](#slowoperationdetector).
 
-![List of Slow Operations](images/ManagementCenter/ListOfSlowOperations.png)
+![List of Slow Operations](images/managementcenter/ListOfSlowOperations.png)
 
 Click on an entry to open a dialog which shows the stacktrace and detailed information about each slow invocation of this operation.
 
-![Slow Operations Details](images/ManagementCenter/SlowOperationDetail.png)
+![Slow Operations Details](images/managementcenter/SlowOperationDetail.png)
 
 Besides the aforementioned monitoring charts and windows, you can also perform operations on the selected member through this page. The operation buttons are located at the top right of the page, as explained below:
 
@@ -503,7 +503,7 @@ Besides the aforementioned monitoring charts and windows, you can also perform o
 
 You can use the scripting feature of this tool to execute codes on the cluster. To open this feature as a tab, select **Scripting** located at the toolbar on top. Once selected, the scripting feature opens as shown below.
 
-![Scripting](images/ManagementCenter/Scripting.jpg)
+![Scripting](images/managementcenter/Scripting.jpg)
 
 In this window, the **Scripting** part is the actual coding editor. You can select the members on which the code will execute from the **Members** list shown at the right side of the window. Below the members list, a combo box enables you to select a scripting language: currently, JavaScript, Ruby, Groovy and Python languages are supported. After you write your script and press the **Execute** button, you can see the execution result in the **Result** part of the window.
 
@@ -528,7 +528,7 @@ The Management Center has a console feature that enables you to execute commands
 
 Open a console window by clicking on the **Console** button located on the toolbar. Below is a sample view with some executed commands.
 
-![Console](images/ManagementCenter/Console.jpg)
+![Console](images/managementcenter/Console.jpg)
 
 
 ### Creating Alerts
@@ -537,11 +537,11 @@ You can use the alerts feature of this tool to receive alerts and/or e-mail noti
 
 Once you click the **Alerts** button located on the toolbar, the page shown below appears.
 
-![Creating Alerts](images/ManagementCenter/Alerts.png)
+![Creating Alerts](images/managementcenter/Alerts.png)
 
 If you want to enable the Management Center to send e-mail notifications to the Management Center Admin users, you need to configure the SMTP server. To do this, click on the **Create STMP Config** shown above. The form shown below appears.
 
-![Create SMTP Configuration](images/ManagementCenter/CreateSMTPConfig.png)
+![Create SMTP Configuration](images/managementcenter/CreateSMTPConfig.png)
 
 In this form, specify the e-mail address from which the notifications will be sent and also its password. Then, provide the SMTP server host address and port. Finally, check the **TLS Connection** checkbox if the connection is secured by TLS (Transport Layer Security).
 
@@ -549,7 +549,7 @@ After you provide the required information, click on the **Save Config** button.
 
 If not, you will see an error message at the bottom of this form as shown below.   
 
-![SMTP Configuration Error](images/ManagementCenter/SMTPConfigFormWithError.png)
+![SMTP Configuration Error](images/managementcenter/SMTPConfigFormWithError.png)
 
 As you can see, the reasons can be wrong SMTP configuration or connectivity problems. In this case, please check the form fields and check for any causes for the connections issues with your server.
 
@@ -557,7 +557,7 @@ As you can see, the reasons can be wrong SMTP configuration or connectivity prob
 
 Select **Member Alerts** check box to create filters for some or all members in the cluster. Once selected, the next screen asks for which members the alert will be created. Select the desired members and click on the **Next** button. On the next page (shown below), specify the criteria.
 
-![Filter for Member](images/ManagementCenter/MemberAlert.jpg)
+![Filter for Member](images/managementcenter/MemberAlert.jpg)
 
 You can create alerts when:
 
@@ -570,7 +570,7 @@ When two or more criteria is specified they will be bound with the logical opera
 
 On the next page, give a name for the filter. Then, select whether notification e-mails will be sent to the Management Center Admins using the **Send Email Alert** checkbox. Then, provide a time interval (in seconds) for which the e-mails with the **same notification content** will be sent using the **Email Interval (secs)** field.  Finally, select whether the alert data will be written to the disk (if checked, you can see the alert log at the folder */users/<your user>/mancenter<version>*).
 
-Click on the **Save** button; your filter will be saved and put into the **Filters** part of the page. To edit the filter, click on the ![](images/ManagementCenter/EditIcon.jpg) icon. To delete it, click on the ![](images/ManagementCenter/DeleteIcon.jpg) icon.
+Click on the **Save** button; your filter will be saved and put into the **Filters** part of the page. To edit the filter, click on the ![](images/managementcenter/EditIcon.jpg) icon. To delete it, click on the ![](images/managementcenter/DeleteIcon.jpg) icon.
 
 **Creating Filters for Data Types**
 
@@ -578,13 +578,13 @@ Select the **Data Type Alerts** check box to create filters for data structures.
 
 The next screen, as shown below, is the one where you specify the criteria for the selected data structure.
 
-![Filter for Data Types](images/ManagementCenter/DataAlert.jpg)
+![Filter for Data Types](images/managementcenter/DataAlert.jpg)
 
 As the screen shown above shows, you will select an item from the left combo box, select the operator in the middle one, specify a value in the input field, and click on the **Add** button. You can create more than one criteria in this page; those will be bound by the logical operator **AND**.
 
 After you specify the criteria, click the **Next** button. On the next page, give a name for the filter. Then, select whether notification e-mails will be sent to the Management Center Admins using the **Send Email Alert** checkbox. Then, provide a time interval (in seconds) for which the e-mails with the **same notification content** will be sent using the **Email Interval (secs)** field.  Finally, select whether the alert data will be written to the disk (if checked, you can see the alert log at the folder */users/<your user>/mancenter<version>*).
 
-Click on the **Save** button; your filter will be saved and put into the **Filters** part of the page. To edit the filter, click on the ![](images/ManagementCenter/EditIcon.jpg) icon. To delete it, click on the ![](images/ManagementCenter/DeleteIcon.jpg) icon.
+Click on the **Save** button; your filter will be saved and put into the **Filters** part of the page. To edit the filter, click on the ![](images/managementcenter/EditIcon.jpg) icon. To delete it, click on the ![](images/managementcenter/DeleteIcon.jpg) icon.
 
 
 ### Administering Management Center
@@ -593,7 +593,7 @@ Click on the **Save** button; your filter will be saved and put into the **Filte
 
 The **Admin** user can add, edit, and remove users and specify the permissions for the users of Management Center. To perform these operations, click on the **Administration** button located on the toolbar. The page below appears.
 
-![Administration](images/ManagementCenter/Administration.png)
+![Administration](images/managementcenter/Administration.png)
 
 ##### Users
 
@@ -610,7 +610,7 @@ To edit or delete a user, select a username listed in the **Users**. Selected us
 
 To update the management center license, you can click on the **Update License** button and enter the new license code. You will see the expiration date of your current license on the screen.
 
-![License](images/ManagementCenter/License.png)
+![License](images/managementcenter/License.png)
 
 ### Hot Restart
 
@@ -618,7 +618,7 @@ To update the management center license, you can click on the **Update License**
 
 The admin user can see and change the cluster state, shut down the cluster, and force start the cluster using the operations listed in this screen as shown below.
 
-![Hot Restart Operations](images/ManagementCenter/HotRestart.png)
+![Hot Restart Operations](images/managementcenter/HotRestart.png)
 
 **Cluster States**
 
@@ -632,17 +632,17 @@ The admin user can see and change the cluster state, shut down the cluster, and 
 
 **Changing Cluster State**
 
-![Changing Cluster state](images/ManagementCenter/ChangeClusterState.png)
+![Changing Cluster state](images/managementcenter/ChangeClusterState.png)
 
 - Click the dropdown menu and choose the state to which you want your cluster to change. A pop-up will appear and stay on the screen until the state is successfully changed.
 
-![Waiting the State Change](images/ManagementCenter/ChangeClusterState-wait.png)
+![Waiting the State Change](images/managementcenter/ChangeClusterState-wait.png)
 
 **Shutting Down the Cluster**
 
 - Click the **Shutdown** button. A pop-up will appear and stay on screen until the cluster is successfully shutdown.
 
-![Shutdown Cluster](images/ManagementCenter/ShutdownCluster.png)
+![Shutdown Cluster](images/managementcenter/ShutdownCluster.png)
 
 If an exception occurs during the state change or shutdown operation on the cluster, this exception message will be shown on the screen as a notification.
 
@@ -650,7 +650,7 @@ If an exception occurs during the state change or shutdown operation on the clus
 
 Restart process cannot be completed if a member crashes permanently and cannot recover from the failure since it cannot start or it fails to load its own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**.
 
-![Force Start](images/ManagementCenter/ForceStart.png)
+![Force Start](images/managementcenter/ForceStart.png)
 
 Click the **Force Start** button. A pop-up will appear and stay on screen until the operation is triggered.
 
@@ -665,7 +665,7 @@ If an exception occurs, this exception message will be showed on the screen as a
 
 Use the Time Travel toolbar item to check the status of the cluster at a time in the past. When you select it on the toolbar, a small window appears on top of the page, as shown below.
 
-![](images/ManagementCenter/TimeTravel.jpg)
+![](images/managementcenter/TimeTravel.jpg)
 
 To see the cluster status in a past time, you should first enable the Time Travel. Click on the area where it says **OFF** (on the right of Time Travel window). It will turn to **ON** after it asks whether to enable the Time Travel with a dialog: click on **Enable** in the dialog to enable the Time Travel.
 
