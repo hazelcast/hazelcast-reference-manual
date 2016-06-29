@@ -7,7 +7,7 @@ Hazelcast Simulator needs a Unix shell to run. Ensure that your local and remote
 
 Please ensure that all remote machines are reachable via TCP ports 22, 9000 and 5701 to 5751 on their external network interface (for example, `eth0`). The first two ports are used by Hazelcast Simulator. The other ports are used by Hazelcast itself. Port 9001 is used on the loopback device on all remote machines for local communication.
 
-![](images/simulator/network.png)
+![](images/network.png)
 
 ### Setting Up the Local Machine (Coordinator)
 
