@@ -14,6 +14,11 @@ An entry processor enables fast in-memory operations on your map without you hav
 
 Hazelcast sends the entry processor to each cluster member and these members apply it to map entries. Therefore, if you add more members, your processing completes faster.
 
+### Index Support For Entry Processor
+
+Entry-processors can be used with a predicate. Predicate helps to process a subset of data by selecting eligible entries. This selection can happen either by doing a full-table-scan or by using indexes. To accelerate entry selection step you can consider to add indexes. If indexes are there, entry-processor will automatically use them.
+
+
 #### Using OBJECT In-Memory Format
 
 If entry processing is the major operation for a map and if the map consists of complex objects, you should use `OBJECT` as the `in-memory-format` to minimize serialization cost. By default, the entry value is stored as a byte array (`BINARY` format). When it is stored as an object (`OBJECT` format), then the entry processor is applied directly on the object. In that case, no serialization or deserialization is performed. However, if there is a defined event listener, a new entry value will be serialized when passing to the event publisher service.
