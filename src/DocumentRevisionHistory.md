@@ -20,6 +20,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 7 - Distributed Data Structures](#distributed-data-structures)|[Replicated Map](#replicated-map)|[Replicating instead of Partitioning](#replicating-instead-of-partitioning) updated by adding a note related to replicated map usage in a lite member. The whole section enhanced.
 ||[Lock](#lock)| Added explanations related to the maximum lease time for locks.
 ||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.
+|[Chapter 9 - Distributed Computing](#distributed-computing)|[Using Indexes](#using-indexes)| Added as a new section.
 |[Chapter 10 - Distributed Query](#distributed-query)|[ValueExtractor with Portable Serialization](#valueExtractor-with-portable-serialization)| Added as a new section.
 |[Chapter 11 - Transactions](#transactions)|[Integrating into J2EE](#integrating-into-j2ee)| Added information related to class loaders.
 |[Chapter 12 - Hazelcast JCache](#hazelcast-jcache)|[ICache Configuration](#icache-configuration)| Added description of the new element `disable-per-entry-invalidation-events`.

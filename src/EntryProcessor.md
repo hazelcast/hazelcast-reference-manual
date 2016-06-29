@@ -14,12 +14,12 @@ An entry processor enables fast in-memory operations on your map without you hav
 
 Hazelcast sends the entry processor to each cluster member and these members apply it to map entries. Therefore, if you add more members, your processing completes faster.
 
-### Index Support For Entry Processor
+### Using Indexes
 
-Entry-processors can be used with a predicate. Predicate helps to process a subset of data by selecting eligible entries. This selection can happen either by doing a full-table-scan or by using indexes. To accelerate entry selection step you can consider to add indexes. If indexes are there, entry-processor will automatically use them.
+Entry processors can be used with predicates. Predicates help to process a subset of data by selecting eligible entries. This selection can happen either by doing a full-table scan or by using indexes. To accelerate entry selection step, you can consider to add indexes. If indexes are there, entry processor will automatically use them.
 
 
-#### Using OBJECT In-Memory Format
+### Using OBJECT In-Memory Format
 
 If entry processing is the major operation for a map and if the map consists of complex objects, you should use `OBJECT` as the `in-memory-format` to minimize serialization cost. By default, the entry value is stored as a byte array (`BINARY` format). When it is stored as an object (`OBJECT` format), then the entry processor is applied directly on the object. In that case, no serialization or deserialization is performed. However, if there is a defined event listener, a new entry value will be serialized when passing to the event publisher service.
 
@@ -72,7 +72,7 @@ Map<K, Object> executeOnEntries( EntryProcessor entryProcessor, Predicate predic
 ![image](images/NoteSmall.jpg) ***NOTE***: *Entry Processors run via Operation Threads that are dedicated to specific partitions.  Therefore, with long running Entry Processor executions, other partition operations such as `map.put(key)` cannot be processed. With this in mind, it is good practice to make your Entry Processor executions as quick as possible.*
 
 
-#### `EntryProcessor` Interface
+### `EntryProcessor` Interface
 
 The following is the `EntryProcessor` interface:
 
@@ -88,7 +88,7 @@ public interface EntryProcessor<K, V> extends Serializable {
 
 When using the `executeOnEntries` method, if the number of entries is high and you need the results, then returning null with the `process()` method is a good practice. By returning null, results of the processing is not stored in the map and thus out of memory errors are eliminated.
 
-#### Processing Backup Entries
+### Processing Backup Entries
 
 If your code modifies the data, then you should also provide a processor for backup entries. This is required to prevent the primary map entries from having different values than the backups because it causes the entry processor to be applied both on the primary and backup entries.
 
