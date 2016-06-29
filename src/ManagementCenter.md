@@ -96,7 +96,7 @@ This page provides the fundamental properties of the selected cluster which are 
 
 #### Toolbar
 
-![](images/toolbar.png)
+![](images/Toolbar.png)
 
 The toolbar has the following buttons:
 
@@ -482,7 +482,7 @@ Besides the aforementioned monitoring charts and windows, you can also perform o
 
 You can use the scripting feature of this tool to execute codes on the cluster. To open this feature as a tab, select **Scripting** located at the toolbar on top. Once selected, the scripting feature opens as shown below.
 
-![](images/scripting.jpg)
+![](images/Scripting.jpg)
 
 In this window, the **Scripting** part is the actual coding editor. You can select the members on which the code will execute from the **Members** list shown at the right side of the window. Below the members list, a combo box enables you to select a scripting language: currently, JavaScript, Ruby, Groovy and Python languages are supported. After you write your script and press the **Execute** button, you can see the execution result in the **Result** part of the window.
 
@@ -507,7 +507,7 @@ The Management Center has a console feature that enables you to execute commands
 
 Open a console window by clicking on the **Console** button located on the toolbar. Below is a sample view with some executed commands.
 
-![](images/console.jpg)
+![](images/Console.jpg)
 
 
 ### Creating Alerts
@@ -636,7 +636,7 @@ If an exception occurs, this exception message will be showed on the screen as a
 
 Use the Time Travel toolbar item to check the status of the cluster at a time in the past. When you select it on the toolbar, a small window appears on top of the page, as shown below.
 
-![](images/timetravel.jpg)
+![](images/Timetravel.jpg)
 
 To see the cluster status in a past time, you should first enable the Time Travel. Click on the area where it says **OFF** (on the right of Time Travel window). It will turn to **ON** after it asks whether to enable the Time Travel with a dialog: click on **Enable** in the dialog to enable the Time Travel.
 
