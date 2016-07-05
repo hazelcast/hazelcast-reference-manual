@@ -2,10 +2,10 @@
 
 ### Creating Near Cache for Map
 
-Map entries in Hazelcast are partitioned across the cluster. Suppose you read the key `k` a number of times and `k` is owned by another member in your cluster. Each `map.get(k)` will be a remote operation, meaning lots of network trips. If you have a map that is read-mostly, then you should consider creating a near cache for the map so that reads can be much faster and consume less network traffic. These benefits do not come free. When using near cache, you should consider the following issues:
+Map entries in Hazelcast are partitioned across the cluster. Suppose you read the key `k` a number of times and `k` is owned by another member in your cluster. Each `map.get(k)` will be a remote operation, meaning lots of network trips. If you have a map that is read-mostly, then you should consider creating a near cache for the map so that reads can be much faster and consume less network traffic. These benefits do not come free; when using near cache, you should consider the following issues:
 
 - Cluster members will have to hold extra cached data, which increases memory consumption.
-- If invalidation is turned on and entries are updated frequently, invalidations will be costly.
+- If invalidation is turned on and entries are updated frequently, then invalidations will be costly.
 - Near cache breaks the strong consistency guarantees; you might be reading stale data.
 
 Near cache is highly recommended for the maps that are read-mostly. The following is the configuration example for map's near cache in the Hazelcast configuration file.
@@ -44,19 +44,18 @@ The element `<near-cache>` has an optional attribute "name" whose default value 
 	- NATIVE: Data will be stored in the near cache that uses Hazelcast's High-Density Memory Store feature. This option is available only in Hazelcast Enterprise HD. Note that a map and its near cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its near cache can use it.
 - `<cache-local-entries>`: Specifies whether the local entries will be cached. It can be useful when in-memory format for near cache is different from that of the map. By default, it is disabled.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If you use High-Density Memory Store for your near cache, the elements `<max-size>` and `<eviction-policy>` do not have any impact. In this case, you need to use the element `<eviction>` to specify the eviction behavior. Please refer to the [Using High-Density Memory Store with Near Cache section](using-high-density-memory-store-with-near-cache).*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you use High-Density Memory Store for your near cache, the elements `<max-size>` and `<eviction-policy>` do not have any impact. In this case, you need to use the element `<eviction>` to specify the eviction behavior. Please refer to the [Using High-Density Memory Store with Near Cache section](#using-high-density-memory-store-with-near-cache).*
 <br></br>
 
 
-Programmatically, you configure near cache by using the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a>. This class is used both in the cluster members and in the clients. In a client/server system, you must enable the near cache separately on the client; you do not need to configure it on the member. For information on how to create a near cache on a client (native Java client), please see [Configuring Client Near Cache](#configuring-client-near-cache). Please note that near cache configuration is specific to the member or client itself, and that a map in a member may not have near cache configured while the same map in a client may have near cache configured.
+Programmatically, you configure near cache by using the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a>. This class is used both in the cluster members and clients. In a client/server system, you must enable the near cache separately on the client, without you needing to configure it on the member. For information on how to create a near cache on a client (native Java client), please see [Configuring Client Near Cache](#configuring-client-near-cache). Please note that near cache configuration is specific to the member or client itself, a map in a member may not have near cache configured while the same map in a client may have near cache configured.
 
-If you are using near cache, you should take into account that your hits to the keys in near cache are not reflected as hits to the original keys on the primary members. This has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even though there is a hit on a key in near cache, your original key on the primary member may expire.
+If you are using near cache, you should take into account that your hits to the keys in near cache are not reflected as hits to the original keys on the primary members; this has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even though there is a hit on a key in near cache, your original key on the primary member may expire.
 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache works only when you access data via `map.get(k)` methods.  Data returned using a predicate is not stored in the near cache.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable near cache on lite members for faster reads.*
-
 
 
 #### Near Cache Invalidation
@@ -70,9 +69,9 @@ This reduces the network traffic and keeps the eventing system less busy.
 
 You can use the following system properties to configure the near cache invalidation:
 
-- `hazelcast.map.invalidation.batch.enabled`. Enables or disables batching. Default value is true. When it is set to false, all invalidations are sent immediately.
-- `hazelcast.map.invalidation.batch.size`. Maximum number of invalidations in a batch. Default value is 100.
-- `hazelcast.map.invalidation.batchfrequency.seconds`. If we cannot reach the configured batch size, a background process sends invalidations periodically. Default value is 10 seconds.
+- `hazelcast.map.invalidation.batch.enabled`: Enable or disable batching. Default value is true. When it is set to false, all invalidations are sent immediately.
+- `hazelcast.map.invalidation.batch.size`: Maximum number of invalidations in a batch. Default value is 100.
+- `hazelcast.map.invalidation.batchfrequency.seconds`: If we cannot reach the configured batch size, a background process sends invalidations periodically. Default value is 10 seconds.
 
 If there are a lot of clients or many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.map.invalidation.batch.size` system property to a suitable value.
 
