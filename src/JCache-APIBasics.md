@@ -1,7 +1,7 @@
 
 ### JCache Base Classes
 
-In the [Example JCache Application section](#example-jcache-application), we have already seen a couple of the base classes and explained how those work. Following are quick descriptions of them.
+In the [Example JCache Application section](#example-jcache-application), we have already seen a couple of the base classes and explained how those work. The following are quick descriptions of them:
 
 **`javax.cache.Caching`**:
 
@@ -16,7 +16,7 @@ interact with Hazelcast clusters.
 
 When a `javax.cache.spi.CachingProvider::getCacheManager` overload is used that takes a `java.lang.ClassLoader` argument, this
 classloader will be part of the scope of the created `java.cache.Cache` and it is not possible to retrieve it on other members.
-We advise not to use those overloads, those are not meant to be used in distributed environments!
+We advise not to use those overloads, as they are not meant to be used in distributed environments!
 
 **`javax.cache.CacheManager`**:
 
