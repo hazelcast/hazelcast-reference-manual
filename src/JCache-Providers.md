@@ -10,14 +10,14 @@ you can use the Client Provider (used by Hazelcast clients) or the Server Provid
 
 ### Configuring JCache Provider
 
-You configure the JCache `javax.cache.spi.CachingProvider` by either specifying the provider at the command line or by declaring the provider inside the Hazelcast configuration XML file. For more information on setting properties in this XML
+Configure the JCache `javax.cache.spi.CachingProvider` by either specifying the provider at the command line or by declaring the provider inside the Hazelcast configuration XML file. For more information on setting properties in this XML
 configuration file, please see the [JCache Declarative Configuration section](#jcache-declarative-configuration).
 
 Hazelcast implements a delegating `CachingProvider` that can automatically be configured for either client or member mode and that
 delegates to the real underlying implementation based on the user's choice. Hazelcast recommends that you use this `CachingProvider`
 implementation.
 
-The delegating `CachingProvider`s fully qualified class name is:
+The delegating `CachingProvider`s fully qualified class name is
 
 ```plain
 com.hazelcast.cache.HazelcastCachingProvider
