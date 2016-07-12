@@ -2,19 +2,19 @@
 
 ## JCache Setup and Configuration
 
-This sub-chapter shows what is necessary to provide the JCache API and the Hazelcast JCache implementation for your application. In
-addition, it demonstrates the different configuration options as well as a description of the configuration properties.
+This section shows what is necessary to provide the JCache API and the Hazelcast JCache implementation for your application. In
+addition, it demonstrates the different configuration options and describes the configuration properties.
 
 ### Setting up Your Application
 
 To provide your application with this JCache functionality, your application needs the JCache API inside its classpath. This API is the bridge between the specified JCache standard and the implementation provided by Hazelcast.
 
-The way to integrate the JCache API JAR into the application classpath depends on the build system used. For Maven, Gradle, SBT,
-Ivy and many other build systems, all using Maven based dependency repositories, perform the integration by adding
+The method of integrating the JCache API JAR into the application classpath depends on the build system used. For Maven, Gradle, SBT,
+Ivy, and many other build systems, all using Maven-based dependency repositories, perform the integration by adding
 the Maven coordinates to the build descriptor.
 
-As already mentioned, next to the default Hazelcast coordinates that might be already part of the application, you have to add JCache
-coordinates.
+As already mentioned, you have to add JCache
+coordinates next to the default Hazelcast coordinates that might be already part of the application.
 
 For Maven users, the coordinates look like the following code:
 
@@ -51,8 +51,7 @@ If you use `hazelcast.jar`:
   <version>"your Hazelcast version, e.g. 3.7"</version>
 </dependency>
 ```
-The users of other build systems have to adjust the way of
-defining the dependency to their needs.
+The users of other build systems have to adjust the definition of the dependency to their needs.
 
 #### Connecting Clients to Remote Member
 
@@ -68,7 +67,7 @@ Maven snippet:
 </dependency>
 ```
 
-For other build systems, e.g. ANT, the users have to download these dependencies from either the JSR-107 specification and
+For other build systems, for instance, ANT, the users have to download these dependencies from either the JSR-107 specification and
 Hazelcast community website (<a href="http://www.hazelcast.org" target="_blank">http://www.hazelcast.org</a>) or from the Maven repository search page
 (<a href="http://search.maven.org" target="_blank">http://search.maven.org</a>).
 
