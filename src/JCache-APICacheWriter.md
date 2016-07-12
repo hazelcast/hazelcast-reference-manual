@@ -2,13 +2,13 @@
 ### CacheWriter
 
 You use a `javax.cache.integration.CacheWriter` to update an external backend resource. If the cache is configured to be
-`write-through`, this process is executed transparently to the users code. Otherwise, there is currently no way to trigger
+`write-through`, this process is executed transparently to the user's code. Otherwise, there is currently no way to trigger
 writing changed entries to the external resource to a user-defined point in time.
 
 If bulk operations throw an exception, `java.util.Collection` has to be cleaned of all successfully written keys so
 the cache implementation can determine what keys are written and can be applied to the cache state.
 
-The following example performs the following tasks.
+The following example performs the following tasks:
 
 - It implements `CacheWriter`.
 - It overrides the `write` method to write the specified entry to the underlying store.
@@ -75,7 +75,7 @@ public class UserCacheWriter
 }
 ```
 
-Again the implementation is pretty straight forward and also as above all exceptions thrown by the external resource, like
+Again, the implementation is pretty straightforward and also as above all exceptions thrown by the external resource, like
 `java.sql.SQLException` has to be wrapped into a `javax.cache.integration.CacheWriterException`. Note this is a different
 exception from the one thrown by `CacheLoader`.
 
