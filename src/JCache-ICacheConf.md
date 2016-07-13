@@ -31,7 +31,7 @@ The declarative configuration for ICache is a superset of the previously discuss
     - `USED_NATIVE_MEMORY_PERCENTAGE`: Maximum used native memory size percentage per cache for each Hazelcast instance. **Available on High-Density Memory cache record store only.**
     - `FREE_NATIVE_MEMORY_SIZE`: Minimum free native memory size in megabytes for each Hazelcast instance. **Available on High-Density Memory cache record store only.**
     - `FREE_NATIVE_MEMORY_PERCENTAGE`: Minimum free native memory size percentage for each Hazelcast instance. **Available on High-Density Memory cache record store only.**
-  - `eviction-policy`: Eviction policy which compares values to find the best matching eviction candidate. Default is `LRU`.
+  - `eviction-policy`: Eviction policy that compares values to find the best matching eviction candidate. Default is `LRU`.
     - `LRU`: Less Recently Used - finds the best eviction candidate based on the lastAccessTime.
     - `LFU`: Less Frequently Used - finds the best eviction candidate based on the number of hits.
 - `partition-lost-listeners` : Defines listeners for dispatching partition lost events for the cache. For more information, please see the [ICache Partition Lost Listener section](#icache-partition-lost-listener).
