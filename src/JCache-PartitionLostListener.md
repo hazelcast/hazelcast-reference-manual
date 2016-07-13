@@ -24,7 +24,7 @@ Let's consider the following example code:
   }
 ```
 
-Within this example code, a `CachePartitionLostListener` implementation is registered to a cache and assume that this cache is configured with 1 backup. For this particular cache and any of the partitions in the
+Within this example code, a `CachePartitionLostListener` implementation is registered to a cache and assumes that this cache is configured with one backup. For this particular cache and any of the partitions in the
 system, if the partition owner member and its first backup member crash simultaneously, the
 given `CachePartitionLostListener` receives a
 corresponding `CachePartitionLostEvent`. If only a single member crashes in the cluster,
