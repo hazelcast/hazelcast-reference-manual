@@ -6,7 +6,7 @@ environment like Hazelcast, you can move the mutating function to the member tha
 object is big, it might prevent traffic by sending the object to the mutator and sending it back to the owner to update it.
 
 By default, Hazelcast JCache sends the complete changed value to the backup partition. Again, this can cause a lot of traffic if
-the object is big. Another option to prevent this is part of the Hazelcast ICache extension. Further information is available at
+the object is big. The Hazelcast ICache extension can also prevent this. Further information is available at
 [Implementing BackupAwareEntryProcessor](#implementing-backupawareentryprocessor).
 
 An arbitrary number of arguments can be passed to the `Cache::invoke` and `Cache::invokeAll` methods. All of those arguments need
@@ -60,10 +60,10 @@ public class UserUpdateEntryProcessor
 single cache entry. No transactional rules are applied to the bulk operation.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *JCache `EntryProcessor` implementations are not allowed to call
-`javax.cache.Cache` methods; this prevents operations from deadlocking between different calls.*
+`javax.cache.Cache` methods. This prevents operations from deadlocking between different calls.*
 <br></br>
 
 In addition, when using a `Cache::invokeAll` method, a `java.util.Map` is returned that maps the key to its
-`javax.cache.processor.EntryProcessorResult`, and which itself wraps the actual result or a thrown
+`javax.cache.processor.EntryProcessorResult`, which itself wraps the actual result or a thrown
 `javax.cache.processor.EntryProcessorException`.
 
