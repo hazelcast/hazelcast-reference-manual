@@ -5,5 +5,5 @@ In addition to the operations explained in [ICache Async Methods](#icache-async-
 
  - `size()`: Returns the estimated size of the distributed cache.
  - `destroy()`: Destroys the cache and removes the data from memory. This is different from the method `javax.cache.Cache::close`.
- - `getLocalCacheStatistics()`: Returns a `com.hazelcast.cache.CacheStatistics` instance providing the same statistics data as the JMX beans. This method is not available yet on Hazelcast clients: the exception `java.lang.UnsupportedOperationException` is thrown when you use this method on a Hazelcast client.
+ - `getLocalCacheStatistics()`: Returns a `com.hazelcast.cache.CacheStatistics` instance providing the same statistics data as the JMX beans. This method is not available yet on Hazelcast clients--the exception `java.lang.UnsupportedOperationException` is thrown when you use this method on a Hazelcast client.
 
