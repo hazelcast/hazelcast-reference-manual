@@ -11,7 +11,7 @@ Hazelcast offers a sub-interface for `EntryProcessor` called `com.hazelcast.cach
 partitions and apply delta changes to the backup entries.
 
 The backup partition `EntryProcessor` can either be the currently running processor (by returning `this`) or it can be
-a specialized `EntryProcessor` implementation (other from the currently running one) which does different operations or leaves
+a specialized `EntryProcessor` implementation (different from the currently running one) that does different operations or leaves
 out operations, e.g. sending emails.
 
 If we again take the `EntryProcessor` example from the demonstration application provided in the [Implementing EntryProcessor section](#implementing-entryprocessor),
