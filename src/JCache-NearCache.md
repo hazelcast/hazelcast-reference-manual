@@ -5,10 +5,10 @@ When you try to read a record with the key `k`, if the current member is not the
 Hazelcast sends a remote operation to the owner member. Each remote operation means lots of network trips. 
 If your cache is used for mostly read operations, it is advised to use a near cache storage in front of the cache itself to read cache records faster and consume less network traffic.
 <br><br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache for JCache is only available for clients NOT members.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache for JCache is only available for clients, NOT members.*
 <br><br>
 
-However, using near cache comes with some trade-off for some cases:
+However, using near cache comes with trade-offs in some cases:
 
 - There will be extra memory consumption for storing near cache records at local.
 - If invalidation is enabled and entries are updated frequently, there will be many invalidation events across the cluster.
@@ -26,7 +26,7 @@ You can use the following system properties to configure the sending of invalida
 - `hazelcast.cache.invalidation.batch.size`: Maximum number of cache invalidation events to be drained and sent to the event listeners in a batch. The default value is `100`.
 - `hazelcast.cache.invalidation.batchfrequency.seconds`: Cache invalidation event batch sending frequency in seconds. When event size does not reach to `hazelcast.cache.invalidation.batch.size` in the given time period, those events are gathered into a batch and sent to the target. The default value is `10` seconds.
 
-So if there are so many clients or so many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.cache.invalidation.batch.size` system property to a suitable value.
+So if there are many clients or many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.cache.invalidation.batch.size` system property to a suitable value.
 
 #### JCache Near Cache Expiration
 
@@ -45,17 +45,17 @@ In the scope of near cache, eviction means evicting (clearing) the entries selec
 
 ##### `max-size-policy`
 
-This element defines the state when near cache is full and whether the eviction should be triggered. The following policies for maximum cache size are supported by the near cache eviction:
+This element defines the state when the near cache is full and determines whether the eviction should be triggered. The following policies for maximum cache size are supported by the near cache eviction:
 
 - **ENTRY_COUNT:** Maximum size based on the entry count in the near cache. Available only for `BINARY` and `OBJECT` in-memory formats.
 - **USED_NATIVE_MEMORY_SIZE:** Maximum used native memory size of the specified near cache in MB to trigger the eviction. If the used native memory size exceeds this threshold, the eviction is triggered.  Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
 - **USED_NATIVE_MEMORY_PERCENTAGE:** Maximum used native memory percentage of the specified near cache to trigger the eviction. If the native memory usage percentage (relative to maximum native memory size) exceeds this threshold, the eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
-- **FREE_NATIVE_MEMORY_SIZE:** Minimum free native memory size of the specified near cache in MB to trigger the eviction.  If free native memory size goes down below of this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
-- **FREE_NATIVE_MEMORY_PERCENTAGE:** Minimum free native memory percentage of the specified near cache to trigger eviction. If free native memory percentage (relative to maximum native memory size) goes down below of this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
+- **FREE_NATIVE_MEMORY_SIZE:** Minimum free native memory size of the specified near cache in MB to trigger the eviction.  If free native memory size goes below this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
+- **FREE_NATIVE_MEMORY_PERCENTAGE:** Minimum free native memory percentage of the specified near cache to trigger eviction. If free native memory percentage (relative to maximum native memory size) goes below this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
 
 ##### `eviction-policy` 
 
-Once a near cache is full (reached to its maximum size as specified with the `max-size-policy` element), an eviction policy determines which, if any, entries must be evicted. Currently, the following eviction policies are supported by near cache eviction:
+Once a near cache is full (i.e., has reached its maximum size as specified by the `max-size-policy` element), an eviction policy determines which, if any, entries must be evicted. Currently, the following eviction policies are supported by near cache eviction:
 
 - LRU (Least Recently Used)
 - LFU (Least Frequently Used)
@@ -119,7 +119,7 @@ The following are the definitions of the configuration elements and attributes.
 Near cache can be configured only at the client side.
 
 <br><br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *It is recommended to specify a `time-to-live-seconds` value to guarantee the eventual eviction of invalidated near cache records.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Specifying a `time-to-live-seconds` value is recommended in order to guarantee the eventual eviction of invalidated near cache records.*
 <br><br>
 
 
@@ -130,7 +130,7 @@ Near cache configuration can be defined at the client side (using `hazelcast-cli
 - Look for near cache configuration with the name of the cache given in the client configuration.
 - If a defined near cache configuration is found, use this near cache configuration defined at the client.
 - Otherwise: 
-	- If there is a defined default near cache configuration is found, use this default near cache configuration.
+	- If a defined default near cache configuration is found, use this default near cache configuration.
 	- If there is no default near cache configuration, it means there is no near cache configuration for cache.
 	
 
