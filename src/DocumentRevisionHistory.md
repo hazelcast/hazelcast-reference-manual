@@ -29,6 +29,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[JCache Eviction](#jcache-eviction)| [Custom Eviction Policies](#custom-eviction-policies) added as a new section.
 |[Chapter 13 - Integrated Clustering](#integrated-clustering)|[Web Session Replication](#web-session-replication)| Updated Tomcat and Jetty based web session replication sections since they have become Hazelcast plugins. These sections' content is moved to their own repos. You can find these repos' links in the related sections.
 ||[Hibernate Second Level Cache](#hibernate-second-level-cache)|Section's content moved to its own repo since this feature has become a Hazelcast plugin. You can find its repo's link in this section.
+||[Spring Integration](#spring-integration)|[Configuring Hazelcast Transaction Manager](#configuring-hazelcast-transaction-manager) added as a new section.
 |[Chapter 14 - Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added the new section [Hot Restart Performance Considerations](#hot-restart-performance-considerations) to summarize the results of performance tests of Hot Restart Persistence.
 ||[Configuring High-Density Memory Store](#configuring-high-density-memory-store)|Enhanced the content for `allocator-type` configuration element.
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)||Enhanced the definition for the property `hazelcast.client.invocation.timeout.seconds`.
