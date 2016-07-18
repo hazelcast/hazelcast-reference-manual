@@ -170,8 +170,7 @@ HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance( config );
 ```
 
 <br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *The `Config` must not be modified after the Hazelcast instance Hazelcast
-has been started. In other words, all configuration must be completed before creating the `HazelcastInstance`*
+![image](images/NoteSmall.jpg) ***NOTE:*** *The `Config` must not be modified after the Hazelcast instance is started. In other words, all configuration must be completed before creating the `HazelcastInstance`.*
 <br>
 
 You can also create a named Hazelcast member. In this case, you should set `instanceName` of `Config` object as shown below:
