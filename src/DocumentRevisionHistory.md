@@ -21,6 +21,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Lock](#lock)| Added explanations related to the maximum lease time for locks.
 ||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.
 |[Chapter 9 - Distributed Computing](#distributed-computing)|[Using Indexes](#using-indexes)| Added as a new section.
+||[Durable Executor Service](#durable-executor-service)|Added as a new section to describe Hazelcast's newly introduced data structure, Durable Executor Service.
 |[Chapter 10 - Distributed Query](#distributed-query)|[ValueExtractor with Portable Serialization](#valueExtractor-with-portable-serialization)| Added as a new section.
 |[Chapter 11 - Transactions](#transactions)|[Integrating into J2EE](#integrating-into-j2ee)| Added information related to class loaders.
 |[Chapter 12 - Hazelcast JCache](#hazelcast-jcache)|[ICache Configuration](#icache-configuration)| Added description of the new element `disable-per-entry-invalidation-events`.
