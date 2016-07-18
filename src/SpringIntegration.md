@@ -428,7 +428,7 @@ You can use JCache implementation in both member and client mode. A cache manage
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Instance name provided in properties overrides `instance-ref` attribute.*
 
-You can specify a uri for each cache manager with `uri` attribute.
+You can specify an URI for each cache manager with `uri` attribute.
 
 
 ```xml
@@ -503,17 +503,16 @@ Please refer to Hibernate [Configuring RegionFactory](#configuring-regionfactory
 
 ### Configuring Hazelcast Transaction Manager
 
-***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-transaction-manager" target="_blank">sample application</a> for Hazelcast Transaction Manager in our code-samples repository.*
+***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-transaction-manager" target="_blank">sample application</a> for Hazelcast Transaction Manager in our code samples repository.*
 <br></br>
 
-Starting with Hazelcast 3.7, you can get rid of the boilerplate code to begin, commit or rollback transactions by using
-[HazelcastTransactionManager](https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/HazelcastTransactionManager.java)
+Starting with Hazelcast 3.7, you can get rid of the boilerplate code to begin, commit or rollback transactions by using <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/HazelcastTransactionManager.java" target="_blank">HazelcastTransactionManager</a>
 which is a `PlatformTransactionManager` implementation to be used with Spring Transaction API.
 
 #### Sample Configuration for Hazelcast Transaction Manager
 
 You need to register `HazelcastTransactionManager` as your transaction manager implementation and also you need to
-register [ManagedTransactionalTaskContext](https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/ManagedTransactionalTaskContext.java)
+register <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/ManagedTransactionalTaskContext.java" target="_blank">ManagedTransactionalTaskContext</a>
 to access transactional data structures within your service class.
 
 
@@ -535,7 +534,8 @@ to access transactional data structures within your service class.
 </bean>
 ...
 ```
-#### A sample transactional method
+
+#### Sample Transactional Method
 
 ```java
 public class ServiceWithTransactionalMethod {
