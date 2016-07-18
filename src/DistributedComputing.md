@@ -1,7 +1,7 @@
 
 # Distributed Computing
 
-From Wikipedia: Distributed computing refers to the use of distributed systems to solve computational problems. In distributed computing, a problem is divided into many tasks, each of which is solved by one or more computers.
+This chapter explains Hazelcast's executor service, durable executor service, and entry processor implementations.
 
 ## Executor Service
 
