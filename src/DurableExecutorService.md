@@ -17,8 +17,8 @@ With the first invocation, a [Ringbuffer](#ringbuffer) stores the task and a gen
 After the first invocation has completed and the sequence of task is returned, second invocation starts to retrieve the result of task with that sequence. This retrieval waits in the waiting operations queue until notified, or it runs immediately if the result is already available.
 
 When task execution is completed, Ringbuffer replaces the task with the result for the given task sequence. This replacement notifies the waiting operations queue.
-
+ 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *.*
 
-
+ 

@@ -34,6 +34,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Configuring High-Density Memory Store](#configuring-high-density-memory-store)|Enhanced the content for `allocator-type` configuration element.
 |[Chapter 15 - Hazelcast Java Client](#hazelcast-java-client)||Enhanced the definition for the property `hazelcast.client.invocation.timeout.seconds`.
 ||[Feature Comparison](#hazelcast-clients-feature-comparison)|Updated to reflect the latest feature developments.
+||[Client System Properties](#client-system-properties)|Added description for the property `hazelcast.client.max.concurrent.invocations`.
 |[Chapter 16 - Other Client and Language Implementations](#other-client-and-language-implementations)|Content of C++ and .NET clients updated so that the reader is directed to the GitHub repositories of these clients.
 |[Chapter 17 - Serialization](#serialization)||Removed `java.lang.Enum` from the default types since it is not among the default serializers.
 |[Chapter 18 - Management](#management)|[Management Center](#management-center)|Added information explaining how to configure Hazelcast Management Center when it is deployed onto an SSL-enabled web container.<br></br>Added information explaining the "Update License" button.
