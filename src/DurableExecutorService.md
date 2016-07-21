@@ -38,11 +38,11 @@ This section presents example configurations for durable executor service along 
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
 DurableExecutorService durableExecSvc = hazelcast.getDurableExecutorService("myDurableExecSvc");
 
-Config config = new Config( "myDurableExecSvc" );
-config.getDurableExecutorConfig().
+Config config = new Config();
+config.getDurableExecutorConfig( "myDurableExecSvc" ).
       .setPoolSize ( "8" )
       .setDurability( "1" )
-      .setCapacity( "1" )
+      .setCapacity( "1" );
 ```
  
 Following are the descriptions of each configuration element and attribute:
