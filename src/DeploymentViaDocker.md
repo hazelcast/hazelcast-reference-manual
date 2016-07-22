@@ -16,4 +16,4 @@ After you pull an image from the Docker registry, you can run your image to star
 
 If you want to start a customized Hazelcast instance, you can extend the Hazelcast image by providing your own configuration file.
 
-This feature is provided as a Hazelcast plugin. Please see its own GitHub repo at <a href="https://github.com/hazelcast/hazelcast-docker" target="_blank">Hazelcast JClouds</a> for details on configurations and usages.
+This feature is provided as a Hazelcast plugin. Please see its own GitHub repo at <a href="https://github.com/hazelcast/hazelcast-docker" target="_blank">Hazelcast Docker</a> for details on configurations and usages.
