@@ -9,9 +9,13 @@ But what if some members share the same JVM or physical machine or chassis and y
 
 You can group members in the same JVM (or physical machine) or members located in the same chassis. Or you can group members to create identical capacity. We call these groups **partition groups**. Partitions are assigned to those partition groups instead of to single members. Backups of these partitions are located in another partition group.
 
-When you enable partition grouping, Hazelcast presents three choices for you to configure partition groups.
+### Grouping Types
 
-- You can group members automatically using the IP addresses of members, so members sharing the same network interface will be grouped together. All members on the same host (IP address or domain name) will be a single partition group. This helps to avoid data loss when a physical server crashes, because multiple replicas of the same partition are not stored on the same host. But if there are multiple network interfaces or domain names per physical machine, that will make this assumption invalid.
+When you enable partition grouping, Hazelcast presents the following choices for you to configure partition groups.
+
+**1. HOST_AWARE:** 
+
+You can group members automatically using the IP addresses of members, so members sharing the same network interface will be grouped together. All members on the same host (IP address or domain name) will be a single partition group. This helps to avoid data loss when a physical server crashes, because multiple replicas of the same partition are not stored on the same host. But if there are multiple network interfaces or domain names per physical machine, that will make this assumption invalid.
 
 ```xml
 <partition-group enabled="true" group-type="HOST_AWARE" />
@@ -24,7 +28,9 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.HOST_AWARE );
 ```
 
-- You can do custom grouping using Hazelcast's interface matching configuration. This way, you can add different and multiple interfaces to a group. You can also use wildcards in the interface addresses. For example, the users can create rack aware or data warehouse partition groups using custom partition grouping.
+**2. CUSTOM:**
+
+You can do custom grouping using Hazelcast's interface matching configuration. This way, you can add different and multiple interfaces to a group. You can also use wildcards in the interface addresses. For example, the users can create rack aware or data warehouse partition groups using custom partition grouping.
 
 ```xml
 <partition-group enabled="true" group-type="CUSTOM">
@@ -59,7 +65,12 @@ partitionGroupConfig.addMemberGroupConfig( memberGroupConfig );
 partitionGroupConfig.addMemberGroupConfig( memberGroupConfig2 );
 ```
 
-- You can give every member its own group. Each member is a group of its own and primary and backup partitions are distributed randomly (not on the same physical member). This gives the least amount of protection and is the default configuration for a Hazelcast cluster.
+**3. PER_MEMBER:**
+
+You can give every member its own group. Each member is a group of its own and primary and backup partitions are distributed randomly (not on the same physical member). This gives the least amount of protection and is the default configuration for a Hazelcast cluster. This grouping type provides good redundancy when Hazelcast members are on separate hosts. However, if multiple instances run on the same host, this type is not a good option. 
+
+Following are declarative and programmatic configuration snippets that show how to enable PER_MEMBER grouping.
+
 
 ```xml
 <partition-group enabled="true" group-type="PER_MEMBER" />
@@ -72,3 +83,7 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.PER_MEMBER );
 ```
 
+**4. ZONE_AWARE:**
+
+
+**5. SPI:**
