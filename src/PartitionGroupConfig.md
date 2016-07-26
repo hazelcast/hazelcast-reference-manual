@@ -17,6 +17,8 @@ When you enable partition grouping, Hazelcast presents the following choices for
 
 You can group members automatically using the IP addresses of members, so members sharing the same network interface will be grouped together. All members on the same host (IP address or domain name) will be a single partition group. This helps to avoid data loss when a physical server crashes, because multiple replicas of the same partition are not stored on the same host. But if there are multiple network interfaces or domain names per physical machine, that will make this assumption invalid.
 
+Following are declarative and programmatic configuration snippets that show how to enable HOST_AWARE grouping.
+
 ```xml
 <partition-group enabled="true" group-type="HOST_AWARE" />
 ```
@@ -30,7 +32,9 @@ partitionGroupConfig.setEnabled( true )
 
 **2. CUSTOM:**
 
-You can do custom grouping using Hazelcast's interface matching configuration. This way, you can add different and multiple interfaces to a group. You can also use wildcards in the interface addresses. For example, the users can create rack aware or data warehouse partition groups using custom partition grouping.
+You can do custom grouping using Hazelcast's interface matching configuration. This way, you can add different and multiple interfaces to a group. You can also use wildcards in the interface addresses. For example, the users can create rack-aware or data warehouse partition groups using custom partition grouping.
+
+Following are declarative and programmatic configuration examples that show how to enable and use CUSTOM grouping.
 
 ```xml
 <partition-group enabled="true" group-type="CUSTOM">
@@ -85,9 +89,16 @@ partitionGroupConfig.setEnabled( true )
 
 **4. ZONE_AWARE:**
 
-You can use zone aware partition group config with hazelcast-jclouds or hazelcast-azure discovery service plugin. When you use hazelcast-jclouds or hazelcast-azure plugin as discovery service, during discovery process those plugins put zone/rack/host info to hazelcast member attribute map. 
-So that hazelcast creates partition groups with respect to attribute map entries that includes zone/rack/host info. In zone aware config, backups will be created in other zones. Every zone will be accepted as one partition group.
-Note: Some cloud providers have attributes rack info instead of zone info. In such cases Hazelcast looks zone info, rack info, host info respectively.
+You can use ZONE_AWARE configuration with Hazelcast jclouds or Hazelcast Azure Discovery Service plugins. 
+
+As discovery services, these plugins put zone, rack, and host information to the Hazelcast [member attributes](#defining-member-attributes) map during the discovery process. Hazelcast creates the partition groups with respect to member attributes map entries that include zone, rack, and host information. 
+
+When using ZONE_AWARE configuration, backups are created in the other zones. Each zone will be accepted as one partition group.
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Some cloud providers have rack information instead of zone information. In such cases, Hazelcast looks for zone, rack, and host information in the given order.*
+<br></br>
+
+Following are declarative and programmatic configuration snippets that show how to enable ZONE_AWARE grouping.
 
 ```xml
 <partition-group enabled="true" group-type="ZONE_AWARE" />
@@ -100,13 +111,13 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.ZONE_AWARE );
 ```
 
-Note: Currently this config works only with hazelcast-jclouds plugin and hazelcast-azure discovery plugin.  
+![image](images/NoteSmall.jpg) ***NOTE:*** *Currently ZONE_AWARE configuration works only with Hazelcast jclouds and Hazelcast Azure Discovery Service plugins. Please refer to their GitHub repositories at [Hazelcast jclouds](https://github.com/hazelcast/hazelcast-jclouds) and [Hazelcast Azure](https://github.com/hazelcast/hazelcast-azure) for more information on these plugins.* 
 
 **5. SPI:**
 
-In SPI config, user can provide his own partition group implementation. User needs to extend DiscoveryStrategy class of the discovery service plugin.
-Then user should override `public PartitionGroupStrategy getPartitionGroupStrategy()` method.
-Then user should return `PartitionGroupStrategy` configuration in that method.
+You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()`, and return the `PartitionGroupStrategy` configuration in that overridden method. 
+
+Following is a sample code covering the implementation steps mentioned in the above paragraph: 
 
 ```
 public class CustomDiscovery extends JCloudsDiscoveryStrategy {
