@@ -17,6 +17,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Discovering Native Clients](#discovering-native-clients)|Added as a new section to explain Hazelcast's multicast discovery plugin.
 ||[Discovering Members with jclouds](#discovering-members-with-jclouds)|Section's content moved to its own repo since this feature has become a Hazelcast plugin. You can find its repo's link in this section.
 ||[Discovering Members within EC2 Cloud](#discovering-members-within-ec2-cloud)|Section's content moved to its own repo since this feature has become a Hazelcast plugin. You can find its repo's link in this section.
+||[Partition Group Configuration](#partition-group-configuration)|Added explanations of the new member group types ZONE_AWARE and SPI.
 |[Chapter 7 - Distributed Data Structures](#distributed-data-structures)|[Replicated Map](#replicated-map)|[Replicating instead of Partitioning](#replicating-instead-of-partitioning) updated by adding a note related to replicated map usage in a lite member. The whole section enhanced.
 ||[Lock](#lock)| Added explanations related to the maximum lease time for locks.
 ||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.
