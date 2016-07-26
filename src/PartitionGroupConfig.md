@@ -85,5 +85,48 @@ partitionGroupConfig.setEnabled( true )
 
 **4. ZONE_AWARE:**
 
+You can use zone aware partition group config with hazelcast-jclouds or hazelcast-azure discovery service plugin. When you use hazelcast-jclouds or hazelcast-azure plugin as discovery service, during discovery process those plugins put zone/rack/host info to hazelcast member attribute map. 
+So that hazelcast creates partition groups with respect to attribute map entries that includes zone/rack/host info. In zone aware config, backups will be created in other zones. Every zone will be accepted as one partition group.
+Note: Some cloud providers have attributes rack info instead of zone info. In such cases Hazelcast looks zone info, rack info, host info respectively.
+
+```xml
+<partition-group enabled="true" group-type="ZONE_AWARE" />
+```
+
+```java
+Config config = ...;
+PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
+partitionGroupConfig.setEnabled( true )
+    .setGroupType( MemberGroupType.ZONE_AWARE );
+```
+
+Note: Currently this config works only with hazelcast-jclouds plugin and hazelcast-azure discovery plugin.  
 
 **5. SPI:**
+
+In SPI config, user can provide his own partition group implementation. User needs to extend DiscoveryStrategy class of the discovery service plugin.
+Then user should override `public PartitionGroupStrategy getPartitionGroupStrategy()` method.
+Then user should return `PartitionGroupStrategy` configuration in that method.
+
+```
+public class CustomDiscovery extends JCloudsDiscoveryStrategy {
+
+    public CustomDiscovery(Map<String, Comparable> properties) {
+        super(properties);
+    }
+    
+    @Override
+    public PartitionGroupStrategy getPartitionGroupStrategy() {
+        return new CustomPartitionGroupStrategy();
+    }
+
+    private class CustomPartitionGroupStrategy implements PartitionGroupStrategy {
+        @Override
+        public Iterable<MemberGroup> getMemberGroups() {
+            ...
+            ...
+        }
+    }
+}
+
+```
