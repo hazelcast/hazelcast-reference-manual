@@ -1,18 +1,13 @@
 
 ### Safety Checking Cluster Members
 
-To prevent data loss when shutting down a cluster member, Hazelcast provides a graceful shutdown feature. You perform this shutdown by calling the method `HazelcastInstance.shutdown()`. Once this method is called, it checks the following conditions to ensure the member is safe to shutdown.
+To prevent data loss when shutting down a cluster member, Hazelcast provides a graceful shutdown feature. You perform this shutdown by calling the method `HazelcastInstance.shutdown()`. With Hazelcast version 3.7, the master node migrates all of the replicas owned by the shutdown-requesting node to the other running (not initiated shutdown) nodes in the cluster. After these migrations are completed, the shutting down node will not be owner or a backup of any partition anymore. It means that you can shutdown any number of Hazelcast nodes in a cluster concurrently with no data loss.
 
-- There is no active migration.
-- At least one backup of partitions are synced with primary ones.
-
-Even if the above conditions are not met, `HazelcastInstance.shutdown()` will force them to be completed. When this method eventually returns, the member has been brought to a safe state and it can be shut down without any data loss. 
+Please note that shutting down nodes wait for a pre-defined amount of time for the master to migrate their partition replicas. You can specify this graceful shutdown timeout duration via `hazelcast.graceful.shutdown.max.wait` and it is 10 minutes by default. If migrations are not completed within this duration, shut down may continue non-gracefully and lead to data loss. Therefore, you should choose your own timeout duration considering size of the data in your cluster.
 
 #### Ensuring Safe State with PartitionService
 
-What if you want to be sure that your **cluster** is in a safe state, as in safe to shutdown without any data loss? For example, you may have some use cases like rolling upgrades, development/testing, or other logic that requires a cluster/member to be safe. 
-
-To provide this safety, Hazelcast offers the `PartitionService` interface with the methods `isClusterSafe`, `isMemberSafe`, `isLocalMemberSafe` and `forceLocalMemberToBeSafe`. These methods can be deemed as decoupled pieces from the method `Hazelcast.shutdown`. 
+As with improvements in the graceful shutdown precedure in Hazelcast version 3.7, the following methods are not needed to perform graceful shutdown. Nevertheless, you can use them to check current safety status of the partitions in your cluster.
 
 
 ```java
@@ -26,34 +21,14 @@ public interface PartitionService {
 }
 ```
 
-The method `isClusterSafe` checks whether the cluster is in a safe state. It returns `true` if there are no active partition migrations and there are sufficient backups for each partition. Once it returns `true`, the cluster is safe and a member can be shut down without data loss.
+The method `isClusterSafe` checks whether the cluster is in a safe state. It returns `true` if there are no active partition migrations and all backups are sync for each partition.
 
-The method `isMemberSafe` checks whether a specific member is in a safe state. This check controls if the first backups of partitions of the given member are synced with the primary ones. Once it returns `true`, the given member is safe and it can be shut down without data loss. 
+The method `isMemberSafe` checks whether a specific member is in a safe state. This check controls if the all backups of partitions of the given member are sync with the primary ones. Once it returns `true`, the given member is safe and it can be shut down without data loss.
 
 Similarly, the method `isLocalMemberSafe` does the same check for the local member. The method `forceLocalMemberToBeSafe` forces the owned and backup partitions to be synchronized, making the local member safe.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *These methods are available starting with Hazelcast 3.3.*
 
-
-#### Example PartitionService Code
-
-
-```java
-PartitionService partitionService = hazelcastInstance.getPartitionService();
-if (partitionService.isClusterSafe()) {
-  hazelcastInstance.shutdown(); // or terminate
-}
-```
-
-OR 
-
-```java
-PartitionService partitionService = hazelcastInstance.getPartitionService();
-if (partitionService.isLocalMemberSafe()) {
-  hazelcastInstance.shutdown(); // or terminate
-}
-```
-<br></br>
 ***RELATED INFORMATION***
 
 *For more code samples please refer to <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster/src/main/java" target="_blank">PartitionService Code Samples</a>*.
