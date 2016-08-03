@@ -1,7 +1,7 @@
 
 ### Batch Size
 
-When `WanBatchReplication` is preferred as the replication implementation, the maximum size of events that are sent in a single batch can be changed 
+The maximum size of events that are sent in a single batch can be changed 
 depending on your needs. Default value for batch size is `500`.
 
 Batch size can be set for each target cluster by modifying related `WanPublisherConfig`.
@@ -37,3 +37,6 @@ And, following is the equivalent programmatic configuration:
 ...
 ``` 
 
+<br></br>
+![image](images/NoteSmall.jpg)***NOTE:*** *`WanNoDelayReplication` implementation has been removed. You can still achieve this behavior by setting the batch size to `1` while configuring your WAN replication.*
+<br></br>
