@@ -20,7 +20,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Partition Group Configuration](#partition-group-configuration)|Added explanations of the new member group types ZONE_AWARE and SPI.
 |[Chapter 7 - Distributed Data Structures](#distributed-data-structures)|[Replicated Map](#replicated-map)|[Replicating instead of Partitioning](#replicating-instead-of-partitioning) updated by adding a note related to replicated map usage in a lite member. The whole section enhanced.
 ||[Lock](#lock)| Added explanations related to the maximum lease time for locks.
-||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.
+||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.<br></br>[Listening to Map Entries with Predicates](#listening-to-map-entries-with-predicates) section updated by adding the explanation of a new system property (`hazelcast.map.entry.filtering.natural.event.types`) that allows better continuous query implementations.
 |[Chapter 9 - Distributed Computing](#distributed-computing)|[Using Indexes](#using-indexes)| Added as a new section.
 ||[Durable Executor Service](#durable-executor-service)|Added as a new section to describe Hazelcast's newly introduced data structure, Durable Executor Service.
 |[Chapter 10 - Distributed Query](#distributed-query)|[ValueExtractor with Portable Serialization](#valueExtractor-with-portable-serialization)| Added as a new section.
@@ -46,7 +46,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 22 - WAN](#wan)||Updated to reflect the improvement which is the ability of generic WAN replication endpoint configurations.
 ||[Synchronizing WAN Target Cluster](#synchronizing-wan-target-cluster)|Added as a new section.
 ||[Solace Integration](#solace-integration)|Added as a new section explaining how to integrate Hazelcast WAN replication with Solace messaging appliances.
-|[Chapter 26 - System Properties](#system-properties)||Added definition for the new property `hazelcast.partition.migration.stale.read.disabled`.|
+|[Chapter 26 - System Properties](#system-properties)||Added definitions for the new properties `hazelcast.partition.migration.stale.read.disabled` and `hazelcast.map.entry.filtering.natural.event.types`.|
 |[Chapter 29 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
 |[Chapter 30 - Glossary](#glossary)||Added new glossary items.|
 
