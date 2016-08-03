@@ -12,6 +12,7 @@ This chapter lists the changes made to this document from the previous release.
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Chapter 1 - Preface](#preface)||Updated the architecture diagram.|
+|[Chapter 3 - Getting Started](#getting-started)||[Deploying on Microsoft Azure](#deploying-on-microsoft-azure) added as a new section.|
 |[Chapter 5 - Understanding Configuration](#understanding-configuration)||Added as a new chapter to provide the fundamentals of Hazelcast configuration.
 |[Chapter 6 - Setting Up Clusters](#setting-up-clusters)||Added as a new chapter to provide all Hazelcast clusters related information.
 ||[Discovering Native Clients](#discovering-native-clients)|Added as a new section to explain Hazelcast's multicast discovery plugin.
