@@ -157,7 +157,7 @@ config.getNetworkConfig().setPort( 5900 )
                 
 MapConfig mapConfig = new MapConfig();
 mapConfig.setName( "testMap" )
-					.setBackupCount( 2 );
+					.setBackupCount( 2 )
 					.setTimeToLiveSeconds( 300 );
         
 config.addMapConfig( mapConfig );
