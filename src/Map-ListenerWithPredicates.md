@@ -8,6 +8,25 @@
 You can listen to the modifications performed on specific map entries. You can think of it as an entry listener with predicates. Please see the [Listening for Map Events section](#listening-for-map-events) for information on how to add entry listeners to a map.
 
 
+![image](images/NoteSmall.jpg) ***IMPORTANT:*** *The default backwards-compatible event publishing strategy only publishes
+`UPDATED` events when map entries are updated to a value that matches the predicate with which the listener was registered.
+This implies that when using the default event publishing strategy, your listener will not be notified about an entry whose
+value is updated from one that matches the predicate to a new value that does not match the predicate.*
+
+Since version 3.7, when you configure Hazelcast members with property `hazelcast.map.entry.filtering.natural.event.types` set to `true`,
+handling of entry updates conceptually treats value transition as entry, update or exit with regards to the predicate value space.
+The following table compares how a listener is notified about an update to a map entry value under the default
+backwards-compatible Hazelcast behavior (when property `hazelcast.map.entry.filtering.natural.event.types` is not set or is set
+to `false`) versus when set to `true`:
+
+&nbsp; | Default | `hazelcast.map.entry.filtering.natural.event.types = true`
+:--------------|:---------------|:------
+When old value matches predicate,<br/>new value does not match predicate | No event is delivered to entry listener | `REMOVED` event is delivered to entry listener
+When old value matches predicate,<br/>new value matches predicate | `UPDATED` event is delivered to entry listener | `UPDATED` event is delivered to entry listener
+When old value does not match predicate,<br/>new value does not match predicate | No event is delivered to entry listener | No event is delivered to entry listener
+When old value does not match predicate,<br/>new value matches predicate | `UPDATED` event is delivered to entry listener | `ADDED` event is delivered to entry listener  
+
+
 As an example, let's listen to the changes made on an employee with the surname "Smith". First, let's create the `Employee` class.
 
 ```java
@@ -30,7 +49,7 @@ public class Employee implements Serializable {
 }
 ```
 
-Then, let's create a continuous query by adding the entry listener with the `surname` predicate.
+Then, let's create a continuous query by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
 
 ```java
 import com.hazelcast.core.*;
@@ -39,7 +58,9 @@ import com.hazelcast.query.SqlPredicate;
 public class ContinuousQuery {
 
     public static void main(String[] args) {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        Config config = new Config();
+        config.setProperty("hazelcast.map.entry.filtering.natural.event.types", "true");
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
         IMap<String, String> map = hz.getMap("map");
         map.addEntryListener(new MyEntryListener(),
                 new SqlPredicate("surname=smith"), true);
@@ -47,14 +68,16 @@ public class ContinuousQuery {
     }
 
     static class MyEntryListener
-            implements EntryListener<String, String> {
+            implements EntryAddedListener<String, String>,
+                       EntryUpdatedListener<String, String>,
+                       EntryRemovedListener<String, String> {
         @Override
         public void entryAdded(EntryEvent<String, String> event) {
             System.out.println("Entry Added:" + event);
         }
 
         @Override
-        public void entryRemoved(EntryEvent<String, String> event) {
+        public void entryRemoved(EntryEvent<String, String> event); {
             System.out.println("Entry Removed:" + event);
         }
 
@@ -62,17 +85,7 @@ public class ContinuousQuery {
         public void entryUpdated(EntryEvent<String, String> event) {
             System.out.println("Entry Updated:" + event);
         }
-
-        @Override
-        public void entryEvicted(EntryEvent<String, String> event) {
-            System.out.println("Entry Evicted:" + event);
-        }
-
-        @Override
-        public void mapEvicted(MapEvent event) {
-            System.out.println("Map Evicted:" + event);
-
-        }
+        
     }
 }
 ```
@@ -87,7 +100,9 @@ import com.hazelcast.core.IMap;
 public class Modify {
 
     public static void main(String[] args) {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        Config config = new Config();
+        config.setProperty("hazelcast.map.entry.filtering.natural.event.types", "true");
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
         IMap<String, Employee> map = hz.getMap("map");
 
         map.put("1", new Employee("smith"));
