@@ -12,12 +12,13 @@ This chapter lists the changes made to this document from the previous release.
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Chapter 1 - Preface](#preface)||Updated the architecture diagram.|
-|[Chapter 3 - Getting Started](#getting-started)||[Deploying on Microsoft Azure](#deploying-on-microsoft-azure) added as a new section.|
+|[Chapter 3 - Getting Started](#getting-started)||[Deploying on Microsoft Azure](#deploying-on-microsoft-azure) and [Deploying On Pivotal Cloud Foundry](#deploying-on-pivotal-cloud-foundry) added as a new sections.|
 |[Chapter 5 - Understanding Configuration](#understanding-configuration)||Added as a new chapter to provide the fundamentals of Hazelcast configuration.
 |[Chapter 6 - Setting Up Clusters](#setting-up-clusters)||Added as a new chapter to provide all Hazelcast clusters related information.
 ||[Discovering Native Clients](#discovering-native-clients)|Added as a new section to explain Hazelcast's multicast discovery plugin.
 ||[Discovering Members with jclouds](#discovering-members-with-jclouds)|Section's content moved to its own repo since this feature has become a Hazelcast plugin. You can find its repo's link in this section.
 ||[Discovering Members within EC2 Cloud](#discovering-members-within-ec2-cloud)|Section's content moved to its own repo since this feature has become a Hazelcast plugin. You can find its repo's link in this section.
+||[Discovering Members within Azure Cloud](#discovering-members-within-azure-cloud)|Added as a new section.
 ||[Partition Group Configuration](#partition-group-configuration)|Added explanations of the new member group types ZONE_AWARE and SPI.
 |[Chapter 7 - Distributed Data Structures](#distributed-data-structures)|[Replicated Map](#replicated-map)|[Replicating instead of Partitioning](#replicating-instead-of-partitioning) updated by adding a note related to replicated map usage in a lite member. The whole section enhanced.
 ||[Lock](#lock)| Added explanations related to the maximum lease time for locks.
