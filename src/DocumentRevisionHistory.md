@@ -12,6 +12,7 @@ This chapter lists the changes made to this document from the previous release.
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Chapter 1 - Preface](#preface)||Updated the architecture diagram.|
+|[Chapter 3 - Getting Started](#getting-started)||[Deploying on Microsoft Azure](#deploying-on-microsoft-azure) added as a new section.|
 |[Chapter 5 - Understanding Configuration](#understanding-configuration)||Added as a new chapter to provide the fundamentals of Hazelcast configuration.
 |[Chapter 6 - Setting Up Clusters](#setting-up-clusters)||Added as a new chapter to provide all Hazelcast clusters related information.
 ||[Discovering Native Clients](#discovering-native-clients)|Added as a new section to explain Hazelcast's multicast discovery plugin.
@@ -20,7 +21,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Partition Group Configuration](#partition-group-configuration)|Added explanations of the new member group types ZONE_AWARE and SPI.
 |[Chapter 7 - Distributed Data Structures](#distributed-data-structures)|[Replicated Map](#replicated-map)|[Replicating instead of Partitioning](#replicating-instead-of-partitioning) updated by adding a note related to replicated map usage in a lite member. The whole section enhanced.
 ||[Lock](#lock)| Added explanations related to the maximum lease time for locks.
-||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.
+||[Map](#map)| Added the new section [Custom Eviction Policy](#custom-eviction-policy) to explain how a customized eviction policy can be plugged.<br></br>[Listening to Map Entries with Predicates](#listening-to-map-entries-with-predicates) section updated by adding the explanation of a new system property (`hazelcast.map.entry.filtering.natural.event.types`) that allows better continuous query implementations.
 |[Chapter 9 - Distributed Computing](#distributed-computing)|[Using Indexes](#using-indexes)| Added as a new section.
 ||[Durable Executor Service](#durable-executor-service)|Added as a new section to describe Hazelcast's newly introduced data structure, Durable Executor Service.
 |[Chapter 10 - Distributed Query](#distributed-query)|[ValueExtractor with Portable Serialization](#valueExtractor-with-portable-serialization)| Added as a new section.
@@ -43,10 +44,10 @@ This chapter lists the changes made to this document from the previous release.
 ||[Hazelcast CLI](#hazelcast-cli)|Added as a new section.
 ||[Safety Checking Cluster Members](#safety-checking-cluster-members)|Updated the content to reflect the improvements in graceful shutdown feature.
 |[Chapter 19 - Security](#security)|[SSL](#ssl)|Added information explaining the performance overhead for the clients when they use SSL.
-|[Chapter 22 - WAN](#wan)||Updated to reflect the improvement which is the ability of generic WAN replication endpoint configurations.
+|[Chapter 22 - WAN](#wan)||Updated to reflect the improvement which is the ability of generic WAN replication endpoint configurations.<br></br>Cleared the content related to `WanNoDelayReplication`  since this implementation has been removed, and added a note under the [Defining WAN Replication section](#defining-wan-replication).
 ||[Synchronizing WAN Target Cluster](#synchronizing-wan-target-cluster)|Added as a new section.
 ||[Solace Integration](#solace-integration)|Added as a new section explaining how to integrate Hazelcast WAN replication with Solace messaging appliances.
-|[Chapter 26 - System Properties](#system-properties)||Added definition for the new property `hazelcast.partition.migration.stale.read.disabled`.|
+|[Chapter 26 - System Properties](#system-properties)||Added definitions for the new properties `hazelcast.partition.migration.stale.read.disabled` and `hazelcast.map.entry.filtering.natural.event.types`.|
 |[Chapter 29 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
 |[Chapter 30 - Glossary](#glossary)||Added new glossary items.|
 
