@@ -49,13 +49,13 @@ public class Employee implements Serializable {
 }
 ```
 
-Then, let's create a continuous query by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
+Then, let's create a listener with predicate by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
 
 ```java
 import com.hazelcast.core.*;
 import com.hazelcast.query.SqlPredicate;
 
-public class ContinuousQuery {
+public class ListenerWithPredicate {
 
     public static void main(String[] args) {
         Config config = new Config();
@@ -113,14 +113,16 @@ public class Modify {
 }
 ```
 
-When you first run the class `ContinuousQuery` and then run `Modify`, you will see output similar to the listing below.
+When you first run the class `ListenerWithPredicate` and then run `Modify`, you will see output similar to the listing below.
 
 ```
 entryAdded:EntryEvent {Address[192.168.178.10]:5702} key=1,oldValue=null,
 value=Person{name= smith }, event=ADDED, by Member [192.168.178.10]:5702
 ```
 
-<br> </br>
+***RELATED INFORMATION***
+
+*Please refer to [Continuous Query Cache](#continuous-query-cache) for more information.*
 
 
 
