@@ -48,7 +48,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 22 - WAN](#wan)||Updated to reflect the improvement which is the ability of generic WAN replication endpoint configurations.<br></br>Cleared the content related to `WanNoDelayReplication`  since this implementation has been removed, and added a note under the [Defining WAN Replication section](#defining-wan-replication).
 ||[Synchronizing WAN Target Cluster](#synchronizing-wan-target-cluster)|Added as a new section.
 ||[Solace Integration](#solace-integration)|Added as a new section explaining how to integrate Hazelcast WAN replication with Solace messaging appliances.
-|[Chapter 26 - System Properties](#system-properties)||Added definitions for the new properties `hazelcast.partition.migration.stale.read.disabled` and `hazelcast.map.entry.filtering.natural.event.types`.|
+|[Chapter 26 - System Properties](#system-properties)||Added definitions for the new properties: <br></br>- `hazelcast.partition.migration.stale.read.disabled`<br></br>- `hazelcast.map.entry.filtering.natural.event.types`<br></br>- `hazelcast.internal.map.expiration.cleanup.operation.count`<br></br>- `hazelcast.internal.map.expiration.cleanup.percentage`<br></br>- `hazelcast.internal.map.expiration.task.period.seconds`|
 |[Chapter 29 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
 |[Chapter 30 - Glossary](#glossary)||Added new glossary items.|
 
