@@ -39,6 +39,9 @@ Property Name | Default Value | Type | Description
 `hazelcast.icmp.ttl` | 0 | int |   ICMP TTL (maximum numbers of hops to try).
 `hazelcast.initial.min.cluster.size` | 0 | int  |   Initial expected cluster size to wait before member to start completely.
 `hazelcast.initial.wait.seconds` | 0 | int  |   Initial time in seconds to wait before member to start completely.
+`hazelcast.internal.map.expiration.cleanup.operation.count`|3|int|This is a property which is used internally and subject to change.
+`hazelcast.internal.map.expiration.cleanup.percentage`|10|int|This is a property which is used internally and subject to change.
+`hazelcast.internal.map.expiration.task.period.seconds`|5|int|This is a property which is used internally and subject to change.
 `hazelcast.io.balancer.interval.seconds`|20|int|Interval in seconds between IOBalancer executions.
 `hazelcast.io.input.thread.count` | 3 | int | Number of socket input threads.
 `hazelcast.io.output.thread.count` | 3 | int | Number of socket output threads.
