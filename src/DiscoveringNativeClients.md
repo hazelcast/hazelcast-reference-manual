@@ -23,7 +23,7 @@ The following is an example declarative configuration.
     <tcp-ip enabled="false">
     </tcp-ip>
     <discovery-strategies>
-        <discovery-strategy class="com.hazelcast.spi.discovery.multicast.MulticastDiscoveryStrateg" enabled="true">
+        <discovery-strategy class="com.hazelcast.spi.discovery.multicast.MulticastDiscoveryStrategy" enabled="true">
           <properties>
           <property name="group">224.2.2.3</property>
           <property name="port">54327</property>
