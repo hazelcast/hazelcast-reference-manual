@@ -102,7 +102,7 @@ Management Center creates a folder with the name `mancenter` under your `user/ho
 
 Once the page is loaded after selecting a cluster, the tool's home page appears as shown below.
 
-![Management Center Home Page](images/ManagementCenterHomePage.jpg)
+![Management Center Home Page](images/ManagementCenterHomePage.png)
 
 This page provides the fundamental properties of the selected cluster which are explained in the [Home Page](#management-center-home-page) section. The page has a toolbar on the top and a menu on the left.
 
