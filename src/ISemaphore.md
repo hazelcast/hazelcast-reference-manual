@@ -15,8 +15,7 @@ Semaphores offer **permit**s to control the thread counts when performing concur
 When a permit is acquired on ISemaphore:
 
 -	if there are permits, the number of permits in the semaphore is decreased by one and the calling thread performs its activity. If there is contention, the longest waiting thread will acquire the permit before all other threads.
--	if no permits are available, the calling thread blocks until a permit becomes available. When a timeout happens during this block, the thread is interrupted. When the semaphore
-is destroyed, an `InstanceDestroyedException` is thrown.
+-	if no permits are available, the calling thread blocks until a permit becomes available. When a timeout happens during this block, the thread is interrupted.
 
 ### Example Semaphore Code
 
