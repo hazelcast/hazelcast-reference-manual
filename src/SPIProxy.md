@@ -158,12 +158,12 @@ For the deserialization, note that the operation must have a *no-arg* constructo
 ```java
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.spi.AbstractOperation;
+import com.hazelcast.spi.Operation;
 import com.hazelcast.spi.PartitionAwareOperation;
 
 import java.io.IOException;
 
-class IncOperation extends AbstractOperation implements PartitionAwareOperation {
+class IncOperation extends Operation implements PartitionAwareOperation {
     private String objectId;
     private int amount, returnValue;
 
@@ -180,11 +180,6 @@ class IncOperation extends AbstractOperation implements PartitionAwareOperation 
     public void run() throws Exception {
         System.out.println("Executing " + objectId + ".inc() on: " + getNodeEngine().getThisAddress());
         returnValue = 0;
-    }
-
-    @Override
-    public boolean returnsResponse() {
-        return true;
     }
 
     @Override

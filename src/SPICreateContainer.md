@@ -117,13 +117,13 @@ As the last step in creating a Container, we connect the method `IncOperation.ru
 ```java
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.spi.AbstractOperation;
+import com.hazelcast.spi.Operation;
 import com.hazelcast.spi.PartitionAwareOperation;
 
 import java.io.IOException;
 import java.util.Map;
 
-class IncOperation extends AbstractOperation implements PartitionAwareOperation {
+class IncOperation extends Operation implements PartitionAwareOperation {
     private String objectId;
     private int amount, returnValue;
 
@@ -146,11 +146,6 @@ class IncOperation extends AbstractOperation implements PartitionAwareOperation 
         counter += amount;
         valuesMap.put(objectId, counter);
         returnValue = counter;
-    }
-
-    @Override
-    public boolean returnsResponse() {
-        return true;
     }
 
     @Override

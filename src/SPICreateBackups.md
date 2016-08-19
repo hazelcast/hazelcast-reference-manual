@@ -4,7 +4,7 @@
 Finally, we make sure that the counter data is available on another member when a member goes down. To do this, have the `IncOperation` class implement the `BackupAwareOperation` interface contained in the SPI package. See the following code.
 
 ```java
-class IncOperation extends AbstractOperation 
+class IncOperation extends Operation
 	implements PartitionAwareOperation, BackupAwareOperation {
    ...   
    
@@ -44,8 +44,8 @@ Now, let's have a look at the `IncBackupOperation`. It implements `BackupOperati
 [source code for BackupOperation here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/BackupOperation.java).
 
 ```java
-public class IncBackupOperation 
-	extends AbstractOperation implements BackupOperation {
+public class IncBackupOperation
+	extends Operation implements BackupOperation {
    private String objectId;
    private int amount;
 
