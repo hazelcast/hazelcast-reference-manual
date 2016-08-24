@@ -62,7 +62,7 @@ The following are example list configurations.
 
 ```java
 Config config = new Config();
-CollectionConfig collectionList = config.getCollectionConfig();
+CollectionConfig collectionList = config.getListConfig();
 collectionList.setName( "MyList" ).setBackupCount( "1" )
         .setMaxSize( "10" );
 ```

@@ -1,8 +1,7 @@
 
 ## Solace Integration
 
-![image](images/Plugin.png)
-
+<img src="images/Plugin_New.png" alt="Tomcat Plugin" height="22" width="84">
 <br></br>
 
 This section explains how you can integrate Hazelcast's WAN replication with [Solace](http://www.solacesystems.com/) messaging platform. With this integration, you can publish and consume WAN replication events to/from Solace appliances. 
