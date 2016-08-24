@@ -10,7 +10,7 @@ This section explains how you can cluster your web sessions using Servlet Filter
 
 ### Filter Based Web Session Replication
 
-<img src="images/Plugin_New.png" alt="Tomcat Plugin" height="22" width="84">
+<img src="images/Plugin_New.png" alt="Filter Plugin" height="22" width="84">
 <br></br>
 
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/filter-based-session-replication" target="_blank">sample application</a> for Filter Based Web Session Replication.*
