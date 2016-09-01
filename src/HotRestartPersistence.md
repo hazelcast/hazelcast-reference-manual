@@ -10,24 +10,24 @@ This chapter explains the Hazelcast's Hot Restart Persistence feature, introduce
 
 ### Hot Restart Persistence Overview
 
-Hot Restart Persistence enables you to get your cluster up and running swiftly after a cluster restart. A restart can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). For Hot Restart Persistence, required states for Hazelcast clusters and members are introduced. Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) for information on the cluster and member states.
+Hot Restart Persistence enables you to get your cluster up and running swiftly after a cluster restart. A restart can be caused by a planned shutdown (including rolling upgrades) or a sudden cluster-wide crash (e.g. power outage). For Hot Restart Persistence, required states for Hazelcast clusters and members are introduced. Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) for information on the cluster and member states. The purpose of the Hot Restart Persistence is to provide a maintenance window for member operations and restart the cluster in a fast way. It is not meant to recover the catastrophic shutdown of one member.
 
-#### Hot Restart Types
+### Hot Restart Types
 
 The Hot Restart feature is supported for the following restart types:
 
 - **Restart after a planned shutdown**:
-	- The cluster is shutdown completely and restarted with the exact same previous setup and data.
+	- The cluster is shut down completely and restarted with the exact same previous setup and data.
 
-		You can shutdown the cluster completely using the method `HazelcastInstance.getCluster().shutdown()` or you can manually change the cluster state to `PASSIVE` and then shut down each member one by one. When you send the command to shut the cluster down, i.e. `HazelcastInstance.getCluster().shutdown()`, the members that are not in the `PASSIVE` state change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `HazelcastInstance.shutdown()`.
+		You can shut down the cluster completely using the method `HazelcastInstance.getCluster().shutdown()` or you can manually change the cluster state to `PASSIVE` and then shut down each member one by one. When you send the command to shut the cluster down, i.e. `HazelcastInstance.getCluster().shutdown()`, the members that are not in the `PASSIVE` state change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `HazelcastInstance.shutdown()`.
 
 	- Rolling upgrade: The cluster is restarted intentionally member by member. For example, this could be done to install an operating system patch or new hardware.
 
-		To be able to shutdown the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After the cluster state is changed to `FROZEN` or `PASSIVE`, you can manually shutdown each member by calling the method `HazelcastInstance.shutdown()`. When that member is restarted, it will rejoin the running cluster. After all members are restarted, the cluster state can be changed back to `ACTIVE`.
+		To be able to shut down the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After the cluster state is changed to `FROZEN` or `PASSIVE`, you can manually shut down each member by calling the method `HazelcastInstance.shutdown()`. When that member is restarted, it will rejoin the running cluster. After all members are restarted, the cluster state can be changed back to `ACTIVE`.
 
 - **Restart after a cluster crash**: The cluster is restarted after all its members crashed at the same time due to a power outage, networking interruptions, etc.
 
-#### The Restart Process
+### Restart Process
 
 During the restart process, each member waits to load data until all the members in the partition table are started. During this process, no operations are allowed. Once all cluster members are started, Hazelcast changes the cluster state to `PASSIVE` and starts to load data. When all data is loaded, Hazelcast changes the cluster state to its previous known state before shutdown and starts to accept the operations which are allowed by the restored cluster state.
 
@@ -35,9 +35,43 @@ If a member fails to either start, join the cluster in time (within the timeout)
 
 In the case of a restart after a cluster crash, the Hot Restart feature realizes that it was not a clean shutdown and Hazelcast tries to restart the cluster with the last saved data following the process explained above. In some cases, specifically when the cluster crashes while it has an ongoing partition migration process, currently it is not possible to restore the last saved state.
 
-#### Force Start
+#### Example Scenarios
 
-A member can crash permanently and then be unable to recover from the failure. In that case, restart process cannot be completed since some of the members do not start or fail to load their own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**. 
+Assume the following:
+
+- You have a cluster consisting of members A and B with Hot Restart enabled, which is initially stable.
+- Member B is killed.
+- Member B restarts.
+
+Since only a single member has failed, the cluster performed the standard High Availability routine by recovering member B's data from backups and redistributing the data among the remaining members (the single member A in this case). Member B's persisted Hot Restart data is completely irrelevant.
+
+Furthermore, when a member starts with existing Hot Restart data, it expects to find itself within a cluster that has been shut down as a whole and is now restarting as a whole. Since the reality is that the cluster has been running all along, member B's persisted cluster state does not match the actual state. Therefore, member B aborts initialization and shuts down.
+
+As another scenario, assume the following:
+
+- You have a cluster consisting of members A and B with Hot Restart enabled, which is initially stable.
+- Member B is killed.
+- Member B's Hot Restart [base directory(`base-dir`)](#configuring-hot-restart) is deleted.
+- Member B restarts.
+
+Now member B joins the cluster as a fresh, empty member. The cluster will assign some partitions to it, unrelated to the partitions it owned before going down. 
+
+
+### Force Start
+
+A member can crash permanently and then be unable to recover from the failure. In that case, restart process cannot be completed since some of the members do not start or fail to load their own data. In that case, you can force the cluster to clean its persisted data and make a fresh start. This process is called **force start**.
+
+Assume the following which is a valid scenario to use force start:
+
+- You have a cluster consisting of members A and B which is initially stable.
+- Cluster transitions into `FROZEN` or `PASSIVE` state.
+- Cluster gracefully shuts down.
+- Member A restarts, but member B does not.
+- Member A uses its Hot Restart data to initiate the Hot Restart procedure.
+- Since it knows the cluster originally contained member B as well, it waits for it to join.
+- This never happens.
+- Now you have the choice to Force Start the cluster without member B.
+- Cluster discards all Hot Restart data and starts empty.
    
 You can trigger the force start process using the Management Center, REST API and cluster management scripts. Force start process is managed by the master member. Therefore, you should trigger the force start on master member.
 
@@ -46,8 +80,6 @@ Please refer to the [Hot Restart functionality](#hot-restart) of the Management 
 ### Configuring Hot Restart
 
 You can configure Hot Restart programmatically or declaratively. The configuration includes elements to enable/disable the feature, to specify the directory where the Hot Restart data will be stored, and to define timeout values.
-
-#### Hot Restart Configuration Elements
 
 The following are the descriptions of the Hot Restart configuration elements.
 
