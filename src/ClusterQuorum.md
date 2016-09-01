@@ -90,11 +90,11 @@ QuorumListenerConfig listenerConfig = new QuorumListenerConfig();
 listenerConfig.setImplementation(new QuorumListener() {
             @Override
             public void onChange(QuorumEvent quorumEvent) {
-              if (QuorumResult.PRESENT.equals(quorumEvent.getType())) {
-                // handle quorum presence
-              } else if (QuorumResult.ABSENT.equals(quorumEvent.getType())) {
-                // handle quorum absence
-              }
+                if (quorumEvent.isPresent()) {
+                       // handle quorum presence
+                } else {
+                    // handle quorum absence
+                }
             }
         });
 // Or you can give the name of the class that implements QuorumListener interface.
