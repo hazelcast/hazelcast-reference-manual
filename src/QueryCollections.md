@@ -22,7 +22,7 @@ In order to query a single element of a collection/array, you can execute the fo
 
 ```java
 // it matches all motorbikes where the zero wheel's name is 'front-wheel'
-Predicate p = Predicates.equals('wheels[0].name', 'front-wheel');
+Predicate p = Predicates.equal('wheels[0].name', 'front-wheel');
 Collection<Motorbike> result = map.values(p);
 ```
 
@@ -30,7 +30,7 @@ It is also possible to query a collection/array using the `any` semantic as show
 
 ```java
 // it matches all motorbikes where any wheel's name is 'front-wheel'
-Predicate p = Predicates.equals('wheels[any].name', 'front');
+Predicate p = Predicates.equal('wheels[any].name', 'front');
 Collection<Motorbike> result = map.values(p);
 ```
 
@@ -61,7 +61,7 @@ Let's assume you have the following index definition:
 The following query will use the index:
 
 ```java
-Predicate p = Predicates.equals('wheels[any].name', 'front-wheel');
+Predicate p = Predicates.equal('wheels[any].name', 'front-wheel');
 ```
 
 
@@ -69,7 +69,7 @@ The following query, however, will NOT leverage the index, since it does not use
 was used in the index:
 
 ```java
-Predicates.equals('wheels[0].name', 'front-wheel')
+Predicates.equal('wheels[0].name', 'front-wheel')
 ```
 
 In order to use the index in the case mentioned above, you have to create another index, as shown below:
@@ -87,16 +87,16 @@ Handling of corner cases may be a bit different than in a programming language l
 Let's have a look at the following examples in order to understand the differences.
 To make the analysis simpler, let's assume that there is only one `Motorbike` object stored in a Hazelcast Map.
 
-| Id  | Query                                                 | Data state                          | Extraction Result | Match |
-| --- | ----------------------------------------------------- | ----------------------------------- | ----------------- | ----- |
-|  1  | Predicates.equals('wheels[7].name', 'front-wheel')    | wheels.size() == 1                  | null              | No    |
-|  2  | Predicates.equals('wheels[7].name', null)             | wheels.size() == 1                  | null              | Yes   |
-|  3  | Predicates.equals('wheels[0].name', 'front-wheel')    | wheels[0].name == null              | null              | No    |
-|  4  | Predicates.equals('wheels[0].name', null)             | wheels[0].name == null              | null              | Yes   |
-|  5  | Predicates.equals('wheels[0].name', 'front-wheel')    | wheels[0] == null                   | null              | No    |
-|  6  | Predicates.equals('wheels[0].name', null)             | wheels[0] == null                   | null              | Yes   |
-|  7  | Predicates.equals('wheels[0].name', 'front-wheel')    | wheels == null                      | null              | No    |
-|  8  | Predicates.equals('wheels[0].name', null)             | wheels == null                      | null              | Yes   |
+| Id  | Query                                                | Data state                          | Extraction Result | Match |
+| --- | ---------------------------------------------------- | ----------------------------------- | ----------------- | ----- |
+|  1  | Predicates.equal('wheels[7].name', 'front-wheel')    | wheels.size() == 1                  | null              | No    |
+|  2  | Predicates.equal('wheels[7].name', null)             | wheels.size() == 1                  | null              | Yes   |
+|  3  | Predicates.equal('wheels[0].name', 'front-wheel')    | wheels[0].name == null              | null              | No    |
+|  4  | Predicates.equal('wheels[0].name', null)             | wheels[0].name == null              | null              | Yes   |
+|  5  | Predicates.equal('wheels[0].name', 'front-wheel')    | wheels[0] == null                   | null              | No    |
+|  6  | Predicates.equal('wheels[0].name', null)             | wheels[0] == null                   | null              | Yes   |
+|  7  | Predicates.equal('wheels[0].name', 'front-wheel')    | wheels == null                      | null              | No    |
+|  8  | Predicates.equal('wheels[0].name', null)             | wheels == null                      | null              | Yes   |
 
 
 As you can see, **no** `NullPointerException`s or `IndexOutOfBoundException`s are thrown in the extraction process, even
