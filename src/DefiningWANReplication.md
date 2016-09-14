@@ -29,7 +29,7 @@ Below is an example of declarative configuration of WAN Replication from New Yor
               <property name="group.password">london-pass</property>
           </properties>
       </wan-publisher>
-  <wan-replication>
+  </wan-replication>
 ...
 </hazelcast>
 ```
