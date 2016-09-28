@@ -237,7 +237,7 @@ You can select the period in the combo box placed at the top right corner of the
 
 Map instances are listed under the **Maps** menu item on the left. When you click on a map, a new tab for monitoring that map instance opens on the right, as shown below. In this tab, you can monitor metrics and also re-configure the selected map.
 
-![Monitoring Maps](images/MonitoringMaps.jpg)
+![Monitoring Maps](images/MonitoringMaps.png)
 
 The below subsections explain the portions of this window.
 
@@ -278,7 +278,7 @@ When you click on a desired monitoring, the chart is loaded with the selected op
 
 Under these charts are **Map Memory** and **Map Throughput** data tables. The Map Memory data table provides memory metrics distributed over members, as shown below.
 
-![Map Memory Data Table](images/MemoryDataTable.jpg)
+![Map Memory Data Table](images/MemoryDataTable.png)
 
 From left to right, this table lists the IP address and port, entry counts, memory used by entries, backup entry counts, memory used by backup entries, events, hits, locks and dirty entries (in the cases where *MapStore* is enabled, these are the entries that are put to/removed from the map but not written to/removed from a database yet) of each entry in the map. You can navigate through the pages using the buttons at the bottom right of the table (**First, Previous, Next, Last**). You can ascend or descend the order of the listings by clicking on the column headings.
 
@@ -333,7 +333,7 @@ You can navigate through the pages using the buttons placed at the bottom right 
 
 Using the menu item **Queues**, you can monitor your queues data structure. When you expand this menu item and click on a queue, a new tab for monitoring that queue instance is opened on the right, as shown below.
 
-![Monitoring Queues](images/MonitoringQueues.jpg)
+![Monitoring Queues](images/MonitoringQueues.png)
 
 On top of the page, small charts monitor the size, offers and polls of the selected queue in real-time. The X-axis of all the charts shows the current system time. To open a chart as a separate dialog, click on the ![](images/MaximizeChart.jpg) button placed at the top right of each chart. The monitoring charts below are available:
 
@@ -343,7 +343,7 @@ On top of the page, small charts monitor the size, offers and polls of the selec
 
 Under these charts are **Queue Statistics** and **Queue Operation Statistics** tables. The Queue Statistics table provides item and backup item counts in the queue and age statistics of items and backup items at each member, as shown below.
 
-![Queue Statistics](images/QueueStatistics.jpg)
+![Queue Statistics](images/QueueStatistics.png)
 
 From left to right, this table lists the IP address and port, items and backup items on the queue of each member, and maximum, minimum and average age of items in the queue. You can navigate through the pages using the buttons placed at the bottom right of the table (**First, Previous, Next, Last**). The order of the listings in each column can be ascended or descended by clicking on column headings.
 
