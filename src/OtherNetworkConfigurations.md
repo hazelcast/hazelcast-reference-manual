@@ -210,8 +210,7 @@ The `aws` element includes parameters to allow the members to form a cluster on 
 - `connection-timeout-seconds`: The maximum amount of time Hazelcast will try to connect to a well known member before giving up. Setting this value too low could mean that a member is not able to connect to a cluster. Setting the value too high means that member startup could slow down because of longer timeouts (for example, when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5.
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If you are using a cloud provider other than AWS, you can use the programmatic configuration to specify a TCP/IP cluster. The members will need to be retrieved from that provider (e.g. JClouds).*
-![image](images/NoteSmall.jpg) ***NOTE:*** *hazelcast-cloud module has been renamed as hazelcast-aws module. If you want to use Aws Discovery, you should add hazelcast-aws jar file to your environment. For more information please look [Hazelcast Aws Readme.](https://github.com/hazelcast/hazelcast-aws/blob/master/README.md)*
+If you are using a cloud provider other than AWS, you can use the programmatic configuration to specify a TCP/IP cluster. The members will need to be retrieved from that provider (e.g. jclouds).
 
 #### discovery-strategies element
 
