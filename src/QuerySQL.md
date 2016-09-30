@@ -28,7 +28,7 @@ Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) 
 <br><br>
 
 
-**BETWEEN: ** `<attribute> [NOT] BETWEEN <value1> AND <value2>`
+**BETWEEN:** `<attribute> [NOT] BETWEEN <value1> AND <value2>`
 
 - `age BETWEEN 20 AND 33 ( same as age >= 20  AND age <= 33 )`
 - `age NOT BETWEEN 30 AND 40 ( same as age < 30 OR age > 40 )`
@@ -67,3 +67,22 @@ Similar to LIKE predicate but in a case-insensitive manner.
 **REGEX**: `<attribute> [NOT] REGEX ‘expression’`
  
 - `name REGEX ‘abc-.*‘` (true for 'abc-123'; false for 'abx-123')
+
+
+
+#### Querying Entry Keys with Predicates
+
+You can use `__key` attribute to perform a predicated search for entry keys. Please see the following example:
+
+```java
+IMap<String, Person> personMap = hazelcastInstance.getMap(persons);
+personMap.put("Alice", new Person("Alice", 35, Gender.FEMALE));
+personMap.put("Andy",  new Person("Andy",  37, Gender.MALE));
+personMap.put("Bob",   new Person("Bob",   22, Gender.MALE));
+[...]
+Predicate predicate = new SqlPredicate("__key like A%");
+Collection<Person> startingWithA = personMap.values(predicate);
+```
+
+In this example, the code creates a collection with the entries whose keys start with the letter "A".
+

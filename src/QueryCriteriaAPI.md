@@ -99,5 +99,3 @@ public Set<Person> getWithNameAndAgeSimplified( String name, int age ) {
   return personMap.values( predicate );
 }
 ```
-
-
