@@ -20,7 +20,7 @@ This Reference Manual covers all editions of Hazelcast. Throughout this manual:
 
 You can see the features for all Hazelcast editions in the following architecture diagram.
 
-![Hazelcast Architecture](images/HazelcastArchitecture.png)
+![Hazelcast Architecture](images/HazelcastArchNew.png)
 
 ![image](images/NoteSmall.jpg) ***NOTE*** *You can see small "HD" boxes for some features in the above diagram. Those features can use High-Density (HD) Memory Store when it is available. It means if you have Hazelcast Enterprise HD, you can use those features with HD Memory Store.*
 
