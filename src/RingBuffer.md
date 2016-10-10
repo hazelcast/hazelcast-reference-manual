@@ -129,6 +129,71 @@ for (; ; ) {
 ```
 
 
+### Persistent Datastore
+
+Hazelcast allows you to load and store the ring buffer items from/to a persistent datastore using the interface `RingbufferStore`. If a ring buffer store is enabled, each item added to the ring buffer will also be stored at the configured ring buffer store. 
+If the ring buffer store is configured you can get items with sequences which are no longer in the actual ring buffer but are only in the ring buffer store. This will probably be much slower but still allows you to continue consuming items from the ring buffer even if they are overwritten with newer items in the ring buffer.
+
+When a ring buffer is being instantiated it will check if the ring buffer store is configured and will request the latest sequence in the ring buffer store. This is to enable the ring buffer to start with sequences larger than the ones in the ring buffer store. In this case, the ring buffer is empty but you can still request older items from it (which will be loaded from the ring buffer store).
+
+The ring buffer store will store items in the same format as the ring buffer. If the `BINARY` in-memory format is used, the ring buffer store must implement the interface `RingbufferStore<byte[]>` meaning that the ring buffer will receive items in the binary format. If the `OBJECT` in-memory format is used, the ring buffer store must implement the interface `RingbufferStore<K>`, where `K`is the type of the item being stored (meaning that the ring buffer store will receive the deserialized object).
+
+The `storeAll` method allows you to batch store items when adding items to the ring buffer in batches.
+
+The following example class includes all of the `RingbufferStore` methods.
+
+```java
+public class TheRingbufferObjectStore implements RingbufferStore<Item> {
+
+    @Override
+    public void store(long sequence, Item data) {
+        System.out.println("Object store");
+    }
+
+    @Override
+    public void storeAll(long firstItemSequence, Item[] items) {
+        System.out.println("Object store all");
+    }
+
+    @Override
+    public Item load(long sequence) {
+        System.out.println("Object load");
+        return null;
+    }
+
+    @Override
+    public long getLargestSequence() {
+        System.out.println("Object get largest sequence");
+        return -1;
+    }
+}
+```
+
+
+`Item` must be serializable. The following is an example of a ring buffer with the ring buffer store configured and enabled.
+
+
+```xml
+    <ringbuffer name="default">
+        <capacity>10000</capacity>
+        <time-to-live-seconds>30</time-to-live-seconds>
+        <backup-count>1</backup-count>
+        <async-backup-count>0</async-backup-count>
+        <in-memory-format>BINARY</in-memory-format>
+        <ringbuffer-store>
+            <class-name>com.hazelcast.RingbufferStoreImpl</class-name>
+        </ringbuffer-store>
+    </ringbuffer>
+```
+
+The ring buffer store properties are : 
+
+- **class-name**: The name of the class implementing the `RingbufferStore` interface. 
+    
+- **factory-class-name**: The name of the class implementing the `RingbufferStoreFactory` interface. This interface allows a factory class to be registered instead of a class implementing the `RingbufferStore` interface.
+    
+Either the `class-name` or the `factory-class-name` property should be used.
+
 ### Configuring Ringbuffer In-Memory Format
 
 You can configure Hazelcast Ringbuffer with an in-memory format that controls the format of the Ringbuffer's stored items. By default, `BINARY` in-memory format is used, 
