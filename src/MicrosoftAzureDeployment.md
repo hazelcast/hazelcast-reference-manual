@@ -67,19 +67,26 @@ In your Hazelcast network configuration, you need to include the discovery strat
 </network>
 ```
 
-Please note that all the values of properties under `<properties>` tag should come from your Azure subcsription setup, as explained at [setting up an active directory and credentials](https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/).
+Please note that all the values of properties under `<properties>` tag should come from your Azure subcsription setup, as explained at [setting up your application and credentials](https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/).
 
 ### Configuring Azure for Hazelcast
 
+At the Azure side, you need to specify the following configuration elements on your Hazelcast virtual machine resources:
 
+* client-id - The Azure Active Directory Service Principal client ID.
+* client-secret - The Azure Active Directory Service Principal client secret.
+* tenant-id - The Azure Active Directory tenant ID.
+* subscription-id - The Azure subscription ID.
+* cluster-id - The name of the tag on the Hazelcast virtual machine resources.
+* group-name - The Azure resource group name of the cluster. You can find this in the Azure portal or CLI. 
 
-??? Configuration at Hazelcast and Azure sides. Also talk about network latencies and debugging.???
+Please note that each of your Hazelcast virtual machine (VM) resources should have `cluster-id` as their tag. Please refer to [tagging your VM resources](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tag/) for more information on how to tag your virtual machines.
 
 
 
 ## Deploying Onto Azure
 
-???
+This section explains how you can deploy your Hazelcast cluster onto Azure platform. 
 
 ### Hazelcast Open Source
 
