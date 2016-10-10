@@ -7,7 +7,7 @@ This chapter provides information on how you can deploy and use your Hazelcast c
 
 ## Prerequisites
 
-???
+You need to have a Microsoft Azure account with an active subscription and enough cores quota.
 
 ## Configuring Your Network
 
