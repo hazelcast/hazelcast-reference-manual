@@ -129,16 +129,17 @@ for (; ; ) {
 ```
 
 
-### Persistent Datastore
+### Ringbuffer with Persistent Datastore
 
-Hazelcast allows you to load and store the ring buffer items from/to a persistent datastore using the interface `RingbufferStore`. If a ring buffer store is enabled, each item added to the ring buffer will also be stored at the configured ring buffer store. 
-If the ring buffer store is configured you can get items with sequences which are no longer in the actual ring buffer but are only in the ring buffer store. This will probably be much slower but still allows you to continue consuming items from the ring buffer even if they are overwritten with newer items in the ring buffer.
+Hazelcast allows you to load and store the Ringbuffer items from/to a persistent datastore using the interface `RingbufferStore`. If a Ringbuffer store is enabled, each item added to the Ringbuffer will also be stored at the configured Ringbuffer store. 
 
-When a ring buffer is being instantiated it will check if the ring buffer store is configured and will request the latest sequence in the ring buffer store. This is to enable the ring buffer to start with sequences larger than the ones in the ring buffer store. In this case, the ring buffer is empty but you can still request older items from it (which will be loaded from the ring buffer store).
+If the Ringbuffer store is configured, you can get items with sequences which are no longer in the actual Ringbuffer but are only in the Ringbuffer store. This will probably be much slower but still allow you to continue consuming items from the Ringbuffer even if they are overwritten with newer items in the Ringbuffer.
 
-The ring buffer store will store items in the same format as the ring buffer. If the `BINARY` in-memory format is used, the ring buffer store must implement the interface `RingbufferStore<byte[]>` meaning that the ring buffer will receive items in the binary format. If the `OBJECT` in-memory format is used, the ring buffer store must implement the interface `RingbufferStore<K>`, where `K`is the type of the item being stored (meaning that the ring buffer store will receive the deserialized object).
+When a Ringbuffer is being instantiated, it will check if the Ringbuffer store is configured and will request the latest sequence in the Ringbuffer store. This is to enable the Ringbuffer to start with sequences larger than the ones in the Ringbuffer store. In this case, the Ringbuffer is empty but you can still request older items from it (which will be loaded from the Ringbuffer store).
 
-The `storeAll` method allows you to batch store items when adding items to the ring buffer in batches.
+The Ringbuffer store will store items in the same format as the Ringbuffer. If the `BINARY` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<byte[]>` meaning that the Ringbuffer will receive items in the binary format. If the `OBJECT` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<K>`, where `K` is the type of item being stored (meaning that the Ringbuffer store will receive the deserialized object).
+
+When adding items to the Ringbuffer, the method `storeAll` allows you to store items in batches.
 
 The following example class includes all of the `RingbufferStore` methods.
 
@@ -170,7 +171,7 @@ public class TheRingbufferObjectStore implements RingbufferStore<Item> {
 ```
 
 
-`Item` must be serializable. The following is an example of a ring buffer with the ring buffer store configured and enabled.
+`Item` must be serializable. The following is an example of a Ringbuffer with the Ringbuffer store configured and enabled.
 
 
 ```xml
@@ -186,13 +187,14 @@ public class TheRingbufferObjectStore implements RingbufferStore<Item> {
     </ringbuffer>
 ```
 
-The ring buffer store properties are : 
+Below are the explanations for the Ringbuffer store configuration elements: 
 
-- **class-name**: The name of the class implementing the `RingbufferStore` interface. 
+- **class-name**: Name of the class implementing the `RingbufferStore` interface. 
     
-- **factory-class-name**: The name of the class implementing the `RingbufferStoreFactory` interface. This interface allows a factory class to be registered instead of a class implementing the `RingbufferStore` interface.
+- **factory-class-name**: Name of the class implementing the `RingbufferStoreFactory` interface. This interface allows a factory class to be registered instead of a class implementing the `RingbufferStore` interface.
     
-Either the `class-name` or the `factory-class-name` property should be used.
+Either the `class-name` or the `factory-class-name` element should be used.
+
 
 ### Configuring Ringbuffer In-Memory Format
 
