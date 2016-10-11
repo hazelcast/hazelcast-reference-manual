@@ -47,6 +47,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.client.invocation.timeout.seconds`|120|string|Time to give up the invocation when a member in the member list is not reachable.
 `hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the member assumes the client is dead and closes its connections to the client.
 `hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same member when this property is `false`. When it is set to `true`, the client tries to connect to the members in the given order.
+`hazelcast.compatibility.3.6.client`|false|bool|When this property is true, if the server can not determine the connected client version, it shall assume that it is of 3.6.x version client. This property is especially needed if you are using ICache (or JCache).
 `hazelcast.connect.all.wait.seconds` | 120 | int | Timeout to connect all other cluster members when a member is joining to a cluster.
 `hazelcast.connection.monitor.interval` | 100 | int  |   Minimum interval in milliseconds to consider a connection error as critical.
 `hazelcast.connection.monitor.max.faults` | 3 | int  |   Maximum IO error count before disconnecting from a member.
