@@ -55,9 +55,9 @@ characters,  (underscore) is placeholder for only one character.
 Predicates class</a> for all predicates provided.*
 
 
-#### Joining Predicates with AND, OR, NOT
+#### Combining Predicates with AND, OR, NOT
 
-You can join predicates using the `and`, `or`, and `not` operators, as shown in the below examples.
+You can combine predicates using the `and`, `or`, and `not` operators, as shown in the below examples.
 
 ```java
 public Set<Person> getWithNameAndAge( String name, int age ) {
