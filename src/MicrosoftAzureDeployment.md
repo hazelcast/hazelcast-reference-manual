@@ -67,7 +67,7 @@ In your Hazelcast network configuration, you need to include the discovery strat
 </network>
 ```
 
-Please note that all the values of properties under `<properties>` tag should come from your Azure subcsription setup, as explained at [setting up your application and credentials](https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/).
+Please note that all the values of properties under `<properties>` tag should come from your Azure subscription setup, as explained at [setting up your application and credentials](https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/).
 
 ### Configuring Azure for Hazelcast
 
@@ -97,7 +97,7 @@ This section explains how you can deploy your Hazelcast cluster onto Azure platf
 	* `Username`: Username used to login to your virtual machine.
 	* `Authentication type`: Type of authentication, `SSH Public Key` or `Password`.
 	* `Password`: Password used to login to your virtual machine, if you select `Authentication Type` as `Password`. You need to confirm the password on the next field, `Confirm Password`.
-	* `SSH Public Key`: SSH puplic key used to login to your virtual machine, if you select `Authentication Type` as `SSH public key`.
+	* `SSH Public Key`: SSH public key used to login to your virtual machine, if you select `Authentication Type` as `SSH public key`.
 	* `Subscription`: Subscription that you used to purchase your resources.
 	* `Resource group`: Resource group that will store all the created resources. Select from the combo box, or click on the `Create new` checkbox if you want to create a new one.
 	* `Location`: Region that will host all the created resources. Select from the combo box.
@@ -112,7 +112,7 @@ This section explains how you can deploy your Hazelcast cluster onto Azure platf
 6. After you complete the above two steps, verify your information in the third step, which is the **Summary** step.
 7. Click on the "Purchase" button to start deploying your cluster. 
 
-As soon as the deployment starts, Microsoft Azure Linuz Agent (waagent) first creates the required environment variables, calls the scripts to install Hazelcast Open Source and to modify the configuration and starts a service called **hazelcast-server** on each of your virtual machines.	
+As soon as the deployment starts, Microsoft Azure Linux Agent (waagent) first creates the required environment variables, calls the scripts to install Hazelcast Open Source and to modify the configuration and starts a service called **hazelcast-server** on each of your virtual machines.	
 
 
 
