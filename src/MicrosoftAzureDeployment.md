@@ -73,11 +73,11 @@ Please note that all the values of properties under `<properties>` tag should co
 
 At the Azure side, you need to specify the following configuration elements on your Hazelcast virtual machine resources:
 
-* client-id - The Azure Active Directory Service Principal client ID.
-* client-secret - The Azure Active Directory Service Principal client secret.
-* tenant-id - The Azure Active Directory tenant ID.
-* subscription-id - The Azure subscription ID.
-* cluster-id - The name of the tag on the Hazelcast virtual machine resources.
+* `client-id` - The Azure Active Directory Service Principal client ID.
+* `client-secret` - The Azure Active Directory Service Principal client secret.
+* `tenant-id` - The Azure Active Directory tenant ID.
+* `subscription-id` - The Azure subscription ID.
+* `cluster-id` - The name of the tag on the Hazelcast virtual machine resources.
 * group-name - The Azure resource group name of the cluster. You can find this in the Azure portal or CLI. 
 
 Please note that each of your Hazelcast virtual machine (VM) resources should have `cluster-id` as their tag. Please refer to [tagging your VM resources](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-tag/) for more information on how to tag your virtual machines.
@@ -90,15 +90,39 @@ This section explains how you can deploy your Hazelcast cluster onto Azure platf
 
 ### Hazelcast Open Source
 
-??? Provide step-by-step instructions for deployment.
+1. Go to [Microsoft Azure Marketplace](https://azure.microsoft.com/en-us/marketplace/) and login to your Azure account. 
+2. Search for Hazelcast Open Source, or simply follow [this](https://azure.microsoft.com/en-us/marketplace/partners/hazelcast/3-6-ossoss/) link.
+3. Click on the **Deploy** button.
+4. Specify the following information in the first step, which is the **Basics** step:
+	* `Username`: Username used to login to your virtual machine.
+	* `Authentication type`: Type of authentication, `SSH Public Key` or `Password`.
+	* `Password`: Password used to login to your virtual machine, if you select `Authentication Type` as `Password`. You need to confirm the password on the next field, `Confirm Password`.
+	* `SSH Public Key`: SSH puplic key used to login to your virtual machine, if you select `Authentication Type` as `SSH public key`.
+	* `Subscription`: Subscription that you used to purchase your resources.
+	* `Resource group`: Resource group that will store all the created resources. Select from the combo box, or click on the `Create new` checkbox if you want to create a new one.
+	* `Location`: Region that will host all the created resources. Select from the combo box.
+5. Specify the following information in the second step, which is the **Infrastructure settings** step:
+	* `Version of Hazelcast`: Hazelcast version to be installed onto your virtual machine.
+	* `Custom Jar upload`: Custom JAR to be added to each virtual machine classpath.
+	* `Hazelcast user name`: Username to be used to login to Hazelcast grid.
+	* `Hazelcast password`: Password to be used to login to Hazelcast grid.
+	* `Storage account`: Storage account used for all resource storage needs.
+	* `Ubuntu version`: Ubuntu version to be installed.
+	* `Virtual machine size`: Size of each virtual machine for the Hazelcast grid.
+6. After you complete the above two steps, verify your information in the third step, which is the **Summary** step.
+7. Click on the "Purchase" button to start deploying your cluster. 
+
+As soon as the deployment starts, Microsoft Azure Linuz Agent (waagent) first creates the required environment variables, calls the scripts to install Hazelcast Open Source and to modify the configuration and starts a service called **hazelcast-server** on each of your virtual machines.	
+
+
 
 ### Hazelcast Enterprise
 
-??? Provide step-by-step instructions for deployment.
+??? Provide step-by-step instructions for Enterprise deployment.
 
 ### Hazelcast Management Center
 
-??? Provide step-by-step instructions for deployment.
+??? Provide step-by-step instructions for Management Center deployment.
 
 ## Accessing Your Cluster
 
