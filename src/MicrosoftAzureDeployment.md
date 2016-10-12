@@ -129,3 +129,14 @@ As soon as the deployment starts, Microsoft Azure Linux Agent (waagent) first cr
 ??? Operations after the deployment.
 
 ![](images/???.png)
+
+## Troubleshooting
+
+When needed, Hazelcast can log the events for the instances that exist in a region. To see what has happened or to trace the activities while forming the cluster, change the log level in your logging mechanism to FINEST or DEBUG. After this change, you can also see in the generated log whether the instances are accepted or rejected, and the reason the instances were rejected. Note that changing the log level in this way may affect the performance of the cluster.
+
+Another issue would be the network latency.  Performance of the Azure platform is different for each region. Please consider the following notes to optimize your Hazelcast applications' performance within Azure:
+
+* Try not to deploy a single cluster that spans across multiple regions.
+* If you host your Hazelcast application in multiple Azure regions, you can lower the latency by serving the end users' requests from the Azure region which has the lowest network latency.
+* If you have latency issues in an Azure region, you can always try another region.
+* You can test the network latency and other networking aspects using online tools, such as [Speedtest](http://cloudharmony.com/speedtest).
