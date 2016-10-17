@@ -176,7 +176,7 @@ The following are the descriptions of MapStore configuration elements and attrib
 
 #### Storing Entries to Multiple Maps
 
-A configuration can be applied to more than one map using wildcards (see [Using Wildcard](#using-wildcard)), meaning that the configuration is shared among the maps. But `MapStore` does not know which entries to store when there is one configuration applied to multiple maps. 
+A configuration can be applied to more than one map using wildcards (see [Using Wildcards](#using-wildcards)), meaning that the configuration is shared among the maps. But `MapStore` does not know which entries to store when there is one configuration applied to multiple maps.
 
 To store entries when there is one configuration applied to multiple maps, use Hazelcast's `MapStoreFactory` interface. Using the `MapStoreFactory` interface, `MapStore`s for each map can be created when a wildcard configuration is used. Example code is shown below.
 
