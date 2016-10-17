@@ -45,7 +45,7 @@ For details about all elements and attributes used to configure Hazelcast, pleas
 
 Besides declarative configuration, you can configure your cluster programmatically. Just instantiate a `Config` object and add/remove/modify properties. Please refer to the Programmatic Configuration section in [Configuration Overview](#configuration-overview) for a configuration code example.
 
-You can use wildcards while configuring Hazelcast. Please refer to the [Using Wildcard section](#using-wildcard) for details.
+You can use wildcards while configuring Hazelcast. Please refer to the [Using Wildcards section](#using-wildcards) for details.
 
 Hazelcast also offers system properties to fine tune some aspects of Hazelcast. Please refer to the [System Properties section](#system-properties) for details.
 
