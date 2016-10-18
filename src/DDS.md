@@ -25,11 +25,48 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 	- [IdGenerator](#idgenerator) is used to generate cluster-wide unique identifiers. ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`.
 	- [CountdownLatch](#icountdownlatch) is the distributed implementation of `java.util.concurrent.CountDownLatch`. Hazelcast CountDownLatch is a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
 
-Common Features of all Hazelcast Data Structures
+
+#### Common Features of all Hazelcast Data Structures
 
 
 - If a member goes down, its backup replica (which holds the same data) will dynamically redistribute the data, including the ownership and locks on them, to the remaining live members. As a result, there will not be any data loss.
 - There is no single cluster master that can be a single point of failure. Every member in the cluster has equal rights and responsibilities. No single member is superior. There is no dependency on an external 'server' or 'master'.
+
+
+#### Overview of Hazelcast Distributed Objects
+
+Hazelcast has two types of distributed objects in terms of their partitioning strategies:
+
+1. Data structures where each partition stores a part of the instance, namely partitioned data structures.
+2. Data structures where a single partition stores the whole instance, namely non-partitioned data structures.
+
+Partitioned Hazelcast data structures are: 
+
+- Map
+- MultiMap
+- Cache (Hazelcast JCache implementation)
+
+Non-partitioned Hazelcast data structures are:
+
+- Queue
+- Set
+- List
+- Ringbuffer
+- Lock
+- Semaphore
+- AtomicLong
+- AtomicReference
+- IdGenerator
+- CountdownLatch
+
+Besides these, Hazelcast also offers the Replicated Map structure as explained in the above *Standard utility collections* list. 
+
+#### Loading and Destroying a Distributed Object
+
+???
+
+
+#### Example Distributed Object Code
 
 Here is an example of how you can retrieve existing data structure instances (map, queue, set, lock, topic, etc.) and how you can listen for instance events, such as an instance being created or destroyed.
 
