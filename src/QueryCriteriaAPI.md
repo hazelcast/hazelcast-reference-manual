@@ -18,7 +18,7 @@ IMap<String, Employee> map = hazelcastInstance.getMap( "employee" );
 EntryObject e = new PredicateBuilder().getEntryObject();
 Predicate predicate = e.is( "active" ).and( e.get( "age" ).lessThan( 30 ) );
 
-Set<Employee> employees = map.values( predicate );
+Collection<Employee> employees = map.values( predicate );
 ```
 
 In the above example code, `predicate` verifies whether the entry is active and its `age` value is less than 30. This `predicate` is
@@ -60,7 +60,7 @@ Predicates class</a> for all predicates provided.*
 You can combine predicates using the `and`, `or`, and `not` operators, as shown in the below examples.
 
 ```java
-public Set<Person> getWithNameAndAge( String name, int age ) {
+public Collection<Person> getWithNameAndAge( String name, int age ) {
   Predicate namePredicate = Predicates.equal( "name", name );
   Predicate agePredicate = Predicates.equal( "age", age );
   Predicate predicate = Predicates.and( namePredicate, agePredicate );
@@ -69,7 +69,7 @@ public Set<Person> getWithNameAndAge( String name, int age ) {
 ```
 
 ```java
-public Set<Person> getWithNameOrAge( String name, int age ) {
+public Collection<Person> getWithNameOrAge( String name, int age ) {
   Predicate namePredicate = Predicates.equal( "name", name );
   Predicate agePredicate = Predicates.equal( "age", age );
   Predicate predicate = Predicates.or( namePredicate, agePredicate );
@@ -78,7 +78,7 @@ public Set<Person> getWithNameOrAge( String name, int age ) {
 ```
 
 ```java
-public Set<Person> getNotWithName( String name ) {
+public Collection<Person> getNotWithName( String name ) {
   Predicate namePredicate = Predicates.equal( "name", name );
   Predicate predicate = Predicates.not( namePredicate );
   return personMap.values( predicate );
@@ -92,7 +92,7 @@ You can simplify predicate usage with the `PredicateBuilder` class, which offers
 below example code which selects all people with a certain name and age.
 
 ```java
-public Set<Person> getWithNameAndAgeSimplified( String name, int age ) {
+public Collection<Person> getWithNameAndAgeSimplified( String name, int age ) {
   EntryObject e = new PredicateBuilder().getEntryObject();
   Predicate agePredicate = e.get( "age" ).equal( age );
   Predicate predicate = e.get( "name" ).equal( name ).and( agePredicate );
