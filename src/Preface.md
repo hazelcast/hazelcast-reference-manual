@@ -6,7 +6,6 @@ Welcome to the Hazelcast Reference Manual. This manual includes concepts, instru
 
 As the reader of this manual, you must be familiar with the Java programming language and you should have installed your preferred Integrated Development Environment (IDE).
 
-
 ## Hazelcast Editions
 
 This Reference Manual covers all editions of Hazelcast. Throughout this manual:
