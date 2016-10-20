@@ -12,17 +12,18 @@ Clustered JMX via Management Center allows you to monitor clustered statistics o
 
 ### Configuring Clustered JMX
 
-In order to configure Clustered JMX, use two command line parameters for your Management Center deployment.
+In order to configure Clustered JMX, use the following command line parameters for your Management Center deployment.
 
 - `-Dhazelcast.mc.jmx.enabled=true` (default is false)
 - `-Dhazelcast.mc.jmx.port=9000` (optional, default is 9999)
+- `-Dcom.sun.management.jmxremote.ssl=false`
 
 With embedded Jetty, you do not need to deploy your Management Center application to any container or application server.
 
 You can start Management Center application with Clustered JMX enabled as shown below.
 
 ```
-java -Dhazelcast.mc.jmx.enabled=true -Dhazelcast.mc.jmx.port=9999 -jar mancenter-3.3.jar
+java -Dhazelcast.mc.jmx.enabled=true -Dhazelcast.mc.jmx.port=9999 -Dcom.sun.management.jmxremote.ssl=false -jar mancenter-3.3.jar
 ```
 
 Once Management Center starts, you should see a log similar to below.
