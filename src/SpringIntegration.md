@@ -478,27 +478,33 @@ For more information about Spring Cache, please see <a href="http://static.sprin
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-hibernate-2ndlevel-cache" target="_blank">sample application</a> for Hibernate 2nd Level Cache Config.*
 <br></br>
 
-If you are using Hibernate with Hazelcast as a second level cache provider, you can easily create `RegionFactory` instances within Spring configuration (by Spring version 3.1). That way, you can use the same `HazelcastInstance` as Hibernate L2 cache instance.
+If you are using Hibernate with Hazelcast as a second level cache provider, you can easily configure your 
+`LocalSessionFactoryBean` to use a Hazelcast instance by passing Hazelcast instance name. That way, you can use the 
+same `HazelcastInstance` as Hibernate L2 cache instance.
 
 ```xml
-<hz:hibernate-region-factory id="regionFactory" instance-ref="instance"
-    mode="LOCAL" />
 ...
 <bean id="sessionFactory" 
       class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" 
 	  scope="singleton">
   <property name="dataSource" ref="dataSource"/>
-  <property name="cacheRegionFactory" ref="regionFactory" />
+  <property name="hibernateProperties">
+      <props>
+          ...
+          <prop key="hibernate.cache.region.factory_class">com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory</prop>
+          <prop key="hibernate.cache.hazelcast.instance_name">${hz.instance.name}</prop>
+      </props>
+  </property>
   ...
 </bean>
 ```
 
-**Hibernate RegionFactory Modes**
+**Hibernate RegionFactory Classes**
 
-- LOCAL
-- DISTRIBUTED 
+- `com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory`
+- `com.hazelcast.hibernate.HazelcastCacheRegionFactory`
 
-Please refer to Hibernate [Configuring RegionFactory](#configuring-regionfactory) for more information.
+Please refer to Hibernate <a href="https://github.com/hazelcast/hazelcast-hibernate#configuring-regionfactory" target="_blank">Configuring RegionFactory</a> for more information.
 
 
 ### Configuring Hazelcast Transaction Manager
