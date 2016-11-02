@@ -10,7 +10,7 @@ Semaphores offer **permit**s to control the thread counts when performing concur
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Semaphore with a single permit may be considered a lock. Unlike the locks, however, when semaphores are used, any thread can release the permit, and semaphores can have multiple permits.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast Semaphore does not support fairness.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast ISemaphore does not support fairness at all times. There are some edge cases where the fairness is not honored, e.g., when the permit becomes available at the time when an internal timeout occurs.* 
 
 When a permit is acquired on ISemaphore:
 
