@@ -9,7 +9,7 @@ Hazelcast supports two different operation modes of WAN Replication:
 - **Active-Active:** Every cluster is equal, each cluster replicates to all other clusters. This is normally used to connect
   different clients to different clusters for the sake of the shortest path between client and server.
 
-Below is an example of declarative configuration of WAN Replication from New York cluster to target the London and Tokyo clusters:
+Below is an example of declarative configuration of WAN Replication from New York cluster to target the London cluster:
 
 ```xml
 <hazelcast>
