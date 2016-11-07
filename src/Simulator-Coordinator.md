@@ -51,10 +51,10 @@ coordinator --waitForTestCaseCompletion
 
 Hazelcast has two basic instance types: member and client. The member instances form the cluster and client instances connect to an existing cluster. Hazelcast Simulator can spawn Workers for both instance types. You can configure the number of member and client Workers and also their distribution on the available remote machines. Available remote machines are the ones, that are configured in the `agents.txt` file (either manually in static setups or via Provisioner in cloud setups).
 
-Use the options `--memberWorkerCount` and `--clientWorkerCount` to control how many member and client Workers you want to have. The following command creates a cluster with four member Workers and eight client Workers (which connect to that cluster).
+Use the options `--members` and `--clients` to control how many member and client Workers you want to have. The following command creates a cluster with four member Workers and eight client Workers (which connect to that cluster).
 
 ```
-coordinator --memberWorkerCount 4 --clientWorkerCount 8
+coordinator --members 4 --clients 8
 ```
 
 A setup without client Workers is fine, but out of the box it won't work without member Workers.
@@ -67,26 +67,7 @@ coordinator --dedicatedMemberMachines 2
 
 You cannot specify more dedicated member machines than you have available. If you define client Workers, there must be at least a single remote machine left (e.g. with three remote machines you can specify a maximum of two dedicated member machines). The round robin assignment will be done in the two sub-groups of remote machines.
 
-If you need more control over the cluster layout, you can create a file `cluster.xml` in your working directory and manually specify the layout per remote machine. This is not necessary for normal use cases, but can be an option for very complex setups.
- 
-```
-<clusterConfiguration>
-    <workerConfiguration name="memberWorker37" type="MEMBER" hzVersion="maven=3.7"/>
-    <workerConfiguration name="clientWorker37" type="CLIENT" hzVersion="maven=3.7"/>
-    <nodeConfiguration>
-        <workerGroup configuration="memberWorker37" count="2"/>
-        <workerGroup configuration="clientWorker37" count="8"/>
-    </nodeConfiguration>
-    <nodeConfiguration>
-        <workerGroup configuration="memberWorker37" count="4"/>
-    </nodeConfiguration>
-    <nodeConfiguration>
-        <workerGroup configuration="memberWorker37" count="50"/>
-    </nodeConfiguration>
-</clusterConfiguration>
-```
-
-In this case you need to have exactly three available remote machines. First we define two different types of Workers (`workerConfiguration`): in this case, a member and a client type with Hazelcast version 3.7. Then we define how many Workers of which type are created on each machine (`nodeConfiguration`): in this case, a mixed, a member only, and a client only machine. With the `cluster.xml` file you can also configure different Hazelcast versions to test cross version compatibility.
+If you need more control over the cluster layout, you can make use of the 'coordinator-remote' which allows full control on layout, versions of clients, servers etc.
 
 ### Controlling the Load Generation
 
