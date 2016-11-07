@@ -1,9 +1,9 @@
 
-## Writing a simulator test
+## Writing a Simulator test
 
 The main part of a simulator test is writing the actual test. The simulator test is heavily inspired by the Junit testing framework and JMH microbenchmarking framework. To demonstrate how to write a test, we'll start with a very basic case and slowely add additional features. 
 
-The initial case, testing the IAtomicLong. 
+For the intial test case we are going to use the IAtomicLong. 
 
 ```
 package example;
@@ -22,23 +22,22 @@ class MyTest extends AbstractTest{
   }
 }
 ```
-The above code example shows one of the most basic tests one can write. The AbstractTest is used to remove duplicate code from tests, so it provides access to a logger, the testContext, targetInstance etc. 
+The above code example shows one of the most basic tests one can write. The AbstractTest is used to remove duplicate code from tests, so it provides access to a logger, the testContext, targetInstance HazelcastInstance etc. 
 
-The property file
+The property file to start the test
 
 ```
 class=example.MyTest
 ```
-
+The main property that needs to be in the property file is the 'class' property which needs to point to the full classname.
 
 ### Adding properties
 
-Properties must be public fields. Properties can be primitives, enums, strings, classes. Properties can be nested and no arg constructor must be used to build up the graph of objects. case sensitive.
-....
+Properties can be added to a test to make it easy to configure these properties from the outside. Properties must be public fields and can be primitives, wrappers around primities like java.lang.Long, enums, strings, classes. 
 
 ```
 class MyTest extends AbstractTest{
-  public int countersLength; 
+  public int countersLength = 20;
 
   private IAtomicLong[] counters;
 
@@ -54,10 +53,36 @@ class MyTest extends AbstractTest{
   }
 }
 ```
+In the above example the 'countersLength' property has been added and it defaults to 20. In most cases it is best to provide defaults for properties to make customization of a test less verbose.
 
+The 'countersLength' can be configured like this:
 ```
 class=example.MyTest
 countersLength=1000
+```
+
+Properties don't need to be simple fields. The property binding supports complex object graphs to be created and configured.
+Properties can be nested and no arg constructor must be used to build up the graph of objects. case sensitive.
+
+```
+class SomeTest{
+	
+	pubic Config config;
+
+	public static class Config{
+		NestedConfig nestedConfig;
+	}
+
+	public static class NestedConfig{
+		public int value;	
+	}
+}
+```
+
+Such a config can be configured using
+```
+class=SomeTest
+config.nestedConfig.value=10
 ```
 
 ### Number of threads
@@ -106,11 +131,14 @@ If the probability is not equal to 1, the test will be terminated when the times
 
 ### ThreadState
 
-In the examples so far there is only state at the test instance level. The test instance is shared between all timestep threads; but in some cases you want to track state per timestep thread. This can be done using 'thread state'. 
+In the examples so far there is only state at the test instance level. The test instance is shared between all timestep-threads; but in some cases you want to track state per timestep-thread. This can be done using 'thread state'. The class of the threadstate is determined by timestep code generator and it will automatically create an instance of this class per timestep-thread. This instance will then be passed to each invocation of the timestep method of that timestep-thread. This means that you don't need to deal with more costly thread-locals.
 
 In the code example below a TreadState is defined that tracks the number of increments per thread.
 
 ```
+import com.hazelcast.simulator.test.BaseThreadState
+....
+
 class MyTest extends AbstractTest{
   public int countersLength; 
 
@@ -130,11 +158,9 @@ class MyTest extends AbstractTest{
   }
 }
 ```
-In this example tracking the number of incremnts isn't that interesting, since nothing is done with it. But it can be used to verify that the actual data-structure is working correctly. For more information see the 'verify' section.
+In this example tracking the number of increments isn't that interesting, since nothing is done with it. But it can be used to verify that the the data-structure under test (the IAtomicLong in this case) is working correctly. For more information see the 'verify' section.
 
-The BaseThreadState class is the recommended way to define your own ThreadState because it provides various random utility methods that frequently are needed.
-
-Thread state doesn't need to extend from BaseThreadState. It can be any object as log as it has a no arg constructor, or it has a constructor with the type of the enclosing class as argument (a non static inner class). The ThreadState class unfortunately needs to be a public class due to the code generator. But the internals of the class don't require any special treatment.
+Exending the BaseThreadState class is the recommended way to define your own ThreadState because it provides various random utility methods that frequently are needed. But ThreadState doesn't need to extend from BaseThreadState. ThreadState can be any class as long as it has a no arg constructor, or it has a constructor with the type of the enclosing class as argument (a non static inner class). The ThreadState class unfortunately needs to be a public class due to the code generator. But the internals of the class don't require any special treatment.
 
 Another restriction is that all timestep, beforeRun and afterRun methods (of the same execution group), need to have the same type for the ThreadState argument. So the following is illegal:
 ```
@@ -148,10 +174,13 @@ class MyTest extends AbstractTest{
   @TimeStep public void get(GetThreadState list){
     counter.inc();
   }
+  
+  public class IncThreadState{long increments;}
+  public class GetThreadState{}
 }
 ```
 
- It is otional for any timestep method to declare this thread state argument. So the following is valid:
+It is optional for any timestep/beforeRun/afterRun method to declare this ThreadState argument. So the following is valid:
 
 ```
 class MyTest extends AbstractTest{
@@ -173,7 +202,7 @@ class MyTest extends AbstractTest{
 
 ### AfterRun/BeforeRun
 
-The timestep methods are called by a timestep thread and each thread will do a loop over its timestep methods. In some cases before this loop begins or after this loop ends, some additional logic is required. For example initialization of the ThreadState object is needed when the loop starts, or updating some shared state when the loop completes. This can be done using beforeRun and afterRun methods. Multiple beforeRun and afterRun methods can be defined, but the order of their executed is unfortunately not defined, so be careful with that.
+The timestep methods are called by a timestep-thread and each thread will do a loop over its timestep methods. In some cases before this loop begins or after this loop ends, some additional logic is required. For example initialization of the ThreadState object is needed when the loop starts, or updating some shared state when the loop completes. This can be done using beforeRun and afterRun methods. Multiple beforeRun and afterRun methods can be defined, but the order of their executed is unfortunately not defined, so be careful with that.
 
 The beforeRun and afterRun methods accept the ThreadState as argument, but this argument is allowed to be ommitted. 
 
