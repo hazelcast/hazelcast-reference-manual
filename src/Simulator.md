@@ -34,6 +34,8 @@ The following are the key concepts mentioned with Hazelcast Simulator.
 
 - **Coordinator** - A JVM that can run anywhere, such as on your local machine. The `Coordinator` is actually responsible for running the `TestSuite` using the `Agents` and `Workers`. You configure it with a list of `Agent` IP addresses, and you run it by executing a command like "run this testsuite with 10 member worker and 100 client worker JVMs for 2 hours".
 
+- **Coordinator Remote** - A JVM that can run anywhere, such as on your local machine. The `CoordinatorRemote` is responsible for sending instructions to the Coordinator. For basic simulator usages the remote is not needed, but for complex scenario's like 'rolling upgrade' or 'high availability' testing, a much more interactive approach is required. The coordinator remote talks to the coordinator using TCP/IP.
+
 - **Provisioner** - Spawns and terminates cloud instances, and installs Hazelcast Simulator on the remote machines. It can be used in combination with EC2 (or any other cloud), but it can also be used in a static setup, such as a local machine or a cluster of machines in your data center.
 
 - **Failure** - An indication that something has gone wrong. Failures are picked up by the `Agent` and sent back to the `Coordinator`.

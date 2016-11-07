@@ -13,7 +13,7 @@ Alternatively, you can execute tests using the Simulator archetype. Please see t
 mvn archetype:generate  \
     -DarchetypeGroupId=com.hazelcast.simulator \
     -DarchetypeArtifactId=archetype \
-    -DarchetypeVersion=0.5 \
+    -DarchetypeVersion=0.9 \
     -DgroupId=yourgroupid  \
     -DartifactId=yourproject
 ```

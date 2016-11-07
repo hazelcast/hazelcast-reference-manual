@@ -50,20 +50,6 @@ provisioner --install
 
 This is also useful whenever you update or change your local installation and want to re-install Hazelcast Simulator on the remote machines. This is just necessary if the JAR files have been changed. Configuration changes in your `test.properties` or `simulator.properties` don't require a new Simulator installation.
 
-### Download and clean log files
-
-Execute the following command to download all the Worker home folders (containing Worker and GC log files and Java heap dumps in cause of an OOM).
-
-```
-provisioner --download
-```
-
-To clean up all Worker homes execute this command.
-
-```
-provisioner --clean
-```
-
 ### Stopping all remote processes
 
 If your test run hangs for any reason you can kill all Java processes on the remote machines with the following command:

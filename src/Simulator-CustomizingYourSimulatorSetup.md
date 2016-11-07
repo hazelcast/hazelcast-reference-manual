@@ -36,7 +36,7 @@ You can configure Simulator itself using the file `simulator.properties` in your
 simulator-wizard --compareSimulatorProperties
 ```
 
-Often changed properties are the `MACHINE_SPEC` to specify the instance type for cloud setups or the `HAZELCAST_VERSION_SPEC` to run Simulator with a different Hazelcast version.
+Often changed properties are the `MACHINE_SPEC` to specify the instance type for cloud setups or the `VERSION_SPEC` to run Simulator with a different Hazelcast version.
 
 Please refer to the [Simulator.Properties File Description section](#simulator-properties-file-description) for detailed information about the `simulator.properties` file.
 
@@ -76,11 +76,22 @@ Please refer to the [Coordinator section](#coordinator) for detailed information
 
 ### Analyzing your Simulator Run
 
-After the Simulator run you can download the log files that the Simulator Workers generated (and clean up the files on the remote machines).
+During the simulator run a directory is created that stores all output for that given run. By default this is a timestamp like '2016-08-02__22_08_09'. After the test completes, all artifacts from the remote workers are downloaded in this directory. So if you have for example enabled Flightrecorder,  then you find the generated jfr files there as well. 
+
+The name of this output directory can be modified by using the '--sessionId' commandline option. Once and a while it is good to clean up the remote workers if they stay around for an extended perod using 
+```
+coordinator --clean
+```
+
+To download all artifacts manually, execute this command.
 
 ```
-provisioner --download
-provisioner --clean
+coordinator --download
 ```
 
-You will find the TestSuite results in the folder `workers`. If configured there will be verbose GC logs and heap dump files (in case of an OOM).
+Both the clean and download command allow for the session-id to be passed. For example: 
+
+```
+coordinator --download 2016-08-02__22_08_09
+coordinator --clean 2016-08-02__22_08_09
+```
