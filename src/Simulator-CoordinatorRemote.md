@@ -1,7 +1,7 @@
 
 ## Coordinator Remote
 
-The Simulator remote is a poweful addition to the Coordinator. The Coordinator is takes care of a lot of things like uploading Hazelcast, starting members, clients, running tests etc. The problem is that the Coordinator cli is very monolythic.
+The Simulator remote is a poweful addition to the Coordinator. The Coordinator takes care of a lot of things like uploading Hazelcast, starting members, clients, running tests etc. The problem is that the Coordinator cli is very monolythic.
 
 To open up the Coordinator, the Coordinator-remote is added. To give some impression:
 ```
@@ -58,8 +58,6 @@ The command returns the list of Simulator addresses of the workers that have bee
 workers=$(coordinator-remote worker-start)
 ```
 
-
-
 ### Clients
 
 The below script demonstrates a basic usage of letting a test run using 5 clients.
@@ -72,7 +70,7 @@ coordinator-remote stop
 
 ### Querying
 
-The command like:
+The commands like:
 -test-start
 -test-run
 -worker-kill
@@ -96,7 +94,7 @@ The above will kill return the directory listing for all workers that have versi
 And the number of selected members can be limited using '--maxCount'.
 - maxCount
 
-By default the selection of the workers is very predictable, but this can sometimes be a problem. E.g. when you want to kill random members and get them killed spread equally over all members. In such situations the '--random' option can be configured:
+By default the selection of the workers is very predictable, but this can sometimes be a problem. E.g. when you want to kill random members and get them killed spread equally over all members. In such situations the '--random' option can be used:
 ```
 member-kill --random
 ```
@@ -106,14 +104,19 @@ member-kill --random
 There are 2 test commands:
 - test-run: runs a test and waits for completion.
 - test-start: starts a test and return the simulator address of the test.
-The test-start is the logical choice if you want to interact with the coordinator during the execution of a test. Perhaps you want to kill a member while a test on the clients is running.
-
+The test-start is the logical choice if you want to interact with the coordinator-remote during the execution of a test. Perhaps you want to kill a member while a test on the clients is running.
 
 The following command shows a basic example of the test-run
 ```
 coordinator-remote test-run --duration 5m map.properties
 ```
 In this case the map test is executed for a duration of 5 minutes.
+
+The following command shows the basic usage of the test-start
+```
+test_id=$(coordinator-remote test-start --duration 5m map.properties
+```
+In this case the map test is executed for a duration of 5 minutes. The call will return immediately and the id of the test is written to the 'test_id' Bash variable.
 
 One can control which worker is going to execute a test. 
 
@@ -126,7 +129,14 @@ coordinator-remote test-run --targetCount 3 map.properties
 ```
 Even though there are 10 members, only 3 are being used to generate load.
 
-#### Target type
+#### Worker type
+Using the worker-type one can control what type of worker is going to acts as driver (so has timestep-threads running). If there are only members, then by default all members will be driver. If there are 1 or more clients (litemember is considered a form of client), then only the clients will acts as driver.
+
+```
+coordinator-remote worker-start --count 2
+coordinator-remote test-run --duration 1m --targetType litemember map.properties
+```
+So in the above example, 2 member workers will act as driver.
 
 ```
 coordinator-remote worker-start --count 2
@@ -134,12 +144,31 @@ coordinator-remote worker-start --workerType javaclient --count 4
 coordinator-remote worker-start --workerType litemember --count 8
 coordinator-remote test-run --duration 1m --targetType litemember map.properties
 ```
-In this contrived example, the test will run on the 4 lite members.
+In this contrived example above, the 8 litemembers will be driver and the javaclients will be completely ignored. The current available types of workers are:
+- member
+- litemember
+- javaclient
+As soon as the native clients are added, one can configure e.g. csharpclient or cppclient.
+
+If a non member workerType is defined, then these workers will be the drivers. 
 
 #### Warmup and duration
-By default a test will not do any warmup and will run for
+By default a test will not do any warmup and will run till the test is explicitly stopped. 
+```
+coordinator-remote test-run map.properties
+```
 
-#### Agent address, Worker address
+But one can configure the warmup and duration like this:
+```
+coordinator-remote test-run --warmup 1m --duration 10m map.properties
+```
+Valid timeunits for the time are:
+-s: second
+-m: minute
+-h: hour
+-d: day
+
+Using the query options like agents, workers and tags, one has perfect control which workers are going to run a particular test. For more information see the 'quering' section. 
 
 ### Stopping test
 
@@ -165,7 +194,7 @@ For a more comprehensive example see the 'rolling upgrade test' section.
 
 ### Killing workers
 
-It is possible to kill one or more members while doing a test. In such cases it is probably best to drive the test through a client. Example:
+It is possible to kill one or more members while doing a test. This is useful for resilience testing for example. In such cases it is probably best to use clients as drivers. Example:
 
 ```
 coordinator-remote worker-start --count 4
@@ -177,22 +206,21 @@ sleep 60
 coordinator-remote test-stop $test_id
 coordinator-remote stop
 ```
-In the above example we start with a 4 node cluster and the client doing a map test. Then we sleep 60 seconds, we keep a random member and we wait for another 60 seconds. Then we stop the test and wait for completion and then stop the coordinator.
+In the above example we start with a 4 node cluster and the client doing a map test. Then we sleep 60 seconds, we keep a random member and we wait for another 60 seconds. Then we stop the test and wait for completion.
 
-The worker-kill is a very flexible command. One can kill a specific worker using its simulator address, one can create all workers on a given agent, or kill all workers with a given version. 
+The worker-kill is a very flexible command. One can kill a specific worker using its simulator address, one can create all workers on a given agent, or kill all workers with a given version. See 'quering' for more information.
 
-One can fully control how a worker is going to get killed. It can be done by a executing a bash script:
-
+One can fully control how a worker is going to get killed. It can be done by a e.g. executing a bash script:
 ```
 coordinator-remote worker-kill 'bash:kill -9 $PID'
 ```
-The $PID, the pid of the worker, is available as variable for the bash script.
+The $PID, the pid of the worker, is available as environment-variable for the bash script.
 
-One can also send in embedded javascript:
+One can also send an embedded javascript:
 ```
 coordinator-remote worker-kill 'js:code that kills the JVM'
 ```
-So using the javascript execute embedded javascript in the jvm. Access to the hazelcast instance is possible using the injected 'hazelcastInstance' environment variable. In theory it is possible to execute any JVM scripting language, like Groovy, by prefixing the command by the extension of the language e.g. 'groovy:.....'. This will cause the scripting engine to load the appropriate scripting language. But you need to make sure the appropriate jars are on set on the classpath of the worker.
+So using the javascript one can execute commands jvm without needing to have the that code on the worker. Access to the hazelcast instance is possible using the injected 'hazelcastInstance' environment variable. In theory it is possible to execute any JVM scripting language, like Groovy, by prefixing the command by the extension of the language e.g. 'groovy:.....'. This will cause the scripting engine to load the appropriate scripting language. But you need to make sure the appropriate jars are on set on the classpath of the worker.
 
 Another way to kill a member is by causing an OOME:
 ```
@@ -221,7 +249,6 @@ coordinator-remote worker-script --fireAndForgetFlag  --command 'bash:jstack $PI
 This command makes a thread dump of each worker JVM.
 
 For more options regarding selecting the target members, see 'quering'.
-
 
 ### Using custom Hazelcast version
 
@@ -261,8 +288,8 @@ member_version=maven=3.6
 client_version=maven=3.7
 coordinator-remote install ${version_1}
 coordinator-remote install ${version_2}
-coordinator-remote worker-start --count 1 --workerType=member --versionSpec {member_version}
-coordinator-remote worker-start --count 1 --workerType=javaclient --versionSpec {client_version}
+coordinator-remote worker-start --versionSpec {member_version}
+coordinator-remote worker-start --workerType=javaclient --versionSpec {client_version}
 coordinator-remote test-run --duration 10m map.properties
 coordinator-remote stop
 ```
@@ -304,9 +331,8 @@ coordinator-remote stop
 ```
 
 #### Reslience testing
-Script should not cause a member to die; it it does, the test will receive a failure. Scripts can be used for a lot of purposes. One could read out some data, modify internal behavior of the Hazelcast cluster. It can for example be used to deliberately cause problems in the system. Perhaps one could close some connections, consume all CPU cycles, use most of the memory so that the member is almost running into an OOME.
+Script should not cause a member to die; it it does, the test will be aborted with a failure. Scripts can be used for a lot of purposes. One could read out some data, modify internal behavior of the Hazelcast cluster. It can for example be used to deliberately cause problems that should not lead to dying members. Perhaps one could close some connections, consume most CPU cycles, use most of the memory so that the member is almost running into an OOME.
 
-By default the coordinator-remote script 
 ### Tags
 Tags are the last piece of the puzzel. A tag is somethign that can be to an agent, worker or test. For example the following tags could be defined on agents:
 ```
