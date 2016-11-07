@@ -1,7 +1,7 @@
 
 ## Profiling your simulator test
 
-To determine where e.g. time is spend or if there are any gc problems, you want to profile your application. The recommended way to profile is using the Java Flight Recorder (JFR) which is only available in the Oracle JVM's. The JFR unlike other commercial profilers like JProbe and Yourkit, doesn't make use of sampling or instrumentation and hooks into some internal hooks and is quite reliable and causes very little overhead. The problem with most other profilers is that they distort the number and point you in the wrong direction (especially when IO or concurrency is involved). Most of the recent performance improvements in Hazelcast are based on using this tool.
+To determine where e.g. time is spend or other resources are being used, you want to profile your application. The recommended way to profile is using the Java Flight Recorder (JFR) which is only available in the Oracle JVM's. The JFR unlike other commercial profilers like JProbe and Yourkit, doesn't make use of sampling or instrumentation and hooks into some internal API's and is quite reliable and causes very little overhead. The problem with most other profilers is that they distort the numbers and frequently point you in the wrong direction; especially when IO or concurrency is involved. Most of the recent performance improvements in Hazelcast are based on using JFR.
 
 To enable the JFR, the JVM settings for the member or client need to be modified depending on what needs to be profiled.
 
@@ -18,11 +18,11 @@ coordinator --members 1 \
             --clientVmOptions "$JFR_ARGS" \
             sometest.properties
 ```
-In the above example, but client and members are configured with JFR. 
+In the above example, but client and members are configured with JFR. Once the Simulator test has completed, all artifacts including the JFR files, are downloaded. The JFR files can be opened using the Java Mission Control command 'jmc'.
 
 ### Reducing fluctuations
 
-Fore more stable performance numbers, set the min and max heap size to the same value, e.g.
+Fore more stable performance numbers, set the minimum and maximum heap size to the same value, e.g.
 
 ```
 coordinator --members 1 \
@@ -31,6 +31,12 @@ coordinator --members 1 \
             --clientVmOptions "-Xmx1g -Xms1g" \
             sometest.properties
 ```
+
+Also set the minumum cluster size to the expected number of members using the following property:
+```
+-Dhazelcast.initial.min.cluster.size=4
+```
+This prevents Hazelcast cluster to start before the miniumum number of nodes has been reached. Otherwise the benchmark numbers of the tests can be distorted due to partition migrations during the test. Especially with a large number of partitions and short tests, this can lead to a very big impact on the benchmark numbers.
 
 ### Enabling diagnostics
 
