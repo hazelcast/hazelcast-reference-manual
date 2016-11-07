@@ -36,6 +36,7 @@ class=example.MyTest
 Properties must be public fields. Properties can be primitives, enums, strings, classes. Properties can be nested and no arg constructor must be used to build up the graph of objects. case sensitive.
 ....
 
+```
 class MyTest extends AbstractTest{
   public int countersLength; 
 
@@ -209,8 +210,8 @@ class MyTest extends AbstractTest{
 ```
 
 ### Verification
-....
 
+```
 class MyTest extends AbstractTest{
   private IAtomicLong counter;
   private IAtomicLong expected;
