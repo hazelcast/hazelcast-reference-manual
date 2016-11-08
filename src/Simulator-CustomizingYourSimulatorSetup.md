@@ -76,20 +76,21 @@ Please refer to the [Coordinator section](#coordinator) for detailed information
 
 ### Analyzing your Simulator Run
 
-During the simulator run a directory is created that stores all output for that given run. By default this is a timestamp like '2016-08-02__22_08_09'. After the test completes, all artifacts from the remote workers are downloaded in this directory. So if you have for example enabled Flightrecorder,  then you find the generated jfr files there as well. 
+During the simulator run, a directory is created that stores all output for that given run. By default this directory's name is a timestamp such as `2016-08-02__22_08_09`. After the test is completed, all artifacts from the remote workers are downloaded to this directory. So if you have, for example, enabled `Flightrecorder`, then you find the generated JFR files there as well. 
 
-The name of this output directory can be modified by using the '--sessionId' commandline option. Once and a while it is good to clean up the remote workers if they stay around for an extended perod using 
+The name of this output directory can be modified by using the `--sessionId` command line option. It is recommended to clean up the remote workers once in a while if they stay around for an extended period. You can clean up using the following command: 
+
 ```
 coordinator --clean
 ```
 
-To download all artifacts manually, execute this command.
+To download all artifacts manually, execute the following command:
 
 ```
 coordinator --download
 ```
 
-Both the clean and download command allow for the session-id to be passed. For example: 
+Both `clean` and `download` commands allow you to pass `sessionId`. Please see the following examples:
 
 ```
 coordinator --download 2016-08-02__22_08_09
