@@ -51,7 +51,7 @@ coordinator-remote test-run --duration 10m map.properties
 coordinator-remote stop
 ```
 
-These commands will start a single node cluster, execute the map test for 10 minutes and then shutdown the coordinator.
+These commands will start a single-member cluster, execute the map test for 10 minutes and then shutdown the coordinator.
 
 
 ### Starting Workers
@@ -257,7 +257,7 @@ coordinator-remote test-stop $test_id
 coordinator-remote stop
 ```
 
-In the above example we start with a four node cluster and the client doing a map test. Then we sleep 60 seconds, we keep a random member and we wait for another 60 seconds. Then we stop the test and wait for completion.
+In the above example we start with a four-member cluster and the client doing a map test. Then we sleep 60 seconds, we keep a random member and we wait for another 60 seconds. Then we stop the test and wait for completion.
 
 The `worker-kill` is a very flexible command. You can kill a specific worker using its simulator address, create all workers on a given agent, or kill all workers with a given version. Please see the [Querying section](#querying) for more information.
 
