@@ -67,7 +67,7 @@ coordinator --dedicatedMemberMachines 2
 
 You cannot specify more dedicated member machines than you have available. If you define client Workers, there must be at least a single remote machine left (e.g. with three remote machines you can specify a maximum of two dedicated member machines). The round robin assignment will be done in the two sub-groups of remote machines.
 
-If you need more control over the cluster layout, you can make use of the 'coordinator-remote' which allows full control on layout, versions of clients, servers etc.
+If you need more control over the cluster layout, you can make use of the `coordinator-remote` which allows full control on layout, versions of clients, servers, etc. Please refer to the [Coordinator Remote section](#coordinator-remote).
 
 ### Controlling the Load Generation
 
@@ -77,11 +77,11 @@ Beside the cluster layout you can also control which Workers will execute their 
 coordinator --targetType MEMBER --targetCount 2
 ```
 
-This will limit the load generation to two member Workers, regardless if client Workers are available or not. Please have a look at command line help via `coordinator --help` to see all allowed values for these arguments.
+This will limit the load generation to two member Workers, regardless of the client Workers' availability. Please have a look at command line help via `coordinator --help` to see all allowed values for these arguments.
 
 ### Controlling the Hazelcast Configuration
 
-By default Coordinator uses the files `${SIMULATOR_HOME}/conf/hazelcast.xml` and `${SIMULATOR_HOME}/conf/client-hazelcast.xml` to configure the created Hazelcast instances. You can override these files by placing a `hazelcast.xml` or `client-hazelcast.xml` in your working directory. You can also specify a path (outside your working directory) with the following arguments.
+By default Coordinator uses the files `${SIMULATOR_HOME}/conf/hazelcast.xml` and `${SIMULATOR_HOME}/conf/client-hazelcast.xml` to configure the created Hazelcast instances. You can override these files by placing a `hazelcast.xml` or `client-hazelcast.xml` in your working directory. You can also specify a path (outside your working directory) with the following arguments:
 
 ```
 coordinator --hzFile your-hazelcast.xml --clientHzFile=your-client-hazelcast.xml
