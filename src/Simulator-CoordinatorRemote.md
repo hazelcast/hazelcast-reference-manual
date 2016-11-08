@@ -1,9 +1,9 @@
 
 ## Coordinator Remote
 
-The Simulator remote is a poweful addition to the Coordinator. The Coordinator takes care of a lot of things such as copying Hazelcast to the remote machines, starting members, clients and running tests. The problem is that the Coordinator command line interface is very monolythic.
+The Simulator remote is a powerful addition to the Coordinator. The Coordinator takes care of a lot of things such as copying Hazelcast to the remote machines, starting members, clients and running tests. The problem is that the Coordinator command line interface is very monolithic.
 
-To open up the Coordinator, the commane `coordinator-remote` is added. To give some impressions:
+To open up the Coordinator, the command `coordinator-remote` is added. To give some impressions:
 
 ```
 coordinator-remote worker-start --count 2
@@ -185,9 +185,9 @@ coordinator-remote test-run --duration 1m --targetType litemember map.properties
 
 In this contrived example above, eight lite members will be drivers and the Java clients will be completely ignored. The current available types of workers are as follows:
 
-- member
-- litemember
-- javaclient
+- `member`
+- `litemember`
+- `javaclient`
 
 As soon as the native clients are added, you will be able to configure, for example C# or C++ clients.
 
@@ -196,47 +196,55 @@ If a non-member `workerType` is defined, then these workers will be the drivers.
 #### Warmup and Duration
 
 By default a test will not do any warmup and will run till the test is explicitly stopped. 
+
 ```
 coordinator-remote test-run map.properties
 ```
 
-But one can configure the warmup and duration like this:
+But you can configure the warmup and duration as shown below:
+
 ```
 coordinator-remote test-run --warmup 1m --duration 10m map.properties
 ```
-Valid timeunits for the time are:
--s: second
--m: minute
--h: hour
--d: day
 
-Using the query options like agents, workers and tags, one has perfect control which workers are going to run a particular test. For more information see the 'quering' section. 
+Valid time units are as follows:
 
-### Stopping test
+- s: second
+- m: minute
+- h: hour
+- d: day
 
-A test can be stopped using the test-stop command. For example:
+Using the query options like agents, workers and tags, you have the perfect control on which workers are going to run a particular test. For more information please see the [Querying section](#querying). 
+
+### Stopping Test
+
+A test can be stopped using the `test-stop` command. Please see the example below:
+
 ```
 test_id=$(coordinator-remote test-start map.properties)
 ...
 coordinator-remote test-stop $test_id
 ```
-This command waits till the test has stopped. It will return the status of the test on completion "failed" or "completed".
 
-### Status of a test
+This command waits till the test stops. It will return the status of test on completion as "failed" or "completed".
 
-If you are running an test with test-start, you probably want to periodically ask what the status of the test is. This can be done using the test-status command. E.g.
+### Status of a Test
+
+If you are running a test with `test-start`, you probably want to periodically ask what the status of the test is. You can do this using the `test-status` command as shown below:
+
 ```
 testId=$(coordinator-remote test-start map.properties)
 ... doing stuff
 coordinator-remote test-status $testId
 ```
-This command will return the phase of the test like running, setup etc. Or it will return 'completed' if the test completed successfully or 'failed' in case of a failure. The actual reason of the failure can be found in the failures.txt in the created session directory.
 
-For a more comprehensive example see the 'rolling upgrade test' section.
+This command returns the phase of test as "running", "setup", etc. Or, it returns "completed" if the test is completed successfully or "failed" in case of a failure. The actual reason of the failure can be found in the `failures.txt` in the created session directory.
 
-### Killing workers
+For a more comprehensive example see the [Rolling Upgrade Test section](#rolling-upgrade-test).
 
-It is possible to kill one or more members while doing a test. This is useful for resilience testing for example. In such cases it is probably best to use clients as drivers. Example:
+### Killing Workers
+
+It is possible to kill one or more members while doing a test. This is useful, for example, for resilience testing. In such cases it is probably best to use clients as drivers. Please see the below example:
 
 ```
 coordinator-remote worker-start --count 4
@@ -248,53 +256,65 @@ sleep 60
 coordinator-remote test-stop $test_id
 coordinator-remote stop
 ```
-In the above example we start with a 4 node cluster and the client doing a map test. Then we sleep 60 seconds, we keep a random member and we wait for another 60 seconds. Then we stop the test and wait for completion.
 
-The worker-kill is a very flexible command. One can kill a specific worker using its simulator address, one can create all workers on a given agent, or kill all workers with a given version. See 'quering' for more information.
+In the above example we start with a four node cluster and the client doing a map test. Then we sleep 60 seconds, we keep a random member and we wait for another 60 seconds. Then we stop the test and wait for completion.
 
-One can fully control how a worker is going to get killed. It can be done by a e.g. executing a bash script:
+The `worker-kill` is a very flexible command. You can kill a specific worker using its simulator address, create all workers on a given agent, or kill all workers with a given version. Please see the [Querying section](#querying) for more information.
+
+You can fully control how a worker is going to get killed. It can be done, for example, by executing a bash script:
+
 ```
 coordinator-remote worker-kill 'bash:kill -9 $PID'
 ```
-The $PID, the pid of the worker, is available as environment-variable for the bash script.
 
-One can also send an embedded javascript:
+The `$PID`, the PID of the worker, is available as an environment variable for the bash script.
+
+You can also send an embedded JavaScript as shown below:
+
 ```
 coordinator-remote worker-kill 'js:code that kills the JVM'
 ```
-So using the javascript one can execute commands jvm without needing to have the that code on the worker. Access to the hazelcast instance is possible using the injected 'hazelcastInstance' environment variable. In theory it is possible to execute any JVM scripting language, like Groovy, by prefixing the command by the extension of the language e.g. 'groovy:.....'. This will cause the scripting engine to load the appropriate scripting language. But you need to make sure the appropriate jars are on set on the classpath of the worker.
 
-Another way to kill a member is by causing an OOME:
+Using the JavaScript you can execute commands on the JVM without needing to have the that code on the worker. Access to the Hazelcast instance is possible using the injected `hazelcastInstance` environment variable. 
+
+In theory it is possible to execute any JVM scripting language, such as Groovy, by prefixing the command by the extension of that language, e.g., `groovy:.....`. This will cause the scripting engine to load the appropriate scripting language. But you need to make sure the appropriate JAR files are set on the worker's classpath.
+
+Another way to kill a member is by causing an OOME as shown below:
+
 ```
 coordinator-remote worker-kill OOME
 ```
-The OOME is actually build on top of the javascript version and allocates big arrays till the JVM runs out of memory.
 
-By default a 'System.exit(0)' is called.
+The OOME is actually built on top of the JavaScript version and it allocates big arrays till the JVM runs out of memory.
 
-### Executing scripts on workers
+By default a `System.exit(0)` is called.
 
-It is possible to execute script on the workers. This can be a bash script, an embedded javascript or any other embedded JVM scripting language. See "killing members" for more information about the scripting options.
+### Executing Scripts on Workers
 
-for example
+It is possible to execute scripts on the workers. This can be a bash script, an embedded JavaScript or any other embedded JVM scripting language. Please see the [Killing Workers](#killing-workers) for more information about the scripting options.
+
+For example, the following command will return the directory listing for every worker:
+
 ```
 coordinator-remote worker-script --command `bash:ls`
 ```
-Will return the directory listing for every worker.
 
-#### Fire and forget
-By default the worker-script command will wait for the results of the execute command. But in some case the script should be executed in a fire and forget fashion. This can be done using the --fireAndForgetFlag option.
+
+#### Fire and Forget
+
+By default the `worker-script` command will wait for the results of the `execute` command. But in some cases, the script should be executed in a fire and forget fashion. This can be done using the `--fireAndForgetFlag` option as shown below:
 
 ```
 coordinator-remote worker-script --fireAndForgetFlag  --command 'bash:jstack $PID'
 ```
+
 This command makes a thread dump of each worker JVM.
 
-For more options regarding selecting the target members, see 'quering'.
+For more options regarding selecting the target members, see the [Querying section](#querying).
 
-### Using custom Hazelcast version
+### Using Custom Hazelcast Version
 
-With the coordinator-remote it is very easy to control the exact version of Hazelcast being used. In the below example, the 3.7.1 version is used, but using the version spec 'git=hash' one can also execute a particular commit.
+With the `coordinator-remote`, it is very easy to control the exact version of Hazelcast being used. In the below example, the 3.7.1 version is used, but using the `versionSpec 'git=hash'` one can also execute a particular commit.
             
 ```
 version=maven=3.7.1
@@ -305,13 +325,14 @@ coordinator-remote test-start --duration 10m map.properties
 coordinator-remote stop
 ```
 
-Because the remote is interactive, one can easily combine different Hazelcast versions in the same cluster. In the below example a 3.7 member is combined with a 3.7.1 member. This makes it an ideal tool to check patch level compatibility.
+Because the remote is interactive, you can easily combine different Hazelcast versions in the same cluster. In the below example a 3.7 member is combined with a 3.7.1 member. This makes it an ideal tool to check patch level compatibility.
 
-It is important to realize that the versions used in the worker-start, need to be installed using 'coordinator-remote install' before being used. 
+It is important to realize that the versions used in the `worker-start` need to be installed using `coordinator-remote install` before being used. 
 
-### Combining Hazelcast versions
+### Combining Hazelcast Versions
 
-Because the coordinator is now interactive, it is possible to mix different versions.
+Because the coordinator is now interactive, it is possible to mix different versions as shown below:
+
 ```
 version_1=maven=3.7.1
 version_2=maven=3.7
@@ -322,9 +343,11 @@ coordinator-remote worker-start --versionSpec ${version_2}
 coordinator-remote test-run --duration 10m map.properties
 coordinator-remote stop
 ```
-In the example above, we create a 2 node cluster with a different patch level Hazelcast version. This is ideal for patch level compatibilty testing.
 
-We can also combine a client of a different version than the members. This is ideal for client compatibility testing.
+In the example above, we create a two-member cluster with a different patch level Hazelcast version. This is ideal for patch level compatibility testing.
+
+We can also combine a client of a different version than the members. This is ideal for client compatibility testing:
+
 ```
 member_version=maven=3.6
 client_version=maven=3.7
@@ -335,10 +358,12 @@ coordinator-remote worker-start --workerType=javaclient --versionSpec {client_ve
 coordinator-remote test-run --duration 10m map.properties
 coordinator-remote stop
 ```
-In the above example we start a 1 node cluster using Hazelcast 3.6 and a Hazelcast javaclient using 3.7.
 
-### Rolling upgrade test
-Because it is easy to mix versions and we can kill and start new members, we can easily create a rolling upgrade test. So imagine we want to verify if a Hazelcast 3.7 cluster can be upgraded to 3.8, we could start out with a 3.7 cluster, start a bunch of clients, start some test on the clients that verifies that the cluster is behavig correctly and then one by one replace the 3.7 members by 3.8 members. Once all members have been upgrded we complete the test. 
+In the above example we start a one-member cluster using Hazelcast 3.6 and a Hazelcast Java client using 3.7.
+
+### Rolling Upgrade Test
+
+Because it is easy to mix versions and we can kill and start new members, we can easily create a rolling upgrade test. So imagine we want to verify if a Hazelcast 3.7 cluster can be upgraded to 3.8, we could start out with a 3.7 cluster, start a bunch of clients, start some tests on the clients that verify the cluster is behaving correctly and then one by one replace the 3.7 members by 3.8 members. Once all members have been upgraded we complete the test. This scenario is depicted in the following example:
 
 ```
 members=10
@@ -372,34 +397,39 @@ coordinator-remote test-stop $test_id
 coordinator-remote stop
 ```
 
-#### Reslience testing
-Script should not cause a member to die; it it does, the test will be aborted with a failure. Scripts can be used for a lot of purposes. One could read out some data, modify internal behavior of the Hazelcast cluster. It can for example be used to deliberately cause problems that should not lead to dying members. Perhaps one could close some connections, consume most CPU cycles, use most of the memory so that the member is almost running into an OOME.
+#### Resilience Testing
+
+Script should not cause a member to die; if it does, the test will be aborted with a failure. Scripts can be used for a lot of purposes. One could read out some data, modify internal behavior of the Hazelcast cluster. It can for example be used to deliberately cause problems that should not lead to dying members. Perhaps one could close some connections, consume most CPU cycles, use most of the memory so that the member is almost running into an OOME.
 
 ### Tags
-Tags are the last piece of the puzzel. A tag is somethign that can be to an agent, worker or test. For example the following tags could be defined on agents:
+
+Tags are the last pieces of the puzzle. A tag can be given to an agent, worker or test. For example the following tags could be defined on agents:
+
 ```
 10.31.44.31:clients
 10.31.44.31:members
 ```
 
-Using these tags, one can create workers. 
+Using these tags, you can create workers:
 
 ```
 coordinator-remote worker-start --agentsTags clients --workerType client
 ```
-The created worker will be spawned on the first agent, since that is the agent with the 'clients' tag. Once the worker is created, it will automaticaly inherit all tags from the agent.
 
-Tags don't need to be a single identifier, it could be something like this 'foo,a=1,b=true'. Quite a few command have support for filtering on tags, see 'Quering'.
+The created worker will be spawned on the first agent, since that is the agent with the `clients` tag. Once the worker is created, it will automatically inherit all tags from the agent.
 
-workers can be created with their own tags:
+Tags do not need to be a single identifier, it may contain multiple identifiers such as `foo,a=1,b=true`. Quite a few commands have support for filtering on tags, please see the [Querying section](#querying).
+
+You can created workers with their own tags:
 
 ```
 coordinator-remote worker-start --tags b=10 --workerType client
 ```
 
-Tags are practical because they allow for a mechanism to configure e.g. the hazelcast.xml in a much more fine grained way
+Tags are practical because they allow for a mechanism to configure, for example the `hazelcast.xml`, in a much more fine grained way.
 
 ### Testing wan replication
 
+???
 
 
