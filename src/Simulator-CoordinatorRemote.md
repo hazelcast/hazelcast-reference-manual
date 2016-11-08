@@ -1,66 +1,80 @@
 
 ## Coordinator Remote
 
-The Simulator remote is a poweful addition to the Coordinator. The Coordinator takes care of a lot of things like uploading Hazelcast, starting members, clients, running tests etc. The problem is that the Coordinator cli is very monolythic.
+The Simulator remote is a poweful addition to the Coordinator. The Coordinator takes care of a lot of things such as copying Hazelcast to the remote machines, starting members, clients and running tests. The problem is that the Coordinator command line interface is very monolythic.
 
-To open up the Coordinator, the Coordinator-remote is added. To give some impression:
+To open up the Coordinator, the commane `coordinator-remote` is added. To give some impressions:
+
 ```
 coordinator-remote worker-start --count 2
 coordinator-remote test-run --duration 2m map.properties
 coordinator-remote stop
-
 ```
-In the above example we first create some workers, then run the map tests for 2 minutes and then we stop the remote. The coordinator-remote looks very simple, but it is very flexible and allows for complex scenario's to be tested.
+
+In the above example we first create some workers, then run the map tests for two minutes and then we stop the remote. The `coordinator-remote` looks very simple, but it is very flexible and allows introducing complex scenarios to be tested.
 
 ### Using the CLI Manual
-Quite a lot of effort was put in setting up a comprehensive CLI manual for the coordinator-remote. To get an overview of all available commands, enter
+
+Quite a lot of effort was put in setting up a comprehensive CLI manual for the `coordinator-remote`. To get an overview of all available commands, use the following command:
 
 ```
 coordinator-remote --help
 ```
 
-This will show all command available, like install or worker-start. To get detailed information about the worker-start, enter the following command:
+This will show all the available commands such as `install` or `worker-start`. You can get detailed information about a command by adding its name, a sample of which is shown below:
+
 ```
 coordinator-remote worker-start --help
 ```
 
-### Configuring the remote
-By default the coordinator opens a port 5000 and listens to this port waiting for commands. If you do not want to enable remote commands, set the COORDINATOR_PORT=0 in the simulator.properties.
+### Configuring the Remote
 
-If you want to run multiple coordinators on a single machine, you need to give each coordinator instance a different port so that the remotes don't communicate with the wrong ports and the coordinator don't compete on getting the port.
+By default the coordinator opens a port 5000 and listens to this port waiting for commands. If you do not want to enable remote commands, set the `COORDINATOR_PORT=0` in the `simulator.properties` file.
 
-### Basic usage
+If you want to run multiple coordinators on a single machine, you need to give each coordinator instance a different port so that the remotes do not communicate with the wrong ports and the coordinator does not compete on getting the port.
 
-To use the coordinator remote, it is best to work with 2 terminals (or let the coordinator write to file). In the first terminal we start the coordinator using:
+### Basic Usage
+
+To use the coordinator remote, it is best to work with two terminals (or let the coordinator write to file). In the first terminal we start the coordinator using the following command:
+
 ```
 coordinator
 ```
-Coordinator will not do anything and listen to command from the coordinator-remote
 
-In the second terminal we enter following commands. This will start a single node cluster and execute the map test for 10 minutes and then shutdown the coordinator.
+Coordinator will not do anything and listen to commands from the `coordinator-remote`.
+
+In the second terminal we enter following commands:
+
 ```
 coordinator-remote worker-start
 coordinator-remote test-run --duration 10m map.properties
 coordinator-remote stop
 ```
 
-### Starting workers
+These commands will start a single node cluster, execute the map test for 10 minutes and then shutdown the coordinator.
+
+
+### Starting Workers
+
+The following command starts one extra worker:
+
 
 ```
 coordinator-remote worker-start
 ```
-This wills start 1 extra worker.
 
-Workers can be started while a test is running, but such a worker will not participate in generating load. So in case of the new worker being a member, it will become an extra member in the cluster. In such cases it is probably best to generate load through a client.
+Workers can be started while a test is running, but such a worker will not participate in generating a load. So in case of the new worker being a member, it will become an extra member in the cluster. In such cases it is probably best to generate load through a client.
 
 The command returns the list of Simulator addresses of the workers that have been created and could be stored in a variable like this:
+
 ```
 workers=$(coordinator-remote worker-start)
 ```
 
 ### Clients
 
-The below script demonstrates a basic usage of letting a test run using 5 clients.
+The following script demonstrates a basic usage of letting a test run using five clients:
+
 ```
 coordinator-remote worker-start --count 1
 coordinator-remote worker-start --workerType javaclient --count 5
@@ -70,73 +84,97 @@ coordinator-remote stop
 
 ### Querying
 
-The commands like:
--test-start
--test-run
--worker-kill
--worker-script
-Execute some kind of behavior one one or more workers. The selection of these commands can be filtered using various options and this allows for a  flexible selection mechanism. 
+The commands such as the following execute a behavior on one or more workers:
 
-Examples:
-- versionSpec. E.g. 'member-kill --versionSpec maven=3.8' which kills 1 member which has the given version.
-- workerType. E.g. 'worker-script --workerType javaclient --command 'bash:ls' executes the ls command on all javaclients
-- agents. E.g. 'test-run --agents C_A1,C_A2 map.properties' runs a test on all members that belong to Agent 1 and 2.
-- workers. E.g. 'test-start --workers C_A1_W1 map.properties' starts a test on worker C_A1_W1. Keep in mind that the --workers option can't be combined with the '--agents' option.
-- workerTags. E.g. 'member-kill --tags bla'
-All commands apart from the worker-kill command try to execute on the maximum number of items that are allowed. Only the worker-kill command has been configured to default to 1. 
+- `test-start`
+- `test-run`
+- `worker-kill`
+- `worker-script`
 
-Filters can also be combined:
+You can specify some filters using various options with these commands and this allows a flexible selection mechanism. Please see the following examples:
+
+
+- Example for the option `versionSpec`:
+  - `member-kill --versionSpec maven=3.8` which kills one member having the given version.
+  <br></br>
+- Example for the option `workerType`:
+  - `worker-script --workerType javaclient --command 'bash:ls'` executes the `ls` command on all Java clients.
+  <br></br>
+- Example for the option `agents`:
+  - `test-run --agents C_A1,C_A2 map.properties` runs a test on all members that belong to Agent 1 and 2.
+  <br></br>
+- Example for the option `workers`:
+  - `test-start --workers C_A1_W1 map.properties` starts a test on worker `C_A1_W1`. Keep in mind that the `--workers` option cannot be combined with the `--agents` option.
+  <br></br>
+- Example for the option `workerTags`:
+  - `member-kill --tags bla`
+
+All commands apart from `worker-kill` try to execute on the maximum number of items that are allowed. Only the `worker-kill` command has been defaulted to 1. 
+
+Filters can also be combined as shown below:
+
 ```
 script-member --versionSpec maven=3.8 --agents C_A1,C_A2 --command 'bash:ls'
 ```
-The above will kill return the directory listing for all workers that have versionSpec maven=3.8 AND have agent C_A1 or C_A2 as parent.
 
-And the number of selected members can be limited using '--maxCount'.
-- maxCount
+The above will return the directory listing for all workers that have `versionSpec maven=3.8` AND have agent `C_A1` or `C_A2` as parent.
 
-By default the selection of the workers is very predictable, but this can sometimes be a problem. E.g. when you want to kill random members and get them killed spread equally over all members. In such situations the '--random' option can be used:
+The number of selected members can be limited using the option `--maxCount`.
+
+By default the selection of the workers is very predictable, but this can sometimes be a problem, for example, when you want to kill random members and get them killed spread equally over all members. In such situations the option `--random` can be used as shown below:
+
 ```
 member-kill --random
 ```
 
-### Starting tests
+### Starting Tests
 
-There are 2 test commands:
-- test-run: runs a test and waits for completion.
-- test-start: starts a test and return the simulator address of the test.
-The test-start is the logical choice if you want to interact with the coordinator-remote during the execution of a test. Perhaps you want to kill a member while a test on the clients is running.
+There are two test commands:
 
-The following command shows a basic example of the test-run
+- `test-run`, runs a test and waits for completion.
+- `test-start`, starts a test and returns the Simulator address of the test.
+
+The `test-start` is the logical choice if you want to interact with the `coordinator-remote` during the execution of a test. Perhaps you want to kill a member while a test on the clients is running.
+
+The following command shows a basic example of the `test-run`:
+
 ```
 coordinator-remote test-run --duration 5m map.properties
 ```
-In this case the map test is executed for a duration of 5 minutes.
 
-The following command shows the basic usage of the test-start
+In this case the map test is executed for five minutes.
+
+The following command shows the basic usage of the `test-start`:
+
 ```
 test_id=$(coordinator-remote test-start --duration 5m map.properties
 ```
-In this case the map test is executed for a duration of 5 minutes. The call will return immediately and the id of the test is written to the 'test_id' Bash variable.
 
-One can control which worker is going to execute a test. 
+In this case the map test is executed for five minutes. The call will return immediately and the ID of the test is written to the `test_id` Bash variable.
 
-#### Target count
-One can control how many worker are going to execute a test ising the targetCount option
+You can control which worker is going to execute a test.
+
+#### Target Count
+
+You can control the number of workers that will execute a test using the option `targetCount` as shown below:
 
 ```
 coordinator-remote worker-start --count 10
 coordinator-remote test-run --targetCount 3 map.properties
 ```
-Even though there are 10 members, only 3 are being used to generate load.
 
-#### Worker type
-Using the worker-type one can control what type of worker is going to acts as driver (so has timestep-threads running). If there are only members, then by default all members will be driver. If there are 1 or more clients (litemember is considered a form of client), then only the clients will acts as driver.
+Even though there are 10 members, only three are being used to generate load.
+
+#### Worker Type
+
+Using the `worker-type` you can control what type of worker is going to act as a driver (so has `timestep-threads` running). If there are only members, then by default all members will be drivers. If there are one or more clients (lite member is considered a form of client), then only the clients will act as drivers.
 
 ```
 coordinator-remote worker-start --count 2
 coordinator-remote test-run --duration 1m --targetType litemember map.properties
 ```
-So in the above example, 2 member workers will act as driver.
+
+In the above example, two member workers will act as drivers.
 
 ```
 coordinator-remote worker-start --count 2
@@ -144,15 +182,19 @@ coordinator-remote worker-start --workerType javaclient --count 4
 coordinator-remote worker-start --workerType litemember --count 8
 coordinator-remote test-run --duration 1m --targetType litemember map.properties
 ```
-In this contrived example above, the 8 litemembers will be driver and the javaclients will be completely ignored. The current available types of workers are:
+
+In this contrived example above, eight lite members will be drivers and the Java clients will be completely ignored. The current available types of workers are as follows:
+
 - member
 - litemember
 - javaclient
-As soon as the native clients are added, one can configure e.g. csharpclient or cppclient.
 
-If a non member workerType is defined, then these workers will be the drivers. 
+As soon as the native clients are added, you will be able to configure, for example C# or C++ clients.
 
-#### Warmup and duration
+If a non-member `workerType` is defined, then these workers will be the drivers. 
+
+#### Warmup and Duration
+
 By default a test will not do any warmup and will run till the test is explicitly stopped. 
 ```
 coordinator-remote test-run map.properties
