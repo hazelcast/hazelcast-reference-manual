@@ -3,7 +3,7 @@
 
 The main part of a Simulator test is writing the actual test. The Simulator test is heavily inspired by the JUnit testing and Java Microbenchmark Harness (JMH) frameworks. To demonstrate writing a test, we will start with a very basic case and progressively add additional features. 
 
-For the intial test case we are going to use the `IAtomicLong`. Please see the following snippet:
+For the initial test case we are going to use the `IAtomicLong`. Please see the following snippet:
 
 ```java
 package example;
@@ -47,7 +47,7 @@ Any `Throwable`, apart from the `StopException`, that is being thrown will lead 
 
 ### Adding properties
 
-Properties can be added to a test to make it easy to modify them from the outside. Properties must be public fields and can be primitives, wrappers around primities like `java.lang.Long`, enums, strings and classes. Properties are case sensitive.
+Properties can be added to a test to make it easy to modify them from the outside. Properties must be public fields and can be primitives, wrappers around primitives like `java.lang.Long`, enums, strings and classes. Properties are case sensitive.
 
 In the below example the `countersLength` property has been added and it defaults to 20.
 
@@ -154,7 +154,7 @@ class=example.MyTest
 getProb=0.8
 ```
 
-In this example, the `get` probility is 0.8, and therefore the `inc` probability is 0.2. 
+In this example, the `get` probability is 0.8, and therefore the `inc` probability is 0.2. 
 
 If the probability is not equal to 1, the test will be terminated when the `Timestep` code is generated during the test start.
 
@@ -192,7 +192,7 @@ In this example, tracking the number of increments is not that interesting since
 
 The class of the `ThreadState` is determined by timestep code-generator and it will automatically create an instance of this class per timestep-thread. This instance will then be passed to each invocation of the timestep method in that timestep-thread. This means that you do not need to deal with more expensive thread-locals.
 
-Exending the `BaseThreadState` class is the recommended way to define your own `ThreadState` because it provides various random utility methods that are needed frequently.
+Extending the `BaseThreadState` class is the recommended way to define your own `ThreadState` because it provides various random utility methods that are needed frequently.
 
 However, `ThreadState` does not need to extend `BaseThreadState`. `ThreadState` can be any class as long as it has a no-arg constructor, or it has a constructor with the type of the enclosing class as argument (a non-static inner class). `ThreadState` class unfortunately needs to be a public class due to the code generator. But the internals of the class do not require any special treatment.
 
@@ -243,7 +243,7 @@ Another advantage is that if there is a shared state, it is easier to share it; 
 
 The timestep methods are called by a timestep-thread and each thread will do a loop over its timestep methods. In some cases before this loop begins or after this loop ends, some additional logic is required. For example initialization of the `ThreadState` object is needed when the loop starts, or updating some shared state when the loop completes. This can be done using `beforeRun` and `afterRun` methods. Multiple `beforeRun` and `afterRun` methods can be defined, but the order of their execution is unfortunately not defined, so be careful with that.
 
-The `beforeRun` and `afterRun` methods accept the `ThreadState` as an argument, but this argument is allowed to be ommitted. 
+The `beforeRun` and `afterRun` methods accept the `ThreadState` as an argument, but this argument is allowed to be omitted. 
 
 In the following example, `beforeRun` and `afterRun` methods are defined that log when the timestep thread starts, and log when it completes. It also writes the number of increments the timestep thread executed:
 
@@ -386,11 +386,11 @@ threadCount=10
 ratePerSecond=100
 ```
 
-In this case each thread wil make 10 requests per second. The `ratePerSecond` under the hood is transformed to interval, so it is a matter of convenience which one is preferred.
+In this case each thread will make 10 requests per second. The `ratePerSecond` under the hood is transformed to interval, so it is a matter of convenience which one is preferred.
 
 #### Coordinated Omission
 
-By default the Simulator prevents the coordinated omission problems by using the expected start time of a request instead of the actual time. So instead of trying to do some kind of a repair after it happened, the Simulator actually prevents the problem happening in the first place. Simular technique is used in [JLBH](http://www.rationaljava.com/2016/04/jlbh-introducing-java-latency.html).
+By default the Simulator prevents the coordinated omission problems by using the expected start time of a request instead of the actual time. So instead of trying to do some kind of a repair after it happened, the Simulator actually prevents the problem happening in the first place. Similar technique is used in [JLBH](http://www.rationaljava.com/2016/04/jlbh-introducing-java-latency.html).
 
 If you are interested in the impact of coordinated omission, the protection against it can be disabled using the `accountForCoordinatedOmission` property:
 ```
@@ -402,79 +402,84 @@ accountForCoordinatedOmission=false
 
 Be extremely careful when setting this property to false and publishing the results. Because the number will be a lot more positive than they actually are.
 
-The rate of doing requests is controlled using the Metronome abstraction and a few flavors are available. One very interesting metronome is the ConstantCombinedRateMetronome. By default each timestep thread-will wait for a given amount of time for the next request and if there is some kind of obstruction, e.g. a map.get is obstructed by an fat entry processor, a bubble of requests is build up that is processed as soon as the entry processor has completed. Instead of building up this bubble, the ConstantCombinedRateMetronome can be used. If one thread is obstructing while its wants to do a get, other timestep-threads from the same execution group will continue with the requests this timestep thread was supposed to do. This way the bubble is prevented; unless all timestep threads from the same execution group are obstructed.
+The rate of doing requests is controlled using the `Metronome` abstraction and a few flavors are available. One very interesting metronome is the `ConstantCombinedRateMetronome`. By default each timestep-thread will wait for a given amount of time for the next request and if there is some kind of an obstruction, e.g., a `map.get` is obstructed by a fat entry processor, a bubble of requests is built up that is processed as soon as the entry processor has completed.
 
-The ConstantCombinedRateMetronome can be configured using:
+Instead of building up this bubble, the `ConstantCombinedRateMetronome` can be used. If one thread is obstructing while it wants to do a `get`, other timestep-threads from the same execution group will continue with the requests this timestep thread was supposed to do. This way the bubble is prevented; unless all timestep threads from the same execution group are obstructed.
+
+The `ConstantCombinedRateMetronome` can be configured as shown below:
+
 ```
 class=example.MyTest
 threadCount=10
 ratePerSecond=100
-metronomeClass=com.hazelcast.Simulator.worker.metronome.ConstantCombinedRateMetronome
+metronomeClass=com.hazelcast.simulator.worker.metronome.ConstantCombinedRateMetronome
 ```
 
 ### Logging
-In some cases, especially when debugging, logging is required. One easy way to add logging is to add the logging into the timestep method, but this can be inefficient and frequently is noisy. Using some magic properties logging can be enabled on any timestep based Simulator test
 
-- frequency based: e.g. every 1000th iteration each timestep thread will log where it is.
-- time rate based: e.g. every 100ms each timestep thread will log where it is. Time based is quite practical because you don't get swamped or a shortage of log entries, like the frequency based one.
+In some cases, especially when debugging, logging is required. One easy way to add logging is to add the logging into the timestep method. But this can be inefficient and it is frequently noisy. Using some magic properties logging can be enabled on any timestep based Simulator test. There are two types of logging:
 
-To configure frequency based logging:
+- **frequency based**; for example every 1000th iteration, each timestep thread will log where it is.
+- **time rate based**; for example every 100ms each timestep thread will log where it is. Time rate based is quite practical because you do not get swamped or a shortage of log entries, like the frequency based one.
+
+You can configure frequency based logging as shown below:
 ```
 class=example.MyTest
 logFrequency=10000
 ```
+
 In this example, every 10000 iteration, a log entry is made per timestep thread.
 
-To configure time rate based logging:
+You can configure time rate based logging as shown below:
+
 ```
 class=example.MyTest
 logRateMs=100
 ```
-In this example, at most every 100ms a log entry is made per timestep thread.
 
-### Execution groups
+In this example, at most every 100ms, a log entry is made per timestep thread.
 
-### Code generation
-The timestep method rely on code generation, that is why a JDK is required to run timestep based test. The code is generated on the fly based on the test and its test parameters. The philosophy is that one should not pay the price for something not used. For example, if there is a single timestep method, no randomization/switch-case is needed to execute the right method. If no logging is confgured, no logging is generator. 
+### Execution Groups
 
-This way many features can be added to the timestep test, without it impacting the performance if the actual feature isn't used.
+### Code Generation
+
+The timestep methods rely on code generation, that is why a JDK is required to run a timestep based test. The code is generated on the fly based on the test and its test parameters. The philosophy is that you should not pay the price for something that is not used. For example, if there is a single timestep method, no randomization/switch-case is needed to execute the right method. If no logging is configured, no logs are generated. 
+
+This way many features can be added to the timestep test without impacting the performance if the actual feature is not used.
 
 The generator timestep worker code can be found in the worker directory. Feel free to have a look at it and send any suggestions how it can be improved.
 
 Currently there is no support yet for dead code elimination.
 
-### Stopping a test
-By default a Simulator test will run for a given amount of time using the duration property, e.g.
+### Stopping a Test
+
+By default a Simulator test will run for a given amount of time using the duration property. Please see the following example:
 
 ```
 coordinator --duration 5m test.properties
 ```
-In this example the test will run for 5 minutes. In some cases one needs more control on when to stop. Currently there are 2 options available:
+
+In this example, the test will run for five minutes. In some cases you need more control on when to stop. Currently there are following options available:
+
+- **Configuring the number of iterations**:
+  The number of iterations can be specified using the test properties:
+
+   ```
+   class=example.MyTest
+   iterations=1000000
+   warmupIterations=10000
+   ```
+
+   In this case the warmup will run for 10k iterations and the test will run for 1000k iterations. 
+ 
+- **`StopException` to stop a single thread**: When a timestep thread wants to stop, it can throw a `StopException`. This exception does not lead to a failure of the test. It also has no influence on any other timestep thread.
+
+- **`TestContext.stop` to stop all timestep threads**: All timestep threads for a given period on a single worker can be stopped using the `TestContext.stop` method. 
 
 
-- Configure number of iterations
-- StopException to stop a single thread
-- TestContext.stop to stop all timestep threads
+In all cases, Coordinator will wait for all timestep threads of all workers to complete. If a duration has been specified, the test will not run longer than this duration.
 
-#### Configure iterations
-The number of configuration can be configured using the test properties
-
-```
-class=example.MyTest
-iterations=1000000
-warmupIterations=10000
-```
-In this case the warmup will run for 10k iterations and the test will run for 1000k iterations. 
-
-#### StopException
-When a timestep thread wants to stop, it can throw a StopException. This exception doesn't lead to an failure of the test. It also has no influence on any other timestep thread.
-
-#### TestContext.stop
-All timestep threads for a given on a single worker can be stopped using the TestContext.stop method. 
-
-In all cases coordinator will wait for all timestep threads of all workers to complete. If a duration has been specified, the test will not running longer than this duration.
-
-### Total lifecycle of calls on the test
+### Total Lifecycle of Calls on the Test
 
 - setup
 - prepare local
