@@ -484,14 +484,14 @@ In all cases, Coordinator will wait for all timestep threads of all workers to c
 - setup
 - prepare local
 - prepare global
-- timestep-thread:before run
-- timestep-thread:timestep ...
-- timestep-thread:after run
+  - timestep-thread:before run
+  - timestep-thread:timestep ...
+  - timestep-thread:after run
 - after warmup local
 - after warmup global
-- timestep-thread:before run
-- timestep-thread:timestep ...
-- timestep-thread:after run
+  - timestep-thread:before run
+  - timestep-thread:timestep ...
+  - timestep-thread:after run
 - local verify
 - global verify
 - local teardown

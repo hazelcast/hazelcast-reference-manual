@@ -160,7 +160,7 @@ account to prevent network operations and concurrent accesses.
 
 As an explanation of how the algorithm works, let's examine the following flowchart step by step.
 
-![Hazelcast JCache Eviction Algorithm](images/Flowchart.png)
+![Hazelcast JCache Eviction Algorithm](images/EvictionFlowchart.png)
 
 1. A new cache is created. Without any special settings, the eviction is configured to kick in when the **cache** exceeds 10.000
 elements and an LRU (Less Recently Used) policy is set up.
