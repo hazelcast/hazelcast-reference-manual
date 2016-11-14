@@ -47,6 +47,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Safety Checking Cluster Members](#safety-checking-cluster-members)|Updated the content to reflect the improvements in graceful shutdown feature.
 |[Chapter 19 - Security](#security)|[SSL](#ssl)|Added information explaining the performance overhead for the clients when they use SSL.
 ||[Encryption](#encryption)|Added a note about the encryption at the client side.
+|[Chapter 21 - Hazelcast Simulator](#hazelcast=simulator)||Moved the content to Simulator's own GitHub repository at [Hazelcast Simulator](https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md).|
 |[Chapter 22 - WAN](#wan)||Updated to reflect the improvement which is the ability of generic WAN replication endpoint configurations.<br></br>Cleared the content related to `WanNoDelayReplication`  since this implementation has been removed, and added a note under the [Defining WAN Replication section](#defining-wan-replication).
 ||[Synchronizing WAN Target Cluster](#synchronizing-wan-target-cluster)|Added as a new section.
 ||[Solace Integration](#solace-integration)|Added as a new section explaining how to integrate Hazelcast WAN replication with Solace messaging appliances.
