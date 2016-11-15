@@ -16,42 +16,34 @@ Let's begin.
 - The following code starts the first Hazelcast member and creates and uses the `customers` map and queue.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-
+import com.hazelcast.core.*;
+import com.hazelcast.config.*;
+ 
 import java.util.Map;
 import java.util.Queue;
-
+ 
 public class GettingStarted {
-  public static void main( String[] args ) {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
-    customers.put( 1, "Joe" );
-    customers.put( 2, "Ali" );
-    customers.put( 3, "Avi" );
-
-    System.out.println( "Customer with key 1: " + customers.get(1) );
-    System.out.println( "Map Size:" + customers.size() );
-
-    Queue<String> queueCustomers = hazelcastInstance.getQueue( "customers" );
-    queueCustomers.offer( "Tom" );
-    queueCustomers.offer( "Mary" );
-    queueCustomers.offer( "Jane" );
-    System.out.println( "First customer: " + queueCustomers.poll() );
-    System.out.println( "Second customer: "+ queueCustomers.peek() );
-    System.out.println( "Queue size: " + queueCustomers.size() );
-  }
+    public static void main(String[] args) {
+        Config cfg = new Config();
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
+        Map<Integer, String> mapCustomers = instance.getMap("customers");
+        mapCustomers.put(1, "Joe");
+        mapCustomers.put(2, "Ali");
+        mapCustomers.put(3, "Avi");
+ 
+        System.out.println("Customer with key 1: "+ mapCustomers.get(1));
+        System.out.println("Map Size:" + mapCustomers.size());
+ 
+        Queue<String> queueCustomers = instance.getQueue("customers");
+        queueCustomers.offer("Tom");
+        queueCustomers.offer("Mary");
+        queueCustomers.offer("Jane");
+        System.out.println("First customer: " + queueCustomers.poll());
+        System.out.println("Second customer: "+ queueCustomers.peek());
+        System.out.println("Queue size: " + queueCustomers.size());
+    }
 }
-```
-
-- Run this `GettingStarted` class a second time to get the second member 
-started. The members form a cluster and the output is similar to the following.
-
-```
-Members [2] {
-  Member [127.0.0.1:5701]
-  Member [127.0.0.1:5702] this
-}                              
+                              
 ```
 
 - Now, add the `hazelcast-client-`*`<version>`*`.jar` library to your classpath. 
