@@ -42,8 +42,7 @@ public class GettingStarted {
         System.out.println("Second customer: "+ queueCustomers.peek());
         System.out.println("Queue size: " + queueCustomers.size());
     }
-}
-                              
+}                            
 ```
 
 - Now, add the `hazelcast-client-`*`<version>`*`.jar` library to your classpath. 
