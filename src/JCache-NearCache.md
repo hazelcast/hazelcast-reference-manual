@@ -1,18 +1,8 @@
 ### JCache Near Cache
 
-Cache entries in Hazelcast are stored as partitioned across the cluster. 
-When you try to read a record with the key `k`, if the current member is not the owner of that key (i.e. not the owner of partition that the key belongs to), 
-Hazelcast sends a remote operation to the owner member. Each remote operation means lots of network trips. 
-If your cache is used for mostly read operations, it is advised to use a near cache storage in front of the cache itself to read cache records faster and consume less network traffic.
-<br><br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *Near cache for JCache is only available for clients, NOT members.*
-<br><br>
+The Hazelcast JCache implementation supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Please refer to the [Near Cache section](#near-cache) for a detailed explanation of the Near Cache feature and its configuration.
 
-However, using near cache comes with trade-offs in some cases:
-
-- There will be extra memory consumption for storing near cache records at local.
-- If invalidation is enabled and entries are updated frequently, there will be many invalidation events across the cluster.
-- Near cache does not give strong consistency but gives eventual consistency guarantees. It is possible to read stale data.
+![image](images/NoteSmall.jpg) ***NOTE:*** *Near Cache for JCache is only available for clients, NOT members.*
 
 #### Configuring Invalidation Event Sending
 
@@ -60,64 +50,6 @@ Once a near cache is full (i.e., has reached its maximum size as specified by th
 - LRU (Least Recently Used)
 - LFU (Least Frequently Used)
 
-#### Configuring JCache Near Cache
-
-The following are example configurations for JCache near cache.
-
-**Declarative**:
-
-```xml
-<hazelcast-client>
-    ...
-    <near-cache name="myCache">
-        <in-memory-format>BINARY</in-memory-format>
-        <invalidate-on-change>true</invalidate-on-change>
-        <cache-local-entries>false</cache-local-entries>
-        <time-to-live-seconds>3600000</time-to-live-seconds>
-        <max-idle-seconds>600000</max-idle-seconds>
-        <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
-    </near-cache>
-    ...
-</hazelcast-client>
-```
-
-**Programmatic**:
-
-```java
-EvictionConfig evictionConfig = new EvictionConfig();
-evictionConfig.setMaxSizePolicy(MaxSizePolicy.ENTRY_COUNT);
-evictionConfig.setEvictionPolicy(EvictionPolicy.LFU);
-evictionConfig.setSize(10000);
- 
-NearCacheConfig nearCacheConfig =
-    new NearCacheConfig()
-        .setName("myCache")
-        .setInMemoryFormat(InMemoryFormat.BINARY)
-        .setInvalidateOnChange(true)
-        .setCacheLocalEntries(false)
-        .setTimeToLiveSeconds(60 * 60 * 1000) // 1 hour TTL
-        .setMaxIdleSeconds(10 * 60 * 1000) // 10 minutes max idle seconds
-        .setEvictionConfig(evictionConfig); 
-...
-
-clientConfig.addNearCacheConfig(nearCacheConfig);
-```
-
-The following are the definitions of the configuration elements and attributes.
-
-- `in-memory-format`: Storage type of near cache entries. Available values are `BINARY`, `OBJECT` and `NATIVE_MEMORY`. `NATIVE_MEMORY` is available only for Hazelcast Enterprise. Default value is `BINARY`.
-- `invalidate-on-change`: Specifies whether the cached entries are evicted when the entries are changed (updated or removed) on the local and global. Available values are `true` and `false`. Default value is `true`.
-- `cache-local-entries`: Specifies whether the local cache entries are stored eagerly (immediately) to near cache when a put operation from the local is performed on the cache. Available values are `true` and `false`. Default value is `false`.
-- `time-to-live-seconds`: Maximum number of seconds for each entry to stay in the near cache. Entries that are older than `<time-to-live-seconds>` will be automatically evicted from the near cache. It can be any integer between `0` and `Integer.MAX_VALUE`. `0` means **infinite**. Default value is `0`.
-- `max-idle-seconds`: Maximum number of seconds each entry can stay in the near cache as untouched (not-read). Entries that are not read (touched) more than `<max-idle-seconds>` value will be removed from the near cache. It can be any integer between `0` and `Integer.MAX_VALUE`. `0` means `Integer.MAX_VALUE`. Default is `0`.
-- `eviction`: Specifies when the eviction is triggered (`max-size policy`) and which eviction policy (`LRU` or `LFU`) is used for the entries to be evicted. The default value for `max-size-policy` is `ENTRY_COUNT`, default `size` is `10000` and default `eviction-policy` is `LRU`. For High-Density Memory Store near cache, since `ENTRY_COUNT` eviction policy is not supported yet, you must explicitly configure eviction with one of the supported policies:
-	- `USED_NATIVE_MEMORY_SIZE`
-	- `USED_NATIVE_MEMORY_PERCENTAGE`
-	- `FREE_NATIVE_MEMORY_SIZE`
-	- `FREE_NATIVE_MEMORY_PERCENTAGE`.
-
-Near cache can be configured only at the client side.
-
 <br><br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Specifying a `time-to-live-seconds` value is recommended in order to guarantee the eventual eviction of invalidated near cache records.*
 <br><br>
@@ -132,7 +64,3 @@ Near cache configuration can be defined at the client side (using `hazelcast-cli
 - Otherwise: 
 	- If a defined default near cache configuration is found, use this default near cache configuration.
 	- If there is no default near cache configuration, it means there is no near cache configuration for cache.
-	
-
-
-

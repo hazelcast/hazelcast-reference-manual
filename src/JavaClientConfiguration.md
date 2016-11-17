@@ -396,46 +396,7 @@ clientConfig.setLoadBalancer(yourLoadBalancer);
 
 ### Configuring Client Near Cache
 
-Hazelcast distributed map has a Near Cache feature to reduce network latencies. Since the client always requests data from the cluster members, it can be helpful for some of your use cases to configure a near cache on the client side.
-The client supports the same Near Cache that is used in Hazelcast distributed map.
-
-You can create Near Cache on the client side by providing a configuration per map name, as shown below.
-
-```java
-ClientConfig clientConfig = new ClientConfig();
-CacheConfig nearCacheConfig = new NearCacheConfig();
-nearCacheConfig.setName("mapName");
-clientConfig.addNearCacheConfig(nearCacheConfig);
-```
-
-You can use wildcards for the map name, as shown below.
-
-```java
-nearCacheConfig.setName("map*");
-nearCacheConfig.setName("*map");
-```
-
-The following is an example declarative configuration for Near Cache. 
-
-```xml
-</hazelcast-client>
-	...
-	...
-	<near-cache name="MENU">
-		<max-size>2000</max-size>
-		<time-to-live-seconds>0</time-to-live-seconds>
-		<max-idle-seconds>0</max-idle-seconds>
-		<eviction-policy>LFU</eviction-policy>
-		<invalidate-on-change>true</invalidate-on-change>
-		<in-memory-format>OBJECT</in-memory-format>
-	</near-cache>
-	...
-</hazelcast-client>
-```
-
-Name of Near Cache on the client side must be the same as the name of IMap on the server for which this Near Cache is being created.
-
-Near Cache can have its own `in-memory-format` which is independent of the `in-memory-format` of the servers.
+The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Since the client always requests data from the cluster members, it can be helpful in some use cases to configure a Near Cache on the client side. Please refer to the [Near Cache section](#near-cache) for a detailed explanation of the Near Cache feature and its configuration.
 
 
 ### Client Group Configuration
