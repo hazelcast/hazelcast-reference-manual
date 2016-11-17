@@ -16,8 +16,9 @@ This foundation includes, but is not limited to, storing keys and values next to
 
 High-Density Memory Store is currently provided for the following Hazelcast features and implementations:
 
-- [Map](#using-high-density-memory-store-with-map) and [near cache](#using-high-density-memory-store-with-near-cache)
+- [Map](#using-high-density-memory-store-with-map)
 - JCache Implementation
+- [Near Cache](#near-cache)
 - [Hot Restart Persistence](#hot-restart-persistence)
 - [Java Client](#using-high-density-memory-store-with-java-client), when using the near cache for client
 - [Web Session Replications](#using-high-density-memory-store)
