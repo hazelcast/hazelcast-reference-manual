@@ -1,7 +1,7 @@
 
 ## Deploying On Pivotal Cloud Foundry
 
-![image](images/Plugin.png)
+<img src="images/Plugin_New.png" alt="Azure Plugin" height="22" width="84">
 <br></br>
 
 

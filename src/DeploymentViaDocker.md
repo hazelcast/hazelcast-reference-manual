@@ -1,7 +1,7 @@
 
 ## Deploying using Docker
 
-![image](images/Plugin.png)
+<img src="images/Plugin_New.png" alt="Azure Plugin" height="22" width="84">
 <br></br>
 
 You can deploy your Hazelcast projects using the Docker containers. Hazelcast has the following images on Docker:
