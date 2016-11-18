@@ -11,7 +11,7 @@ These benefits do not come for free, please consider the following trade-offs:
 
 Near Cache is highly recommended for data structures that are mostly read.
 
-In a client/server system you must enable the Near Cache separately on the client, without the need to configure it on the member. Please note that Near Cache configuration is specific to the member or client itself: a data structure on a member may not have Near Cache configured while the same data structure on a client may have Near Cache configured. They also can have different Near Cache configurations.
+In a client/server system you must enable the Near Cache separately on the client, without the need to configure it on the server. Please note that Near Cache configuration is specific to the server or client itself: a data structure on a server may not have Near Cache configured while the same data structure on a client may have Near Cache configured. They also can have different Near Cache configurations.
 
 If you are using Near Cache, you should take into account that your hits to the keys in the Near Cache are not reflected as hits to the original keys on the primary members. This has for example an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even though there is a hit on a key in Near Cache, your original key on the primary member may expire.
 
@@ -23,13 +23,13 @@ The following matrix shows the Hazelcast data structures with Near Cache support
 
 | Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` |
 |:------------------------|:-------------------|:----------------------|:----------------------|
-| IMap member             | yes                | yes                   | no                    |
+| IMap server             | yes                | yes                   | no                    |
 | IMap client             | yes                | no                    | no                    |
-| JCache member           | no                 | no                    | no                    |
+| JCache server           | no                 | no                    | no                    |
 | JCache client           | yes                | no                    | yes                   |
-| ReplicatedMap member    | no                 | no                    | no                    |
+| ReplicatedMap server    | no                 | no                    | no                    |
 | ReplicatedMap client    | yes                | no                    | no                    |
-| TransactionalMap member | limited            | no                    | no                    |
+| TransactionalMap server | limited            | no                    | no                    |
 | TransactionalMap client | no                 | no                    | no                    |
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable Near Cache on lite members for faster reads.*
@@ -77,17 +77,9 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setEvictionConfig(evictionConfig)
   .setCacheLocalEntries(true|false)
   .setLocalUpdatePolicy(LocalUpdatePolicy.INVALIDATE|CACHE);
-
-// configure for IMap, TransactionalMap or lite members
-Config config = new Config();
-config.getMapConfig("myDataStructure").setNearCacheConfig(nearCacheConfig);
-
-// configure for IMap, ReplicatedMap or JCache clients
-ClientConfig clientConfig = new ClientConfig();
-clientConfig.addNearCacheConfig(nearCacheConfig);
 ```
 
-The class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a> is used for all supported Hazelcast data structures on members and clients.
+The class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a> is used for all supported Hazelcast data structures on servers and clients.
 
 Following are the descriptions of all configuration elements:
 
@@ -111,39 +103,81 @@ Following are the descriptions of all configuration elements:
 	* `FREE_NATIVE_MEMORY_SIZE`: Minimum free native memory size in megabytes (`NATIVE` in-memory format only).
 	* `FREE_NATIVE_MEMORY_PERCENTAGE`: Minimum free native memory percentage (`NATIVE` in-memory format only).
   - `size`: Maximum size of the Near Cache used for `max-size-policy`. When this is reached the Near Cache is evicted based on the policy defined. Any integer between `0` and `Integer.MAX_VALUE`. `0` means `Integer.MAX_VALUE`. Its default value is `0`.
- - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
+ - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast servers, not on Hazelcast clients (which have no local entries).
  - `local-update-policy`: Specifies the update policy of the local Near Cache. Is just available on JCache clients. Available values are as follows:
    - `INVALIDATE`: Does not update the local Near Cache. Will invalidate the local Near Cache eventually (default value).
    - `CACHE`: Updates the local Near Cache immediately after the put operation completes.
 
 ### Near Cache configuration examples
 
-The following are configuration examples for IMap Near Caches for Hazelcast members and clients.
+This section shows some configuration examples for different Hazelcast data structures.
+
+#### Near Cache example for IMap
+
+The following are configuration examples for IMap Near Caches for Hazelcast servers and clients.
 ```xml
 <hazelcast>
   <map name="mostlyReadMap">
+    <in-memory-format>BINARY</in-memory-format>
     <near-cache>
-      <in-memory-format>BINARY</in-memory-format>
-      <invalidate-on-change>true</invalidate-on-change>
-      <eviction eviction-policy="LFU" max-size-policy="ENTRY_COUNT" size="5000"/>
+      <in-memory-format>OBJECT</in-memory-format>
+      <invalidate-on-change>false</invalidate-on-change>
+      <time-to-live-seconds>600</time-to-live-seconds>
+      <eviction eviction-policy="NONE" max-size-policy="ENTRY_COUNT" size="5000"/>
       <cache-local-entries>true</cache-local-entries>
     </near-cache>
   </map>
 </hazelcast>
 ```
+```java
+EvictionConfig evictionConfig = new EvictionConfig()
+  .setEvictionPolicy(EvictionPolicy.NONE)
+  .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT)
+  .setSize(5000);
+
+NearCacheConfig nearCacheConfig = new NearCacheConfig()
+  .setInMemoryFormat(InMemoryFormat.OBJECT)
+  .setInvalidateOnChange(false)
+  .setTimeToLiveSeconds(600)
+  .setEvictionConfig(evictionConfig);
+
+Config config = new Config();
+config.getMapConfig("mostlyReadMap")
+  .setInMemoryFormat(InMemoryFormat.BINARY)
+  .setNearCacheConfig(nearCacheConfig);
+```
+
+The Near Cache configuration for maps on severs is a child of the map configuration, so you don't have to define the map name in the Near Cache configuration.
 ```xml
 <hazelcast-client>
-  <map name="mostlyReadMap"/>
-
   <near-cache name="mostlyReadMap">
     <in-memory-format>OBJECT</in-memory-format>
-    <invalidate-on-change>false</invalidate-on-change>
-    <time-to-live-seconds>600</time-to-live-seconds>
-    <max-idle-seconds>100</max-idle-seconds>
-    <eviction eviction-policy="NONE" max-size-policy="ENTRY_COUNT" size="10000"/>
+    <invalidate-on-change>true</invalidate-on-change>
+    <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="50000"/>
   </near-cache>
 </hazelcast-client>
 ```
+```java
+EvictionConfig evictionConfig = new EvictionConfig()
+  .setEvictionPolicy(EvictionPolicy.LRU)
+  .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT)
+  .setSize(50000);
+
+NearCacheConfig nearCacheConfig = new NearCacheConfig()
+  .setName("mapName")
+  .setInMemoryFormat(InMemoryFormat.OBJECT)
+  .setInvalidateOnChange(true)
+  .setEvictionConfig(evictionConfig);
+
+ClientConfig clientConfig = new ClientConfig()
+  .addNearCacheConfig(nearCacheConfig);
+```
+
+The Near Cache on the client side must have the same name as the IMap on the server for which this Near Cache is being created. You can use wildcards, so in this example `mostlyRead*` would also match the map `mostlyReadMap`.
+
+A Near Cache can have its own `in-memory-format` which is independent of the `in-memory-format` of the data structure.
+
+#### Near Cache example for JCache clients
 
 The following is a configuration example for a JCache Near Cache for a Hazelcast client.  
 ```xml
@@ -151,76 +185,67 @@ The following is a configuration example for a JCache Near Cache for a Hazelcast
   <near-cache name="mostlyReadCache">
     <in-memory-format>OBJECT</in-memory-format>
     <invalidate-on-change>true</invalidate-on-change>
-    <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="10000"/>
+    <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="30000"/>
     <local-update-policy>CACHE</local-update-policy>
   </near-cache>
 </hazelcast-client>
 ```
+```java
+EvictionConfig evictionConfig = new EvictionConfig()
+  .setEvictionPolicy(EvictionPolicy.LRU)
+  .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT)
+  .setSize(30000);
 
+NearCacheConfig nearCacheConfig = new NearCacheConfig()
+  .setName("mostlyReadCache")
+  .setInMemoryFormat(InMemoryFormat.OBJECT)
+  .setInvalidateOnChange(true)
+  .setEvictionConfig(evictionConfig)
+  .setLocalUpdatePolicy(LocalUpdatePolicy.CACHE);
+
+ClientConfig clientConfig = new ClientConfig()
+  .addNearCacheConfig(nearCacheConfig);
+```
+
+#### Near Cache with High-Density Memory Store example
 <font color="##153F75">**Hazelcast Enterprise HD**</font><br/>
-The following is a configuration example for an IMap High-Density Near Cache for a Hazelcast member.
+The following is a configuration example for an IMap High-Density Near Cache for a Hazelcast server.
 ```xml
 <hazelcast>
   <map name="mostlyReadHDMap">
+    <in-memory-format>OBJECT</in-memory-format>
     <near-cache>
       <in-memory-format>NATIVE</in-memory-format>
       <eviction eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_PERCENTAGE" size="90"/>
-      <cache-local-entries>true</cache-local-entries>
     </near-cache>
   </map>
 </hazelcast>
 ```
+```java
+EvictionConfig evictionConfig = new EvictionConfig()
+  .setEvictionPolicy(EvictionPolicy.LFU)
+  .setMaximumSizePolicy(MaxSizePolicy.USED_NATIVE_MEMORY_PERCENTAGE)
+  .setSize(90);
+
+NearCacheConfig nearCacheConfig = new NearCacheConfig()
+  .setInMemoryFormat(InMemoryFormat.NATIVE)
+  .setEvictionConfig(evictionConfig);
+
+Config config = new Config();
+config.getMapConfig("mostlyReadHDMap")
+  .setInMemoryFormat(InMemoryFormat.OBJECT)
+  .setNearCacheConfig(nearCacheConfig);
+```
 Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the [Configuring High-Density Memory Store section](#configuring-high-density-memory-store).
 
 Note that a map and its Near Cache can independently use High-Density Memory Store. For example, if your map does not use High-Density Memory Store, its Near Cache can still use it.
-
-!!!!!!!!!!!!!!!!!!
-
-You can create Near Cache on the client side by providing a configuration per map name, as shown below.
-
-```java
-ClientConfig clientConfig = new ClientConfig();
-CacheConfig nearCacheConfig = new NearCacheConfig();
-nearCacheConfig.setName("mapName");
-clientConfig.addNearCacheConfig(nearCacheConfig);
-```
-
-You can use wildcards for the map name, as shown below.
-
-```java
-nearCacheConfig.setName("map*");
-nearCacheConfig.setName("*map");
-```
-
-The following is an example declarative configuration for Near Cache. 
-
-```xml
-</hazelcast-client>
-	...
-	<near-cache name="MENU">
-		<max-size>2000</max-size>
-		<time-to-live-seconds>0</time-to-live-seconds>
-		<max-idle-seconds>0</max-idle-seconds>
-		<eviction-policy>LFU</eviction-policy>
-		<invalidate-on-change>true</invalidate-on-change>
-		<in-memory-format>OBJECT</in-memory-format>
-	</near-cache>
-	...
-</hazelcast-client>
-```
-
-Name of Near Cache on the client side must be the same as the name of IMap on the server for which this Near Cache is being created.
-
-Near Cache can have its own `in-memory-format` which is independent of the `in-memory-format` of the servers.
-
-!!!!!!!!!!!!!!!!!!
 
 ### Near Cache Invalidation
 
 When you enable invalidations on Near Cache, either programmatically via `NearCacheConfig#setInvalidateOnChange` or declaratively via `<invalidate-on-change>true</invalidate-on-change>`, when entries are updated or removed from an entry in the underlying IMap, corresponding entries are removed from Near Caches to prevent stale reads.
 This is called Near Cache invalidation.
 
-Invalidations can be sent from members to client Near Caches or to member Near Caches, either individually or in batches. Default behavior is sending in batches. If there are lots of mutating operations such as put/remove on IMap, it is advised that you make invalidations in batches. This reduces the network traffic and keeps the eventing system less busy.
+Invalidations can be sent from servers to client Near Caches or to server Near Caches, either individually or in batches. Default behavior is sending in batches. If there are lots of mutating operations such as put/remove on IMap, it is advised that you make invalidations in batches. This reduces the network traffic and keeps the eventing system less busy.
 
 You can use the following system properties to configure the Near Cache invalidation:
 
