@@ -14,6 +14,8 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 7 - Distributed Data Structures](#distributed-data-structures)|[Ringbuffer](#ringbuffer)|Added [Ringbuffer with Persistent Datastore](#ringbuffer-with-persistent-datastore) as a new section.
 |||Added [Overview of Hazelcast Distributed Objects](#overview-of-hazelcast-distributed-objects), [Loading and Destroying a Distributed Object](#loading-and-destroying-a-distributed-object) and [Controlling Partitions](#controlling-partitions) as new sections.  
 |[Chapter 10 - Distributed Query](#distributed-query)||Explanation for the `__key` attribute added under [Querying with SQL](#querying-with-sql) section.
+||[Fast-Aggregations](#fast-aggregations)|Added as a new section.
+||[Projections](#projections)|Added as a new section.
 |[Chapter 14 - Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added example scenarios to give more idea on how the restart process and force start works.
 |[Chapter 20 - Performance](#performance)|[Near Cache](#near-cache)|Added as a new section to consolidate all near cache related content in the Reference Manual.|
 |[Chapter 21 - Hazelcast Simulator](#hazelcast-simulator)||Moved the content to Simulator's own GitHub repository at [Hazelcast Simulator](https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md).|

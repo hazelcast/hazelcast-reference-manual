@@ -1,11 +1,11 @@
 
 ## Projections
 
-There are cases where instead of sending all the data returned by a query from a Node we want to transform (strip down) each result object in order to avoid redundant network traffic.
-For example, we select all employees based on some criteria, but we just want to return their name instead of the whole Employee object.
-It is easy doable with the Projection API.
+There are cases where instead of sending all the data returned by a query from a member, you want to transform (strip down) each result object in order to avoid redundant network traffic.
 
-### The Projections's API
+For example, you select all employees based on some criteria, but you just want to return their name instead of the whole Employee object. It is easily doable with the Projection API.
+
+### Projections API
 
 The API of the Projection looks as follows:
 
@@ -69,7 +69,7 @@ There are two methods that enable using the Projections:
 
 ### Sample implementation
 
-Let's consider the following domain object stored in an IMap.
+Let's consider the following domain object stored in an IMap:
 
 ```java
 public class Employee implements Serializable {
@@ -90,7 +90,7 @@ public class Employee implements Serializable {
 
 ```
 
-In order to return just the names the Employees the user can run the Query in the following way:
+In order to return just the names of the Employees, you can run the Query in the following way:
 
 ```java
         Collection<String> names = employees.project(new Projection<Map.Entry<String, Employee>, String>() {

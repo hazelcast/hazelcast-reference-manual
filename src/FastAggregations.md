@@ -1,11 +1,11 @@
 
 ## Fast-Aggregations
 
-Fast-Aggregations are the successor of the [Aggregators](#aggregators).
-They are equivalent to the Map-Reduce Aggregators in most of the use-cases, but instead of running on the Map-Reduce engine they run on the Query infrastructure.
-Their performance is tens to hundreds times better due to the fact that they run in parallel for each partition and are highly optimized for speed and low memory consumption.
+Fast-Aggregations functionality is the successor of the [Aggregators](#aggregators).
+They are equivalent to the MapReduce Aggregators in most of the use cases, but instead of running on the MapReduce engine they run on the Query infrastructure.
+Their performance is tens to hundreds times better since they run in parallel for each partition and are highly optimized for speed and low memory consumption.
 
-### The Aggregator's API
+### Aggregator API
 
 The API of the Aggregator looks as follows:
 
@@ -79,15 +79,17 @@ public abstract class Aggregator<R, K, V> implements Serializable {
 ```
 
 The Fast-Aggregation consists of three phases represented by three methods:
+
 - `accumulate()`,
 - `combine`,
-- `aggreagate`.
+- `aggregate`.
 
 There are also two callbacks:
+
 - `onAccumulationFinished()` called when the accumulation phase finishes.
 - `onCombinationFinished()` called when the combination phase finishes.
 
-These callbacks enables releasing state that might have been initialised and stored in the Aggregator - to reduce the network traffic.
+These callbacks enable releasing the state that might have been initialized and stored in the Aggregator - to reduce the network traffic.
 
 Each phase is described below.
 
@@ -97,14 +99,15 @@ During the Accumulation phase each Aggregator accumulates all entries passed to 
 It accumulates only those pieces of information that are required to calculate the aggregation result in the last phase - that's implementation specific.
 
 In case of the `DoubleAverage` aggregation the Aggregator would accumulate:
+
 - the sum of the elements it accumulated
 - the count of the elements it accumulated
 
 ##### Combination
 
-Due to the fact that the Fast-Aggregation is executed in parallel on each partition of the cluster the results need to be combined after the Accumulation phase in order to be able calculate the final result.
+Since Fast-Aggregation is executed in parallel on each partition of the cluster, the results need to be combined after the Accumulation phase in order to be able to calculate the final result.
 
-In case of the `DoubleAverage` aggregation the aggregatot would sum up all the sums of the elements and all the counts.
+In case of the `DoubleAverage` aggregation the aggregator would sum up all the sums of the elements and all the counts.
 
 
 ##### Aggregation
@@ -118,7 +121,7 @@ In case of the `DoubleAverage` aggregation the Aggregator would just divide the 
 
 Fast-Aggregations are available on `com.hazelcast.core.IMap` only.
 
-There are two methods that enables using them:
+There are two methods that enable using them:
 
 ```java
     /**
@@ -141,7 +144,7 @@ There are two methods that enables using them:
     <R> R aggregate(Aggregator<R, K, V> aggregator, Predicate<K, V> predicate);
 ```
 
-#### Sample implementation
+### Sample Implementation
 
 Here's a sample implementation of the Aggregator:
 
@@ -187,16 +190,17 @@ public class DoubleAverageAggregator<K, V> extends AbstractAggregator<Double, K,
 ```
 
 As you can see:
+
 - the `accumulate()` method calculates the sum and the count of the elements.
 - the `combine()` method combines the results from all the accumulations.
 - the `aggregate()` method calculates the final result.
 
-#### Config options
+### Configuration Options
 
 On each partition, after the entries have been passed to the aggregator, the accumulation runs in parallel.
 It means that each aggregator is cloned and receives a sub-set of the entries received from a partition.
 Then, it runs the accumulation phase in all of the cloned aggregators - at the end, the result is combined into a single accumulation result.
 It speeds up the processing by at least the factor of two - even in case of simple aggregations. If the accumulation logic is more "heavy", the speed-up may be more significant.
 
-In order to switch the accumulationn into a sequential mode just set the `hazelcast.aggregation.accumulation.parallel.evaluation` property to `false` (it's set to `true` by default).
+In order to switch the accumulation into a sequential mode just set the `hazelcast.aggregation.accumulation.parallel.evaluation` property to `false` (it's set to `true` by default).
 
