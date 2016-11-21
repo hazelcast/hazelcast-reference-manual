@@ -81,8 +81,8 @@ public abstract class Aggregator<R, K, V> implements Serializable {
 The Fast-Aggregation consists of three phases represented by three methods:
 
 - `accumulate()`,
-- `combine`,
-- `aggregate`.
+- `combine()`,
+- `aggregate()`.
 
 There are also two callbacks:
 
