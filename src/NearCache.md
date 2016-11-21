@@ -1,7 +1,7 @@
 
 ## Near Cache
 
-Map or Cache entries in Hazelcast are partitioned across the cluster members. Hazelcast clients do not have local data at all. Suppose you read the key `k` a number of times from a Hazelcast client or `k` is owned by another member in your cluster. Then each `map.get(k)` will be a remote operation, which creates a lot of network trips. If you have a data structure that is mostly read, then you should consider creating a local Near Cache, so that reads are sped up and less network traffic is created. 
+Map or Cache entries in Hazelcast are partitioned across the cluster members. Hazelcast clients do not have local data at all. Suppose you read the key `k` a number of times from a Hazelcast client or `k` is owned by another member in your cluster. Then each `map.get(k)` or `cache.get(k)` will be a remote operation, which creates a lot of network trips. If you have a data structure that is mostly read, then you should consider creating a local Near Cache, so that reads are sped up and less network traffic is created. 
 
 These benefits do not come for free, please consider the following trade-offs:
 
@@ -23,13 +23,13 @@ The following matrix shows the Hazelcast data structures with Near Cache support
 
 | Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` |
 |:------------------------|:-------------------|:----------------------|:----------------------|
-| IMap server             | yes                | yes                   | no                    |
+| IMap member             | yes                | yes                   | no                    |
 | IMap client             | yes                | no                    | no                    |
-| JCache server           | no                 | no                    | no                    |
+| JCache member           | no                 | no                    | no                    |
 | JCache client           | yes                | no                    | yes                   |
-| ReplicatedMap server    | no                 | no                    | no                    |
+| ReplicatedMap member    | no                 | no                    | no                    |
 | ReplicatedMap client    | yes                | no                    | no                    |
-| TransactionalMap server | limited            | no                    | no                    |
+| TransactionalMap member | limited            | no                    | no                    |
 | TransactionalMap client | no                 | no                    | no                    |
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable Near Cache on lite members for faster reads.*
@@ -79,7 +79,7 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setLocalUpdatePolicy(LocalUpdatePolicy.INVALIDATE|CACHE);
 ```
 
-The class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a> is used for all supported Hazelcast data structures on servers and clients.
+The class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a> is used for all supported Hazelcast data structures on members and clients.
 
 Following are the descriptions of all configuration elements:
 
@@ -97,13 +97,13 @@ Following are the descriptions of all configuration elements:
 	- `NONE`: No items will be evicted and the property max-size will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds` to evict items from the Near Cache.
 	- `RANDOM`: A random item will be evicted.
   - `max-size-policy`: Maximum size policy for eviction of the Near Cache. Available values are as follows:
-	* `ENTRY_COUNT`: Maximum entry count per Near Cache (default value).
-	* `USED_NATIVE_MEMORY_SIZE`: Maximum used native memory size in megabytes (`NATIVE` in-memory format only).
-	* `USED_NATIVE_MEMORY_PERCENTAGE`: Maximum used native memory percentage (`NATIVE` in-memory format only).
-	* `FREE_NATIVE_MEMORY_SIZE`: Minimum free native memory size in megabytes (`NATIVE` in-memory format only).
-	* `FREE_NATIVE_MEMORY_PERCENTAGE`: Minimum free native memory percentage (`NATIVE` in-memory format only).
+	* `ENTRY_COUNT`: Maximum size based on the entry count in the Near Cache (default value).
+	* `USED_NATIVE_MEMORY_SIZE`: Maximum used native memory size of the specified Near Cache in MB to trigger the eviction. If the used native memory size exceeds this threshold, the eviction is triggered.  Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
+	* `USED_NATIVE_MEMORY_PERCENTAGE`: Maximum used native memory percentage of the specified Near Cache to trigger the eviction. If the native memory usage percentage (relative to maximum native memory size) exceeds this threshold, the eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
+	* `FREE_NATIVE_MEMORY_SIZE`: Minimum free native memory size of the specified Near Cache in MB to trigger the eviction. If free native memory size goes below this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
+	* `FREE_NATIVE_MEMORY_PERCENTAGE`: Minimum free native memory percentage of the specified Near Cache to trigger eviction. If free native memory percentage (relative to maximum native memory size) goes below this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
   - `size`: Maximum size of the Near Cache used for `max-size-policy`. When this is reached the Near Cache is evicted based on the policy defined. Any integer between `0` and `Integer.MAX_VALUE`. `0` means `Integer.MAX_VALUE`. Its default value is `0`.
- - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast servers, not on Hazelcast clients (which have no local entries).
+ - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
  - `local-update-policy`: Specifies the update policy of the local Near Cache. Is just available on JCache clients. Available values are as follows:
    - `INVALIDATE`: Does not update the local Near Cache. Will invalidate the local Near Cache eventually (default value).
    - `CACHE`: Updates the local Near Cache immediately after the put operation completes.
@@ -114,7 +114,7 @@ This section shows some configuration examples for different Hazelcast data stru
 
 #### Near Cache Example for IMap
 
-The following are configuration examples for IMap Near Caches for Hazelcast servers and clients.
+The following are configuration examples for IMap Near Caches for Hazelcast members and clients.
 
 ```xml
 <hazelcast>
@@ -130,6 +130,7 @@ The following are configuration examples for IMap Near Caches for Hazelcast serv
   </map>
 </hazelcast>
 ```
+
 ```java
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.NONE)
@@ -148,7 +149,7 @@ config.getMapConfig("mostlyReadMap")
   .setNearCacheConfig(nearCacheConfig);
 ```
 
-The Near Cache configuration for maps on servers is a child of the map configuration, so you do not have to define the map name in the Near Cache configuration.
+The Near Cache configuration for maps on members is a child of the map configuration, so you do not have to define the map name in the Near Cache configuration.
 
 ```xml
 <hazelcast-client>
@@ -176,7 +177,7 @@ ClientConfig clientConfig = new ClientConfig()
   .addNearCacheConfig(nearCacheConfig);
 ```
 
-The Near Cache on the client side must have the same name as the IMap on the server for which this Near Cache is being created. You can use wildcards, so in this example `mostlyRead*` would also match the map `mostlyReadMap`.
+The Near Cache on the client side must have the same name as the IMap on the member for which this Near Cache is being created. You can use wildcards, so in this example `mostlyRead*` would also match the map `mostlyReadMap`.
 
 A Near Cache can have its own `in-memory-format` which is independent of the `in-memory-format` of the data structure.
 
@@ -217,7 +218,7 @@ ClientConfig clientConfig = new ClientConfig()
 <font color="##153F75">**Hazelcast Enterprise HD**</font>
 <br><br/>
 
-The following is a configuration example for an IMap High-Density Near Cache for a Hazelcast server.
+The following is a configuration example for an IMap High-Density Near Cache for a Hazelcast member.
 
 ```xml
 <hazelcast>
@@ -251,17 +252,35 @@ Keep in mind that you should have already enabled the High-Density Memory Store 
 
 Note that a map and its Near Cache can independently use High-Density Memory Store. For example, if your map does not use High-Density Memory Store, its Near Cache can still use it.
 
+### Near Cache Eviction
+
+In the scope of Near Cache, eviction means evicting (clearing) the entries selected according to the given `eviction-policy` when the specified `max-size-policy` has been reached.
+
+The `max-size-policy` defines the state when the Near Cache is full and determines whether the eviction should be triggered. The `size` is either interpreted as entry count, memory size or percentage, depending on the chosen policy.
+
+Once the eviction is triggered the configured `eviction-policy` determines which, if any, entries must be evicted.
+
+### Near Cache Expiration
+
+Expiration means the eviction of expired records. A record is expired: 
+- if it is not touched (accessed/read) for `max-idle-seconds`
+- `time-to-live-seconds` passed since it is put to Near Cache
+
+The actual expiration is performed in two cases:
+
+- When a record is accessed: it is checked if the record is expired or not. If it is expired, it is evicted and `null` is returned as value to the caller.
+- In the background: there is an expiration task that periodically (currently 5 seconds) scans records and evicts the expired records.
+
 ### Near Cache Invalidation
 
-When you enable invalidations on Near Cache, either programmatically via `NearCacheConfig#setInvalidateOnChange` or declaratively via `<invalidate-on-change>true</invalidate-on-change>`, when entries are updated or removed from an entry in the underlying IMap, corresponding entries are removed from Near Caches to prevent stale reads.
-This is called Near Cache invalidation.
+Invalidation is the process of removing an entry from the Near Cache when its value is updated or it is removed from the original data structure (to prevent stale reads). Near Cache invalidation happens asynchronously at the cluster level, but synchronously at the current member. This means that the Near Cache is invalidated within the whole cluster after the modifying operation is finished, but updated from the current member before the modifying operation is done. A modifying operation can be an EntryProcessor, an explicit update or remove as well as an expiration or eviction. Generally, whenever the state of an entry changes in the record store by updating its value or removing it, the invalidation event is sent for that entry.
 
-Invalidations can be sent from servers to client Near Caches or to server Near Caches, either individually or in batches. Default behavior is sending in batches. If there are lots of mutating operations such as put/remove on IMap, it is advised that you make invalidations in batches. This reduces the network traffic and keeps the eventing system less busy.
+Invalidations can be sent from members to client Near Caches or to member Near Caches, either individually or in batches. Default behavior is sending in batches. If there are lots of mutating operations such as put/remove on data structures, it is advised that you configure batch invalidations. This reduces the network traffic and keeps the eventing system less busy, but may increase the delay of individual invalidations.
 
 You can use the following system properties to configure the Near Cache invalidation:
 
-- `hazelcast.map.invalidation.batch.enabled`: Enable or disable batching. Default value is true. When it is set to false, all invalidations are sent immediately.
-- `hazelcast.map.invalidation.batch.size`: Maximum number of invalidations in a batch. Default value is 100.
-- `hazelcast.map.invalidation.batchfrequency.seconds`: If we cannot reach the configured batch size, a background process sends invalidations periodically. Default value is 10 seconds.
+- `hazelcast.map.invalidation.batch.enabled`: Enable or disable batching. Default value is `true`. When it is set to `false`, all invalidations are sent immediately.
+- `hazelcast.map.invalidation.batch.size`: Maximum number of invalidations in a batch. Default value is `100`.
+- `hazelcast.map.invalidation.batchfrequency.seconds`: If the collected invalidations do not reach the configured batch size, a background process sends them periodically. The default value is `10` seconds.
 
 If there are a lot of clients or many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.map.invalidation.batch.size` system property to a suitable value.
