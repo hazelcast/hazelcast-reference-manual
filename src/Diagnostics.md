@@ -15,7 +15,7 @@ To enable diagnostics logging, you should specify the following properties an th
 -Dhazelcast.diagnostics.slowoperations.period.seconds=30
 ```
 
-In addition to the properties at the member side, you should also specify the following properties at the client side:
+At the client side you should specify the following properties:
 
 ```
 -Dhazelcast.diagnostics.enabled=true
@@ -68,4 +68,61 @@ The content format of the diagnostics log file is depicted below:
 
 ### Diagnostics Plugins
 
-As it is stated in the introduction of this section and shown in the log file format above, diagnostics utility consists of plugins such as BuildInfo, SystemProperties, and HazelcastInstance. The following subsections explain these diagnostic plugins.
+As it is stated in the introduction of this section and shown in the log file content above, diagnostics utility consists of plugins such as BuildInfo, SystemProperties, and HazelcastInstance.
+
+##### BuildInfo
+
+It shows the detailed Hazelcast build information including the Hazelcast release number, `Git` revision number, and whether you have Hazelcast Enterprise or not.
+
+##### System Properties
+
+It shows all the properties and their values in your system used by and configured for your Hazelcast installation. These are the properties starting with `java` (excluding `java.awt`), `hazelcast`, `sun` and `os`. It also includes the arguments that are used to startup the JVM.
+
+##### Config Properties
+
+It shows the Hazelcast properties and their values explicitly set by you either on the command line (with `-D`) or by using declarative/programmatic configuration.
+
+##### Metrics
+
+It shows a comprehensive log of what is happening in your Hazelcast system.
+
+You can configure the level of detail and frequency of dumping information to the log file using the following properties:
+
+* `hazelcast.diagnostics.metrics.period.seconds`: Set a value in seconds. Its default is 60.
+* `hazelcast.diagnostics.metrics.level`: Set a level. It can be `Mandatory`, `Info` and `Debug`. Its default is `Mandatory`. 
+
+##### Slow Operations
+
+It shows the slow operations and invocations, Please refer to [SlowOperationDetector](#slowoperationdetector) for more information.
+
+##### Invocations
+
+It shows all kinds of statistics about current and past invocations including current pending invocations, history of invocations and slow history, i.e. all samples where the invocation took more than the defined threshold.  Slow history does not only include the invocations where the operations took a lot of time, but it also includes any other invocations that have been obstructed.
+
+Using the following properties, you can configure the frequency of scanning all pending invocations and the threshold that makes an invocation to be considered as slow:
+
+* `hazelcast.diagnostics.invocation.sample.period.seconds`: Set a value in seconds. Its default is 60.
+* `hazelcast.diagnostics.invocation.slow.threshold.seconds`: Set a value in seconds. Its default is 5.
+
+##### Hazelcast Instance
+
+It shows the basic state of your Hazelcast cluster including the count and addresses of current members and the address of master member. It is useful to get a fast impression of the cluster without needing to analyze a lot of data.
+
+You can configure the frequency at which the cluster information is dumped to the log file using the following property:
+
+* `hazelcast.diagnostics.memberinfo.period.second`: Set a value in seconds. Its default is 60.
+
+##### System Log
+
+It shows the activities in your cluster including when a connection/member is added or removed, and if there is a change in the lifecycle of the cluster. It also includes the reasons for connection closings.
+
+You can enable or disable the system log diagnostics plugin, and configure whether it shows information about partition migrations using the following properties:
+
+* `hazelcast.diagnostics.systemlog.enabled`: Its default is `true`.
+* `hazelcast.diagnostics.systemlog.partitions`: Its default is false. Please note that if you enable this, you may get a lot of log entries if you have many partitions.
+
+
+
+
+ 
+
