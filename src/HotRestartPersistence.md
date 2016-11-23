@@ -86,6 +86,8 @@ You can configure Hot Restart programmatically or declaratively. The configurati
 The following are the descriptions of the Hot Restart configuration elements.
 
 - `hot-restart-persistence`: The configuration that enables the Hot Restart feature. It includes the element `base-dir` that is used to specify the directory where the Hot Restart data will be stored. The default value for `base-dir` is `hot-restart`. You can use the default value, or you can specify the value of another folder containing the Hot Restart configuration, but it is mandatory that this `hot-restart` element has a value. This directory will be created automatically if it does not exist.
+A single `base-dir` can be used only and only by a single Hazelcast member, it cannot be shared by multiple members. An attempt to use the same `base-dir` by multiple members will make these members abort the startup process except one which wins the ownership of the directory.
+- `parallelism`: Level of parallelism in Hot Restart Persistence. There will be this many IO threads, each writing in parallel to its own files. During the Hot Restart procedure, this many IO threads will be reading the files and this many rebuilder threads will be rebuilding the Hot Restart metadata.
 - `validation-timeout-seconds`: Validation timeout for the Hot Restart process when validating the cluster members expected to join and the partition table on the whole cluster.
 - `data-load-timeout-seconds`: Data load timeout for the Hot Restart process. All members in the cluster should finish restoring their local data before this timeout.
 - `hot-restart`: The configuration that enables or disables the Hot Restart feature per data structure. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`). Turning on `fsync` guarantees that data is persisted to the disk device when a write operation returns successful response to the caller. By default, `fsync` is turned off. That means data will be persisted to the disk device eventually, instead of on every disk write. This generally provides better performance.
@@ -103,6 +105,7 @@ An example configuration is shown below.
    ...
    <hot-restart-persistence enabled="true">
 	   <base-dir>/mnt/hot-restart</base-dir>
+	   <parallelism>1</parallelism>
 	   <validation-timeout-seconds>120</validation-timeout-seconds>
 	   <data-load-timeout-seconds>900</data-load-timeout-seconds>
    </hot-restart-persistence>
@@ -131,6 +134,7 @@ The programmatic equivalent of the above declarative configuration is shown belo
 HotRestartPersistenceConfig hotRestartPersistenceConfig = new HotRestartPersistenceConfig();
 hotRestartPersistenceConfig.setEnabled(true);
 hotRestartPersistenceConfig.setBaseDir(new File("/mnt/hot-restart"));
+hotRestartPersistenceConfig.setParallelism(1);
 hotRestartPersistenceConfig.setValidationTimeoutSeconds(120);
 hotRestartPersistenceConfig.setDataLoadTimeoutSeconds(900);
 config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
@@ -145,9 +149,16 @@ cacheConfig.getHotRestartConfig().setEnabled(true);
 ```
 
 
-### Hot Restart and IP Address-Port
+### Moving/Copying Hot Restart Data
 
-Hazelcast relies on the IP address-port pair as a unique identifier for a cluster member. The member must restart with these address-port settings the same as before shutdown. Otherwise, Hot Restart fails.
+After Hazelcast member owning the Hot Restart data is shutdown, Hot Restart `base-dir` can be copied/moved to a different server (which may have different IP address and/or different number of CPU cores) and Hazelcast member can be restarted using the existing Hot Restart data on that new server. Having a new IP address does not affect Hot Restart, since it does not rely on the IP address of the server but instead uses `Member` UUID as a unique identifier.
+
+This flexibility provides;
+- ability to replace one or more faulty servers with new ones easily without touching remaining cluster
+- ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
+- ability to copy production data to test environment, so that a more functional test cluster can bet setup  
+
+Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores e.g. `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicity set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see [System Properties section](#system-properties).
 
 ### Hot Restart Persistence Design Details
 
