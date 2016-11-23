@@ -17,6 +17,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Fast-Aggregations](#fast-aggregations)|Added as a new section.
 ||[Projections](#projections)|Added as a new section.
 |[Chapter 14 - Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added example scenarios to give more idea on how the restart process and force start works.<br></br> Added the new configuration element `parallelism`. <br></br> Added the new section Moving/Copying Hot Restart Data.
+||[Hazelcast Striim](#hazelcast-striim)| Added as a new section.
 |[Chapter 18 - Management](#management)|[Diagnostics](#diagnostics)|Added as a new section to explain the diagnostic utility of Hazelcast.|
 |[Chapter 20 - Performance](#performance)|[Near Cache](#near-cache)|Added as a new section to consolidate all near cache related content in the Reference Manual.|
 |[Chapter 21 - Hazelcast Simulator](#hazelcast-simulator)||Moved the content to Simulator's own GitHub repository at [Hazelcast Simulator](https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md).|
