@@ -19,18 +19,18 @@ If you are using Near Cache, you should take into account that your hits to the 
 
 ### Hazelcast Data Structures with Near Cache Support
 
-The following matrix shows the Hazelcast data structures with Near Cache support. Please have a look at the next section for a detailed explanation of `cache-local-entries` and `local-update-policy`.
+The following matrix shows the Hazelcast data structures with Near Cache support. Please have a look at the next section for a detailed explanation of `cache-local-entries`, `local-update-policy` and `preloader`.
 
-| Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` |
-|:------------------------|:-------------------|:----------------------|:----------------------|
-| IMap member             | yes                | yes                   | no                    |
-| IMap client             | yes                | no                    | no                    |
-| JCache member           | no                 | no                    | no                    |
-| JCache client           | yes                | no                    | yes                   |
-| ReplicatedMap member    | no                 | no                    | no                    |
-| ReplicatedMap client    | yes                | no                    | no                    |
-| TransactionalMap member | limited            | no                    | no                    |
-| TransactionalMap client | no                 | no                    | no                    |
+| Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` | `preloader` |
+|:------------------------|:-------------------|:----------------------|:----------------------|:------------|
+| IMap member             | yes                | yes                   | no                    | no          |
+| IMap client             | yes                | no                    | no                    | yes         |
+| JCache member           | no                 | no                    | no                    | no          |
+| JCache client           | yes                | no                    | yes                   | yes         |
+| ReplicatedMap member    | no                 | no                    | no                    | no          |
+| ReplicatedMap client    | yes                | no                    | no                    | no          |
+| TransactionalMap member | limited            | no                    | no                    | no          |
+| TransactionalMap client | no                 | no                    | no                    | no          |
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable Near Cache on lite members for faster reads.*
 
@@ -43,7 +43,7 @@ The following shows the configuration for the Hazelcast Near Cache.
 ```xml
 <near-cache name="myDataStructure">
   <in-memory-format>(OBJECT|BINARY|NATIVE)</in-memory-format>
-  <invalidate-on-change>(false|true)</invalidate-on-change>
+  <invalidate-on-change>(true|false)</invalidate-on-change>
   <time-to-live-seconds>(0..INT_MAX)</time-to-live-seconds>
   <max-idle-seconds>(0..INT_MAX)</max-idle-seconds>
   <eviction eviction-policy="(LRU|LFU|RANDOM|NONE)"
@@ -53,6 +53,10 @@ The following shows the configuration for the Hazelcast Near Cache.
             size="(0..INT_MAX)"/>
   <cache-local-entries>(false|true)</cache-local-entries>
   <local-update-policy>(INVALIDATE|CACHE)</local-update-policy>
+  <preloader enabled="(true|false)"
+             file-name="nearcache-example.store"
+             store-initial-delay-seconds="(0..INT_MAX)"
+             store-interval-seconds="(0..INT_MAX)"/>
 </near-cache>
 ```
 
@@ -68,6 +72,12 @@ EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.LRU|LFU|RANDOM|NONE);
   .setSize(0..INT_MAX);
 
+NearCachePreloaderConfig preloaderConfig = new NearCachePreloaderConfig()
+  .setEnabled(true|false)
+  .setFileName("nearcache-example.store")
+  .setStoreInitialDelaySeconds(0..INT_MAX)
+  .setStoreIntervalSeconds(0..INT_MAX);
+
 NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setName("myDataStructure")
   .setInMemoryFormat(InMemoryFormat.BINARY|OBJECT|NATIVE)
@@ -76,7 +86,8 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setMaxIdleSeconds(0..INT_MAX)
   .setEvictionConfig(evictionConfig)
   .setCacheLocalEntries(true|false)
-  .setLocalUpdatePolicy(LocalUpdatePolicy.INVALIDATE|CACHE);
+  .setLocalUpdatePolicy(LocalUpdatePolicy.INVALIDATE|CACHE)
+  .setPreloaderConfig(preloaderConfig);
 ```
 
 The class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/NearCacheConfig.java" target="_blank">NearCacheConfig</a> is used for all supported Hazelcast data structures on members and clients.
@@ -107,6 +118,11 @@ Following are the descriptions of all configuration elements:
 - `local-update-policy`: Specifies the update policy of the local Near Cache. Is just available on JCache clients. Available values are as follows:
    - `INVALIDATE`: Does not update the local Near Cache. Will invalidate the local Near Cache eventually (default value).
    - `CACHE`: Updates the local Near Cache immediately after the put operation completes.
+- `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
+  - `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
+  - `file-name`: Specifies the file name for the preloader of this Near Cache.
+  - `store-initial-delay-seconds`: Specifies the delay in seconds until the keys of this Near Cache are stored for the first time. Its default value is `600`.
+  - `store-interval-seconds`: Specifies the interval in seconds in which the keys of this Near Cache are stored. Its default value is `600`. 
 
 ### Near Cache Configuration Examples
 
@@ -298,3 +314,11 @@ You can configure eventual consistency with the system properties below (same pr
 - `hazelcast.invalidation.max.tolerated.miss.count`: Default value is 10. If missed invalidation count is bigger than this value, relevant cached data will be made unreachable. 
 - `hazelcast.invalidation.reconciliation.interval.seconds`: Default value is 60 seconds. This is a periodic task that scans cluster members periodically to compare generated invalidation events with the received ones from Near Cache.
 
+### Near Cache Preloader
+
+The Near Cache preloader is a functionality to store the keys from a Near Cache to provide a fast re-population of the previous hot data set after a Hazelcast Client has been restarted. It is available on IMap and JCache clients.
+
+The Near Cache preloader stores the keys (not the values) of Near Cache entries in regular intervals. You can define the initial delay via `store-initial-delay-seconds`, e.g., if you know that your hot data set will need some time to build up. You can configure the interval via `store-interval-seconds` which determines how often the key-set will be stored. The persistence will not run continuously. Whenever the storage is scheduled, it will be performed on the actual keys in the Near Cache.
+ 
+ The Near Cache preloader will be triggered on the first initialization of the data structure on the client, e.g., `client.getMap("myNearCacheMap")`. This schedules the preloader, which will work in the background, so your application is not blocked. The storage will be enabled after the loading is completed.
+ 
