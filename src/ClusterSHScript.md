@@ -12,12 +12,13 @@ The script `cluster.sh` needs the following parameters to operate according to y
 
 Parameter | Default Value | Description
 :--------------|:------|:------------
-`-o` or `--operation`|`get-state`|Executes a cluster-wide operation. Operation can be `get-state`, `change-state`, `shutdown` and `force-start`.
+`-o` or `--operation`|`get-state`|Executes a cluster-wide operation. Operation can be `get-state`, `change-state`, `shutdown`, `force-start`, `get-cluster-version` and `change-cluster-version`.
 `-s` or `--state`|None|Updates the state of the cluster to a new state. New state can be `active`, `frozen`, `passive`. This is used with the operation `change-state`. This parameter has no default value; when you use this, you should provide a valid state.
 `-a` or `--address`|`127.0.0.1`|Defines the IP address of a cluster member. If you want to manage your cluster remotely, you should use this parameter to provide the IP address of a member to this script.
 `-p` or `--port`|`5701`|Defines on which port Hazelcast is running on the local or remote machine. The default value is `5701`.
 `-g` or `--groupname`|`dev`|Defines the name of a cluster group which is used for a simple authentication. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
 `-P` or `--password`|`dev-pass`|Defines the password of a cluster group. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
+`-v` or `--version`|None|Defines the cluster version to change to. To be used in conjunction with `change-cluster-version` operation. 
 
 The script `cluster.sh` is self-documented; you can see the parameter descriptions using the command `sh cluster.sh -h` or `sh cluster.sh --help`.
 
@@ -90,6 +91,30 @@ Similarly, you can use the following command for the same purpose:
 
 `sh cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --groupname test --password test`
 
+
+<br></br>
+
+**Getting the current cluster version:**
+
+To get the cluster version, use the following command:
+
+`sh cluster.sh -o get-cluster-version -a 172.16.254.1 -p 5702 -g test -P test`
+
+The following also gets the cluster state, using the alternative parameter names (e.g. `--port` instead of `-p`):
+
+`sh cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --groupname test --password test`
+
+<br></br>
+
+**Changing cluster version:**
+
+Learn more about when you should change the cluster version in [Rolling Upgrades section](#Rolling-member-upgrades-across-minor-versions).
+
+To change the cluster version to `3.9`, use the following command:
+
+`sh cluster.sh -o change-cluster-version -v 3.9 -a 172.16.254.1 -p 5702 -g test -P test`
+
+Cluster version is always in `major.minor` format, using other formats will result in a failure.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Currently, this script is not supported on the Windows platforms.*
