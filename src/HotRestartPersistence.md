@@ -81,19 +81,19 @@ Please refer to the [Hot Restart functionality](#hot-restart) of the Management 
 
 ### Partial Start
 
-When one or more members fail to start or have incorrect Hot Restart data (stale or corrupted data) or fail to load their Hot Restart data, cluster will become incomplete and restart mechanism can not proceed. One solution is to use [Force Start](#force-start) and make a fresh start with existing members. Another solution is to do a partial start.
+When one or more members fail to start or have incorrect Hot Restart data (stale or corrupted data) or fail to load their Hot Restart data, cluster will become incomplete and restart mechanism cannot proceed. One solution is to use [Force Start](#force-start) and make a fresh start with existing members. Another solution is to do a partial start.
 
-Partial start means, cluster will start with an incomplete member set. Data belonging to those members missing will be assumed lost and Hazelcast will try to recover missing data using restored backups.  For example, if you have minimum 2 backups configured for all maps and caches, then a partial start up to 2 missing members will be safe against data loss. If there are more than 2 missing members or there are maps/caches with less than 2 backups then data loss is expected.
+Partial start means that the cluster will start with an incomplete member set. Data belonging to those missing members will be assumed lost and Hazelcast will try to recover missing data using the restored backups.  For example, if you have minimum two backups configured for all maps and caches, then a partial start up to two missing members will be safe against data loss. If there are more than two missing members or there are maps/caches with less than two backups, then data loss is expected.
 
-Partial start is controlled by `cluster-data-recovery-policy` configuration parameter and is not allowed by default. To enable partial start, one of `PARTIAL_RECOVERY_MOST_RECENT` or `PARTIAL_RECOVERY_MOST_COMPLETE` should be set. For details see [Configuring Hot Restart](#configuring-hot-restart).
+Partial start is controlled by `cluster-data-recovery-policy` configuration parameter and is not allowed by default. To enable partial start, one of the configuration values `PARTIAL_RECOVERY_MOST_RECENT` or `PARTIAL_RECOVERY_MOST_COMPLETE` should be set. Please see [Configuring Hot Restart section](#configuring-hot-restart) for details.
 
-When partial start is enabled, Hazelcast can perform a partial start automatically or manually in case of some members are unable to restart successfully. Automatic partial start happens when some members are fail to start and join cluster in `validation-timeout-seconds`. After timeout, Hot Restart chooses to perform partial start with existing members. During validation phase, partial start can be requested manually using the Management Center, REST API and cluster management scripts before `validation-timeout-seconds` passes.
+When partial start is enabled, Hazelcast can perform a partial start automatically or manually in case of some members are unable to restart successfully. Automatic partial start happens when some members fail to start and join cluster in `validation-timeout-seconds`. After timeout, Hot Restart chooses to perform partial start with existing members. During the validation phase, partial start can be requested manually using the Management Center, REST API and cluster management scripts before `validation-timeout-seconds` passes.
 
 Please refer to the [Hot Restart functionality](#hot-restart) of the Management Center section to learn how you can perform a partial restart using the Management Center.
 
-Other situation to decide to do partial start is failures during data load phase. If one or more members fail while loading Hot Restart data, Hazelcast automatically performs a partial start with members successfully restored Hot Restart data.
+Other situation to decide to perform a partial start is the failures during data loading phase. If one or more members fail while loading Hot Restart data, Hazelcast automatically performs a partial start with members successfully restored Hot Restart data.
 
-Selection of members to perform partial start among live members is done according to defined `cluster-data-recovery-policy`. Excluded members are instructed to perform [force start](#force-start), they are only allowed to join cluster only when they clean their Hot Restart data and make a fresh start.
+Selection of members to perform partial start among live members is done according to the defined `cluster-data-recovery-policy`. Excluded members are instructed to perform [force start](#force-start), they are only allowed to join cluster only when they clean their Hot Restart data and make a fresh start.
 
 
 ### Configuring Hot Restart
@@ -107,10 +107,10 @@ A single `base-dir` can be used only and only by a single Hazelcast member, it c
 - `parallelism`: Level of parallelism in Hot Restart Persistence. There will be this many IO threads, each writing in parallel to its own files. During the Hot Restart procedure, this many IO threads will be reading the files and this many rebuilder threads will be rebuilding the Hot Restart metadata.
 - `validation-timeout-seconds`: Validation timeout for the Hot Restart process when validating the cluster members expected to join and the partition table on the whole cluster.
 - `data-load-timeout-seconds`: Data load timeout for the Hot Restart process. All members in the cluster should finish restoring their local data before this timeout.
-- `cluster-data-recovery-policy`: Specifies the data recovery policy that will be respected during hot restart cluster start. Valid values are;
-    * `FULL_RECOVERY_ONLY`: Starts the cluster only when all expected nodes are present and correct. Otherwise, it fails. This is default value.
-    * `PARTIAL_RECOVERY_MOST_RECENT`: Starts the cluster with the members which have most up-to-date partition table and successfully restored their data. All other members will leave the cluster and force-start themselves. If no member restores its data successfully, cluster start fails.	     
-    * `PARTIAL_RECOVERY_MOST_COMPLETE`: Starts the cluster with the largest group of members which have the same partition table version and successfully restored their data. All other members will leave the cluster and force-start themselves. If no member restores its data successfully, cluster start fails.
+- `cluster-data-recovery-policy`: Specifies the data recovery policy that will be respected during Hot Restart cluster start. Valid values are;
+    * `FULL_RECOVERY_ONLY`: Starts the cluster only when all expected members are present and correct. Otherwise, it fails. This is the default value.
+    * `PARTIAL_RECOVERY_MOST_RECENT`: Starts the cluster with the members which have most up-to-date partition table and successfully restored their data. All other members will leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.	     
+    * `PARTIAL_RECOVERY_MOST_COMPLETE`: Starts the cluster with the largest group of members which have the same partition table version and successfully restored their data. All other members will leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.
 - `hot-restart`: The configuration that enables or disables the Hot Restart feature per data structure. This element is used for the supported data structures (in the above examples, you can see that it is included in `map` and `cache`). Turning on `fsync` guarantees that data is persisted to the disk device when a write operation returns successful response to the caller. By default, `fsync` is turned off. That means data will be persisted to the disk device eventually, instead of on every disk write. This generally provides better performance.
 
 #### Hot Restart Configuration Examples
@@ -181,7 +181,7 @@ This flexibility provides;
 - ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
 - ability to copy production data to test environment, so that a more functional test cluster can bet setup  
 
-Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores e.g. `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicity set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see [System Properties section](#system-properties).
+Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores e.g. `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see [System Properties section](#system-properties).
 
 ### Hot Restart Persistence Design Details
 
