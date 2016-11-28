@@ -1,6 +1,22 @@
 
 ### Upgrading from 3.x
 
+- **Upgrading from 3.6.x to 3.7.x when using `JCache`:**
+ Hazelcast 3.7 introduced changes in `JCache` implementation which broke compatibility of 3.6.x clients to 3.7-3.7.2 cluster members and vice versa,
+ so 3.7-3.7.2 clients are also incompatible with 3.6.x cluster members. This issue only affects Java clients which use `JCache` functionality.
+ 
+    Starting with Hazelcast version 3.7.3, a compatibility option is provided which can be used to ensure backwards compatibility with 3.6.x clients.
+ In order to upgrade a 3.6.x cluster and clients to 3.7.3 (or later), you will need to use this compatibility option on either the member or the client
+ side, depending on which one is upgraded first:
+    * first upgrade your cluster members to 3.7.3, adding property `hazelcast.compatibility.3.6.client=true` to your configuration; when started with this
+ property, cluster members are compatible with 3.6.x and 3.7.3+ clients but not with 3.7-3.7.2 clients. Once your cluster is upgraded, you may
+ upgrade your applications to use client version 3.7.3+.
+    * upgrade your clients from 3.6.x to 3.7.3, adding property `hazelcast.compatibility.3.6.server=true` to your Hazelcast client configuration. A
+  3.7.3 client started with this compatibility option is compatible with 3.6.x and 3.7.3+ cluster members but incompatible with 3.7-3.7.2 cluster
+  members. Once your clients are upgraded, you may then proceed to upgrade your cluster members to version 3.7.3 or later.
+ 
+    You may use any of the supported ways [as described in System Properties section](#system-properties) to configure the compatibility option. When done
+ upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration. 
 
 - **Introducing the `spring-aware` element:**
 Before the release 3.5, Hazelcast uses `SpringManagedContext` to scan `SpringAware` annotations by default. This may cause some performance overhead for the users who do not use `SpringAware`.
@@ -26,8 +42,6 @@ The method `getId()` in the interface `DistributedObject` has been removed. Plea
 
 - **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from System Properties, there has been a change to inform to the users who have been using this class. Starting with 3.7, the class `GroupProperties.java` has been replaced by `GroupProperty.java`. 
 In this new class, system properties are instances of the newly introduced `HazelcastProperty` object. You can access the names of these properties by calling `getName()` method of `HazelcastProperty`.
-
-- **Upgrading 3.6.x cluster to 3.7.3**: This is only valid for existing ICache users. Two new system properties added, namely `hazelcast.compatibility.3.6.server` and `hazelcast.compatibility.3.6.client`. When upgrading from (assuming that you are using ICache) 3.6.x to 3.7.3 then the servers should be started with `-Dhazelcast.compatibility.3.6.client=true` to enable existing 3.6.x clients work properly. When upgrading from 3.7.1 and 3.7.2 to 3.7.3 this is not needed.
 
 
 
