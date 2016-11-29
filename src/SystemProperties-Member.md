@@ -32,6 +32,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.event.queue.timeout.millis` | 250 | int | Timeout to enqueue events to event queue.
 `hazelcast.event.thread.count` | 5 | int | Number of event handler threads.
 `hazelcast.graceful.shutdown.max.wait` | 600 | int  |   Maximum wait in seconds during graceful shutdown.
+`hazelcast.http.healthcheck.enabled`|false|bool|Enable/disable Hazelcast's HTTP based health check implementation.  When it is enabled, you can retrieve information about your cluster's health status (member state, cluster state, cluster size, etc.) by launching `http://<your member's host IP>:5701/hazelcast/health`.
 `hazelcast.health.monitoring.delay.seconds`|30|int|Health monitoring logging interval in seconds.
 `hazelcast.health.monitoring.level`|SILENT|string|Health monitoring log level. When *SILENT*, logs are printed only when values exceed some predefined threshold. When *NOISY*, logs are always printed periodically. Set *OFF* to turn off completely.
 `hazelcast.heartbeat.interval.seconds` | 5 | int  |   Heartbeat send interval in seconds.
