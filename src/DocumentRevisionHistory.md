@@ -22,7 +22,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Chapter 18 - Management](#management)|[Diagnostics](#diagnostics)|Added as a new section to explain the diagnostic utility of Hazelcast.|
 |[Chapter 20 - Performance](#performance)|[Near Cache](#near-cache)|Added as a new section to consolidate all near cache related content in the Reference Manual.|
 |[Chapter 21 - Hazelcast Simulator](#hazelcast-simulator)||Moved the content to Simulator's own GitHub repository at [Hazelcast Simulator](https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md).|
-|[Chapter 26 - System Properties](#system-properties)||Added definitions for the new properties: <br></br>- `hazelcast.compatibility.3.6.server`<br></br>- `hazelcast.compatibility.3.6.client`|
+|[Chapter 26 - System Properties](#system-properties)||Added definitions for the following new properties: <br></br>- `hazelcast.compatibility.3.6.server` and `hazelcast.compatibility.3.6.client`: Please refer to the [Upgrading from 3.x section](#upgrading-from-3-x).<br></br> - `hazelcast.http.healthcheck.enabled`: Enabler for A simple HTTP based health check utility. Please refer to the [System Properties chapter](#system-properties).  |
 |[Chapter 29 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
 |[Chapter 30 - Glossary](#glossary)||Added new glossary items.|
 
