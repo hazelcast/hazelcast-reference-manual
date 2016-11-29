@@ -68,9 +68,21 @@ Similarly, you can use the following command for the same purpose:
 
 
 <br></br>
+**Partial starting the cluster:**
+
+To partial start the cluster when Hot Restart is enabled, use the following command:
+
+`sh cluster.sh -o partial-start -a 172.16.254.1 -p 5702 -g test -P test`
+
+Similarly, you can use the following command for the same purpose:
+
+`sh cluster.sh --operation partial-start --address 172.16.254.1 --port 5702 --groupname test --password test`
+
+
+<br></br>
 **Force starting the cluster:**
 
-To force start the cluster, use the following command:
+To force start the cluster when Hot Restart is enabled, use the following command:
 
 `sh cluster.sh -o force-start -a 172.16.254.1 -p 5702 -g test -P test`
 

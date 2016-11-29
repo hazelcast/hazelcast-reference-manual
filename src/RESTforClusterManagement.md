@@ -35,9 +35,19 @@ curl --data "${GROUPNAME}&${PASSWORD}"  http://127.0.0.1:${PORT}/hazelcast/rest/
 
 
 <br></br>
+**Partial starting the cluster:**
+
+To partial start the cluster when Hot Restart is enabled, use the following command:
+
+```
+curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/partialStart/
+```
+
+
+<br></br>
 **Force starting the cluster:**
 
-To force start the cluster, use the following command:
+To force start the cluster when Hot Restart is enabled, use the following command:
 
 ```
 curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/forceStart/
