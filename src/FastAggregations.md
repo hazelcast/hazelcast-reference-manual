@@ -195,6 +195,27 @@ As you can see:
 - the `combine()` method combines the results from all the accumulations.
 - the `aggregate()` method calculates the final result.
 
+### In-built Aggregations
+
+The `com.hazelcast.aggregation.Aggregators` class provides a wide variety of in-built Aggregators.
+The full list is presented below:
+
+- count
+- distinct
+- bigDecimal sum/avg/min/max
+- bigInteger sum/avg/min/max
+- double sum/avg/min/max
+- integer sum/avg/min/max
+- long sum/avg/min/max
+- number avg
+- comparable min/max
+- fixedPointSum, floatingPointSum
+
+E.g. in order to use the `count()` Aggregator just instantiate it using the `Aggregators` factory class.
+
+Each in-built aggregator can also navigate to an attribute of the Object passed to the `accumulate` method (via reflection).
+E.g. `Aggregators.distinct("address.city")` will extract the `address.city` attribute from the object passed to the Aggregator and accumulate the extracted value.
+
 ### Configuration Options
 
 On each partition, after the entries have been passed to the aggregator, the accumulation runs in parallel.
