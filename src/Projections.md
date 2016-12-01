@@ -102,3 +102,15 @@ In order to return just the names of the Employees, you can run the Query in the
 ```
 
 
+### In-built Projections
+
+The `com.hazelcast.projection.Projections` class provides two in-built projections:
+
+- singleAttribute
+- multiAttribute
+
+The `singleAttribute` projection enables extracting a single attribute from an Object (via reflection).
+E.g. `Projection.singleAttribute("address.city")` will extract the `address.city` attribute from the object passed to the Projection.
+
+The `multiAttribute` projection enables extracting multiples attributes from an Object (via reflection).
+E.g. `Projection.multiAttribute("address.city", "postalAddress.city")` will extract both attributes from the Object passed to the Projection and return them in an Object[] array
