@@ -108,7 +108,7 @@ The following also gets the cluster state, using the alternative parameter names
 
 **Changing cluster version:**
 
-Learn more about when you should change the cluster version in [Rolling Upgrades section](#Rolling-member-upgrades-across-minor-versions).
+Learn more about when you should change the cluster version in [Rolling Member Upgrades section](#rolling-member-upgrades).
 
 To change the cluster version to `3.9`, use the following command:
 
