@@ -1,5 +1,5 @@
 
-# Network Partitioning - Split Brain Syndrome
+# Network Partitioning - Split-Brain Syndrome
 
 Imagine that you have a cluster with ten members and that the network is divided into two in a way that four members cannot see the other six members. As a result, you end up having two separate clusters: one with four members and one with six members. Members in each sub-cluster think that the other members are dead even though they are not. This situation is called Network Partitioning (a.k.a. *Split-Brain Syndrome*).
 
@@ -48,9 +48,9 @@ The only metadata available for merge decisions are from the `EntryView` interfa
 You could also create your own versioning scheme or capture a time series of deltas to reconstruct an entry.
 
 
-## How Hazelcast Split Brain Merge Happens
+## How Hazelcast Split-Brain Merge Happens
 
-Here is, step by step, how Hazelcast split brain merge happens:
+Here is, step by step, how Hazelcast split-brain merge happens:
 
 1. The oldest member of the cluster checks if there is another cluster with the same *group-name* and *group-password* in the network.
 2. If the oldest member finds such a cluster, then it figures out which cluster should merge to the other.
@@ -125,5 +125,5 @@ Here is how merge policies are specified per map:
 </hazelcast>
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Map is the only Hazelcast distributed data structure that merges after a split brain syndrome. For the other data structures (e.g. Queue, Topic, IdGenerator, etc. ), one instance of that data structure is chosen after split brain syndrome. *
+![image](images/NoteSmall.jpg) ***NOTE:*** *Map is the only Hazelcast distributed data structure that merges after a split-brain syndrome. For the other data structures (e.g. Queue, Topic, IdGenerator, etc. ), one instance of that data structure is chosen after split-brain syndrome.*
 
