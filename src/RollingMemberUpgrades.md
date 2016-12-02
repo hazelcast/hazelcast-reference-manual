@@ -105,14 +105,14 @@ are compatible with Hazelcast version 3.6 and newer minor versions. Thus older c
 connected to a cluster will operate at the lower version of capabilities until all members are upgraded and the cluster version upgrade occurs.
 
  <br></br>
-**Can I stop and start multiple nodes at once during a rolling member upgrade?**
+**Can I stop and start multiple members at once during a rolling member upgrade?**
 
-It is not recommended due to potential network partitions. It is advised to always stop and start one node in each upgrade step.
+It is not recommended due to potential network partitions. It is advised to always stop and start one member in each upgrade step.
 
  <br></br>
 **Can I upgrade my business app together with Hazelcast while doing a rolling member upgrade?**
 
-Yes, but make sure to make the new version of your app compatible with the old one since there will be a timespan when both versions inter-operate. Checking if two versions of your app are compatible includes verifying binary & algorithmic compatibility, etc.
+Yes, but make sure to make the new version of your app compatible with the old one since there will be a timespan when both versions interoperate. Checking if two versions of your app are compatible includes verifying binary and algorithmic compatibility, and some other steps.
 
-It's worth mentioning that a business app upgrade is orthogonal to a rolling member upgrade. A rolling business app upgrade may be done without upgrading the members.
+It is worth mentioning that a business app upgrade is orthogonal to a rolling member upgrade. A rolling business app upgrade may be done without upgrading the members.
 
