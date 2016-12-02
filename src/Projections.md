@@ -90,7 +90,7 @@ public class Employee implements Serializable {
 
 ```
 
-In order to return just the names of the Employees, you can run the Query in the following way:
+To return just the names of the Employees, you can run the query in the following way:
 
 ```java
         Collection<String> names = employees.project(new Projection<Map.Entry<String, Employee>, String>() {
@@ -102,15 +102,13 @@ In order to return just the names of the Employees, you can run the Query in the
 ```
 
 
-### In-built Projections
+### Built-In Projections
 
-The `com.hazelcast.projection.Projections` class provides two in-built projections:
+The `com.hazelcast.projection.Projections` class provides two built-in Projections:
 
 - singleAttribute
 - multiAttribute
 
-The `singleAttribute` projection enables extracting a single attribute from an Object (via reflection).
-E.g. `Projection.singleAttribute("address.city")` will extract the `address.city` attribute from the object passed to the Projection.
+The `singleAttribute` Projection enables extracting a single attribute from an object (via reflection). For example, `Projection.singleAttribute("address.city")` will extract the `address.city` attribute from the object passed to the Projection.
 
-The `multiAttribute` projection enables extracting multiples attributes from an Object (via reflection).
-E.g. `Projection.multiAttribute("address.city", "postalAddress.city")` will extract both attributes from the Object passed to the Projection and return them in an Object[] array
+The `multiAttribute` Projection enables extracting multiples attributes from an object (via reflection). For example, `Projection.multiAttribute("address.city", "postalAddress.city")` will extract both attributes from the object passed to the Projection and return them in an `Object[]` array.

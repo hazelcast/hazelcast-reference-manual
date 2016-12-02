@@ -95,7 +95,7 @@ Each phase is described below.
 
 ##### Accumulation
 
-During the Accumulation phase each Aggregator accumulates all entries passed to it by the query engine.
+During the accumulation phase each Aggregator accumulates all entries passed to it by the query engine.
 It accumulates only those pieces of information that are required to calculate the aggregation result in the last phase - that's implementation specific.
 
 In case of the `DoubleAverage` aggregation the Aggregator would accumulate:
@@ -105,16 +105,16 @@ In case of the `DoubleAverage` aggregation the Aggregator would accumulate:
 
 ##### Combination
 
-Since Fast-Aggregation is executed in parallel on each partition of the cluster, the results need to be combined after the Accumulation phase in order to be able to calculate the final result.
+Since Fast-Aggregation is executed in parallel on each partition of the cluster, the results need to be combined after the accumulation phase in order to be able to calculate the final result.
 
-In case of the `DoubleAverage` aggregation the aggregator would sum up all the sums of the elements and all the counts.
+In case of the `DoubleAverage` aggregation, the aggregator would sum up all the sums of the elements and all the counts.
 
 
 ##### Aggregation
 
 Aggregation is the last phase that calculates the final result from the results accumulated and combined in the preceding phases.
 
-In case of the `DoubleAverage` aggregation the Aggregator would just divide the sum of the elements by their count (if non-zero).
+In case of the `DoubleAverage` aggregation, the Aggregator would just divide the sum of the elements by their count (if non-zero).
 
 
 #### Fast-Aggregations and Map Interfaces
@@ -195,9 +195,9 @@ As you can see:
 - the `combine()` method combines the results from all the accumulations.
 - the `aggregate()` method calculates the final result.
 
-### In-built Aggregations
+### Built-In Aggregations
 
-The `com.hazelcast.aggregation.Aggregators` class provides a wide variety of in-built Aggregators.
+The `com.hazelcast.aggregation.Aggregators` class provides a wide variety of built-in Aggregators.
 The full list is presented below:
 
 - count
@@ -211,10 +211,9 @@ The full list is presented below:
 - comparable min/max
 - fixedPointSum, floatingPointSum
 
-E.g. in order to use the `count()` Aggregator just instantiate it using the `Aggregators` factory class.
+To use the any of these Aggregators, instantiate them using the `Aggregators` factory class.
 
-Each in-built aggregator can also navigate to an attribute of the Object passed to the `accumulate` method (via reflection).
-E.g. `Aggregators.distinct("address.city")` will extract the `address.city` attribute from the object passed to the Aggregator and accumulate the extracted value.
+Each built-in Aggregator can also navigate to an attribute of the object passed to the `accumulate()` method (via reflection). For example, `Aggregators.distinct("address.city")` will extract the `address.city` attribute from the object passed to the Aggregator and accumulate the extracted value.
 
 ### Configuration Options
 
