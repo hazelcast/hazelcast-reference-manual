@@ -87,7 +87,6 @@ This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sur
 is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it directly.
 
 
-
 ### Synchronizing Threads with ICondition
 
 `ICondition` is the distributed implementation of the `notify`, `notifyAll` and `wait` operations on the Java object. You can use it to synchronize
@@ -142,3 +141,43 @@ try {
 }
 ```
 
+### Lock split brain protection
+
+Locks can be configured to check for a minimum number of available members before applying lock operations (see [Split-Brain Protection](#split-brain-protection)). This is a check to avoid performing successful lock operations on all parts of a cluster during a network partition. Due to the implementation details, the check does not guarantee that the lock will fail in all conditions of a network partition and it can happen that two members can acquire the same lock. Once the membership change has been detected the lock operations will fail with a `QuorumException` if not enough members are not present. In essence, this does not provide correctness but rather narrows down the window of opportunity in which locks can continue operations on several members concurrently.
+
+Although the check does not provide correctness it can still be useful. In cases where members acquire the lock to perform some costly but idempotent operation, configuring lock quorum can further prevent some cases where the cluster has been split into several sub-clusters and more than one member perform the same operation.
+
+Following is a list of methods that now support quorum checks. The list is grouped by quorum type. Additionally, since Hazelcast IMap also provides locking support, certain map and multimap methods also allow quorum checks. 
+- WRITE, READ_WRITE
+    - Condition#await, Condition#awaitUninterruptibly, Condition#awaitNanos, Condition#awaitUntil
+    - Lock#lockInterruptibly, ILock#lock, IMap#tryLock, IMap#lock. MultiMap#lock, MultiMap#tryLock
+    - Condition#signal, Condition#signalAll
+- READ,READ_WRITE
+    - ILock#getLockCount
+    - ILock#getRemainingLeaseTime
+    - ILock#isLocked, IMap#isLocked, MultiMap#isLocked
+    - ILock#forceUnlock, IMap#forceUnlock, MultiMap#forceUnlock, ILock#unlock, IMap#unlock, ObjectMultiMapProxy#unlock
+
+### Lock configuration
+
+As mentioned in the [Lock split brain protection](#lock-split-brain-protection), Lock allows for split brain protection. 
+
+An example of a declarative configuration is as follows :
+```xml
+<lock name="myLock">
+    <quorum-ref>quorum-name</quorum-ref>
+</lock>
+```
+
+- `quorum-ref` : Name of quorum configuration that you want this lock to use.
+
+An example of programmatic configuration is as follows : 
+```xml
+Config config = new Config();
+LockConfig lockConfig = new LockConfig();
+lockConfig.setName("myLock")
+          .setQuorumName("quorum-name");
+config.addLockConfig(lockConfig);
+```
+
+![image](images/NoteSmall.jpg) ***NOTE:*** As mentioned above, a quorum definition for a lock that has the same name or a pattern that matches a map name will force the map locking actions to use the defined quorum. It is important to keep this in mind when using lock quorum and map locking actions.

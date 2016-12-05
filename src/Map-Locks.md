@@ -140,3 +140,33 @@ The ABA problem occurs in environments when a shared resource is open to change 
 To prevent these kind of problems, you can assign a version number and check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields will be equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy, and it is used in environments that do not expect intensive concurrent changes on a specific key.
 
 In Hazelcast, you can apply the [optimistic locking](#optimistic-locking) strategy with the map `replace` method.
+
+### Lock split brain protection with pessimistic locking
+
+Locks can be configured to check the number of currently present members before applying a locking operation. If the check fails, the lock operation will fail with a `QuorumException` (see [Split-Brain Protection](#split-brain-protection)). As pessimistic locking uses lock operations internally, it will also use the configured lock quorum. This means that you can configure a lock quorum with the same name or a pattern that matches the map name. Note that the quorum for IMap locking actions can be different from the quorum for other IMap actions.  
+
+The following actions will then check for lock quorum before being applied  : 
+- `IMap#lock(K)` and `IMap#lock(K, long, java.util.concurrent.TimeUnit)`
+- `IMap#isLocked`
+- `IMap#tryLock(K)`, `IMap#tryLock(K, long, java.util.concurrent.TimeUnit)` and `IMap#tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
+- `IMap#unlock`
+- `IMap#forceUnlock`
+- `MultiMap#lock(K)` and `MultiMap#lock(K, long, java.util.concurrent.TimeUnit)`
+- `MultiMap#isLocked`
+- `MultiMap#tryLock(K)`, `MultiMap#tryLock(K, long, java.util.concurrent.TimeUnit)` and `MultiMap#tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
+- `MultiMap#unlock`
+- `MultiMap#forceUnlock`
+
+
+An example of declarative configuration : 
+```xml
+<map name="myMap">
+  <quorum-ref>map-actions-quorum</quorum-ref>
+</map>
+
+<lock name="myMap">
+    <quorum-ref>map-lock-actions-quorum</quorum-ref>
+</lock>
+```
+
+Here the configured map will use the `map-lock-actions-quorum` quorum for map lock actions and the `map-actions-quorum` quorum for other map actions.
