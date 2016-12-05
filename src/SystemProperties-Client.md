@@ -15,6 +15,9 @@ Property Name | Default Value | Type | Description
 `hazelcast.client.invocation.timeout.seconds`|120|string|Time to give up the invocation when a member in the member list is not reachable.
 `hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same member when this property is `false`. When it is set to `true`, the client tries to connect to the members in the given order.
 `hazelcast.compatibility.3.6.server`|false|bool|When this property is true, if the client cannot know the server version, it will assume that the server has the version 3.6.x.
+`hazelcast.invalidation.max.tolerated.miss.count`|10|int|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
+`hazelcast.invalidation.reconciliation.interval.seconds`|60|int|Period for which the clients are scanned to compare generated invalidation events with the received ones from Near Cache.
+
 
 ## Sample Codes for Client
 
