@@ -24,7 +24,7 @@ Starting with Hazelcast Enterprise 3.8, each next minor version released will be
  be possible to perform a rolling upgrade on a cluster running Hazelcast Enterprise 3.8 to Hazelcast Enterprise 3.9 whenever that is released.
  _Rolling upgrades across minor versions is a Hazelcast Enterprise feature, starting with version 3.8_.
  
-The compatibility guarantees described above are given in the context of rolling member upgrades; it is never advisable to run a
+The compatibility guarantees described above are given in the context of rolling member upgrades and only apply to GA (general availability) releases. It is never advisable to run a
  cluster with members running on different patch or minor versions for prolonged periods of time.
 
 
