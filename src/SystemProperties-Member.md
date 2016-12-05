@@ -19,6 +19,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.client.event.thread.count`|5|string|Thread count for handling incoming event packets.
 `hazelcast.client.heartbeat.interval`|10000|string|The frequency of heartbeat messages sent by the clients to members.
 `hazelcast.client.heartbeat.timeout`|300000|string|Timeout for the heartbeat messages sent by the client to members. If no messages pass between client and member within the given time via this property in milliseconds, the connection will be closed.
+`hazelcast.invalidation.max.tolerated.miss.count`|10|int|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
+`hazelcast.invalidation.reconciliation.interval.seconds`|60|int|Period for which the cluster members are scanned to compare generated invalidation events with the received ones from Near Cache.
 `hazelcast.client.invocation.timeout.seconds`|120|string|Time to give up the invocation when a member in the member list is not reachable.
 `hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the member assumes the client is dead and closes its connections to the client.
 `hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same member when this property is `false`. When it is set to `true`, the client tries to connect to the members in the given order.
@@ -55,6 +57,9 @@ Property Name | Default Value | Type | Description
 `hazelcast.mancenter.home` | mancenter | string |  Folder where Management Center data files are stored (license information, time travel information, etc.).
 `hazelcast.map.entry.filtering.natural.event.types` | false | bool | Notify [entry listeners with predicates](#listening-to-map-entries-with-predicates) on map entry updates with events that match entry, update or exit from predicate value space.
 `hazelcast.map.expiry.delay.seconds`|10|int|Useful to deal with some possible edge cases. For example, when using EntryProcessor, without this delay, you may see an EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup. As a result of this, when backup promotes to owner, you will end up an unprocessed key.
+`hazelcast.map.invalidation.batchfrequency.seconds` | 10 | int |  If the collected invalidations do not reach the configured batch size, a background process sends them at this interval.
+`hazelcast.map.invalidation.batch.enabled` | true | bool|  Enable or disable batching. When it is set to `false`, all invalidations are sent immediately.
+`hazelcast.map.invalidation.batch.size`| 100 | int | Maximum number of invalidations in a batch.
 `hazelcast.map.load.chunk.size` | 1000 | int |   Chunk size for [MapLoader](#loading-and-storing-persistent-data)'s map initialization process (MapLoader.loadAllKeys()).
 `hazelcast.map.replica.wait.seconds.for.scheduled.tasks`|10|int|Scheduler delay for map tasks those will be executed on backup members.
 `hazelcast.map.write.behind.queue.capacity`|50000|string|Maximum write-behind queue capacity per member. It is the total of all write-behind queue sizes in a member including backups. Its maximum value is `Integer.MAX_VALUE`. The value of this property is taken into account only if the `write-coalescing` element of the Map Store configuration is `false`. Please refer to the [Map Store section](#map-store) for the description of the `write-coalescing` element.
