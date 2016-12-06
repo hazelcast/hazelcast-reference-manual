@@ -362,32 +362,43 @@ To achieve a high consistency of data on all members, the cluster should be put 
 
 Because of the design of Hot Restart Store, we can use hard links to achieve backups/snapshots of the store. The hot backup process will use hard links whenever possible because they provide big performance benefits and because the backups share disk usage. 
 
-The performance benefit comes from the fact that Hot Restart file contents are not being duplicated (thus using disk and IO resources) but rather by creating a new file name for the same contents on disk (another pointer to the same inode). Since all backups and stores share the same inode, disk usage drops. The bigger the percentage of stable data in the hot restart store (data not undergoing changes), the more files will each backup share with the operational hot restart store and the less disk space it will be using. For the hot backup to use hard links, you must be running Hazelcast nodes on JDK 7 or higher and must satisfy all requirements for the <a href="https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#createLink(java.nio.file.Path,%20java.nio.file.Path)" target="_blank">`Files#createLink` method</a> to be supported. The backup process will initially attempt to create a new hard link and if that fails for any reason it will continue by copying the data. Subsequent backups will also attempt to use hard links.
+The performance benefit comes from the fact that Hot Restart file contents are not being duplicated (thus using disk and IO resources) but rather a new file name is created for the same contents on disk (another pointer to the same inode). Since all backups and stores share the same inode, disk usage drops. 
 
-#### Backup process progress and completion
+The bigger the percentage of stable data in the Hot Restart Store (data not undergoing changes), the more files will each backup share with the operational Hot Restart Store and the less disk space it will be using. For the hot backup to use hard links, you must be running Hazelcast members on JDK 7 or higher and must satisfy all requirements for the <a href="https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#createLink(java.nio.file.Path,%20java.nio.file.Path)" target="_blank">`Files#createLink` method</a> to be supported. 
 
-Only cluster and distributed object metadata is copied synchronously during the invocation of the backup method. The rest of the hot restart store containing partition data will be copied asynchronously after the method call has ended. You can track the progress by API or view it from the management center. 
+The backup process will initially attempt to create a new hard link and if that fails for any reason it will continue by copying the data. Subsequent backups will also attempt to use hard links.
 
-An example of how to track the progress via API : 
+#### Backup Process Progress and Completion
+
+Only cluster and distributed object metadata is copied synchronously during the invocation of the backup method. The rest of the Hot Restart Store containing partition data will be copied asynchronously after the method call has ended. You can track the progress by API or view it from the management center. 
+
+An example of how to track the progress via API is shown below:
+
 ```java
 HotRestartBackupService service = ...;
 HotRestartStateImpl status = service.getBackupTaskStatus();
 ...
 ```
 
-The returned object contains local member backup status :
+The returned object contains local member backup status:
+
 - the backup state (NOT_STARTED, IN_PROGRESS, FAILURE, SUCCESS)
 - the completed count
 - the total count
-The completed and total count can provide you a way to track the percentage of the copied data. Currently the count defines the number of copied and total local member hot restart stores (defined by `HotRestartPersistenceConfig#setParallelism`) but this can change at a later point to provide greater resolution.
 
-Besides tracking the hot restart status by API, you can view the status in the management center and you can inspect the on-disk files for each member. Each member creates a `inprogress` file which is created in each of the copied hot restart stores. This means that the backup is currently in progress. As the backup task completes the backup operation the file will be removed. If an error occurrs during the backup task, the `inprogress` file will be renamed to `failure` and it will contain a stack trace of the exception.
 
-#### Backup task interruption and cancellation
+The completed and total count can provide you a way to track the percentage of the copied data. Currently the count defines the number of copied and total local member Hot Restart Stores (defined by `HotRestartPersistenceConfig#setParallelism`) but this can change at a later point to provide greater resolution.
 
-Once the backup method call has returned and asynchronous copying of the partition data has started, the backup task can be interrupted. This is helpful in situations where the backup task has started at an inconvenient time. For instance, the backup task could be automatized and it could be accidentally triggered during high load on the Hazelcast instances, causing the performance of the Hazelcast instances to drop. The backup task mainly uses disk IO, consumes little CPU and it generally does not last for a long time (although you should test it with your environment to determine the exact impact). Nevertheless, you can abort the backup tasks on all nodes via a cluster-wide interrupt operation. This operation can be triggered programmatically or from the management center. 
+Besides tracking the Hot Restart status by API, you can view the status in the management center and you can inspect the on-disk files for each member. Each member creates an `inprogress` file which is created in each of the copied Hot Restart Stores. This means that the backup is currently in progress. As the backup task completes the backup operation, the file will be removed. If an error occurs during the backup task, the `inprogress` file will be renamed to `failure` and it will contain a stack trace of the exception.
 
-An example of programmatic interruption : 
+#### Backup Task Interruption and Cancellation
+
+Once the backup method call has returned and asynchronous copying of the partition data has started, the backup task can be interrupted. This is helpful in situations where the backup task has started at an inconvenient time. For instance, the backup task could be automatized and it could be accidentally triggered during high load on the Hazelcast instances, causing the performance of the Hazelcast instances to drop.
+
+The backup task mainly uses disk IO, consumes little CPU and it generally does not last for a long time (although you should test it with your environment to determine the exact impact). Nevertheless, you can abort the backup tasks on all members via a cluster-wide interrupt operation. This operation can be triggered programmatically or from the management center. 
+
+An example of programmatic interruption is shown below:
+
 ```java
 HotRestartBackupService service = ...;
 service.interruptBackupTask();
@@ -396,7 +407,8 @@ service.interruptBackupTask();
 
 This method will send an interrupt to all members. The interrupt is ignored if the backup task is currently not in progress so you can safely call this method even though it has previously been called or when some members have already completed their local backup tasks.
 
-You can also interrupt the local member backup task :
+You can also interrupt the local member backup task as shown below:
+
 ```java
 HotRestartBackupService service = ...;
 service.interruptLocalBackupTask();
