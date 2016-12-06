@@ -12,8 +12,11 @@ This chapter lists the changes made to this document from the previous release.
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Chapter 7 - Rolling Member Upgrades](#rolling-member-upgrades)||Added as a new chapter.
-|[Chapter 8 - Distributed Data Structures](#distributed-data-structures)|[Ringbuffer](#ringbuffer)|Added [Ringbuffer with Persistent Datastore](#ringbuffer-with-persistent-datastore) as a new section.
-|||Added [Overview of Hazelcast Distributed Objects](#overview-of-hazelcast-distributed-objects), [Loading and Destroying a Distributed Object](#loading-and-destroying-a-distributed-object) and [Controlling Partitions](#controlling-partitions) as new sections.  
+|[Chapter 8 - Distributed Data Structures](#distributed-data-structures)|[Queue](#queue)| Updated  by adding split-brain protection content.
+||[Ringbuffer](#ringbuffer)|Added [Ringbuffer with Persistent Datastore](#ringbuffer-with-persistent-datastore) as a new section.
+||[Locking Maps](#locking-maps)| Updated by adding split-brain protection content.
+|||Added [Overview of Hazelcast Distributed Objects](#overview-of-hazelcast-distributed-objects), [Loading and Destroying a Distributed Object](#loading-and-destroying-a-distributed-object) and [Controlling Partitions](#controlling-partitions) as new sections.
+||[Lock](#lock)| Updated by adding split-brain protection content.
 |[Chapter 10 - Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)| Added a warning to the introduction.
 |[Chapter 11 - Distributed Query](#distributed-query)||Explanation for the `__key` attribute added under [Querying with SQL](#querying-with-sql) section.
 ||[Fast-Aggregations](#fast-aggregations)|Added as a new section.
