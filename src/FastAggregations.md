@@ -14,28 +14,28 @@ package com.hazelcast.aggregation;
 
 /**
  * Base class for all aggregators. Exposes API for parallel two-phase aggregations:
- * - accumulation of entries by multiple instance of aggregators
+ * - accumulation of input entries by multiple instance of aggregators
  * - combining all aggregators into one to calculate the final result
- * <p>
+ *
  * Aggregator does not have to be thread-safe.
  * accumulate() and combine() calls may be interwoven.
- * <p>
+ *
  * The very instance passed to an aggregate() method will not be used at all. It is just a prototype object
  * that will be cloned using serialization, since each partition gets its own instance of an aggregator.
  * In this way the aggregator is not used by multiple-threads. Each thread gets its own aggregator instance.
  *
- * @param <R> aggregation result
- * @param <K> entry key type
- * @param <V> entry value type
+ * @param <I> input type
+ * @param <R> result type
+ * @since 3.8
  */
-public abstract class Aggregator<R, K, V> implements Serializable {
+public abstract class Aggregator<I, R> implements Serializable {
 
     /**
      * Accumulates the given entries.
      *
-     * @param entry entries to accumulate.
+     * @param input input to accumulate.
      */
-    public abstract void accumulate(Map.Entry<K, V> entry);
+    public abstract void accumulate(I input);
 
     /**
      * Called after the last call to combine on a specific instance. Enables disposing of the intermediary state.
@@ -126,22 +126,34 @@ There are two methods that enable using them:
 ```java
     /**
      * Applies the aggregation logic on all map entries and returns the result
+     * <p>
+     * Fast-Aggregations are the successor of the Map-Reduce Aggregators.
+     * They are equivalent to the Map-Reduce Aggregators in most of the use-cases, but instead of running on the Map-Reduce
+     * engine they run on the Query infrastructure. Their performance is tens to hundreds times better due to the fact
+     * that they run in parallel for each partition and are highly optimized for speed and low memory consumption.
      *
      * @param aggregator aggregator to aggregate the entries with
      * @param <R>        type of the result
      * @return the result of the given type
+     * @since 3.8
      */
-    <R> R aggregate(Aggregator<R, K, V> aggregator);
+    <R> R aggregate(Aggregator<Map.Entry<K, V>, R> aggregator);
 
     /**
      * Applies the aggregation logic on map entries filtered with the Predicated and returns the result
+     * <p>
+     * Fast-Aggregations are the successor of the Map-Reduce Aggregators.
+     * They are equivalent to the Map-Reduce Aggregators in most of the use-cases, but instead of running on the Map-Reduce
+     * engine they run on the Query infrastructure. Their performance is tens to hundreds times better due to the fact
+     * that they run in parallel for each partition and are highly optimized for speed and low memory consumption.
      *
      * @param aggregator aggregator to aggregate the entries with
      * @param predicate  predicate to filter the entries with
      * @param <R>        type of the result
      * @return the result of the given type
+     * @since 3.8
      */
-    <R> R aggregate(Aggregator<R, K, V> aggregator, Predicate<K, V> predicate);
+    <R> R aggregate(Aggregator<Map.Entry<K, V>, R> aggregator, Predicate<K, V> predicate);
 ```
 
 ### Sample Implementation
@@ -149,7 +161,7 @@ There are two methods that enable using them:
 Here's a sample implementation of the Aggregator:
 
 ```java
-public class DoubleAverageAggregator<K, V> extends AbstractAggregator<Double, K, V> {
+public class DoubleAverageAggregator<I> extends AbstractAggregator<I, Double> {
 
     private double sum;
 
@@ -164,7 +176,7 @@ public class DoubleAverageAggregator<K, V> extends AbstractAggregator<Double, K,
     }
 
     @Override
-    public void accumulate(Map.Entry<K, V> entry) {
+    public void accumulate(I entry) {
         count++;
         Double extractedValue = (Double) extract(entry);
         sum += extractedValue;
