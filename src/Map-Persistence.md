@@ -285,3 +285,47 @@ class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapS
 ```
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.*
+
+
+#### Accessing a Database Using `Properties`
+
+You can prepare your own `MapLoader` to access a database such as Cassandra and MongDB. For this, you can first declaratively specify the database properties in your `hazelcast.xml` configuration file and then implement the `MapLoaderLifecycleSupport` interface to pass those properties.
+
+You can define the database properties, such as its URL and name, using the `properties` configuration element. The following is a configuration example for MongoDB:
+
+```xml
+    <map name="supplements">
+        <map-store enabled="true" initial-mode="LAZY">
+            <class-name>com.hazelcast.loader.YourMapStoreImplementation</class-name>
+            <properties>
+                <property name="mongo.url">mongodb://localhost:27017</property>
+                <property name="mongo.db">mydb</property>
+                <property name="mongo.collection">supplements</property>
+            </properties>
+        </map-store>
+    </map>
+```
+
+After you specified the database properties in your configuration, you need to implement the `MapLoaderLifecycleSupport` interface and give those properties in the `init()` method, as shown below:
+
+```java
+public class YourMapStoreImplementation implements MapStore<String, Supplement>, MapLoaderLifecycleSupport {
+
+    private MongoClient mongoClient;
+    private MongoCollection collection;
+
+    public YourMapStoreImplementation() {
+    }
+
+    @Override
+    public void init(HazelcastInstance hazelcastInstance, Properties properties, String mapName) {
+        String mongoUrl = (String) properties.get("mongo.url");
+        String dbName = (String) properties.get("mongo.db");
+        String collectionName = (String) properties.get("mongo.collection");
+        this.mongoClient = new MongoClient(new MongoClientURI(mongoUrl));
+        this.collection = mongoClient.getDatabase(dbName).getCollection(collectionName);
+    }
+```
+
+You can refer to the full example [here](https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/mongodb).
+
