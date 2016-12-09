@@ -1,9 +1,5 @@
 ## Continuous Query Cache
 
-<font color="#3981DB">**Hazelcast Enterprise**</font>
-
-<br></br>
-
 A continuous query cache is used to cache the result of a continuous query. After the construction of a continuous query cache, all changes on the underlying `IMap` are immediately reflected to this cache as a stream of events. Therefore, this cache will be an always up-to-date view of the `IMap`. You can create a continuous query cache either on the client or member.
 
 ### Keeping Query Results Local and Ready
