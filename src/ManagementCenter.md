@@ -97,7 +97,7 @@ Management Center creates a folder with the name `mancenter` under your `user/ho
 
 *Please refer to the [Management Center Configuration section](#management-center-configuration) for a full description of Hazelcast Management Center configuration.*
 
-### LDAP/Active Directory Authentication
+### LDAP-Active Directory Authentication
 
 You can use your existing LDAP or Active Directory server for authentication/authorization on Management Center. Click "Configure LDAP" button on Sign Up page and fill in the following details for your LDAP/Active Directory server:
 
@@ -114,7 +114,7 @@ You can use your existing LDAP or Active Directory server for authentication/aut
 - **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
 - **Start TLS:** Enable if your LDAP server uses Start TLS.
 
-Once configured, LDAP settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload LDAP Config" button on login page. 
+Once configured, LDAP settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload LDAP Config" button on the login page. 
 
 ### Management Center Tools
 
