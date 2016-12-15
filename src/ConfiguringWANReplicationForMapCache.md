@@ -50,7 +50,7 @@ You see that we have `my-shared-map` configured to replicate itself to the clust
 
 - `name`: Name of `wan-replication` configuration. IMap or ICache instance uses this `wan-replication` configuration. 
 - `merge-policy`: Resolve conflicts that are occurred when target cluster already has the replicated entry key.
-- `republishing-enabled`: When enabled, an incoming event to a member is forwarded to target cluster of that member.
+- `republishing-enabled`: When enabled, an incoming event to a member is forwarded to target cluster of that member. Enabling the event republishing is useful in a scenario where cluster A replicates to cluster B, and cluster B replicates to cluster C. You do not need to enable republishing when all your clusters replicate to each other. 
 
 When using Active-Active Replication, multiple clusters can simultaneously update the same entry in a distributed data structure.
 You can configure a merge policy to resolve these potential conflicts, as shown in the above example configuration (using the `merge-policy` sub-element under the `wan-replication-ref` element).
