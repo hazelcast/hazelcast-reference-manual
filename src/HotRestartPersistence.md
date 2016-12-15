@@ -338,19 +338,19 @@ The duration of the backup process and the disk data usage drastically depends o
 Following is an example of how to trigger the Hot Backup via API: 
 
 ```java
-HotRestartBackupService service = ...;
+HotRestartService service = instance.getCluster().getHotRestartService();
 service.backup();
 ```
 
 You can also define the backup sequence yourself:
 
 ```java
-HotRestartBackupService service = ...;
+HotRestartService service = instance.getCluster().getHotRestartService();
 long backupSeq = ...
 service.backup(backupSeq);
 ```
 
-Keep in mind that the backup will fail if any member contains a backup directory with the name `backup-<backupSeq>` given sequence.
+Keep in mind that the backup will fail if any member contains a backup directory with the name `backup-<backupSeq>`, where `backupSeq` is the given sequence.
 
 #### Achieving High Consistency of Backup Data
 
@@ -375,7 +375,7 @@ Only cluster and distributed object metadata is copied synchronously during the 
 An example of how to track the progress via API is shown below:
 
 ```java
-HotRestartBackupService service = ...;
+HotRestartService service = instance.getCluster().getHotRestartService();
 HotRestartStateImpl status = service.getBackupTaskStatus();
 ...
 ```
@@ -400,7 +400,7 @@ The backup task mainly uses disk IO, consumes little CPU and it generally does n
 An example of programmatic interruption is shown below:
 
 ```java
-HotRestartBackupService service = ...;
+HotRestartService service = instance.getCluster().getHotRestartService();
 service.interruptBackupTask();
 ...
 ```
@@ -410,7 +410,7 @@ This method will send an interrupt to all members. The interrupt is ignored if t
 You can also interrupt the local member backup task as shown below:
 
 ```java
-HotRestartBackupService service = ...;
+HotRestartService service = instance.getCluster().getHotRestartService();
 service.interruptLocalBackupTask();
 ...
 ```
