@@ -1,6 +1,6 @@
 ## Management Center
 
-Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring the overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. Uou can run scripts (JavaScript, Groovy, etc.) and commands on your members with its scripting and console modules.
+Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring the overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. You can run scripts (JavaScript, Groovy, etc.) and commands on your members with its scripting and console modules.
 
 ### Installing Management Center
 
@@ -429,10 +429,23 @@ In this tab, you see **WAN Replication Operations Table** for each target which 
 ![WAN Replication Operations Table](images/WanTargetTable.png)
 
 -	**Connected**: Status of the member connection to the target.
--	**Outbound Recs (sec)**: Average number of records sent to target per second from this member.
--	**Outbound Lat (ms)**: Average latency of sending a record to the target from this member.
+-	**Outbound Recs (sec)**: Average of event count per second. Please see the paragraph below.
+-	**Outbound Lat (ms)**: Average latency of sending a record to the target from this member. Please see the paragraph below.
 -	**Outbound Queue**: Number of records waiting in the queue to be sent to the target.
 -	**Action**: Stops/Resumes replication of this member's records.
+
+<br></br>
+**Outbound Recs** and **Outbound Lat** are based on the following internal statistics:
+
+- Total published event count (TBEC): Total number of events that are successfully sent to the target cluster since the start-up of the member.
+- Total latency (TL): Grand total of each event's waiting time in the queue, including network transmit and receiving ACK from the target.
+
+Each member sends these two statistics to the Management Center at intervals of 3 seconds (update interval). Management Center derives **Outbound Recs/s** and **Outbound Lat** from these statistics as formulated below:
+
+Outbound Recs/s = (Current TBEC - Previous TBEC) / Update Interval
+
+Outbound Latency = (Current TL - Previous TL) / Update Interval
+
 
 ### Monitoring Members
 
