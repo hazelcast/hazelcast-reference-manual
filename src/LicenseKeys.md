@@ -8,10 +8,10 @@ Hazelcast Enterprise offers you two types of licenses: **Enterprise** and **Ente
 * **Enterprise license**: In addition to the open source edition of Hazelcast, Enterprise features are the following:
 	* Security
 	* WAN Replication
-	* Continuous Query Cache
 	* Clustered REST
 	* Clustered JMX 
-	* Web Sessions
+	* Striim Hot Cache
+	* Rolling Upgrades
 <br></br>
 * **Enterprise HD license**: In addition to the Enterprise features, Enterprise HD features are the following:
 	* High-Density Memory Store
