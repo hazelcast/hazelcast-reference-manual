@@ -74,11 +74,11 @@ As it is stated in the introduction of this section and shown in the log file co
 
 It shows the detailed Hazelcast build information including the Hazelcast release number, `Git` revision number, and whether you have Hazelcast Enterprise or not.
 
-##### System Properties
+##### SystemProperties
 
 It shows all the properties and their values in your system used by and configured for your Hazelcast installation. These are the properties starting with `java` (excluding `java.awt`), `hazelcast`, `sun` and `os`. It also includes the arguments that are used to startup the JVM.
 
-##### Config Properties
+##### ConfigProperties
 
 It shows the Hazelcast properties and their values explicitly set by you either on the command line (with `-D`) or by using declarative/programmatic configuration.
 
@@ -91,7 +91,7 @@ You can configure the level of detail and frequency of dumping information to th
 * `hazelcast.diagnostics.metrics.period.seconds`: Set a value in seconds. Its default is 60.
 * `hazelcast.diagnostics.metrics.level`: Set a level. It can be `Mandatory`, `Info` and `Debug`. Its default is `Mandatory`. 
 
-##### Slow Operations
+##### SlowOperations
 
 It shows the slow operations and invocations, Please refer to [SlowOperationDetector](#slowoperationdetector) for more information.
 
@@ -104,7 +104,7 @@ Using the following properties, you can configure the frequency of scanning all 
 * `hazelcast.diagnostics.invocation.sample.period.seconds`: Set a value in seconds. Its default is 60.
 * `hazelcast.diagnostics.invocation.slow.threshold.seconds`: Set a value in seconds. Its default is 5.
 
-##### Hazelcast Instance
+##### HazelcastInstance
 
 It shows the basic state of your Hazelcast cluster including the count and addresses of current members and the address of master member. It is useful to get a fast impression of the cluster without needing to analyze a lot of data.
 
@@ -112,7 +112,7 @@ You can configure the frequency at which the cluster information is dumped to th
 
 * `hazelcast.diagnostics.memberinfo.period.second`: Set a value in seconds. Its default is 60.
 
-##### System Log
+##### SystemLog
 
 It shows the activities in your cluster including when a connection/member is added or removed, and if there is a change in the lifecycle of the cluster. It also includes the reasons for connection closings.
 
