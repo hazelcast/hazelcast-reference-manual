@@ -2,9 +2,10 @@
 
 ## Scheduled Executor Service
 
-Hazelcast's scheduled executor service is a data structure which implements the java.util.concurrent.ScheduledExecutorService, partially.
-Partially, in the sense, that it allows the scheduling of a single future execution and/or at a fixed rate execution but not at a fixed delay.
-On top of the vanilla scheduling APIs the scheduled executor service allows additional ones such as:
+Hazelcast's scheduled executor service is a data structure which implements the `java.util.concurrent.ScheduledExecutorService`, partially.
+Here, partially means that it allows the scheduling of a single future execution and/or at a fixed rate execution but not at a fixed delay.
+
+On top of the Vanilla Scheduling APIs, the scheduled executor service allows additional ones such as the following:
 
 - `scheduleOnMember`: On a specific cluster member.
 - `scheduleOnKeyOwner`: On the partition owning that key.
@@ -41,9 +42,9 @@ import java.util.concurrent.TimeUnit;
  * Tasks (<tt>Runnable</tt> and/or <tt>Callable</tt>) scheduled on any partition through an <tt>IScheduledExecutorService</tt>,
  * yield some durability characteristics.
  * <ul>
- *     <li>When a node goes down (up to <tt>durability</tt> config), the scheduled task will get re-scheduled
- *     on a replica node.</li>
- *     <li>In the event of a partition migration, the task will be re-scheduled on the destination node.</li>
+ *     <li>When a member goes down (up to <tt>durability</tt> config), the scheduled task will get re-scheduled
+ *     on a replica member.</li>
+ *     <li>In the event of a partition migration, the task will be re-scheduled on the destination member.</li>
  * </ul>
  * <b>Note: </b> The above characteristics don't apply when scheduled on a <tt>Member</tt>.
  *
@@ -57,8 +58,8 @@ import java.util.concurrent.TimeUnit;
  * <br/>
  *
  * Upon scheduling a task acquires a resource handler, see {@link ScheduledTaskHandler}. The handler is generated before
- * the actual scheduling of the task on the node, which allows for a way to access the future in an event of a node failure
- * immediately after scheduling, and also guarantees no duplicates in the cluster by utilising a unique name per task.
+ * the actual scheduling of the task on the member, which allows for a way to access the future in an event of a member failure
+ * immediately after scheduling, and also guarantees no duplicates in the cluster by utilizing a unique name per task.
  * A name can also be defined by the user by having the <tt>Runnable</tt> or <tt>Callable</tt> implement the {@link NamedTask}.
  * Alternatively, one can wrap any task using the {@link TaskUtils#named(String, Callable)} or
  * {@link TaskUtils#named(String, Runnable)} for simplicity.
@@ -387,7 +388,7 @@ public interface IScheduledExecutorService extends DistributedObject {
 
     /**
      * Creates a new {@link IScheduledFuture} from the given handler.
-     * This is useful in case your member node or client from which the original
+     * This is useful in case your member member or client from which the original
      * scheduling happened, went down, and now you want to access the <tt>ScheduledFuture</tt> again.
      *
      * @param handler The handler of the task as found from {@link IScheduledFuture#getHandler()}
@@ -417,18 +418,18 @@ public interface IScheduledExecutorService extends DistributedObject {
 }
 ```
 
-There are two different modes of durability for the service.
+There are two different modes of durability for the service:
 
-1. Upon partition specific scheduling the future task is stored both in the primary partition and also in its N backups (N: Durability property in config). More specifically, there is always one or more backups to take ownership of the task in the event of a lost node. If a node is lost the task will be re-scheduled on the backup (new primary) node, which might induce further delays on the subsequent executions of the task.
-eg. If we schedule a task to run in 10 seconds from now, `schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds the owner node goes down (before the execution takes place), then the backup owner will re-schedule the task in 10 seconds from now. Therefore, from the user's perspective waiting on the result, this will be available in `10 + 5 = 15` seconds rather than 10 s/he originally anticipated. If `atFixedRate` was used, then only the initial delay is affected in the above scenario, all subsequent executions should adhere to the given period parameter.    
+1. Upon partition specific scheduling, the future task is stored both in the primary partition and also in its N backups, N being the `<durability>` property in the configuration. More specifically, there are always one or more backups to take ownership of the task in the event of a lost member. If a member is lost, the task will be re-scheduled on the backup (new primary) member, which might induce further delays on the subsequent executions of the task.
+For example, if we schedule a task to run in 10 seconds from now, `schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds the owner member goes down (before the execution takes place), then the backup owner will re-schedule the task in 10 seconds from now. Therefore, from the user's perspective waiting on the result, this will be available in `10 + 5 = 15` seconds rather than 10 seconds as it is anticipated originally. If `atFixedRate` was used, then only the initial delay is affected in the above scenario, all subsequent executions should adhere to the given period parameter.    
 
-2. Upon member specific scheduling the future task is *only* stored in the member itself, which means that in the event of a lost node, the task will be lost as well.
+2. Upon member specific scheduling, the future task is *only* stored in the member itself, which means that in the event of a lost member, the task will be lost as well.
 
-To accomplish the described durability all tasks provide a unique identity/name; before scheduling takes place. The name allows the service to reach the scheduled task even after the caller (client or node) goes down, and also allows helps to prevent duplicate tasks.
-The name of the task can be user defined if needs be, by implementing the `com.hazelcast.scheduledexecutor.NamedTask` interface. (plain wrapper util available here `com.hazelcast.scheduledexecutor.TaskUtils#named(java.lang.String, java.lang.Runnable)`). If the task doesn't provide a name in its implementation, the service provides a random UUID for it, internally.
+To accomplish the described durability, all tasks provide a unique identity/name before the scheduling takes place. The name allows the service to reach the scheduled task even after the caller (client or member) goes down, and also allows helps to prevent duplicate tasks.
+The name of the task can be user-defined if it needs to be, by implementing the `com.hazelcast.scheduledexecutor.NamedTask` interface (plain wrapper util is available here: `com.hazelcast.scheduledexecutor.TaskUtils#named(java.lang.String, java.lang.Runnable)`). If the task does not provide a name in its implementation, the service provides a random UUID for it, internally.
 
-Upon scheduling the service returns an `IScheduledFuture` which on top of the `java.util.concurrent.ScheduledFuture` functionality provides API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
-For reference:
+Upon scheduling, the service returns an `IScheduledFuture` which on top of the `java.util.concurrent.ScheduledFuture` functionality provides API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
+Please see below for your reference:
 
 ```
 package com.hazelcast.scheduledexecutor;
@@ -461,7 +462,7 @@ public interface IScheduledFuture<V>
      * Returns the statistics and time measurement info of the execution of this scheduled future
      * in the {@link IScheduledExecutorService} it was scheduled.
      *
-     * @return An instance of {@link ScheduledTaskStatistics}, holding all stas and measurements
+     * @return An instance of {@link ScheduledTaskStatistics}, holding all stats and measurements
      */
     ScheduledTaskStatistics getStats();
 
@@ -498,11 +499,16 @@ public interface IScheduledFuture<V>
 }
 ```
 
-The task handler, is a descriptor class holding information for the scheduled future, which is used to pin-point the actual task in the cluster. It contains the name of the task, the owner (member or partition) and the scheduler name. The handler is always available after scheduling and can be stored in a plain string format `com.hazelcast.scheduledexecutor.ScheduledTaskHandler#toUrn` and re-constructed back from that String `com.hazelcast.scheduledexecutor.ScheduledTaskHandler#of`. If the handler is lost, one can still find a task under a given scheduler by using the Scheduler's `com.hazelcast.scheduledexecutor.IScheduledExecutorService#getAllScheduledFutures`.
+The task handler, is a descriptor class holding information for the scheduled future, which is used to pinpoint the actual task in the cluster. It contains the name of the task, the owner (member or partition) and the scheduler name. 
 
-Last but not least, similar to [executor service](#executor-service), the scheduled executor service allows Stateful tasks to be scheduled. Stateful tasks, are tasks that require any kind of state during their runtime, which must also be durable along with the task in the event of a lost partition. Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask` interface, and providing implementation details for saving the state and loading it back. If a partition is lost, then the re-scheduled task will load the previously saved state before its execution.
+The handler is always available after scheduling and can be stored in a plain string format `com.hazelcast.scheduledexecutor.ScheduledTaskHandler#toUrn` and re-constructed back from that String `com.hazelcast.scheduledexecutor.ScheduledTaskHandler#of`. If the handler is lost, you can still find a task under a given scheduler by using the Scheduler's `com.hazelcast.scheduledexecutor.IScheduledExecutorService#getAllScheduledFutures`.
 
-**Note:** As with the tasks, Objects stored in the state Map, need to be Hazelcast serializable.
+Last but not least, similar to [executor service](#executor-service), the scheduled executor service allows Stateful tasks to be scheduled. Stateful tasks, are tasks that require any kind of state during their runtime, which must also be durable along with the task in the event of a lost partition. 
+
+Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask` interface, and providing implementation details for saving the state and loading it back. If a partition is lost, then the re-scheduled task will load the previously saved state before its execution.
+
+![image](images/NoteSmall.jpg)***NOTE:*** *As with the tasks, Objects stored in the state Map need to be Hazelcast serializable.*
+
 
 ### Configuring Scheduled Executor Service
 
