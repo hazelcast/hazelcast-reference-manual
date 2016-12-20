@@ -3,8 +3,9 @@
 ## Cardinality Estimator Service
 
 Hazelcast's cardinality estimator service is a data structure which implements Flajolet's HyperLogLog algorithm for estimating cardinalities of unique objects in theoretically huge data sets.
-The implementation offered by Hazelcast includes improvemnts from Google's version of the algorithm, a.k.a HyperLogLog++.
-The cardinality estimator service is not providing anyway to configure its properties, but rather uses some well tested defaults.
+The implementation offered by Hazelcast includes improvements from Google's version of the algorithm, i.e., HyperLogLog++.
+
+The cardinality estimator service does not provide any ways to configure its properties, but rather uses some well tested defaults.
 
 - `P`: Precision - 14, using the 14 LSB of the hash for the index.
 - `M`: 2 ^ P = 16384 (16K) registers
