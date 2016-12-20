@@ -39,7 +39,7 @@ To get the state of the cluster, use the following command:
 
 `sh cluster.sh -o get-state -a 172.16.254.1 -p 5702 -g test -P test`
 
-The following also gets the cluster state, using the alternative parameter names (e.g. `--port` instead of `-p`):
+The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
 
 `sh cluster.sh --operation get-state --address 172.16.254.1 --port 5702 --groupname test --password test`
 
@@ -100,7 +100,7 @@ To get the cluster version, use the following command:
 
 `sh cluster.sh -o get-cluster-version -a 172.16.254.1 -p 5702 -g test -P test`
 
-The following also gets the cluster state, using the alternative parameter names (e.g. `--port` instead of `-p`):
+The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
 
 `sh cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --groupname test --password test`
 

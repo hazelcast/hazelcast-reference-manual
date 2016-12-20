@@ -104,7 +104,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.slow.operation.detector.log.purge.interval.seconds`|300|int|Purge interval for slow operation logs.
 `hazelcast.slow.operation.detector.log.retention.seconds`|3600|int|Defines the retention time of invocations in slow operation logs. If an invocation is older than this value, it will be purged from the log to prevent unlimited memory usage. When all invocations are purged from a log, the log itself will be deleted.
 `hazelcast.slow.operation.detector.stacktrace.logging.enabled`|false|bool|Defines if the stacktraces of slow operations are logged in the log file. Stack traces are always reported to the Management Center, but by default, they are not printed to keep the log size small.
-`hazelcast.slow.operation.detector.threshold.millis`|10000|int|Defines a threshold above which a running operation in `OperationService` is considered to be slow. These operations log a warning and are shown in the Management Center with detailed information, e.g. stacktrace.
+`hazelcast.slow.operation.detector.threshold.millis`|10000|int|Defines a threshold above which a running operation in `OperationService` is considered to be slow. These operations log a warning and are shown in the Management Center with detailed information, e.g., stacktrace.
 `hazelcast.socket.bind.any` | true | bool | Bind both server-socket and client-sockets to any local interface.
 `hazelcast.socket.client.bind`|true|bool|Bind client socket to an interface when connecting to a remote server socket. When set to `false`, client socket is not bound to any interface.
 `hazelcast.socket.client.bind.any` | true | bool |   Bind client-sockets to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
@@ -114,7 +114,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.socket.keep.alive` | true | bool  | Socket set keep alive (`SO_KEEPALIVE`).
 `hazelcast.socket.linger.seconds`|0|int|Set socket `SO_LINGER` option.
 `hazelcast.socket.no.delay` | true | bool  |   Socket set TCP no delay.
-`hazelcast.socket.receive.buffer.size` | 32 | int | Socket receive buffer (`SO_RCVBUF`) size in KB. If you have a very fast network (e.g. 10gbit) and/or you have large entries, then you may benefit from increasing sender/receiver buffer sizes. Use this property and the next one below tune the size. For example, a send/receive buffer size of 1024 kB is a safe starting point for a 10gbit network.
+`hazelcast.socket.receive.buffer.size` | 32 | int | Socket receive buffer (`SO_RCVBUF`) size in KB. If you have a very fast network, e.g., 10gbit) and/or you have large entries, then you may benefit from increasing sender/receiver buffer sizes. Use this property and the next one below tune the size. For example, a send/receive buffer size of 1024 kB is a safe starting point for a 10gbit network.
 `hazelcast.socket.send.buffer.size` | 32 | int  | Socket send buffer (`SO_SNDBUF`) size in KB.
 `hazelcast.socket.server.bind.any` | true | bool | Bind server-socket to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
 `hazelcast.tcp.join.port.try.count`|3|int|The number of incremental ports, starting with the port number defined in the network configuration, that will be used to connect to a host (which is defined without a port in TCP/IP member list while a member is searching for a cluster).

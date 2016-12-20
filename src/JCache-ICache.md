@@ -193,7 +193,7 @@ An attempt to create a `CacheManager` with a different set of properties but an 
 The `java.net.URI`s that don't use the above-mentioned Hazelcast-specific schemes are recognized as namespacing. Those
 `CacheManager`s share the same underlying default `HazelcastInstance` created (or set) by the `CachingProvider`, but they cache with the
 same names and different namespaces on the `CacheManager` level, and therefore they won't share the same data. This is useful where multiple
-applications might share the same Hazelcast JCache implementation (e.g., on application or OSGi servers) but are developed by
+applications might share the same Hazelcast JCache implementation, e.g., on application or OSGi servers, but are developed by
 independent teams. To prevent interfering on caches using the same name, every application can use its own namespace when
 retrieving the `CacheManager`.
 

@@ -6,7 +6,7 @@ as a regular topic. The main difference is that Reliable Topic is backed up by t
 
 * Events are not lost since the Ringbuffer is configured with one synchronous backup by default.
 * Each Reliable `ITopic` gets its own Ringbuffer; if a topic has a very fast producer, it will not lead to problems at topics that run at a slower pace.
-* Since the event system behind a regular `ITopic` is shared with other data structures (e.g., collection listeners), 
+* Since the event system behind a regular `ITopic` is shared with other data structures, e.g., collection listeners, 
   you can run into isolation problems. This does not happen with the Reliable `ITopic`.
 
 ### Sample Reliable ITopic Code

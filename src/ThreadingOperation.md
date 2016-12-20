@@ -3,7 +3,7 @@
 
 There are 2 types of operations:
 
-* Operations that are aware of a certain partition, e.g. `IMap.get(key)`.
+* Operations that are aware of a certain partition, e.g., `IMap.get(key)`.
 * Operations that are not partition aware, such as the `IExecutorService.executeOnMember(command, member)` operation.
 
 Each of these operation types has a different threading model explained in the following sections.
@@ -55,7 +55,7 @@ say you have one CPU and four cores per CPU. By default, four operation threads 
 
 #### Operations that are Not Partition-aware
 
-To execute operations that are not partition-aware, e.g. `IExecutorService.executeOnMember(command, member)`, generic operation 
+To execute operations that are not partition-aware, e.g., `IExecutorService.executeOnMember(command, member)`, generic operation 
 threads are used. When the Hazelcast instance is started, an array of operation threads is created. The size of this array 
 has a default value of the number of cores divided by two with a minimum value of 2. It can be changed using the 
 `hazelcast.operation.generic.thread.count` property. 
@@ -74,7 +74,7 @@ production since performance is dominated by I/O and the system does not run man
  
 #### Priority Operations
  
-In some cases, the system needs to run operations with a higher priority, e.g. an important system operation. To support priority operations, Hazelcast has the following features:
+In some cases, the system needs to run operations with a higher priority, e.g., an important system operation. To support priority operations, Hazelcast has the following features:
 
 * For partition-aware operations: Each partition thread has its own work queue and it also has a priority
   work queue. The partition thread always checks the priority queue before it processes work from its normal work queue.

@@ -93,7 +93,7 @@ If a job is cancelled while execution, all partitions are immediately set to the
 
 While the operation is running in addition to the default operations, some more operations like
 ProcessStatsUpdateOperation (updates processed records statistics) or NotifyRemoteExceptionOperation (notifies the members that the sending member encountered an unrecoverable situation and the Job needs to
-be cancelled - e.g. NullPointerException inside of a Mapper) are executed against the job owner to keep track of the process.
+be cancelled, e.g., NullPointerException inside of a Mapper, are executed against the job owner to keep track of the process.
 
 
 

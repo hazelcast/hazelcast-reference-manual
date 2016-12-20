@@ -1,7 +1,7 @@
 
 ## WaitNotifyService
 
-`WaitNotifyService` is an interface offered by SPI for the objects (e.g. Lock, Semaphore) to be used when a thread needs to wait for a lock to be released. You can see the [WaitNotifyService source code here](https://github.com/hazelcast/hazelcast/tree/master/hazelcast/src/main/java/com/hazelcast/spi/impl/waitnotifyservice).
+`WaitNotifyService` is an interface offered by SPI for the objects, such as Lock and Semaphore, to be used when a thread needs to wait for a lock to be released. You can see the [WaitNotifyService source code here](https://github.com/hazelcast/hazelcast/tree/master/hazelcast/src/main/java/com/hazelcast/spi/impl/waitnotifyservice).
 
 `WaitNotifyService` keeps a list of waiters. For each notify operation:
 
@@ -15,4 +15,4 @@ Each waiter can sit on a wait-notify queue for, at most, its operation's call ti
 
 This way, it is possible to distinguish an unresponsive member and a long (~infinite) wait. On the caller side, if the waiting thread does not get a response for either a call timeout or for more than *2 times the call-timeout*, it will exit with `OperationTimeoutException`.  
 
-Note that this behavior breaks the fairness. Hazelcast does not support fairness for any of the data structures with blocking operations (i.e. lock and semaphore).
+Note that this behavior breaks the fairness. Hazelcast does not support fairness for any of the data structures with blocking operations, such as Lock and Semaphore.

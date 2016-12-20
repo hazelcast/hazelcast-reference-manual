@@ -16,8 +16,8 @@ rendered as O(1), but it can be faster than the normal runtime cost if the algor
 Most importantly, typical production systems have two common types of caches:
 
 - **Reference Caches**: Caches for reference data are normally small and are used to speed up the de-referencing as a lookup table. Those
-caches are commonly tend to be small and contain a previously known, fixed number of elements (e.g., states of the USA or
-abbreviations of elements).
+caches are commonly tend to be small and contain a previously known, fixed number of elements, e.g., states of the USA or
+abbreviations of elements.
 - **Active DataSet Caches**:  The other type of caches normally caches an active data set. These caches run to their maximum
 size and evict the oldest or not frequently used entries to keep in memory bounds. They sit in front of a database or HTML
 generators to cache the latest requested data.
@@ -164,7 +164,7 @@ As an explanation of how the algorithm works, let's examine the following flowch
 
 1. A new cache is created. Without any special settings, the eviction is configured to kick in when the **cache** exceeds 10.000
 elements and an LRU (Less Recently Used) policy is set up.
-2. The user puts in a new entry (e.g., a key-value pair).
+2. The user puts in a new entry, e.g., a key-value pair.
 3. For every put, the eviction strategy evaluates the current cache size and decides if an eviction is necessary or not. If not, the entry is stored in step 10.
 4. If eviction is required, a new sampling is started. The built-in sampler is implemented as an lazy iterator.
 5. The sampling algorithm selects a random sample from the underlying data storage.

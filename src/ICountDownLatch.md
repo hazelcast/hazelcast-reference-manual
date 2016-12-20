@@ -44,7 +44,7 @@ The follower class above first retrieves `ICountDownLatch` and then calls the `a
 
 ### Recovering From Failure
 
-In a distributed environment, the counting down cluster member may go down. In this case, all listeners are notified immediately and automatically by Hazelcast. The state of the current process just before the failure should be verified and 'how to continue now' should be decided (e.g. restart all process operations, continue with the first failed process operation, throw an exception, etc.).
+In a distributed environment, the counting down cluster member may go down. In this case, all listeners are notified immediately and automatically by Hazelcast. The state of the current process just before the failure should be verified and 'how to continue now' should be decided, e.g., restart all process operations, continue with the first failed process operation, and throw an exception.
 
 ### Using ICountDownLatch
 

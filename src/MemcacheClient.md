@@ -45,7 +45,7 @@ client.set( "key1", 3600, "value1" );
 System.out.println( client.get( "key1" ) );
 ```
 
-If you want your data to be stored in different maps (e.g. to utilize per map configuration), you can do that with a map name prefix as in the following example code.
+If you want your data to be stored in different maps, for example to utilize per map configuration, you can do that with a map name prefix as in the following example code.
 
 
 ```java

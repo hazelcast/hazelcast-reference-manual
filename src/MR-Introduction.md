@@ -250,7 +250,7 @@ The definition of the input type is a bit strange, but because Combiner and Redu
 
 You can use `KeyPredicate` to pre-select whether or not a key should be selected for mapping in the mapping phase. If the `KeyValueSource` implementation is able to know all keys prior to execution, the keys are filtered before the operations are divided among the different cluster members.
 
-A `KeyPredicate` can also be used to select only a special range of data (e.g., a time frame), or in similar use cases.
+A `KeyPredicate` can also be used to select only a special range of data, e.g., a time frame, or in similar use cases.
 
 A basic `KeyPredicate` implementation that only maps keys containing the word "hazelcast" might look like the following code example:
 

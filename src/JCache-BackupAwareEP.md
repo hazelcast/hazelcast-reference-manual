@@ -12,7 +12,7 @@ partitions and apply delta changes to the backup entries.
 
 The backup partition `EntryProcessor` can either be the currently running processor (by returning `this`) or it can be
 a specialized `EntryProcessor` implementation (different from the currently running one) that does different operations or leaves
-out operations, e.g. sending emails.
+out operations, e.g., sending emails.
 
 If we again take the `EntryProcessor` example from the demonstration application provided in the [Implementing EntryProcessor section](#implementing-entryprocessor),
 the changed code will look like the following snippet.

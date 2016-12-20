@@ -88,7 +88,7 @@ First, we set the expected types for the cache, which is already known from the 
 
 The next two lines configure the thread that will be read-through and write-through to the underlying backend resource that is configured
 over the next few lines. The JCache API offers `javax.cache.integration.CacheLoader` and `javax.cache.integration.CacheWriter` to
-implement adapter classes to any kind of backend resource, e.g. JPA, JDBC, or any other backend technology implementable in Java.
+implement adapter classes to any kind of backend resource, e.g., JPA, JDBC, or any other backend technology implementable in Java.
 The interface provides the typical CRUD operations like `create`, `get`, `update`, `delete`, and some bulk operation versions of those
 common operations. We will look into the implementation of those implementations later.
 

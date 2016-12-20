@@ -123,10 +123,10 @@ You can also use the interface <a href="https://github.com/hazelcast/hazelcast/b
 
 You should consider the following when you perform versioning.
 
-- It is important to change the version whenever an update is performed in the serialized fields of a class (e.g. increment the version).
+- It is important to change the version whenever an update is performed in the serialized fields of a class, for example by incrementing the version.
 - If a client performs a Portable deserialization on a field, and then that Portable is updated by removing that field on the cluster side, this may lead to a problem.
 - Portable serialization does not use reflection and hence, fields in the class and in the serialized content are not automatically mapped. Field renaming is a simpler process. Also, since the class ID is stored, renaming the Portable does not lead to problems.
-- Types of fields need to be updated carefully. Hazelcast performs basic type upgradings (e.g. `int` to `float`).
+- Types of fields need to be updated carefully. Hazelcast performs basic type upgradings, such as `int` to `float`.
 
 
 #### Example Portable Versioning Scenarios

@@ -183,7 +183,7 @@ The `multicast` element includes parameters to fine tune the multicast join mech
 - `multicast-port`: The multicast socket port that the Hazelcast member listens to and sends discovery messages through. Default value is 54327.
 - `multicast-time-to-live`: Time-to-live value for multicast packets sent out to control the scope of multicasts. See more information [here](http://www.tldp.org/HOWTO/Multicast-HOWTO-2.html).
 - `multicast-timeout-seconds`: Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another member. For example, if you set it as 60 seconds, each member will wait for 60 seconds until a leader member is selected. Its default value is 2 seconds. 
-- `trusted-interfaces`: Includes IP addresses of trusted members. When a member wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (\*) on the last digit of IP address (e.g. 192.168.1.\* or 192.168.1.100-110).
+- `trusted-interfaces`: Includes IP addresses of trusted members. When a member wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (\*) on the last digit of IP address, e.g., 192.168.1.\* or 192.168.1.100-110.
 	
 #### tcp-ip element 
 
@@ -195,7 +195,7 @@ The `tcp-ip` element includes parameters to fine tune the TCP/IP join mechanism.
 
 ![image](images/NoteSmall.jpg)***NOTE:*** *`tcp-ip` element also accepts the `interface` parameter. Please refer to the [Interfaces element description](#interfaces).*
 
-- `connection-timeout-seconds`: Defines the connection timeout. This is the maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. Setting it to a too low value could mean that a member is not able to connect to a cluster. Setting it to a too high value means that member startup could slow down because of longer timeouts (e.g. when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5.
+- `connection-timeout-seconds`: Defines the connection timeout. This is the maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. Setting it to a too low value could mean that a member is not able to connect to a cluster. Setting it to a too high value means that member startup could slow down because of longer timeouts, for example when a well known member is not up. Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5.
 
 #### aws element 
 
@@ -210,7 +210,7 @@ The `aws` element includes parameters to allow the members to form a cluster on 
 - `connection-timeout-seconds`: The maximum amount of time Hazelcast will try to connect to a well known member before giving up. Setting this value too low could mean that a member is not able to connect to a cluster. Setting the value too high means that member startup could slow down because of longer timeouts (for example, when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5.
 
 
-If you are using a cloud provider other than AWS, you can use the programmatic configuration to specify a TCP/IP cluster. The members will need to be retrieved from that provider (e.g. jclouds).
+If you are using a cloud provider other than AWS, you can use the programmatic configuration to specify a TCP/IP cluster. The members will need to be retrieved from that provider, e.g., jclouds.
 
 #### discovery-strategies element
 
