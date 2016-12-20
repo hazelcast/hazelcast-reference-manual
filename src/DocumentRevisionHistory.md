@@ -17,7 +17,9 @@ This chapter lists the changes made to this document from the previous release.
 ||[Locking Maps](#locking-maps)| Updated by adding split-brain protection content.
 |||Added [Overview of Hazelcast Distributed Objects](#overview-of-hazelcast-distributed-objects), [Loading and Destroying a Distributed Object](#loading-and-destroying-a-distributed-object) and [Controlling Partitions](#controlling-partitions) as new sections.
 ||[Lock](#lock)| Updated by adding split-brain protection content.
+||[Cardinality Estimator Service](#cardinality-estimator-service)| Added as a new section.
 |[Chapter 10 - Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)| Added a warning to the introduction.
+||[Scheduled Executor Service](#scheduled-executor-service)| Added as a new section.
 |[Chapter 11 - Distributed Query](#distributed-query)||Explanation for the `__key` attribute added under [Querying with SQL](#querying-with-sql) section.
 ||[Fast-Aggregations](#fast-aggregations)|Added as a new section.
 ||[Projections](#projections)|Added as a new section.
