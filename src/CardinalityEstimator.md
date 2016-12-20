@@ -12,14 +12,15 @@ The cardinality estimator service does not provide any ways to configure its pro
 - `P'`: Sparse Precision - 25
 - `Durability`: How many backups for each estimator, default 2
 
-**Note:** It is important to understand that this data structure is not 100% accurate, it is used to provide estimates. The error rate is typically a result of `1.04/sqrt(M)`
-which in our implementation is around 0.81% for high percentiles.
+![image](images/NoteSmall.jpg)***NOTE:*** *It is important to understand that this data structure is not 100% accurate, it is used to provide estimates. The error rate is typically a result of `1.04/sqrt(M)` which in our implementation is around 0.81% for high percentiles.*
+
+
 
 The memory consumption of this data structure is close to 16K despite the size of elements in the source data set or stream.
 
-### API
+### Cardinality Estimator API
 
-In detail the API looks as follows:
+The following is a brief view of the cardinality estimator API:
 
 ```
 package com.hazelcast.cardinality;
@@ -43,11 +44,7 @@ public interface CardinalityEstimator extends DistributedObject {
      * use to feed objects into the estimator.
      *
      * Objects are considered identical if they are serialized into the same binary blob.
-     * In other words: It does <strong>not</strong> use Java equality.
-     *
-     * @param obj object to add in the estimation set.
-     * @throws NullPointerException if obj is null
-     * @since 3.8
+     * In other words: It does not use Java equality.
      */
     void add(Object obj);
 
@@ -55,9 +52,6 @@ public interface CardinalityEstimator extends DistributedObject {
     /**
      * Estimates the cardinality of the aggregation so far.
      * If it was previously estimated and never invalidated, then a cached version is used.
-     *
-     * @return a cached estimation or a newly computed one.
-     * @since 3.8
      */
     long estimate();
 
@@ -66,21 +60,16 @@ public interface CardinalityEstimator extends DistributedObject {
      * use to feed objects into the estimator.
      *
      * Objects are considered identical if they are serialized into the same binary blob.
-     * In other words: It does <strong>not</strong> use Java equality.
+     * In other words: It does not use Java equality.
      *
-     * This method will dispatch a request and return immediately an {@link ICompletableFuture}.
+     * This method will dispatch a request and return immediately an ICompletableFuture.
      * The operations result can be obtained in a blocking way, or a
      * callback can be provided for execution upon completion, as demonstrated in the following examples:
-     * <p>
-     * <pre>
-     *     ICompletableFuture&lt;Void&gt; future = estimator.addAsync();
+     * 1.  ICompletableFuture&lt;Void&gt; future = estimator.addAsync();
      *     // do something else, then read the result
      *     Boolean result = future.get(); // this method will block until the result is available
-     * </pre>
-     * </p>
-     * <p>
-     * <pre>
-     *     ICompletableFuture&lt;Void&gt; future = estimator.addAsync();
+     * 
+     * 2.  ICompletableFuture&lt;Void&gt; future = estimator.addAsync();
      *     future.andThen(new ExecutionCallback&lt;Void&gt;() {
      *          void onResponse(Void response) {
      *              // do something
@@ -90,12 +79,6 @@ public interface CardinalityEstimator extends DistributedObject {
      *              // handle failure
      *          }
      *     });
-     * </pre>
-     * </p>
-     * @param obj object to add in the estimation set.
-     * @return an {@link ICompletableFuture} API consumers can use to track execution of this request.
-     * @throws NullPointerException if obj is null
-     * @since 3.8
      */
     ICompletableFuture<Void> addAsync(Object obj);
 
@@ -103,19 +86,14 @@ public interface CardinalityEstimator extends DistributedObject {
      * Estimates the cardinality of the aggregation so far.
      * If it was previously estimated and never invalidated, then a cached version is used.
      *
-     * This method will dispatch a request and return immediately an {@link ICompletableFuture}.
+     * This method will dispatch a request and return immediately an ICompletableFuture.
      * The operations result can be obtained in a blocking way, or a
      * callback can be provided for execution upon completion, as demonstrated in the following examples:
-     * <p>
-     * <pre>
-     *     ICompletableFuture&lt;Long&gt; future = estimator.estimateAsync();
+     * 1.  ICompletableFuture&lt;Long&gt; future = estimator.estimateAsync();
      *     // do something else, then read the result
      *     Long result = future.get(); // this method will block until the result is available
-     * </pre>
-     * </p>
-     * <p>
-     * <pre>
-     *     ICompletableFuture&lt;Long&gt; future = estimator.estimateAsync();
+     * 
+     * 2.  ICompletableFuture&lt;Long&gt; future = estimator.estimateAsync();
      *     future.andThen(new ExecutionCallback&lt;Long&gt;() {
      *          void onResponse(Long response) {
      *              // do something with the result
@@ -125,10 +103,6 @@ public interface CardinalityEstimator extends DistributedObject {
      *              // handle failure
      *          }
      *     });
-     * </pre>
-     * </p>
-     * @return {@link ICompletableFuture} bearing the response, the estimate.
-     * @since 3.8
      */
     ICompletableFuture<Long> estimateAsync();
 
@@ -137,13 +111,13 @@ public interface CardinalityEstimator extends DistributedObject {
 
 There are two phases in using the cardinality estimator.
 
-1. Add objects to the instance of the estimator (eg. for IPs `estimator.add("0.0.0.0.")`).
-The provided object is first serialized, and then the byte array is used to generate a hash for that object.
-**Note:** Objects must be serializable in a form that Hazelcast understands.
-2. Compute the estimate of the set so far `estimator.estimate()`
+1. Add objects to the instance of the estimator, e.g., for IPs `estimator.add("0.0.0.0.")`.
+The provided object is first serialized, and then the byte array is used to generate a hash for that object.<br></br>
+![image](images/NoteSmall.jpg)***NOTE:*** *Objects must be serializable in a form that Hazelcast understands.*
+
+2. Compute the estimate of the set so far `estimator.estimate()`.
 
 ### Examples
-
 
 ```
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
