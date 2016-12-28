@@ -11,6 +11,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Chapter 6 - Setting Up Clusters](#setting-up-clusters)|[User Code Deployment](#user-code-deployment)|Added as a new section to explain Hazelcast's distributed class loading feature.
 |[Chapter 7 - Rolling Member Upgrades](#rolling-member-upgrades)||Added as a new chapter.
 |[Chapter 8 - Distributed Data Structures](#distributed-data-structures)|[Queue](#queue)| Updated  by adding split-brain protection content.
 ||[Ringbuffer](#ringbuffer)|Added [Ringbuffer with Persistent Datastore](#ringbuffer-with-persistent-datastore) as a new section.
