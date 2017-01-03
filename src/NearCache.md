@@ -54,7 +54,7 @@ The following shows the configuration for the Hazelcast Near Cache.
   <cache-local-entries>(false|true)</cache-local-entries>
   <local-update-policy>(INVALIDATE|CACHE)</local-update-policy>
   <preloader enabled="(true|false)"
-             file-name="nearcache-example.store"
+             filename="nearcache-example.store"
              store-initial-delay-seconds="(0..INT_MAX)"
              store-interval-seconds="(0..INT_MAX)"/>
 </near-cache>
@@ -74,7 +74,7 @@ EvictionConfig evictionConfig = new EvictionConfig()
 
 NearCachePreloaderConfig preloaderConfig = new NearCachePreloaderConfig()
   .setEnabled(true|false)
-  .setFileName("nearcache-example.store")
+  .setFilename("nearcache-example.store")
   .setStoreInitialDelaySeconds(0..INT_MAX)
   .setStoreIntervalSeconds(0..INT_MAX);
 
@@ -120,7 +120,7 @@ Following are the descriptions of all configuration elements:
    - `CACHE`: Updates the local Near Cache immediately after the put operation completes.
 - `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
   - `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
-  - `file-name`: Specifies the file name for the preloader of this Near Cache.
+  - `filename`: Specifies the file name for the preloader of this Near Cache. If not set the name will be generated from the name of the Near Cache.
   - `store-initial-delay-seconds`: Specifies the delay in seconds until the keys of this Near Cache are stored for the first time. Its default value is `600`.
   - `store-interval-seconds`: Specifies the interval in seconds in which the keys of this Near Cache are stored. Its default value is `600`. 
 
@@ -321,4 +321,7 @@ The Near Cache preloader is a functionality to store the keys from a Near Cache 
 The Near Cache preloader stores the keys (not the values) of Near Cache entries in regular intervals. You can define the initial delay via `store-initial-delay-seconds`, e.g., if you know that your hot data set will need some time to build up. You can configure the interval via `store-interval-seconds` which determines how often the key-set will be stored. The persistence will not run continuously. Whenever the storage is scheduled, it will be performed on the actual keys in the Near Cache.
  
 The Near Cache preloader will be triggered on the first initialization of the data structure on the client, e.g., `client.getMap("myNearCacheMap")`. This schedules the preloader, which will work in the background, so your application is not blocked. The storage will be enabled after the loading is completed.
- 
+
+The configuration parameter `filename` is optional. If you omit it the storage filename will be generated from the name of the Near Cache. For auto-generated and relative filenames the base folder will be the user working directory (normally where the JVM was started or configured with the system property `user.dir`).
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you run multiple Hazelcast clients with enabled Near Cache preloader on the same machine, you have to configure a unique storage filename for each client or run them from different user directories. If two clients would write into the same file, only the first client will succeed. The following clients will throw an exception as soon as the Near Cache preloader is triggered.*
