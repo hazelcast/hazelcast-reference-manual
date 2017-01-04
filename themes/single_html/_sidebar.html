@@ -1,41 +1,39 @@
 <% toc_level = (level, maxLevel, currentLevel=1) => %>
-    <ol>
+  <ol>
     <% for entry in level: %>
-        <li>
-            <a href="<%= @baseUrl %><%- entry.slug %>.html#<%= entry.anchor %>"><%= entry.title %></a>
-            <% if entry.childs and currentLevel < maxLevel: %>
-                <%= toc_level(entry.childs, maxLevel, currentLevel + 1) %>
-            <% end %>
-        </li>
-    <% end %>
-</ol>
+    <li>
+      <a href="<%= @baseUrl %><%- entry.slug %>.html#<%= entry.anchor %>"><%= entry.title %></a>
+      <% if entry.childs and currentLevel < maxLevel: %>
+        <%= toc_level(entry.childs, maxLevel, currentLevel + 1) %>
+      <% end %>
+    </li>
+  <% end %>
+  </ol>
 <% end %>
-	
 <% generate_tags = (level, maxLevel, currentLevel=1) => %>
-     <% for entry in level: %>
-         {label: "<%= entry.title %>", url: "<%= @baseUrl %><%- entry.slug %>.html#<%= entry.anchor %>"},
-         <% if entry.childs and currentLevel < maxLevel: %>
-             <%= generate_tags(entry.childs, maxLevel, currentLevel + 1) %>
-         <% end %>
-     <% end %>
- <% end %>
-     <script type="text/javascript">
-         $( function() {
-         var availableTags = [
-         <%= generate_tags(@manifest.tableOfContent, @manifest.maxTocLevel) %>
-         ];
-         $( "#search" ).autocomplete({
-           source: availableTags,
-           select: function(event, ui){
-             window.location = ui.item.url
-           }
-         });
-       } );
-     </script>
-	 
-	<div id="sidebar" style="overflow-y:auto">
-	    <form action="<%= @baseUrl %>search.html"><input id="search" type="text" placeholder="Search" name="q" /></form>
-	    <nav id="toc">
-	        <%= toc_level(@manifest.tableOfContent, @manifest.maxTocLevel) %>
-	    </nav>
-	</div>
+  <% for entry in level: %>
+    {label: "<%= entry.title %>", url: "<%= @baseUrl %><%- entry.slug %>.html#<%= entry.anchor %>"},
+      <% if entry.childs and currentLevel < maxLevel: %>
+        <%= generate_tags(entry.childs, maxLevel, currentLevel + 1) %>
+      <% end %>
+    <% end %>
+<% end %>
+<script type="text/javascript">
+  $( function() {
+    var availableTags = [
+      <%= generate_tags(@manifest.tableOfContent, @manifest.maxTocLevel) %>
+    ];
+    $( "#search" ).autocomplete({
+      source: availableTags,
+      select: function(event, ui){
+      window.location = ui.item.url
+       }
+     });
+  } );
+</script>
+<div id="sidebar" style="overflow-y:auto">
+  <form action="<%= @baseUrl %>search.html"><input id="search" type="text" placeholder="Search" name="q" /></form>
+  <nav id="toc">
+    <%= toc_level(@manifest.tableOfContent, @manifest.maxTocLevel) %>
+  </nav>
+</div>
