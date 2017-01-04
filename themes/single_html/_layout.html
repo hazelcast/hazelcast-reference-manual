@@ -12,76 +12,67 @@
     <link type="text/css" rel="stylesheet" href="<%= @baseUrl %>assets/css/docs.css">
     <link type="text/css" rel="stylesheet" href="<%= @baseUrl %>assets/css/print.css" media="print">
     <% if @manifest.options.css: %><link type="text/css" rel="stylesheet" href="<%- @manifest.options.css %>"><% end %>
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/jquery.sticky-kit.min.js"></script>
     <script type="text/javascript" src="http://yandex.st/highlightjs/6.1/highlight.min.js"></script>
-    <script type="text/javascript" src="<%= @baseUrl %>assets/js/lunr.min.js"></script>
-
     <% if @manifest.options.embedly: %>
-        <script type="text/javascript" src="http://scripts.embed.ly/jquery.embedly.min.js"></script>
-        <script type="text/javascript">
-            $(function(){
-                $('#content p:not(.disable-embedly) a:only-child').parent().embedly({
-                    key:'<%= @manifest.options.embedly %>',
-                    maxWidth: 700
-                });
+     <script type="text/javascript" src="http://scripts.embed.ly/jquery.embedly.min.js"></script>
+      <script type="text/javascript">
+        $(function(){
+          $('#content p:not(.disable-embedly) a:only-child').parent().embedly({
+            key:'<%= @manifest.options.embedly %>',
+            maxWidth: 700
             });
-        </script>
+          });
+      </script>
     <% end %>
-
     <script type="text/javascript">var BASE_URL = "<%= @baseUrl %>";</script>
     <script type="text/javascript" src="<%= @baseUrl %>assets/js/viewer.js"></script>
-    <script type="text/javascript" src="<%= @baseUrl %>assets/js/scroll-scrollup.js"></script>
-
     <script type="text/javascript"> 
-  	$(function(){
-		$("#sidebar").stick_in_parent()
-	});
+      $(function(){
+        $("#sidebar").stick_in_parent()
+       });
     </script>
+</head>
+<body>
+  <div id="page">
+    <div id="sitebar">
+      <div class="content">
+        <p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
+      </div>
+    </div>
+    <header id="header">
+      <div class="content">
+        <div style="overflow:hidden">
+          <div style="float:left">
+            <a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
+          </div>
+          <div style="float:left;padding-top: 30px;padding-left: 30px;">
+            <a href="<%= @baseUrl %>"></a> <span style="font-size:36px;color:white"> Reference Manual </span> <span style="font-size:12px;color:white"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content">
+      <%- @include "_sidebar.html" %>
+      <div id="content">
+        <%- @content %>
+      </div>
+      <a class="sendfix" href="https://github.com/hazelcast/hazelcast-reference-manual/issues/new" target="_blank">Send Us a Fix!</a>
+    </div>
+  </div>
+    <script type="text/javascript" src="<%= @baseUrl %>assets/js/scroll-scrollup.js"></script>	
+    <script type="text/javascript" src="<%= @baseUrl %>assets/js/lunr.min.js"></script>
     <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
        ga('create', 'UA-74505322-1', 'auto');
        ga('send', 'pageview');
-    </script>
-    <script type="text/javascript">
-        setTimeout(function(){var a=document.createElement("script");
-            var b=document.getElementsByTagName("script")[0];
-            a.src=document.location.protocol+"//dnn506yrbagrg.cloudfront.net/pages/scripts/0020/7413.js?"+Math.floor(new Date().getTime()/3600000);
-            a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
-    </script>
-
-</head>
-<body>
-	<div id="page">
-			<div id="sitebar">
-				<div class="content">
-					<p><a href="http://hazelcast.org/documentation">Go to <span style="font-weight:bold">hazelcast.org/documentation</span></a></p>
-				</div>
-			</div>
-		<header id="header">
-			<div class="content">
-				<div style="overflow:hidden">
-					<div style="float:left">
-						<a href="http://www.hazelcast.org"><img src="<%= @baseUrl %>assets/img/logo.png" style="width: 199px;padding-top: 18px"/></a>
-					</div>
-					<div style="float:left;padding-top: 30px;padding-left: 30px;">
-					<a href="<%= @baseUrl %>"></a> <span style="font-size:36px;color:white"> Reference Manual </span> <span style="font-size:12px;color:white"> Version: <%= @manifest.options.version %> - Publication Date : <%= @manifest.options.date %> </span>
-					</div>
-				</div>
-			</div>
-		</header>
-		<div class="content">
-			<%- @include "_sidebar.html" %>
-				<div id="content">
-					<%- @content %>
-				</div>
-				<a class="sendfix" href="https://github.com/hazelcast/hazelcast-reference-manual/issues/new" target="_blank">Send Us a Fix!</a>
-		</div>
-	</div>
+    </script>    
 </body>
 </html>
