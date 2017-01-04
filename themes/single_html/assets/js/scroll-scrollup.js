@@ -20,3 +20,4 @@ $(function () {
 });
 
 (function(){$("a[href^=#]").on("click",function(t){var a=$(this).attr("href");$("html, body").animate({scrollTop:$(a).offset().top},"fast"),t.preventDefault()})}).call(this);
+
