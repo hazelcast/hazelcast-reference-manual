@@ -16,6 +16,7 @@ Your implementation of `LoginModule` should create an instance of `com.hazelcast
 public class CustomLoginModule implements LoginModule {
   CallbackHandler callbackHandler;
   Subject subject;
+  Credentials credentials;
     
   public void initialize( Subject subject, CallbackHandler callbackHandler,
                           Map<String, ?> sharedState, Map<String, ?> options ) {
@@ -27,7 +28,7 @@ public class CustomLoginModule implements LoginModule {
     CredentialsCallback callback = new CredentialsCallback();
     try {
       callbackHandler.handle( new Callback[] { callback } );
-      credentials = cb.getCredentials();
+      credentials = callback.getCredentials();
     } catch ( Exception e ) {
       throw new LoginException( e.getMessage() );
     }
