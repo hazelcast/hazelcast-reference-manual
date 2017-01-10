@@ -45,7 +45,7 @@ one at version `3.9.0`, includes the following steps which should be repeated fo
  ...
  INFO: [192.168.2.2]:5701 [cluster] [3.9] Hazelcast 3.9 (20170630 - a67dc3a) starting at [192.168.2.2]:5701
  ...
- INFO: [192.168.2.2]:5701 [cluster] [3.9] Cluster version changed to 3.8
+ INFO: [192.168.2.2]:5701 [cluster] [3.9] Cluster version set to 3.8
 ```
  
  The version in brackets `[3.9]` still denotes the member's codebase version (running on the hypothetical `hazelcast-3.9.jar` binary). Once the member
