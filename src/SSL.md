@@ -8,7 +8,7 @@
 ![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot use SSL when [Hazelcast Encryption](#encryption) is enabled.*
 <br></br>
 
-One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which you can use to establish an encrypted communication across your cluster. Note that, if you are developing applications using Java 8, you wıll be using its successor TLS (Transport Layer Security).
+One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which you can use to establish an encrypted communication across your cluster. Note that, if you are developing applications using Java 8, you will be using its successor TLS (Transport Layer Security).
 
 ### SSL for Hazelcast Members
 
