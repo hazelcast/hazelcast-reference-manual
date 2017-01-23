@@ -2,37 +2,37 @@
 
 # Preface
 
-Welcome to the Hazelcast Reference Manual. This manual includes concepts, instructions, and samples to guide you on how to use Hazelcast and build Hazelcast applications.
+Welcome to the Hazelcast IMDG (In-Memory Data Grid) Reference Manual. This manual includes concepts, instructions, and samples to guide you on how to use Hazelcast and build Hazelcast IMDG applications.
 
 As the reader of this manual, you must be familiar with the Java programming language and you should have installed your preferred Integrated Development Environment (IDE).
 
-## Hazelcast Editions
+## Hazelcast IMDG Editions
 
-This Reference Manual covers all editions of Hazelcast. Throughout this manual:
+This Reference Manual covers all editions of Hazelcast IMDG. Throughout this manual:
 
-- **Hazelcast** refers to the open source edition of Hazelcast in-memory data grid middleware. It is also the name of the company (Hazelcast, Inc.) providing the Hazelcast product.
-- <font color="#3981DB">**Hazelcast Enterprise**</font> is a commercially licensed edition of Hazelcast which provides high-value enterprise features in addition to Hazelcast.
-- <font color="##153F75">**Hazelcast Enterprise HD**</font> is a commercially licensed edition of Hazelcast which provides High-Density (HD) Memory Store and Hot Restart Persistence features in addition to Hazelcast Enterprise.
+- **Hazelcast** or **Hazelcast IMDG** refers to the open source edition of Hazelcast in-memory data grid middleware. **Hazelcast** is also the name of the company (Hazelcast, Inc.) providing the Hazelcast product.
+- <font color="#3981DB">**Hazelcast IMDG Enterprise**</font> is a commercially licensed edition of Hazelcast IMDG which provides high-value enterprise features in addition to Hazelcast IMDG.
+- <font color="##153F75">**Hazelcast IMDG Enterprise HD**</font> is a commercially licensed edition of Hazelcast IMDG which provides High-Density (HD) Memory Store and Hot Restart Persistence features in addition to Hazelcast IMDG Enterprise.
 
 
-## Hazelcast Architecture
+## Hazelcast IMDG Architecture
 
-You can see the features for all Hazelcast editions in the following architecture diagram.
+You can see the features for all Hazelcast IMDG editions in the following architecture diagram.
 
 <img src="images/HCArch.png" alt="Hazelcast Architecture" height="453" width="700">
 
-![image](images/NoteSmall.jpg) ***NOTE*** *You can see small "HD" boxes for some features in the above diagram. Those features can use High-Density (HD) Memory Store when it is available. It means if you have Hazelcast Enterprise HD, you can use those features with HD Memory Store.*
+![image](images/NoteSmall.jpg) ***NOTE*** *You can see small "HD" boxes for some features in the above diagram. Those features can use High-Density (HD) Memory Store when it is available. It means if you have Hazelcast IMDG Enterprise HD, you can use those features with HD Memory Store.*
 
-For more information on Hazelcast's Architecture, please see the white paper <a href="https://hazelcast.com/resources/architects-view-hazelcast/" target="_blank">An Architect’s View of Hazelcast</a>.
+For more information on Hazelcast IMDG's Architecture, please see the white paper <a href="https://hazelcast.com/resources/architects-view-hazelcast/" target="_blank">An Architect’s View of Hazelcast</a>.
 
-## Hazelcast Plugins
+## Hazelcast IMDG Plugins
 
-You can extend Hazelcast's functionality by using its plugins. These plugins have their own lifecycles. Please see <a href="http://hazelcast.org/plugins/" target="_blank">Plugins page</a> to learn about Hazelcast plugins you can use. Hazelcast plugins are marked with <img src="images/Plugin_New.png" alt="Plugin" height="12" width="54"> label throughout this manual.
+You can extend Hazelcast IMDG's functionality by using its plugins. These plugins have their own lifecycles. Please see <a href="http://hazelcast.org/plugins/" target="_blank">Plugins page</a> to learn about Hazelcast plugins you can use. Hazelcast plugins are marked with <img src="images/Plugin_New.png" alt="Plugin" height="12" width="54"> label throughout this manual.
 
 
 ## Licensing
 
-Hazelcast and Hazelcast Reference Manual are free and provided under the Apache License, Version 2.0. Hazelcast Enterprise is commercially licensed by Hazelcast, Inc.
+Hazelcast IMDG and Hazelcast Reference Manual are free and provided under the Apache License, Version 2.0. Hazelcast IMDG Enterprise and Hazelcast IMDG Enterprise HD is commercially licensed by Hazelcast, Inc.
 
 For more detailed information on licensing, please see the [License Questions appendix](#license-questions).
 
@@ -46,18 +46,18 @@ Hazelcast is a registered trademark of Hazelcast, Inc. All other trademarks in t
 
 Support for Hazelcast is provided via <a href="https://github.com/hazelcast/hazelcast/issues" target="_blank">GitHub</a>, <a href="https://groups.google.com/forum/#!forum/hazelcast" target="_blank">Mail Group</a> and <a href="http://www.stackoverflow.com" target="_blank">StackOverflow</a>
 
-For information on the commercial support for Hazelcast and Hazelcast Enterprise, please see 
+For information on the commercial support for Hazelcast IMDG and Hazelcast IMDG Enterprise, please see 
 <a href="https://hazelcast.com/pricing/" target="_blank">hazelcast.com</a>.
 
 ## Release Notes
 
-Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes document</a> for the new features, enhancements and fixes performed for each Hazelcast release.
+Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes document</a> for the new features, enhancements and fixes performed for each Hazelcast IMDG release.
 
 
 
-## Contributing to Hazelcast
+## Contributing to Hazelcast IMDG
 
-You can contribute to the Hazelcast code, report a bug, or request an enhancement. Please see the following resources.
+You can contribute to the Hazelcast IMDG code, report a bug, or request an enhancement. Please see the following resources.
 
 - <a href="https://hazelcast.atlassian.net/wiki/display/COM/Developing+with+Git" target="_blank">Developing with Git</a>: Document that explains the branch mechanism of Hazelcast and how to request changes.
 - <a href="https://hazelcast.atlassian.net/wiki/display/COM/Hazelcast+Contributor+Agreement" target="_blank">Hazelcast Contributor Agreement form</a>: Form that each contributing developer needs to fill and send back to Hazelcast.
@@ -70,16 +70,16 @@ Hazelcast partners with leading hardware and software technologies, system integ
 
 ## Phone Home
 
-Hazelcast uses phone home data to learn about usage of Hazelcast.
+Hazelcast uses phone home data to learn about usage of Hazelcast IMDG.
 
-Hazelcast member instances call our phone home server initially when they are started and then every 24 hours. This applies to all the instances joined to the cluster.
+Hazelcast IMDG member instances call our phone home server initially when they are started and then every 24 hours. This applies to all the instances joined to the cluster.
 
 **What is sent in?**
 
 The following information is sent in a phone home:
 
-- Hazelcast version
-- Local Hazelcast member UUID
+- Hazelcast IMDG version
+- Local Hazelcast IMDG member UUID
 - Download ID 
 - A hash value of the cluster ID
 - Cluster size bands for 5, 10, 20, 40, 60, 100, 150, 300, 600 and > 600
@@ -92,7 +92,7 @@ The following information is sent in a phone home:
 	- Version of operating system
 	- Version of installed Java
 	- Name of Java Virtual Machine
-- Hazelcast Enterprise specific: 
+- Hazelcast IMDG Enterprise specific: 
 	- Number of clients by language (Java, C++, C#)
 	- Flag for Hazelcast Enterprise 
 	- Hash value of license key
