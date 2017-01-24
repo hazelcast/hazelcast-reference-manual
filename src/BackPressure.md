@@ -15,6 +15,8 @@ To prevent the system from crashing, Hazelcast provides back pressure. Back pres
 
 - periodically making an async backup sync.
 
+### Member Side
+
 Back pressure is disabled by default and you can enable it using the following system property:
 
 `hazelcast.backpressure.enabled`
@@ -47,6 +49,21 @@ controlled through the following property:
 
 This system property's default value is 100. It means, out of 100 *asynchronous* backups, Hazelcast makes 1 of them a *synchronous* one. A randomization is added, so the sync window with default configuration will be between 75 and 125 
 invocations. 
+
+### Client Side
+
+To prevent the system at the client side from overloading, you can apply a constraint on the number of concurrent invocations. You can use the following system property at the client side for this purpose:
+
+`hazelcast.client.max.concurrent.invocations`
+
+This property defines the maximum allowed number of concurrent invocations. When it is not explicitly set, it has the value `Integer.MAX_VALUE` by default, which means infinite. When you set it and if the maximum number of concurrent invocations is exceeded this value, Hazelcast will throw `HazelcastOverloadException` when a new invocation comes in.
+
+Please note that back off timeout and controlling the number of pending async backups (sync window) is not supported at the client side.
+
+
+
+
+
 
 <br></br>
 
