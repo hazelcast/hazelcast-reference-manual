@@ -45,3 +45,5 @@ The following is the declarative configuration example.
 </native-memory>
 ```
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *You can check whether there is enough free physical memory for the requested number of bytes using the system property `hazelcast.hidensity.check.freememory`. Please see the [System Properties chapter](#system-properties) on how to use Hazelcast system properties*.

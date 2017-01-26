@@ -38,6 +38,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.health.monitoring.delay.seconds`|30|int|Health monitoring logging interval in seconds.
 `hazelcast.health.monitoring.level`|SILENT|string|Health monitoring log level. When *SILENT*, logs are printed only when values exceed some predefined threshold. When *NOISY*, logs are always printed periodically. Set *OFF* to turn off completely.
 `hazelcast.heartbeat.interval.seconds` | 5 | int  |   Heartbeat send interval in seconds.
+`hazelcast.hidensity.check.freememory`|true|bool|If enabled and is able to fetch memory statistics via Java's `OperatingSystemMXBean`, it checks whether there is enough free physical memory for the requested number of bytes. If the free memory checker is disabled (false), acts as if the check is succeeded.
 `hazelcast.icmp.enabled` | false | bool  |   Enable ICMP ping.
 `hazelcast.icmp.timeout` | 1000 | int |   ICMP timeout in milliseconds.
 `hazelcast.icmp.ttl` | 0 | int |   ICMP TTL (maximum numbers of hops to try).
