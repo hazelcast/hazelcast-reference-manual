@@ -52,7 +52,7 @@ The following shows the configuration for the Hazelcast Near Cache.
               |FREE_NATIVE_MEMORY_SIZE|FREE_NATIVE_MEMORY_PERCENTAGE"
             size="(0..INT_MAX)"/>
   <cache-local-entries>(false|true)</cache-local-entries>
-  <local-update-policy>(INVALIDATE|CACHE)</local-update-policy>
+  <local-update-policy>(INVALIDATE|CACHE_ON_UPDATE)</local-update-policy>
   <preloader enabled="(true|false)"
              filename="nearcache-example.store"
              store-initial-delay-seconds="(0..INT_MAX)"
@@ -86,7 +86,7 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setMaxIdleSeconds(0..INT_MAX)
   .setEvictionConfig(evictionConfig)
   .setCacheLocalEntries(true|false)
-  .setLocalUpdatePolicy(LocalUpdatePolicy.INVALIDATE|CACHE)
+  .setLocalUpdatePolicy(LocalUpdatePolicy.INVALIDATE|CACHE_ON_UPDATE)
   .setPreloaderConfig(preloaderConfig);
 ```
 
@@ -117,7 +117,7 @@ Following are the descriptions of all configuration elements:
 - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
 - `local-update-policy`: Specifies the update policy of the local Near Cache. Is just available on JCache clients. Available values are as follows:
    - `INVALIDATE`: Does not update the local Near Cache. Will invalidate the local Near Cache eventually (default value).
-   - `CACHE`: Updates the local Near Cache immediately after the put operation completes.
+   - `CACHE_ON_UPDATE`: Updates the local Near Cache immediately after the put operation completes.
 - `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
   - `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
   - `filename`: Specifies the file name for the preloader of this Near Cache. If not set the name will be generated from the name of the Near Cache.
@@ -207,7 +207,7 @@ The following is a configuration example for a JCache Near Cache for a Hazelcast
     <in-memory-format>OBJECT</in-memory-format>
     <invalidate-on-change>true</invalidate-on-change>
     <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="30000"/>
-    <local-update-policy>CACHE</local-update-policy>
+    <local-update-policy>CACHE_ON_UPDATE</local-update-policy>
   </near-cache>
 </hazelcast-client>
 ```
@@ -223,7 +223,7 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setInMemoryFormat(InMemoryFormat.OBJECT)
   .setInvalidateOnChange(true)
   .setEvictionConfig(evictionConfig)
-  .setLocalUpdatePolicy(LocalUpdatePolicy.CACHE);
+  .setLocalUpdatePolicy(LocalUpdatePolicy.CACHE_ON_UPDATE);
 
 ClientConfig clientConfig = new ClientConfig()
   .addNearCacheConfig(nearCacheConfig);
