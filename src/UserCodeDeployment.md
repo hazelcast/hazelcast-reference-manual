@@ -20,20 +20,20 @@ User Code Deployment feature is not enabled by default. You can configure this f
 **Declarative Configuration**
 
 ```xml
-<distributed-classloading enabled="true">
+<user-code-deployment enabled="true">
 	<class-cache-mode>ETERNAL</class-cache-mode>
 	<provider-mode>LOCAL_CLASSES_ONLY</provider-mode>
 	<blacklist-prefixes>com.foo</blacklist-prefixes>
 	<whitelist-prefixes>com.bar.MyClass</whitelist-prefixes>
 	<provider-filter>HAS_ATTRIBUTE:lite<provider-filter>
-</distributed-classloading>
+</user-code-deployment>
 ```
 
 **Programmatic Configuration**
 
 ```java
 Config config = new Config();
-DistributedClassLoadingConfig distCLConfig = config.getDistributedClassLoadingConfig();
+UserCodeDeploymentConfig distCLConfig = config.getUserCodeDeploymentConfig();
 	distCLConfig.setEnabled( true )
 	            .setClassCacheMode( "ETERNAL" )
 	            .setProviderMode( "LOCAL_CLASSES_ONLY" )
