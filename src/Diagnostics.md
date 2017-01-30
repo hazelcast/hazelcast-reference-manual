@@ -122,7 +122,39 @@ You can enable or disable the system log diagnostics plugin, and configure wheth
 * `hazelcast.diagnostics.systemlog.partitions`: Its default is false. Please note that if you enable this, you may get a lot of log entries if you have many partitions.
 
 
+##### StoreLatency
 
+It shows statistics including the count of methods for each store (`load`, `loadAll`, `loadAllKeys`, etc.), average and maximum latencies for each store method calls, and latency distributions for each store. The following is an example output snippet as part of the diagnostics log file for Hazelcast MapStore:
 
- 
+```
+17-9-2016 13:12:34 MapStoreLatency[
+                          map[
+                                  loadAllKeys[
+                                          count=1
+                                          totalTime(us)=8
+                                          avg(us)=8
+                                          max(us)=8
+                                          latency-distribution[
+                                                  0..99us=1]]
+                                  load[
+                                          count=100
+                                          totalTime(us)=4,632,190
+                                          avg(us)=46,321
+                                          max(us)=99,178
+                                          latency-distribution[
+                                                  0..99us=1
+                                                  1600..3199us=3
+                                                  3200..6399us=3
+                                                  6400..12799us=7
+                                                  12800..25599us=13
+                                                  25600..51199us=32
+                                                  51200..102399us=41]]]]
+```
+
+According to your store usage, a similar output can be seen for Hazelcast JCache, Queue and Ringbuffer with persistent datastores.
+
+You can control the StoreLatency plugin using the following properties:
+
+- `hazelcast.diagnostics.storeLatency.period.seconds`: The frequency this plugin is writing the collected information to the disk. By default it is disabled. A sensible production value would be 60 (seconds).
+- `hazelcast.diagnostics.storeLatency.reset.period.seconds`: The period of resetting the statistics. If, for example, it is set as 300 (5 minutes), all the statistics are cleared for every 5 minutes. By default it is 0, meaning that statistics are not reset.
 
