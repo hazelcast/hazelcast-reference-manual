@@ -67,7 +67,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.master.confirmation.interval.seconds` | 30 | int  |   Interval at which members send master confirmation.
 `hazelcast.max.join.merge.target.seconds`|20|int|Split-brain merge timeout for a specific target.
 `hazelcast.max.join.seconds`|300|int| Join timeout, maximum time to try to join before giving.
-`hazelcast.max.no.heartbeat.seconds` | 300 | int  |   Maximum timeout of heartbeat in seconds for a member to assume it is dead. CAUTION : setting this value too low can cause members to be evicted from the cluster when they are under heavy load. This is because they are unable to send heartbeat operations in time and other nodes then assume that it is dead. 
+`hazelcast.max.no.heartbeat.seconds` | 300 | int  |   Maximum timeout of heartbeat in seconds for a member to assume it is dead. ***CAUTION***: *Setting this value too low may cause members to be evicted from the cluster when they are under heavy load: they will be unable to send heartbeat operations in time, so other members will assume that it is dead.*
 `hazelcast.max.no.master.confirmation.seconds` | 450 | int  |   Max timeout of master confirmation from other members.
 `hazelcast.max.wait.seconds.before.join` | 20 | int  |   Maximum wait time before join operation.
 `hazelcast.mc.max.visible.instance.count` | 100 | int  |   Management Center maximum visible instance count.
