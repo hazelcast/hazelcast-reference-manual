@@ -13,7 +13,7 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 	- [List](#list) is similar to Hazelcast Set. The only difference is that it allows duplicate elements and preserves their order.
 	- [MultiMap](#multimap) is a specialized Hazelcast map. It is a distributed data structure where you can store multiple values for a single key.
 	- [Replicated Map](#replicated-map) does not partition data. It does not spread data to different cluster members. Instead, it replicates the data to all members.
-	- [Cardinality Estimator](#cardinality-estimator) is a data structure which implements Flajolet's HyperLogLog algorithm.
+	- [Cardinality Estimator](#cardinality-estimator-service) is a data structure which implements Flajolet's HyperLogLog algorithm.
 
 - **Topic** is the distributed mechanism for publishing messages that are delivered to multiple subscribers. It is also known as the publish/subscribe (pub/sub) messaging model. Please see the [Topic section](#topic) for more information. Hazelcast also has a structure called Reliable Topic which uses the same interface of Hazelcast Topic. The difference is that it is backed up by the Ringbuffer data structure. Please see the [Reliable Topic section](#reliable-topic).
 
