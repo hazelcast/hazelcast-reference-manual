@@ -403,7 +403,7 @@ You can create Near Cache on the client side by providing a configuration per ma
 
 ```java
 ClientConfig clientConfig = new ClientConfig();
-CacheConfig nearCacheConfig = new NearCacheConfig();
+NearCacheConfig nearCacheConfig = new NearCacheConfig();
 nearCacheConfig.setName("mapName");
 clientConfig.addNearCacheConfig(nearCacheConfig);
 ```
