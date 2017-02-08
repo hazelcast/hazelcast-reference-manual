@@ -26,6 +26,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Projections](#projections)|Added as a new section.
 |[Chapter 15 - Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added example scenarios to give more idea on how the restart process and force start works.<br></br> Added the new configuration element `parallelism`. <br></br> Added the new section Moving/Copying Hot Restart Data. <br></br> Added the new section Partial Start and the new configuration element `cluster-data-recovery-policy`. <br></br> Added the new section [Hot Backup](#hot-backup).
 ||[Hazelcast Striim](#hazelcast-striim)| Added as a new section.
+|[Chapter 18 - Serialization](#serialization)|[Implementing Portable Serialization](#implementing-portable-serialization)|[Ordering Consistency for writePortable](#ordering-consistency-for-writeportable) added as a new section.|
 |[Chapter 19 - Management](#management)|[Diagnostics](#diagnostics)|Added as a new section to explain the diagnostic utility of Hazelcast.|
 ||[LDAP-Active Directory Authentication](#ldap-active-directory-authentication)|Added as a new section.
 |||Partial start related content added to [Using REST API for Cluster Management](#using-rest-api-for-cluster-management) and [Using the Script cluster.sh](#using-the-script-clustersh) sections.
