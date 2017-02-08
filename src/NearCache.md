@@ -54,7 +54,7 @@ The following shows the configuration for the Hazelcast Near Cache.
   <cache-local-entries>(false|true)</cache-local-entries>
   <local-update-policy>(INVALIDATE|CACHE_ON_UPDATE)</local-update-policy>
   <preloader enabled="(true|false)"
-             filename="nearcache-example.store"
+             directory="nearcache-example"
              store-initial-delay-seconds="(0..INT_MAX)"
              store-interval-seconds="(0..INT_MAX)"/>
 </near-cache>
@@ -74,7 +74,7 @@ EvictionConfig evictionConfig = new EvictionConfig()
 
 NearCachePreloaderConfig preloaderConfig = new NearCachePreloaderConfig()
   .setEnabled(true|false)
-  .setFilename("nearcache-example.store")
+  .setDirectory("nearcache-example")
   .setStoreInitialDelaySeconds(0..INT_MAX)
   .setStoreIntervalSeconds(0..INT_MAX);
 
@@ -113,14 +113,16 @@ Following are the descriptions of all configuration elements:
 	* `USED_NATIVE_MEMORY_PERCENTAGE`: Maximum used native memory percentage of the specified Near Cache to trigger the eviction. If the native memory usage percentage (relative to maximum native memory size) exceeds this threshold, the eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
 	* `FREE_NATIVE_MEMORY_SIZE`: Minimum free native memory size of the specified Near Cache in MB to trigger the eviction. If free native memory size goes below this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
 	* `FREE_NATIVE_MEMORY_PERCENTAGE`: Minimum free native memory percentage of the specified Near Cache to trigger eviction. If free native memory percentage (relative to maximum native memory size) goes below this threshold, eviction is triggered. Available only for `NATIVE` in-memory format. This is supported only by Hazelcast Enterprise.
-  - `size`: Maximum size of the Near Cache used for `max-size-policy`. When this is reached the Near Cache is evicted based on the policy defined. Any integer between `0` and `Integer.MAX_VALUE`. `0` means `Integer.MAX_VALUE`. Its default value is `0`.
+  - `size`: Maximum size of the Near Cache used for `max-size-policy`. When this is reached the Near Cache is evicted based on the policy defined. Any integer between `1` and `Integer.MAX_VALUE`. This value has different defaults, depending on the data structure.
+	* `IMap`: Its default value is `Integer.MAX_VALUE` for on-heap maps and `10000` for the `NATIVE` in-memory format.
+	* `JCache`: Its default value is `10000`.
 - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
 - `local-update-policy`: Specifies the update policy of the local Near Cache. Is just available on JCache clients. Available values are as follows:
    - `INVALIDATE`: Does not update the local Near Cache. Will invalidate the local Near Cache eventually (default value).
    - `CACHE_ON_UPDATE`: Updates the local Near Cache immediately after the put operation completes.
 - `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
   - `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
-  - `filename`: Specifies the file name for the preloader of this Near Cache. If not set the name will be generated from the name of the Near Cache.
+  - `directory`: Specifies the parent directory for the preloader of this Near Cache. The filenames for the preloader storage will be generated from the Near Cache name. You can additionally specify the parent directory to have multiple clients on the same machine with the same Near Cache names.
   - `store-initial-delay-seconds`: Specifies the delay in seconds until the keys of this Near Cache are stored for the first time. Its default value is `600`.
   - `store-interval-seconds`: Specifies the interval in seconds in which the keys of this Near Cache are stored. Its default value is `600`. 
 
@@ -184,7 +186,7 @@ EvictionConfig evictionConfig = new EvictionConfig()
   .setSize(50000);
 
 NearCacheConfig nearCacheConfig = new NearCacheConfig()
-  .setName("mapName")
+  .setName("mostlyReadMap")
   .setInMemoryFormat(InMemoryFormat.OBJECT)
   .setInvalidateOnChange(true)
   .setEvictionConfig(evictionConfig);
@@ -193,7 +195,7 @@ ClientConfig clientConfig = new ClientConfig()
   .addNearCacheConfig(nearCacheConfig);
 ```
 
-The Near Cache on the client side must have the same name as the IMap on the member for which this Near Cache is being created. You can use wildcards, so in this example `mostlyRead*` would also match the map `mostlyReadMap`.
+The Near Cache on the client side must have the same name as the data structure on the member for which this Near Cache is being created. You can use wildcards, so in this example `mostlyRead*` would also match the map `mostlyReadMap`.
 
 A Near Cache can have its own `in-memory-format` which is independent of the `in-memory-format` of the data structure.
 
@@ -238,7 +240,7 @@ The following is a configuration example for an IMap High-Density Near Cache for
 
 ```xml
 <hazelcast>
-  <map name="mostlyReadHDMap">
+  <map name="mostlyReadMapWithHighDensityNearCache">
     <in-memory-format>OBJECT</in-memory-format>
     <near-cache>
       <in-memory-format>NATIVE</in-memory-format>
@@ -259,7 +261,7 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setEvictionConfig(evictionConfig);
 
 Config config = new Config();
-config.getMapConfig("mostlyReadHDMap")
+config.getMapConfig("mostlyReadMapWithHighDensityNearCache")
   .setInMemoryFormat(InMemoryFormat.OBJECT)
   .setNearCacheConfig(nearCacheConfig);
 ```
@@ -322,6 +324,6 @@ The Near Cache preloader stores the keys (not the values) of Near Cache entries 
  
 The Near Cache preloader will be triggered on the first initialization of the data structure on the client, e.g., `client.getMap("myNearCacheMap")`. This schedules the preloader, which will work in the background, so your application is not blocked. The storage will be enabled after the loading is completed.
 
-The configuration parameter `filename` is optional. If you omit it the storage filename will be generated from the name of the Near Cache. For auto-generated and relative filenames the base folder will be the user working directory (normally where the JVM was started or configured with the system property `user.dir`).
+The configuration parameter `directory` is optional. If you omit it the directory name the base folder will be the user working directory (normally where the JVM was started or configured with the system property `user.dir`). The storage filenames will always be created from the Near Cache name. So even if you use a wildcard name in the Near Cache Configuration, the preloader filenames will be unique. 
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you run multiple Hazelcast clients with enabled Near Cache preloader on the same machine, you have to configure a unique storage filename for each client or run them from different user directories. If two clients would write into the same file, only the first client will succeed. The following clients will throw an exception as soon as the Near Cache preloader is triggered.*
