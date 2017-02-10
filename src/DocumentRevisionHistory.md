@@ -20,6 +20,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Lock](#lock)| Updated by adding split-brain protection content.
 ||[Cardinality Estimator Service](#cardinality-estimator-service)| Added as a new section.
 ||[Removing Bulk Map Entries with Predicates](#removing-bulk-map-entries-with-predicates)|Added as a new section.
+||[Forced Eviction](#forced-eviction)| Added as a new section.
 |[Chapter 10 - Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)| Added a warning to the introduction.
 ||[Scheduled Executor Service](#scheduled-executor-service)| Added as a new section.
 |[Chapter 11 - Distributed Query](#distributed-query)||Explanation for the `__key` attribute added under [Querying with SQL](#querying-with-sql) section.
