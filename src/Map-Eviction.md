@@ -194,7 +194,7 @@ Hazelcast may use forced eviction in the cases when the eviction explained in [U
 
 Forced eviction mechanism is explained below as steps in the given order:
 
-* When the normal eviction is not enough, forced eviction is triggered and first it tries to evict 20% of the entries from the current partition. It retries this five times.
+* When the normal eviction is not enough, forced eviction is triggered and first it tries to evict approx. 20% of the entries from the current partition. It retries this five times.
 * If the result of above step is still not enough, forced eviction applies the above step to all maps. This time it might perform eviction from some other partitions too,provided that they are owned by the same thread.
 * If that is still not enough to free up your memory, it evicts not the 20% but all the entries from the current partition.
 * if that is not enough, it will evict all the entries from the other data structures; from the partitions owned by the local thread.
