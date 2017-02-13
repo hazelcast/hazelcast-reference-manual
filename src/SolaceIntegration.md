@@ -6,20 +6,21 @@
 
 This section explains how you can integrate Hazelcast's WAN replication with [Solace](http://www.solacesystems.com/) messaging platform. With this integration, you can publish and consume WAN replication events to/from Solace appliances. 
 
-Solace, the most powerful global enterprise messaging solution, combines with Hazelcast, the fastest inmemory
+Solace, the most powerful global enterprise messaging solution, combines with Hazelcast, the fastest in-memory
 data grid, to drive efficiencies in the processing of global data workloads. This Solace-Hazelcast joint
-solution enables multi-cloud and hybrid cloud replication of Hazelcast clusters for worldwide operation. It
+solution enables multi-cloud and hybrid-cloud replication of Hazelcast clusters for worldwide operation. It
 enables enterprise grade reliability, WAN scale-out and low latency cluster replication.
  
 ### Enabling Integration
  
- To publish and consume WAN replication events on Solace appliances, Hazelcast WAN replication has the following classes:
+To publish and consume WAN replication events on Solace appliances, Hazelcast WAN replication has the following classes:
  
  - `SolaceWanPublisher`
  - `SolaceWanConsumer`
  
- You can register these classes using the configuration elements `<wan-publisher>` and `<wan-consumer>` while configuring your WAN replication.
- `SolaceWanPublisher` and `SolaceWanConsumer` is a part of hazelcast-solace library which can be found in following Maven coordinates.
+You can register these classes using the configuration elements `<wan-publisher>` and `<wan-consumer>` while configuring your WAN replication.
+`SolaceWanPublisher` and `SolaceWanConsumer` are included in the `hazelcast-solace` library which can be found in following Maven coordinates:
+
  ```xml
  <dependency>
      <groupId>com.hazelcast</groupId>
@@ -28,11 +29,11 @@ enables enterprise grade reliability, WAN scale-out and low latency cluster repl
  </dependency>
  ```
  
- Please see the following sections for configuration details.
+Please see the following sections for configuration details.
  
 #### Configuring Publisher
  
- Following is an example declarative configuration for the publisher side:
+Following is an example declarative configuration for the publisher side:
  
  ```xml
  <wan-replication name="AtoB">
@@ -64,9 +65,9 @@ enables enterprise grade reliability, WAN scale-out and low latency cluster repl
  
  
  
-####Configuring Consumer
+#### Configuring Consumer
  
- Following is an example declarative configuration for the consumer side:
+Following is an example declarative configuration for the consumer side:
  
  ```xml
  <wan-replication name="AtoB">
@@ -93,9 +94,9 @@ enables enterprise grade reliability, WAN scale-out and low latency cluster repl
  - `queue.name`: Name of the queue to be polled by the consumer. It is a mandatory property.
  
  
- ###Additional Information
+### Additional Information
  
- You can find code samples at [hazelcast-code-samples](https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/wan-replication/src/main/java/com/hazelcast/wan/solace) repository.
+You can find code samples at [hazelcast-code-samples](https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/wan-replication/src/main/java/com/hazelcast/wan/solace) repository.
  
  ***RELATED INFORMATION***
  
