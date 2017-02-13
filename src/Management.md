@@ -26,6 +26,8 @@ System.out.println( "number of entries owned on this member = "
     + mapStatistics.getOwnedEntryCount() );
 ```
 
+**Note:** Since Hazelcast IMDG 3.8 `getOwnedEntryMemoryCost()` method is now supported for NATIVE in-memory-format as well.
+
 Below is the list of metrics that you can access via the `LocalMapStats` object.
 
 ```java
