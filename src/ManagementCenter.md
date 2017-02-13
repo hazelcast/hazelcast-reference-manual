@@ -56,9 +56,9 @@ mancenter</management-center>
 
 
 
-If you have the open source edition of Hazelcast, Management Center can be used for at most 2 members in the cluster. To use it for more members, you need to have either a Management Center license, Hazelcast Enterprise license or Hazelcast Enterprise HD license. This license should be entered within the Management Center as described in the following paragraphs.
+If you have the open source edition of Hazelcast, Management Center can be used for at most 2 members in the cluster. To use it for more members, you need to have either a Management Center license, Hazelcast IMDG Enterprise license or Hazelcast IMDG Enterprise HD license. This license should be entered within the Management Center as described in the following paragraphs.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Even if you have a Hazelcast Enterprise or Enterprise HD license key and you set it as explained in the [Setting the License Key](#setting-the-license-key) section, you still need to enter this same license within the Management Center. Please see the following paragraphs to learn how you can enter your license.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Even if you have a Hazelcast IMDG Enterprise or Enterprise HD license key and you set it as explained in the [Setting the License Key](#setting-the-license-key) section, you still need to enter this same license within the Management Center. Please see the following paragraphs to learn how you can enter your license.*
 <br></br>
 
 
@@ -77,7 +77,7 @@ It asks you to create a username and password and give a valid e-mail address of
 
 "Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has at most 2 members.
 
-If you have a Management Center license or Hazelcast Enterprise license, you can enter it in the dialog box that appears once you press the **Enter License** button, as shown below.
+If you have a Management Center license or Hazelcast IMDG Enterprise license, you can enter it in the dialog box that appears once you press the **Enter License** button, as shown below.
 
 ![Providing License for Management Center](images/EnterLicense.png)
 
@@ -156,7 +156,7 @@ The Home Page includes a menu on the left which lists the distributed data struc
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Distributed data structures will be shown there when the proxies are created for them.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *WAN Replication tab is only visible with <font color="#3981DB">**Hazelcast Enterprise**</font> license.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *WAN Replication tab is only visible with <font color="#3981DB">**Hazelcast IMDG Enterprise**</font> license.*
 
 You can expand and collapse menu items by clicking on them. Below is the list of menu items with links to their explanations.
 

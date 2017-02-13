@@ -12,7 +12,7 @@ To set how the data will be stored in memory, set `in-memory-format` in the conf
 
 - `OBJECT`. The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing will not contain the deserialization cost.
  
-- `NATIVE`: (<font color="##153F75">**Hazelcast Enterprise HD**</font>) This option is used to enable the map to use Hazelcast's High-Density Memory Store. Please refer to the [Using High-Density Memory Store with Map section](#using-high-density-memory-store-with-map).
+- `NATIVE`: (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) This option is used to enable the map to use Hazelcast's High-Density Memory Store. Please refer to the [Using High-Density Memory Store with Map section](#using-high-density-memory-store-with-map).
 
 Regular operations like `get` rely on the object instance. When the `OBJECT` format is used and a `get` is performed, the map does not return the stored instance, but creates a clone. Therefore, this whole `get` operation first includes a serialization on the member owning the instance, and then a deserialization on the member calling the instance. When the `BINARY` format is used, only a deserialization is required; `BINARY` is faster.
 

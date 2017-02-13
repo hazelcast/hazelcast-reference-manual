@@ -12,7 +12,7 @@ Each Hazelcast bundle provides a different OSGI service. Their instances can be 
 
 Hazelcast OSGI service's lifecycle (and the owned/created instances's lifecycles) is the same with the owner Hazelcast bundles. When the bundle is stopped (deactivated), the owned service and Hazelcast instances are also deactivated/shutdown and deregistered automatically. When the bundle is re-activated, its service is registered again.
 
-The Hazelcast Enterprise JAR package is also an OSGI bundle like the Hazelcast Open Source JAR package.
+The Hazelcast IMDG Enterprise JAR package is also an OSGI bundle like the Hazelcast Open Source JAR package.
 
 ## API
 

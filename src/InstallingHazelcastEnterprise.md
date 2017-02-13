@@ -1,8 +1,8 @@
 
 
-### Hazelcast Enterprise
+### Hazelcast IMDG Enterprise
 
-There are two Maven repositories defined for Hazelcast Enterprise:
+There are two Maven repositories defined for Hazelcast IMDG Enterprise:
 
 ```
 <repository>
@@ -15,7 +15,7 @@ There are two Maven repositories defined for Hazelcast Enterprise:
 </repository>
 ```
 
-Hazelcast Enterprise customers may also define dependencies, a sample of which is shown below.
+Hazelcast IMDG Enterprise customers may also define dependencies, a sample of which is shown below.
 
 ```
 <dependency>

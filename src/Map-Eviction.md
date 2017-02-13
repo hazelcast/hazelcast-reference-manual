@@ -87,19 +87,19 @@ Let's describe each element:
 
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
-	- `USED_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size in megabytes per map for each Hazelcast instance.
+	- `USED_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Maximum used native memory size in megabytes per map for each Hazelcast instance.
 
 		`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
 
-	- `USED_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Maximum used native memory size percentage per map for each Hazelcast instance.
+	- `USED_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Maximum used native memory size percentage per map for each Hazelcast instance.
 
 		`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
 
-	- `FREE_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Minimum free native memory size in megabytes for each Hazelcast instance.
+	- `FREE_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Minimum free native memory size in megabytes for each Hazelcast instance.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
 
-	- `FREE_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast Enterprise HD**</font>) Minimum free native memory size percentage for each Hazelcast instance.
+	- `FREE_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Minimum free native memory size percentage for each Hazelcast instance.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
 

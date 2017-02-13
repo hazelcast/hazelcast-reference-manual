@@ -235,7 +235,7 @@ Default value is *3000*.
 
 #### Setting a Socket Interceptor
 
-<font color="#3981DB">**Hazelcast Enterprise**</font>
+<font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
 
 
@@ -311,7 +311,7 @@ socketOptions.setLingerSeconds(3);
 
 #### Enabling Client SSL
 
-<font color="#3981DB">**Hazelcast Enterprise**</font>
+<font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
 
 

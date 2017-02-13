@@ -8,7 +8,7 @@ This chapter explains how to install Hazelcast and start a Hazelcast member and 
 The following sections explain the installation of Hazelcast and Hazelcast Enterprise. It also includes notes and changes to consider when upgrading Hazelcast.
 
 
-### Hazelcast
+### Hazelcast IMDG
 
 You can find Hazelcast in standard Maven repositories. If your project uses Maven, you do not need to add 
 additional repositories to your `pom.xml` or add `hazelcast-<version>.jar` file into your 

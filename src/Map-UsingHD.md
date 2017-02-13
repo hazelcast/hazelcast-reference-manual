@@ -4,7 +4,7 @@
 
 ### Using High-Density Memory Store with Map
 
-<font color="##153F75">**Hazelcast Enterprise HD**</font>
+<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>
 <br></br>
 
 Hazelcast instances are Java programs. In case of `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into the heap of its server instances. Java heap is subject to garbage collection (GC). In case of larger heaps, garbage collection might cause your application to pause for tens of seconds (even minutes for really large heaps), badly affecting your application performance and response times.

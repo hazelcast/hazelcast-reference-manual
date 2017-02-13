@@ -3,7 +3,7 @@
 
 Caches are generally not expected to grow to an infinite size. Implementing an [expiry policy](#expirepolicy) is one way you can
 prevent infinite growth, but sometimes it is hard to define a meaningful expiration timeout. Therefore, Hazelcast JCache provides the eviction feature. Eviction offers the possibility of removing entries based on the cache size or amount of used memory
-(Hazelcast Enterprise Only) and not based on timeouts.
+(Hazelcast IMDG Enterprise Only) and not based on timeouts.
 
 #### Eviction and Runtime
 

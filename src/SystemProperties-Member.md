@@ -29,7 +29,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.connection.monitor.interval` | 100 | int  |   Minimum interval in milliseconds to consider a connection error as critical.
 `hazelcast.connection.monitor.max.faults` | 3 | int  |   Maximum IO error count before disconnecting from a member.
 `hazelcast.discovery.public.ip.enabled` | false | bool | Enable use of public IP address in member discovery with Discovery SPI.
-`hazelcast.enterprise.license.key` | null | string  |   <a href="http://www.hazelcast.com/products.jsp" target="_blank">Hazelcast Enterprise</a> license key.
+`hazelcast.enterprise.license.key` | null | string  |   <a href="http://www.hazelcast.com/products.jsp" target="_blank">Hazelcast IMDG Enterprise</a> license key.
 `hazelcast.event.queue.capacity` | 1000000 | int | Capacity of internal event queue.
 `hazelcast.event.queue.timeout.millis` | 250 | int | Timeout to enqueue events to event queue.
 `hazelcast.event.thread.count` | 5 | int | Number of event handler threads.

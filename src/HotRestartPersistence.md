@@ -1,6 +1,6 @@
 ## Hot Restart Persistence
 
-<font color="##153F75">**Hazelcast Enterprise HD**</font>
+<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>
 <br></br>
 
 

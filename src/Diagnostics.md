@@ -72,7 +72,7 @@ As it is stated in the introduction of this section and shown in the log file co
 
 ##### BuildInfo
 
-It shows the detailed Hazelcast build information including the Hazelcast release number, `Git` revision number, and whether you have Hazelcast Enterprise or not.
+It shows the detailed Hazelcast build information including the Hazelcast release number, `Git` revision number, and whether you have Hazelcast IMDG Enterprise or not.
 
 ##### SystemProperties
 

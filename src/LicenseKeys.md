@@ -3,7 +3,7 @@
 
 ### Setting the License Key
 
-Hazelcast Enterprise offers you two types of licenses: **Enterprise** and **Enterprise HD**. The supported features differ in your Hazelcast setup according to the license type you own.
+Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise** and **Enterprise HD**. The supported features differ in your Hazelcast setup according to the license type you own.
 
 * **Enterprise license**: In addition to the open source edition of Hazelcast, Enterprise features are the following:
 	* Security
@@ -18,7 +18,7 @@ Hazelcast Enterprise offers you two types of licenses: **Enterprise** and **Ente
 	* Hot Restart Persistence 
 
 
-To use Hazelcast Enterprise, you need to set the provided license key using one of the configuration methods shown below. 
+To use Hazelcast IMDG Enterprise, you need to set the provided license key using one of the configuration methods shown below. 
 
 <br></br>
 **Declarative Configuration:**

@@ -1,6 +1,6 @@
 # Rolling Member Upgrades
 
-<font color="#3981DB">**Hazelcast Enterprise**</font>
+<font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
 
 This chapter explains the procedure of upgrading the version of Hazelcast members in a running cluster without interrupting the operation of the cluster.
@@ -18,11 +18,11 @@ determines the feature set exposed by the cluster.
 
 Hazelcast members operating on binaries of the same major and minor version numbers are compatible regardless of patch version.
   For example, in a cluster with members running on version 3.7.1, it is possible to perform a rolling upgrade to 3.7.2 by shutting down, upgrading to `hazelcast-3.7.2.jar` binary 
-  and starting each member one by one. _Patch level compatibility applies to both Hazelcast Open Source and Hazelcast Enterprise_.
+  and starting each member one by one. _Patch level compatibility applies to both Hazelcast IMDG and Hazelcast IMDG Enterprise_.
 
-Starting with Hazelcast Enterprise 3.8, each next minor version released will be compatible with the previous one. For example, it will
- be possible to perform a rolling upgrade on a cluster running Hazelcast Enterprise 3.8 to Hazelcast Enterprise 3.9 whenever that is released.
- _Rolling upgrades across minor versions is a Hazelcast Enterprise feature, starting with version 3.8_.
+Starting with Hazelcast IMDG Enterprise 3.8, each next minor version released will be compatible with the previous one. For example, it will
+ be possible to perform a rolling upgrade on a cluster running Hazelcast IMDG Enterprise 3.8 to Hazelcast IMDG Enterprise 3.9 whenever that is released.
+ _Rolling upgrades across minor versions is a Hazelcast IMDG Enterprise feature, starting with version 3.8_.
  
 The compatibility guarantees described above are given in the context of rolling member upgrades and only apply to GA (general availability) releases. It is never advisable to run a
  cluster with members running on different patch or minor versions for prolonged periods of time.

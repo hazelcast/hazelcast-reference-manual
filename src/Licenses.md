@@ -4,7 +4,7 @@
 Hazelcast is distributed using the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License 2</a>, therefore permissions are granted
 to use, reproduce and distribute it along with any kind of open source and closed source applications.
 
-Hazelcast Enterprise is a commercial product of Hazelcast, Inc. and is distributed under a commercial license that must be acquired
+Hazelcast IMDG Enterprise is a commercial product of Hazelcast, Inc. and is distributed under a commercial license that must be acquired
 before using it in any type of released software. Feel free to contact <a href="http://hazelcast.com/contact/" target="_blank">Hazelcast sales department</a>
 for more information on commercial offers.
 
@@ -47,14 +47,14 @@ also known as LGPL. Please read carefully the terms of the LGPL since restrictio
 
 **Apache Tomcat**:
 
-Hazelcast Enterprise offers native integration into Apache Tomcat for web session clustering.
+Hazelcast IMDG Enterprise offers native integration into Apache Tomcat for web session clustering.
 
 Apache Tomcat is distributed under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License 2</a> and therefore
 fully compatible with Hazelcast.
 
 **Eclipse Jetty**:
 
-Hazelcast Enterprise offers native integration into Jetty for web session clustering.
+Hazelcast IMDG Enterprise offers native integration into Jetty for web session clustering.
 
 Jetty is distributed with a dual licensing strategy. It is licensed under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License 2</a>
 and under the <a href="https://www.eclipse.org/legal/epl-v10.html" target="_blank">Eclipse Public License v1.0</a>, also known as EPL. Due to the Apache License,
@@ -69,7 +69,7 @@ Please read carefully the terms of this license since restrictions might apply.
 
 **Boost C++ Libraries**:
 
-Hazelcast Enterprise offers a native C++ client, which has a link-time dependency to the Boost C++ Libraries.
+Hazelcast IMDG Enterprise offers a native C++ client, which has a link-time dependency to the Boost C++ Libraries.
 
 The Boost Libraries are distributed under the terms of the <a href="http://www.boost.org/LICENSE_1_0.txt" target="_blank">Boost Software License</a>), which is
 very similar to the MIT or BSD license. Please read carefully the terms of this license since restrictions might apply.

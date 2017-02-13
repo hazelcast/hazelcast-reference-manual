@@ -1,7 +1,7 @@
 
 ## Encryption
 
-<font color="#3981DB">**Hazelcast Enterprise**</font>
+<font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
 
 

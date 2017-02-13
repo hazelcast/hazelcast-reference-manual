@@ -6,8 +6,8 @@
 
 You can deploy your Hazelcast projects using the Docker containers. Hazelcast has the following images on Docker:
 
-- Hazelcast
-- Hazelcast Enterprise
+- Hazelcast IMDG
+- Hazelcast IMDG Enterprise
 - Hazelcast Management Center
 - Hazelcast OpenShift
 

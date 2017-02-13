@@ -4,7 +4,7 @@
 
 This section explains how you can cluster your web sessions using Servlet Filter, Tomcat, and Jetty based solutions. Each web session clustering is explained in the following subsections.
 
-[Filter](#filter-based-web-session-replication) based web session replication has the option to use a map with High-Density Memory Store to keep your session objects. Note that High-Density Memory Store is available in <font color="##153F75">**Hazelcast Enterprise HD**</font>. Please refer to the [High-Density Memory Store section](#high-density-memory-store) for details on this feature.
+[Filter](#filter-based-web-session-replication) based web session replication has the option to use a map with High-Density Memory Store to keep your session objects. Note that High-Density Memory Store is available in <font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>. Please refer to the [High-Density Memory Store section](#high-density-memory-store) for details on this feature.
 
 
 
