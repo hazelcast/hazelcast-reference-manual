@@ -239,6 +239,8 @@ To accomplish the described durability, all tasks provide a unique identity/name
 The name of the task can be user-defined if it needs to be, by implementing the `com.hazelcast.scheduledexecutor.NamedTask` interface (plain wrapper util is available here: `com.hazelcast.scheduledexecutor.TaskUtils#named(java.lang.String, java.lang.Runnable)`). If the task does not provide a name in its implementation, the service provides a random UUID for it, internally.
 
 Upon scheduling, the service returns an `IScheduledFuture` which on top of the `java.util.concurrent.ScheduledFuture` functionality provides API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
+
+Futures associated with a scheduled task act as listeners on the local member/client, in order to be aware of the lost partitions and/or members . Therefore, they are always strongly referenced on the member/client side. In order to clean up their resources, you can use `dispose()` once completed. Dispose will also cancel further executions of the task if scheduled at fixed rate.
 Please see below for your reference:
 
 ```
