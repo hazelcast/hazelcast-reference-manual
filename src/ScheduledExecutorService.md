@@ -319,8 +319,9 @@ This section presents example configurations for scheduled executor service alon
 
 ```xml
 <scheduled-executor-service name="myScheduledExecSvc">
-	<pool-size>8</pool-size>
+	<pool-size>16</pool-size>
 	<durability>1</durability>
+	<capacity>100</capacity>
 </scheduled-executor-service>
 ```
 
@@ -329,7 +330,8 @@ This section presents example configurations for scheduled executor service alon
 ```java
 Config config = new Config();
 config.getScheduledExecutorConfig( "myScheduledExecSvc" ).
-      .setPoolSize ( "8" )
+      .setPoolSize ( "16" )
+      .setCapacity( 100 )
       .setDurability( "1" );
 
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
@@ -341,6 +343,7 @@ Following are the descriptions of each configuration element and attribute:
 * `name`: Name of the scheduled executor.
 * `pool-size`: Number of executor threads per member for the executor.
 * `durability`: Durability of the executor.
+* `capacity`: Maximum number of tasks that a Scheduler can have per partition. Attempt to schedule more, will result in `RejectedExecutionException`. The tasks should get disposed by the user to free-up the capacity.
 
 ### Examples
 
