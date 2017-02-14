@@ -239,6 +239,8 @@ To accomplish the described durability, all tasks provide a unique identity/name
 The name of the task can be user-defined if it needs to be, by implementing the `com.hazelcast.scheduledexecutor.NamedTask` interface (plain wrapper util is available here: `com.hazelcast.scheduledexecutor.TaskUtils#named(java.lang.String, java.lang.Runnable)`). If the task does not provide a name in its implementation, the service provides a random UUID for it, internally.
 
 Upon scheduling, the service returns an `IScheduledFuture` which on top of the `java.util.concurrent.ScheduledFuture` functionality provides API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
+
+Futures associated with a scheduled task, in order to be aware of lost partitions and/or members, they act as listeners on the local member/client. Therefore, they are always strongly referenced, on the member/client side. In order to clean up their resources, once completed, one can use `dispose()`. Dispose will also cancel further executions of the task if scheduled at fixed rate.
 Please see below for your reference:
 
 ```
@@ -317,8 +319,9 @@ This section presents example configurations for scheduled executor service alon
 
 ```xml
 <scheduled-executor-service name="myScheduledExecSvc">
-	<pool-size>8</pool-size>
+	<pool-size>16</pool-size>
 	<durability>1</durability>
+	<capacity>100</capacity>
 </scheduled-executor-service>
 ```
 
@@ -327,7 +330,8 @@ This section presents example configurations for scheduled executor service alon
 ```java
 Config config = new Config();
 config.getScheduledExecutorConfig( "myScheduledExecSvc" ).
-      .setPoolSize ( "8" )
+      .setPoolSize ( "16" )
+      .setCapacity( 100 )
       .setDurability( "1" );
 
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
@@ -338,6 +342,7 @@ Following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the scheduled executor.
 * `pool-size`: Number of executor threads per member for the executor.
+* `capacity`: Max number of tasks that a Scheduler can have per partition. Attempt to schedule more, will result in RejectedExecutionException. To free-up capacity, tasks should get disposed by the user.
 * `durability`: Durability of the executor.
 
 ### Examples
@@ -368,6 +373,6 @@ IScheduledFuture<Double> future = executorService.schedule(
 
 int membersCount = future.get(); // Block until we get the result
 ScheduledTaskStatistics stats = future.getStats();
-
+future.dispose(); // Always dispose futures that are not in use any more, to release resources
 int totalTaskRuns = stats.getTotalRuns()); // = 1
 ```
