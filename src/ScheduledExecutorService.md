@@ -374,5 +374,7 @@ IScheduledFuture<Double> future = executorService.schedule(
 int membersCount = future.get(); // Block until we get the result
 ScheduledTaskStatistics stats = future.getStats();
 
+future.dispose(); // Always dispose futures that are not in use any more, to release resources
+
 int totalTaskRuns = stats.getTotalRuns()); // = 1
 ```
