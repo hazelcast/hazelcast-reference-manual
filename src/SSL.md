@@ -95,12 +95,16 @@ The first thing that can be done is making sure that AES intrensics are used. Mo
 used, the JIT will automatically make use of these AES instructions. They can also be explicitly enabled using `-XX:+UseAES -XX:+UseAESIntrinsics`, 
 or disabled using `-XX:-UseAES -XX:-UseAESIntrinsics`. 
 
-A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available in a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of `/dev/random` for 
+A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available 
+for a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of `/dev/random` for 
 the generation of random numbers. `/dev/random` relies on entropy to be able to generate random numbers. However if this entropy is 
-insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption. This can be easily fixed
+insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption since `/dev/random` will
+block; it could block for minutes waiting for sufficient entropy . This can be fixed
 by adding the following system property `-Djava.security.egd=file:/dev/./urandom`. For a more permanent solution, modify 
 `<JAVA_HOME>/jre/lib/security/java.security` file, look for the `securerandom.source=/dev/urandom` and change it 
-to `securerandom.source=file:/dev/./urandom`.
+to `securerandom.source=file:/dev/./urandom`. Switching to `/dev/urandom` could be controversial because the `/dev/urandom` will not 
+block if there is a shortage of entropy and the returned random values could theoretically be vulnerable to a cryptographic attack. 
+If this is a concern in your application, use `/dev/random` instead.
 
 Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client 
 automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
