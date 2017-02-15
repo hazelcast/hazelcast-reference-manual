@@ -87,4 +87,24 @@ ClientConfig clientConfig = new ClientConfig();
 clientConfig.getNetworkConfig().addAddress("127.0.0.1");
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *When you use SSL with the Java client, it will have a throughput that is 50% of a non-SSL Java client with the same configuration. If it is a .NET client, it will have a throughput that is 46% of a non-SSL .NET client.*
+### SSL Performance Improvements for Java
+
+SSL can have a significant impact on performance. There are a few ways to increase the performance. 
+
+The first thing that can be done is making sure that AES intrensics are used. Modern CPUs (2010 or newer Westmere) have hardware support for AES encryption/decryption and if a Java 8 or newer JVM is
+used, the JIT will automatically make use of these AES instructions. They can also be explicitly enabled using `-XX:+UseAES -XX:+UseAESIntrinsics`, 
+or disabled using `-XX:-UseAES -XX:-UseAESIntrinsics`. 
+
+A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available in a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of `/dev/random` for 
+the generation of random numbers. `/dev/random` relies on entropy to be able to generate random numbers. However if this entropy is 
+insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption. This can be easily fixed
+by adding the following system property `-Djava.security.egd=file:/dev/./urandom`. For a more permanent solution, modify 
+`<JAVA_HOME>/jre/lib/security/java.security` file, look for the `securerandom.source=/dev/urandom` and change it 
+to `securerandom.source=file:/dev/./urandom`.
+
+Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client 
+automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
+be changed using the `hazelcast.client.io.input.thread.count` and `hazelcast.client.io.input.thread.count` client system properties.
+By default it is 1 input thread and 1 output thread. If SSL is enabled, it will default to 3 input threads and 3 output threads.
+Having more client I/O threads than members in the cluster will not lead to an increased performance. So with a 2-member cluster,
+2 in and 2 out threads will give the best performance.
