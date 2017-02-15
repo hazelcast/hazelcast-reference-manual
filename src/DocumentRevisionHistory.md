@@ -33,6 +33,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[LDAP-Active Directory Authentication](#ldap-active-directory-authentication)|Added as a new section.
 |||Partial start related content added to [Using REST API for Cluster Management](#using-rest-api-for-cluster-management) and [Using the Script cluster.sh](#using-the-script-clustersh) sections.
 ||[Using the Script cluster.sh](#using-the-script-clustersh)| Updated by adding new operations and parameters related to Rolling Member Upgrade procedures.
+|[Chapter 20 - Security](#security)|[SSL](#ssl)|Added "SSL Performance Improvements for Java" as a new section.|
 |[Chapter 21 - Performance](#performance)|[Near Cache](#near-cache)|Added as a new section to consolidate all near cache related content in the Reference Manual. Added also the new contents, [Near Cache Eventual Consistency](#near-cache-eventual-consistency) and [Near Cache Preloader](#near-cache-preloader).|
 ||[Back Pressure](#back-pressure)|Added the section [Client Side](#client-side) explaining how you can control the number of maximum concurrent invocations at the client side.
 |[Chapter 22 - Hazelcast Simulator](#hazelcast-simulator)||Moved the content to Simulator's own GitHub repository at [Hazelcast Simulator](https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md).|
