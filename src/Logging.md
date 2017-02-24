@@ -6,11 +6,9 @@ Hazelcast has a flexible logging configuration and does not depend on any loggin
 To use built-in adapters, set the `hazelcast.logging.type` property to one of the predefined types below.
 
 -   **jdk**: JDK logging (default)
-
 -   **log4j**: Log4j
-
+-   **log4j2**: Log4j2
 -   **slf4j**: Slf4j
-
 -   **none**: disable logging
 
 You can set `hazelcast.logging.type` through declarative configuration, programmatic configuration, or JVM system property.
@@ -24,7 +22,7 @@ You can set `hazelcast.logging.type` through declarative configuration, programm
 ```xml
   ....
   <properties>
-    <property name="hazelcast.logging.type">jdk</property>
+    <property name="hazelcast.logging.type">log4j</property>
     ....
   </properties>
 </hazelcast>
