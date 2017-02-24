@@ -14,7 +14,7 @@ To use built-in adapters, set the `hazelcast.logging.type` property to one of th
 You can set `hazelcast.logging.type` through declarative configuration, programmatic configuration, or JVM system property.
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If you choose to use `log4j` or `slf4j`, you should include the proper dependencies in the classpath.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you choose to use `log4j`, `log4j2`, or `slf4j`, you should include the proper dependencies in the classpath.*
 <br></br>
 
 **Declarative Configuration**
