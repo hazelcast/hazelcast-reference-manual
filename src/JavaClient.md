@@ -38,31 +38,39 @@ Set|Yes|Yes|Yes
 List|Yes|Yes|Yes
 MultiMap|Yes|Yes|Yes
 Replicated Map|Yes|No|No
+Ringbuffer|Yes|Yes|No
 Topic|Yes|Yes|Yes
-MapReduce|Yes|No|No
+Reliable Topic|Yes|No|Yes
+JCache|Yes|No|No
+Cardinality Estimator|Yes|No|No
+Projections|Yes|No|No
+Fast Aggregations|Yes|No|no
 Lock|Yes|Yes|Yes
+Condition|Yes|No|No
 Semaphore|Yes|Yes|Yes
 AtomicLong|Yes|Yes|Yes
 AtomicReference|Yes|Yes|Yes
 IdGenerator|Yes|Yes|Yes
 CountDownLatch|Yes|Yes|Yes
+Distributed Executor Service|Yes|No|No
+Event Listeners|Yes|Yes|Yes
+Sub-Listener Interfaces for Map ListenerMap|Yes|No|No
+Entry Processor|Yes|Yes|Yes
 Transactional Map|Yes|Yes|Yes
 Transactional MultiMap|Yes|Yes|Yes
 Transactional Queue|Yes|Yes|Yes
 Transactional List|Yes|Yes|Yes
 Transactional Set|Yes|Yes|Yes
-JCache|Yes|No|No
-Ringbuffer|Yes|Yes|No
-Reliable Topic|Yes|No|No
+Query (Predicates)|Yes|Yes|Yes
+Paging Predicates|Yes|No|No
+Support Built-in Predicates as defined in Java client|Yes|Yes|Yes
+Continuous Query Caching|Yes|No|No
+Listener with Predicate|Yes|Yes|Yes
+MapReduce|Yes|No|No
 Hot Restart|Yes (with a near cache)|No|No
 Client Configuration Import|Yes|No|No
 Hazelcast Client Protocol|Yes|Yes|Yes
 Fail Fast on Invalid Configuration|Yes|No|No
-Sub-Listener Interfaces for Map ListenerMap|Yes|No|No
-Continuous Query|Yes|No|No
-Listener with Predicate|Yes|Yes|Yes
-Distributed Executor Service|Yes|No|No
-Query|Yes|Yes|Yes
 Near Cache|Yes|Yes|No
 Heartbeat|Yes|Yes|Yes
 Declarative Configuration|Yes|Yes|No
@@ -72,7 +80,6 @@ XA Transactions|Yes|No|No
 Smart Client|Yes|Yes|Yes
 Dummy Client|Yes|Yes|Yes
 Lifecycle Service|Yes|Yes|Yes
-Event Listeners|Yes|Yes|Yes
 DataSerializable|Yes|Yes|Yes
 IdentifiedDataSerializable|Yes|Yes|Yes
 Portable|Yes|Yes|Yes
