@@ -2,10 +2,10 @@
       <div class="sitebar"></div>
         <div>  
           <div style="float:left">
-            <a href="http://www.hazelcast.org"><img src="IMDG_orange_logo_full_RGB-light_200px.png" style="width: 125px;padding-top: 14px"/></a>
+            <a href="http://www.hazelcast.org"><img src="IMDG_orange_logo_full_RGB-light_200px.png" style="padding-top: 8px"/></a>
           </div>
           <div>
-            <a class="Navbar__branda" href="<?= $params['base_page'] . $params['index']->getUri(); ?>">Reference Manual <span style="font-size:14px">for release 3.9-SNAPSHOT</span></a>
+            <a class="Navbar__branda" href="<?= $params['base_page'] . $params['index']->getUri(); ?>">Reference Manual <span style="font-size:14px">for release 3.9</span></a>
           </div>
         </div>
 <?php if ($params['html']['search']) {
