@@ -9,7 +9,9 @@ One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which 
 
 ### SSL for Hazelcast Members
 
-Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in network configuration.
+Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in the network configuration.
+
+The following is the implementation code snippet:
 
 ```java
 public class MySSLContextFactory implements SSLContextFactory {
@@ -23,6 +25,8 @@ public class MySSLContextFactory implements SSLContextFactory {
   }
 }
 ```
+
+The following is the base declarative configuration for the implemented `SSLContextFactory`:
 
 ```xml
 <hazelcast>
@@ -42,7 +46,7 @@ public class MySSLContextFactory implements SSLContextFactory {
 </hazelcast>
 ```
 
-Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLContextFactory`, which uses configured keystore to initialize `SSLContext`. You define `keyStore` and `keyStorePassword`, and you can set `keyManagerAlgorithm` (default `SunX509`), `trustManagerAlgorithm` (default `SunX509`) and `protocol` (default `TLS`).
+Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLContextFactory`, which uses the configured keystore to initialize `SSLContext`; see the following example configuration for SSL.
 
 ```xml
 <hazelcast>
@@ -56,6 +60,8 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
       <properties>
         <property name="keyStore">keyStore</property>
         <property name="keyStorePassword">keyStorePassword</property>
+        <property name="trustStore">trustStore</property>
+        <property name="trustStorePassword">trustStorePassword</property>
         <property name="keyManagerAlgorithm">SunX509</property>
         <property name="trustManagerAlgorithm">SunX509</property>
         <property name="protocol">TLS</property>
@@ -66,10 +72,27 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
 </hazelcast>
 ```
 
-You can set `keyStore` and `keyStorePassword` also using the following system properties.
+You can set all the above properties using the `javax.net.ssl` prefix, e.g., `javax.net.ssl.keyStore` and `javax.net.ssl.keyStorePassword`.
+  
+Here are the descriptions for the properties:
+ 
+* `keystore`: Path of your keystore file. Note that your keystore's type must be `JKS`.
+* `keyStorePassword`: Password to access the key from your keystore file.
+* `truststore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application. Its type should be `JKS`.
+* `trustStorePassword`: Password to unlock the truststore file.
+* `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
+* `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
+* `protocol`: Name of the algorithm which is used in your SSL. Its default value is `TLS`. Available values are:
+  * SSL
+  * SSLv2
+  * SSLv3
+  * TLS
+  * TLSv1
+  * TLSv1.1
+  * TLSv1.2
 
- - `javax.net.ssl.keyStore`
- - `javax.net.ssl.keyStorePassword` 
+  All of the above algorithms support Java 6 and higher versions, except the TLSv1.2 supports Java 7 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you write only `SSL` or `TLS` your application will choose the SSL or TLS version according to your Java version.
+ 
 
 ### SSL for Hazelcast Clients
 
@@ -92,12 +115,16 @@ The first thing that can be done is making sure that AES intrensics are used. Mo
 used, the JIT will automatically make use of these AES instructions. They can also be explicitly enabled using `-XX:+UseAES -XX:+UseAESIntrinsics`, 
 or disabled using `-XX:-UseAES -XX:-UseAESIntrinsics`. 
 
-A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available in a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of `/dev/random` for 
+A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available 
+for a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of `/dev/random` for 
 the generation of random numbers. `/dev/random` relies on entropy to be able to generate random numbers. However if this entropy is 
-insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption. This can be easily fixed
+insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption since `/dev/random` will
+block; it could block for minutes waiting for sufficient entropy . This can be fixed
 by adding the following system property `-Djava.security.egd=file:/dev/./urandom`. For a more permanent solution, modify 
 `<JAVA_HOME>/jre/lib/security/java.security` file, look for the `securerandom.source=/dev/urandom` and change it 
-to `securerandom.source=file:/dev/./urandom`.
+to `securerandom.source=file:/dev/./urandom`. Switching to `/dev/urandom` could be controversial because the `/dev/urandom` will not 
+block if there is a shortage of entropy and the returned random values could theoretically be vulnerable to a cryptographic attack. 
+If this is a concern in your application, use `/dev/random` instead.
 
 Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client 
 automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
