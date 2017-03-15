@@ -200,6 +200,12 @@
 <td align="left">Time after which the member assumes the client is dead and closes its connections to the client.</td>
 </tr>
 <tr>
+<td align="left"><code>hazelcast.client.responsequeue.idlestrategy</code></td>
+<td align="left">block</td>
+<td align="left">string</td>
+<td align="left">Specifies whether the response thread for internal operations at the client side will be blocked or not. If you use <code>block</code> (the default value) the thread will be blocked and need to be notified which can cause a reduction in the performance. If you use <code>backoff</code> there will be no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this will increase CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.</td>
+</tr>
+<tr>
 <td align="left"><code>hazelcast.client.shuffle.member.list</code></td>
 <td align="left">true</td>
 <td align="left">string</td>
@@ -546,6 +552,12 @@
 <td align="left">-1</td>
 <td align="left">int</td>
 <td align="left">Number of generic operation handler threads. <code>-1</code> means CPU core count / 2.</td>
+</tr>
+<tr>
+<td align="left"><code>hazelcast.operation.responsequeue.idlestrategy</code></td>
+<td align="left">block</td>
+<td align="left">string</td>
+<td align="left">Specifies whether the response thread for internal operations at the member side will be blocked or not. If you use <code>block</code> (the default value) the thread will be blocked and need to be notified which can cause a reduction in the performance. If you use <code>backoff</code> there will be no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this will increase CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.</td>
 </tr>
 <tr>
 <td align="left"><code>hazelcast.operation.thread.count</code></td>

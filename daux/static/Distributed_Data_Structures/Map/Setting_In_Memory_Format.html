@@ -90,13 +90,13 @@
 <p>To set how the data will be stored in memory, set <code>in-memory-format</code> in the configuration. You have the following format options:</p>
 <ul>
 <li>
-<p><code>BINARY</code> (default). The data will be stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as <code>put</code> and <code>get</code>.</p>
+<p><code>BINARY</code> (default). The data (both the key and value) will be stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as <code>put</code> and <code>get</code>.</p>
 </li>
 <li>
-<p><code>OBJECT</code>. The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing will not contain the deserialization cost.</p>
+<p><code>OBJECT</code>. The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing will not contain the deserialization cost. Note that when you use <code>OBJECT</code> as the in-memory format, the key will still be stored in binary format, and the value will be stored in object format.</p>
 </li>
 <li>
-<p><code>NATIVE</code>: (<font color="##153F75"><strong>Hazelcast IMDG Enterprise HD</strong></font>) This option is used to enable the map to use Hazelcast's High-Density Memory Store. Please refer to the <a href="Using_High-Density_Memory_Store_with_Map.html">Using High-Density Memory Store with Map section</a>.</p>
+<p><code>NATIVE</code>: (<font color="##153F75"><strong>Hazelcast IMDG Enterprise HD</strong></font>) This format behaves the same as BINARY, however, instead of heap memory, key and value will be stored in the off-heap memory.</p>
 </li>
 </ul>
 <p>Regular operations like <code>get</code> rely on the object instance. When the <code>OBJECT</code> format is used and a <code>get</code> is performed, the map does not return the stored instance, but creates a clone. Therefore, this whole <code>get</code> operation first includes a serialization on the member owning the instance, and then a deserialization on the member calling the instance. When the <code>BINARY</code> format is used, only a deserialization is required; <code>BINARY</code> is faster.</p>

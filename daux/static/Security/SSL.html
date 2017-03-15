@@ -91,7 +91,8 @@
 <p><img src="../images/NoteSmall.jpg" alt="image" /> <strong><em>NOTE:</em></strong> <em>You cannot use SSL when <a href="Encryption.html">Hazelcast Encryption</a> is enabled.</em></p>
 <p>One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which you can use to establish an encrypted communication across your cluster. Note that, if you are developing applications using Java 8, you will be using its successor TLS (Transport Layer Security).</p>
 <h3 id="page_SSL+for+Hazelcast+Members">SSL for Hazelcast Members</h3>
-<p>Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement <code>com.hazelcast.nio.ssl.SSLContextFactory</code> and configure the SSL section in network configuration.</p>
+<p>Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement <code>com.hazelcast.nio.ssl.SSLContextFactory</code> and configure the SSL section in the network configuration.</p>
+<p>The following is the implementation code snippet:</p>
 <pre><code class="language-java">public class MySSLContextFactory implements SSLContextFactory {
   public void init( Properties properties ) throws Exception {
   }
@@ -103,6 +104,7 @@
   }
 }
 </code></pre>
+<p>The following is the base declarative configuration for the implemented <code>SSLContextFactory</code>:</p>
 <pre><code class="language-xml">&lt;hazelcast&gt;
   ...
   &lt;network&gt;
@@ -119,7 +121,7 @@
   ...
 &lt;/hazelcast&gt;
 </code></pre>
-<p>Hazelcast provides a default SSLContextFactory, <code>com.hazelcast.nio.ssl.BasicSSLContextFactory</code>, which uses configured keystore to initialize <code>SSLContext</code>. You define <code>keyStore</code> and <code>keyStorePassword</code>, and you can set <code>keyManagerAlgorithm</code> (default <code>SunX509</code>), <code>trustManagerAlgorithm</code> (default <code>SunX509</code>) and <code>protocol</code> (default <code>TLS</code>).</p>
+<p>Hazelcast provides a default SSLContextFactory, <code>com.hazelcast.nio.ssl.BasicSSLContextFactory</code>, which uses the configured keystore to initialize <code>SSLContext</code>; see the following example configuration for SSL.</p>
 <pre><code class="language-xml">&lt;hazelcast&gt;
   ...
   &lt;network&gt;
@@ -131,6 +133,8 @@
       &lt;properties&gt;
         &lt;property name=&quot;keyStore&quot;&gt;keyStore&lt;/property&gt;
         &lt;property name=&quot;keyStorePassword&quot;&gt;keyStorePassword&lt;/property&gt;
+        &lt;property name=&quot;trustStore&quot;&gt;trustStore&lt;/property&gt;
+        &lt;property name=&quot;trustStorePassword&quot;&gt;trustStorePassword&lt;/property&gt;
         &lt;property name=&quot;keyManagerAlgorithm&quot;&gt;SunX509&lt;/property&gt;
         &lt;property name=&quot;trustManagerAlgorithm&quot;&gt;SunX509&lt;/property&gt;
         &lt;property name=&quot;protocol&quot;&gt;TLS&lt;/property&gt;
@@ -140,13 +144,39 @@
   ...
 &lt;/hazelcast&gt;
 </code></pre>
-<p>You can set <code>keyStore</code> and <code>keyStorePassword</code> also using the following system properties.</p>
+<p>You can set all the above properties using the <code>javax.net.ssl</code> prefix, e.g., <code>javax.net.ssl.keyStore</code> and <code>javax.net.ssl.keyStorePassword</code>.</p>
+<p>Here are the descriptions for the properties:</p>
 <ul>
 <li>
-<code>javax.net.ssl.keyStore</code>
+<p><code>keystore</code>: Path of your keystore file. Note that your keystore's type must be <code>JKS</code>.</p>
 </li>
 <li>
-<code>javax.net.ssl.keyStorePassword</code>
+<p><code>keyStorePassword</code>: Password to access the key from your keystore file.</p>
+</li>
+<li>
+<p><code>truststore</code>: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application. Its type should be <code>JKS</code>.</p>
+</li>
+<li>
+<p><code>trustStorePassword</code>: Password to unlock the truststore file.</p>
+</li>
+<li>
+<p><code>keyManagerAlgorithm</code>: Name of the algorithm based on which the authentication keys are provided.</p>
+</li>
+<li>
+<p><code>trustManagerAlgorithm</code>: Name of the algorithm based on which the trust managers are provided.</p>
+</li>
+<li>
+<p><code>protocol</code>: Name of the algorithm which is used in your SSL. Its default value is <code>TLS</code>. Available values are:</p>
+<ul>
+<li>SSL</li>
+<li>SSLv2</li>
+<li>SSLv3</li>
+<li>TLS</li>
+<li>TLSv1</li>
+<li>TLSv1.1</li>
+<li>TLSv1.2</li>
+</ul>
+<p>All of the above algorithms support Java 6 and higher versions, except the TLSv1.2 supports Java 7 and higher versions. For the <code>protocol</code> property, we recommend you to provide SSL or TLS with its version information, e.g., <code>TLSv1.2</code>. Note that if you write only <code>SSL</code> or <code>TLS</code> your application will choose the SSL or TLS version according to your Java version.</p>
 </li>
 </ul>
 <h3 id="page_SSL+for+Hazelcast+Clients">SSL for Hazelcast Clients</h3>
@@ -163,12 +193,16 @@ clientConfig.getNetworkConfig().addAddress(&quot;127.0.0.1&quot;);
 <p>The first thing that can be done is making sure that AES intrensics are used. Modern CPUs (2010 or newer Westmere) have hardware support for AES encryption/decryption and if a Java 8 or newer JVM is
 used, the JIT will automatically make use of these AES instructions. They can also be explicitly enabled using <code>-XX:+UseAES -XX:+UseAESIntrinsics</code>,
 or disabled using <code>-XX:-UseAES -XX:-UseAESIntrinsics</code>.</p>
-<p>A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available in a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of <code>/dev/random</code> for
+<p>A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available
+for a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of <code>/dev/random</code> for
 the generation of random numbers. <code>/dev/random</code> relies on entropy to be able to generate random numbers. However if this entropy is
-insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption. This can be easily fixed
+insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption since <code>/dev/random</code> will
+block; it could block for minutes waiting for sufficient entropy . This can be fixed
 by adding the following system property <code>-Djava.security.egd=file:/dev/./urandom</code>. For a more permanent solution, modify
 <code>&lt;JAVA_HOME&gt;/jre/lib/security/java.security</code> file, look for the <code>securerandom.source=/dev/urandom</code> and change it
-to <code>securerandom.source=file:/dev/./urandom</code>.</p>
+to <code>securerandom.source=file:/dev/./urandom</code>. Switching to <code>/dev/urandom</code> could be controversial because the <code>/dev/urandom</code> will not
+block if there is a shortage of entropy and the returned random values could theoretically be vulnerable to a cryptographic attack.
+If this is a concern in your application, use <code>/dev/random</code> instead.</p>
 <p>Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client
 automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
 be changed using the <code>hazelcast.client.io.input.thread.count</code> and <code>hazelcast.client.io.input.thread.count</code> client system properties.
