@@ -226,7 +226,10 @@ Here is the `MapLoader` initialization flow:
 5. Each member puts its owned entries into the map by calling `IMap.putTransient(key,value)`.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If the load mode is `LAZY` and the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since all the data is not loaded in this case (`LAZY` mode), please note that there may still be entries in your datastore.*
-<br></br>
+
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *When the load mode is `EAGER` and you do not want the MapStore start to load as soon as the first cluster member starts, you can use the system property `hazelcast.initial.min.cluster.size`. For example, if you set its value as `3`, loading process will wait until three members is completely up.*
+
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *The return type of `loadAllKeys()` is changed from `Set` to `Iterable` with the release of Hazelcast 3.5. MapLoader implementations from previous releases are also supported and do not need to be adapted.*
 
