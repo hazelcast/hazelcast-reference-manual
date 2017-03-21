@@ -119,5 +119,5 @@ Here is how merge policies are specified per map:
 </hazelcast>
 ```
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *Map is the only Hazelcast distributed data structure that merges after a split-brain syndrome. For the other data structures, e.g., Queue, Topic and IdGenerator, one instance of that data structure is chosen after split-brain syndrome.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *Map is the only Hazelcast distributed data structure that merges after a split-brain syndrome. For the other data structures, e.g., Queue, Topic, Lock and IdGenerator, one instance from the larger cluster is chosen after split-brain syndrome.*
 
