@@ -19,7 +19,7 @@ classpath (Maven does that for you). Just add the following lines to your `pom.x
 	<dependency>
 		<groupId>com.hazelcast</groupId>
 		<artifactId>hazelcast</artifactId>
-		<version>3.7</version>
+		<version>Hazelcast Version To Be Installed</version>
 	</dependency>
 </dependencies>
 ```
