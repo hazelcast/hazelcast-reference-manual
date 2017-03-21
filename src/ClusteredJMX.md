@@ -16,7 +16,13 @@ In order to configure Clustered JMX, use the following command line parameters f
 
 - `-Dhazelcast.mc.jmx.enabled=true` (default is false)
 - `-Dhazelcast.mc.jmx.port=9000` (optional, default is 9999)
-- `-Dcom.sun.management.jmxremote.ssl=false`
+
+By default, Clustered JMX is served unencrypted. To enable SSL for Clustered JMX, use the following command line 
+parameters for your Management Center deployment.
+
+- `-Dhazelcast.mc.jmx.ssl=true` (default is false) 
+- `-Djavax.net.ssl.keyStore=path to your keyStore`
+- `-Djavax.net.ssl.keyStorePassword=password for your keyStore`
 
 With embedded Jetty, you do not need to deploy your Management Center application to any container or application server.
 
