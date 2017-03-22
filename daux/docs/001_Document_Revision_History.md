@@ -7,6 +7,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter/Section|Description|
 |:-------|:-----------|
+|[Entry Processor](/08_Distributed_Computing/03_Entry_Processor)|Added the new section "Entry Processor Optimization" explaining Offloadable and Readonly entry processors.|
 |[SSL](/18_Security/04_SSL.md)|Added the new section "Authenticating Mutually".
 |[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: ???.
 |[FAQ](/28_FAQ.md)|Added new questions/answers.|
