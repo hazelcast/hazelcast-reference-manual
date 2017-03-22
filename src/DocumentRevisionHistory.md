@@ -12,6 +12,7 @@ This chapter lists the changes made to this document from the previous release.
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Chapter 10 - Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)|Added "Entry Processor Optimizations" as a new section explaining Offloadable and Readonly entry processors.|
+|[Chapter 13 - Hazelcast JCache](#hazelcast-jcache)|[Scoping to Join Clusters](#scoping-to-join-clusters)|Enhanced the content to explain and give examples about the Hazelcast instance creations during cache manager starts.
 |[Chapter 20 - Security](#security)|[SSL](#ssl)|Added "Authenticating Mutually" as a new section.|
 |[Chapter 30 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
 |[Chapter 31 - Glossary](#glossary)||Added new glossary items.|
