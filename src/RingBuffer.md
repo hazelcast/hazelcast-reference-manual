@@ -206,7 +206,7 @@ In the declarative configuration example below, a Ringbuffer is configured with 
 
 ```xml
 <ringbuffer name="rb">
-    <in-memory-format>BINARY</in-memory-format>
+    <in-memory-format>OBJECT</in-memory-format>
 </ringbuffer>
 ```
 
