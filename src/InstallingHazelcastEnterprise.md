@@ -19,16 +19,6 @@ Hazelcast IMDG Enterprise customers may also define dependencies, a sample of wh
 
 ```
 <dependency>
-     <groupId>com.hazelcast</groupId>
-     <artifactId>hazelcast-enterprise-tomcat6</artifactId>
-     <version>${project.version}</version>
-</dependency>
-<dependency>
-     <groupId>com.hazelcast</groupId>
-     <artifactId>hazelcast-enterprise-tomcat7</artifactId>
-     <version>${project.version}</version>
-</dependency>
-<dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast-enterprise</artifactId>
       <version>${project.version}</version>
