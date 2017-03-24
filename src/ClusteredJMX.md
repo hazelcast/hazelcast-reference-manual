@@ -40,6 +40,16 @@ You can use `jconsole` or any other JMX client to monitor your Hazelcast Cluster
 
 ![](images/ClusteredJMX.png)
 
+
+### Enabling TLS/SSL for Clustered JMX
+
+By default, Clustered JMX is served unencrypted. To enable TLS/SSL for Clustered JMX, use the following command line 
+parameters for your Management Center deployment.
+
+- `-Dhazelcast.mc.jmx.ssl=true` (default is false) 
+- `-Djavax.net.ssl.keyStore=path to your keyStore`
+- `-Djavax.net.ssl.keyStorePassword=password for your keyStore`
+
 ### Clustered JMX API
 
 The management beans are exposed with the following object name format.
