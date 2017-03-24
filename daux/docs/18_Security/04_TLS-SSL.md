@@ -3,7 +3,7 @@
 <br></br>
 
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *You cannot use SSL when [Hazelcast Encryption](03_Encryption.md) is enabled.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *You cannot use TLS/SSL when [Hazelcast Encryption](03_Encryption.md) is enabled.*
 
 One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which you can use to establish an encrypted communication across your cluster with key stores and trust stores. Note that, if you are developing applications using Java 8, you will be using its successor TLS (Transport Layer Security).
 
@@ -12,7 +12,7 @@ One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which 
 ![image](../images/NoteSmall.jpg) ***NOTE:*** *It is NOT recommended to reuse the key stores and trust stores for external applications.*
 <br></br>
 
-### SSL for Hazelcast Members
+### TLS/SSL for Hazelcast Members
 
 Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in the network configuration.
 
@@ -51,7 +51,7 @@ The following is the base declarative configuration for the implemented `SSLCont
 </hazelcast>
 ```
 
-Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLContextFactory`, which uses the configured keystore to initialize `SSLContext`; see the following example configuration for SSL.
+Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLContextFactory`, which uses the configured keystore to initialize `SSLContext`; see the following example configuration for TLS/SSL.
 
 ```xml
 <hazelcast>
@@ -85,7 +85,7 @@ Here are the descriptions for the properties:
 * `trustStorePassword`: Password to unlock the truststore file.
 * `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
 * `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
-* `protocol`: Name of the algorithm which is used in your SSL. Its default value is `TLS`. Available values are:
+* `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLS`. Available values are:
   * SSL
   * SSLv2
   * SSLv3
@@ -113,9 +113,9 @@ Or,
 ```
 
 
-### SSL for Hazelcast Clients
+### TLS/SSL for Hazelcast Clients
 
-Hazelcast clients which support SSL should have the following properties to configure the SSL:
+Hazelcast clients which support TLS/SSL should have the following properties to configure the TLS/SSL:
 
 ```java
 Properties clientSslProps = TestKeyStoreUtil.createSslProperties();
@@ -125,7 +125,7 @@ ClientConfig config = new ClientConfig();
 config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(clientSslProps));
 ```
 
-### Authenticating Mutually
+### Mutual Authentication
 
 As explained above, Hazelcast members have keyStore used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust. 
 
@@ -187,9 +187,9 @@ HazelcastClient.newHazelcastClient(config);
 
 
 
-### SSL Performance Improvements for Java
+### TLS/SSL Performance Improvements for Java
 
-SSL can have a significant impact on performance. There are a few ways to increase the performance. 
+TLS/SSL can have a significant impact on performance. There are a few ways to increase the performance. 
 
 The first thing that can be done is making sure that AES intrensics are used. Modern CPUs (2010 or newer Westmere) have hardware support for AES encryption/decryption and if a Java 8 or newer JVM is
 used, the JIT will automatically make use of these AES instructions. They can also be explicitly enabled using `-XX:+UseAES -XX:+UseAESIntrinsics`, 
@@ -209,6 +209,6 @@ If this is a concern in your application, use `/dev/random` instead.
 Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client 
 automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
 be changed using the `hazelcast.client.io.input.thread.count` and `hazelcast.client.io.input.thread.count` client system properties.
-By default it is 1 input thread and 1 output thread. If SSL is enabled, it will default to 3 input threads and 3 output threads.
+By default it is 1 input thread and 1 output thread. If TLS/SSL is enabled, it will default to 3 input threads and 3 output threads.
 Having more client I/O threads than members in the cluster will not lead to an increased performance. So with a 2-member cluster,
 2 in and 2 out threads will give the best performance.
