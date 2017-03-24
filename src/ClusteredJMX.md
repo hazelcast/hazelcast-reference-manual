@@ -50,6 +50,20 @@ parameters for your Management Center deployment.
 - `-Djavax.net.ssl.keyStore=path to your keyStore`
 - `-Djavax.net.ssl.keyStorePassword=password for your keyStore`
 
+Following is an example on how to start Management Center with a TLS/SSL enabled Clustered JMX service on port 65432:
+
+```bash
+java -Dhazelcast.mc.jmx.enabled=true -Dhazelcast.mc.jmx.port=65432 -Dhazelcast.mc.jmx.ssl=true -Djavax.net.ssl.keyStore=/some/dir/selfsigned.jks -Djavax.net.ssl.keyStorePassword=yourpassword -jar mancenter-3.8.1.war 
+```
+
+Then you can use the following command to connect to the Clustered JMX service using JConsole with address `localhost:65432`:
+
+```bash
+jconsole -J-Djavax.net.ssl.trustStore=/some/dir/selftrusted.ts -J-Djavax.net.ssl.trustStorePassword=trustpass
+```
+
+
+
 ### Clustered JMX API
 
 The management beans are exposed with the following object name format.
