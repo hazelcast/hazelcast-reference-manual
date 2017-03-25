@@ -91,11 +91,16 @@ Here, you can either choose to connect to a cluster without providing a license 
 
 Management Center creates a folder with the name `mancenter` under your `user/home` folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property. Please see the [System Properties section](#system-properties) to see the description of this property and to learn how to set a system property.
 
-<br></br>
 
-***RELATED INFORMATION***
+### Using Management Center with TLS/SSL Only
 
-*Please refer to the [Management Center Configuration section](#management-center-configuration) for a full description of Hazelcast Management Center configuration.*
+To encrypt data transmitted over all channels of Management Center using TLS/SSL, make sure you do all of the following:
+
+* Deploy Management Center on a TLS/SSL enabled container. See [Installing Management Center](#installing-management-center).
+* Enable TLS/SSL for your Hazelcast cluster. See [TLS/SSL](#tlsssl)
+* If you're using Clustered JMX on Management center, enable TLS/SSL for it. See [Enabling TLS/SSL for Clustered JMX](#enabling-tlsssl-for-clustered-jmx).
+* If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP-Active Directory Authentication](#ldap-active-directory-authentication)
+
 
 ### LDAP-Active Directory Authentication
 
