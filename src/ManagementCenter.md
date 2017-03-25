@@ -91,11 +91,6 @@ Here, you can either choose to connect to a cluster without providing a license 
 
 Management Center creates a folder with the name `mancenter` under your `user/home` folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property. Please see the [System Properties section](#system-properties) to see the description of this property and to learn how to set a system property.
 
-<br></br>
-
-***RELATED INFORMATION***
-
-*Please refer to the [Management Center Configuration section](#management-center-configuration) for a full description of Hazelcast Management Center configuration.*
 
 ### Using Management Center with TLS/SSL Only
 
