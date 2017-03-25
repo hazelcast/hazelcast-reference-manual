@@ -97,6 +97,15 @@ Management Center creates a folder with the name `mancenter` under your `user/ho
 
 *Please refer to the [Management Center Configuration section](#management-center-configuration) for a full description of Hazelcast Management Center configuration.*
 
+### Using with TLS/SSL Only
+
+To encrypt data transmitted over all channels of Management Center, make sure you do all of the following:
+
+* Deploy Management Center on a TLS/SSL enabled container
+* Enable TLS/SSL for your Hazelcast cluster
+* If you're using Clustered JMX on Management center, enable TLS/SSL for it
+* If you're using LDAP authentication, make sure you use LDAPS or enable Start TLS.
+
 ### LDAP-Active Directory Authentication
 
 You can use your existing LDAP or Active Directory server for authentication/authorization on Management Center. Click "Configure LDAP" button on Sign Up page and fill in the following details for your LDAP/Active Directory server:
