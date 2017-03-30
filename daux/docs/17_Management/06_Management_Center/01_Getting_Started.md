@@ -2,7 +2,7 @@
 
 If you have the open source edition of Hazelcast, Management Center can be used for at most 2 members in the cluster. To use it for more members, you need to have either a Management Center license, Hazelcast IMDG Enterprise license or Hazelcast IMDG Enterprise HD license. This license should be entered within the Management Center as described in the following paragraphs.
 
-![image](../../images/NoteSmall.jpg) ***NOTE:*** *Even if you have a Hazelcast IMDG Enterprise or Enterprise HD license key and you set it as explained in the [Setting the License Key](#setting-the-license-key) section, you still need to enter this same license within the Management Center. Please see the following paragraphs to learn how you can enter your license.*
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *Even if you have a Hazelcast IMDG Enterprise or Enterprise HD license key and you set it as explained in the [Setting the License Key](/01_Getting_Started/02_Setting_The_License_Keys.md) section, you still need to enter this same license within the Management Center. Please see the following paragraphs to learn how you can enter your license.*
 <br></br>
 
 
@@ -33,11 +33,5 @@ When you try to connect to a cluster that has more than 2 members without enteri
 
 Here, you can either choose to connect to a cluster without providing a license key or to enter your license key. If you choose to continue without a license, please remember that Management Center works if your cluster has **at most** two members.
 
-Management Center creates a folder with the name `mancenter` under your `user/home` folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property. Please see the [System Properties section](#system-properties) to see the description of this property and to learn how to set a system property.
-
-<br></br>
-
-***RELATED INFORMATION***
-
-*Please refer to the [Management Center Configuration section](#management-center-configuration) for a full description of Hazelcast Management Center configuration.*
+Management Center creates a folder with the name `mancenter` under your `user/home` folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property. Please see the [System Properties section](/25_System_Properties.md) to see the description of this property and to learn how to set a system property.
 
