@@ -70,7 +70,7 @@ Once you browse to `http://localhost:8080/mancenter` and since you are going to 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
 
 
-It asks you to create a username and password and give a valid e-mail address of yours. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
+It asks you to create a username and password. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
 
 ![Selecting Cluster to Connect](images/ConnectCluster.png)
 
@@ -101,16 +101,17 @@ To encrypt data transmitted over all channels of Management Center using TLS/SSL
 * If you're using Clustered JMX on Management center, enable TLS/SSL for it. See [Enabling TLS/SSL for Clustered JMX](#enabling-tlsssl-for-clustered-jmx).
 * If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP-Active Directory Authentication](#ldap-active-directory-authentication)
 
-
 ### LDAP-Active Directory Authentication
 
-You can use your existing LDAP or Active Directory server for authentication/authorization on Management Center. Click "Configure LDAP" button on Sign Up page and fill in the following details for your LDAP/Active Directory server:
+You can use your existing LDAP or Active Directory server for authentication/authorization on Management Center. Click on the "Configure LDAP" button on the Sign Up page, and the following form page appears:
+
+![LDAP Configuration](images/ConfigureLDAP.png)
+
+Provide the details in this form for your LDAP/Active Directory server:
 
 - **URL:** URL of your LDAP/Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
 - **LDAP Type:** Choose `Active Directory` if you're using Microsoft Active Directory, `LDAP` for other LDAP servers such as Apache DS or Open LDAP
 - **Domain:** Domain of your organization on Active Directory.
-- **Distinguished name (DN) of user:** DN of a user that has admin privileges on the LDAP server. Will be used to connect to the server when authenticating users. 
-- **Password:** Password for the same user.
 - **Search base DN:** Base DN to use for searching users/groups.
 - **Additional user DN:** Appended to "Search base DN" and used for finding users.
 - **Additional group DN:** Appended to "Search base DN" and used for finding groups.
@@ -118,6 +119,8 @@ You can use your existing LDAP or Active Directory server for authentication/aut
 - **User Group Name:** Members of this group will have read and write privileges on Management Center.
 - **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
 - **Start TLS:** Enable if your LDAP server uses Start TLS.
+- **User Search Filter:** LDAP search filter expression to search for users. For example, `uid={0}` searches for a username that matches with the `uid` attribute.
+- **Group Search Filter:** LDAP search filter expression to search for groups. For example, `uniquemember={0}` searches for a group that matches with the `uniquemember` attribute.
 
 Once configured, LDAP settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload LDAP Config" button on the login page. 
 
