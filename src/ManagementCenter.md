@@ -101,17 +101,15 @@ To encrypt data transmitted over all channels of Management Center using TLS/SSL
 * If you're using Clustered JMX on Management center, enable TLS/SSL for it. See [Enabling TLS/SSL for Clustered JMX](#enabling-tlsssl-for-clustered-jmx).
 * If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP-Active Directory Authentication](#ldap-active-directory-authentication)
 
-### LDAP-Active Directory Authentication
+### LDAP Authentication
 
-You can use your existing LDAP or Active Directory server for authentication/authorization on Management Center. Click on the "Configure LDAP" button on the Sign Up page, and the following form page appears:
+You can use your existing LDAP server for authentication/authorization on Management Center. Choose LDAP from the Security Provider combobox on the "Configure security" page, and the following form page appears:
 
 ![LDAP Configuration](images/ConfigureLDAP.png)
 
-Provide the details in this form for your LDAP/Active Directory server:
+Provide the details in this form for your LDAP server:
 
 - **URL:** URL of your LDAP/Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
-- **LDAP Type:** Choose `Active Directory` if you're using Microsoft Active Directory, `LDAP` for other LDAP servers such as Apache DS or Open LDAP
-- **Domain:** Domain of your organization on Active Directory.
 - **Search base DN:** Base DN to use for searching users/groups.
 - **Additional user DN:** Appended to "Search base DN" and used for finding users.
 - **Additional group DN:** Appended to "Search base DN" and used for finding groups.
@@ -122,7 +120,113 @@ Provide the details in this form for your LDAP/Active Directory server:
 - **User Search Filter:** LDAP search filter expression to search for users. For example, `uid={0}` searches for a username that matches with the `uid` attribute.
 - **Group Search Filter:** LDAP search filter expression to search for groups. For example, `uniquemember={0}` searches for a group that matches with the `uniquemember` attribute.
 
-Once configured, LDAP settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload LDAP Config" button on the login page. 
+Once configured, LDAP settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload Security Config" button on the login page.
+ 
+### Active Directory Authentication
+ 
+You can use your existing Active Directory server for authentication/authorization on Management Center. Choose Active Directory from the Security Provider combobox on the "Configure security" page, and the following form page appears:
+ 
+![Active Directory Configuration](images/ConfigureAD.png)
+ 
+Provide the details in this form for your Active Directory server:
+ 
+- **URL:** URL of your LDAP/Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
+- **Domain:** Domain of your organization on Active Directory.
+- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on Management Center.
+- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+ 
+Once configured, Active Directory settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload Security Config" button on the login page.
+
+### JAAS Authentication
+
+You can use your own `javax.security.auth.spi.LoginModule` implementation for authentication/authorization on Management Center. Choose JAAS from the Security Provider combobox on the "Configure security" page, and the following page appears:
+
+![JAAS Configuration](images/JAAS.png)
+
+Provide the details in this form for your JAAS `LoginModule` implementation:
+
+- **Login Module Class**: Fully qualified class name of your `javax.security.auth.spi.LoginModule` implementation
+- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on Management Center.
+- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+
+Following is an example implementation. Note that we return two `java.security.Principal` instances, one of them is the username and the other one is a group name, which you will use when configuring JAAS security as described above.
+
+```java
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
+import java.security.Principal;
+import java.util.Map;
+ 
+public class SampleLoginModule implements LoginModule {
+    private Subject subject;
+    private String password;
+    private String username;
+ 
+    @Override
+    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
+        this.subject = subject;
+ 
+        try {
+            NameCallback nameCallback = new NameCallback("prompt");
+            PasswordCallback passwordCallback = new PasswordCallback("prompt", false);
+ 
+            callbackHandler.handle(new Callback[] {nameCallback, passwordCallback });
+ 
+            password = new String(passwordCallback.getPassword());
+            username = nameCallback.getName();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+ 
+    @Override
+    public boolean login() throws LoginException {
+        if (!username.equals("emre")) {
+            throw new LoginException("Bad User");
+        }
+ 
+        if (!password.equals("pass1234")) {
+            throw new LoginException("Bad Password");
+        }
+ 
+        subject.getPrincipals().add(new Principal() {
+            public String getName() {
+                return "emre";
+            }
+        });
+        
+        subject.getPrincipals().add(new Principal() {
+            public String getName() {
+                return "MancenterAdmin";
+            }
+        });
+        
+        return true;
+    }
+        
+    @Override
+    public boolean commit() throws LoginException {
+        return true;
+    }
+
+    @Override
+    public boolean abort() throws LoginException {
+        return true;
+    }
+
+    @Override
+    public boolean logout() throws LoginException {
+        return true;
+    }
+}
+```
 
 ### Management Center Tools
 
