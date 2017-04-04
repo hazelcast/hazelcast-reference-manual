@@ -64,13 +64,15 @@ If you have the open source edition of Hazelcast, Management Center can be used 
 
 Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
 
-![Signing Up](images/Signup.png)
+![Signing Up](images/ConfigureSecurity.png)
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you already configured security before, a login dialog box appears instead.*
 
 
-It asks you to create a username and password. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
+It asks you to choose your security provider and create a username and password. Available security providers are Active Directory, LDAP and JAAS, which are described in the following sections. 
+
+Once you press the **Save** button, your administrator account credentials are created and the following dialog box appears.
 
 ![Selecting Cluster to Connect](images/ConnectCluster.png)
 
@@ -99,17 +101,17 @@ To encrypt data transmitted over all channels of Management Center using TLS/SSL
 * Deploy Management Center on a TLS/SSL enabled container. See [Installing Management Center](#installing-management-center).
 * Enable TLS/SSL for your Hazelcast cluster. See [TLS/SSL](#tlsssl)
 * If you're using Clustered JMX on Management center, enable TLS/SSL for it. See [Enabling TLS/SSL for Clustered JMX](#enabling-tlsssl-for-clustered-jmx).
-* If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP-Active Directory Authentication](#ldap-active-directory-authentication)
+* If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP  Authentication](#ldap-authentication).
 
 ### LDAP Authentication
 
-You can use your existing LDAP server for authentication/authorization on Management Center. Choose LDAP from the Security Provider combobox on the "Configure security" page, and the following form page appears:
+You can use your existing LDAP server for authentication/authorization on Management Center. In the "Configure Security" page, select **LDAP** from the "Security Provider" combo box, and the following form page appears:
 
 ![LDAP Configuration](images/ConfigureLDAP.png)
 
 Provide the details in this form for your LDAP server:
 
-- **URL:** URL of your LDAP/Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
+- **URL:** URL of your LDAP server, including schema (`ldap://` or `ldaps://`) and port.
 - **Search base DN:** Base DN to use for searching users/groups.
 - **Additional user DN:** Appended to "Search base DN" and used for finding users.
 - **Additional group DN:** Appended to "Search base DN" and used for finding groups.
@@ -124,13 +126,13 @@ Once configured, LDAP settings are saved in a file named `ldap.properties` under
  
 ### Active Directory Authentication
  
-You can use your existing Active Directory server for authentication/authorization on Management Center. Choose Active Directory from the Security Provider combobox on the "Configure security" page, and the following form page appears:
+You can use your existing Active Directory server for authentication/authorization on Management Center. In the "Configure Security" page, select **Active Directory** from the "Security Provider" combo, and the following form page appears:
  
 ![Active Directory Configuration](images/ConfigureAD.png)
  
 Provide the details in this form for your Active Directory server:
  
-- **URL:** URL of your LDAP/Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
+- **URL:** URL of your Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
 - **Domain:** Domain of your organization on Active Directory.
 - **Admin Group Name:** Members of this group will have admin privileges on Management Center.
 - **User Group Name:** Members of this group will have read and write privileges on Management Center.
@@ -140,9 +142,9 @@ Once configured, Active Directory settings are saved in a file named `ldap.prope
 
 ### JAAS Authentication
 
-You can use your own `javax.security.auth.spi.LoginModule` implementation for authentication/authorization on Management Center. Choose JAAS from the Security Provider combobox on the "Configure security" page, and the following page appears:
+You can use your own `javax.security.auth.spi.LoginModule` implementation for authentication/authorization on Management Center. In the "Configure Security" page, select **JAAS** from the "Security Provider" combo box, and the following page appears:
 
-![JAAS Configuration](images/JAAS.png)
+![JAAS Configuration](images/ConfigureJAAS.png)
 
 Provide the details in this form for your JAAS `LoginModule` implementation:
 
@@ -151,7 +153,7 @@ Provide the details in this form for your JAAS `LoginModule` implementation:
 - **User Group Name:** Members of this group will have read and write privileges on Management Center.
 - **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
 
-Following is an example implementation. Note that we return two `java.security.Principal` instances, one of them is the username and the other one is a group name, which you will use when configuring JAAS security as described above.
+Following is an example implementation. Note that we return two `java.security.Principal` instances; one of them is the username and the other one is a group name, which you will use when configuring JAAS security as described above.
 
 ```java
 import javax.security.auth.Subject;
