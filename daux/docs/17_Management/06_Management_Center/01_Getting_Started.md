@@ -8,18 +8,20 @@ If you have the open source edition of Hazelcast, Management Center can be used 
 
 Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
 
-![Signing Up](../../images/Signup.png)
+![Signing Up](../../images/ConfigureSecurity.png)
 
 
-![image](../../images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *If you already configured security before, a login dialog box appears instead.*
 
 
-It asks you to create a username and password and give a valid e-mail address of yours. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
+It asks you to choose your security provider and create a username and password. Available security providers are Active Directory, LDAP and JAAS, which are described in the following sections.
+
+Once you press the **Save** button, your administrator account credentials are created and the following dialog box appears.
 
 ![Selecting Cluster to Connect](../../images/ConnectCluster.png)
 
 
-"Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has **at most** two members. Note that if your cluster has more than two members, Management Center (without a license) does not show any information
+"Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has at most 2 members.
 
 If you have a Management Center license or Hazelcast IMDG Enterprise license, you can enter it in the dialog box that appears once you press the **Enter License** button, as shown below.
 
