@@ -64,32 +64,35 @@ If you have the open source edition of Hazelcast, Management Center can be used 
 
 Once you browse to `http://localhost:8080/mancenter` and since you are going to use Management Center for the first time, the following dialog box appears.
 
-![Signing Up](images/Signup.png)
+![Signing Up](images/ConfigureSecurity.png)
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *If you already created an administrator account before, a login dialog box appears instead.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *If you already configured security before, a login dialog box appears instead.*
 
 
-It asks you to create a username and password and give a valid e-mail address of yours. Once you press the **Sign Up** button, your administrator account credentials are created and the following dialog box appears.
+It asks you to choose your security provider and create a username and password. Available security providers are Active Directory, LDAP and JAAS, which are described in the following sections. 
+
+Once you press the **Save** button, your administrator account credentials are created and the following dialog box appears.
 
 ![Selecting Cluster to Connect](images/ConnectCluster.png)
 
 
-"Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has **at most** two members. Note that if your cluster has more than two members, Management Center (without a license) does not show any information.
+"Select Cluster to Connect" dialog box lists the clusters that send statistics to Management Center. You can either select a cluster to connect using the **Connect** button or enter your Management Center license key using the **Enter License** button. Management Center can be used without a license if the cluster that you want to monitor has at most 2 members.
 
 If you have a Management Center license or Hazelcast IMDG Enterprise license, you can enter it in the dialog box that appears once you press the **Enter License** button, as shown below.
 
 ![Providing License for Management Center](images/EnterLicense.png)
 
 
-When you try to connect to a cluster that has more than two members without entering a license key or if your license key is expired, the following dialog box appears.
+When you try to connect to a cluster that has more than 2 members without entering a license key or if your license key is expired, the following dialog box appears.
 
 ![Management Center License Warning](images/ExpiredLicense.png)
 
 
-Here, you can either choose to connect to a cluster without providing a license key or to enter your license key. If you choose to continue without a license, please remember that Management Center works if your cluster has **at most** two members.
+Here, you can either choose to connect to a cluster without providing a license key or to enter your license key. If you choose to continue without a license, Management Center still continues to function but you will only be able to monitor up to 2 members of your cluster.
 
 Management Center creates a folder with the name `mancenter` under your `user/home` folder to save data files and above settings/license information. You can change the data folder by setting the `hazelcast.mancenter.home` system property. Please see the [System Properties section](#system-properties) to see the description of this property and to learn how to set a system property.
+
 
 ### Using Management Center with TLS/SSL Only
 
@@ -98,17 +101,17 @@ To encrypt data transmitted over all channels of Management Center using TLS/SSL
 * Deploy Management Center on a TLS/SSL enabled container. See [Installing Management Center](#installing-management-center).
 * Enable TLS/SSL for your Hazelcast cluster. See [TLS/SSL](#tlsssl)
 * If you're using Clustered JMX on Management center, enable TLS/SSL for it. See [Enabling TLS/SSL for Clustered JMX](#enabling-tlsssl-for-clustered-jmx).
-* If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP-Active Directory Authentication](#ldap-active-directory-authentication).
+* If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP  Authentication](#ldap-authentication).
 
-### LDAP-Active Directory Authentication
+### LDAP Authentication
 
-You can use your existing LDAP or Active Directory server for authentication/authorization on Management Center. Click "Configure LDAP" button on Sign Up page and fill in the following details for your LDAP/Active Directory server:
+You can use your existing LDAP server for authentication/authorization on Management Center. In the "Configure Security" page, select **LDAP** from the "Security Provider" combo box, and the following form page appears:
 
-- **URL:** URL of your LDAP/Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
-- **LDAP Type:** Choose `Active Directory` if you're using Microsoft Active Directory, `LDAP` for other LDAP servers such as Apache DS or Open LDAP
-- **Domain:** Domain of your organization on Active Directory.
-- **Distinguished name (DN) of user:** DN of a user that has admin privileges on the LDAP server. Will be used to connect to the server when authenticating users. 
-- **Password:** Password for the same user.
+![LDAP Configuration](images/ConfigureLDAP.png)
+
+Provide the details in this form for your LDAP server:
+
+- **URL:** URL of your LDAP server, including schema (`ldap://` or `ldaps://`) and port.
 - **Search base DN:** Base DN to use for searching users/groups.
 - **Additional user DN:** Appended to "Search base DN" and used for finding users.
 - **Additional group DN:** Appended to "Search base DN" and used for finding groups.
@@ -116,8 +119,116 @@ You can use your existing LDAP or Active Directory server for authentication/aut
 - **User Group Name:** Members of this group will have read and write privileges on Management Center.
 - **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
 - **Start TLS:** Enable if your LDAP server uses Start TLS.
+- **User Search Filter:** LDAP search filter expression to search for users. For example, `uid={0}` searches for a username that matches with the `uid` attribute.
+- **Group Search Filter:** LDAP search filter expression to search for groups. For example, `uniquemember={0}` searches for a group that matches with the `uniquemember` attribute.
 
-Once configured, LDAP settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload LDAP Config" button on the login page. 
+Once configured, LDAP settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload Security Config" button on the login page.
+ 
+### Active Directory Authentication
+ 
+You can use your existing Active Directory server for authentication/authorization on Management Center. In the "Configure Security" page, select **Active Directory** from the "Security Provider" combo, and the following form page appears:
+ 
+![Active Directory Configuration](images/ConfigureAD.png)
+ 
+Provide the details in this form for your Active Directory server:
+ 
+- **URL:** URL of your Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
+- **Domain:** Domain of your organization on Active Directory.
+- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on Management Center.
+- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+ 
+Once configured, Active Directory settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload Security Config" button on the login page.
+
+### JAAS Authentication
+
+You can use your own `javax.security.auth.spi.LoginModule` implementation for authentication/authorization on Management Center. In the "Configure Security" page, select **JAAS** from the "Security Provider" combo box, and the following page appears:
+
+![JAAS Configuration](images/ConfigureJAAS.png)
+
+Provide the details in this form for your JAAS `LoginModule` implementation:
+
+- **Login Module Class**: Fully qualified class name of your `javax.security.auth.spi.LoginModule` implementation
+- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on Management Center.
+- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+
+Following is an example implementation. Note that we return two `java.security.Principal` instances; one of them is the username and the other one is a group name, which you will use when configuring JAAS security as described above.
+
+```java
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
+import java.security.Principal;
+import java.util.Map;
+ 
+public class SampleLoginModule implements LoginModule {
+    private Subject subject;
+    private String password;
+    private String username;
+ 
+    @Override
+    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
+        this.subject = subject;
+ 
+        try {
+            NameCallback nameCallback = new NameCallback("prompt");
+            PasswordCallback passwordCallback = new PasswordCallback("prompt", false);
+ 
+            callbackHandler.handle(new Callback[] {nameCallback, passwordCallback });
+ 
+            password = new String(passwordCallback.getPassword());
+            username = nameCallback.getName();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+ 
+    @Override
+    public boolean login() throws LoginException {
+        if (!username.equals("emre")) {
+            throw new LoginException("Bad User");
+        }
+ 
+        if (!password.equals("pass1234")) {
+            throw new LoginException("Bad Password");
+        }
+ 
+        subject.getPrincipals().add(new Principal() {
+            public String getName() {
+                return "emre";
+            }
+        });
+        
+        subject.getPrincipals().add(new Principal() {
+            public String getName() {
+                return "MancenterAdmin";
+            }
+        });
+        
+        return true;
+    }
+        
+    @Override
+    public boolean commit() throws LoginException {
+        return true;
+    }
+
+    @Override
+    public boolean abort() throws LoginException {
+        return true;
+    }
+
+    @Override
+    public boolean logout() throws LoginException {
+        return true;
+    }
+}
+```
 
 ### Management Center Tools
 
