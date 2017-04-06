@@ -31,6 +31,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Hazelcast Striim](#hazelcast-striim-hot-cache)| Added as a new section.
 |[Chapter 18 - Serialization](#serialization)|[Implementing Portable Serialization](#implementing-portable-serialization)|[Ordering Consistency for writePortable](#ordering-consistency-for-writeportable) added as a new section.|
 |[Chapter 19 - Management](#management)|[Diagnostics](#diagnostics)|Added as a new section to explain the diagnostic utility of Hazelcast.|
+|||Added [LDAP](#ldap-authentication), [Active Directory](#active-directory-authentication) and [JAAS Authentication](#jaas-authentication) as new sections.
 ||[LDAP-Active Directory Authentication](#ldap-active-directory-authentication)|Added as a new section.
 |||Partial start related content added to [Using REST API for Cluster Management](#using-rest-api-for-cluster-management) and [Using the Script cluster.sh](#using-the-script-clustersh) sections.
 ||[Using the Script cluster.sh](#using-the-script-clustersh)| Updated by adding new operations and parameters related to Rolling Member Upgrade procedures.
