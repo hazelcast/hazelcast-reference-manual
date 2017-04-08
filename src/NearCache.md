@@ -66,7 +66,7 @@ The element `<near-cache>` has an optional attribute `name` whose default value 
 
 ```java
 EvictionConfig evictionConfig = new EvictionConfig()
-  .setMaxSizePolicy(MaxSizePolicy.ENTRY_COUNT
+  .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT
     |USED_NATIVE_MEMORY_SIZE|USED_NATIVE_MEMORY_PERCENTAGE
     |FREE_NATIVE_MEMORY_SIZE|FREE_NATIVE_MEMORY_PERCENTAGE);
   .setEvictionPolicy(EvictionPolicy.LRU|LFU|RANDOM|NONE);
