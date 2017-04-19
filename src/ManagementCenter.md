@@ -2,34 +2,47 @@
 
 Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring the overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. You can run scripts (JavaScript, Groovy, etc.) and commands on your members with its scripting and console modules.
 
-### Installing Management Center
+### Deploying and Starting
 
-You have two options for installing Hazelcast Management Center:
+You have two options for starting Hazelcast Management Center:
 
 1. Deploy the file `mancenter`-*version*`.war` on your Java application server/container.
 2. Start Hazelcast Management Center from the command line and then have the Hazelcast cluster members communicate with it. This means that your members should know the URL of the `mancenter` application before they start.
+
+###### Starting with WAR File
 
 Here are the steps.
 
 - Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file under the directory `mancenter`.
 - You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
 
-```java
+```bash
 java -jar mancenter-*version*.war 8080 mancenter
 ```
 
-- You can also start it using the scripts `startManCenter.bat` or `startManCenter.sh` located in the directory `mancenter`.
-- Or, instead of starting at the command line, you can deploy it to your web server (Tomcat, Jetty, etc.). Let us say it is running at `http://localhost:8080/mancenter`.
-- After you perform the above steps, make sure that `http://localhost:8080/mancenter` is up.
-- Configure your Hazelcast members by adding the URL of your web application to your `hazelcast.xml`. Hazelcast members will send their states to this URL.
+###### Starting with an Extra Classpath
 
-```xml
-<management-center enabled="true">
-    http://localhost:8080/mancenter
-</management-center>
+You can also start the Management Center with an extra classpath entry (for example, when using JAAS authentication) by using the following command:
+
+```bash
+java -cp "mancenter-*version*.war:/path/to/an/extra.jar" Launcher 8080 mancenter 
 ```
 
-- If you have deployed `mancenter-*version*.war` in your already-SSL-enabled web container, configure `hazelcast.xml` as follows.
+On Windows, the command becomes as follows (semicolon instead of colon):
+
+```bash
+java -cp "mancenter-*version*.war;/path/to/an/extra.jar" Launcher 8080 mancenter
+```
+
+###### Starting with Scripts
+ 
+Optionally, you can use the scripts `startManCenter.bat` or `startManCenter.sh` located in the directory `mancenter` to start the Management Center.
+
+###### Deploying to Application Server
+
+Or, instead of starting at the command line, you can deploy it to your application server (Tomcat, Jetty, etc.).
+
+If you have deployed `mancenter-*version*.war` in your already-SSL-enabled web container, configure `hazelcast.xml` as follows.
 
 ```xml
 <management-center enabled="true">
@@ -41,16 +54,31 @@ If you are using an untrusted certificate for your container, which you created 
 
 `keytool -import -noprompt -trustcacerts -alias <AliasName> -file <certificateFile> -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass <Password>`
 
-- You can also set a frequency (in seconds) for which Management Center will take information from the Hazelcast cluster, using the element `update-interval` as shown below. `update-interval` is optional and its default value is 3 seconds.
+
+#### Launching to Management Center
+
+After you perform the above steps, make sure that `http://localhost:8080/mancenter` is up.
+
+Configure your Hazelcast members by adding the URL of your web application to your `hazelcast.xml`. Hazelcast members will send their states to this URL.
 
 ```xml
-<management-center enabled="true" update-interval="3">http://localhost:8080/
-mancenter</management-center>
+<management-center enabled="true">
+    http://localhost:8080/mancenter
+</management-center>
 ```
 
+Now you can start your Hazelcast cluster, browse to `http://localhost:8080/mancenter` and setup your [administrator account](#getting-started-to-management-center) explained in the next section.
 
-- Start your Hazelcast cluster.
-- Browse to `http://localhost:8080/mancenter` and setup your [administrator account](#getting-started-to-management-center) explained in the next section.
+
+###### Configuring Update Interval
+
+You can set a frequency (in seconds) for which Management Center will take information from the Hazelcast cluster, using the element `update-interval` as shown below. `update-interval` is optional and its default value is 3 seconds.
+
+```xml
+<management-center enabled="true" update-interval="3">
+   http://localhost:8080/mancenter
+</management-center>
+```
 
 ### Getting Started to Management Center
 
