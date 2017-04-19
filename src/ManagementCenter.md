@@ -14,8 +14,20 @@ Here are the steps.
 - Download the latest Hazelcast ZIP from <a href="http://www.hazelcast.org/download/" target="_blank">hazelcast.org</a>. The ZIP contains the `mancenter`-*version*`.war` file under the directory `mancenter`.
 - You can directly start `mancenter`-*version*`.war` file from the command line. The following command will start Hazelcast Management Center on port 8080 with context root 'mancenter' (`http://localhost:8080/mancenter`).
 
-```java
+```bash
 java -jar mancenter-*version*.war 8080 mancenter
+```
+
+- You can also start Management Center with an extra classpath entry by using the following command (when using JAAS authentication for e.g.):
+
+```bash
+java -cp "mancenter-*version*.war:/path/to/an/extra.jar" Launcher 8080 mancenter 
+```
+
+- On Windows, command becomes:
+
+```bash
+java -cp "mancenter-*version*.war;/path/to/an/extra.jar" Launcher 8080 mancenter
 ```
 
 - You can also start it using the scripts `startManCenter.bat` or `startManCenter.sh` located in the directory `mancenter`.
