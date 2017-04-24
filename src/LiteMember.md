@@ -9,7 +9,7 @@ You can form your cluster to include the regular Hazelcast members to store data
 
 #### Configuring Lite Members
 
-You can enable a cluster member to be a lite member using declarative or programmatic configuration. 
+You can enable a cluster member to be a lite member using declarative or programmatic configuration.
 
 ##### Declarative Configuration
 
@@ -26,7 +26,17 @@ Config config = new Config();
 config.setLiteMember(true);
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Note that you cannot change a member's role at runtime.*
+#### Promoting Lite Members to Data Member
 
+Lite members can be promoted to data members using `Cluster` interface. When they are promoted, cluster partitions are rebalanced and ownerships of some portion of the partitions are assigned to newly promoted data members. A data member cannot be downgraded to a lite member back.
 
+```java
+Config config = new Config();
+config.setLiteMember(true);
 
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+Cluster cluster = hazelcastInstance.getCluster();
+cluster.promoteLocalLiteMember();
+```
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *A data member cannot be downgraded to a lite member back.*
