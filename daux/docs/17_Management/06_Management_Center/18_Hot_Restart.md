@@ -5,9 +5,11 @@ The admin user can see and change the cluster state, shut down the cluster, and 
 
 ![Hot Restart Operations](../../images/HotRestart.png)
 
-**Cluster States**
+**Cluster States:**
 
 - **Active**: Cluster will continue to operate without any restriction. All operations are allowed. This is the default state of a cluster.
+
+- **No Migration**: Migrations (partition rebalancing) and backup replications are not allowed. Cluster will continue to operate without any restriction. All other operations are allowed.
 
 - **Frozen**: New members are not allowed to join, except the members left in **this** state or **Passive** state. All other operations except migrations are allowed and will operate without any restriction.
 

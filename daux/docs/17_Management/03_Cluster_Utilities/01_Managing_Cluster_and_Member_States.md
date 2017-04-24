@@ -9,6 +9,14 @@ By changing the state of your cluster, you can allow/restrict several cluster op
 
 - **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 <br></br>
+
+- **`NO_MIGRATION`**:
+  - In this state, migrations (partition rebalancing) and backup replications are not allowed.
+  - Cluster accepts new members.
+  - All other operations are allowed.
+  - You cannot change the state of a cluster to `NO_MIGRATION` when migration/replication tasks are being performed.
+<br></br>
+
 - **`FROZEN`**: 
 	- In this state, the partition table is frozen and partition assignments are not performed. 
 	- Your cluster does not accept new members. 

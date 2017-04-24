@@ -12,6 +12,7 @@ This chapter lists the changes made to this document from the previous release.
 |[SSL](/18_Security/04_TLS-SSL.md)|Added the new section "Authenticating Mutually".
 |[Using Management Center with TLS/SSL Only](/17_Management/06_Management_Center/01_Using_Management_Center_with_TLS-SSL_Only.md)|Added as a new section.
 |[Promoting Lite Members to Data Member](/17_Management/03_Cluster_Utilities/04_Enabling_Lite_Members.md)|Added as a new section.
+|[Using the Script cluster.sh](/17_Management/03_Cluster_Utilities/02_Using_the_Script_cluster.sh.md)|Added the explanation for the new cluster state `NO_MIGRATION`.
 |[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: ???.
 |[FAQ](/28_FAQ.md)|Added new questions/answers.|
 |[Glossary](/29_Glossary)|Added new glossary items.|
