@@ -28,7 +28,7 @@ config.setLiteMember(true);
 
 #### Promoting Lite Members to Data Member
 
-Lite members can be promoted to data members using `Cluster` interface. When they are promoted, cluster partitions are rebalanced and ownerships of some portion of the partitions are assigned to newly promoted data members. A data member cannot be downgraded to a lite member back.
+Lite members can be promoted to data members using the `Cluster` interface. When they are promoted, cluster partitions are rebalanced and ownerships of some portion of the partitions are assigned to the newly promoted data members.
 
 ```java
 Config config = new Config();
@@ -39,4 +39,4 @@ Cluster cluster = hazelcastInstance.getCluster();
 cluster.promoteLocalLiteMember();
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *A data member cannot be downgraded to a lite member back.*
+![Note](images/NoteSmall.jpg) ***NOTE:*** *A data member cannot be downgraded to a lite member back.*
