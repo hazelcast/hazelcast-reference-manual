@@ -216,7 +216,7 @@ The `InitialLoadMode` configuration parameter in the class <a href="https://gith
 
 Here is the `MapLoader` initialization flow:
 
-1. When `getMap()` is first called from any member, initialization will start depending on the value of `InitialLoadMode`. If it is set to `EAGER`, initialization starts.  If it is set to `LAZY`, initialization does not start but data is loaded each time a partition loading completes.
+1. When `getMap()` is first called from any member, initialization will start depending on the value of `InitialLoadMode`. If it is set to `EAGER`, initialization starts  on all partitions as soon as the map is touched, i.e., all partitions will be loaded when `getMap` is called.  If it is set to `LAZY`, data will be loaded partition by partition, i.e., each partition will be loaded with its first touch.
 2. Hazelcast will call `MapLoader.loadAllKeys()` to get all your keys on one of the members.
 3. That member will distribute keys to all other members in batches.
 4. Each member will load values of all its owned keys by calling `MapLoader.loadAll(keys)`.
@@ -224,7 +224,7 @@ Here is the `MapLoader` initialization flow:
 
 ![image](../../images/NoteSmall.jpg) ***NOTE:*** *If the load mode is `LAZY` and the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since all the data is not loaded in this case (`LAZY` mode), please note that there may still be entries in your datastore.*
 
-![image](../../images/NoteSmall.jpg) ***NOTE:*** *When the load mode is `EAGER` and you do not want the MapStore start to load as soon as the first cluster member starts, you can use the system property `hazelcast.initial.min.cluster.size`. For example, if you set its value as `3`, loading process will wait until three members is completely up.*
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *If you do not want the MapStore start to load as soon as the first cluster member starts, you can use the system property `hazelcast.initial.min.cluster.size`. For example, if you set its value as `3`, loading process will be blocked until all three members are completely up.*
 
 
 ![image](../../images/NoteSmall.jpg) ***NOTE:*** *The return type of `loadAllKeys()` is changed from `Set` to `Iterable` with the release of Hazelcast 3.5. MapLoader implementations from previous releases are also supported and do not need to be adapted.*

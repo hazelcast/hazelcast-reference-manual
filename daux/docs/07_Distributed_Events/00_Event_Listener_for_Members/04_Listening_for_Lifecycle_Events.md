@@ -8,7 +8,7 @@ The Lifecycle Listener notifies for the following events:
 - `MERGING`: A member is merging with the cluster.
 - `MERGED`: A member's merge operation has completed.
 - `CLIENT_CONNECTED`: A Hazelcast Client connected to the cluster.
-- `CLINET_DISCONNECTED`: A Hazelcast Client disconnected from the cluster.
+- `CLIENT_DISCONNECTED`: A Hazelcast Client disconnected from the cluster.
 
 
 The following is an example Lifecycle Listener class.
