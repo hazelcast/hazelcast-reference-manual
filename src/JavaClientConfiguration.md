@@ -309,14 +309,16 @@ socketOptions.setReuseAddress(true);
 socketOptions.setLingerSeconds(3);
 ```
 
-#### Enabling Client SSL
+#### Enabling Client TLS/SSL
 
 <font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
 
 
 
-You can use SSL to secure the connection between the client and the members. If you want SSL enabled for the client-cluster connection, you should set `SSLConfig`. Once set, the connection (socket) is established out of an SSL factory defined either by a factory class name or factory implementation. Please see the `SSLConfig` class in the `com.hazelcast.config` package at the JavaDocs page of the <a href="http://www.hazelcast.org/documentation" target="_blank">Hazelcast Documentation</a> web site.
+You can use TLS/SSL to secure the connection between the client and the members. If you want TLS/SSL enabled for the client-cluster connection, you should set `SSLConfig`. Once set, the connection (socket) is established out of an TLS/SSL factory defined either by a factory class name or factory implementation. Please see the [TLS/SSL section](#tlsssl).
+
+As explained in the [TLS/SSL section](#tlsssl), Hazelcast members have keyStores used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust. Starting with Hazelcast 3.8.1 release, mutual authentication is introduced. This allows the clients also to have their keyStores and members to have their trustStores so that the members can know which clients they can trust. Please see the [Mutual Authentication section](#mutual-authentication).
 
 #### Configuring Client for AWS
 
