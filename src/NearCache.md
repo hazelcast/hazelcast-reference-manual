@@ -117,9 +117,9 @@ Following are the descriptions of all configuration elements:
 	* `IMap`: Its default value is `Integer.MAX_VALUE` for on-heap maps and `10000` for the `NATIVE` in-memory format.
 	* `JCache`: Its default value is `10000`.
 - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
-- `local-update-policy`: Specifies the update policy of the local Near Cache. Is just available on JCache clients. Available values are as follows:
-   - `INVALIDATE`: Does not update the local Near Cache. Will invalidate the local Near Cache eventually (default value).
-   - `CACHE_ON_UPDATE`: Updates the local Near Cache immediately after the put operation completes.
+- `local-update-policy`: Specifies the update policy of the local Near Cache. It is available on JCache clients. Available values are as follows:
+   - `INVALIDATE`: Removes the near cache entry on mutation. After the mutative call to the member completes but before the operation returns to the caller, the near cache entry is removed. During the mutative operation the near cache is not locked so readers will continue to read the old value during update. But as soon as the update completes the near cache entry is removed. Any threads reading the key after this point will have a near cache miss and call through to the member, obtaining the new entry. This setting provides read-your-writes consistency. This is the default setting.
+   - `CACHE_ON_UPDATE`: Updates the near cache entry on mutation. After the mutative call to the member completes but before the put returns to the caller, the near cache entry is updated. So a remove will remove it and one of the put methods will update it to the new value. During the mutative operation the near cache is not locked so readers will continue to read the old value during update. But before the call completes the near cache entry is updated. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the cache, both the near cache and the original copy in the member. The member will initiate an invalidate event to any other near caches, however the caller near cache is not invalidated as it already has the new value. This setting also provides read-your-writes consistency.
 - `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
   - `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
   - `directory`: Specifies the parent directory for the preloader of this Near Cache. The filenames for the preloader storage will be generated from the Near Cache name. You can additionally specify the parent directory to have multiple clients on the same machine with the same Near Cache names.
@@ -304,7 +304,9 @@ You can use the following system properties to configure the Near Cache invalida
 
 If there are a lot of clients or many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.map.invalidation.batch.size` system property to a suitable value.
 
-### Near Cache Eventual Consistency
+### Near Cache Consistency
+
+##### Eventual Consistency
 
 Near Caches are invalidated by invalidation events. Invalidation events can be lost due to the fire-and-forget fashion of eventing system. If an event is lost, reads from Near Cache can indefinitely be stale.
 
@@ -315,6 +317,11 @@ You can configure eventual consistency with the system properties below (same pr
 
 - `hazelcast.invalidation.max.tolerated.miss.count`: Default value is 10. If missed invalidation count is bigger than this value, relevant cached data will be made unreachable. 
 - `hazelcast.invalidation.reconciliation.interval.seconds`: Default value is 60 seconds. This is a periodic task that scans cluster members periodically to compare generated invalidation events with the received ones from Near Cache.
+
+##### Locally Initiated Changes
+
+
+
 
 ### Near Cache Preloader
 
