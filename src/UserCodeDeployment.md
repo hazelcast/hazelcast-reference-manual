@@ -54,4 +54,34 @@ User Code Deployment has the following configuration elements and attributes:
   - `OFF`: Never serve classes to other members.
 - `<blacklist-prefixes>`: Comma separated name prefixes of classes/packages to be prevented from dynamic class loading. For example, if you set it as "com.foo", remote loading of all classes from the "com.foo" package will be blacklisted, including the classes from all its sub-packages. If you set it as "com.foo.Class", then the "Class" and all classes having the "Class" as prefix in the "com.foo" package will be blacklisted.
 - `<whitelist-prefixes>`: Comma separated name prefixes of classes/packages only from which the classes will be loaded. It allows to quickly configure remote loading only for classes from selected packages. It can be used together with blacklisting. For example, you can whitelist the prefix "com.foo" and blacklist the prefix "com.foo.secret".
-- `<provider-filter>`: Filter to constraint members to be used for a class loading request when a class is not available locally. The value is in the format "HAS_ATTRIBUTE:foo". When it is set as "HAS_ATTRIBUTE:foo", the class loading request will only be sent to the members which have "foo" as a [member attribute](#defining-member-attributes).
+- `<provider-filter>`: Filter to constraint members to be used for a class loading request when a class is not available locally. The value is in the format "HAS_ATTRIBUTE:foo". When it is set as "HAS_ATTRIBUTE:foo", the class loading request will only be sent to the members which have "foo" as a [member attribute](#defining-member-attributes). Setting the this to null will allow to load classes from all members.
+
+#### Example for Filtering Members
+
+As described above, the configuration element `provider-filter` is used to constrain a member to load classes only from a subset of all cluster members. The value of the `provider-filter` must be set as a member attribute in the desired members from which the classes will be loaded. Please see the following example usage provided as programmatic configurations.
+
+The below example configuration will allow the Hazelcast member to load classes only from members with the `class-provider` attribute set. It will not ask any other member to provide a locally unavailable class:
+
+```java
+Config hazelcastConfig = new Config();
+DistributedClassloadingConfig distributedClassloadingConfig = hazelcastConfig.getDistributedClassloadingConfig();
+distributedClassloadingConfig.setProviderFilter(HAS_ATTRIBUTE:class-provider);
+
+HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
+```
+
+And the below example configuration sets the attribute `class-provider` for a member. So, the above member will load classes from the members who have the attribute `class-provider`:
+
+```java
+Config hazelcastConfig = new Config();
+DistributedClassloadingConfig distributedClassloadingConfig = hazelcastConfig.getDistributedClassloadingConfig();
+distributedClassloadingConfig.setProviderFilter(HAS_ATTRIBUTE:class-provider);
+
+HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
+```
+
+
+
+
+
+
