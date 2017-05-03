@@ -65,7 +65,7 @@ The below example configuration will allow the Hazelcast member to load classes 
 ```java
 Config hazelcastConfig = new Config();
 DistributedClassloadingConfig distributedClassloadingConfig = hazelcastConfig.getDistributedClassloadingConfig();
-distributedClassloadingConfig.setProviderFilter(HAS_ATTRIBUTE:class-provider);
+distributedClassloadingConfig.setProviderFilter("HAS_ATTRIBUTE:class-provider");
 
 HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
 ```
@@ -75,7 +75,7 @@ And the below example configuration sets the attribute `class-provider` for a me
 ```java
 Config hazelcastConfig = new Config();
 DistributedClassloadingConfig distributedClassloadingConfig = hazelcastConfig.getDistributedClassloadingConfig();
-distributedClassloadingConfig.setProviderFilter(HAS_ATTRIBUTE:class-provider);
+distributedClassloadingConfig.setProviderFilter("HAS_ATTRIBUTE:class-provider");
 
 HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
 ```
