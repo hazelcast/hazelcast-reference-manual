@@ -325,9 +325,9 @@ For local invalidations, when a record is updated/removed, future reads will see
 - `INVALIDATE`
 - `CACHE_ON_UPDATE`
 
-If you choose `INVALIDATE`, the entry is removed from the Near Cache after the update/remove occurs and before the operation returns to the caller. During the update/remove operation the readers will continue to read the old value since the Near Cache is not locked. The entry is removed when the update operation completes.
+If you choose `INVALIDATE`, the entry is removed from the Near Cache after the update/remove occurs in the underlying data structure, and before the operation returns to the caller. Until the update/remove operation completes, the entry can be read from the near cache.
 
-If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove call to the member completes and before the put returns to the caller. A remove operation will remove the entry and one of the put methods will update it to the new value. Similar to the `INVALIDATION` policy, the Near Cache is not locked so the readers will continue to read the old value during the update/remove operation. The near cache entry is updated before the call completes. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the the near cache and the original copy in the member. 
+If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove call to the member completes and before the put returns to the caller. A remove operation will remove the entry and one of the put methods will update it to the new value.  The near cache entry is updated before the call completes. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the the near cache and the original copy in the member. 
 
 ### Near Cache Preloader
 
