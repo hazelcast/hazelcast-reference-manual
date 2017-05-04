@@ -74,9 +74,8 @@ And the below example configuration sets the attribute `class-provider` for a me
 
 ```java
 Config hazelcastConfig = new Config();
-DistributedClassloadingConfig distributedClassloadingConfig = hazelcastConfig.getDistributedClassloadingConfig();
-distributedClassloadingConfig.setProviderFilter("HAS_ATTRIBUTE:class-provider");
-
+MemberAttributeConfig memberAttributes = hazelcastConfig.getMemberAttributeConfig();
+memberAttributes.setAttribute("class-provider", "true");
 HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
 ```
 
