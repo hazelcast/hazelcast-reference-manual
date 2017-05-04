@@ -76,6 +76,7 @@ And the below example configuration sets the attribute `class-provider` for a me
 Config hazelcastConfig = new Config();
 MemberAttributeConfig memberAttributes = hazelcastConfig.getMemberAttributeConfig();
 memberAttributes.setAttribute("class-provider", "true");
+
 HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
 ```
 
