@@ -91,6 +91,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.partition.migration.stale.read.disabled` | false | bool | Hazelcast allows read operations to be performed while a partition is being migrated. This can lead to stale reads for some scenarios. You can disable stale read operations by setting this system property's value to "true". Its default value is "false", meaning that stale reads are allowed.
 `hazelcast.partition.migration.timeout` | 300 | int  |   Timeout for partition migration tasks in seconds.
 `hazelcast.partition.table.send.interval`|15|int|Interval for publishing partition table periodically to all cluster members.
+`hazelcast.partition.migration.fragments.enabled` | true | bool | When enabled, which is enabled by default, partitions are migrated/replicated in small fragments instead of one big chunk. Migrating partitions in fragments reduces pressure on memory and network, since smaller packets are created in memory and sent through network but also it can increase the migration time to complete.  
 `hazelcast.partitioning.strategy.class`|null|string|Class name implementing `com.hazelcast.core.PartitioningStrategy`, which defines key to partition mapping.
 `hazelcast.performance.monitor.max.rolled.file.count`|10|int|The PerformanceMonitor uses a rolling file approach to prevent eating too much disk space. This property sets the maximum number of rolling files to keep on disk.
 `hazelcast.performance.monitor.max.rolled.file.size.mb`|10|int|The performance monitor uses a rolling file approach to prevent eating too much disk space. This property sets the maximum size in MB for a single file. Every HazelcastInstance gets its own history of log files.
@@ -124,4 +125,3 @@ Property Name | Default Value | Type | Description
 `hazelcast.unsafe.mode` | auto | string  | "auto" (the default value) automatically detects whether the usage of `Unsafe` is suitable for a given platform. "disabled" explicitly disables the `Unsafe` usage in your platform. "enforced" enforces the usage of `Unsafe` even if your platform does not support it. This property can only be set by passing a JVM-wide system property.
 `hazelcast.phone.home.enabled` | true | bool  |   Enable or disable the sending of phone home data to Hazelcast's phone home server.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.
-
