@@ -86,6 +86,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.partition.backup.sync.interval`|30|int|Interval for syncing backup replicas.
 `hazelcast.partition.count` | 271 | int  |   Total partition count.
 `hazelcast.partition.max.parallel.replications`|5|int|Maximum number of parallel partition backup replication operations per member. When a partition backup ownership changes or a backup inconsistency is detected, the members start to sync their backup partitions. This parameter limits the maximum running replication operations in parallel.
+`hazelcast.partition.migration.fragments.enabled` | true | bool | When enabled, which is the default behavior, partitions are migrated/replicated in small fragments instead of one big chunk. Migrating partitions in fragments reduces pressure on the memory and network, since smaller packets are created in the memory and sent through the network. Note that it can increase the migration time to complete.
 `hazelcast.partition.migration.interval` | 0 | int |   Interval to run partition migration tasks in seconds.
 `hazelcast.partition.migration.stale.read.disabled` | false | bool | Hazelcast allows read operations to be performed while a partition is being migrated. This can lead to stale reads for some scenarios. You can disable stale read operations by setting this system property's value to "true". Its default value is "false", meaning that stale reads are allowed.
 `hazelcast.partition.migration.timeout` | 300 | int  |   Timeout for partition migration tasks in seconds.

@@ -17,6 +17,6 @@ This chapter lists the changes made to this document from the previous release.
 |[Using the Script cluster.sh](/17_Management/03_Cluster_Utilities/02_Using_the_Script_cluster.sh.md)|Added the explanation for the new cluster state `NO_MIGRATION`.
 |[Defining Member Attributes](/17_Management/03_Cluster_Utilities/05_Defining_Member_Attributes.md)|Added information related to member filtering for distributed class loading (user code deployment)
 |[Near Cache](/19_Performance/04_Near_Cache/)|Added "Locally Initiated Changes" as a new section.
-|[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: ???.
+|[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: <br> - hazelcast.partition.migration.fragments.enabled
 |[FAQ](/28_FAQ.md)|Added new questions/answers.|
 |[Glossary](/29_Glossary)|Added new glossary items.|
