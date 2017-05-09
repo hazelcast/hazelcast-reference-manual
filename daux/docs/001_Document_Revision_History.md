@@ -16,6 +16,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Promoting Lite Members to Data Member](/17_Management/03_Cluster_Utilities/04_Enabling_Lite_Members.md)|Added as a new section.
 |[Using the Script cluster.sh](/17_Management/03_Cluster_Utilities/02_Using_the_Script_cluster.sh.md)|Added the explanation for the new cluster state `NO_MIGRATION`.
 |[Defining Member Attributes](/17_Management/03_Cluster_Utilities/05_Defining_Member_Attributes.md)|Added information related to member filtering for distributed class loading (user code deployment)
+|[Native Client Security](/18_Security/08_Native_Client_Security.md)|Added description for the Cache Permissions.|
 |[Near Cache](/19_Performance/04_Near_Cache/)|Added "Locally Initiated Changes" as a new section.
 |[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: <br> - hazelcast.partition.migration.fragments.enabled
 |[FAQ](/28_FAQ.md)|Added new questions/answers.|
