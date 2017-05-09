@@ -327,4 +327,22 @@ Permission policy should return a `PermissionCollection` containing permissions 
 </transaction-permission>
 ```
 
+- Cache Permission
+
+```xml
+<cache-permission name="/hz/cache-name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</cache-permission>
+```
+	Actions: all, create, destroy, put, read, remove, listen
+
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *The name provided in `cache-permission` must be the Hazelcast distributed object name corresponding to the `Cache` as described in [JCache - Hazelcast Instance Integration](#jcache-hazelcast-instance-integration).*
+<br></br>
+
 <br> </br>
