@@ -21,6 +21,7 @@ This chapter lists the changes made to this document from the previous release.
 |||Added [LDAP](#ldap-authentication), [Active Directory](#active-directory-authentication) and [JAAS Authentication](#jaas-authentication) as new sections.
 ||[Defining Member Attributes](#defining-member-attributes)|Added information related to member filtering for distributed class loading (user code deployment).
 |[Chapter 20 - Security](#security)|[SSL](#ssl)|Added "Authenticating Mutually" as a new section.|
+||[Native Client Security](#native-client-security)| Added description for the Cache Permissions.
 |[Chapter 21 - Performance](#performance)|[Near Cache](#near-cache)|Added "Locally Initiated Changes" as a new section.|
 |[Chapter 26 - System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled|
 |[Chapter 30 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
