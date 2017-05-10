@@ -77,7 +77,7 @@ The following are example Reliable Topic configurations.
 
 ```java
 Config config = new Config();
-ReliableTopicConfig rtConfig = config.getReliableTopicConfig();
+ReliableTopicConfig rtConfig = config.getReliableTopicConfig( "default" );
 rtConfig.setTopicOverloadPolicy( TopicOverloadPolicy.BLOCK )
         .setReadBatchSize( 10 )
         .setStatisticsEnabled( true );
