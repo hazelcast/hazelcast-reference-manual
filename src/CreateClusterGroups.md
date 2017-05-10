@@ -27,3 +27,5 @@ HazelcastInstance h1 = Hazelcast.newHazelcastInstance( configApp1 );
 HazelcastInstance h2 = Hazelcast.newHazelcastInstance( configApp2 );
 HazelcastInstance h3 = Hazelcast.newHazelcastInstance( configApp2 );
 ```
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with 3.8.2, members with the same group name but with different group passwords (that do not use authentication) forms a cluster. Before this release, group passwords needed to be the same too.*
