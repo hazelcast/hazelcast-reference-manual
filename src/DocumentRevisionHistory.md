@@ -19,6 +19,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Promoting Lite Members to Data Member](#promoting-lite-members-to-data-member)| Added as a new section.
 ||[Managing Cluster and Member States](#managing-cluster-and-member-states)| Added the explanation for the new cluster state `NO_MIGRATION`.
 |||Added [LDAP](#ldap-authentication), [Active Directory](#active-directory-authentication) and [JAAS Authentication](#jaas-authentication) as new sections.
+|||Added [Password Encryption](#password-encryption) as a new section to explain how to encrypt LDAP passwords.
 ||[Defining Member Attributes](#defining-member-attributes)|Added information related to member filtering for distributed class loading (user code deployment).
 |[Chapter 20 - Security](#security)|[SSL](#ssl)|Added "Authenticating Mutually" as a new section.|
 ||[Native Client Security](#native-client-security)| Added description for the Cache Permissions.
