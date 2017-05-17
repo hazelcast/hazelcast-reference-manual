@@ -21,6 +21,7 @@ This chapter lists the changes made to this document from the previous release.
 |||Added [LDAP](#ldap-authentication), [Active Directory](#active-directory-authentication) and [JAAS Authentication](#jaas-authentication) as new sections.
 |||Added [Password Encryption](#password-encryption) as a new section to explain how to encrypt LDAP passwords.
 ||[Defining Member Attributes](#defining-member-attributes)|Added information related to member filtering for distributed class loading (user code deployment).
+||[Management Center](#management-center)|Updated by adding "Metrics-Only" privilege definition and "Enabling TLS/SSL when starting with WAR file" section.
 |[Chapter 20 - Security](#security)|[SSL](#ssl)|Added "Authenticating Mutually" as a new section.|
 ||[Native Client Security](#native-client-security)| Added description for the Cache Permissions.
 |[Chapter 21 - Performance](#performance)|[Near Cache](#near-cache)|Added "Locally Initiated Changes" as a new section.|
