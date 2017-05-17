@@ -20,9 +20,9 @@ Here are the steps.
 java -jar mancenter-*version*.war 8080 mancenter
 ```
 
-##### Enabling TLS/SSL when starting with WAR file
+###### Enabling TLS/SSL when starting with WAR file
 
-By default, when you start Management Center from the command line, it will serve the pages unencrypted by using 'http'. To enable TLS/SSL, use the following command line parameters for starting the Management Center:
+When you start Management Center from the command line, it will serve the pages unencrypted by using "http", by default. To enable TLS/SSL, use the following command line parameters when starting the Management Center:
 
 - `-Dhazelcast.mc.tls.enabled=true` (default is false) 
 - `-Dhazelcast.mc.tls.keyStore=path to your keyStore`
@@ -30,7 +30,7 @@ By default, when you start Management Center from the command line, it will serv
 - `-Dhazelcast.mc.tls.trustStore=path to your trustStore`
 - `-Dhazelcast.mc.tls.trustStorePassword=password for your trustStore`
 
-You can leave trust store and trust store password empty to use the system JVM's own trust store.
+You can leave trust store and trust store password values empty to use the system JVM's own trust store.
 
 Following is an example on how to start Management Center with  TLS/SSL enabled from the command line:
 
@@ -46,7 +46,7 @@ To override the HTTPS port, you can give it as the second argument when starting
 java -Dhazelcast.mc.tls.enabled=true -Dhazelcast.mc.tls.keyStorePassword=/dir/to/certificate.jks -Dhazelcast.mc.tls.keyStorePassword=yourpassword -jar mancenter-3.8.2.war 80 443 mancenter 
 ```
 
-This will start Management Center on HTTP port 80 and HTTPS port 443 with context path `/mancenter`. Note that accessing port 80 with an `http://` prefix will redirect the users to an `https://` URL on port 443. It means that users will use HTTPS regardless of the version of the URL they use.
+This will start Management Center on HTTP port 80 and HTTPS port 443 with context path `/mancenter`. Note that accessing port 80 with an `http://` prefix will redirect the users to an `https://` URL on port 443. It means that the users will use HTTPS regardless of the version of the URL they use.
 
 ###### Starting with an Extra Classpath
 
@@ -153,7 +153,7 @@ Management Center creates a folder with the name `mancenter` under your `user/ho
 
 To encrypt data transmitted over all channels of Management Center using TLS/SSL, make sure you do all of the following:
 
-* Deploy Management Center on a TLS/SSL enabled container or start it from the command line with TLS/SSL enabled. See [Installing Management Center](#installing-management-center).
+* Deploy Management Center on a TLS/SSL enabled container or start it from the command line with TLS/SSL enabled. See [Deploying and Starting](#deploying-and-starting).
 * Enable TLS/SSL for your Hazelcast cluster. See [TLS/SSL](#tlsssl)
 * If you're using Clustered JMX on Management center, enable TLS/SSL for it. See [Enabling TLS/SSL for Clustered JMX](#enabling-tlsssl-for-clustered-jmx).
 * If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP  Authentication](#ldap-authentication).
