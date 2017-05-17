@@ -172,10 +172,10 @@ Provide the details in this form for your LDAP server:
 - **Search base DN:** Base DN to use for searching users/groups.
 - **Additional user DN:** Appended to "Search base DN" and used for finding users.
 - **Additional group DN:** Appended to "Search base DN" and used for finding groups.
-- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
-- **User Group Name:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
-- **Metrics-only Group Name:** Members of this group will only have privilege to see the metrics on Management Center.
+- **Admin Group Name:** Members of this group will have admin privileges on the Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group Name:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group Name:** Members of this group will have the privilege to see only the metrics on the Management Center.
 - **Start TLS:** Enable if your LDAP server uses Start TLS.
 - **User Search Filter:** LDAP search filter expression to search for users. For example, `uid={0}` searches for a username that matches with the `uid` attribute.
 - **Group Search Filter:** LDAP search filter expression to search for groups. For example, `uniquemember={0}` searches for a group that matches with the `uniquemember` attribute.
@@ -226,10 +226,10 @@ Provide the details in this form for your Active Directory server:
  
 - **URL:** URL of your Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
 - **Domain:** Domain of your organization on Active Directory.
-- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
-- **User Group Name:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
-- **Metrics-only Group Name:** Members of this group will only have privilege to see the metrics on Management Center.
+- **Admin Group Name:** Members of this group will have admin privileges on the Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group Name:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group Name:** Members of this group will have the privilege to see only the metrics on the Management Center.
 
 Once configured, Active Directory settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload Security Config" button on the login page.
 
@@ -242,10 +242,10 @@ You can use your own `javax.security.auth.spi.LoginModule` implementation for au
 Provide the details in this form for your JAAS `LoginModule` implementation:
 
 - **Login Module Class**: Fully qualified class name of your `javax.security.auth.spi.LoginModule` implementation
-- **Admin Group:** Members of this group will have admin privileges on Management Center.
-- **User Group:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group:** Members of this group will only have read privilege on Management Center.
-- **Metrics-only Group:** Members of this group will only have privilege to see the metrics on Management Center.
+- **Admin Group Name:** Members of this group will have admin privileges on the Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group Name:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group Name:** Members of this group will have the privilege to see only the metrics on the Management Center.
 
 Following is an example implementation. Note that we return two `java.security.Principal` instances; one of them is the username and the other one is a group name, which you will use when configuring JAAS security as described above.
 
@@ -836,9 +836,9 @@ The **Admin** user can add, edit, and remove users and specify the permissions f
 
 ##### Users
 
-To add a user to the system, specify the username, e-mail and password in the **Add/Edit User** part of the page. If the user to be added will have administrator privileges, select **isAdmin** checkbox. **Permissions** checkboxes have three values:
+To add a user to the system, specify the username, e-mail and password in the **Add/Edit User** part of the page. If the user to be added will have administrator privileges, select **isAdmin** checkbox. **Permissions** field has the following checkboxes:
 
--	**Metrics Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar at that user's session. Also, users with this permission cannot [browse a map](#map-browser) or a cache to see their contents, cannot update a [map configuration](#map-config), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](#monitoring-members)).
+-	**Metrics Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar on that user's session. Also, the users with this permission cannot [browse a map](#map-browser) or a cache to see their contents, cannot update a [map configuration](#map-config), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](#monitoring-members)).
 -	**Read Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar at that user's session. Also, users with this permission cannot update a [map configuration](#map-config), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](#monitoring-members)).
 -	**Read/Write**: If this permission is given to the user, *Home*, *Scripting*, *Console*, *Documentation* and *Time Travel* items will be visible. The users with this permission can update a map configuration and perform operations on the members.
 
