@@ -10,9 +10,10 @@ Provide the details in this form for your LDAP server:
 - **Search base DN:** Base DN to use for searching users/groups.
 - **Additional user DN:** Appended to "Search base DN" and used for finding users.
 - **Additional group DN:** Appended to "Search base DN" and used for finding groups.
-- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
-- **User Group Name:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+- **Admin Group Name:** Members of this group will have admin privileges on the Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group Name:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group Name:** Members of this group will have the privilege to see only the metrics on the Management Center.
 - **Start TLS:** Enable if your LDAP server uses Start TLS.
 - **User Search Filter:** LDAP search filter expression to search for users. For example, `uid={0}` searches for a username that matches with the `uid` attribute.
 - **Group Search Filter:** LDAP search filter expression to search for groups. For example, `uniquemember={0}` searches for a group that matches with the `uniquemember` attribute

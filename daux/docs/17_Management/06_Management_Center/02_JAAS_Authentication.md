@@ -5,9 +5,10 @@ You can use your own `javax.security.auth.spi.LoginModule` implementation for au
 Provide the details in this form for your JAAS `LoginModule` implementation:
 
 - **Login Module Class**: Fully qualified class name of your `javax.security.auth.spi.LoginModule` implementation
-- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
-- **User Group Name:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+- **Admin Group:** Members of this group will have admin privileges on the Management Center.
+- **User Group:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group:** Members of this group will have the privilege to see only the metrics on the Management Center.
 
 Following is an example implementation. Note that we return two `java.security.Principal` instances; one of them is the username and the other one is a group name, which you will use when configuring JAAS security as described above.
 

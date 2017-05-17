@@ -7,8 +7,9 @@ The **Admin** user can add, edit, and remove users and specify the permissions f
 
 ##### Users
 
-To add a user to the system, specify the username, e-mail and password in the **Add/Edit User** part of the page. If the user to be added will have administrator privileges, select **isAdmin** checkbox. **Permissions** checkboxes have two values:
+To add a user to the system, specify the username, e-mail and password in the **Add/Edit User** part of the page. If the user to be added will have administrator privileges, select **isAdmin** checkbox. **Permissions** field has the following checkboxes:
 
+-	**Metrics Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar on that user's session. Also, the users with this permission cannot [browse a map](06_Managing_Maps.md) or a cache to see their contents, cannot update a [map configuration](06_Managing_Maps.md), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](13_Monitoring_Members.md)).
 -	**Read Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar at that user's session. Also, users with this permission cannot update a [map configuration](06_Managing_Maps.md), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](13_Monitoring_Members.md)).
 -	**Read/Write**: If this permission is given to the user, *Home*, *Scripting*, *Console*, *Documentation* and *Time Travel* items will be visible. The users with this permission can update a map configuration and perform operations on the members.
 

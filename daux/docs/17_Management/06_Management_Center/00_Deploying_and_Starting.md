@@ -15,6 +15,34 @@ Here are the steps.
 ```bash
 java -jar mancenter-*version*.war 8080 mancenter
 ```
+###### Enabling TLS/SSL when starting with WAR file
+
+When you start Management Center from the command line, it will serve the pages unencrypted by using "http", by default. To enable TLS/SSL, use the following command line parameters when starting the Management Center:
+
+- `-Dhazelcast.mc.tls.enabled=true` (default is false) 
+- `-Dhazelcast.mc.tls.keyStore=path to your keyStore`
+- `-Dhazelcast.mc.tls.keyStorePassword=password for your keyStore`
+- `-Dhazelcast.mc.tls.trustStore=path to your trustStore`
+- `-Dhazelcast.mc.tls.trustStorePassword=password for your trustStore`
+
+You can leave trust store and trust store password values empty to use the system JVM's own trust store.
+
+Following is an example on how to start Management Center with  TLS/SSL enabled from the command line:
+
+```bash
+java -Dhazelcast.mc.tls.enabled=true -Dhazelcast.mc.tls.keyStorePassword=/some/dir/selfsigned.jks -Dhazelcast.mc.tls.keyStorePassword=yourpassword -jar mancenter-3.8.2.war 
+```
+
+You can access Management Center from the following HTTPS URL on port 8443: `https://localhost:8443/mancenter`
+
+To override the HTTPS port, you can give it as the second argument when starting Management Center. For example:
+
+```bash
+java -Dhazelcast.mc.tls.enabled=true -Dhazelcast.mc.tls.keyStorePassword=/dir/to/certificate.jks -Dhazelcast.mc.tls.keyStorePassword=yourpassword -jar mancenter-3.8.2.war 80 443 mancenter 
+```
+
+This will start Management Center on HTTP port 80 and HTTPS port 443 with context path `/mancenter`. Note that accessing port 80 with an `http://` prefix will redirect the users to an `https://` URL on port 443. It means that the users will use HTTPS regardless of the version of the URL they use.
+
 
 ###### Starting with an Extra Classpath
 
