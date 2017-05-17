@@ -20,6 +20,35 @@ Here are the steps.
 java -jar mancenter-*version*.war 8080 mancenter
 ```
 
+###### Enabling TLS/SSL when starting with WAR file
+
+When you start Management Center from the command line, it will serve the pages unencrypted by using "http", by default. To enable TLS/SSL, use the following command line parameters when starting the Management Center:
+
+- `-Dhazelcast.mc.tls.enabled=true` (default is false) 
+- `-Dhazelcast.mc.tls.keyStore=path to your keyStore`
+- `-Dhazelcast.mc.tls.keyStorePassword=password for your keyStore`
+- `-Dhazelcast.mc.tls.trustStore=path to your trustStore`
+- `-Dhazelcast.mc.tls.trustStorePassword=password for your trustStore`
+
+You can leave trust store and trust store password values empty to use the system JVM's own trust store.
+
+Following is an example on how to start Management Center with  TLS/SSL enabled from the command line:
+
+```bash
+java -Dhazelcast.mc.tls.enabled=true -Dhazelcast.mc.tls.keyStorePassword=/some/dir/selfsigned.jks -Dhazelcast.mc.tls.keyStorePassword=yourpassword -jar mancenter-3.8.2.war 
+```
+
+You can access Management Center from the following HTTPS URL on port 8443: `https://localhost:8443/mancenter`
+
+To override the HTTPS port, you can give it as the second argument when starting Management Center. For example:
+
+```bash
+java -Dhazelcast.mc.tls.enabled=true -Dhazelcast.mc.tls.keyStorePassword=/dir/to/certificate.jks -Dhazelcast.mc.tls.keyStorePassword=yourpassword -jar mancenter-3.8.2.war 80 443 mancenter 
+```
+
+This will start Management Center on HTTP port 80 and HTTPS port 443 with context path `/mancenter`. Note that accessing port 80 with an `http://` prefix will redirect the users to an `https://` URL on port 443. It means that the users will use HTTPS regardless of the version of the URL they use.
+
+
 ###### Starting with an Extra Classpath
 
 You can also start the Management Center with an extra classpath entry (for example, when using JAAS authentication) by using the following command:
@@ -126,7 +155,8 @@ Management Center creates a folder with the name `mancenter` under your `user/ho
 
 To encrypt data transmitted over all channels of Management Center using TLS/SSL, make sure you do all of the following:
 
-* Deploy Management Center on a TLS/SSL enabled container. See [Installing Management Center](#installing-management-center).
+
+* Deploy Management Center on a TLS/SSL enabled container or start it from the command line with TLS/SSL enabled. See [Deploying and Starting](#deploying-and-starting).
 * Enable TLS/SSL for your Hazelcast cluster. See [TLS/SSL](#tlsssl)
 * If you're using Clustered JMX on Management center, enable TLS/SSL for it. See [Enabling TLS/SSL for Clustered JMX](#enabling-tlsssl-for-clustered-jmx).
 * If you're using LDAP authentication, make sure you use LDAPS or enable the "Start TLS" field. See [LDAP  Authentication](#ldap-authentication).
@@ -144,9 +174,10 @@ Provide the details in this form for your LDAP server:
 - **Search base DN:** Base DN to use for searching users/groups.
 - **Additional user DN:** Appended to "Search base DN" and used for finding users.
 - **Additional group DN:** Appended to "Search base DN" and used for finding groups.
-- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
-- **User Group Name:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+- **Admin Group Name:** Members of this group will have admin privileges on the Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group Name:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group Name:** Members of this group will have the privilege to see only the metrics on the Management Center.
 - **Start TLS:** Enable if your LDAP server uses Start TLS.
 - **User Search Filter:** LDAP search filter expression to search for users. For example, `uid={0}` searches for a username that matches with the `uid` attribute.
 - **Group Search Filter:** LDAP search filter expression to search for groups. For example, `uniquemember={0}` searches for a group that matches with the `uniquemember` attribute.
@@ -198,9 +229,10 @@ Provide the details in this form for your Active Directory server:
  
 - **URL:** URL of your Active Directory server, including schema (`ldap://` or `ldaps://`) and port.
 - **Domain:** Domain of your organization on Active Directory.
-- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
-- **User Group Name:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+- **Admin Group Name:** Members of this group will have admin privileges on the Management Center.
+- **User Group Name:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group Name:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group Name:** Members of this group will have the privilege to see only the metrics on the Management Center.
  
 Once configured, Active Directory settings are saved in a file named `ldap.properties` under the `mancenter` folder mentioned in the previous section. If you want to update your settings afterwards, you need to update `ldap.properties` file and click "Reload Security Config" button on the login page.
 
@@ -213,9 +245,11 @@ You can use your own `javax.security.auth.spi.LoginModule` implementation for au
 Provide the details in this form for your JAAS `LoginModule` implementation:
 
 - **Login Module Class**: Fully qualified class name of your `javax.security.auth.spi.LoginModule` implementation
-- **Admin Group Name:** Members of this group will have admin privileges on Management Center.
-- **User Group Name:** Members of this group will have read and write privileges on Management Center.
-- **Read-only User Group Name:** Members of this group will only have read privilege on Management Center.
+- **Admin Group:** Members of this group will have admin privileges on the Management Center.
+- **User Group:** Members of this group will have read and write privileges on the Management Center.
+- **Read-only User Group:** Members of this group will have only read privilege on the Management Center.
+- **Metrics-only Group:** Members of this group will have the privilege to see only the metrics on the Management Center.
+
 
 Following is an example implementation. Note that we return two `java.security.Principal` instances; one of them is the username and the other one is a group name, which you will use when configuring JAAS security as described above.
 
@@ -806,8 +840,9 @@ The **Admin** user can add, edit, and remove users and specify the permissions f
 
 ##### Users
 
-To add a user to the system, specify the username, e-mail and password in the **Add/Edit User** part of the page. If the user to be added will have administrator privileges, select **isAdmin** checkbox. **Permissions** checkboxes have two values:
+To add a user to the system, specify the username, e-mail and password in the **Add/Edit User** part of the page. If the user to be added will have administrator privileges, select **isAdmin** checkbox. **Permissions** field has the following checkboxes:
 
+- **Metrics Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar on that user's session. Also, the users with this permission cannot [browse a map](#map-browser) or a cache to see their contents, cannot update a [map configuration](#map-config), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](#monitoring-members)).
 -	**Read Only**: If this permission is given to the user, only *Home*, *Documentation* and *Time Travel* items will be visible at the toolbar at that user's session. Also, users with this permission cannot update a [map configuration](#map-config), run a garbage collection and take a thread dump on a cluster member, or shutdown a member (please see [Monitoring Members](#monitoring-members)).
 -	**Read/Write**: If this permission is given to the user, *Home*, *Scripting*, *Console*, *Documentation* and *Time Travel* items will be visible. The users with this permission can update a map configuration and perform operations on the members.
 
