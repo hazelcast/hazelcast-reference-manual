@@ -37,6 +37,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Using the Script cluster.sh](#using-the-script-clustersh)| Updated by adding new operations and parameters related to Rolling Member Upgrade procedures.
 ||[Enabling SSL for Clustered JMX](#enabling-ssl-for-clustered-jmx)|Added as a new section.
 ||[Using Management Center with TLS/SSL Only](#using-management-center-with-tlsssl-only)|Added as a new section.
+||[Management Center](#management-center)|Updated by adding "Metrics-Only" privilege definition and "Enabling TLS/SSL when starting with WAR file" section.
 |[Chapter 20 - Security](#security)|[SSL](#ssl)|Added "Authenticating Mutually" as a new section.|
 |[Chapter 21 - Performance](#performance)|[Near Cache](#near-cache)|Added as a new section to consolidate all near cache related content in the Reference Manual. Added also the new contents, [Near Cache Eventual Consistency](#near-cache-eventual-consistency) and [Near Cache Preloader](#near-cache-preloader).|
 ||[Back Pressure](#back-pressure)|Added the section [Client Side](#client-side) explaining how you can control the number of maximum concurrent invocations at the client side.
