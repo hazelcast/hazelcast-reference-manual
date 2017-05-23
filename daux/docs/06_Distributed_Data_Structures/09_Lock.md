@@ -83,6 +83,9 @@ This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sur
 - Hazelcast IMap also provides locking support on the entry level with the method `IMap.lock(key)`. Although the same infrastructure 
 is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it directly.
 
+#### ILock vs. IMap.lock
+
+ILock-based locks use system resources even when they are not acquired. You have to call `destroy()`, but this can have a side effect when another thread is trying to acquire it. They are a good choice when you have a limited number of locks. The IMap-based locks are auto-destructed. They use no resources when they are not acquired. This implies they are invisible for monitoring unless they are being hold by some thread.
 
 ### Synchronizing Threads with ICondition
 
