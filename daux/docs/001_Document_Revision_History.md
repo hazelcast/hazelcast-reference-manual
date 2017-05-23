@@ -8,6 +8,7 @@ This chapter lists the changes made to this document from the previous release.
 |Chapter/Section|Description|
 |:-------|:-----------|
 |[User Code Deployment](/04_Setting_Up_Clusters/07_User_Code_Deployment.md)|Added "Example for Member Filtering Members" as a new section to explain how to use the `provider-filter` element.
+|[Lock](06_Distributed_Data_Structures/09_Lock.md)|Added "Lock vs. IMap.lock" as a new section.
 |[Entry Processor](/08_Distributed_Computing/03_Entry_Processor)|Added the new section "Entry Processor Optimization" explaining Offloadable and Readonly entry processors.|
 |[Scoping to Join Clusters](/11_Hazelcast_JCache/05_Hazelcast_JCache_Extension-ICache/00_Scoping_to_Join_Clusters.md)|Enhanced the content to explain and give examples about the Hazelcast instance creations during cache manager starts (Hazelcast JCache).
 |[Enabling Client TLS/SSL](/14_Hazelcast_Java_Client/02_Configuring_Java_Client/00_Configuring_Client_Network.md)|Added information related to mutual authentication.
