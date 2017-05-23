@@ -13,9 +13,10 @@ This chapter lists the changes made to this document from the previous release.
 |:-------|:-------|:-----------|
 |[Chapter 6 - Setting Up Clusters](#setting-up-clusters)|[User Code Deployment](#user-code-deployment)|Added "Example for  Filtering Members" as a new section to explain how to use the `provider-filter` element.|
 |[Chapter 10 - Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)|Added "Entry Processor Optimizations" as a new section explaining Offloadable and Readonly entry processors.|
+|[Chapter 3 - Distributed Data Structures](#distributed-data-structures)|[Lock](#lock)|Added "Lock vs. IMap.lock" as a new section.|
 |[Chapter 13 - Hazelcast JCache](#hazelcast-jcache)|[Scoping to Join Clusters](#scoping-to-join-clusters)|Enhanced the content to explain and give examples about the Hazelcast instance creations during cache manager starts.
 |[Chapter 16 - Hazelcast Java Client](#hazelcast-java-client)|[Enabling Client TLS/SSL](#enabling-client-tlsssl)|Added information related to mutual authentication.
-|[Chapter 19 - Management](#management)|[Using Management Center with TLS/SSL Only](#using-management-center-with-tlsssl-only)|Added as a new section.
+|[Chapter 19 - Management](#management)|[Using Management Center with TLS/SSL Only](#;)|Added as a new section.
 ||[Promoting Lite Members to Data Member](#promoting-lite-members-to-data-member)| Added as a new section.
 ||[Managing Cluster and Member States](#managing-cluster-and-member-states)| Added the explanation for the new cluster state `NO_MIGRATION`.
 |||Added [LDAP](#ldap-authentication), [Active Directory](#active-directory-authentication) and [JAAS Authentication](#jaas-authentication) as new sections.
