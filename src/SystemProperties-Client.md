@@ -17,7 +17,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.compatibility.3.6.server`|false|bool|When this property is true, if the client cannot know the server version, it will assume that the server has the version 3.6.x.
 `hazelcast.invalidation.max.tolerated.miss.count`|10|int|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
 `hazelcast.invalidation.reconciliation.interval.seconds`|60|int|Period for which the clients are scanned to compare generated invalidation events with the received ones from Near Cache.
-`hazelcast.client.statistics.enabled`|false|bool|If set to true, it enables the client statistics collection and sending to the cluster.
+`hazelcast.client.statistics.enabled`|false|bool|If set to true, it enables collecting the client statistics and sending them to the cluster.
 `hazelcast.client.statistics.period.seconds`|3|int|The period in seconds the client statistics are collected and sent to the cluster.
 
 
