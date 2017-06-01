@@ -12,7 +12,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.client.max.concurrent.invocations`|Integer.MAX_VALUE|string|Maximum allowed number of concurrent invocations. You can apply a constraint on the number of concurrent invocations in order to prevent the system from overloading. If the maximum number of concurrent invocations is exceeded and a new invocation comes in, Hazelcast throws `HazelcastOverloadException`.
 `hazelcast.client.invocation.timeout.seconds`|120|string|Time to give up the invocation when a member in the member list is not reachable.
 `hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same member when this property is `false`. When it is set to `true`, the client tries to connect to the members in the given order.
+`hazelcast.client.statistics.enabled`|false|bool|If set to true, it enables collecting the client statistics and sending them to the cluster.
+`hazelcast.client.statistics.period.seconds`|3|int|The period in seconds the client statistics are collected and sent to the cluster.
 `hazelcast.compatibility.3.6.server`|false|bool|When this property is true, if the client cannot know the server version, it will assume that the server has the version 3.6.x.
 `hazelcast.invalidation.max.tolerated.miss.count`|10|int|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
 `hazelcast.invalidation.reconciliation.interval.seconds`|60|int|Period for which the clients are scanned to compare generated invalidation events with the received ones from Near Cache.
-
