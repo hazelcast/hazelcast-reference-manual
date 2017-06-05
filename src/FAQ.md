@@ -187,6 +187,7 @@ Also, you should configure the clients attentively. Please refer to the [Java Cl
 ## Difference between Lite Member and Smart Client?
 
 Lite member supports task execution (distributed executor service), smart client does not. Also, Lite Member is highly coupled with cluster, smart client is not.
+Starting with Hazelcast 3.9, you can also promote lite members to data members. Please refer to the [Lite Members section](#lite-members) for more information. 
 
 <br></br>
 
