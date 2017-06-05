@@ -274,23 +274,35 @@ Client-server topology fits better if there are multiple applications sharing th
 
 ## How do I know it is safe to kill the second member?
 
-Below code snippet shuts down the cluster members if the cluster is safe for a member shutdown.
+Starting with Hazelcast 3.7, graceful shutdown of a Hazelcast member can be initiated any time as follows:  
+
+```java
+  hazelcastInstance.shutdown(); 
+```
+
+Once a Hazelcast member initiates a graceful shutdown, data of the shutting down member is migrated to the other nodes automatically.
+
+However, there is no such guarantee for termination.
+
+Below code snippet terminates a member if the cluster is safe, which means that there are no partitions being migrated and all backups are in sync when this method is called.
 
 ```java
 PartitionService partitionService = hazelcastInstance.getPartitionService();
 if (partitionService.isClusterSafe()) {
-  hazelcastInstance.shutdown(); // or terminate
+  hazelcastInstance.getLifecycleService().terminate(); 
 }
 ```
 
-Below code snippet shuts down the local member if the member is safe to be shutdown.
+Below code snippet terminates the local member if the member is safe to terminate, which means that all backups of partitions currently owned by local member are in sync when this method is called.
 
 ```java
 PartitionService partitionService = hazelcastInstance.getPartitionService();
 if (partitionService.isLocalMemberSafe()) {
-  hazelcastInstance.shutdown(); // or terminate
+  hazelcastInstance.getLifecycleService().terminate();
 }
 ```
+
+Please keep in mind that two code snippets shown above are inherently racy. If member failures occur in the cluster after the safety condition check passes, termination of the local member can lead to data loss. For safety of the data, graceful shutdown API is highly recommended.  
 
 ***RELATED INFORMATION***
 
