@@ -9,33 +9,35 @@ By changing the state of your cluster, you can allow/restrict several cluster op
 
 - **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 <br></br>
-
 - **`NO_MIGRATION`**:
-  - In this state, migrations (partition rebalancing) and backup replications are not allowed.
-  - Cluster accepts new members.
-  - All other operations are allowed.
-  - You cannot change the state of a cluster to `NO_MIGRATION` when migration/replication tasks are being performed.
+    - In this state, migrations (partition rebalancing) and backup replications are not allowed.
+    - The cluster accepts new members.
+    - All other operations are allowed.
+    - You cannot change the state of a cluster to `NO_MIGRATION` when migration/replication tasks are being performed.
+    - When you want to add multiple new members to the cluster, you can first change the cluster state to `NO_MIGRATION`, then start the new members. Once all of them join to the cluster, you can change the cluster state back to `ACTIVE`. Then, the cluster will rebalance partition replica distribution at once.
 <br></br>
-
-- **`FROZEN`**: 
-	- In this state, the partition table is frozen and partition assignments are not performed. 
-	- Your cluster does not accept new members. 
-	- If a member leaves, it can join back. Its partition assignments (both primary and replica) remain the same until either it joins back or the cluster state is changed to `ACTIVE`. When it joins back to the cluster, it will own all previous partition assignments as it was. On the other hand, when the cluster state changes to `ACTIVE`, re-partitioning starts and unassigned partitions are assigned to the active members.
+- **`FROZEN`**:
+	- In this state, the partition table is frozen and partition assignments are not performed.
+	- The cluster does not accept new members.
+	- If a member leaves, it can join back. Its partition assignments (both primary and backup replicas) remain the same until either it joins back or the cluster state is changed to `ACTIVE`. When it joins back to the cluster, it will own all previous partition assignments as it was. On the other hand, when the cluster state changes to `ACTIVE`, re-partitioning starts and unassigned partition replicas are assigned to the active members.
 	- All other operations in the cluster, except migration, continue without restrictions.
 	- You cannot change the state of a cluster to `FROZEN` when migration/replication tasks are being performed.
+	- You can make use of `FROZEN` state along with the [Hot Restart Persistence](/1500_Storage/300_Hot_Restart_Persistence/index.md) feature. You can change the cluster state to `FROZEN`, then restart some of your members using the Hot Restart feature. The data on the restarting members will not be accessible but you will be able to access to the data that is stored in other members. Basically, `FROZEN` cluster state allows you do perform maintenance on your members with degrading availability partially.
 <br></br>
 - **`PASSIVE`**:
 	- In this state, the partition table is frozen and partition assignments are not performed. 
-	- Your cluster does not accept new members.
+	- The cluster does not accept new members.
 	- If a member leaves while the cluster is in this state, the member will be removed from the partition table if cluster state moves back to `ACTIVE`. 
 	- This state rejects ALL operations immediately EXCEPT the read-only operations like `map.get()` and `cache.get()`, replication and cluster heartbeat tasks. 
 	- You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
+	- You can make use of `PASSIVE` state along with the [Hot Restart Persistence](/1500_Storage/300_Hot_Restart_Persistence/index.md) feature. Please see <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java#L245" target="_blank">Cluster Shutdown API</a> for more info.
 <br></br>
 - **`IN_TRANSITION`**: 
 	- This state shows that the state of the cluster is in transition. 
 	- You cannot set your cluster's state as `IN_TRANSITION` explicitly. 
 	- It is a temporary and intermediate state. 
 	- During this state, your cluster does not accept new members and migration/replication tasks are paused.
+
 
 
 ![image](../../images/NoteSmall.jpg) ***NOTE:*** *All in-cluster methods are fail-fast, i.e. when a method fails in the cluster, it throws an exception immediately (it will not be retried).*
