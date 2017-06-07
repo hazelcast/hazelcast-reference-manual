@@ -167,7 +167,7 @@ The property `javax.net.ssl.mutualAuthentication` has two options:
 
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *When a new client is introduced with a new keystore, the truststore at the member side should be updated accordingly to include new clients' information to be able to accept it.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *When a new client is introduced with a new keystore, the truststore at the member side should be updated accordingly to include new clients' information to be able to accept it.*
 <br></br>
 
 
