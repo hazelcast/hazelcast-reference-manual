@@ -2,7 +2,7 @@
       <div class="sitebar"></div>
         <div>  
           <div style="float:left">
-            <a href="http://www.hazelcast.org"><img src="IMDG_orange_logo_full_RGB-light_200px.png" style="padding-top: 8px"/></a>
+            <a href="http://www.hazelcast.org/"><img src="<?= $params['base_url'] . 'images/logo.png' ?>" style="padding-bottom:8px;"/></a>
           </div>
           <div>
             <a class="Navbar__branda" href="<?= $params['base_page'] . $params['index']->getUri(); ?>">Reference Manual <span style="font-size:11px">3.9-SNAPSHOT</span></a>
