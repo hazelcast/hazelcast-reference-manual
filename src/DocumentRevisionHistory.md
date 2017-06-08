@@ -25,6 +25,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Management Center](#management-center)|Updated by adding "Metrics-Only" privilege definition and "Enabling TLS/SSL when starting with WAR file" section.
 |[Chapter 20 - Security](#security)|[SSL](#ssl)|Added "Authenticating Mutually" as a new section.|
 ||[Native Client Security](#native-client-security)| Added description for the Cache Permissions.
+||[Validating Secrets Using Strength Policy](#validating-secrets-using-strength-policy)| Added as a new section.
 |[Chapter 21 - Performance](#performance)|[Near Cache](#near-cache)|Added "Locally Initiated Changes" as a new section.|
 |[Chapter 26 - System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled|
 |[Chapter 30 - FAQ](#frequently-asked-questions)||Added new questions/answers.|
