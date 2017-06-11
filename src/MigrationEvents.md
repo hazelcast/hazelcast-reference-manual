@@ -8,7 +8,7 @@ The Migration Listener interface has methods that are invoked for the following 
 - `migrationCompleted`: A partition migration is completed.
 - `migrationFailed`: A partition migration failed.
 
-To write a Migration Listener class, you implement the DistributedObjectListener interface and its methods.
+To write a Migration Listener class, you implement the MigrationListener interface and its methods.
 
 The following is an example Migration Listener class.
 
