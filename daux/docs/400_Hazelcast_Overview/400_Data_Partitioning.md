@@ -1,27 +1,27 @@
 
-As you read in the [Sharding in Hazelcast section](00_Sharding_In_Hazelcast.md), Hazelcast shards are called Partitions. Partitions are memory segments that can contain hundreds or thousands of data entries each, depending on the memory capacity of your system. 
+As you read in the [Sharding in Hazelcast section](00_Sharding_In_Hazelcast.md), Hazelcast shards are called Partitions. Partitions are memory segments that can contain hundreds or thousands of data entries each, depending on the memory capacity of your system. Each Hazelcast partition can have multiple replicas, which are distributed among the cluster members. One of the replicas becomes the `primary` and other replicas are called `backups`. Cluster member which owns `primary` replica of a partition is called `partition owner`. When you read or write a particular data entry, you transparently talk to the owner of the partition that contains the data entry.
 
-By default, Hazelcast offers 271 partitions. When you start a cluster member, it starts with these 271 partitions. The following illustration shows the partitions in a Hazelcast cluster with single member.
+By default, Hazelcast offers 271 partitions. When you start a cluster with a single member, it owns all of 271 partitions (i.e., it keeps primary replicas for 271 partitions). The following illustration shows the partitions in a Hazelcast cluster with single member.
 
 ![Single Member with Partitions](../images/NodePartition.jpg)
 
-When you start a second member on that cluster (creating a Hazelcast cluster with two members), the partitions are distributed as shown in the illustration here.
+When you start a second member on that cluster (creating a Hazelcast cluster with two members), the partition replicas are distributed as shown in the illustration here.
 
 ![Cluster with Two Members - Backups are Created](../images/BackupPartitions.jpg)
 
-In the illustration, the partitions with black text are primary partitions and the partitions with blue text are replica partitions (backups). The first member has 135 primary partitions (black), and each of these partitions are backed up in the second member (blue). At the same time, the first member also has the replica partitions of the second member's primary partitions.
+In the illustration, the partition replicas with black text are primaries and the partition replicas with blue text are backups. The first member has primary replicas of 135 partitions (black), and each of these partitions are backed up in the second member (i.e., the second member owns the backup replicas) (blue). At the same time, the first member also has the backup replicas of the second member's primary partition replicas.
 
-As you add more members, Hazelcast moves some of the primary and replica partitions to the new members one by one, making all members equal and redundant. Only the minimum amount of partitions will be moved to scale out Hazelcast. The following is an illustration of the partition distributions in a Hazelcast cluster with four members.
+As you add more members, Hazelcast moves some of the primary and backup partition replicas to the new members one by one, making all members equal and redundant. Thanks to the consistent hashing algorithm, only the minimum amount of partitions will be moved to scale out Hazelcast. The following is an illustration of the partition replica distributions in a Hazelcast cluster with four members.
 
 ![Cluster with Four Members](../images/FourNodeCluster.jpg)
 
-Hazelcast distributes the partitions equally among the members of the cluster. Hazelcast creates the backups of partitions and distributes them among the members for redundancy.
+Hazelcast distributes partitions' primary and backup replicas equally among the members of the cluster. Backup replicas of the partitions are maintained for redundancy.
 
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *Each partition can have multiple backups depending on your backup count. Please see the [Backing Up Maps section](/06_Distributed_Data_Structures/00_Map/01_Backing_Up_Maps.md).*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *Your data can have multiple copies on partition primaries and backups, depending on your backup count. Please see the [Backing Up Maps section](/06_Distributed_Data_Structures/00_Map/01_Backing_Up_Maps.md).*
 
 
-Partition distributions in the above illustrations are for your convenience and descriptive purposes. Normally, the partitions are not distributed in an order (as they are shown in these illustrations), but are distributed randomly. The important point here is that Hazelcast equally distributes the partitions and their backups among the members.
+Partition distributions in the above illustrations are for your convenience and descriptive purposes. Normally, the partitions are not distributed in any order (as they are shown in these illustrations), but are distributed randomly. The important point here is that Hazelcast equally distributes the partition primaries and their backup replicas among the members.
 
 Starting with Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
 they can access partitions that are owned by other members in the cluster.
