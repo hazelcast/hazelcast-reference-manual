@@ -1,7 +1,7 @@
 
-`WaitNotifyService` is an interface offered by SPI for the objects, such as Lock and Semaphore, to be used when a thread needs to wait for a lock to be released. You can see the [WaitNotifyService source code here](https://github.com/hazelcast/hazelcast/tree/master/hazelcast/src/main/java/com/hazelcast/spi/impl/waitnotifyservice).
+`OperationParker` is an interface offered by SPI for the objects, such as Lock and Semaphore, to be used when a thread needs to wait for a lock to be released. You can see the [OperationParker source code here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/impl/operationparker/OperationParker.java).
 
-`WaitNotifyService` keeps a list of waiters. For each notify operation:
+`OperationParker` keeps a list of waiters. For each notify operation:
 
 - it looks for a waiter,
 - it asks the waiter whether it wants to keep waiting,
