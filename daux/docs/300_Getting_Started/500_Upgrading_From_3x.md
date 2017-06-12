@@ -45,6 +45,6 @@ In this new class, system properties are instances of the newly introduced `Haze
 
 - **Introducing <wan-publisher> element**: Starting with 3.8, the configuration element `<target-cluster>` is replaced with the element `<wan-publisher>` in WAN replication configuration.
 
-
+- **WaitNotifyService** interface has been renamed as **OperationParker**.
 
 
