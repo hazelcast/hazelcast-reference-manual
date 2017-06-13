@@ -76,6 +76,14 @@
                 });
             });
         </script>
+        
+         <script>
+        $(function(){
+        $(".Columns__left").scrollTop($('.Nav__item--active').offset().top);
+        });
+        </script>
+
+        
     <?php
 
     } ?>
