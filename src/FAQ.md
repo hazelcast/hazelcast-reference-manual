@@ -39,9 +39,9 @@ Once a member is gone (crashes), the following happens since data in each member
 
 -	First, the backups in other members are restored.
 -	Then, data from these restored backups are recovered.
--	And finally, backups for these recovered data are formed.
+-	And finally, new backups for these recovered data are formed.
 
-So eventually, no data is lost.
+So eventually, availability of the data is maintained. 
 
 <br></br>
 
