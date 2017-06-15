@@ -441,6 +441,32 @@ You can add three types of event listeners.
 - MembershipListener
 - DistributedObjectListener
 
+### Client Connection Strategy Configuration
+You can configure client start mode as async or sync using async-start parameter. By default it is false. 
+
+You can also configure reconnect mode which has three options; OFF, ON or ASYNC. OFF disables reconnection. ON enables reconnection in blocking manner where all waiting invocation will block until a cluster connection is established or failed.
+ ASYNC enables reconnection in non-blocking manner where all waiting invocation will receive a `HazelcastClientOfflineException`.
+
+
+**Declarative**:
+
+```xml
+<hazelcast-client>
+  ...
+  <client-connection-strategy async-start="true" reconnect-mode="ASYNC" />
+  ...
+</hazelcast-client>
+```
+
+**Programmatic**:
+
+```java
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.getClientConfigurationStrategy()
+			.setAsyncStart(true)
+			.setReconnnectMode(ReconnectMode.ASYNC);
+```
+
 
 ***RELATED INFORMATION***
 
