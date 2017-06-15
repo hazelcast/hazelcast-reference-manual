@@ -339,5 +339,20 @@ Permission policy should return a `PermissionCollection` containing permissions 
 ```
 	Actions: all, create, destroy, put, read, remove, listen
 
+- User Code Deployment Permission
+
+```xml
+<user-code-deployment-permission principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</user-code-deployment-permission>
+```
+  Actions: all, deploy
+
+
 ![image](images/NoteSmall.jpg) ***NOTE:*** *The name provided in `cache-permission` must be the Hazelcast distributed object name corresponding to the `Cache` as described in [JCache - Hazelcast Instance Integration](#jcache-hazelcast-instance-integration).*
 
