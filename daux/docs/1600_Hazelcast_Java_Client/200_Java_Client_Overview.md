@@ -27,7 +27,7 @@ If you prefer to use maven, add the following lines to your `pom.xml`.
 ## Getting Started with Client API
 
 
-The first step is configuration. You can configure the Java client declaratively or programmatically. We will use the programmatic approach throughout this tutorial. Please refer to the [Java Client Declarative Configuration section](../02_Configuring_Java_Client) for details.
+The first step is configuration. You can configure the Java client declaratively or programmatically. We will use the programmatic approach throughout this tutorial. Please refer to the [Java Client Declarative Configuration section](/02_Configuring_Java_Client/_index.md) for details.
 
 ```java
 ClientConfig clientConfig = new ClientConfig();
@@ -85,14 +85,14 @@ There are two main failure cases you should be aware of, and configurations you 
 
 While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, all the members might be not available. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `connectionAttemptLimit` times. 
 
-You can configure `connectionAttemptLimit` for the number of times you want the client to retry connecting. Please see [Setting Connection Attempt Limit](../02_Configuring_Java_Client/00_Configuring_Client_Network.md).
+You can configure `connectionAttemptLimit` for the number of times you want the client to retry connecting. Please see [Setting Connection Attempt Limit](/02_Configuring_Java_Client/00_Configuring_Client_Network.md).
 
 The client executes each operation through the already established connection to the cluster. If this connection(s) disconnects or drops, the client will try to reconnect as configured.
 
 
 ##### Handling Retry-able Operation Failure
 
-While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, set the `redoOperation` to `true`. Please see [Enabling Redo Operation](../02_Configuring_Java_Client/00_Configuring_Client_Network.md).
+While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, set the `redoOperation` to `true`. Please see [Enabling Redo Operation](/02_Configuring_Java_Client/00_Configuring_Client_Network.md).
 
 You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client will retry an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes: 
 
@@ -100,7 +100,7 @@ You can set a timeout for retrying the operations sent to a member. This can be 
 - Connection between the client and member is closed.
 - Client's heartbeat requests are timed out.
 
-Please see the [Client System Properties section](../05_Client_System_Properties.md).
+Please see the [Client System Properties section](/05_Client_System_Properties.md).
 
 ## Using Supported Distributed Data Structures
 
@@ -250,10 +250,45 @@ lifecycleService.shutdown();
 ## Client Listeners
 
 
-You can configure listeners to listen to various event types on the client side. You can configure global events not relating to any distributed object through [Client ListenerConfig](../02_Configuring_Java_Client/06_Configuring_Client_Listeners.md). You should configure distributed object listeners like map entry listeners or list item listeners through their proxies. You can refer to the related sections under each distributed data structure in this reference manual.
+You can configure listeners to listen to various event types on the client side. You can configure global events not relating to any distributed object through [Client ListenerConfig](/02_Configuring_Java_Client/06_Configuring_Client_Listeners.md). You should configure distributed object listeners like map entry listeners or list item listeners through their proxies. You can refer to the related sections under each distributed data structure in this reference manual.
+
+
 
 ## Client Transactions
 
 Transactional distributed objects are supported on the client side. Please see the [Transactions chapter](/10_Transactions) on how to use them.
 
+## Async Start and Reconnect Modes
+
+Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.   
+
+Async client start is configured by setting the configuration element `async-start` to `true`. This configuration will change the behavior of `HazelcastClient.newHazelcastClient()` call. It'll return a client instance without waiting to establish a cluster connection.
+Until the client connects to cluster, it will throw `HazelcastClientOfflineException` on any network dependent operations hence they won't block. If you want to check or wait the client to complete its cluster connection, you can use the built-in lifecycle listener:
+
+
+```java
+ClientStateListener clientStateListener = new ClientStateListener(clientConfig);
+HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
+ 
+//Client started but may not be connected to cluster yet.
+ 
+//check connection status
+clientStateListener.isConnected(); 
+ 
+//blocks until client completes connect to cluster 
+if (clientStateListener.awaitConnected()) {
+	//connected successfully
+} else {
+	//client failed to connect to cluster
+}
+```
+
+
+Java client can also be configured to specify how it reconnects after a cluster disconnection. There are three options:
+
+* A client can reject to reconnect to the cluster and trigger the client shutdown process.
+* Client can open a connection to the cluster by blocking all waiting invocations.
+* Client can open a connection to the cluster without blocking the waiting invocations. All invocations will receive `HazelcastClientOfflineException` during the establishment of cluster connection. If cluster connection is failed to connect, then client shutdown will be triggered.
+
+You can refer to the [Configuring Client Connection Strategy section](1600_Hazelcast_Java_Client/300_Configuring_Java_Client/750_Configuring_Client_Connection_Strategy.md) to learn how to configure these.
 
