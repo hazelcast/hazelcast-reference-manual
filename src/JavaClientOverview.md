@@ -242,7 +242,6 @@ if(lifecycleService.isRunning()){
 
 //shutdown client gracefully
 lifecycleService.shutdown();
-
 ```
 
 ### Client Listeners
@@ -253,12 +252,12 @@ You can configure listeners to listen to various event types on the client side.
 
 Transactional distributed objects are supported on the client side. Please see the [Transactions chapter](#transactions) on how to use them.
 
-### Async start and reconnect modes
+### Async Start and Reconnect Modes
 
-Java client can be configured to connect to cluster in an async manner during client start and reconnecting after a cluster disconnect. Both of the options are configured via `ClientConnectionStrategyConfig`.   
+Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.   
 
-Async client start is configured by setting async-start to true. This configuration will change the behaviour of `HazelcastClient.newHazelcastClient()` call. It'll return a client instance without waiting to establish a cluster connection.
-Until client connects to cluster it will throw `HazelcastClientOfflineException` on any network dependent operation hence they won't block. If you want to check or wait the client complete its cluster connection, you can use the builtin lifecycle listener:
+Async client start is configured by setting the configuration element `async-start` to `true`. This configuration will change the behavior of `HazelcastClient.newHazelcastClient()` call. It'll return a client instance without waiting to establish a cluster connection.
+Until the client connects to cluster, it will throw `HazelcastClientOfflineException` on any network dependent operations hence they won't block. If you want to check or wait the client to complete its cluster connection, you can use the built-in lifecycle listener:
 
 
 ```java
@@ -276,17 +275,15 @@ if (clientStateListener.awaitConnected()) {
 } else {
 	//client failed to connect to cluster
 }
-
 ```
 
-### Client Reconnect Modes
 
-Java client can be configured how it reconnects after a cluster disconnection. There are three options:
+Java client can also be configured to specify how it reconnects after a cluster disconnection. There are three options:
 
-* A client can reject reconnect to cluster and trigger client shutdown process.
-* Client can open a connection to cluster by blocking all waiting invocations.
-* Client can open a connection to cluster without blocking them. All invocation will receive `HazelcastClientOfflineException` during cluster connection established. If cluster connection failed to connect then client shutdown will be trigger.
+* A client can reject to reconnect to the cluster and trigger the client shutdown process.
+* Client can open a connection to the cluster by blocking all waiting invocations.
+* Client can open a connection to the cluster without blocking the waiting invocations. All invocations will receive `HazelcastClientOfflineException` during the establishment of cluster connection. If cluster connection is failed to connect, then client shutdown will be triggered.
 
- 
+You can refer to the [Configuring Client Connection Strategy section](#configuring-client-connection-strategy) to learn how to configure these.
 
 
