@@ -5,13 +5,13 @@
 
 
 Hazelcast distributes map entries onto multiple cluster members (JVMs). Each member holds some portion of the data.
- 
-Distributed maps have one backup by default. If a member goes down, you do not lose data. Backup operations are synchronous, so when a `map.put(key, value)` returns, it is guaranteed that the map entry is replicated to one other member. For the reads, it is also guaranteed that `map.get(key)` returns the latest value of the entry. Consistency is strictly enforced.
+
+Distributed maps have one backup by default. If a member goes down, your data is recovered using the backups in the cluster. There are two types of backups as described below: _sync_ and _async_.
 
 
 #### Creating Sync Backups
 
-To provide data safety, Hazelcast allows you to specify the number of backup copies you want to have. That way, data on a cluster member will be copied onto other member(s). 
+To provide data safety, Hazelcast allows you to specify the number of backup copies you want to have. That way, data on a cluster member will be copied onto other member(s).
 
 To create synchronous backups, select the number of backup copies using the `backup-count` property.
 
@@ -32,7 +32,7 @@ Hazelcast supports both synchronous and asynchronous backups. By default, backup
 Asynchronous backups, on the other hand, do not block operations. They are fire & forget and do not require acknowledgements; the backup operations are performed at some point in time.
 
 To create asynchronous backups, select the number of async backups with the `async-backup-count` property. An example is shown below.
- 
+
 
 ```xml
 <hazelcast>
@@ -42,6 +42,8 @@ To create asynchronous backups, select the number of async backups with the `asy
   </map>
 </hazelcast>
 ```
+
+See [Consistency and Replication Model](#consistency-and-replication-model) for more detail.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Backups increase memory usage since they are also kept in memory.*
@@ -54,7 +56,7 @@ To create asynchronous backups, select the number of async backups with the `asy
 
 By default, Hazelcast has one sync backup copy. If `backup-count` is set to more than 1, then each member will carry both owned entries and backup copies of other members. So for the `map.get(key)` call, it is possible that the calling member has a backup copy of that key. By default, `map.get(key)` will always read the value from the actual owner of the key for consistency.
 
-To enable backup reads (read local backup entries), set the value of the `read-backup-data` property to **true**. Its default value is **false** for strong consistency. Enabling backup reads can improve performance. 
+To enable backup reads (read local backup entries), set the value of the `read-backup-data` property to **true**. Its default value is **false** for consistency. Enabling backup reads can improve performance but on the other hand it can cause stale reads while still preserving monotonic-reads property.
 
 ```xml
 <hazelcast>
