@@ -1,5 +1,5 @@
 
-## User Code Deployment - BETA
+## Member User Code Deployment - BETA
 
 Hazelcast can dynamically load your custom classes or domain classes from a remote class repository, which typically includes [lite members](#enabling-lite-members). For this purpose Hazelcast offers a distributed  dynamic class loader.
 

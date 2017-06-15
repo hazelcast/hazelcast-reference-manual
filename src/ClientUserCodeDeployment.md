@@ -1,16 +1,15 @@
 
-## Client User Code Deployment 
+## Client User Code Deployment
 
-1. Objects that is will be runned on cluster by clients like Runnable, Callable, Entry Processor 
-2. User domain objects that is stored in Members when InMemoryFormat is set to Object
-needs to be deployed to members.
+You can use the User Code Deployment at the client side for the following situations:
 
-With this feature open, clients will deploy these classes to members. This way, when a client adds a new class members
-does not require to restarted to include new classes in classpath. 
+1. You have objects that will run on the cluster by the clients such as `Runnable`, `Callable`, and Entry Processors.
+2. You have user domain objects stored in the members (in-memory format is set to `Object`) which need to be deployed to other members.
+
+When this feature is enabled, the clients will deploy these classes to the members. By this way, when a client adds a new class, the members will not require restarts to include the new classes in classpath. 
 
 
-There is security permission for user code deployment see related section here
-http://docs.hazelcast.org/docs/3.8/manual/html-single/index.html#native-client-security
+You can also use the client permission policy to specify which clients are permitted to use User Code Deployment. Please see the [Permissions](#permissions).
 
 ### Configuring Client User Code Deployment
 
@@ -50,7 +49,7 @@ clientUserCodeDeploymentConfig.setEnabled(true);
 clientConfig.setUserCodeDeploymentConfig(clientUserCodeDeploymentConfig);
 ```
 
-Note that user code deployment should also be enabled on members to use this feature. 
+Note that User Code Deployment should also be enabled on the members to use this feature. 
 
 ```java
 Config config = new Config();
