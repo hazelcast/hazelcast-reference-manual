@@ -7,6 +7,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter/Section|Description|
 |:-------|:-----------|
+|[Consistency and Replication Model](/450_Consistency_and_Replication_Model.md)]| Added as a new chapter to explain the full picture of Hazelcast's consistency model. 
 |[User Code Deployment](/04_Setting_Up_Clusters/07_User_Code_Deployment_-_BETA.md)|Added "Example for Member Filtering Members" as a new section to explain how to use the `provider-filter` element.
 |[Client User Code Deployment](/04_Setting_Up_Clusters/07_Client_User_Code_Deployment_-_BETA.md)|Added as a new section.
 |[Lock](06_Distributed_Data_Structures/09_Lock.md)|Added "Lock vs. IMap.lock" as a new section.
