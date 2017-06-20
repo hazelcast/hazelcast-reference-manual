@@ -5,15 +5,15 @@
 <br></br>
 
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *You cannot integrate OpenSSL into Hazelcast when [Hazelcast Encryption](03_Encryption.md) 
+![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot integrate OpenSSL into Hazelcast when [Hazelcast Encryption](03_Encryption.md) 
 is enabled.*
 
-TLS/SSL in Java normally is provided by the JRE; however the performance overhead can be significant; even with AES intrensics
+TLS/SSL in Java is normally provided by the JRE. However, the performance overhead can be significant; even with AES intrensics
 enabled. If you are using Linux, Hazelcast provides OpenSSL integration for TLS/SSL which can provide significant performance
 improvements.
 
-OpenSSL can be used on client and or server. For best performance, it is recommended to install on client and server and 
-configure the appropriate cipher-suite(s).
+OpenSSL can be used on clients and/or members. For best performance, it is recommended to install on a client and member, and 
+configure the appropriate cipher suite(s).
 
 Integrating OpenSSL into Hazelcast is achieved with the following steps:
 
@@ -28,7 +28,7 @@ Below sections explain these steps.
 Install OpenSSL. Make sure that you are installing 1.0.1 or 1.0.2 releases. Please refer to its documentation at 
 [github.com/openssl](https://github.com/openssl/openssl/blob/master/INSTALL). 
 
-On the major distributions OpenSSL is installed by default. Make sure the OpenSSL version is not suffering from the 
+On the major distributions, OpenSSL is installed by default. Make sure the OpenSSL version is not suffering from the 
 [Heartbleed Bug](http://heartbleed.com). 
 
 ### Apache Portable Runtime library
@@ -36,16 +36,19 @@ On the major distributions OpenSSL is installed by default. Make sure the OpenSS
 Install Apache Portable Runtime library. Please refer to [apr.apache.org](https://apr.apache.org/download.cgi). 
 
 For RHEL:
+
 `sudo yum -y install apr`
 
 For Ubuntu:
+
 `sudo apt-get -y install libapr1`
 
-### Netty libraries
+### Netty Libraries
 
 For the OpenSSL integration in Java, the [Netty](https://netty.io/) library is used. 
 
-Make sure the following libraries from tne Netty framework are on the classpath:
+Make sure the following libraries from the Netty framework are on the classpath:
+
    - `netty-buffer-4.1.8.Final.jar`
    - `netty-codec-4.1.8.Final.jar`
    - `netty-common-4.1.8.Final.jar`
@@ -54,7 +57,8 @@ Make sure the following libraries from tne Netty framework are on the classpath:
    - `netty-transport-4.1.8.Final.jar`
    - `netty-tcnative-boringssl-static-1.1.33.Fork26-linux-x86_64.jar`
 
-For a Maven based project, the following snippet adds the jars.
+For a Maven based project, the following snippet adds the JARs.
+
 ```xml
     <dependencies>
         <dependency>
@@ -98,7 +102,7 @@ For a Maven based project, the following snippet adds the jars.
   
 ### Configuring Hazelcast for OpenSSL
 
-Configuring OpenSSL in Hazelcast is pretty straight forward. On client and or member side, the following snippet enables TLS/SSL
+Configuring OpenSSL in Hazelcast is straight forward. On the client and/or member side, the following snippet enables TLS/SSL
 using OpenSSL:
 
 ```xml
@@ -116,7 +120,7 @@ using OpenSSL:
     </properties>
 </ssl>
 ```
-The configuration is almost the same as regular TLS/SSL integration. The main difference is the OpenSSLEngineFactory factory-class.
+The configuration is almost the same as regular TLS/SSL integration. The main difference is the `OpenSSLEngineFactory` factory class.
 
 Here are the descriptions for the properties:
  
@@ -142,11 +146,11 @@ configure only `SSL` or `TLS`, it will be converted to `SSLv3` and `TLSv1.2`.
 
 ### Configuring Cipher Suites
 
-To get the best performance out of OpenSSL, the correct [cipher suites](https://en.wikipedia.org/wiki/Cipher_suite) needs to be configured.
-Each cipher-suite has different performance and security characteristics and depending on the hardware and the
-selected cipher-suite, the overhead of TLS can range from dramatic to almost negligible.
+To get the best performance out of OpenSSL, the correct [cipher suites](https://en.wikipedia.org/wiki/Cipher_suite) need to be configured.
+Each cipher suite has different performance and security characteristics and depending on the hardware and selected cipher suite, the overhead of TLS can range from dramatic to almost negligible.
 
-The cipher-suites is configured using:
+The cipher suites are configured using the `ciphersuites` property as shown below:
+
 ```xml
 <ssl enabled="true">
     <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
@@ -161,20 +165,21 @@ The cipher-suites is configured using:
     </properties>
 </ssl>
 ```
+
 The `ciphersuites` property accepts a comma separated list (spaces, enters, tabs are filtered out) of cipher suites in the order 
 of preference.
 
-You can configure a member and client with different cipher suites; but there should be at least one shared cipher-suite. 
+You can configure a member and client with different cipher suites; but there should be at least one shared cipher suite. 
 
-One of the cipher-suites that gave very low overhead but still provides solid security is the 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'.
-However in our measurements this cipher-suite only performs well using OpenSSL; using the regular Java TLS integration, it performs
-badly. So keep that in mind when configuring a client using regular SSL and a server using OpenSSL.
+One of the cipher suites that gave very low overhead but still provides solid security is the 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'.
+However in our measurements this cipher suite only performs well using OpenSSL; using the regular Java TLS integration, it performs
+badly. So keep that in mind when configuring a client using regular SSL and a member using OpenSSL.
 
-Please check your security expert to determine which cipher-suites are appropriate and run performance tests which ones perform
+Please check with your security expert to determine which cipher suites are appropriate and run performance tests to see which ones perform
 well in your environment.
 
-If no cipher-suites is configured, the both client and or server will determine a cipher-suite themselves during the TLS/SSL 
-handshake. Which can lead to suboptimal performance and lower security than required.
+If you don't configure the cipher suites, then both client and/or member will determine a cipher suite by themselves during the TLS/SSL 
+handshake. This can lead to suboptimal performance and lower security than required.
 
 ### Other Ways of Configuring Properties
 
