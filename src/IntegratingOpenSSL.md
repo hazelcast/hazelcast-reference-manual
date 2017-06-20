@@ -173,6 +173,9 @@ badly. So keep that in mind when configuring a client using regular SSL and a se
 Please check your security expert to determine which cipher-suites are appropriate and run performance tests which ones perform
 well in your environment.
 
+If no cipher-suites is configured, the both client and or server will determine a cipher-suite themselves during the TLS/SSL 
+handshake. Which can lead to suboptimal performance and lower security than required.
+
 ### Other Ways of Configuring Properties
 
 You can set all the properties presented in this section using the `javax.net.ssl` prefix, e.g., `javax.net.ssl.keyStore` 
