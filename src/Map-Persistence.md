@@ -116,7 +116,7 @@ In this mode, when the `map.put(key,value)` call returns:
 
 If `MapStore` throws an exception then the exception is propagated to the original `put` or `remove` call in the form of `RuntimeException`.
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *There is a key difference in behaviour of map.remove(key) and map.delete(key) i.e. the latter results in MapStore.delete(key) to be invoked whereas the former only removes entry from the IMap.
+![image](images/NoteSmall.jpg) ***NOTE:*** *There is a key difference in the behaviors of `map.remove(key)` and `map.delete(key)`, i.e., the latter results in `MapStore.delete(key)` to be invoked whereas the former only removes the entry from IMap.*
 
 #### Setting Write-Behind Persistence
 
