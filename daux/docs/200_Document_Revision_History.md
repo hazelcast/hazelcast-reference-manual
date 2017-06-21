@@ -8,6 +8,7 @@ This chapter lists the changes made to this document from the previous release.
 |Chapter/Section|Description|
 |:-------|:-----------|
 |[Consistency and Replication Model](/450_Consistency_and_Replication_Model.md)]| Added as a new chapter to explain the full picture of Hazelcast's consistency model. 
+|[Configuration Pattern Matcher](/500_Understanding_Configuration/550_Configuration_Pattern_Matcher.md)| Added as a new section.
 |[User Code Deployment](/04_Setting_Up_Clusters/07_User_Code_Deployment_-_BETA.md)|Added "Example for Member Filtering Members" as a new section to explain how to use the `provider-filter` element.
 |[Client User Code Deployment](/04_Setting_Up_Clusters/07_Client_User_Code_Deployment_-_BETA.md)|Added as a new section.
 |[Lock](06_Distributed_Data_Structures/09_Lock.md)|Added "Lock vs. IMap.lock" as a new section.
@@ -27,5 +28,3 @@ This chapter lists the changes made to this document from the previous release.
 |[Native Client Security](/18_Security/08_Native_Client_Security.md)|Added description for the Cache Permissions.|
 |[Near Cache](/19_Performance/04_Near_Cache/06_Near_Cache_Consistency.md)|Added "Locally Initiated Changes" as a new section.
 |[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: <br> - hazelcast.partition.migration.fragments.enabled
-|[FAQ](/28_FAQ.md)|Added new questions/answers.|
-|[Glossary](/29_Glossary)|Added new glossary items.|
