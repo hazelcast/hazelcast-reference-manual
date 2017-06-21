@@ -111,9 +111,9 @@ In this mode, when the `map.put(key,value)` call returns:
 - In-Memory entry is updated.
 - In-Memory backup copies are successfully created on other cluster members (if `backup-count` is greater than 0).
 
-The same behavior goes for a `map.remove(key)` call. The only difference is that  `MapStore.delete(key)` is called when the entry will be deleted.
+If `MapStore` throws an exception then the exception is propagated to the original `put` or `remove` call in the form of `RuntimeException`.
 
-If `MapStore` throws an exception, then the exception will be propagated back to the original `put` or `remove` call in the form of `RuntimeException`.
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *There is a key difference in the behaviors of `map.remove(key)` and `map.delete(key)`, i.e., the latter results in `MapStore.delete(key)` to be invoked whereas the former only removes the entry from IMap.*
 
 #### Setting Write-Behind Persistence
 
