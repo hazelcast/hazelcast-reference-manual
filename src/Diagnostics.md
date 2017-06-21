@@ -63,8 +63,18 @@ The content format of the diagnostics log file is depicted below:
 ...
 ```
 
+A rolling file approach is used to prevent creating too much data. By default 10 files of 10MB each are allowed
+to exist. The size of the file can be changed using:
 
+```
+-Dhazelcast.diagnostics.max.rolled.file.size.mb=20
+```
 
+And the number of files can be configured using:
+
+```
+-Dhazelcast.diagnostics.max.rolled.file.count=5
+```
 
 ### Diagnostics Plugins
 
