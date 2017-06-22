@@ -27,4 +27,4 @@ This chapter lists the changes made to this document from the previous release.
 |[Defining Member Attributes](/17_Management/03_Cluster_Utilities/05_Defining_Member_Attributes.md)|Added information related to member filtering for distributed class loading (user code deployment)
 |[Native Client Security](/18_Security/08_Native_Client_Security.md)|Added description for the Cache Permissions.|
 |[Near Cache](/19_Performance/04_Near_Cache/06_Near_Cache_Consistency.md)|Added "Locally Initiated Changes" as a new section.
-|[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: <br> - hazelcast.partition.migration.fragments.enabled
+|[System Properties](/25_System_Properties.md)|Added definitions for the following new properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.diagnostics.max.rolled.file.size.mb <br> - hazelcast.diagnostics.max.rolled.file.count
