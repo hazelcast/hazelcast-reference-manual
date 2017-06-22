@@ -47,8 +47,8 @@ config.getDurableExecutorConfig( "myDurableExecSvc" ).
  
 Following are the descriptions of each configuration element and attribute:
 
-* `name`: Name of the executor task.
-* `pool-size`: Number of executor threads per member for the executor.
-* `durability`: Durability of the executor.
-* `capacity`: Executor's task queue capacity; the number of tasks this queue can hold. 0 means Integer.MAX_VALUE.
+* `name`: Name of the executor task
+* `pool-size`: Number of executor threads per member for the executor
+* `durability`: Number of backups in the cluster for the submitted task; default is 1
+* `capacity`: Executor's task queue capacity; the number of tasks this queue can hold. 0 means Integer.MAX_VALUE
  
