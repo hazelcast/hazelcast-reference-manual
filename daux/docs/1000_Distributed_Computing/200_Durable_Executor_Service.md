@@ -46,6 +46,6 @@ Following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the executor task.
 * `pool-size`: Number of executor threads per member for the executor.
-* `durability`: Durability of the executor.
+* `durability`: Count of the backup members on which the execution task will be stored. Its default value is 1.
 * `capacity`: Executor's task queue capacity; the number of tasks this queue can hold. 0 means Integer.MAX_VALUE.
  
