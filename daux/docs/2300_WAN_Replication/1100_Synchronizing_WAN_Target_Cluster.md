@@ -6,7 +6,7 @@ Synchronization is useful if two remote clusters lost their synchronization due 
 Synchronization can be initiated through Hazelcast's REST API. Below is the URL for the REST call;
 
 ```
-http://member_ip:port/hazelcast/rest/wan/sync/map
+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
 ```
 
 You need to add parameters to the request in the following order separated by "&";
@@ -35,9 +35,6 @@ Assume that you have configured an IMap with a WAN replication configuration as 
 Then, a sample CURL command to initiate the synchronization for "my-map" would be as follows:
 
 ```
-curl -H "Content-type: text/plain" -X POST -d "my-wan-cluster&istanbul&my-map" --URL http://127.0.0.1:5701/hazelcast/rest/wan/sync/map
+curl -H "Content-type: text/plain" -X POST -d "my-wan-cluster&istanbul&my-map" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/sync/map
 ```
-
-
-
 

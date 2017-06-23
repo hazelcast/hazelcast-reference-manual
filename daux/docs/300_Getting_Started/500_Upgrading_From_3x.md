@@ -47,4 +47,5 @@ In this new class, system properties are instances of the newly introduced `Haze
 
 - **WaitNotifyService** interface has been renamed as **OperationParker**.
 
-
+- **Synchronizing WAN Target Cluster**: Starting with the 3.8 release, the URL for the REST call has been changed from 
+`http://member_ip:port/hazelcast/rest/wan/sync/map` to `http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map`.
