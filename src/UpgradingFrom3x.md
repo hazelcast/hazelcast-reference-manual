@@ -1,4 +1,4 @@
-
+ 
 ### Upgrading from 3.x
 
 - **Upgrading from 3.6.x to 3.7.x when using `JCache`:**
@@ -42,6 +42,9 @@ The method `getId()` in the interface `DistributedObject` has been removed. Plea
 
 - **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from System Properties, there has been a change to inform to the users who have been using this class. Starting with 3.7, the class `GroupProperties.java` has been replaced by `GroupProperty.java`. 
 In this new class, system properties are instances of the newly introduced `HazelcastProperty` object. You can access the names of these properties by calling `getName()` method of `HazelcastProperty`.
+
+- **Synchronizing WAN Target Cluster**: Starting with the 3.8 release, the URL for the REST call has been changed from 
+`http://member_ip:port/hazelcast/rest/wan/sync/map` to `http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map`.
 
 
 
