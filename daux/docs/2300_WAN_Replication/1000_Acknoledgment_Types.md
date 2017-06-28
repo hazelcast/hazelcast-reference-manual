@@ -1,5 +1,5 @@
 
-Starting with 3.6, WAN replication supports different acknowledgment (ACK) types for each target cluster group.
+Starting with Hazelcast 3.6, WAN replication supports different acknowledgment (ACK) types for each target cluster group.
 You can choose from 2 different ACK type depending on your consistency requirements. The following ACK types are supported:
  
 - `ACK_ON_RECEIPT`: A batch of replication events is considered successful as soon as it is received by the target cluster. This option does not guarantee that the received event is actually applied but it is faster.

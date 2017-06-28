@@ -1,5 +1,5 @@
 
-Starting with 3.6, Enterprise WAN replication allows you to intercept WAN replication events before they are placed to
+Starting with Hazelcast 3.6, WAN replication allows you to intercept WAN replication events before they are placed to
 WAN event replication queues by providing a filtering API. Using this API, you can monitor WAN replication events of each data structure
 separately.
 

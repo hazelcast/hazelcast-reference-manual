@@ -21,7 +21,7 @@ HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance( config );
 ```
 
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *The `Config` must not be modified after the Hazelcast instance is started. In other words, all configuration must be completed before creating the `HazelcastInstance`.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *The `Config` must not be modified after the Hazelcast instance is started. In other words, all configuration must be completed before creating the `HazelcastInstance`. Certain additional configuration elements can be added at runtime as described in the [Dynamically Adding Configuration on a Cluster section](/450_Dynamically_Adding_Configuration_on_a_Cluster).*
 
 
 You can also create a named Hazelcast member. In this case, you should set `instanceName` of `Config` object as shown below:

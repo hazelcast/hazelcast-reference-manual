@@ -100,7 +100,7 @@ assuming a `3.8` cluster version.
 <br></br>
 **Do I have to upgrade clients to work with rolling upgrades?**
 
-Starting with Hazelcast version 3.6, the Hazelcast Open Binary Client Protocol was introduced. Clients which implement the Open Binary Client Protocol
+Starting with Hazelcast 3.6, the Hazelcast Open Binary Client Protocol was introduced. Clients which implement the Open Binary Client Protocol
 are compatible with Hazelcast version 3.6 and newer minor versions. Thus older client versions will be compatible with next minor versions. Newer clients
 connected to a cluster will operate at the lower version of capabilities until all members are upgraded and the cluster version upgrade occurs.
 

@@ -1,6 +1,6 @@
 
 In the previous Hazelcast releases, WAN replication was dropping the new events if WAN replication event queues are full.
-This behavior is configurable starting with the release 3.6. 
+This behavior is configurable starting with Hazelcast 3.6. 
 
 There are two different supported behaviors:
  

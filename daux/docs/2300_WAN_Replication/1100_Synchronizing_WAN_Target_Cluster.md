@@ -1,5 +1,5 @@
 
-Starting with 3.7 you can initiate a synchronization operation on an IMap for a specific target cluster. 
+Starting with Hazelcast 3.7 you can initiate a synchronization operation on an IMap for a specific target cluster. 
 Synchronization operation sends all the data of an IMap to a target cluster to align the state of target IMap with source IMap.
 Synchronization is useful if two remote clusters lost their synchronization due to WAN queue overflow or in restart scenarios.
 
