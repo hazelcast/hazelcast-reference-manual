@@ -19,18 +19,18 @@ If you are using Near Cache, you should take into account that your hits to the 
 
 ### Hazelcast Data Structures with Near Cache Support
 
-The following matrix shows the Hazelcast data structures with Near Cache support. Please have a look at the next section for a detailed explanation of `cache-local-entries`, `local-update-policy` and `preloader`.
+The following matrix shows the Hazelcast data structures with Near Cache support. Please have a look at the next section for a detailed explanation of `cache-local-entries`, `local-update-policy`, `preloader` and `serialize-keys`.
 
-| Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` | `preloader` |
-|:------------------------|:-------------------|:----------------------|:----------------------|:------------|
-| IMap member             | yes                | yes                   | no                    | no          |
-| IMap client             | yes                | no                    | no                    | yes         |
-| JCache member           | no                 | no                    | no                    | no          |
-| JCache client           | yes                | no                    | yes                   | yes         |
-| ReplicatedMap member    | no                 | no                    | no                    | no          |
-| ReplicatedMap client    | yes                | no                    | no                    | no          |
-| TransactionalMap member | limited            | no                    | no                    | no          |
-| TransactionalMap client | no                 | no                    | no                    | no          |
+| Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` | `preloader` | `serialize-keys` |
+|:------------------------|:-------------------|:----------------------|:----------------------|:------------|:-----------------|
+| IMap member             | yes                | yes                   | no                    | no          | yes              |
+| IMap client             | yes                | no                    | no                    | yes         | yes              |
+| JCache member           | no                 | no                    | no                    | no          | no               |
+| JCache client           | yes                | no                    | yes                   | yes         | yes              |
+| ReplicatedMap member    | no                 | no                    | no                    | no          | no               |
+| ReplicatedMap client    | yes                | no                    | no                    | no          | no               |
+| TransactionalMap member | limited            | no                    | no                    | no          | no               |
+| TransactionalMap client | no                 | no                    | no                    | no          | no               |
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable Near Cache on lite members for faster reads.*
 
@@ -43,6 +43,7 @@ The following shows the configuration for the Hazelcast Near Cache.
 ```xml
 <near-cache name="myDataStructure">
   <in-memory-format>(OBJECT|BINARY|NATIVE)</in-memory-format>
+  <serialize-keys>(true|false)</serialize-keys>
   <invalidate-on-change>(true|false)</invalidate-on-change>
   <time-to-live-seconds>(0..INT_MAX)</time-to-live-seconds>
   <max-idle-seconds>(0..INT_MAX)</max-idle-seconds>
@@ -81,6 +82,7 @@ NearCachePreloaderConfig preloaderConfig = new NearCachePreloaderConfig()
 NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setName("myDataStructure")
   .setInMemoryFormat(InMemoryFormat.BINARY|OBJECT|NATIVE)
+  .setSerializeKeys(true|false)
   .setInvalidateOnChange(true|false)
   .setTimeToLiveSeconds(0..INT_MAX)
   .setMaxIdleSeconds(0..INT_MAX)
@@ -98,6 +100,7 @@ Following are the descriptions of all configuration elements:
   - `BINARY`: Data will be stored in serialized binary format (default value).
   - `OBJECT`: Data will be stored in deserialized form.
   - `NATIVE`: Data will be stored in the Near Cache that uses Hazelcast's High-Density Memory Store feature. This option is available only in Hazelcast IMDG Enterprise HD. Note that a map and its Near Cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its Near Cache can use it.
+- `serialize-keys`: Specifies if the keys of a Near Cache entry should be serialized or not. Serializing the keys has a big impact on the read performance of the Near Cache. It should just be activated when you have mutable keys, which are changed after used for the Near Cache. Its default value is `false`.
 - `invalidate-on-change`: Specifies whether the cached entries are evicted when the entries are updated or removed. Its default value is true.
 - `time-to-live-seconds`: Maximum number of seconds for each entry to stay in the Near Cache. Entries that are older than this period are automatically evicted from the Near Cache. Regardless of the eviction policy used, `time-to-live-seconds` still applies. Any integer between 0 and `Integer.MAX_VALUE`. 0 means infinite. Its default value is 0.
 - `max-idle-seconds`: Maximum number of seconds each entry can stay in the Near Cache as untouched (not read). Entries that are not read more than this period are removed from the Near Cache. Any integer between 0 and `Integer.MAX_VALUE`. 0 means `Integer.MAX_VALUE`. Its default value is 0.
