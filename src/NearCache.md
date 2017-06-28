@@ -19,18 +19,18 @@ If you are using Near Cache, you should take into account that your hits to the 
 
 ### Hazelcast Data Structures with Near Cache Support
 
-The following matrix shows the Hazelcast data structures with Near Cache support. Please have a look at the next section for a detailed explanation of `cache-local-entries`, `local-update-policy` and `preloader`.
+The following matrix shows the Hazelcast data structures with Near Cache support. Please have a look at the next section for a detailed explanation of `cache-local-entries`, `local-update-policy`, `preloader` and `serialize-keys`.
 
-| Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` | `preloader` |
-|:------------------------|:-------------------|:----------------------|:----------------------|:------------|
-| IMap member             | yes                | yes                   | no                    | no          |
-| IMap client             | yes                | no                    | no                    | yes         |
-| JCache member           | no                 | no                    | no                    | no          |
-| JCache client           | yes                | no                    | yes                   | yes         |
-| ReplicatedMap member    | no                 | no                    | no                    | no          |
-| ReplicatedMap client    | yes                | no                    | no                    | no          |
-| TransactionalMap member | limited            | no                    | no                    | no          |
-| TransactionalMap client | no                 | no                    | no                    | no          |
+| Data structure          | Near Cache Support | `cache-local-entries` | `local-update-policy` | `preloader` | `serialize-keys` |
+|:------------------------|:-------------------|:----------------------|:----------------------|:------------|:-----------------|
+| IMap member             | yes                | yes                   | no                    | no          | yes              |
+| IMap client             | yes                | no                    | no                    | yes         | yes              |
+| JCache member           | no                 | no                    | no                    | no          | no               |
+| JCache client           | yes                | no                    | yes                   | yes         | yes              |
+| ReplicatedMap member    | no                 | no                    | no                    | no          | no               |
+| ReplicatedMap client    | yes                | no                    | no                    | no          | no               |
+| TransactionalMap member | limited            | no                    | no                    | no          | no               |
+| TransactionalMap client | no                 | no                    | no                    | no          | no               |
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Even though lite members do not store any data for Hazelcast data structures, you can enable Near Cache on lite members for faster reads.*
 
@@ -43,6 +43,7 @@ The following shows the configuration for the Hazelcast Near Cache.
 ```xml
 <near-cache name="myDataStructure">
   <in-memory-format>(OBJECT|BINARY|NATIVE)</in-memory-format>
+  <serialize-keys>(true|false)</serialize-keys>
   <invalidate-on-change>(true|false)</invalidate-on-change>
   <time-to-live-seconds>(0..INT_MAX)</time-to-live-seconds>
   <max-idle-seconds>(0..INT_MAX)</max-idle-seconds>
@@ -81,6 +82,7 @@ NearCachePreloaderConfig preloaderConfig = new NearCachePreloaderConfig()
 NearCacheConfig nearCacheConfig = new NearCacheConfig()
   .setName("myDataStructure")
   .setInMemoryFormat(InMemoryFormat.BINARY|OBJECT|NATIVE)
+  .setSerializeKeys(true|false)
   .setInvalidateOnChange(true|false)
   .setTimeToLiveSeconds(0..INT_MAX)
   .setMaxIdleSeconds(0..INT_MAX)
@@ -98,6 +100,7 @@ Following are the descriptions of all configuration elements:
   - `BINARY`: Data will be stored in serialized binary format (default value).
   - `OBJECT`: Data will be stored in deserialized form.
   - `NATIVE`: Data will be stored in the Near Cache that uses Hazelcast's High-Density Memory Store feature. This option is available only in Hazelcast IMDG Enterprise HD. Note that a map and its Near Cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its Near Cache can use it.
+- `serialize-keys`: Specifies if the keys of a Near Cache entry should be serialized or not. Serializing the keys has a big impact on the read performance of the Near Cache. It should just be activated when you have mutable keys, which are changed after used for the Near Cache. Its default value is `false`.
 - `invalidate-on-change`: Specifies whether the cached entries are evicted when the entries are updated or removed. Its default value is true.
 - `time-to-live-seconds`: Maximum number of seconds for each entry to stay in the Near Cache. Entries that are older than this period are automatically evicted from the Near Cache. Regardless of the eviction policy used, `time-to-live-seconds` still applies. Any integer between 0 and `Integer.MAX_VALUE`. 0 means infinite. Its default value is 0.
 - `max-idle-seconds`: Maximum number of seconds each entry can stay in the Near Cache as untouched (not read). Entries that are not read more than this period are removed from the Near Cache. Any integer between 0 and `Integer.MAX_VALUE`. 0 means `Integer.MAX_VALUE`. Its default value is 0.
@@ -118,8 +121,8 @@ Following are the descriptions of all configuration elements:
 	* `JCache`: Its default value is `10000`.
 - `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
 - `local-update-policy`: Specifies the update policy of the local Near Cache. It is available on JCache clients. Available values are as follows:
-   - `INVALIDATE`: Removes the near cache entry on mutation. After the mutative call to the member completes but before the operation returns to the caller, the near cache entry is removed. Until the mutative operation completes, the readers still continue to read the old value. But as soon as the update completes the near cache entry is removed. Any threads reading the key after this point will have a near cache miss and call through to the member, obtaining the new entry. This setting provides read-your-writes consistency. This is the default setting.
-   - `CACHE_ON_UPDATE`: Updates the near cache entry on mutation. After the mutative call to the member completes but before the put returns to the caller, the near cache entry is updated. So a remove will remove it and one of the put methods will update it to the new value. Until the update/remove operation completes, the entry's old value can still be read from the near cache. But before the call completes the near cache entry is updated. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the cache, both the near cache and the original copy in the member. The member will initiate an invalidate event to any other near caches, however the caller near cache is not invalidated as it already has the new value. This setting also provides read-your-writes consistency.
+   - `INVALIDATE`: Removes the Near Cache entry on mutation. After the mutative call to the member completes but before the operation returns to the caller, the Near Cache entry is removed. Until the mutative operation completes, the readers still continue to read the old value. But as soon as the update completes the Near Cache entry is removed. Any threads reading the key after this point will have a Near Cache miss and call through to the member, obtaining the new entry. This setting provides read-your-writes consistency. This is the default setting.
+   - `CACHE_ON_UPDATE`: Updates the Near Cache entry on mutation. After the mutative call to the member completes but before the put returns to the caller, the Near Cache entry is updated. So a remove will remove it and one of the put methods will update it to the new value. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. But before the call completes the Near Cache entry is updated. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the cache, both the Near Cache and the original copy in the member. The member will initiate an invalidate event to any other Near Caches, however the caller Near Cache is not invalidated as it already has the new value. This setting also provides read-your-writes consistency.
 - `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
   - `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
   - `directory`: Specifies the parent directory for the preloader of this Near Cache. The filenames for the preloader storage will be generated from the Near Cache name. You can additionally specify the parent directory to have multiple clients on the same machine with the same Near Cache names.
@@ -325,9 +328,9 @@ For local invalidations, when a record is updated/removed, future reads will see
 - `INVALIDATE`
 - `CACHE_ON_UPDATE`
 
-If you choose `INVALIDATE`, the entry is removed from the Near Cache after the update/remove occurs in the underlying data structure, and before the operation (get) returns to the caller. Until the update/remove operation completes, the entry's old value can still be read from the near cache.
+If you choose `INVALIDATE`, the entry is removed from the Near Cache after the update/remove occurs in the underlying data structure, and before the operation (get) returns to the caller. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache.
 
-If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove occurs in the underlying data structure and before the operation (put/get) returns to the caller. If it is an update operation, it will remove the entry and the new value will be placed. Until the update/remove operation completes, the entry's old value can still be read from the near cache. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the the near cache and the original copy in the member. 
+If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove occurs in the underlying data structure and before the operation (put/get) returns to the caller. If it is an update operation, it will remove the entry and the new value will be placed. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the the Near Cache and the original copy in the member. 
 
 ### Near Cache Preloader
 
