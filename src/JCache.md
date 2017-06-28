@@ -10,7 +10,7 @@ gain performance or decrease application latencies.
 
 ## JCache Overview
 
-Starting with Hazelcast release 3.3.1, Hazelcast offers a specification-compliant JCache implementation. To show our commitment to this
+Starting with Hazelcast 3.3.1, Hazelcast offers a specification-compliant JCache implementation. To show our commitment to this
 important specification that the Java world was waiting for over a decade, we did not just provide a simple wrapper around our existing
 APIs; we implemented a caching structure from the ground up to optimize the behavior to the needs of JCache.
 The Hazelcast JCache implementation is 100% TCK (Technology Compatibility Kit) compliant and therefore passes all specification

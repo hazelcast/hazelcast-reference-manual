@@ -5,14 +5,14 @@
 This chapter lists the changes made to this document from the previous release.
 
 <br></br>
-![image](images/NoteSmall.jpg)***NOTE:*** *Please refer to the <a href="http://docs.hazelcast.org/docs/release-notes/" target="_blank">Release Notes</a> for the new features, enhancements and fixes performed for each Hazelcast release.*
+![image](images/NoteSmall.jpg)***NOTE:*** *Please refer to the <a href="http://docs.hazelcast.org/docs/rn/" target="_blank">Release Notes</a> for the new features, enhancements and fixes performed for each Hazelcast release.*
 
 <br></br>
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
 |[Consistency and Replication Model](#consistency-and-replication-model)| |Added as a new chapter to explain the full picture of Hazelcast's consistency model.|
-|[Understanding Configuration](#understanding-configuration)||Added [Configuration Pattern Patcher](#configuration-pattern-matcher) as a new section.|
+|[Understanding Configuration](#understanding-configuration)||Added [Configuration Pattern Patcher](#configuration-pattern-matcher) and [Dynamically Adding Configuration on a Cluster](#dynamically-adding-configuration-on-a-cluster) as a new sections.|
 |[Setting Up Clusters](#setting-up-clusters)|[User Code Deployment](#user-code-deployment)|Added "Example for  Filtering Members" as a new section to explain how to use the `provider-filter` element.|
 ||[Client User Code Deployment](#client-user-code-deployment-beta)|Added as a new section.
 |[Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)|Added "Entry Processor Optimizations" as a new section explaining Offloadable and Readonly entry processors.|

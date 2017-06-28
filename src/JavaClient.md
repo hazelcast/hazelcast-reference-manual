@@ -17,7 +17,7 @@ Imagine a trading application where all the trading data are stored and managed 
 Currently, Hazelcast has Java, C++ and .NET Clients as native clients. This chapter describes the Java Client.
 
 <br><br>
-![image](images/NoteSmall.jpg) ***IMPORTANT:*** *Starting with the release 3.5, a new Java Native Client Library is introduced in the release package. This library contains clients which use the new Hazelcast Open Binary Client Protocol.*
+![image](images/NoteSmall.jpg) ***IMPORTANT:*** *Starting with Hazelcast 3.5, a new Java Native Client Library is introduced in the release package. This library contains clients which use the new Hazelcast Open Binary Client Protocol.*
 
 * *For 3.5.x releases: You can use the new client experimentally with the library `hazelcast-client-new`. This library does not exist for the releases before 3.5. Please do not use this library with the Hazelcast clusters from 3.6.x and higher releases since it is not compatible with those releases.* 
 * *For 3.6.x releases: You can use the new client with the library `hazelcast-client`. The old client's library is `hazelcast-client-legacy`, and you can still use it.*
