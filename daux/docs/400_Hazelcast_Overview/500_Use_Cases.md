@@ -3,7 +3,7 @@ Hazelcast can be used:
 
 -	to share server configuration/information to see how a cluster performs.
 -	to cluster highly changing data with event notifications, e.g., user based events, and to queue and distribute background tasks.
--	as a simple Memcache with near cache.
+-	as a simple Memcache with Near Cache.
 -	as a cloud-wide scheduler of certain processes that need to be performed on some members.
 -	to share information (user information, queues, maps, etc.) on the fly with multiple members in different installations under OSGI environments.
 -	to share thousands of keys in a cluster where there is a web service interface on an application server and some validation.

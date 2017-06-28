@@ -14,6 +14,6 @@ High-Density Memory Store is currently provided for the following Hazelcast feat
 - JCache Implementation
 - [Near Cache](/19_Performance/04_Near_Cache)
 - [Hot Restart Persistence](/13_Storage/02_Hot_Restart_Persistence)
-- [Java Client](/14_Hazelcast_Java_Client/03_Using_High-Density_Memory_Store_with_Java_Client.md), when using the near cache for client
+- [Java Client](/14_Hazelcast_Java_Client/03_Using_High-Density_Memory_Store_with_Java_Client.md), when using the Near Cache for client
 - Web Session Replications
 - Hibernate 2nd Level Caching

@@ -155,7 +155,7 @@ long getOtherOperationCount();
 long total();
 
 /**
- * Cost of map & near cache & backup in bytes.
+ * Cost of map & Near Cache & backup in bytes.
  * todo: in object mode, object size is zero.
  */
 long getHeapCost();
@@ -178,12 +178,12 @@ HazelcastInstance node = Hazelcast.newHazelcastInstance();
 IMap<String, Customer> customers = node.getMap( "customers" );
 LocalMapStats mapStatistics = customers.getLocalMapStats();
 NearCacheStats nearCacheStatistics = mapStatistics.getNearCacheStats();
-System.out.println( "near cache hit/miss ratio= "
+System.out.println( "Near Cache hit/miss ratio= "
     + nearCacheStatistics.getRatio() );
 ```
 
 Below is the list of metrics that you can access via the `NearCacheStats` object.
-This behavior applies to both client and member near caches.
+This behavior applies to both client and member Near Caches.
 
 
 ```java
@@ -362,7 +362,7 @@ long getOtherOperationCount();
 long total();
 
 /**
- * Cost of map & near cache  & backup in bytes.
+ * Cost of map & Near Cache & backup in bytes.
  * todo: in object mode, object size is zero.
  */
 long getHeapCost();

@@ -3,9 +3,9 @@
 <font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>
 <br></br>
 
-If you have <font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>, your Hazelcast Java client's near cache can benefit from the High-Density Memory Store. 
+If you have <font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>, your Hazelcast Java client's Near Cache can benefit from the High-Density Memory Store. 
 
-Let's recall the Java client's near cache configuration (please see the [Configuring Client Near Cache section](#configuring-client-near-cache)) **without** High-Density Memory Store:
+Let's recall the Java client's Near Cache configuration (please see the [Configuring Client Near Cache section](#configuring-client-near-cache)) **without** High-Density Memory Store:
 
 ```xml
 </hazelcast-client>
@@ -23,7 +23,7 @@ Let's recall the Java client's near cache configuration (please see the [Configu
 </hazelcast-client>
 ```
 
-You can configure this near cache to use Hazelcast's High-Density Memory Store by setting the in-memory format to NATIVE. Please see the following configuration example:
+You can configure this Near Cache to use Hazelcast's High-Density Memory Store by setting the in-memory format to NATIVE. Please see the following configuration example:
 
 ```xml
 </hazelcast-client>
@@ -41,12 +41,12 @@ You can configure this near cache to use Hazelcast's High-Density Memory Store b
 </hazelcast-client>
 ``` 
 
-Please notice that when the in-memory format is NATIVE, i.e. High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's near cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a near cache without High-Density Memory Store do not have any impact. 
+Please notice that when the in-memory format is NATIVE, i.e. High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's Near Cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a Near Cache without High-Density Memory Store do not have any impact. 
 
 The element `<eviction>` has the following attributes:
 
-- `size`: Maximum size (entry count) of the near cache.
-- `max-size-policy`: Maximum size policy for eviction of the near cache. Available values are as follows:
+- `size`: Maximum size (entry count) of the Near Cache.
+- `max-size-policy`: Maximum size policy for eviction of the Near Cache. Available values are as follows:
 	* ENTRY_COUNT: Maximum entry count per member.
 	* USED_NATIVE_MEMORY_SIZE: Maximum used native memory size in megabytes.
 	* USED_NATIVE_MEMORY_PERCENTAGE: Maximum used native memory percentage.

@@ -141,7 +141,7 @@ long getOtherOperationCount();
 long total();
 
 /**
- * Cost of map & near cache  & backup in bytes.
+ * Cost of map & Near Cache  & backup in bytes.
  * todo: in object mode, object size is zero.
  */
 long getHeapCost();
