@@ -133,7 +133,7 @@ config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setPrope
 
 As explained above, Hazelcast members have keyStore used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust. 
 
-Starting with 3.8.1, mutual authentication is introduced. This allows the clients also to have their keyStores and members to have their trustStores so that the members can know which clients they can trust.
+Starting with Hazelcast 3.8.1, mutual authentication is introduced. This allows the clients also to have their keyStores and members to have their trustStores so that the members can know which clients they can trust.
 
 To enable mutual authentication, you need to set the following property at the member side:
 
