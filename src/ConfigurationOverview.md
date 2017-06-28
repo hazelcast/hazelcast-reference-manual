@@ -27,7 +27,7 @@ If you want to specify your own configuration file to create `Config`, Hazelcast
 
 **2- Programmatic Configuration**
 
-To configure Hazelcast programmatically, just instantiate a `Config` object and set/change its properties/attributes to your needs. Below is a code sample in which some network, map, map store, and near cache attributes are configured for a Hazelcast instance.
+To configure Hazelcast programmatically, just instantiate a `Config` object and set/change its properties/attributes to your needs. Below is a code sample in which some network, map, map store, and Near Cache attributes are configured for a Hazelcast instance.
 
 ```java
 Config config = new Config();
