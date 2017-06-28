@@ -78,12 +78,12 @@ public class MyCacheEvictionPolicyComparator
 ###### Configuration
 
 Custom eviction policy comparator can be specified through the eviction configuration 
-by giving the full class name of the `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near cache) 
+by giving the full class name of the `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) 
 implementation or by specifying its instance itself.
 
 **Programmatic:**
 
-You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near cache) implementation 
+You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
 through `EvictionConfig`. This approach is useful when eviction configuration is specified at the client side 
 and custom `EvictionPolicyComparator` implementation class itself does not exist at the client but at server side.
 
@@ -97,7 +97,7 @@ EvictionConfig evictionConfig =
 cacheConfig.setEvictionConfig(evictionConfig);
 ```
 
-You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near cache) instance itself directly through `EvictionConfig`. 
+You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) instance itself directly through `EvictionConfig`. 
 
 ```java
 CacheConfig cacheConfig = new CacheConfig();
@@ -111,7 +111,7 @@ cacheConfig.setEvictionConfig(evictionConfig);
 
 **Declarative:**
 
-You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near cache) implementation 
+You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
 in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast configuration XML file.
 
 ```xml
@@ -122,7 +122,7 @@ in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast c
 
 **Declarative for Spring:**
 
-You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near cache) implementation 
+You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
 in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast *Spring* configuration XML file.
 
 ```xml
@@ -131,7 +131,7 @@ in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast *
 </hz:cache>
 ```
 
-You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its near cache) bean in the `<eviction>` tag 
+You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) bean in the `<eviction>` tag 
 by referencing through `comparator-bean` attribute in Hazelcast *Spring* configuration XML file
 
 ```xml

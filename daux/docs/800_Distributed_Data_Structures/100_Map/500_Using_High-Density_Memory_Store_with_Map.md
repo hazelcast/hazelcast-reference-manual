@@ -33,9 +33,9 @@ The new eviction algorithm for map with High-Density Memory Store is similar to 
     ```
   - These IMap eviction policies for `max-size` cannot be used: `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
 
-  - Near cache eviction configuration is also different for `NATIVE` in-memory format.
+  - Near Cache eviction configuration is also different for `NATIVE` in-memory format.
 
-    For a near cache configuration with in-memory format set to `BINARY`:
+    For a Near Cache configuration with in-memory format set to `BINARY`:
     
     ```xml
         <map name="nativeMap*">
@@ -61,7 +61,7 @@ The new eviction algorithm for map with High-Density Memory Store is similar to 
          </map>
      ```
 
-  - Near cache eviction policy `ENTRY_COUNT` cannot be used for `max-size-policy`.
+  - Near Cache eviction policy `ENTRY_COUNT` cannot be used for `max-size-policy`.
 
 
 <br></br>
