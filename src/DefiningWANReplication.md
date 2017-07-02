@@ -1,5 +1,5 @@
 
-### Defining WAN replication
+### Defining WAN Replication
 
 Hazelcast supports two different operation modes of WAN Replication:
 
@@ -9,12 +9,14 @@ Hazelcast supports two different operation modes of WAN Replication:
 - **Active-Active:** Every cluster is equal, each cluster replicates to all other clusters. This is normally used to connect
   different clients to different clusters for the sake of the shortest path between client and server.
   
-There are two different ways of defining the WAN replication endpoints :
-- using static endpoints
-- using the discovery SPI
+There are two different ways of defining the WAN replication endpoints:
+
+- Static endpoints
+- Discovery SPI
+
 You can use at most one of these when defining a single WAN publisher.
 
-#### Defining WAN Replication using static endpoints
+#### Defining WAN Replication Using Static Endpoints
 
 Below is an example of declarative configuration of WAN Replication from New York cluster to target the London cluster:
 
@@ -58,9 +60,10 @@ Following are the definitions of configuration elements:
 - `endpoints`: IP addresses of the cluster members for which the WAN replication is implemented.
 - `group.password`: Configures target cluster's group password.
 
-Other relevant properties are : 
-- `discovery.period` : The period in seconds in which WAN tries to reestablish connections to failed endpoints. Default is 10 (seconds).
-- `executorThreadCount` : The number of threads that the WanBatchReplication executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialised there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. 
+Other relevant properties are:
+ 
+- `discovery.period`: Period in seconds in which WAN tries to reestablish connections to failed endpoints. Default is 10 (seconds).
+- `executorThreadCount`: The number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. 
 
 And the following is the equivalent programmatic configuration snippet:
 
@@ -97,11 +100,11 @@ have similar configurations if you want to run in Active-Active mode.
 If the New York and London cluster configurations contain the `wan-replication` element and the Tokyo cluster does not, it means
 New York and London are active endpoints and Tokyo is a passive endpoint.
 
-#### Defining WAN replication using Discovery SPI
+#### Defining WAN Replication Using Discovery SPI
 
-In addition to defining target cluster endpoints with static IP addresses, you can configure WAN to work with the discovery SPI and determine the endpoint IP addresses at runtime. This allows you to use WAN with endpoints on various cloud infrastructures (such as Amazon EC2) where the IP address is not known in advance. Typically you will use a readily available discovery SPI plugin such as <a href="https://github.com/hazelcast/hazelcast-aws" target="_blank">Hazelcast AWS EC2 discovery plugin</a> or similar. For more advanced cases you can provide your own discovery SPI implementation with custom logic for determining the WAN target endpoints such as looking up the endpoints in some service registry.
+In addition to defining target cluster endpoints with static IP addresses, you can configure WAN to work with the discovery SPI and determine the endpoint IP addresses at runtime. This allows you to use WAN with endpoints on various cloud infrastructures (such as Amazon EC2) where the IP address is not known in advance. Typically you will use a readily available discovery SPI plugin such as <a href="https://github.com/hazelcast/hazelcast-aws" target="_blank">Hazelcast AWS EC2 discovery plugin</a> or similar. For more advanced cases, you can provide your own discovery SPI implementation with custom logic for determining the WAN target endpoints such as looking up the endpoints in some service registry.
  
-Following is an example of setting up WAN replication with the EC2 discovery plugin. You must have the <a href="https://github.com/hazelcast/hazelcast-aws" target="_blank">Hazelcast AWS EC2 discovery plugin</a> on classpath.
+Following is an example of setting up the WAN replication with the EC2 discovery plugin. You must have the <a href="https://github.com/hazelcast/hazelcast-aws" target="_blank">Hazelcast AWS EC2 discovery plugin</a> on the classpath.
 
 ```xml
 <hazelcast>
@@ -143,9 +146,10 @@ Following is an example of setting up WAN replication with the EC2 discovery plu
 ...
 </hazelcast>
 ```
-The `hz-port` property defines the port on which the target endpoint is running. The default port 5701 is used if this property is not defined. This is needed because the Amazon API which the AWS plugin uses does not provide the port on which Hazelcast is running, only the IP address. For some other discovery SPI implementation this might not be necessary and it might discover the port as well, e.g. by looking up in a service registry. 
 
-The other properties are the same as when using the `aws` element. In case of EC2 discovery you can configure WAN replication using the `aws` element. You may use either of these, but not both at the same time.
+The `hz-port` property defines the port on which the target endpoint is running. The default port 5701 is used if this property is not defined. This is needed because the Amazon API which the AWS plugin uses does not provide the port on which Hazelcast is running, only the IP address. For some other discovery SPI implementations, this might not be necessary and it might discover the port as well, e.g., by looking up in a service registry. 
+
+The other properties are the same as when using the `aws` element. In case of EC2 discovery you can configure the WAN replication using the `aws` element. You may use either of these, but not both at the same time.
 
 ```xml
 <hazelcast>
@@ -184,11 +188,11 @@ The other properties are the same as when using the `aws` element. In case of EC
 
 You can refer to the [aws element](#aws-element) and the [Configuring Client for AWS](#configuring-client-for-aws) sections for the descriptions of above AWS configuration elements. Following are the definitions of additional configuration properties:
 
-- `discovery.period` : Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 (seconds).
-- `maxEndpoints` : The maximum number of endpoints that WAN will connect to when using a discovery mechanism to define endpoints. Default is Integer.MAX_VALUE. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
-- `executorThreadCount` : The number of threads that the WanBatchReplication executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor will be sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that will not be performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialised there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order.
+- `discovery.period`: Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 (seconds).
+- `maxEndpoints`: Maximum number of endpoints that WAN will connect to when using a discovery mechanism to define endpoints. Default is `Integer.MAX_VALUE`. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
+- `executorThreadCount`: Number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor will be sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that will not be performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order.
 
-You can also define the WAN publisher with discovery SPI using programmatic configuration : 
+You can also define the WAN publisher with discovery SPI using the programmatic configuration: 
 
 ```java
 Config config = new Config();
