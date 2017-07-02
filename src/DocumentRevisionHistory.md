@@ -17,6 +17,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Client User Code Deployment](#client-user-code-deployment-beta)|Added as a new section.
 |[Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)|Added "Entry Processor Optimizations" as a new section explaining Offloadable and Readonly entry processors.|
 |[Distributed Data Structures](#distributed-data-structures)|[Lock](#lock)|Added "Lock vs. IMap.lock" as a new section.|
+||[Event Journal](#event-journal)| Added as a new section to explain the event journal distributed data structure that stores the history of mutation actions on the data structures such as map or cache.
 |[Hazelcast JCache](#hazelcast-jcache)|[Scoping to Join Clusters](#scoping-to-join-clusters)|Enhanced the content to explain and give examples about the Hazelcast instance creations during cache manager starts.
 |[Hazelcast Java Client](#hazelcast-java-client)|[Enabling Client TLS/SSL](#enabling-client-tlsssl)|Added information related to mutual authentication.
 ||[Configuring Client Connection Strategy](#configuring-client-connection-strategy)| Added as a new section.
@@ -32,6 +33,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Native Client Security](#native-client-security)| Added description for the Cache Permissions.
 ||[Validating Secrets Using Strength Policy](#validating-secrets-using-strength-policy)| Added as a new section.
 |[Performance](#performance)|[Near Cache](#near-cache)|Added "Locally Initiated Changes" as a new section.|
+|[WAN](#wan)|| Added the new section [Defining WAN replication using Discovery SPI](#defining-wan-replication-using-discovery-spi) to explain how to use WAN with endpoints on various cloud infrastructures (such as Amazon EC2) where the IP addresses are not known in advance.
 |[System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled|
 |[FAQ](#frequently-asked-questions)||Updated questions/answers.|
 
