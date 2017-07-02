@@ -6,9 +6,9 @@ By reading from the event journal you can recreate the state of the map or cache
 
 The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer and shares much similarities with it. 
 
-# Configuring Event Journal
+### Configuring Event Journal
 
-### Configuring Event Journal Capacity
+#### Configuring Event Journal Capacity
 
 By default, an event journal is configured with a `capacity` of 10000 items. This creates an array with a size of 10000. If 
 a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item. 
@@ -54,12 +54,12 @@ EventJournalConfig myMapJournalConfig = new EventJournalConfig()
 The `mapName` and `cacheName` attributes define the map or cache to which this event journal configuration applies. You can use pattern-matching and the `default` keyword when doing so. For instance, by using a `mapName` of `journaled*`, the journal configuration will apply to all maps whose names start with "journaled" and don't have other journal configurations that match (e.g., if you would have a more specific journal configuration with an exact name match). If you specify the `mapName` or `cacheName` as `default`, the journal configuration will apply to all maps and caches that don't have any other journal configuration. This means that potentially all maps and/or caches will have one single event journal configuration.
 
 
-### Event Journal Partitioning
+#### Event Journal Partitioning
 
 The event journal is a partitioned data structure. The partitioning is done by the event key. Because of this, the map and cache entry with a specific key is co-located with the events for that key and will be migrated accordingly.
 Also, the backup count for the event journal is equal to the backup count of the map or cache for which it contains events. The events on the backup replicas will be created with the map or cache backup operations and no additional network traffic is introduced when appending events to the event journal. 
 
-### Configuring Event Journal time-to-live
+#### Configuring Event Journal time-to-live
 
 You can configure Hazelcast event journal with a `time-to-live` in seconds. Using this setting, you can control how long the items remain in 
 the event journal before they are expired. By default, the `time-to-live` is set to 0, meaning that unless the item is overwritten, 
