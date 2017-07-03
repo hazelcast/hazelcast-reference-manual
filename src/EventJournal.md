@@ -4,7 +4,13 @@ The event journal is a distributed data structure that stores the history of mut
 
 By reading from the event journal you can recreate the state of the map or cache at any point in time. Currently the event journal does not expose public API for reading the event journal in Hazelcast IMDG. The event journal should be used in conjunction with [Hazelcast Jet](http://jet.hazelcast.org/). Because of this we will describe how to configure it but not how to use it from IMDG.
 
-The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer and shares much similarities with it. 
+The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer and shares much similarities with it.
+ 
+### Interaction with evictions and expiration for IMap
+ 
+Configuring IMap with eviction and expiration can cause the event journal to contain different events on the different replicas of the same partition. You can run into issues if you are reading from the event journal and the partition owner is terminated. A backup replica will then be promoted into the partition owner but the event journal will contain different events. The event count should stay the same but the entries which you previously thought were evicted and expired could now be "alive" and vice versa.
+
+This is because eviction and expiration randomly choose entries to be evicted/expired. The entry is not coordinated between partition replicas.
 
 ### Configuring Event Journal
 
