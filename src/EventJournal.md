@@ -6,7 +6,7 @@ By reading from the event journal you can recreate the state of the map or cache
 
 The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer and shares much similarities with it.
  
-### Interaction with evictions and expiration for IMap
+### Interaction with Evictions and Expiration for IMap
  
 Configuring IMap with eviction and expiration can cause the event journal to contain different events on the different replicas of the same partition. You can run into issues if you are reading from the event journal and the partition owner is terminated. A backup replica will then be promoted into the partition owner but the event journal will contain different events. The event count should stay the same but the entries which you previously thought were evicted and expired could now be "alive" and vice versa.
 
