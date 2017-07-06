@@ -10,6 +10,9 @@ There are two different supported behaviors:
 when the WAN event queues are full.   
 - `THROW_EXCEPTION`: If you select this option, the WAN queue size is checked before each supported mutating operation (like `IMap#put`, `ICache#put`).
 If one the queues of target cluster is full, `WANReplicationQueueFullException` is thrown and the operation is not allowed.
+- `THROW_EXCEPTION_ONLY_IF_REPLICATION_ACTIVE`: Its effect is similar to that of `THROW_EXCEPTION`. But, it  throws exception only when WAN replication is active. It discards the new events if WAN replication is stopped.
+
+
 
 The following is an example configuration:
 
