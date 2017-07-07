@@ -55,6 +55,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
 `hazelcast.legacy.memberlist.format.enabled`  | false  |  bool  |  Enables the legacy (pre 3.9) member list format which is printed in the logs. The new format is introduced starting with Hazelcast 3.9 and includes member list version. Any change in the cluster, such as a member leaving or joining, will increment the member list version.
+`hazelcast.mastership.claim.timeout.seconds`  | 120  | int  | The timeout which defines when master candidate gives up waiting for response to its mastership claim. After timeout happens, non-responding member will be removed from member list.
 `hazelcast.lock.max.lease.time.seconds`|Long.MAX_VALUE | long | All locks which are acquired without an explicit lease time use this value (in seconds) as the lease time. When you want to set an explicit lease time for your locks, you cannot set it to a longer time than this value.
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
 `hazelcast.mancenter.home` | mancenter | string |  Folder where Management Center data files are stored (license information, time travel information, etc.).
@@ -75,7 +76,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.mc.max.visible.instance.count` | 100 | int  |   Management Center maximum visible instance count.
 `hazelcast.mc.max.visible.slow.operations.count`|10|int|Management Center maximum visible slow operations count.
 `hazelcast.mc.url.change.enabled` | true | bool  |   Management Center changing server url is enabled.
-`hazelcast.member.list.publish.interval.seconds` | 600 | int  |   Interval at which master member publishes a member list.
+`hazelcast.member.list.publish.interval.seconds` | 60 | int  |   Interval at which master member publishes a member list.
 `hazelcast.memcache.enabled`| false | bool |   Enable [Memcache](#memcache-client) client request listener service.
 `hazelcast.merge.first.run.delay.seconds` | 300 | int |   Initial run delay of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
 `hazelcast.merge.next.run.delay.seconds` | 120 | int |   Run interval of [split brain/merge process](#network-partitioning-split-brain-syndrome) in seconds.
