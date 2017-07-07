@@ -49,11 +49,23 @@ public class GettingStarted {
 started. The members form a cluster and the output is similar to the following.
 
 ```
-Members [2] {
-  Member [127.0.0.1:5701]
-  Member [127.0.0.1:5702] this
-}                              
+Members {size:2, ver:1} [
+    Member [127.0.0.1]:5701 - e40081de-056a-4ae5-8ffe-632caf8a6cf1 this
+    Member [127.0.0.1]:5702 - 93e82109-16bf-4b16-9c87-f4a6d0873080
+]                              
 ```
+
+Here, you can see the size of your cluster (`size`) and member list version (`ver`). The member list version will be incremented when changes happen to the cluster, e.g., a member leaving from or joining to the cluster.
+
+The above member list format is introduced with Hazelcast 3.9. You can enable the legacy member list format,  which was used for the releases before Hazelcast 3.9, using the system property `hazelcast.legacy.memberlist.format.enabled`. Please see the [System Properties chapter](#system-properties). The following is an example for the legacy member list format:
+
+```
+Members [2] {
+    Member [127.0.0.1]:5701 - c1ccc8d4-a549-4bff-bf46-9213e14a9fd2 this
+    Member [127.0.0.1]:5702 - 33a82dbf-85d6-4780-b9cf-e47d42fb89d4
+}
+```
+
 
 - Now, add the `hazelcast-client-`*`<version>`*`.jar` library to your classpath. 
 This is required to use a Hazelcast client.
