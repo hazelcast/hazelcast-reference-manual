@@ -125,3 +125,4 @@ Property Name | Default Value | Type | Description
 `hazelcast.unsafe.mode` | auto | string  | "auto" (the default value) automatically detects whether the usage of `Unsafe` is suitable for a given platform. "disabled" explicitly disables the `Unsafe` usage in your platform. "enforced" enforces the usage of `Unsafe` even if your platform does not support it. This property can only be set by passing a JVM-wide system property.
 `hazelcast.phone.home.enabled` | true | bool  |   Enable or disable the sending of phone home data to Hazelcast's phone home server.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.
+`hazelcast.legacy.memberlist.format.enabled`  | false  |  bool  |  Enables legacy (pre 3.9) member list format which is printed in logs. New format is introduced by 3.9 and includes member list version.
