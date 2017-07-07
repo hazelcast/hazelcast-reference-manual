@@ -54,6 +54,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.io.thread.count` | 3 | int | Number of threads performing socket input and socket output. If, for example, the default value (3) is used, it means there are 3 threads performing input and 3 threads performing output (6 threads in total).
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
+`hazelcast.legacy.memberlist.format.enabled`  | false  |  bool  |  Enables the legacy (pre 3.9) member list format which is printed in the logs. The new format is introduced starting with Hazelcast 3.9 and includes member list version. Any change in the cluster, such as a member leaving or joining, will increment the member list version.
 `hazelcast.lock.max.lease.time.seconds`|Long.MAX_VALUE | long | All locks which are acquired without an explicit lease time use this value (in seconds) as the lease time. When you want to set an explicit lease time for your locks, you cannot set it to a longer time than this value.
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
 `hazelcast.mancenter.home` | mancenter | string |  Folder where Management Center data files are stored (license information, time travel information, etc.).
@@ -125,4 +126,3 @@ Property Name | Default Value | Type | Description
 `hazelcast.unsafe.mode` | auto | string  | "auto" (the default value) automatically detects whether the usage of `Unsafe` is suitable for a given platform. "disabled" explicitly disables the `Unsafe` usage in your platform. "enforced" enforces the usage of `Unsafe` even if your platform does not support it. This property can only be set by passing a JVM-wide system property.
 `hazelcast.phone.home.enabled` | true | bool  |   Enable or disable the sending of phone home data to Hazelcast's phone home server.
 `hazelcast.wait.seconds.before.join` | 5 | int  | Wait time before join operation.
-`hazelcast.legacy.memberlist.format.enabled`  | false  |  bool  |  Enables legacy (pre 3.9) member list format which is printed in logs. New format is introduced by 3.9 and includes member list version.
