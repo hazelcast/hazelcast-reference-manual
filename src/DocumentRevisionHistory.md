@@ -11,6 +11,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Preface](#preface)|[Phone Home](#phone-home)|Added information related to the new environment variable `HZ_PHONE_HOME_ENABLED` for disabling phone homes. 
 |[Consistency and Replication Model](#consistency-and-replication-model)| |Added as a new chapter to explain the full picture of Hazelcast's consistency model.|
 |[Understanding Configuration](#understanding-configuration)||Added [Configuration Pattern Patcher](#configuration-pattern-matcher) and [Dynamically Adding Configuration on a Cluster](#dynamically-adding-configuration-on-a-cluster) as a new sections.|
 |[Setting Up Clusters](#setting-up-clusters)|[User Code Deployment](#user-code-deployment)|Added "Example for  Filtering Members" as a new section to explain how to use the `provider-filter` element.|
