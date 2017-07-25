@@ -19,7 +19,7 @@ This Reference Manual covers all editions of Hazelcast IMDG. Throughout this man
 
 You can see the features for all Hazelcast IMDG editions in the following architecture diagram.
 
-<img src="images/HCArch.png" alt="Hazelcast Architecture" height="453" width="700">
+![Hazelcast Architecture](images/HazelcastArchitecture.png)
 
 ![image](images/NoteSmall.jpg) ***NOTE*** *You can see small "HD" boxes for some features in the above diagram. Those features can use High-Density (HD) Memory Store when it is available. It means if you have Hazelcast IMDG Enterprise HD, you can use those features with HD Memory Store.*
 
