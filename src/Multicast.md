@@ -1,6 +1,6 @@
 
 
-### Discovering Members by Multicast
+## Discovering Members by Multicast
 
 With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication. The cluster members do not need to know the concrete addresses of the other members, as they just multicast to all the other members for listening. Whether multicast is possible or allowed depends on your environment.
 
