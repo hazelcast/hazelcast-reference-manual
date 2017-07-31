@@ -168,3 +168,63 @@ You can control the StoreLatency plugin using the following properties:
 - `hazelcast.diagnostics.storeLatency.period.seconds`: The frequency this plugin is writing the collected information to the disk. By default it is disabled. A sensible production value would be 60 (seconds).
 - `hazelcast.diagnostics.storeLatency.reset.period.seconds`: The period of resetting the statistics. If, for example, it is set as 300 (5 minutes), all the statistics are cleared for every 5 minutes. By default it is 0, meaning that statistics are not reset.
 
+##### OperationHeartbeats
+
+It shows the deviation between member/member operation heartbeats. Every member will send to every other member, regardless if
+there is an operation running on behalf of that member, a operation-heartbeat. It contains a listing of all callIds of the running
+operations from a given member. This plugin also works fine between members/lite-members.
+
+Because this operation-heartbeat is send periodically; by default 1/4 of the operation-calltimeout of 60 seconds, we would expect
+an operation-heartbeat to be received every 15 seconds. Operation-heartbeats are priority packets (so overtake regular packets)
+and are processed by an isolated thread in the invocation-monitor, so if there is any deviation in the frequency of receiving
+these packets, it could problems like network problems.
+
+The following shows an example of the output where a operation-heartbeat has not been received for 37 seconds:
+
+```
+20-7-2017 11:12:55 OperationHeartbeats[
+                                  member[10.212.1.119]:5701[
+                                          deviation(%)=146.6666717529297
+                                          noHeartbeat(ms)=37,000
+                                          lastHeartbeat(ms)=1,500,538,375,603
+                                          lastHeartbeat(date-time)=20-7-2017 11:12:55
+                                          now(ms)=1,500,538,338,603
+                                          now(date-time)=20-7-2017 11:12:18]]]
+```
+
+The OperationHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
+file if the max-deviation is exceeded. 
+
+You can control the OperationHeartbeats plugin using the following properties:
+
+- `hazelcast.diagnostics.operation-heartbeat.seconds`: The frequency this plugin is writing the collected information to the disk. It is configured to be 10 seconds by default. 0 disables the plugin.
+- `hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage and defaults to 33. E.g. with a default 60 call timeout and operation-heartbeat interval being 15 seconds, the maximum deviation with a deviation-percentage of 33, is 5 seconds. So if a packet is arrived after 19 seconds; no problem; but if it arrives after 21 seconds, then the plugin will render.
+
+##### MemberHeartbeats
+
+This plugin looks a lot like the OperationHeartbeats plugin, but instead of relying on operation-hearts to determine deviation, it relies on member/member cluster heartbeats. Every member will send a heartbeat to every other member periodically (by default every 5 seconds).
+
+Just like the OperationHeartbeats, the MemberHeartbeats plugin can be used to detect if there are networking problems long before they actually lead to problems like splitbrains etc.
+
+The following shows an example of the output where no member/member heartbeat has been received for 9 seconds:
+
+```
+20-7-2017 19:32:22 MemberHeartbeats[
+                          member[10.212.1.119]:5701[
+                                  deviation(%)=80.0
+                                  noHeartbeat(ms)=9,000
+                                  lastHeartbeat(ms)=1,500,568,333,645
+                                  lastHeartbeat(date-time)=20-7-2017 19:32:13
+                                  now(ms)=1,500,568,342,645
+                                  now(date-time)=20-7-2017 19:32:22]]
+```
+
+The MemberHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
+file if the max-deviation is exceeded. 
+
+You can control the OperationHeartbeats plugin using the following properties:
+
+- `hazelcast.diagnostics.member-heartbeat.seconds`: The frequency this plugin is writing the collected information to the disk. It is configured to be 10 seconds by default. 0 disables the plugin.
+- `hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage in defaults to 100.  E.g. if the interval of member/member heartbeats is 5 seconds, a 100% deviation will be fine with heartbeats arriving up to 5 seconds after they are expected. So a heartbeat arriving at 9 seconds will not be rendered, but a heartbeat received at 11 seconds, will be rendered.
+                                                                                                                                   
+                                                                                                                                   
