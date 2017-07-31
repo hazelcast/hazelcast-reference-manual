@@ -171,15 +171,15 @@ You can control the StoreLatency plugin using the following properties:
 ##### OperationHeartbeats
 
 It shows the deviation between member/member operation heartbeats. Every member will send to every other member, regardless if
-there is an operation running on behalf of that member, a operation-heartbeat. It contains a listing of all callIds of the running
+there is an operation running on behalf of that member, an operation heartbeat. It contains a listing of all `callId`s of the running
 operations from a given member. This plugin also works fine between members/lite-members.
 
-Because this operation-heartbeat is send periodically; by default 1/4 of the operation-calltimeout of 60 seconds, we would expect
-an operation-heartbeat to be received every 15 seconds. Operation-heartbeats are priority packets (so overtake regular packets)
-and are processed by an isolated thread in the invocation-monitor, so if there is any deviation in the frequency of receiving
-these packets, it could problems like network problems.
+Because this operation heartbeat is sent periodically; by default 1/4 of the operation call timeout of 60 seconds, we would expect
+an operation heartbeat to be received every 15 seconds. Operation heartbeats are high priority packets (so they overtake regular packets)
+and are processed by an isolated thread in the invocation monitor. If there is any deviation in the frequency of receiving
+these packets, it may be due to the problems such as network latencies.
 
-The following shows an example of the output where a operation-heartbeat has not been received for 37 seconds:
+The following shows an example of the output where an operation heartbeat has not been received for 37 seconds:
 
 ```
 20-7-2017 11:12:55 OperationHeartbeats[
@@ -193,18 +193,18 @@ The following shows an example of the output where a operation-heartbeat has not
 ```
 
 The OperationHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
-file if the max-deviation is exceeded. 
+file if the max-deviation (explained below) is exceeded. 
 
 You can control the OperationHeartbeats plugin using the following properties:
 
 - `hazelcast.diagnostics.operation-heartbeat.seconds`: The frequency this plugin is writing the collected information to the disk. It is configured to be 10 seconds by default. 0 disables the plugin.
-- `hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage and defaults to 33. E.g. with a default 60 call timeout and operation-heartbeat interval being 15 seconds, the maximum deviation with a deviation-percentage of 33, is 5 seconds. So if a packet is arrived after 19 seconds; no problem; but if it arrives after 21 seconds, then the plugin will render.
+- `hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage. Its default value is 33. For example, with a default 60 call timeout and operation heartbeat interval being 15 seconds, the maximum deviation with a deviation-percentage of 33, is 5 seconds. So there is no problem if a packet is arrived after 19 seconds, but if it arrives after 21 seconds, then the plugin will render.
 
 ##### MemberHeartbeats
 
-This plugin looks a lot like the OperationHeartbeats plugin, but instead of relying on operation-hearts to determine deviation, it relies on member/member cluster heartbeats. Every member will send a heartbeat to every other member periodically (by default every 5 seconds).
+This plugin looks a lot like the OperationHeartbeats plugin, but instead of relying on operation heartbeats to determine the deviation, it relies on member/member cluster heartbeats. Every member will send a heartbeat to every other member periodically (by default every 5 seconds).
 
-Just like the OperationHeartbeats, the MemberHeartbeats plugin can be used to detect if there are networking problems long before they actually lead to problems like splitbrains etc.
+Just like the OperationHeartbeats, the MemberHeartbeats plugin can be used to detect if there are networking problems long before they actually lead to problems such as split-brain syndromes.
 
 The following shows an example of the output where no member/member heartbeat has been received for 9 seconds:
 
@@ -220,11 +220,11 @@ The following shows an example of the output where no member/member heartbeat ha
 ```
 
 The MemberHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
-file if the max-deviation is exceeded. 
+file if the max-deviation (explained below) is exceeded. 
 
-You can control the OperationHeartbeats plugin using the following properties:
+You can control the MemberHeartbeats plugin using the following properties:
 
 - `hazelcast.diagnostics.member-heartbeat.seconds`: The frequency this plugin is writing the collected information to the disk. It is configured to be 10 seconds by default. 0 disables the plugin.
-- `hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage in defaults to 100.  E.g. if the interval of member/member heartbeats is 5 seconds, a 100% deviation will be fine with heartbeats arriving up to 5 seconds after they are expected. So a heartbeat arriving at 9 seconds will not be rendered, but a heartbeat received at 11 seconds, will be rendered.
+- `hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage. Its default value is 100.  For example, if the interval of member/member heartbeats is 5 seconds, a 100% deviation will be fine with heartbeats arriving up to 5 seconds after they are expected. So a heartbeat arriving after 9 seconds will not be rendered, but a heartbeat received after 11 seconds will be rendered.
                                                                                                                                    
                                                                                                                                    
