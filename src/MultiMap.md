@@ -91,9 +91,9 @@ mmConfig.setValueCollectionType( "SET" );
 
 The following are the configuration elements and their descriptions:
 
-- `backup-count`: Defines the number of asynchronous backups. For example, if it is set to 1, backup of a partition will be
+- `backup-count`: Defines the number of synchronous backups. For example, if it is set to 1, backup of a partition will be
 placed on one other member. If it is 2, it will be placed on two other members.
-- `async-backup-count`: The number of synchronous backups. Behavior is the same as that of the `backup-count` element.
+- `async-backup-count`: The number of asynchronous backups. Behavior is the same as that of the `backup-count` element.
 - `statistics-enabled`: You can retrieve some statistics such as owned entry count, backup entry count, last update time, and locked entry count by setting this parameter's value as "true". The method for retrieving the statistics is `getLocalMultiMapStats()`.
 - `value-collection-type`: Type of the value collection. It can be `Set` or `List`.
 - `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
