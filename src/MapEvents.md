@@ -141,7 +141,8 @@ Let`s consider the following example code:
 ```java
   public static void main(String[] args) {
     Config config = new Config();
-    config.getMapConfig("map").setBackupCount(1); // might lose data if any member crashes
+    // keeps its data if a single node crashes
+    config.getMapConfig("map").setBackupCount(1);
 
     HazelcastInstance instance = HazelcastInstanceFactory.newHazelcastInstance(config);
 
