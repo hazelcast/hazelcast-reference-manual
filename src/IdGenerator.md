@@ -4,6 +4,8 @@
 
 Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *The `IdGenerator` may break it's consistency guarantees in some edge cases. Please see [Consistency and Replication Model](#consistency-and-replication-model) for more details on the guarantees Hazelcast provides.*
+
 ### Generating Cluster-Wide IDs
 
 ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10,000 identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 10,000 IDs. This way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.

@@ -25,6 +25,8 @@ As mentioned in the [Overview section](#hazelcast-overview), Hazelcast offers di
 	- [AtomicReference](#iatomicreference) is the distributed implementation of `java.util.concurrent.atomic.AtomicReference`. When you need to deal with a reference in a distributed environment, you can use Hazelcast AtomicReference. 
 	- [IdGenerator](#idgenerator) is used to generate cluster-wide unique identifiers. ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`.
 	- [CountdownLatch](#icountdownlatch) is the distributed implementation of `java.util.concurrent.CountDownLatch`. Hazelcast CountDownLatch is a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
+	
+![image](images/NoteSmall.jpg) ***NOTE:*** *The consistency guarantees of the concurrency utilities may break in some edge cases. Please see [Consistency and Replication Model](#consistency-and-replication-model) for more details on the guarantees Hazelcast provides.*
 
 
 

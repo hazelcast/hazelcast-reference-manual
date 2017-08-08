@@ -3,6 +3,8 @@
 
 Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and thus their performances differ from AtomicLong.
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *The `IAtomicLong` may break it's consistency guarantees in some edge cases. Please see [Consistency and Replication Model](#consistency-and-replication-model) for more details on the guarantees Hazelcast provides.*
+
 
 The following example code creates an instance, increments it by a million, and prints the count.
 

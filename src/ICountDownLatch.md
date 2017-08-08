@@ -4,6 +4,8 @@
 
 Hazelcast `ICountDownLatch` is the distributed implementation of `java.util.concurrent.CountDownLatch`.
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *The `ICountDownLatch` may break it's consistency guarantees in some edge cases. Please see [Consistency and Replication Model](#consistency-and-replication-model) for more details on the guarantees Hazelcast provides.*
+
 ### Gate-Keeping Concurrent Activities
 
 `CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
