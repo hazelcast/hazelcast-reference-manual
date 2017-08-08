@@ -57,7 +57,7 @@ Following are the definitions of configuration elements:
 - `snapshot.enabled`: When set to `true`, only the latest events (based on key) are selected and sent in a batch.
 - `response.timeout.millis`: Time in milliseconds to be waited for the acknowledgment of a sent WAN event to target cluster. 
 - `ack.type`: Acknowledgment type for each target cluster.
-- `endpoints`: IP addresses of the cluster members for which the WAN replication is implemented.
+- `endpoints`: IP addresses and ports of the cluster members for which the WAN replication is implemented. These endpoints are not necessarily the entire target cluster and WAN does not perform the discovery of other members in the target cluster. It only expects that these IP addresses (or at least some of them) are available.
 - `group.password`: Configures target cluster's group password.
 
 Other relevant properties are:
