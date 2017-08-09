@@ -1,13 +1,11 @@
 ## Hazelcast Striim Hot Cache
 
 <font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
-
 <br></br>
-
 
 With Hazelcast Striim Hot Cache, you can reduce the latency of propagation of data from your backend database into your Hazelcast cache to milliseconds. You have the flexibility to run multiple applications off a single database, keeping Hazelcast cache refreshes current while adhering to low latency SLAs.
 
-This joint solution with Hazelcast’s in-memory data grid uses Striim’s Change Data Capture (CDC) to solve the cache consistency problems.
+This joint solution with Hazelcast's in-memory data grid uses Striim's Change Data Capture (CDC) to solve the cache consistency problems.
 
 When you have an application that needs to retrieve and store information in a database, you can use a Hazelcast in-memory cache for rapid access to data. There may be some other applications that make database updates; in this case, your application may show out-of-date or invalid information.
 
