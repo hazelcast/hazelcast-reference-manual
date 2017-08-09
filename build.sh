@@ -8,9 +8,6 @@ function buildDocumentation {
     createMergedMarkdownFile
     createSingleHTML
     createMancenterDocumentation
-    if [ "$2" != "--skipPDF" ]; then
-        createPDF
-    fi
     delete
     echo "Done"
 }
