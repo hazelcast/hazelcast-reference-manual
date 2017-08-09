@@ -18,6 +18,9 @@
     You may use any of the supported ways [as described in System Properties section](#system-properties) to configure the compatibility option. When done
  upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration. 
 
+- **Upgrading from 3.6.x to 3.8.x (Hazelcast IMDG Enterprise) when using `JCache`:**
+  Due to a compatibility problem, `CacheConfig` serialization may not work if your member is 3.8.x where x < 5. Hence, you will need to use Hazelcast 3.8.5 or higher version where the problem is being fixed. This issue affects Hazelcast IMDG Enterprise only.
+
 - **Introducing the `spring-aware` element:**
 Before the release 3.5, Hazelcast uses `SpringManagedContext` to scan `SpringAware` annotations by default. This may cause some performance overhead for the users who do not use `SpringAware`.
 This behavior has been changed with the release of Hazelcast 3.5. `SpringAware` annotations are disabled by default. By introducing the `spring-aware` element, now it is possible to enable it by adding the `<hz:spring-aware />` tag to the configuration. Please see the [Spring Integration section](#spring-integration).
