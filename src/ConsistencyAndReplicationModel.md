@@ -21,7 +21,7 @@ Hazelcast offers features such as _Quorum_, _ILock_, _AtomicLong_, etc. In the j
 
 ### Best-Effort Consistency
 
-Hazelcast’s replication technique enables Hazelcast clusters to offer high throughput. However, due to temporary situations in the system, such as network interruption, backup replicas can miss some updates and diverge from the primary. Backup replicas can also hit long GC pauses or VM pauses, and fall behind the primary, which is a situation called as _replication lag_. If a Hazelcast partition primary replica node crashes while there is a replication lag between itself and the backups, strong consistency of the data can be lost. 
+Hazelcast's replication technique enables Hazelcast clusters to offer high throughput. However, due to temporary situations in the system, such as network interruption, backup replicas can miss some updates and diverge from the primary. Backup replicas can also hit long GC pauses or VM pauses, and fall behind the primary, which is a situation called as _replication lag_. If a Hazelcast partition primary replica node crashes while there is a replication lag between itself and the backups, strong consistency of the data can be lost. 
 
 Please note that CP systems can have similar problems as well. However, in a CP system, once a replica performs an update locally (i.e., _commits_ the update), the underlying consensus algorithm guarantees durability of the update for the rest of the execution. 
 

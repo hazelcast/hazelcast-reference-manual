@@ -48,7 +48,7 @@ In a distributed environment, the counting down cluster member may go down. In t
 
 ### Using ICountDownLatch
 
-Although the `ICountDownLatch` is a very useful synchronization aid, you will probably not use it on a daily basis. Unlike Java’s implementation, Hazelcast’s `ICountDownLatch` count can be reset after a countdown has finished, but not during an active count.
+Although the `ICountDownLatch` is a very useful synchronization aid, you will probably not use it on a daily basis. Unlike Java's implementation, Hazelcast's `ICountDownLatch` count can be reset after a countdown has finished, but not during an active count.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *ICountDownLatch has 1 synchronous backup and no asynchronous backups. Its backup count is not configurable. Also, the count cannot be re-set during an active count, it should be re-set after the countdown is finished.*
 

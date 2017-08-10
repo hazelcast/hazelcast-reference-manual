@@ -1,6 +1,5 @@
 ## Split-Brain Recovery
 
-
 Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will going to initiate merge process is decided. This decision is based on the size of clusters; the smaller cluster will merge into the bigger one. If they have equal number of members then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
 
 After merging side is decided, master (the eldest) member of the merging cluster initiates the cluster merge process by sending merge instruction to the members in its cluster.
