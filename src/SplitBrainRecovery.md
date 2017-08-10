@@ -1,12 +1,12 @@
 ## Split-Brain Recovery
 
 
-Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will going to initiate merge process is decided. This decision is based on size of the clusters; the smaller cluster will merge into the bigger one. If they have equal number of members then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there’s no intersection in their member lists.
+Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will going to initiate merge process is decided. This decision is based on the size of clusters; the smaller cluster will merge into the bigger one. If they have equal number of members then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
 
-After merging side is decided, master (the eldest) node of the merging cluster initiates the cluster merge process by sending merge instruction to nodes in its cluster.
-While recovering from partitioning, Hazelcast uses merge policies for some data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflict between existing and merging records. Hazelcast provides an interface to be implemented and also few builtin policies ready to use.
+After merging side is decided, master (the eldest) member of the merging cluster initiates the cluster merge process by sending merge instruction to the members in its cluster.
+While recovering from partitioning, Hazelcast uses merge policies for some data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging records. Hazelcast provides an interface to be implemented and also few built-in policies ready to use.
 
-Remaining data structures discards the data from merging side.
+Remaining data structures discard the data from merging side.
 
 Each member of the merging cluster will do the following:
 
@@ -20,7 +20,7 @@ Each member of the merging cluster will do the following:
 
 ### Merge Policies
 
-Only `IMap`, `ICache` and `ReplicatedMap` supports merge policies. `IMap` and `ReplicatedMap` use `com.hazelcast.map.merge.MapMergePolicy`. `ICache` uses `com.hazelcast.cache.CacheMergePolicy`. They are very similar interfaces with some minor differences in parameters.
+Only `IMap`, `ICache` and `ReplicatedMap` support merge policies. `IMap` and `ReplicatedMap` use `com.hazelcast.map.merge.MapMergePolicy`. `ICache` uses `com.hazelcast.cache.CacheMergePolicy`. They are very similar interfaces with some minor differences in parameters.
 
 ```java
 public interface MapMergePolicy extends DataSerializable {
@@ -64,9 +64,9 @@ public interface CacheMergePolicy extends Serializable {
 }
 ```
 
-There are built-in merge policies such as `PassThroughMergePolicy`, `PutIfAbsentMapMergePolicy`, `HigherHitsMapMergePolicy` and `LatestUpdateMapMergePolicy`. Additionally you can develop your own merge policy by implementing relevant interface. You should set the full class name of your implementation to the merge-policy configuration.  
+There are built-in merge policies such as `PassThroughMergePolicy`, `PutIfAbsentMapMergePolicy`, `HigherHitsMapMergePolicy` and `LatestUpdateMapMergePolicy`. Additionally you can develop your own merge policy by implementing the relevant interface. You should set the full class name of your implementation to the merge-policy configuration.  
 
-For more info, see [Consistency and Replication Model section](#consistency-and-replication-model).
+For more information, please see the [Consistency and Replication Model chapter](#consistency-and-replication-model).
 
 ### Specifying Merge Policies
 

@@ -36,6 +36,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Validating Secrets Using Strength Policy](#validating-secrets-using-strength-policy)| Added as a new section.
 |[Performance](#performance)|[Near Cache](#near-cache)|Added "Locally Initiated Changes" as a new section.|
 |[WAN](#wan)|| Added the new section [Defining WAN replication using Discovery SPI](#defining-wan-replication-using-discovery-spi) to explain how to use WAN with endpoints on various cloud infrastructures (such as Amazon EC2) where the IP addresses are not known in advance. <br> [WAN Replication Failure Detection and Recovery](#wan-replication-failure-detection-and-recovery) added as a new section.
+|[Network Partitioning](#network-partitioning)|Improved the whole content on how Hazelcast handles split-brain syndrome.
 |[System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.legacy.memberlist.format.enabled<br> - hazelcast.mastership.claim.timeout.seconds<br> - hazelcast.diagnostics.operation-heartbeat.seconds <br> - hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage <br> - hazelcast.diagnostics.member-heartbeat.seconds <br> - hazelcast.diagnostics.member-heartbeat.max-deviation-percentage|
 
 

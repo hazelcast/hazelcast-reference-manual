@@ -20,9 +20,9 @@ Each data structure to be protected should have the quorum configuration added t
 
 Cluster Membership is established and maintained by heartbeats. A network partitioning will present some members as being unreachable. While configurable, it is normally seconds or tens of seconds before the cluster is adjusted to exclude unreachable members. The cluster size is based on the currently understood number of members.
 
-For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection, a time window to detect quorum is not satisfied anymore. Length of this window depends on the failure detector. Given guarantee is, every node will eventually detect the failed nodes and will reject the operation on the data structure which requires the quorum.
+For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection, a time window to detect quorum is not satisfied anymore. Length of this window depends on the failure detector. Given guarantee is, every member will eventually detect the failed members and will reject the operation on the data structure which requires the quorum.
 
-For more info, see [Consistency and Replication Model section](#consistency-and-replication-model).
+For more information, please see the [Consistency and Replication Model chapter](#consistency-and-replication-model).
 
 
 ### Configuring Quorum
