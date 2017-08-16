@@ -8,6 +8,8 @@
 ![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot integrate OpenSSL into Hazelcast when [Hazelcast Encryption](03_Encryption.md) 
 is enabled.*
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *You currently cannot use OpenSSL integration with Hazelcast when using IBM JDK.*
+
 TLS/SSL in Java is normally provided by the JRE. However, the performance overhead can be significant; even with AES intrensics
 enabled. If you are using Linux, Hazelcast provides OpenSSL integration for TLS/SSL which can provide significant performance
 improvements.
@@ -25,7 +27,7 @@ Below sections explain these steps.
 
 ### Installing OpenSSL
 
-Install OpenSSL. Make sure that you are installing 1.0.1 or 1.0.2 releases. Please refer to its documentation at 
+Install OpenSSL. Make sure that you are installing 1.0.1 or newer release. Please refer to its documentation at 
 [github.com/openssl](https://github.com/openssl/openssl/blob/master/INSTALL). 
 
 On the major distributions, OpenSSL is installed by default. Make sure the OpenSSL version is not suffering from the 
@@ -106,19 +108,22 @@ Configuring OpenSSL in Hazelcast is straight forward. On the client and/or membe
 using OpenSSL:
 
 ```xml
-<ssl enabled="true">
-    <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
-     
-    <properties>
-        <property name="keyStore">hazelcast.keystore</property>
-        <property name="keyStorePassword">123456</property>
-        <property name="keyManagerAlgorithm">SunX509</property>
-        <property name="trustManagerAlgorithm">SunX509</property>
-        <property name="trustStore">hazelcast.truststore</property>
-        <property name="trustStorePassword">123456</property>
-        <property name="protocol">TLSv1.2</property>
-    </properties>
-</ssl>
+<network>
+    ...
+    <ssl enabled="true">
+        <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
+         
+        <properties>
+            <property name="keyStore">hazelcast.keystore</property>
+            <property name="keyStorePassword">123456</property>
+            <property name="keyManagerAlgorithm">SunX509</property>
+            <property name="trustManagerAlgorithm">SunX509</property>
+            <property name="trustStore">hazelcast.truststore</property>
+            <property name="trustStorePassword">123456</property>
+            <property name="protocol">TLSv1.2</property>
+        </properties>
+    </ssl>
+</network>
 ```
 The configuration is almost the same as regular TLS/SSL integration. The main difference is the `OpenSSLEngineFactory` factory class.
 
@@ -161,7 +166,7 @@ The cipher suites are configured using the `ciphersuites` property as shown belo
         ...
         ...
         <property name="ciphersuites">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-                                      TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA
+                                      TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA</property>
     </properties>
 </ssl>
 ```
