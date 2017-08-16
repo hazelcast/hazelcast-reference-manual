@@ -1,5 +1,7 @@
 
-# Network Partitioning - Split-Brain Syndrome
+# Network Partitioning
+
+## Split-Brain Syndrome
 
 In general, network partitioning is a network failure that causes the members to split into multiple groups such that a member in a group cannot communicate with members in other groups. In a partition scenario, all sides of the original cluster will operate independently assuming members in other sides are failed. Network partitioning is also called as _Split-Brain Syndrome_.
 
