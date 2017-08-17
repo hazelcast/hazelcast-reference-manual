@@ -28,7 +28,7 @@ public class FillMapMember {
     capitalcities.put( "11", "Moscow" );
     ...
     ...
-    capitalcities.put( "120", "Stockholm" )
+    capitalcities.put( "120", "Stockholm" );
   }
 }
 ```
