@@ -3,8 +3,8 @@
 
 You can use the User Code Deployment at the client side for the following situations:
 
-1. You have objects that will run on the cluster by the clients such as `Runnable`, `Callable`, and Entry Processors.
-2. You have user domain objects stored in the members (in-memory format is set to `Object`) which need to be deployed to other members.
+1. You have objects that will run on the cluster via the clients such as `Runnable`, `Callable`, and Entry Processors.
+2. You have new or amended user domain objects (in-memory format of the IMap set to `Object`) which need to be deployed into the cluster.
 
 When this feature is enabled, the clients will deploy these classes to the members. By this way, when a client adds a new class, the members will not require restarts to include the new classes in classpath. 
 
