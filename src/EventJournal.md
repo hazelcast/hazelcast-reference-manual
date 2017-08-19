@@ -2,7 +2,7 @@
 
 The event journal is a distributed data structure that stores the history of mutation actions on data structures such as map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) will create an event which will be stored in the event journal. The event will store the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or by configuring expiration and eviction. 
 
-By reading from the event journal you can recreate the state of the map or cache at any point in time. Currently the event journal does not expose public API for reading the event journal in Hazelcast IMDG. The event journal should be used in conjunction with [Hazelcast Jet](http://jet.hazelcast.org/). Because of this we will describe how to configure it but not how to use it from IMDG.
+By reading from the event journal you can recreate the state of the map or cache at any point in time. Currently the event journal does not expose a public API for reading the event journal in Hazelcast IMDG. The event journal should be used in conjunction with [Hazelcast Jet](http://jet.hazelcast.org/). Because of this we will describe how to configure it but not how to use it from IMDG.
 
 The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer and shares much similarities with it.
  
