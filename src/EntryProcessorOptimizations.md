@@ -5,7 +5,7 @@ By default the entry processor executes on a partition thread. A partition threa
 one or more partitions. The design of entry processor assumes users have fast user code execution of the `process()` method.
 In the pathological case where the code that is very heavy and executes in multi-milliseconds, this may create a bottleneck.
 
-We have slow user code detection which can be used to log a warning controlled by some system properties:
+We have slow user code detection which can be used to log a warning controlled by the following system properties:
 
 - `hazelcast.slow.operation.detector.enabled` (default: true)
 - `hazelcast.slow.operation.detector.threshold.millis` (default: 10000)
