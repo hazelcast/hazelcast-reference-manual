@@ -5,19 +5,19 @@ By default the entry processor executes on a partition thread. A partition threa
 one or more partitions. The design of entry processor assumes users have fast user code execution of the `process()` method.
 In the pathological case where the code that is very heavy and executes in multi-milliseconds, this may create a bottleneck.
 
-We have slow user code detection which can be used to log a warning controlled by the following system properties:
+We have a slow user code detector which can be used to log a warning controlled by the following system properties:
 
 - `hazelcast.slow.operation.detector.enabled` (default: true)
 - `hazelcast.slow.operation.detector.threshold.millis` (default: 10000)
 
-The defaults catch extremely slow operations but you should set this much lower, say to 1ms, at development time to catch entry processors that could be problematic in production. These are good candidates for our optimisations.
+The defaults catch extremely slow operations but you should set this much lower, say to 1ms, at development time to catch entry processors that could be problematic in production. These are good candidates for our optimizations. Please see the [Slow Operation Detector section](#slow-operation-detector) for more information.
 
-We have two optimisations:
+We have two optimizations:
 
-- `Offloadable` which moves execution off the parititon thread to an executor thread
+- `Offloadable` which moves execution off the partition thread to an executor thread
 - `ReadOnly` which means we can avoid taking a lock on the key
 
-These are enabled very simply by implementing thse interfaces in your `EntryProcessor`.
+These are enabled very simply by implementing these interfaces in your `EntryProcessor`.
 
 As of 3.9, these optimizations apply to the following IMap methods only:
 
