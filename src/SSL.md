@@ -218,4 +218,10 @@ Having more client I/O threads than members in the cluster will not lead to an i
 
 ### TLS/SSL Debugging
 
-To assist with TLS/SSL problems, the following system property can be added `-Djavax.net.debug=all` which will provide a lot of logging output, including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information see http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html
+To assist with TLS/SSL issues, the following system property can be used:
+
+```
+-Djavax.net.debug=all
+```
+
+The property will provide a lot of logging output including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information please see [Debugging TSL/SSL Connections](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html).
