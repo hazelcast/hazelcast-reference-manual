@@ -71,7 +71,7 @@ $ curl http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
 
 **Changing the cluster version:**
 
-To upgrade cluster version, after having upgraded all your cluster's members to a new minor version, use the following `curl` command:
+To upgrade the cluster version, after having upgraded all members of your cluster to a new minor version, use the following `curl` command:
 
 ```
 $ curl --data "${GROUPNAME}&${PASSWORD}&${CLUSTER_VERSION}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
@@ -86,5 +86,5 @@ $ curl --data "dev&dev-pass&3.9" http://127.0.0.1:5701/hazelcast/rest/management
 ```
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *You can also perform the above cluster version operations using Hazelcast Management Center or using the script `cluster.sh`. Learn more in [Rolling Member Upgrades section](#RollingMemberUpgrades) and [Using the Script cluster.sh section](#using-the-script-cluster-sh).*
+![image](images/NoteSmall.jpg) ***NOTE:*** *You can also perform the above cluster version operations using Hazelcast Management Center or using the script `cluster.sh`. Please see the [Rolling Member Upgrades chapter](#rolling-member-upgrades) and [Using the Script cluster.sh section](#using-the-script-cluster-sh).*
 <br></br>
