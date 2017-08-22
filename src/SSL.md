@@ -215,3 +215,7 @@ be changed using the `hazelcast.client.io.input.thread.count` and `hazelcast.cli
 By default it is 1 input thread and 1 output thread. If TLS/SSL is enabled, it will default to 3 input threads and 3 output threads.
 Having more client I/O threads than members in the cluster will not lead to an increased performance. So with a 2-member cluster,
 2 in and 2 out threads will give the best performance.
+
+### TLS/SSL Debugging
+
+To assist with TLS/SSL problems, the following system property can be added `-Djavax.net.debug=all` which will provide a lot of logging output, including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information see http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html
