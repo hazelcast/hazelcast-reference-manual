@@ -115,62 +115,68 @@ order count.
 3. Upon completion of the `Callable` task, return the result (remaining order count). You 
 do not have to wait until the task is completed; since distributed executions are asynchronous, you can do other things in the meantime.
 
-Here is some example code.
+Here is an example code.
 
 ```java
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
-public int removeOrder( long customerId, long orderId ) throws Exception {
-  IExecutorService executorService
-    = hazelcastInstance.getExecutorService( "ExecutorService" );
-  
-  OrderDeletionTask task = new OrderDeletionTask( customerId, orderId );
-  Future<Integer> future = executorService.submit( task );
-  int remainingOrders = future.get();
-  
-  return remainingOrders;
-}
+    public int removeOrder(long customerId, long orderId) throws Exception {
+        IExecutorService executorService = hazelcastInstance.getExecutorService("ExecutorService");
 
-public static class OrderDeletionTask
-    implements Callable<Integer>, PartitionAware, Serializable {
+        OrderDeletionTask task = new OrderDeletionTask(customerId, orderId);
+        Future<Integer> future = executorService.submit(task);
+        int remainingOrders = future.get();
 
-  private long customerId;
-  private long orderId;
-
-  public OrderDeletionTask() {
-  }
-
-  public OrderDeletionTask(long customerId, long orderId) {
-    this.customerId = customerId;
-    this.orderId = orderId;
-  }
-
-  @Override
-  public Integer call() {
-    Map<Long, Customer> customerMap = hazelcastInstance.getMap( "customers" );
-    IMap<OrderKey, Order> orderMap = hazelcastInstance.getMap( "orders" );
-    
-    mapCustomers.lock( customerId );
-    Customer customer = mapCustomers.get( customerId );
-    Predicate predicate = Predicates.equal( "customerId", customerId );
-    Set<OrderKey> orderKeys = orderMap.localKeySet( predicate );
-    int orderCount = orderKeys.size();
-    for (OrderKey key : orderKeys) {
-      if (key.orderId == orderId) {
-        orderCount--;
-        orderMap.delete( key );
-      }
+        return remainingOrders;
     }
-    mapCustomers.unlock( customerId );
-    
-    return orderCount;
-  }
 
-  @Override
-  public Object getPartitionKey() {
-    return customerId;
-  }
-}
+    public static class OrderDeletionTask
+            implements Callable<Integer>, PartitionAware, Serializable, HazelcastInstanceAware {
+
+        private long orderId;
+        private long customerId;
+        private HazelcastInstance hazelcastInstance;
+
+        public OrderDeletionTask() {
+        }
+
+        public OrderDeletionTask(long customerId, long orderId) {
+            this.customerId = customerId;
+            this.orderId = orderId;
+        }
+
+        @Override
+        public Integer call() {
+            IMap<Long, Customer> customerMap = hazelcastInstance.getMap("customers");
+            IMap<OrderKey, Order> orderMap = hazelcastInstance.getMap("orders");
+
+            customerMap.lock(customerId);
+
+            Predicate predicate = Predicates.equal("customerId", customerId);
+            Set<OrderKey> orderKeys = orderMap.localKeySet(predicate);
+            int orderCount = orderKeys.size();
+            for (OrderKey key : orderKeys) {
+                if (key.orderId == orderId) {
+                    orderCount--;
+                    orderMap.delete(key);
+                }
+            }
+
+            customerMap.unlock(customerId);
+
+            return orderCount;
+        }
+
+        @Override
+        public Object getPartitionKey() {
+            return customerId;
+        }
+
+        @Override
+        public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+            this.hazelcastInstance = hazelcastInstance;
+        }
+    }
 ```
 
 The benefits of doing the same operation with distributed `ExecutorService` based on the key are:
