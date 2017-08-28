@@ -3,6 +3,8 @@
 
 There are some advanced client configuration properties to tune some aspects of Hazelcast Client. You can set them as property name and value pairs through declarative configuration, programmatic configuration, or JVM system property. Please see the [System Properties section](#system-properties) to learn how to set these properties.
 
+![note](images/NoteSmall.jpg) ***NOTE:*** *When you want to reconfigure a system property, you need to restart the members for which the property is modified.*
+
 The table below lists the client configuration properties with their descriptions.
 
 Property Name | Default Value | Type | Description
