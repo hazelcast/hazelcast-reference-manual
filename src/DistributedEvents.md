@@ -10,20 +10,33 @@ As a rule of thumb, your event listener should not implement heavy processes in 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *In a failover scenario, events are not highly available and may get lost. Eventing mechanism is being improved for failover scenarios.*
 
 
+Hazelcast offers the following event listeners. 
 
-## Event Listeners for Hazelcast Members
-
-Hazelcast offers the following event listeners:
+For cluster events:
 
 - **Membership Listener** for cluster membership events.
 - **Distributed Object Listener** for distributed object creation and destroy events.
 - **Migration Listener** for partition migration start and complete events.
 - **Partition Lost Listener** for partition lost events.
 - **Lifecycle Listener** for `HazelcastInstance` lifecycle events.
+- **Client Listener** for client connection events.
+
+
+For distributed object events:
+
 - **Entry Listener** for `IMap` and `MultiMap` entry events.
 - **Item Listener** for `IQueue`, `ISet` and `IList` item events.
 - **Message Listener** for `ITopic` message events.
-- **Client Listener** for client connection events.
 
+For Hazelcast JCache implementation:
+
+- **Cache Entry Listener**, please see [CacheEntryListener](#cacheentrylistener).
+- **Cache Partition Lost Listener**, please see [ICache Partition Lost Listener](#icache-partition-lost-listener).
+
+For Hazelcast clients:
+
+- **Lifecycle Listener**
+- **Membership Listener**
+- **Distributed Object Listener**
 
 
