@@ -10,7 +10,7 @@ We have a slow user code detector which can be used to log a warning controlled 
 - `hazelcast.slow.operation.detector.enabled` (default: true)
 - `hazelcast.slow.operation.detector.threshold.millis` (default: 10000)
 
-The defaults catch extremely slow operations but you should set this much lower, say to 1ms, at development time to catch entry processors that could be problematic in production. These are good candidates for our optimizations. Please see the [Slow Operation Detector section](#slow-operation-detector) for more information.
+The defaults catch extremely slow operations but you should set this much lower, say to 1ms, at development time to catch entry processors that could be problematic in production. These are good candidates for our optimizations.
 
 We have two optimizations:
 
