@@ -2,7 +2,7 @@
 
 The table below lists the system properties with their descriptions in alphabetical order.
 
-
+![note](images/NoteSmall.jpg) ***NOTE:*** *When you want reconfigure a system property, you need to restart the members for which the property is modified.*
 
 Property Name | Default Value | Type | Description
 :--------------|:---------------|:------|:------------
