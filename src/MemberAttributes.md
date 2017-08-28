@@ -52,3 +52,11 @@ member4.setIntAttribute( "CPU_CORE_COUNT", 2 );
 ```
 
 For another example, you can tag some members with a filter so that a member in the cluster can load classes from those tagged members. Please see the [User Code Deployment section](#user-code-deployment) for more information.
+
+You can also configure your member attributes through declarative configuration and start your member afterwards. Here is how you can use the declarative approach:
+
+```xml
+<member-attributes>
+  <attribute name="CPU_CORE_COUNT">4</attribute-name>
+</member-attributes>
+```
