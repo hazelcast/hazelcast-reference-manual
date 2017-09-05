@@ -17,6 +17,11 @@ In order to configure Clustered JMX, use the following command line parameters f
 - `-Dhazelcast.mc.jmx.enabled=true` (default is false)
 - `-Dhazelcast.mc.jmx.port=9000` (optional, default is 9999)
 
+Starting with Hazelcast Management Center 3.8.4, you can also use the following parameters:
+
+- `-Dhazelcast.mc.jmx.rmi.port=9001` (optional, default is 9998)
+- `-Dhazelcast.mc.jmx.host=localhost` (optional, default is server's host name)
+
 
 With embedded Jetty, you do not need to deploy your Management Center application to any container or application server.
 
