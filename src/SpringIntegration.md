@@ -408,6 +408,19 @@ public interface IDummyBean {
 }
 ```
 
+##### Defining Timeouts for Cache Read Operation
+
+Starting with Hazelcast 3.8.4, you can define a timeout value for the get operations from your Spring cache. This may be useful for some cases such as required by SLAs. Hazelcast provides a property to specify this timeout: `hazelcast.spring.cache.prop`. This can be specified as a Java property (using `-D`) or you can add this property to your Spring properties file (usually named as `application.properties`).
+
+A sample usage is given below:
+
+```
+hazelcast.spring.cache.prop=defaultReadTimeout=2,cache1=10,cache2=20
+```
+
+The argument `defaultReadTimeout` applies to all of your Spring caches. If you want to define different timeout values for some specific Spring caches, you can provide them as a comma separated list as shown in the above sample usage. The values are in milliseconds. If you want to have no timeout for a cache, simply set it to `0` or a negative value.
+
+
 #### Declarative Hazelcast JCache Based Caching Configuration
 
 ```xml
