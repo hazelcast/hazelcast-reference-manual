@@ -27,6 +27,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Distributed Query](#distributed-query)||Explanation for the `__key` attribute added under [Querying with SQL](#querying-with-sql) section.
 ||[Fast-Aggregations](#fast-aggregations)|Added as a new section.
 ||[Projections](#projections)|Added as a new section.
+|[Hazelcast Java Client](#hazelcast-java-client)||[Setting Outbound Ports](#setting-outbound-ports) added as a new section.
 |[Hazelcast JCache](#hazelcast-jcache)|[Scoping to Join Clusters](#scoping-to-join-clusters)|Enhanced the content to explain and give examples about the Hazelcast instance creations during cache manager starts.
 |[Integrated Clustering](#integrated-clustering)|[Integrating with Spring](#integrating-with-spring)| Added "Defining Timeouts for Cache Read Operation" as a new section.
 |[Storage](#storage)|[Hot Restart Persistence](#hot-restart-persistence)|Added example scenarios to give more idea on how the restart process and force start works.<br></br> Added the new configuration element `parallelism`. <br></br> Added the new section Moving/Copying Hot Restart Data. <br></br> Added the new section Partial Start and the new configuration element `cluster-data-recovery-policy`. <br></br> Added the new section [Hot Backup](#hot-backup).
