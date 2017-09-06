@@ -46,8 +46,7 @@ A backup update can be missed because of a few reasons, such as a stale partitio
 
 In some cases, although the target member of an invocation is assumed to be alive by the failure detector, the target may not execute the operation or send the response back in time. Network splits, long pauses caused by high load, GC or IO (disk, network) can be listed as a few possible reasons. When an invocation doesn't receive any response from the member that owns primary replica, then invocation fails with an `OperationTimeoutException`. This timeout is 2 minutes by default and defined by the system property `hazelcast.operation.call.timeout.millis`. (See [System Properties](#system-properties) section.) When timeout is passed, result of the invocation will be indeterminate.
 
-
-## Exactly once, At least once or At most once Execution
+## Exactly-once, At-least-once or At-most-once Execution
 
 Hazelcast, as an AP product, does not provide the exactly-once guarantee. In general, Hazelcast tends to be an at-least-once solution.
 
@@ -58,3 +57,14 @@ In the following failure case, exactly-once guarantee can be broken:
 In the following failure case, invocation state will become indeterminate:
 
 * As explained above, when an invocation does not receive a response in time, invocation will fail with an `OperationTimeoutException`. This exception does not say anything about outcome of the operation, that means operation may not be executed at all, it may be executed once or twice (due to member left case explained above).
+
+## IndeterminateOperationStateException
+
+As described in [Invocation Lifecycle](#invocation-lifecycle) section, for partition-based invocations, such as `map.put()`, a caller waits with a timeout for the operation is executed on corresponding partition's primary replica and backup replicas, based on the sync backup configuration of the distributed data structure. Hazelcast 3.9 introduces a new mechanism to detect indeterminate situations while making such invocations. If `hazelcast.operation.fail.on.indeterminate.state` system property is enabled, an invocation throws `IndeterminateOperationStateException` when it encounters following cases:
+
+- The operation fails on partition primary replica node with `MemberLeftException`. In this case, the caller may not determine the status of the operation. It could happen that the primary replica executes the operation, but fails before replicating it to all required backup replicas. Even if the caller receives backup acks from some backup replicas, it cannot decide if it has received all required ack responses, since it does not know how many acks it should wait for.
+
+- There is at least one missing ack from backup replicas for the given timeout duration. In this case, the caller knows that the operation is executed on the primary replica, but some backup may have missed it. It could be also a false-positive, if the backup timeout duration is configured with a very small value. However, Hazelcast's active anti-entropy mechanism eventually kicks in and resolves durability of the write on all available backup replicas as long as the primary replica node is alive. 
+
+When an invocation fails with `IndeterminateOperationStateException`, the system does not try to rollback the changes which are executed on healthy replicas. Effect of a failed invocation may be even observed by another caller, if the invocation has succeeded on the primary replica. Hence, this new behaviour does not guarantee linearizability. However, if an invocation completes without `IndeterminateOperationStateException` when the configuration is enabled, it is guaranteed that the operation has been executed exactly-once on primary replica and specified number of backup replicas of the partition.
+  
