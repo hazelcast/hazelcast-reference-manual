@@ -47,6 +47,10 @@ Here is an example of configuring network for Java Client declaratively.
     <address>127.0.0.1</address>
     <address>127.0.0.2</address>
   </cluster-members>
+  <outbound-ports>
+     <ports>34600</ports>
+     <ports>34700-34710</ports>
+  </outbound-ports>
   <smart-routing>true</smart-routing>
   <redo-operation>true</redo-operation>
   <socket-interceptor enabled="true">
@@ -77,6 +81,26 @@ Here is an example of configuring network for Java Client programmatically.
 ```java
 ClientConfig clientConfig = new ClientConfig();
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
+networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703")
+             .setSmartRouting(true)
+             .addOutboundPortDefinition("34700-34710")
+             .setRedoOperation(true)
+             .setConnectionTimeout(5000)
+             .setConnectionAttemptLimit(5)
+             
+ClientAwsConfig clientAwsConfig = new ClientAwsConfig();
+clientAwsConfig.setInsideAws( false )
+               .setAccessKey( "my-access-key" )
+               .setSecretKey( "my-secret-key" )
+               .setRegion( "us-west-1" )
+               .setHostHeader( "ec2.amazonaws.com" )
+               .setSecurityGroupName( ">hazelcast-sg" )
+               .setTagKey( "type" )
+               .setTagValue( "hz-members" )
+               .setIamRole( "s3access" )
+               .setEnabled( true );
+clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
+HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 ```
 
 #### Configuring Address List
@@ -110,6 +134,44 @@ networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703");
 If the port part is omitted, then 5701, 5702, and 5703 will be tried in random order.
 
 You can provide multiple addresses with ports provided or not, as seen above. The provided list is shuffled and tried in random order. Default value is *localhost*.
+
+#### Setting Outbound Ports
+
+You may want to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast Java client to use only defined outbound ports. The following are example configurations.
+
+
+**Declarative:**
+
+```xml
+  <network>
+    <outbound-ports>
+      <!-- ports between 34700 and 34710 -->
+      <ports>34700-34710</ports>
+      <!-- comma separated ports -->
+      <ports>34700,34701,34702,34703</ports> 
+      <ports>34700,34705-34710</ports>
+    </outbound-ports>
+  </network>
+```
+
+**Programmatic:**
+
+```java
+...
+NetworkConfig networkConfig = config.getNetworkConfig();
+// ports between 34700 and 34710
+networkConfig.addOutboundPortDefinition("34700-34710");
+// comma separated ports
+networkConfig.addOutboundPortDefinition("34700,34701,34702,34703");
+networkConfig.addOutboundPort(34705);
+...
+```
+
+***Note:*** *You can use port ranges and/or comma separated ports.*
+
+As shown in the programmatic configuration, you use the method `addOutboundPort` to add only one port. If you need to add a group of ports, then use the method `addOutboundPortDefinition`. 
+
+In the declarative configuration, the element `ports` can be used for both single and multiple port definitions.
 
 #### Setting Smart Routing
 
