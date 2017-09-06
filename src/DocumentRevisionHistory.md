@@ -25,6 +25,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Hazelcast Java Client](#hazelcast-java-client)|[Enabling Client TLS/SSL](#enabling-client-tlsssl)|Added information related to mutual authentication.
 ||[Configuring Client Connection Strategy](#configuring-client-connection-strategy)| Added as a new section.
 ||[Async Start and Reconnect Modes](#async-start-and-reconnect-modes)|Added as a new section.
+||[Setting Outbound Ports](#setting-outbound-ports)| Added as a new section.
 |[Management](#management)|[Using Management Center with TLS/SSL Only](#;)|Added as a new section.
 ||[Promoting Lite Members to Data Member](#promoting-lite-members-to-data-member)| Added as a new section.
 ||[Managing Cluster and Member States](#managing-cluster-and-member-states)| Added the explanation for the new cluster state `NO_MIGRATION`.
