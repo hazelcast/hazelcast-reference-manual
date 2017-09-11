@@ -16,9 +16,9 @@ This is because eviction and expiration randomly choose entries to be evicted/ex
 
 #### Configuring Event Journal Capacity
 
-By default, an event journal is configured with a `capacity` of 10000 items. This creates an array with a size of 10000. If 
+By default, an event journal is configured with a `capacity` of 10000 items. This creates a single array per partition, roughly the size of the capacity divided by the number of partitions. Thus, if the configured capacity is 10000 and the number of partitions is 271, we will create 271 arrays of size 36 (10000/271). If 
 a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item. 
-In a lot of cases you may want to change this `capacity` number to something that better fits your needs. 
+A single array of the event journal keeps events that are only related to the map entries in that partition. In a lot of cases you may want to change this `capacity` number to something that better fits your needs. As the capacity is shared between partitions, keep in mind not to set it to a value which is too low for you. Setting the capacity to a number lower than the partition count will result in an error when initializing the event journal. 
 
 Below is a declarative configuration example of an event journal with a `capacity` of 2000 items:
 
