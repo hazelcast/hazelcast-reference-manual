@@ -15,16 +15,9 @@ Property Name | Default Value | Type | Description
 `hazelcast.cache.invalidation.batch.size`|100|int|Defines the maximum number of cache invalidation events to be drained and sent to the event listeners in a batch.
 `hazelcast.cache.invalidation.batchfrequency.seconds`|5|int|Defines cache invalidation event batch sending frequency in seconds.
 `hazelcast.clientengine.thread.count`||int|Maximum number of threads to process non-partition-aware client requests, like `map.size()`, query, executor tasks, etc. Default count is 20 times number of cores.
-`hazelcast.client.event.queue.capacity`|1000000|string|Default value of the capacity of executor that handles incoming event packets.
-`hazelcast.client.event.thread.count`|5|string|Thread count for handling incoming event packets.
-`hazelcast.client.heartbeat.interval`|10000|string|The frequency of heartbeat messages sent by the clients to members.
-`hazelcast.client.heartbeat.timeout`|300000|string|Timeout for the heartbeat messages sent by the client to members. If no messages pass between client and member within the given time via this property in milliseconds, the connection will be closed.
 `hazelcast.invalidation.max.tolerated.miss.count`|10|int|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
 `hazelcast.invalidation.reconciliation.interval.seconds`|60|int|Period for which the cluster members are scanned to compare generated invalidation events with the received ones from Near Cache.
-`hazelcast.client.invocation.timeout.seconds`|120|string|Time to give up the invocation when a member in the member list is not reachable.
 `hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the member assumes the client is dead and closes its connections to the client.
-`hazelcast.client.responsequeue.idlestrategy`|block|string|Specifies whether the response thread for internal operations at the client side will be blocked or not. If you use `block` (the default value) the thread will be blocked and need to be notified which can cause a reduction in the performance. If you use `backoff` there will be no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this will increase CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
-`hazelcast.client.shuffle.member.list`|true|string|The client shuffles the given member list to prevent all clients to connect to the same member when this property is `false`. When it is set to `true`, the client tries to connect to the members in the given order.
 `hazelcast.compatibility.3.6.client`|false|bool|When this property is true, if the server cannot determine the connected client version, it will assume that it has the version 3.6.x. This property is especially needed if you are using ICache (or JCache).
 `hazelcast.connect.all.wait.seconds` | 120 | int | Timeout to connect all other cluster members when a member is joining to a cluster.
 `hazelcast.connection.monitor.interval` | 100 | int  |   Minimum interval in milliseconds to consider a connection error as critical.
@@ -70,8 +63,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.mastership.claim.timeout.seconds`  | 120  | int  | Timeout which defines when master candidate gives up waiting for response to its mastership claim. After timeout happens, non-responding member will be removed from the member list.
 `hazelcast.max.join.merge.target.seconds`|20|int|Split-brain merge timeout for a specific target.
 `hazelcast.max.join.seconds`|300|int| Join timeout, maximum time to try to join before giving.
-`hazelcast.max.no.heartbeat.seconds` | 300 | int  |   Maximum timeout of heartbeat in seconds for a member to assume it is dead. ***CAUTION***: *Setting this value too low may cause members to be evicted from the cluster when they are under heavy load: they will be unable to send heartbeat operations in time, so other members will assume that it is dead.*
-`hazelcast.max.no.master.confirmation.seconds` | 450 | int  |   Max timeout of master confirmation from other members.
+`hazelcast.max.no.heartbeat.seconds` | 60 | int  |   Maximum timeout of heartbeat in seconds for a member to assume it is dead. ***CAUTION***: *Setting this value too low may cause members to be evicted from the cluster when they are under heavy load: they will be unable to send heartbeat operations in time, so other members will assume that it is dead.*
+`hazelcast.max.no.master.confirmation.seconds` | 150 | int  |   Max timeout of master confirmation from other members.
 `hazelcast.max.wait.seconds.before.join` | 20 | int  |   Maximum wait time before join operation.
 `hazelcast.mc.max.visible.instance.count` | 100 | int  |   Management Center maximum visible instance count.
 `hazelcast.mc.max.visible.slow.operations.count`|10|int|Management Center maximum visible slow operations count.
