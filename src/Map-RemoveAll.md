@@ -1,6 +1,6 @@
 
 
-### Removing Bulk Map Entries with Predicates
+### Removing Map Entries in Bulk with Predicates
 
 You can remove all map entries that match your predicate. For this, Hazelcast offers the method `removeAll()`. Its syntax is as follows:
 
@@ -8,7 +8,7 @@ You can remove all map entries that match your predicate. For this, Hazelcast of
 void removeAll(Predicate<K, V> predicate);
 ```
 
-Normally the map entries matching the predicate are found with a full scan in the map. But if the entries are indexed, then Hazelcast uses index search to find those entries. In the case of indexing, you can expect that finding the entries are faster.
+Normally the map entries matching the predicate are found with a full scan of the map. If the entries are indexed, Hazelcast uses the index search to find them. With index, you can expect that finding the entries is faster.
 
 
 ![Note](images/NoteSmall.jpg) ***NOTE:*** *When `removeAll()` is called, ALL entries in the caller member's Near Cache are also removed.*
