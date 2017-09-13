@@ -171,7 +171,7 @@ The following are the descriptions of MapStore configuration elements and attrib
 - `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries will be tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
 - `write-coalescing`: In write-behind mode, Hazelcast coalesces updates on a specific key by default; it applies only the last update on it. You can set this element to `false` to store all updates performed on a key to the data store.
 - `enabled`: True to enable this map-store, false to disable. Default value is true.
-- `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded.
+- `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded. Please see the [Initializing Map on Startup section](#initializing-map-on-startup) for more details.
 
 
 #### Storing Entries to Multiple Maps
