@@ -13,6 +13,7 @@ To enable diagnostics logging, you should specify the following properties an th
 -Dhazelcast.diagnostics.invocation.sample.period.seconds=30
 -Dhazelcast.diagnostics.pending.invocations.period.seconds=30
 -Dhazelcast.diagnostics.slowoperations.period.seconds=30
+-Dhazelcast.diagnostics.storeLatency.period.seconds=60
 ```
 
 At the client side you should specify the following properties:
@@ -35,6 +36,12 @@ The name of the log file has the following format:
 
 ```
 diagnostics-<host IP>#<port>-<unique ID>.log
+```
+
+The name of the log file can be prefixed with a custom string using:
+
+```
+-Dhazelcast.diagnostics.filename.prefix=foobar
 ```
 
 The content format of the diagnostics log file is depicted below:
