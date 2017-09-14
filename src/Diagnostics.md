@@ -38,7 +38,7 @@ The name of the log file has the following format:
 diagnostics-<host IP>#<port>-<unique ID>.log
 ```
 
-The name of the log file can be prefixed with a custom string using:
+The name of the log file can be prefixed with a custom string as shown below:
 
 ```
 -Dhazelcast.diagnostics.filename.prefix=foobar
