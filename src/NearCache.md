@@ -38,6 +38,9 @@ The following matrix shows the Hazelcast data structures with Near Cache support
 
 The following shows the configuration for the Hazelcast Near Cache.
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *Please keep in mind that, if you want to use near cache on a Hazelcast member, configure it on the member; if you want to use it on a Hazelcast client, configure it on the client.*
+
+
 **Declarative**:
 
 ```xml
