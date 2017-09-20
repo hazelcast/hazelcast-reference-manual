@@ -64,3 +64,9 @@ The following is the Spring declarative configuration for the same sample.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with Hazelcast 3.9, if you configure the data structure to use [High-Density Memory Store](#configuring-high-density-memory-store) ***and*** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full GCs, when doing a lot of updates to index.*
+
+
+#### Indexing Attributes with ValueExtractor
+
+You can also define custom attributes that may be referenced in predicates, queries and indexes. Custom attributes can be defined by implementing a `ValueExtractor`. Please see the [Indexing Custom Attributes section](#indexing-custom-attributes) for details.
+
