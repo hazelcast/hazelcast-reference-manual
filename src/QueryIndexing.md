@@ -2,6 +2,9 @@
 
 ### Indexing Queries
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Since Hazelcast 3.9, if you configure the data structure to use [High-Density Memory Store](#configuring-high-density-memory-store) ***and*** indexes, the indexes are automatically stored in the HD memory store as well. This prevents from running into full GCs, when doing a lot of updates to index.*   
+
 Hazelcast distributed queries will run on each member in parallel and will return only the results to the caller.
 Then, on the caller side, the results will be merged.
 
