@@ -85,10 +85,12 @@ Here are the descriptions for the properties:
  
 * `keystore`: Path of your keystore file. Note that your keystore's type must be `JKS`.
 * `keyStorePassword`: Password to access the key from your keystore file.
+* `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
+* `keyStoreType`: The type of the keystore. Its default value is `JKS`. 
 * `truststore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application. Its type should be `JKS`.
 * `trustStorePassword`: Password to unlock the truststore file.
-* `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
 * `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
+* `trustStoreType`: The type of the truststore. Its default value is `JKS`. 
 * `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLS`. Available values are:
   * SSL
   * SSLv2
