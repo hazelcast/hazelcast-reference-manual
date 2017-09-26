@@ -227,7 +227,7 @@ psConfig.setPartitioningStrategyClass( "StringAndPartitionAwarePartitioningStrat
 
 
 
-You can also define your own partition strategy by implementing the class `PartitionStrategy`. To enable your implementation, add the full class name to your Hazelcast configuration using either the declarative or programmatic approach, as sampled above.
+You can also define your own partition strategy by implementing the class `PartitioningStrategy`. To enable your implementation, add the full class name to your Hazelcast configuration using either the declarative or programmatic approach, as sampled above.
 
 Note that you can define the above strategies per map in your Hazelcast member. You can also define a strategy per member in your Hazelcast cluster. This can be done by defining the `hazelcast.partitioning.strategy.class` system property. An example declarative way of configuring this property is shown below:
 
