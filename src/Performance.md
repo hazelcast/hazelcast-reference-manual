@@ -6,6 +6,8 @@ This chapter provides information on the performance features of Hazelcast inclu
 
 Data affinity ensures that related entries exist on the same member. If related data is on the same member, operations can be executed without the cost of extra network calls and extra wire data. This feature is provided by using the same partition keys for related data.
 
+#### PartitionAware
+
 **Co-location of related data and computation**
 
 Hazelcast has a standard way of finding out which member owns/manages each key object. The following operations will be routed to the same member, since all of them are operating based on the same key `"key1"`.
@@ -184,3 +186,65 @@ The benefits of doing the same operation with distributed `ExecutorService` base
 - Only one distributed execution (`executorService.submit(task)`), instead of four.
 - Less data is sent over the wire.
 - Since lock/update/unlock cycle is done locally (local to the customer data), lock duration for the `Customer` entry is much less, thus enabling higher concurrency.
+
+
+#### PartitioningStrategy
+
+Another way of storing the related data on the same location is using/implementing the class `PartitioningStrategy`. Normally (if no partitioning strategy is defined), Hazelcast finds the partition of a key first by converting the object to binary and then by hashing this binary. If a partitioning strategy is defined, Hazelcast injects the key to the strategy and the strategy returns an object out of which the partition is calculated by hashing it.
+
+Hazelcast offers the following out-of-the-box partitioning strategies:
+
+- `DefaultPartitioningStrategy`: Default strategy. It checks whether the key implements `PartitionAware`. If it implements, the object is converted to binary and then hashed, to find the partition of the key.
+- `StringPartitioningStrategy`: Works only for string keys. It uses the string after `@` character as the partition ID. For example, if you have two keys `ordergroup1@region1` and `customergroup1@region1`, both `ordergroup1` and `customergroup1` will fall into the partition where `region1` is located.
+- `StringAndPartitionAwarePartitioningStrategy`: Works as the combination of the above two strategies. If the key implements `PartitionAware`, it works like the `DefaultPartitioningStrategy`. If it is a string key, it works like the `StringPartitioningStrategy`.
+
+
+**Declarative Configuration**
+
+
+```xml
+<hazelcast>
+...
+   <map name="your Hazelcast map's name"
+   ...
+      <partition-strategy>
+         com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
+      </partition-strategy>
+   ...
+   </map>
+...
+</hazelcast>
+```
+
+**Programmatic Configuration**
+
+```java
+Config config = new Config();
+PartitioningStrategyConfig psConfig = getPartitioningStrategyConfig();
+psConfig.setPartitioningStrategyClass( "StringAndPartitionAwarePartitioningStrategy" );
+...
+```
+
+
+
+You can also define your own partition strategy by implementing the class `PartitionStrategy`. To enable your implementation, add the full class name to your Hazelcast configuration using either the declarative or programmatic approach, as sampled above.
+
+Note that you can define the above strategies per map in your Hazelcast member. You can also define a strategy per member in your Hazelcast cluster. This can be done by defining the `hazelcast.partitioning.strategy.class` system property. An example declarative way of configuring this property is shown below:
+
+```xml
+<hazelcast>
+...
+  <properties>
+    <property name="hazelcast.partitioning.strategy.class">
+       com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
+    </property>
+    ....
+  </properties>
+  ...
+</hazelcast>
+```
+
+You can also use other system property configuration options as explained in the [Configuring with System Properties section](#configuring-with-system-properties).
+
+
+
