@@ -198,6 +198,8 @@ Hazelcast offers the following out-of-the-box partitioning strategies:
 - `StringPartitioningStrategy`: Works only for string keys. It uses the string after `@` character as the partition ID. For example, if you have two keys `ordergroup1@region1` and `customergroup1@region1`, both `ordergroup1` and `customergroup1` will fall into the partition where `region1` is located.
 - `StringAndPartitionAwarePartitioningStrategy`: Works as the combination of the above two strategies. If the key implements `PartitionAware`, it works like the `DefaultPartitioningStrategy`. If it is a string key, it works like the `StringPartitioningStrategy`.
 
+Following are the example configuration snippets. Note that these strategy configurations are **per map**.
+
 
 **Declarative Configuration**
 
@@ -205,7 +207,7 @@ Hazelcast offers the following out-of-the-box partitioning strategies:
 ```xml
 <hazelcast>
 ...
-   <map name="your Hazelcast map's name"
+   <map name="name-of-the-map">
    ...
       <partition-strategy>
          com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
@@ -220,8 +222,12 @@ Hazelcast offers the following out-of-the-box partitioning strategies:
 
 ```java
 Config config = new Config();
-PartitioningStrategyConfig psConfig = getPartitioningStrategyConfig();
+MapConfig mapConfig = config.getMapConfig("name-of-the-map");
+PartitioningStrategyConfig psConfig = mapConfig.getPartitioningStrategyConfig();
 psConfig.setPartitioningStrategyClass( "StringAndPartitionAwarePartitioningStrategy" );
+
+// OR
+psConfig.setPartitioningStrategy(YourCustomPartitioningStrategy);
 ...
 ```
 
@@ -229,7 +235,7 @@ psConfig.setPartitioningStrategyClass( "StringAndPartitionAwarePartitioningStrat
 
 You can also define your own partition strategy by implementing the class `PartitioningStrategy`. To enable your implementation, add the full class name to your Hazelcast configuration using either the declarative or programmatic approach, as sampled above.
 
-Note that you can define the above strategies per map in your Hazelcast member. You can also define a strategy per member in your Hazelcast cluster. This can be done by defining the `hazelcast.partitioning.strategy.class` system property. An example declarative way of configuring this property is shown below:
+As stated previously, above strategies are defined **per map** in your Hazelcast member. You can also define a strategy **per member** in your Hazelcast cluster. This can be done by defining the `hazelcast.partitioning.strategy.class` system property. An example declarative way of configuring this property is shown below:
 
 ```xml
 <hazelcast>
@@ -244,7 +250,7 @@ Note that you can define the above strategies per map in your Hazelcast member. 
 </hazelcast>
 ```
 
-You can also use other system property configuration options as explained in the [Configuring with System Properties section](#configuring-with-system-properties).
+You can also use other system property configuring options as explained in the [Configuring with System Properties section](#configuring-with-system-properties).
 
 
 
