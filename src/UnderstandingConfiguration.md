@@ -290,14 +290,14 @@ instance.getConfig().addMapConfig(noBackupsMap);
 
 Dynamic configuration elements must be fully configured before the invocation of `add*Config` method: at that point, the configuration object will be delivered to every member of the cluster and added to each member's dynamic configuration, so mutating the configuration object after the `add*Config` invocation will have no effect.
 
-As dynamically added data structure configuration is propagated across all cluster members, it is possible that failures may occur (e.g. timeout, network partition). The configuration propagation mechanism internally retries adding the configuration whenever a membership change is detected. However if an exception is thrown from `add*Config` method the configuration may have been partially propagated to some cluster members and adding the configuration should be retried by the user.
+As dynamically added data structure configuration is propagated across all cluster members, failures may occur due to conditions such as timeout and network partition. The configuration propagation mechanism internally retries adding the configuration whenever a membership change is detected. However if an exception is thrown from `add*Config` method, the configuration may have been partially propagated to some cluster members and adding the configuration should be retried by the user.
 
 Adding new dynamic configuration is supported for all `add*Config` methods except:
 
 - `JobTracker` which has been deprecated since Hazelcast 3.8
 - `QuorumConfig`: new quorum configuration cannot be dynamically added but other configuration can reference quorums configured in the existing static configuration
 - `WanReplicationConfig`: new WAN replication configuration cannot be dynamically added, however existing static ones can be referenced from other configurations, e.g., a new dynamic `MapConfig` may include a `WanReplicationRef` to a statically configured WAN replication config.
-- `ListenerConfig`: listeners can be instead added at runtime via other API such as `HazelcastInstance.getCluster().addMembershipListener`, `HazelcastInstance.getPartitionService().addMigrationListener` etc.
+- `ListenerConfig`: listeners can be instead added at runtime via other API such as `HazelcastInstance.getCluster().addMembershipListener` and `HazelcastInstance.getPartitionService().addMigrationListener`.
 
 ### Handling Configuration Conflicts
  
