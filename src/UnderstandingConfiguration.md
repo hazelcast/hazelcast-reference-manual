@@ -171,7 +171,7 @@ HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance( config );
 ```
 
 <br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *The `Config` must not be modified after the Hazelcast instance is started. In other words, all configuration must be completed before creating the `HazelcastInstance`. Certain additional configuration elements can be added at runtime as described in the [Dynamically Adding Configuration on a Cluster section](#dynamically-adding-configuration-on-a-cluster).*
+![image](images/NoteSmall.jpg) ***NOTE:*** *The `Config` must not be modified after the Hazelcast instance is started. In other words, all configuration must be completed before creating the `HazelcastInstance`. Certain additional configuration elements can be added at runtime as described in the [Dynamically Adding Data Structure Configuration on a Cluster section](#dynamically-adding-data-structure-configuration-on-a-cluster).*
 <br>
 
 You can also create a named Hazelcast member. In this case, you should set `instanceName` of `Config` object as shown below:
@@ -265,11 +265,11 @@ If you use Hazelcast with [Spring](https://spring.io/) you can declare beans usi
 
 Please see the [Spring Integration section](#spring-integration) for more information on Hazelcast-Spring integration.
 
-## Dynamically Adding Configuration on a Cluster
+## Dynamically Adding Data Structure Configuration on a Cluster
 
 As described above, Hazelcast can be configured in a declarative or programmatic way; configuration must be completed before starting a Hazelcast member and this configuration cannot be altered at runtime, thus we refer to this as _static_ configuration. 
 
-Starting with Hazelcast 3.9, it is possible to dynamically add certain configuration elements at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
+Starting with Hazelcast 3.9, it is possible to dynamically add configuration for certain data structures at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
  
 ```
 Config config = new Config():
@@ -290,11 +290,14 @@ instance.getConfig().addMapConfig(noBackupsMap);
 
 Dynamic configuration elements must be fully configured before the invocation of `add*Config` method: at that point, the configuration object will be delivered to every member of the cluster and added to each member's dynamic configuration, so mutating the configuration object after the `add*Config` invocation will have no effect.
 
+As dynamically added data structure configuration is propagated across all cluster members, it is possible that failures may occur (e.g. timeout, network partition). The configuration propagation mechanism internally retries adding the configuration whenever a membership change is detected. However if an exception is thrown from `add*Config` method the configuration may have been partially propagated to some cluster members and adding the configuration should be retried by the user.
+
 Adding new dynamic configuration is supported for all `add*Config` methods except:
 
 - `JobTracker` which has been deprecated since Hazelcast 3.8
 - `QuorumConfig`: new quorum configuration cannot be dynamically added but other configuration can reference quorums configured in the existing static configuration
 - `WanReplicationConfig`: new WAN replication configuration cannot be dynamically added, however existing static ones can be referenced from other configurations, e.g., a new dynamic `MapConfig` may include a `WanReplicationRef` to a statically configured WAN replication config.
+- `ListenerConfig`: listeners can be instead added at runtime via other API such as `HazelcastInstance.getCluster().addMembershipListener`, `HazelcastInstance.getPartitionService().addMigrationListener` etc.
 
 ### Handling Configuration Conflicts
  
