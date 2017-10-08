@@ -48,6 +48,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.jcache.provider.type`||string|Type of the JCache provider. Values can be `client` or `server`.
 `hazelcast.jmx` | false | bool  |   Enable [JMX](#monitoring-with-jmx) agent.
 `hazelcast.legacy.memberlist.format.enabled`  | false  |  bool  |  Enables the legacy (for the releases before Hazelcast 3.9) member list format which is printed in the logs. The new format is introduced starting with Hazelcast 3.9 and includes member list version. Any change in the cluster, such as a member leaving or joining, will increment the member list version.<br>Please see the [Starting the Member and Client section](#starting-the-member-and-client).
+`hazelcast.local.localAddress`| | string | It is an overrider property for the default server socket listener's IP address. If this property is set, then this is the address where the server socket is bound to.
+`hazelcast.local.publicAddress`| | string | It is an overrider property for the default public address to be advertised to other cluster members and clients.
 `hazelcast.lock.max.lease.time.seconds`|Long.MAX_VALUE | long | All locks which are acquired without an explicit lease time use this value (in seconds) as the lease time. When you want to set an explicit lease time for your locks, you cannot set it to a longer time than this value.
 `hazelcast.logging.type` | jdk | enum |   Name of [logging](#logging-configuration) framework type to send logging events.
 `hazelcast.mancenter.home` | mancenter | string |  Folder where Management Center data files are stored (license information, time travel information, etc.).
