@@ -227,3 +227,9 @@ To assist with TLS/SSL issues, the following system property can be used:
 ```
 
 The property will provide a lot of logging output including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information please see [Debugging TSL/SSL Connections](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html).
+
+### TLS/SSL for Hazelcast Management Center
+
+In order to use secured communication between cluster and Management Center, you have to configure the cluster, see [Connecting Hazelcast members to Management Center](http://docs.hazelcast.org/docs/management-center/3.9-EA2/manual/html/Deploying_and_Starting.html#page_Connecting+Hazelcast+members+to+Management+Center).
+
+
