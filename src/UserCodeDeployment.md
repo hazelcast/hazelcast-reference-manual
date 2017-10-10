@@ -34,12 +34,12 @@ User Code Deployment feature is not enabled by default. You can configure this f
 ```java
 Config config = new Config();
 UserCodeDeploymentConfig distCLConfig = config.getUserCodeDeploymentConfig();
-distCLConfig.setEnabled(true)
-        .setClassCacheMode(ClassCacheMode.ETERNAL)
-        .setProviderMode(ProviderMode.LOCAL_CLASSES_ONLY)
-        .setBlacklistedPrefixes("com.foo")
-        .setWhitelistedPrefixes("com.bar.MyClass")
-        .setProviderFilter("HAS_ATTRIBUTE:lite");
+distCLConfig.setEnabled( true )
+        .setClassCacheMode( ClassCacheMode.ETERNAL )
+        .setProviderMode( ProviderMode.LOCAL_CLASSES_ONLY )
+        .setBlacklistedPrefixes( "com.foo" )
+        .setWhitelistedPrefixes( "com.bar.MyClass" )
+        .setProviderFilter( "HAS_ATTRIBUTE:lite" );
 ```
 
 User Code Deployment has the following configuration elements and attributes:
