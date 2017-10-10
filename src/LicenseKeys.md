@@ -83,3 +83,21 @@ As another option, you can set your license key using the below command (the "-D
 <br> </br>
 
 
+##### License Key Format
+
+License keys have the following format:
+
+```
+<Name of the Hazelcast edition>#<Count of the Members>#<License key>
+```
+
+The strings before the `<License key>` is the human readable part. You can use your license key with or without this human readable part. So, both the following example license keys are valid:
+
+```
+HazelcastEnterpriseHD#2Nodes#1q2w3e4r5t
+```
+
+
+```
+1q2w3e4r5t
+```
