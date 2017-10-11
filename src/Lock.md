@@ -3,7 +3,7 @@
 ## Lock
 
 ILock is the distributed implementation of `java.util.concurrent.locks.Lock`, meaning that if you lock using an ILock, the critical
-section that it guards is guaranteed to be executed by only one thread in the entire cluster. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
+section that it guards is guaranteed to be executed by only one thread in the entire cluster, provided that there are no network failures. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
 
 ### Using Try-Catch Blocks with Locks
 
