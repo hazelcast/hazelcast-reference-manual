@@ -20,7 +20,7 @@ You can integrate Hazelcast with Spring and this chapter explains the configurat
 
 ***Classpath Configuration*** 
 
-![image](images/NoteSmall.jpg) ***NOTE*** To enable Spring integration, either `hazelcast-spring-`<*version*>`.jar` or `hazelcast-all-`<*version*>`.jar` must be in the classpath.
+![image](images/NoteSmall.jpg) ***NOTE:*** *To enable Spring integration, either `hazelcast-spring-<version>.jar` or `hazelcast-all-<version>.jar` must be in the classpath.*
 
 If you use Maven, add the following lines to your `pom.xml`.
 
@@ -43,22 +43,23 @@ If you use `hazelcast-spring.jar`:
   <version>"your Hazelcast version, e.g. 3.8"</version>
 </dependency>
 ```
-The users of other build systems have to adjust the definition of the dependency to their needs.
 
-***Troubleshooting***
+If you use other build systems, you have to adjust the definition of dependencies to your needs.
 
-When the Spring Integration jars are not correctly installed in the Java classpath, you may see exceptions such as the following.
+##### Troubleshooting
+
+When the Spring Integration JARs are not correctly installed in the Java classpath, you may see either of the following exceptions:
 
 ```
 org.xml.sax.SAXParseException; systemId: http://hazelcast.com/schema/spring/hazelcast-spring.xsd; lineNumber: 2; columnNumber: 35; s4s-elt-character: Non-whitespace characters are not allowed in schema elements other than 'xs:appinfo' and 'xs:documentation'. Saw '301 Moved Permanently'.
 ```
-Or the following.
+<br>
 
 ```
 org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: Unable to locate Spring NamespaceHandler for XML schema namespace [http://www.hazelcast.com/schema/spring]
 ```
+<br>
 
-Or even the following.
 
 ```
 org.xml.sax.SAXParseException; lineNumber: 25; columnNumber: 33; schema_reference.4: Failed to read schema document 'http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd', because 1) could not find the document; 2) the document could not be read; 3) the root element of the document is not <xsd:schema>.
@@ -94,8 +95,6 @@ You can declare Hazelcast Objects using the default Spring *beans* namespace. Ex
 
 
 #### Declaring Beans by *hazelcast* Namespace 
-
-***Declaring Beans*** 
 
 Hazelcast has its own namespace **hazelcast** for bean definitions. You can easily add the namespace declaration *xmlns:hz="http://www.hazelcast.com/schema/spring"* to the `beans` element in the context file so that *hz* namespace shortcut can be used as a bean declaration.
 
