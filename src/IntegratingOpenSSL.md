@@ -121,9 +121,7 @@ use the following snippet which contains all the essentials JARs.
    </dependencies>
 ```
     
-It is very important that the version of Netty jar(s) corresponds to a very specific version of netty-tcnative. 
-In case of doubt, the simplest thing to do is to download the netty tar.bz2 file from the 
-[Netty](https://netty.io/downloads.html) website and check which netty-tcnative version is used for that Netty release. 
+![Note](images/NoteSmall.jpg) ***NOTE:*** *It is very important that the version of Netty JAR(s) corresponds to a very specific version of `netty-tcnative`. In case of doubt, the simplest thing to do is to download the `netty-<version>.tar.bz2` file from the [Netty](https://netty.io/downloads.html) website and check which `netty-tcnative` version is used for that Netty release.*
   
 ### Configuring Hazelcast for OpenSSL
 
