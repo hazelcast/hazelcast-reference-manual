@@ -17,6 +17,8 @@ Client User Code Deployment feature is not enabled by default. You can configure
 
 **Declarative Configuration**
 
+In your `hazelcast-client.xml`:
+
 ```xml
 
 <user-code-deployment enabled="true">
@@ -56,3 +58,22 @@ Config config = new Config();
 UserCodeDeploymentConfig userCodeDeploymentConfig = config.getUserCodeDeploymentConfig();
 userCodeDeploymentConfig.setEnabled( true );
 ```
+
+
+##### Important to Know
+
+Note that User Code Deployment should also be enabled on the members to use this feature. 
+
+```java
+Config config = new Config();
+UserCodeDeploymentConfig userCodeDeploymentConfig = config.getUserCodeDeploymentConfig();
+userCodeDeploymentConfig.setEnabled( true );
+```
+
+Please refer to the [Member User Code Deployment section](#user-code-deployment-beta) for more information on enabling it on the member side and its configuration properties. 
+
+For the property `class-cache-mode`, Client User Code Deployment supports only the `ETERNAL` mode, regardless of the configuration set at the member side (which can be `ETERNAL` and `OFF`).
+
+For the property, `provider-mode`, Client User Code Deployment supports only the `LOCAL_AND_CACHED_CLASSES` mode, regardless of the configuration set at the member side (which can be `LOCAL_AND_CACHED_CLASSES`, `LOCAL_CLASSES_ONLY` and `OFF`).
+
+The remaining properties, which are `blacklist-prefixes`, `whitelist-prefixes` and `provider-filter` configured at the member side, will effect the client user code deployment's behavior too. For example, assuming that you provide `com.foo` as a blacklist prefix at the member side, the member will discard the classes with the prefix `com.foo` loaded by the client.
