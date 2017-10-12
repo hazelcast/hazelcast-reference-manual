@@ -52,7 +52,11 @@ User Code Deployment has the following configuration elements and attributes:
   - `LOCAL_AND_CACHED_CLASSES`: Serve classes loaded from both local classpath and from other members. This is the default value.
   - `LOCAL_CLASSES_ONLY`: Serve classes from the local classpath only. Classes loaded from other members will be used locally, but they are not served to other members.
   - `OFF`: Never serve classes to other members.
-- `<blacklist-prefixes>`: Comma separated name prefixes of classes/packages to be prevented from dynamic class loading. For example, if you set it as "com.foo", remote loading of all classes from the "com.foo" package will be blacklisted, including the classes from all its sub-packages. If you set it as "com.foo.Class", then the "Class" and all classes having the "Class" as prefix in the "com.foo" package will be blacklisted.
+- `<blacklist-prefixes>`: Comma separated name prefixes of classes/packages to be prevented from dynamic class loading. For example, if you set it as "com.foo", remote loading of all classes from the "com.foo" package will be blacklisted, including the classes from all its sub-packages. If you set it as "com.foo.Class", then the "Class" and all classes having the "Class" as prefix in the "com.foo" package will be blacklisted. There are some built-in prefixes which are blacklisted by default. These are as follows:
+  - `javax.`
+  - `java.`
+  - `sun.`
+  - `com.hazelcast.`
 - `<whitelist-prefixes>`: Comma separated name prefixes of classes/packages only from which the classes will be loaded. It allows to quickly configure remote loading only for classes from selected packages. It can be used together with blacklisting. For example, you can whitelist the prefix "com.foo" and blacklist the prefix "com.foo.secret".
 - `<provider-filter>`: Filter to constraint members to be used for a class loading request when a class is not available locally. The value is in the format "HAS_ATTRIBUTE:foo". When it is set as "HAS_ATTRIBUTE:foo", the class loading request will only be sent to the members which have "foo" as a [member attribute](#defining-member-attributes). Setting this to null will allow to load classes from all members. Please see an example in the below section.
 
