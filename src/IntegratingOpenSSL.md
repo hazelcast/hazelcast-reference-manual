@@ -70,6 +70,24 @@ For a Maven based project, the following snippet adds the JARs.
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        ...
+   </dependencies>
+```
+
+If your projects requires a smaller set of dependencies, then instead of using the larger `netty-all` jar from the previous snippet,
+use the following snippet which contains all the essentials jars.
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-tcnative-boringssl-static</artifactId>
+            <version>1.1.33.Fork26</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
             <version>4.1.8.Final</version>
         </dependency>
