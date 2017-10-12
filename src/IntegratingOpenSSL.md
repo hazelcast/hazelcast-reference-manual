@@ -77,8 +77,9 @@ For a Maven based project, the following snippet adds the JARs.
    </dependencies>
 ```
 
-If your projects requires a smaller set of dependencies, then instead of using the larger `netty-all` jar from the previous snippet,
-use the following snippet which contains all the essentials jars.
+If your projects require a smaller set of dependencies, then instead of using the larger `netty-all` JAR from the previous snippet,
+use the following snippet which contains all the essentials JARs.
+
 ```xml
     <dependencies>
         <dependency>
