@@ -55,51 +55,51 @@ The following is an example declarative configuration for map eviction.
 
 Let's describe each element:
 
-- `time-to-live`. Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
-- `max-idle-seconds`. Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
-- `eviction-policy`. Valid values are described below.
+- `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
+- `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
+- `eviction-policy`: Valid values are described below.
 	- NONE: Default policy. If set, no items will be evicted and the property `max-size` will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
 	- LRU: Least Recently Used.
 	- LFU: Least Frequently Used.
 
-- `max-size`. Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
-	- `PER_NODE`. Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than the partition count (which is 271 by default).		
+- `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
+	- `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than the partition count (which is 271 by default).		
 
 		`<max-size policy="PER_NODE">5000</max-size>`
 
-	- `PER_PARTITION`. Maximum number of map entries within each partition. Storage size depends on the partition count in a cluster member. This attribute should not be used often. For instance, avoid using this attribute with a small cluster. If the cluster is small, it will be hosting more partitions, and therefore map entries, than that of a larger cluster. Thus, for a small cluster, eviction of the entries will decrease performance (the number of entries is large).
+	- `PER_PARTITION`: Maximum number of map entries within each partition. Storage size depends on the partition count in a cluster member. This attribute should not be used often. For instance, avoid using this attribute with a small cluster. If the cluster is small, it will be hosting more partitions, and therefore map entries, than that of a larger cluster. Thus, for a small cluster, eviction of the entries will decrease performance (the number of entries is large).
 
 		`<max-size policy="PER_PARTITION">27100</max-size>`
 
-	- `USED_HEAP_SIZE`. Maximum used heap size in megabytes per map for each Hazelcast instance. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
+	- `USED_HEAP_SIZE`: Maximum used heap size in megabytes per map for each Hazelcast instance. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
 
 		`<max-size policy="USED_HEAP_SIZE">4096</max-size>`
 
-	- `USED_HEAP_PERCENTAGE`. Maximum used heap size percentage per map for each Hazelcast instance. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when used heap size exceeds 100 MB. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
+	- `USED_HEAP_PERCENTAGE`: Maximum used heap size percentage per map for each Hazelcast instance. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when used heap size exceeds 100 MB. Please note that this policy does not work when [in-memory format](#setting-in-memory-format) is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
 
 		`<max-size policy="USED_HEAP_PERCENTAGE">10</max-size>`
 
-	- `FREE_HEAP_SIZE`. Minimum free heap size in megabytes for each JVM.
+	- `FREE_HEAP_SIZE`: Minimum free heap size in megabytes for each JVM.
 
 		`<max-size policy="FREE_HEAP_SIZE">512</max-size>`
 
-	- `FREE_HEAP_PERCENTAGE`. Minimum free heap size percentage for each JVM. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when free heap size is below 100 MB.
+	- `FREE_HEAP_PERCENTAGE`: Minimum free heap size percentage for each JVM. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when free heap size is below 100 MB.
 
 		`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
 
-	- `USED_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Maximum used native memory size in megabytes per map for each Hazelcast instance.
+	- `USED_NATIVE_MEMORY_SIZE`: (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Maximum used native memory size in megabytes per map for each Hazelcast instance.
 
 		`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
 
-	- `USED_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Maximum used native memory size percentage per map for each Hazelcast instance.
+	- `USED_NATIVE_MEMORY_PERCENTAGE`: (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Maximum used native memory size percentage per map for each Hazelcast instance.
 
 		`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
 
-	- `FREE_NATIVE_MEMORY_SIZE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Minimum free native memory size in megabytes for each Hazelcast instance.
+	- `FREE_NATIVE_MEMORY_SIZE`: (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Minimum free native memory size in megabytes for each Hazelcast instance.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
 
-	- `FREE_NATIVE_MEMORY_PERCENTAGE`. (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Minimum free native memory size percentage for each Hazelcast instance.
+	- `FREE_NATIVE_MEMORY_PERCENTAGE`: (<font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>) Minimum free native memory size percentage for each Hazelcast instance.
 
 		`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
 
