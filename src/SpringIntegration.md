@@ -500,7 +500,7 @@ public class CachingConfiguration implements CachingConfigurer{
     public CacheManager cacheManager() {
         ClientConfig config = new ClientConfig();
         HazelcastInstance client = HazelcastClient.newHazelcastClient(config);
-        return new HazelcastCacheManager(client);
+        return new com.hazelcast.spring.cache.HazelcastCacheManager(client);
     }
     @Bean
     public KeyGenerator keyGenerator() {
