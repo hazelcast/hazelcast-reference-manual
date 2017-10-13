@@ -129,7 +129,7 @@ Here is how merge policies are specified per cache:
         com.hazelcast.cache.merge.LatestAccessCacheMergePolicy or LATEST_ACCESS:
             The entry which has been accessed more recently wins.
 
-        Default policy is com.hazelcast.cache.merge.PassThroughCacheMergePolicy
+        Default policy is com.hazelcast.cache.merge.PutIfAbsentCacheMergePolicy
         -->
         <merge-policy>MY_MERGE_POLICY_CLASS</merge-policy>        
     </cache>
