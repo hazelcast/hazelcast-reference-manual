@@ -1,16 +1,16 @@
 ## Event Journal
 
-The event journal is a distributed data structure that stores the history of mutation actions on data structures such as map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) will create an event which will be stored in the event journal. The event will store the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or by configuring expiration and eviction. 
+The event journal is a distributed data structure that stores the history of mutation actions on map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) will create an event which will be stored in the event journal. The event will store the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or by configuring expiration and eviction.  By reading from the event journal you can recreate the state of the map or cache at any point in time. 
 
-By reading from the event journal you can recreate the state of the map or cache at any point in time. Currently the event journal does not expose a public API for reading the event journal in Hazelcast IMDG. The event journal should be used in conjunction with [Hazelcast Jet](http://jet.hazelcast.org/). Because of this we will describe how to configure it but not how to use it from IMDG.
+![image](images/NoteSmall.jpg)***NOTE:*** *Currently the event journal does not expose a public API for reading the event journal in Hazelcast IMDG. The event journal should be used in conjunction with [Hazelcast Jet](http://jet.hazelcast.org/). Because of this we will describe how to configure it but not how to use it from IMDG. If you enable and configure the event journal, you may only reach it through private API and you will most probably not get any benefits but the journal will retain events nevertheless and consume heap space.
 
-The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer and shares much similarities with it.
+The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer (partitioned by ringbuffer item) and shares many similarities with it.
  
 ### Interaction with Evictions and Expiration for IMap
  
 Configuring IMap with eviction and expiration can cause the event journal to contain different events on the different replicas of the same partition. You can run into issues if you are reading from the event journal and the partition owner is terminated. A backup replica will then be promoted into the partition owner but the event journal will contain different events. The event count should stay the same but the entries which you previously thought were evicted and expired could now be "alive" and vice versa.
 
-This is because eviction and expiration randomly choose entries to be evicted/expired. The entry is not coordinated between partition replicas.
+This is because eviction and expiration randomly choose entries to be evicted/expired. The entry is not coordinated between partition replicas. In these cases, the event journal diverges and will not converge at any future point but will remain inconsistent just as well as the contents of the internal record stores are inconsistent between replicas. You may say that the event journal on a specific replica is in-sync with the record store on that replica but the event journals and record stores between replicas are out-of-sync. 
 
 ### Configuring Event Journal
 

@@ -63,7 +63,7 @@ Following are the definitions of configuration elements:
 Other relevant properties are:
  
 - `discovery.period`: Period in seconds in which WAN tries to reestablish connections to failed endpoints. Default is 10 (seconds).
-- `executorThreadCount`: The number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. 
+- `executorThreadCount`: The number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. It is important to determine which number of executor threads is a good value. Failure to do so can lead to performance issues - either contention on a too small number of threads or wasted threads that will not be performing any work. 
 
 And the following is the equivalent programmatic configuration snippet:
 
