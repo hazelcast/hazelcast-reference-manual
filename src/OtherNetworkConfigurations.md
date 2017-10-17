@@ -317,15 +317,15 @@ Also see additional <a href="http://docs.oracle.com/javase/1.5.0/docs/guide/net/
 ![image](images/NoteSmall.jpg) ***NOTE:*** *IPv6 support has been switched off by default, since some platforms have issues using the IPv6 stack. Some other platforms such as Amazon AWS have no support at all. To enable IPv6 support, just set configuration property `hazelcast.prefer.ipv4.stack` to *false*. Please refer to the [System Properties section](#system-properties) for details.*
 
 
-### Member address provider SPI
+### Member Address Provider SPI
 
-![image](images/NoteSmall.jpg) ***NOTE:*** This SPI is not intended to provide addresses of other cluster members with which the hazelcast instance will form a cluster. To do that, refer to the other network configuration sections.
+![image](images/NoteSmall.jpg) ***NOTE:*** *This SPI is not intended to provide addresses of other cluster members with which the Hazelcast instance will form a cluster. To do that, refer to the other network configuration sections above.*
 
-By default, Hazelcast chooses the public and bind address. You can influence on the choice by defining a `public-address` in the configuration or by using other properties mentioned above. In some cases, though, these properties are not enough and the default address picking strategy will choose wrong addresses. This may be the case when deploying Hazelcast in some cloud environments (e.g. AWS), when using Docker or when the instance is deployed behind a NAT and the `public-address` property is not enough (see [Public Address section](#public-address)). 
+By default, Hazelcast chooses the public and bind address. You can influence on the choice by defining a `public-address` in the configuration or by using other properties mentioned above. In some cases, though, these properties are not enough and the default address picking strategy will choose wrong addresses. This may be the case when deploying Hazelcast in some cloud environments, such as AWS, when using Docker or when the instance is deployed behind a NAT and the `public-address` property is not enough (please see the [Public Address section](#public-address)).
 
 In these cases, it is possible to configure the bind and public address in a more advanced way. You can provide an implementation of the `com.hazelcast.spi.MemberAddressProvider` interface which will provide the bind and public address. The implementation may then choose these addresses in any way - it may read from a system property or file or even invoke a web service to retrieve the public and private address. 
 
-The details of the implementation depend heavily on the environment in which hazelcast is deployed. As such, we will demonstrate how to configure Hazelcast to use a simplified custom member address provider SPI implementation. An example of an implementation:
+The details of the implementation depend heavily on the environment in which Hazelcast is deployed. As such, we will demonstrate how to configure Hazelcast to use a simplified custom member address provider SPI implementation. An example of an implementation is shown below:
 
 ```java
 public static final class SimpleMemberAddressProvider implements MemberAddressProvider {
@@ -344,7 +344,8 @@ public static final class SimpleMemberAddressProvider implements MemberAddressPr
 ```
 
 Note that if the bind address port is `0` then it will use a port as configured in the Hazelcast network configuration (see the [Port section](#port)). If the public address port is set to `0` then it will broadcast the same port that it is bound to. If you wish to bind to any local interface, you may return `new InetSocketAddress((InetAddress) null, port)` from the `getBindAddress()` address.
-The following configuration examples contain properties that will be provided to the constructor of the provided class. If you don't provide any properties, the class may have either a no-arg constructor or a constructor accepting a single `java.util.Properties` instance. On the other hand, if you do provide properties in the configuration, the class must have a constructor accepting a single `java.util.Properties` instance.
+
+The following configuration examples contain properties that will be provided to the constructor of the provided class. If you do not provide any properties, the class may have either a no-arg constructor or a constructor accepting a single `java.util.Properties` instance. On the other hand, if you do provide properties in the configuration, the class must have a constructor accepting a single `java.util.Properties` instance.
 
 
 **Declarative:**
