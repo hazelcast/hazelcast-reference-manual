@@ -30,8 +30,7 @@ Below sections explain these steps.
 Install OpenSSL. Make sure that you are installing 1.0.1 or newer release. Please refer to its documentation at 
 [github.com/openssl](https://github.com/openssl/openssl/blob/master/INSTALL). 
 
-On the major distributions, OpenSSL is installed by default. Make sure the OpenSSL version is not suffering from the 
-[Heartbleed Bug](http://heartbleed.com). 
+On the major distributions, OpenSSL is installed by default. 
 
 ### Apache Portable Runtime library
 
