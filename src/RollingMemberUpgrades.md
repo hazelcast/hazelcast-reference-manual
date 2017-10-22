@@ -61,7 +61,7 @@ one at version `3.9.0`, includes the following steps which should be repeated fo
  
 ***NOTE:*** *You need to upgrade your Management Center version *before* upgrading the member version if you want to 
 change cluster version using Management Center. Management Center is compatible with the previous minor version of 
-Hazelcast starting with version 3.9. Following the example above, Management Center 3.9 works with both Hazelcast IMDG 
+Hazelcast, starting with version 3.9. For example, Management Center 3.9 works with both Hazelcast IMDG 
 3.8 and 3.9. To change your cluster version to 3.9, you need Management Center 3.9.*
  
 ## Network Partitions and Rolling Upgrades
