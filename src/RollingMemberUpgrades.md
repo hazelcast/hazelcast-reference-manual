@@ -56,8 +56,13 @@ one at version `3.9.0`, includes the following steps which should be repeated fo
  At this point all members of the cluster have been upgraded to codebase version `3.9.0` but the cluster still operates at cluster version `3.8`. In order to use `3.9` features
  the cluster version must be changed to `3.9`. There are two ways to accomplish this:
  
- * Use Management Center.
+ * Use [Management Center](http://docs.hazelcast.org/docs/management-center/latest/manual/html/Rolling_Upgrade.html).
  * Use the command line [cluster.sh script](#using-the-script-cluster-sh).
+ 
+***NOTE:*** *You need to upgrade your Management Center version *before* upgrading the member version if you want to 
+change cluster version using Management Center. Management Center is compatible with the previous minor version of 
+Hazelcast starting with version 3.9. Following the example above, Management Center 3.9 works with both Hazelcast IMDG 
+3.8 and 3.9. To change your cluster version to 3.9, you need Management Center 3.9.*
  
 ## Network Partitions and Rolling Upgrades
 
