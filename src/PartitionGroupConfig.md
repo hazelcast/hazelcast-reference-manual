@@ -89,7 +89,7 @@ partitionGroupConfig.setEnabled( true )
 
 **4. ZONE_AWARE:**
 
-You can use ZONE_AWARE configuration with Hazelcast jclouds or Hazelcast Azure Discovery Service plugins. 
+You can use ZONE_AWARE configuration with [Hazelcast AWS Discovery](https://github.com/hazelcast/hazelcast-aws), Hazelcast jclouds or Hazelcast Azure Discovery Service plugins. 
 
 As discovery services, these plugins put zone, rack, and host information to the Hazelcast [member attributes](#defining-member-attributes) map during the discovery process. Hazelcast creates the partition groups with respect to member attributes map entries that include zone, rack, and host information. 
 
@@ -111,7 +111,7 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.ZONE_AWARE );
 ```
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Currently ZONE_AWARE configuration works only with Hazelcast jclouds and Hazelcast Azure Discovery Service plugins. Please refer to their GitHub repositories at [Hazelcast jclouds](https://github.com/hazelcast/hazelcast-jclouds) and [Hazelcast Azure](https://github.com/hazelcast/hazelcast-azure) for more information on these plugins.* 
+ 
 
 **5. SPI:**
 
