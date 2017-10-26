@@ -54,8 +54,6 @@ According to the above example, Hazelcast will try to find free ports between 57
 
 - `auto-increment`: In some cases you may want to choose to use only one port. In that case, you can disable the auto-increment feature of `port` by setting `auto-increment` to `false`. The `port-count` attribute is not used when auto-increment feature is disabled.
 
-The parameter `port-count` is ignored when the above configuration is made.
-
 ### Outbound Ports
 
 
