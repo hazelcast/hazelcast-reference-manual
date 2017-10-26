@@ -344,7 +344,7 @@ When you start a Hazelcast member without passing a `Config` object, as explaine
 
 -	First, it looks for the `hazelcast.config` system property. If it is set, its value is used as the path. This is useful if you want to be able to change your Hazelcast configuration; you can do this because it is not embedded within the application. You can set the `config` option with the following command:
  
-	`- Dhazelcast.config=`*`<path to the hazelcast.xml>`*.
+	`-Dhazelcast.config=`*`<path to the hazelcast.xml>`*.
 	
 	The path can be a regular one or a classpath reference with the prefix `classpath:`.
 -	If the above system property is not set, Hazelcast then checks whether there is a `hazelcast.xml` file in the working directory.
