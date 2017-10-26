@@ -21,7 +21,7 @@ All network related configurations are performed via the `network` element in th
 ```java
 Config config = new Config();
 config.getNetworkConfig()
-      .setPublicAddress( "11.22.33.44", "5555" ); 
+      .setPublicAddress( "11.22.33.44:5555" );
 ```
 
 
@@ -157,7 +157,7 @@ The `join` configuration element is used to discover Hazelcast members and enabl
               <discovery-strategy ... />
             </discovery-strategies>
         </join>
-   <network>     
+   </network>
 ```
 
 **Programmatic:**
@@ -360,7 +360,7 @@ The following configuration examples contain properties that will be provided to
             </properties>
         </member-address-provider>
         <!-- other network configuration -->
-   <network>
+   </network>
 ```
 
 **Programmatic:**
