@@ -47,7 +47,7 @@ Following are declarative and programmatic configuration examples that show how 
   <interface>10.10.10.10-100</interface>
   <interface>10.10.1.*</interface>
   <interface>10.10.2.*</interface>
-</member-group
+</member-group>
 </partition-group>
 ```
 
