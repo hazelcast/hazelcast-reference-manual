@@ -21,7 +21,7 @@ All network related configurations are performed via the `network` element in th
 ```java
 Config config = new Config();
 config.getNetworkConfig()
-      .setPublicAddress( "11.22.33.44:5555" );
+    .setPublicAddress( "11.22.33.44:5555" );
 ```
 
 
@@ -33,7 +33,7 @@ You can specify the ports that Hazelcast will use to communicate between cluster
 
 ```xml
 <network>
-  <port port-count="20" auto-increment="false">5701</port>
+  <port port-count="20" auto-increment="true">5701</port>
 </network>
 ```
 
@@ -41,20 +41,18 @@ You can specify the ports that Hazelcast will use to communicate between cluster
 
 ```java
 Config config = new Config();
-config.getNetworkConfig().setPort( "5701" ); 
-             .setPortCount( "20" ).setPortAutoIncrement( false );
+config.getNetworkConfig().setPort( 5701 )
+    .setPortAutoIncrement( true ).setPortCount( 20 );
 ```
+
+According to the above example, Hazelcast will try to find free ports between 5701 and 5720.
 
 `port` has the following attributes.
 
 - `port-count`: By default, Hazelcast will try 100 ports to bind. Meaning that, if you set the value of port as 5701, as members are joining to the cluster, Hazelcast tries to find ports between 5701 and 5801. You can choose to change the port count in the cases like having large instances on a single machine or willing to have only a few ports to be assigned. The parameter `port-count` is used for this purpose, whose default value is 100.
 
 
-
-- `auto-increment`: According to the above example, Hazelcast will try to find free ports between 5701 and 5801. Normally, you will not need to change this value, but it will come very handy when needed. You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of `port` by setting `auto-increment` to `false`.
-
-
-The parameter `port-count` is ignored when the above configuration is made.
+- `auto-increment`:  In some cases you may want to choose to use only one port. In that case, you can disable the auto-increment feature of `port` by setting `auto-increment` to `false`. The `port-count` attribute is not used when auto-increment feature is disabled.
 
 ### Outbound Ports
 
