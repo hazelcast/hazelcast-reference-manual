@@ -26,4 +26,4 @@ The element `cache-deserialized-values` controls the caching of deserialized val
 - INDEX-ONLY: Deserialized values will be cached only when they are inserted into an index.
 - ALWAYS: Deserialized values will always be cached.
 
-If you are using portable serialization or your map's in-memory format is `OBJECT`, then `cache-deserialized-values` element does not have any effect.
+If you are using portable serialization or your map's in-memory format is `OBJECT` or `NATIVE`, then `cache-deserialized-values` element does not have any effect.
