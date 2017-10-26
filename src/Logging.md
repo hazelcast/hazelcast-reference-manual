@@ -54,7 +54,7 @@ LogListener listener = new LogListener() {
   public void log( LogEvent logEvent ) {
     // do something
   }
-}
+};
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 LoggingService loggingService = instance.getLoggingService();
 loggingService.addLogListener( Level.INFO, listener );
