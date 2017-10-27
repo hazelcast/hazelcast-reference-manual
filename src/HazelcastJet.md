@@ -19,7 +19,7 @@ Hazelcast Jet is appropriate for applications that require a near real-time expe
 - Internet-of-things (IoT) data ingestion, processing and storage
 - Data processing microservice architectures
 
-The aforementioned applications produce massive amounts of data that need near real-time processing. Hazelcast Jet achieves this by processing the incoming records as soon as possible,  hence lowering the latency, and ingesting the data at high-velocity. Execution model of Jet and keeping both the computation and data storage in memory enables breakthrough application speeds. Since Jet uses Hazelcast IMDG’s discovery mechanisms, it can be used both on-premises and cloud environments.
+The aforementioned applications produce massive amounts of data that need near real-time processing. Hazelcast Jet achieves this by processing the incoming records as soon as possible,  hence lowering the latency, and ingesting the data at high-velocity. Execution model of Jet and keeping both the computation and data storage in memory enables high application speeds. Since Jet uses Hazelcast IMDG’s discovery mechanisms, it can be used both on-premises and cloud environments. Hazelcast Jet typically runs on several machines that form a cluster. 
 
 Following is the logical architecture of Hazelcast Jet
 
@@ -27,8 +27,25 @@ Following is the logical architecture of Hazelcast Jet
 
 ## Components
 
+Jet's core is a distributed computation engine based on DAG (Directed Acyclic Graph) model. In this model the following components exist:
+
+- **Vertex**: Main unit of work in a Jet computation. There are three kinds of vertex in Jet: source, computational, and sink. Source vertex injects data from the environment into the Jet job. Computational vertex accepts data, performs the computation and emits the results. Sink vertex drains these results of the Jet job into the environment.
+- **Processor**: Contains the code of the computation to be performed by a vertex. Each vertex’s computation is implemented by a Processor. On each Jet cluster member there are one or more instances of the processor running in parallel for a single vertex.
+- **Edge**: Transfers data from one vertex to the next. It decides which target processor an item should be routed to. This could be guided by the partitioning logic, or could be one of the other choices like broadcast or pooled unicast.
+- **Job**: Unit of work which is executed and it is composed of processors. 
 
 
+## How You Can Use It
+
+???
+
+## How Data is Processed
+
+???
+
+## Relationship with Hazelcast IMDG
+
+???
 
 
 
