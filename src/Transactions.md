@@ -71,5 +71,7 @@ However, if the member that initiates the commit crashes after it has written to
 
 On the other hand, if you choose TWO_PHASE as the transaction type, the commit log is again tracked locally but it is copied to another cluster member. Therefore, when a failure happens, e.g., the member initiating the commit crashes, you still have the commit log in another member and that member can complete the commit. However, copying the commit log to another member makes the TWO_PHASE approach slow.
 
-Consequently, it is recommended that you choose ONE_PHASE as the transaction type if you want better performance, and that you choose TWO_PHASE if reliability of your system is more important than the performance. 
+Consequently, it is recommended that you choose ONE_PHASE as the transaction type if you want better performance, and that you choose TWO_PHASE if reliability of your system is more important than the performance.
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *Transactions do not provide any consistency support in case of a split-brain or node failures.*
 
