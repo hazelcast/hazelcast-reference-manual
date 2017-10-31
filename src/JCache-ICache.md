@@ -9,6 +9,14 @@ It has two sets of extensions:
 * Asynchronous version of all cache operations. See [Async Operations](#icache-async-methoods).
 * Cache operations with custom `ExpiryPolicy` parameter to apply on that specific operation. See [Custom ExpiryPolicy](#defining-a-custom-expirypolicy).
 
+
+<br>
+![Note](images/NoteSmall.jpg) ***NOTE:*** *ICache data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Fast Batch Processing. Hazelcast Jet uses ICache as a source (reads data from ICache) and as a sink (writes data to ICache). Please see the [Fast Batch Processing](???link to fast batch processing on .com ???) use case for Hazelcast Jet. Please also see [ICache reader](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IMap+and+ICache+readers) and [ICache writer](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IMap+and+ICache+writers) sections in Hazelcast Jet Reference Manual.*
+
+<br>
+
+
+
 ### Scoping to Join Clusters
 
 A `CacheManager`, started either as a client or as an embedded member, can be configured to start a new Hazelcast instance or reuse an already existing one to connect to a Hazelcast cluster. To achieve this, request
