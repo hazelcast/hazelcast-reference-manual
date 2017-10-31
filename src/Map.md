@@ -4,6 +4,10 @@
 
 Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap` and hence `java.util.Map`. It is the distributed implementation of Java map. You can perform operations like reading and writing from/to a Hazelcast map with the well known get and put methods.
 
+<br>
+![Note](images/NoteSmall.jpg) ***NOTE:*** *IMap data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the [Fast Batch Processing](???link to fast batch processing on .com ???) use case for Hazelcast Jet. Please also see [IMap reader](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IMap+and+ICache+readers) and [IMap writer](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IMap+and+ICache+writers) sections in Hazelcast Jet Reference Manual.*
+<br>
+
 ### Getting a Map and Putting an Entry
 
 Hazelcast will partition your map entries and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "(1/n `*` total-data) + backups", **n** being the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
