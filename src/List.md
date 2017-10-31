@@ -2,12 +2,19 @@
 
 ## List
 
-Hazelcast List is similar to Hazelcast Set, but Hazelcast List also allows duplicate elements.
+Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allows duplicate elements.
 
 * Besides allowing duplicate elements, Hazelcast List preserves the order of elements.
 * Hazelcast List is a non-partitioned data structure where values and each backup are represented by their own single partition.
 * Hazelcast List cannot be scaled beyond the capacity of a single machine.
 * All items are copied to local and iteration occurs locally.
+
+
+<br>
+![Note](images/NoteSmall.jpg) ***NOTE:*** *IList data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Fast Batch Processing. Hazelcast Jet uses IList as a source (reads data from IList) and as a sink (writes data to IList). Please see the [Fast Batch Processing](???link to fast batch processing on .com ???) use case for Hazelcast Jet. Please also see [IList reader](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IList+reader) and [IList writer](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IList+writer) sections in Hazelcast Jet Reference Manual.*
+
+<br>
+
 
 ### Getting a List and Putting Items
 
