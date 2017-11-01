@@ -421,36 +421,22 @@ The following is an example Message Listener class.
 ```java
 public class SampleMessageListener implements MessageListener<MyEvent> {
 
-  public static void main( String[] args ) {
-    SampleMessageListener sample = new SampleMessageListener();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ITopic topic = hazelcastInstance.getTopic( "default" );
-    topic.addMessageListener( sample );
-    topic.publish( new MyEvent() );
-  }
-
   public void onMessage( Message<MyEvent> message ) {
     MyEvent myEvent = message.getMessageObject();
     System.out.println( "Message received = " + myEvent.toString() );
-    if ( myEvent.isHeavyweight() ) {
-      messageExecutor.execute( new Runnable() {
-          public void run() {
-            doHeavyweightStuff( myEvent );
-          }
-      } );
-    }
   }
+}
 ```
 
 #### Registering Message Listeners
 
-After you create your class, you can configure your cluster to include message listeners. Below is an example using the method `addMessageListener`. You can also see this portion in the above class creation.
+After you create your class, you can configure your cluster to include message listeners. Below is an example using the method `addMessageListener`.
 
 ```java
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 ITopic topic = hazelcastInstance.getTopic( "default" );
-topic.addMessageListener( sample );
+topic.addMessageListener( new SampleMessageListener() );
 ```
 
 With the above approach, there is the possibility of missing messaging events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register this listener in the configuration. You can register it using declarative, programmatic, or Spring configuration, as shown below.
