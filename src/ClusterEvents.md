@@ -14,21 +14,19 @@ To write a Membership Listener class, you implement the MembershipListener inter
 The following is an example Membership Listener class.
 
 ```java
-public class ClusterMembershipListener
-     implements MembershipListener {
-     
-public void memberAdded(MembershipEvent membershipEvent) {
-  System.err.println("Added: " + membershipEvent);
-}
+public class ClusterMembershipListener implements MembershipListener {
 
-public void memberRemoved(MembershipEvent membershipEvent) {
-       System.err.println("Removed: " + membershipEvent);
-     }
+  public void memberAdded(MembershipEvent membershipEvent) {
+    System.err.println("Added: " + membershipEvent);
+  }
 
-public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
-       System.err.println("Member attribute changed: " + memberAttributeEvent);
-     }
-     
+  public void memberRemoved(MembershipEvent membershipEvent) {
+    System.err.println("Removed: " + membershipEvent);
+  }
+
+  public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
+    System.err.println("Member attribute changed: " + memberAttributeEvent);
+  }
 }
 ```
 
