@@ -232,40 +232,50 @@ The attribute `local` is also a boolean attribute that is optional, and if you s
 
 ### Listening for MultiMap Events
 
-You can listen to entry-based events in the MultiMap using `EntryListener`. The following is an example listener class for MultiMap.
+You can listen to entry-based events in the MultiMap using `EntryListener`. The following is an example entry listener implementation for MultiMap.
 
 ```java
-public class Listen {
-
-  public static void main( String[] args ) {
-    HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-    MultiMap<String, String> map = hz.getMultiMap( "somemap" );
-    map.addEntryListener( new MyEntryListener(), true );
-    System.out.println( "EntryListener registered" );
+public class SampleEntryListener implements EntryListener<String, String> {
+  @Override
+  public void entryAdded(EntryEvent<String, String> event) {
+    System.out.println("Entry Added: " + event);
   }
 
-  static class SampleEntryListener implements EntryListener<String, String>{
-    @Override
-    public void entryAdded( EntryEvent<String, String> event ) {
-      System.out.println( "Entry Added:" + event );
-    }
+  @Override
+  public void entryRemoved( EntryEvent<String, String> event ) {
+    System.out.println( "Entry Removed: " + event );
+  }
 
-    @Override
-    public void entryRemoved( EntryEvent<String, String> event ) {
-      System.out.println( "Entry Removed:" + event );
-    }
+  @Override
+  public void entryUpdated(EntryEvent<String, String> event) {
+    System.out.println( "Entry Updated: " + event );
+  }
+
+  @Override
+  public void entryEvicted(EntryEvent<String, String> event) {
+    System.out.println( "Entry evicted: " + event );
+  }
+
+  @Override
+  public void mapCleared(MapEvent event) {
+    System.out.println( "Map Cleared: " + event );
+  }
+
+  @Override
+  public void mapEvicted(MapEvent event) {
+    System.out.println( "Map Evicted: " + event );
   }
 }
 ```
 
 #### Registering MultiMap Listeners
 
-After you create your listener class, you can configure your cluster to include MultiMap listeners using the method `addEntryListener` (as you can see in the example `Listen` class above). Below is the related portion from this code, showing how to register a map listener.
+After you create your listener class, you can configure your cluster to include MultiMap listeners using the method `addEntryListener`. Below is the related portion from a code, showing how to register a map listener.
 
 ```java
 HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 MultiMap<String, String> map = hz.getMultiMap( "somemap" );
-map.addEntryListener( new MyEntryListener(), true );
+map.addEntryListener( new SampleEntryListener(), true );
 ```
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
@@ -299,7 +309,7 @@ The following is an example of the equivalent declarative configuration.
 The following is an example of the equivalent Spring configuration.
 
 ```
-<hz:multimap name="default" value-collection-type="LIST">
+<hz:multimap name="somemap" value-collection-type="SET">
    <hz:entry-listeners>
       <hz:entry-listener include-value="false"
          class-name="com.your-package.SampleEntryListener"/>
