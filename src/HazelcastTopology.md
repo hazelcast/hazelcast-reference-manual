@@ -5,7 +5,7 @@
 You can deploy a Hazelcast cluster in two ways: Embedded or Client/Server.
 
 If you have an application whose main focal point is asynchronous or high performance computing and lots of task
-executions, then Embedded deployment is useful. In Embedded deployment, members include both the application and Hazelcast data and services. The advantage of the Embedded deployment is having a low-latency data access.
+executions, then Embedded deployment is the preferred way. In Embedded deployment, members include both the application and Hazelcast data and services. The advantage of the Embedded deployment is having a low-latency data access.
 
 See the below illustration.
 
