@@ -19,17 +19,18 @@ Yes. All Hazelcast data structures are thread safe.
 ## How do members discover each other?
 
 
-When a member is started in a cluster, it will dynamically and automatically be discovered. There are three types of discovery.
+When a member is started in a cluster, it will dynamically and automatically be discovered. The following are the types of discovery:
 
--	Multicast discovery: members in a cluster discover each other by multicast, by default. 
 -	Discovery by TCP/IP: the first member created in the cluster (leader) will form a list of IP addresses of other joining members and will send this list to these members so the members will know each other.
--	If your application is placed on Amazon EC2, Hazelcast has an automatic discovery mechanism. You will give your Amazon credentials and the joining member will be discovered automatically.
+-	Discovery at clouds: Hazelcast supports discovery at cloud platforms such as jclouds based environments, Azure, Consul, and PCF. 
+- -	Multicast discovery: members in a cluster discover each other by multicast, by default. It is not recommended for production since UDP is often blocked in production environments and other discovery mechanisms are more definite
+
 
 Once members are discovered, all the communication between them will be via TCP/IP.
 <br></br>
 ***RELATED INFORMATION***
 
-*Please refer to the [Discovering Cluster Members section](#discovering-cluster-members) for detailed information.*
+*Please refer to the [Discovery Mechanisms section](#discovery-mechanisms) for detailed information.*
 
 <br></br>
 
@@ -180,7 +181,7 @@ Yes. Hazelcast performed a successful test on Amazon EC2 with 200 members.
 
 Yes. However, there are some points you should consider. The environment should be LAN with a high stability and the network speed should be 10 Gbps or higher. If the number of members is high, the client type should be selected as Dummy, not Smart Client. In the case of Smart Clients, since each client will open a connection to the members, these members should be powerful enough (for example, more cores) to handle hundreds or thousands of connections and client requests. Also, you should consider using Near Caches in clients to lower the network traffic. And you should use the Hazelcast releases with the NIO implementation (which starts with Hazelcast 3.2).
 
-Also, you should configure the clients attentively. Please refer to the [Java Client section](#hazelcast-java-client) section for configuration notes.
+Also, you should configure the clients attentively. Please refer to the [Clients section](#hazelcast-clients) section for configuration notes.
 
 <br></br>
 
@@ -211,7 +212,9 @@ Yes. But please note that Hazelcast's main design focus is multi-member clusters
 
 ## How can I monitor Hazelcast?
 
-[Hazelcast Management Center](#management-center) is what you use to monitor and manage the members running Hazelcast. In addition to monitoring the overall state of a cluster, you can analyze and browse data structures in detail, you can update map configurations, and you can take thread dumps from members. 
+[Hazelcast Management Center](http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html) is what you use to monitor and manage the members running Hazelcast. In addition to monitoring the overall state of a cluster, you can analyze and browse data structures in detail, you can update map configurations, and you can take thread dumps from members.
+
+You can also use Hazelcast's HTTP based health check implementation and health monitoring utility. Please see the [Health Check and Monitoring section](#health-check-and-monitoring). There is also a [diagnostocs tool](#diagnostics) where you can see detailed logs enhanced with diagnostic plugins.
 
 Moreover, JMX monitoring is also provided. Please see the [Monitoring with JMX section](#monitoring-with-jmx) for details.
 
@@ -272,6 +275,24 @@ Client-server topology fits better if there are multiple applications sharing th
 
 <br></br>
 
+## How can I shutdown a Hazelcast member
+
+Ways of shutting down a Hazelcast instance:
+
+- You can call `kill -9 <PID>` in the terminal (which sends a SIGKILL signal). This will result in the immediate shutdown which is not recommended for production systems. If you set the property `hazelcast.shutdownhook.enabled` to `false` and then kill the process using `kill -15 <PID>`, its result is the same (immediate shutdown).
+
+- You can call `kill -15 <PID>` in the terminal (which sends a SIGTERM signal) or you can call the method `HazelcastInstance#getLifecycleService().terminate()` programatically. Both will terminate your member ungracefully. They do not wait for migration operations, they force the shutdown. But this is much better than `kill -9 <PID>` since it releases most of the used resources.
+
+- In order to gracefully shutdown a Hazelcast member (so that it waits the migration operations to be completed), you have four options:
+  - You can call the method `HazelcastInstance#shutdown()` programatically.
+  - You can use JMX API's shutdown method. You can do this by implementing a JMX client application or using a JMX monitoring tool (like JConsole).
+  - You can set the property `hazelcast.shutdownhook.policy` to `GRACEFUL` and then shutdown by using `kill -15 <PID>`. Your member will be gracefully shutdown.
+  - You can use the "Shutdown Member" button in the member view of [Hazelcast Management Center](http://docs.hazelcast.org/docs/management-center/latest/manual/html/Monitoring_Members.html).
+
+If you use systemd's `systemctl` utility, i.e., `systemctl stop service_name`, a SIGTERM signal is sent. After 90 seconds of waiting it is followed by a SIGKILL signal by default. Thus, it will call terminate at first, and kill the member directly after 90 seconds. We do not recommend to use it with its defaults. But [systemd](https://www.linux.com/learn/understanding-and-using-systemd) is very customizable and well-documented, you can see its details using the command  `man systemd.kill`. If you can customize it to shutdown your Hazelcast member gracefully (by using the methods above), then you can use it.
+
+<br></br>
+
 ## How do I know it is safe to kill the second member?
 
 Starting with Hazelcast 3.7, graceful shutdown of a Hazelcast member can be initiated any time as follows:  
@@ -327,7 +348,7 @@ The only disadvantage when using Near Cache is that it may cause stale reads.
 
 ## Is Hazelcast secure?
 
-Hazelcast supports symmetric encryption, secure sockets layer (SSL), and Java Authentication and Authorization Service (JAAS). Please see the [Security chapter](#security) for more information.
+Hazelcast supports symmetric encryption, transport layer security and secure sockets layer (TLS/SSL), and Java Authentication and Authorization Service (JAAS). Please see the [Security chapter](#security) for more information.
 
 <br></br>
 
