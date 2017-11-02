@@ -13,11 +13,8 @@ You can use the `ExecutionCallback` offered by Hazelcast to asynchronously be no
 Let's use the Fibonacci series to explain this. The example code below is the calculation that will be executed. Note that it is Callable and Serializable.
 
 ```java
-public class Fibonacci<Long> implements Callable<Long>, Serializable {
+public class Fibonacci implements Callable<Long>, Serializable {
   int input = 0;
-
-  public Fibonacci() {
-  }
 
   public Fibonacci( int input ) {
     this.input = input;
