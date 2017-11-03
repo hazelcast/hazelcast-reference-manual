@@ -91,25 +91,25 @@ If the entry processor implements `ReadOnly` and modifies the entry, an `Unsuppo
 Putting it all together:
 
 ```
-private static class OffloadableReadOnlyEntryProcessor implements EntryProcessor<String, Employee>,
-            Offloadable, ReadOnly {
+public class OffloadableReadOnlyEntryProcessor implements EntryProcessor<String, Employee>, 
+        Offloadable, ReadOnly {
 
-        @Override
-        public Object process(Map.Entry<String, Employee> entry) {
-            // heavy logic
-            return null;
-        }
+    @Override
+    public Object process(Map.Entry<String, Employee> entry) {
+        // heavy logic
+        return null;
+    }
 
-        @Override
-        public EntryBackupProcessor<String, Employee> getBackupProcessor() {
-            // ReadOnly EntryProcessor has to return null, since it's just a read-only operation that will not be
-            // executed on the backup
-            return null;
-        }
+    @Override
+    public EntryBackupProcessor<String, Employee> getBackupProcessor() {
+        // ReadOnly EntryProcessor has to return null, since it's just a read-only operation that will not be
+        // executed on the backup
+        return null;
+    }
 
-        @Override
-        public String getExecutorName() {
-            return OFFLOADABLE_EXECUTOR;
-        }
+    @Override
+    public String getExecutorName() {
+        return OFFLOADABLE_EXECUTOR;
+    }
 }
 ```
