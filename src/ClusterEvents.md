@@ -88,34 +88,21 @@ The following is an example Distributed Object Listener class.
 
 ```java
 public class SampleDistObjListener implements DistributedObjectListener {
-  public static void main(String[] args) {
-    SampleDistObjListener sample = new SampleDistObjListener();
-
-    Config config = new Config();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-    hazelcastInstance.addDistributedObjectListener(sample);
-
-    Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
-    for (DistributedObject distributedObject : distributedObjects) {
-      System.out.println(distributedObject.getName() + "," + distributedObject.getId());
-    }
-  }
 
   @Override
   public void distributedObjectCreated(DistributedObjectEvent event) {
     DistributedObject instance = event.getDistributedObject();
-    System.out.println("Created " + instance.getName() + "," + instance.getId());
+    System.out.println("Created " + instance.getName() + ", service=" + instance.getServiceName());
   }
 
   @Override
   public void distributedObjectDestroyed(DistributedObjectEvent event) {
-    DistributedObject instance = event.getDistributedObject();
-    System.out.println("Destroyed " + instance.getName() + "," + instance.getId());
+    System.out.println("Destroyed " + event.getObjectName() + ", service=" + event.getServiceName());
   }
 }
 ```
 
-When a respective event is fired, the distributed object listener outputs the event type, and the name, service (for example, if a Map service provides the distributed object, than it is a Map object), and ID of the object.
+When a respective event is fired, the distributed object listener outputs the event type, the object name and a service name (for example, for a Map object the service name is `"hz:impl:mapService"`).
 
 #### Registering Distributed Object Listeners
 
