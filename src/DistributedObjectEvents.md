@@ -337,26 +337,18 @@ The following is an example Item Listener class for an `ISet` structure.
 
 
 ```java
-public class SampleItemListener implements ItemListener {
+public class SampleItemListener implements ItemListener<Price> {
 
-  public static void main( String[] args ) { 
-    SampleItemListener sampleItemListener = new SampleItemListener();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ICollection<Price> set = hazelcastInstance.getSet( "default" );
-    set.addItemListener( sampleItemListener, true ); 
-
-    Price price = new Price( 10, time1 )
-    set.add( price );
-    set.remove( price );
-  } 
-
-  public void itemAdded( Object item ) {
-    System.out.println( "Item added = " + item );
+  @Override
+  public void itemAdded(ItemEvent<Price> event) {
+    System.out.println( "Item added:  " + event );
   }
 
-  public void itemRemoved( Object item ) {
-    System.out.println( "Item removed = " + item );
-  }     
+  @Override
+  public void itemRemoved(ItemEvent<Price> event) {
+    System.out.println( "Item removed: " + event );
+  }
+
 }
 ```
 
@@ -374,7 +366,7 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 ICollection<Price> set = hazelcastInstance.getSet( "default" );
 // or ISet<Prices> set = hazelcastInstance.getSet( "default" );
-default.addItemListener( sampleItemListener, true );
+set.addItemListener( new SampleItemListener(), true );
 ```
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
