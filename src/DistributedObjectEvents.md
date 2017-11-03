@@ -98,16 +98,28 @@ If you execute the `Listen` class and then the `Modify` class, you get the follo
 produced by the `Listen` class. 
 
 ```
-entryAdded:EntryEvent {Address[192.168.1.100]:5702} key=251359212222282,
-    oldValue=null, value=1, event=ADDED, by Member [192.168.1.100]:5702
+Entry Added:EntryEvent{entryEventType=ADDED, member=Member [192.168.1.100]]:5702
+ - ffedb655-bbad-43ea-aee8-d429d37ce528, name='somemap', key=11455268066242,
+ oldValue=null, value=1, mergingValue=null}
 
-entryUpdated:EntryEvent {Address[192.168.1.100]:5702} key=251359212222282,
-    oldValue=1, value=2, event=UPDATED, by Member [192.168.1.100]:5702
+Entry Updated:EntryEvent{entryEventType=UPDATED, member=Member [192.168.1.100]]:5702
+ - ffedb655-bbad-43ea-aee8-d429d37ce528, name='somemap', key=11455268066242,
+ oldValue=1, value=2, mergingValue=null}
 
-entryRemoved:EntryEvent {Address[192.168.1.100]:5702} key=251359212222282,
-    oldValue=2, value=2, event=REMOVED, by Member [192.168.1.100]:5702
+Entry Removed:EntryEvent{entryEventType=REMOVED, member=Member [192.168.1.100]]:5702
+ - ffedb655-bbad-43ea-aee8-d429d37ce528, name='somemap', key=11455268066242,
+ oldValue=null, value=null, mergingValue=null}
 ```
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that the method `IMap.clear()` does not fire an "EntryRemoved" event, but fires a "MapCleared" event.*
+<br></br>
 
+#### Partitions and Entry Listeners
+
+A map listener runs on the event threads that are also used by the other listeners. For 
+example, the collection listeners and pub/sub message listeners. This means that the entry 
+listeners can access other partitions. Consider this when you run long tasks, since listening 
+to those tasks may cause the other map/event listeners to starve.
 
 ```java
 public class MyEntryListener implements EntryListener{
@@ -121,17 +133,6 @@ public class MyEntryListener implements EntryListener{
 ...
 ```
 
-<br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that the method `IMap.clear()` does not fire an "EntryRemoved" event, but fires a "MapCleared" event.*
-<br></br>
-
-
-#### Partitions and Entry Listeners
-
-A map listener runs on the event threads that are also used by the other listeners. For 
-example, the collection listeners and pub/sub message listeners. This means that the entry 
-listeners can access other partitions. Consider this when you run long tasks, since listening 
-to those tasks may cause the other map/event listeners to starve.
 
 #### Listening for Lost Map Partitions
 
@@ -148,7 +149,7 @@ Let`s consider the following example code:
 
     HazelcastInstance instance = HazelcastInstanceFactory.newHazelcastInstance(config);
 
-    IMap<Object, Object> map = instance1.getMap("map");
+    IMap<Object, Object> map = instance.getMap("map");
     map.put(0, 0);
 
     map.addPartitionLostListener(new MapPartitionLostListener() {
