@@ -40,7 +40,7 @@ The following are example configurations for executor service.
 ```java
 Config config = new Config();
 ExecutorConfig executorConfig = config.getExecutorConfig("exec");
-executorConfig.setPoolSize( "1" ).setQueueCapacity( "10" )
+executorConfig.setPoolSize( 1 ).setQueueCapacity( 10 )
           .setStatisticsEnabled( true );
 ```
 
