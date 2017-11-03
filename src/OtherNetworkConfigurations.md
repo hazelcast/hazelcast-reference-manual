@@ -229,7 +229,7 @@ public static void main( String[] args )throws Exception{
   config.setTagValue( ... );
   config.setEnabled( true );
   AWSClient client = new AWSClient( config );
-  List<String> ipAddresses = client.getPrivateIpAddresses();
+  Collection<String> ipAddresses = client.getPrivateIpAddresses();
   System.out.println( "addresses found:" + ipAddresses ); 
   for ( String ip: ipAddresses ) {
     System.out.println( ip ); 
@@ -266,8 +266,8 @@ The following are example configurations.
 ```java
 Config config = new Config();
 NetworkConfig network = config.getNetworkConfig();
-InterfacesConfig interface = network.getInterfaces();
-interface.setEnabled( true )
+InterfacesConfig interfaceConfig = network.getInterfaces();
+interfaceConfig.setEnabled( true )
             .addInterface( "192.168.1.3" );
 ```
 
