@@ -36,6 +36,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.icmp.enabled` | false | bool  |   Enable ICMP ping.
 `hazelcast.icmp.timeout` | 1000 | int |   ICMP timeout in milliseconds.
 `hazelcast.icmp.ttl` | 0 | int |   ICMP TTL (maximum numbers of hops to try).
+`hazelcast.index.copy.behavior` |COPY_ON_READ | string | Defines the behavior for index copying on index read/write. Please refer to the [Copying Indexes section](#copying-indexes).
 `hazelcast.initial.min.cluster.size` | 0 | int  |   Initial expected cluster size to wait before member to start completely.
 `hazelcast.initial.wait.seconds` | 0 | int  |   Initial time in seconds to wait before member to start completely.
 `hazelcast.internal.map.expiration.cleanup.operation.count`|3|int|This is a property which is used internally and subject to change in the future releases.
