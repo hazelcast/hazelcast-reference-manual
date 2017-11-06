@@ -18,7 +18,7 @@
     You may use any of the supported ways [as described in System Properties section](#system-properties) to configure the compatibility option. When done
  upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration. 
 
-- **Upgrading from 3.6.x to 3.8.x EE and if you are using  when using `JCache`:**
+- **Upgrading from 3.6.x to 3.8.x EE when using `JCache`:**
  Due to a compatibility problem CacheConfig serialization may not work if your member is 3.8.x where x < 5. Hence, you will need to use the 3.8.5 or higher version where the problem is being fixed.
 
 - **Introducing the `spring-aware` element:**
@@ -29,13 +29,13 @@ This behavior has been changed with the release of Hazelcast 3.5. `SpringAware` 
 Starting with Hazelcast 3.6, WAN replication related system properties, which are configured on a per member basis, can now be configured per target cluster.
 The 4 system properties below are no longer valid.
 
-	* `hazelcast.enterprise.wanrep.batch.size`, please see the [WAN Replication Batch Size](http://docs.hazelcast.org/docs/latest-dev/manual/html-single/index.html#batch-size). 
+	* `hazelcast.enterprise.wanrep.batch.size`, please see the [WAN Replication Batch Size](#batch-size). 
 
-	* `hazelcast.enterprise.wanrep.batchfrequency.seconds`, please see the [WAN Replication Batch Maximum Delay](http://docs.hazelcast.org/docs/latest-dev/manual/html-single/index.html#batch-maximum-delay).
+	* `hazelcast.enterprise.wanrep.batchfrequency.seconds`, please see the [WAN Replication Batch Maximum Delay](#batch-maximum-delay).
 
-	* `hazelcast.enterprise.wanrep.optimeout.millis`, please see the [WAN Replication Response Timeout](http://docs.hazelcast.org/docs/latest-dev/manual/html-single/index.html#response-timeout).
+	* `hazelcast.enterprise.wanrep.optimeout.millis`, please see the [WAN Replication Response Timeout](#response-timeout).
 
-	* `hazelcast.enterprise.wanrep.queue.capacity`, please see the [WAN Replication Queue Capacity](http://docs.hazelcast.org/docs/latest-dev/manual/html-single/index.html#queue-capacity).
+	* `hazelcast.enterprise.wanrep.queue.capacity`, please see the [WAN Replication Queue Capacity](#queue-capacity).
 
 
 - **Removal of deprecated getId() method**: 
@@ -46,7 +46,7 @@ The method `getId()` in the interface `DistributedObject` has been removed. Plea
 - **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from System Properties, there has been a change to inform to the users who have been using this class. Starting with Hazelcast 3.7, the class `GroupProperties.java` has been replaced by `GroupProperty.java`. 
 In this new class, system properties are instances of the newly introduced `HazelcastProperty` object. You can access the names of these properties by calling `getName()` method of `HazelcastProperty`.
 
-- **Removal of WanNoDelayReplication**: `WanNoDelayReplication` implementation of Hazelcast's WAN Replication has been removed starting with Hazelcast 3.7. You can still achieve this behavior by setting the batch size to `1` while configuring the WanBatchReplication. Please refer to the [Defining WAN Replication section](http://docs.hazelcast.org/docs/3.7/manual/html-single/index.html#defining-wan-replication) for more information.
+- **Removal of WanNoDelayReplication**: `WanNoDelayReplication` implementation of Hazelcast's WAN Replication has been removed starting with Hazelcast 3.7. You can still achieve this behavior by setting the batch size to `1` while configuring the WanBatchReplication. Please refer to the [Defining WAN Replication section](#defining-wan-replication) for more information.
 
 - **Introducing <wan-publisher> element**: Starting with Hazelcast 3.8, the configuration element `<target-cluster>` is replaced with the element `<wan-publisher>` in WAN replication configuration.
 

@@ -21,12 +21,12 @@ Hazelcast IMDG Enterprise customers may also define dependencies, a sample of wh
 <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast-enterprise</artifactId>
-      <version>${project.version}</version>
+      <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
 <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast-enterprise-all</artifactId>
-      <version>${project.version}</version>
+      <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
 ```
 
