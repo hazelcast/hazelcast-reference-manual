@@ -81,6 +81,10 @@ You can set one these options using the system property `hazelcast.index.copy.be
 - `COPY_ON_WRITE`
 - `NEVER`
  
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Usage of this system property is supported for BINARY and OBJECT in-memory formats. Only in Hazelcast 3.8.7, it is also supported for NATIVE in-memory format.*
+
+
 
 #### Indexing Attributes with ValueExtractor
 
