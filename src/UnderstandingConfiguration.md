@@ -40,6 +40,16 @@ A part of `hazelcast.xml` is shown as an example below.
 		<multicast-port>54327</multicast-port>
 		</multicast>
 		<tcp-ip enabled="false">
+			<interface>127.0.0.1</interface>
+				<member-list>
+					<member>127.0.0.1</member>
+				</member-list>
+		</tcp-ip>
+	</join>
+</network>
+<map name="default">
+	<time-to-live-seconds>0</time-to-live-seconds>
+</map>
 ```
 
 ### Composing Declarative Configuration
@@ -136,7 +146,7 @@ Using the element `<import>`, you can also load XML resources from classpath and
 </hazelcast>
 ```
 
-The element `<import>` supports placeholders too. Please see the following example snippet:
+The element `<import>` supports variables too. Please see the following example snippet:
 
 ```xml
 <hazelcast>
@@ -145,7 +155,9 @@ The element `<import>` supports placeholders too. Please see the following examp
 </hazelcast>
 ```
 
-
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *You can refer to the [Using Variables section](#using-variables) to learn how you can set the configuration elements with variables.*
+<br></br>
 
 ## Configuring Programmatically
 
@@ -272,7 +284,7 @@ As described above, Hazelcast can be configured in a declarative or programmatic
 Starting with Hazelcast 3.9, it is possible to dynamically add configuration for certain data structures at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
  
 ```
-Config config = new Config():
+Config config = new Config();
 MapConfig mapConfig = new MapConfig("sessions");
 config.addMapConfig(mapConfig);
 
@@ -461,7 +473,7 @@ Properties properties = new Properties();
 // fill the properties, e.g. from database/LDAP, etc.
 
 XmlConfigBuilder builder = new XmlConfigBuilder();
-builder.setProperties(properties)
+builder.setProperties(properties);
 Config config = builder.build();
 HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 ```
