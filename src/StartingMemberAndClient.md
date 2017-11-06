@@ -49,7 +49,7 @@ public class GettingStarted {
 started. The members form a cluster and the output is similar to the following.
 
 ```
-Members {size:2, ver:1} [
+Members {size:2, ver:2} [
     Member [127.0.0.1]:5701 - e40081de-056a-4ae5-8ffe-632caf8a6cf1 this
     Member [127.0.0.1]:5702 - 93e82109-16bf-4b16-9c87-f4a6d0873080
 ]                              
