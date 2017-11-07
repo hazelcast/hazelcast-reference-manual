@@ -37,7 +37,7 @@ Properties properties = new Properties();
 // fill the properties, e.g. from database/LDAP, etc.
 
 XmlConfigBuilder builder = new XmlConfigBuilder();
-builder.setProperties(properties)
+builder.setProperties(properties);
 Config config = builder.build();
 HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 ```

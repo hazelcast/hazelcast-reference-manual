@@ -16,7 +16,7 @@ Let's assume you have the following index definition:
 The following query will use the index:
 
 ```java
-Predicate p = Predicates.equal('wheels[any].name', 'front-wheel');
+Predicate p = Predicates.equal("wheels[any].name", "front-wheel");
 ```
 
 
@@ -24,7 +24,7 @@ The following query, however, will NOT leverage the index, since it does not use
 was used in the index:
 
 ```java
-Predicates.equal('wheels[0].name', 'front-wheel')
+Predicates.equal("wheels[0].name", "front-wheel")
 ```
 
 In order to use the index in the case mentioned above, you have to create another index, as shown below:
@@ -34,4 +34,3 @@ In order to use the index in the case mentioned above, you have to create anothe
   <index ordered="false">wheels[0].name</index>
 </indexes>
 ```
-

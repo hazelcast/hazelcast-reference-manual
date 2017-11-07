@@ -28,6 +28,16 @@ A part of `hazelcast.xml` is shown as an example below.
 		<multicast-port>54327</multicast-port>
 		</multicast>
 		<tcp-ip enabled="false">
+			<interface>127.0.0.1</interface>
+			<member-list>
+				<member>127.0.0.1</member>
+			</member-list>
+		</tcp-ip>
+	</join>
+</network>
+<map name="default">
+	<time-to-live-seconds>0</time-to-live-seconds>
+</map>
 ```
 
 ### Composing Declarative Configuration
@@ -124,7 +134,7 @@ Using the element `<import>`, you can also load XML resources from classpath and
 </hazelcast>
 ```
 
-The element `<import>` supports placeholders too. Please see the following example snippet:
+The element `<import>` supports variables too. Please see the following example snippet:
 
 ```xml
 <hazelcast>
@@ -132,6 +142,8 @@ The element `<import>` supports placeholders too. Please see the following examp
   <import resource="${environment}-network-config.xml"/>
 </hazelcast>
 ```
-
+<br></br>
+![image](../images/NoteSmall.jpg) ***NOTE:*** *You can refer to the [Using Variables section](/Understanding_Configuration/Using_Variables.html) to learn how you can set the configuration elements with variables.*
+<br></br>
 
 

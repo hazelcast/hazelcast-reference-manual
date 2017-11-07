@@ -3,7 +3,7 @@ As described above, Hazelcast can be configured in a declarative or programmatic
 Starting with Hazelcast 3.9, it is possible to dynamically add configuration for certain data structures at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
  
 ```
-Config config = new Config():
+Config config = new Config();
 MapConfig mapConfig = new MapConfig("sessions");
 config.addMapConfig(mapConfig);
 
