@@ -1,6 +1,6 @@
 
 
-You can add event listeners to a Hazelcast Java client. You can configure the following listeners to listen to the events on the client side. Please see the respective sections under the [Cluster and Distributed Object Events sections](/900_Distributed_Events/index.md) for example codes.
+You can add event listeners to a Hazelcast Java client. You can configure the following listeners to listen to the events on the client side. Please see the respective sections under the [Cluster and Distributed Object Events sections](/900_Distributed_Events) for example codes.
 
 - [Lifecycle Listener](/00_Cluster_Events/04_Listening_for_Lifecycle_Events.md): Notifies when the client is starting, started, shutting down, and shutdown.
 - [Membership Listener](/00_Cluster_Events/00_Listening_for_Member_Events.md): Notifies when a member joins to/leaves the cluster to which the client is connected, or when an attribute is changed in a member.
