@@ -38,7 +38,7 @@ Hazelcast offers a discovery strategy for your Hazelcast applications running on
 
 ### Zookeeper Cloud Discovery
 
-This discovery mechanism provides a service based discovery strategy by using Apache Curator to communicate with your Zookeeper server. You can use this plugin with [Discovery SPI](http://docs.hazelcast.org/docs/latest-development/manual/html/Extending_Hazelcast/Discovery_SPI/index.html) enabled Hazelcast 3.6.1 and higher applications. This is provided as a Hazelcast plugin. Please see its [documentation](https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md) for information on configuring and using it.
+This discovery mechanism provides a service based discovery strategy by using Apache Curator to communicate with your Zookeeper server. You can use this plugin with [Discovery SPI](#discovery-spi) enabled Hazelcast 3.6.1 and higher applications. This is provided as a Hazelcast plugin. Please see its [documentation](https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md) for information on configuring and using it.
 
 ### Consul Cloud Discovery
 
