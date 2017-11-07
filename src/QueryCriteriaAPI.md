@@ -26,8 +26,7 @@ applied to the `employee` map using the `map.values(predicate)` method. This met
 and merges the results coming from them. Since the predicate is communicated between the members, it needs to
 be serializable.
 
-![image](images/NoteSmall.jpg)***NOTE:*** *Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of the Hazelcast distributed 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.*
+![image](images/NoteSmall.jpg)***NOTE:*** *Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of the Hazelcast distributed map.*
 
 #### Predicates Class Operators
 
