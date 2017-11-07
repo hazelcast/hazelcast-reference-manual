@@ -26,8 +26,7 @@ applied to the `employee` map using the `map.values(predicate)` method. This met
 and merges the results coming from them. Since the predicate is communicated between the members, it needs to
 be serializable.
 
-![image](images/NoteSmall.jpg)***NOTE:*** *Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of the Hazelcast distributed 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.*
+![image](images/NoteSmall.jpg)***NOTE:*** *Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of the Hazelcast distributed map.*
 
 #### Predicates Class Operators
 
@@ -60,28 +59,28 @@ Predicates class</a> for all predicates provided.*
 You can combine predicates using the `and`, `or`, and `not` operators, as shown in the below examples.
 
 ```java
-public Collection<Person> getWithNameAndAge( String name, int age ) {
+public Collection<Employee> getWithNameAndAge( String name, int age ) {
   Predicate namePredicate = Predicates.equal( "name", name );
   Predicate agePredicate = Predicates.equal( "age", age );
   Predicate predicate = Predicates.and( namePredicate, agePredicate );
-  return personMap.values( predicate );
+  return employeeMap.values( predicate );
 }
 ```
 
 ```java
-public Collection<Person> getWithNameOrAge( String name, int age ) {
+public Collection<Employee> getWithNameOrAge( String name, int age ) {
   Predicate namePredicate = Predicates.equal( "name", name );
   Predicate agePredicate = Predicates.equal( "age", age );
   Predicate predicate = Predicates.or( namePredicate, agePredicate );
-  return personMap.values( predicate );
+  return employeeMap.values( predicate );
 }
 ```
 
 ```java
-public Collection<Person> getNotWithName( String name ) {
+public Collection<Employee> getNotWithName( String name ) {
   Predicate namePredicate = Predicates.equal( "name", name );
   Predicate predicate = Predicates.not( namePredicate );
-  return personMap.values( predicate );
+  return employeeMap.values( predicate );
 }
 ```
 
@@ -92,11 +91,11 @@ You can simplify predicate usage with the `PredicateBuilder` class, which offers
 below example code which selects all people with a certain name and age.
 
 ```java
-public Collection<Person> getWithNameAndAgeSimplified( String name, int age ) {
+public Collection<Employee> getWithNameAndAgeSimplified( String name, int age ) {
   EntryObject e = new PredicateBuilder().getEntryObject();
   Predicate agePredicate = e.get( "age" ).equal( age );
   Predicate predicate = e.get( "name" ).equal( name ).and( agePredicate );
-  return personMap.values( predicate );
+  return employeeMap.values( predicate );
 }
 ```
 
