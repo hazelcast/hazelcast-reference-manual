@@ -17,15 +17,15 @@ Collection<String> keys = map.keySet(predicate);
 ...
 ```
 
-By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. But if the 
-Partition Predicate will only access a single partition and this can lead to a big performance gain.
+By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. However, if the 
+partition predicate will only access a single partition, this can lead to a big performance gain.
 
-For the partition predicate to work correctly, you need to know to which partition your data belongs to so you can send the
-request to the correct partition. One of the ways to do it is to make use of the PartitionAware interface when data is 
-inserted, thereby controlling the owning partition. 
+For the partition predicate to work correctly, you need to know to which partition your data belongs to so that you can send the
+request to the correct partition. One of the ways of doing it is to make use of the `PartitionAware` interface when data is 
+inserted, thereby controlling the owning partition. Please see the [PartitionAware section](#partitionaware) for more information and examples.
 
-A concrete example, imagine there is a webshop that sells phones and accessories. To find all the accessories of a phone, 
-a query could be executed that selects all accessories for that phone. This query is executing on all members in the cluster and
-therefor could generate quite a lot of load. However if we would store the accessories in the same partition as the phone, the 
-PartitionPredicate could be use the partitionkey of the phone to select the right partition and then queries for 
-the accessories for that phone, thereby reducing the load on the system and get faster query results.
+A concrete example may be a webshop that sells phones and accessories. To find all the accessories of a phone, 
+a query could be executed that selects all accessories for that phone. This query is executed on all members in the cluster and
+therefore could generate quite a lot of load. However, if we would store the accessories in the same partition as the phone, the 
+partition predicate could use the `partitionKey` of the phone to select the right partition and then it queries for 
+the accessories for that phone; and this reduces the load on the system and get faster query results.
