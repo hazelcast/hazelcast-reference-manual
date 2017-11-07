@@ -20,7 +20,7 @@ Collection<String> keys = map.keySet(predicate);
 By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. However, if the 
 partition predicate will only access a single partition, this can lead to a big performance gain.
 
-For the partition predicate to work correctly, you need to know to which partition your data belongs to so that you can send the
+For the partition predicate to work correctly, you need to know which partition your data belongs to so that you can send the
 request to the correct partition. One of the ways of doing it is to make use of the `PartitionAware` interface when data is 
 inserted, thereby controlling the owning partition. Please see the [PartitionAware section](#partitionaware) for more information and examples.
 
