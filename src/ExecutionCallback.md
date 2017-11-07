@@ -40,13 +40,8 @@ The example code below submits the Fibonacci calculation to `ExecutionCallback` 
 
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.ExecutionCallback;
-import com.hazelcast.core.IExecutorService;
-import java.util.concurrent.Future;
-
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-IExecutorService es = hazelcastInstance.getExecutorService();
+IExecutorService es = hazelcastInstance.getExecutorService("default");
 Callable<Long> task = new Fibonacci( 10 );
 
 es.submit(task, new ExecutionCallback<Long> () {
@@ -60,7 +55,7 @@ es.submit(task, new ExecutionCallback<Long> () {
   public void onFailure( Throwable t ) {
     t.printStackTrace();
   }
-};
+});
 ```
 
 
