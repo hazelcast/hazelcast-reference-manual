@@ -117,7 +117,7 @@ int avgSalary = salaries.aggregate( Supplier.fromKeyPredicate(
 
 For our next example, we will do some grouping based on the different worldwide offices. Currently, a group aggregator is not yet 
 available, so we need a small workaround to achieve this goal. (In later versions of the Aggregations API this will not be 
-required because it will be available out of the box in a much more convenient way.)
+required because it will be available out-of-the-box in a much more convenient way.)
 
 Again, let's start with our filter. This time, we want to filter based on an office name and we need to do some data joins
 to achieve this kind of filtering. 

@@ -197,7 +197,7 @@ Finally, when all the above steps are not enough, Hazelcast throws a  Native Out
 ![image](../../images/NoteSmall.jpg) ***NOTE:*** *This section is valid for Hazelcast 3.7 and higher releases.*
 
 
-Apart from the policies such as LRU and LFU, which Hazelcast provides out of the box, you can develop and use your own eviction policy. 
+Apart from the policies such as LRU and LFU, which Hazelcast provides out-of-the-box, you can develop and use your own eviction policy. 
 
 To achieve this, you need to provide an implementation of `MapEvictionPolicy` as in the following `OddEvictor` example:
 

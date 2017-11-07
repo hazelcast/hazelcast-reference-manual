@@ -28,7 +28,7 @@ As shown in the feature list in the [Hazelcast Overview](#hazelcast-overview), H
 * Hazelcast is open source.
 * Hazelcast is only a JAR file. You do not need to install software.
 * Hazelcast is a library, it does not impose an architecture on Hazelcast users.
-* Hazelcast provides out of the box distributed data structures, such as Map, Queue, MultiMap, Topic, Lock and Executor.
+* Hazelcast provides out-of-the-box distributed data structures, such as Map, Queue, MultiMap, Topic, Lock and Executor.
 * There is no "master," meaning no single point of failure in a Hazelcast cluster; each member in the cluster is configured to be functionally the same.
 * When the size of your memory and compute requirements increase, new members can be dynamically joined to the Hazelcast cluster to scale elastically.
 * Data is resilient to member failure. Data backups are distributed across the cluster. This is a big benefit when a member in the cluster crashes as data will not be lost.
