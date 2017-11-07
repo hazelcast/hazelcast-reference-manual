@@ -329,13 +329,13 @@ This section presents example configurations for scheduled executor service alon
 
 ```java
 Config config = new Config();
-config.getScheduledExecutorConfig( "myScheduledExecSvc" ).
-      .setPoolSize ( "16" )
+config.getScheduledExecutorConfig( "myScheduledExecSvc" )
+      .setPoolSize ( 16 )
       .setCapacity( 100 )
-      .setDurability( "1" );
+      .setDurability( 1 );
 
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
-ScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduldExecutorService("myScheduledExecSvc");
+IScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduledExecutorService("myScheduledExecSvc");
 ```
 
 Following are the descriptions of each configuration element and attribute:
@@ -352,27 +352,27 @@ Scheduling a callable that computes the cluster size in `10 seconds` from now:
 ```
 static class DelayedClusterSizeTask implements Callable<Integer>, HazelcastInstanceAware, Serializable {
 
-        private transient HazelcastInstance instance;
+    private transient HazelcastInstance instance;
 
-        @Override
-        public Integer call()
-                throws Exception {
-            return instance.getCluster().getMembers().size();
-        }
-
-        @Override
-        public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
-            this.instance = hazelcastInstance;
-        }
+    @Override
+    public Integer call()
+            throws Exception {
+        return instance.getCluster().getMembers().size();
     }
 
+    @Override
+    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        this.instance = hazelcastInstance;
+    }
+}
+
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
-IScheduledExecutorService executorService = instance.getScheduledExecutor("myScheduler");
-IScheduledFuture<Double> future = executorService.schedule(
-	new DelayedClusterSizeTask(), 10, TimeUnit.SECONDS);
+IScheduledExecutorService executorService = hazelcast.getScheduledExecutorService("myScheduler");
+IScheduledFuture<Integer> future = executorService.schedule(
+        new DelayedClusterSizeTask(), 10, TimeUnit.SECONDS);
 
 int membersCount = future.get(); // Block until we get the result
 ScheduledTaskStatistics stats = future.getStats();
 future.dispose(); // Always dispose futures that are not in use any more, to release resources
-int totalTaskRuns = stats.getTotalRuns()); // = 1
+long totalTaskRuns = stats.getTotalRuns(); // = 1
 ```
