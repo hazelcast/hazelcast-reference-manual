@@ -39,7 +39,7 @@ A submitted job is always identified using a unique combination of the `JobTrack
 
 To create a Job, a second class `com.hazelcast.mapreduce.KeyValueSource` is necessary. We will have a deeper look at the `KeyValueSource` class in the next section. `KeyValueSource` is used to wrap any kind of data or data structure into a well defined set of key-value pairs.
 
-The example code below is a direct follow up to the example in [Retrieving a JobTracker Instance](#retrieving-a-jobTracker-instance), and it reuses the already created HazelcastInstance and `JobTracker` instances.
+The example code below is a direct follow up to the example in [Retrieving a JobTracker Instance](#retrieving-a-jobtracker-instance), and it reuses the already created HazelcastInstance and `JobTracker` instances.
 
 The example starts by retrieving an instance of our data map, and then it creates the Job instance. Implementations used to configure the Job will be discussed while walking further through the API documentation.
 
