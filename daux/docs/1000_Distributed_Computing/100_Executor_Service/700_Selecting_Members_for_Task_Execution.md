@@ -10,10 +10,10 @@ In a simple example shown below, we select the cluster members based on the pres
 
 ```java
 public class MyMemberSelector implements MemberSelector {
-     public boolean select(Member member) {
-         return Boolean.TRUE.equals(member.getAttribute("my.special.executor"));
-     }
- }
+    public boolean select(Member member) {
+        return Boolean.TRUE.equals(member.getBooleanAttribute("my.special.executor"));
+    }
+}
 ```
 
 You can use `MemberSelector` instances provided by the `com.hazelcast.cluster.memberselector.MemberSelectors` class. For example, you can select a lite member for running a task using `com.hazelcast.cluster.memberselector.MemberSelectors#LITE_MEMBER_SELECTOR`.

@@ -232,7 +232,7 @@ For example, if we schedule a task to run in 10 seconds from now, `schedule(new 
 
 2. Upon member specific scheduling, the future task is *only* stored in the member itself, which means that in the event of a lost member, the task will be lost as well.
 
-To accomplish the described durability, all tasks provide a unique identity/name before the scheduling takes place. The name allows the service to reach the scheduled task even after the caller (client or member) goes down, and also allows helps to prevent duplicate tasks.
+To accomplish the described durability, all tasks provide a unique identity/name before the scheduling takes place. The name allows the service to reach the scheduled task even after the caller (client or member) goes down, and also allows to prevent duplicate tasks.
 The name of the task can be user-defined if it needs to be, by implementing the `com.hazelcast.scheduledexecutor.NamedTask` interface (plain wrapper util is available here: `com.hazelcast.scheduledexecutor.TaskUtils#named(java.lang.String, java.lang.Runnable)`). If the task does not provide a name in its implementation, the service provides a random UUID for it, internally.
 
 Upon scheduling, the service returns an `IScheduledFuture` which on top of the `java.util.concurrent.ScheduledFuture` functionality provides API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
@@ -327,13 +327,13 @@ This section presents example configurations for scheduled executor service alon
 
 ```java
 Config config = new Config();
-config.getScheduledExecutorConfig( "myScheduledExecSvc" ).
-      .setPoolSize ( "8" )
-      .setDurability( "1" )
-      .setCapacity( 100 );
+config.getScheduledExecutorConfig( "myScheduledExecSvc" )
+      .setPoolSize ( 16 )
+      .setCapacity( 100 )
+      .setDurability( 1 );
 
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
-ScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduldExecutorService("myScheduledExecSvc");
+IScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduledExecutorService("myScheduledExecSvc");
 ```
 
 Following are the descriptions of each configuration element and attribute:
@@ -347,31 +347,30 @@ Following are the descriptions of each configuration element and attribute:
 
 Scheduling a callable that computes the cluster size in `10 seconds` from now:
 
-```
+```java
 static class DelayedClusterSizeTask implements Callable<Integer>, HazelcastInstanceAware, Serializable {
 
-        private transient HazelcastInstance instance;
+    private transient HazelcastInstance instance;
 
-        @Override
-        public Integer call()
-                throws Exception {
-            return instance.getCluster().getMembers().size();
-        }
-
-        @Override
-        public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
-            this.instance = hazelcastInstance;
-        }
+    @Override
+    public Integer call()
+            throws Exception {
+        return instance.getCluster().getMembers().size();
     }
 
+    @Override
+    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        this.instance = hazelcastInstance;
+    }
+}
+
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
-IScheduledExecutorService executorService = instance.getScheduledExecutor("myScheduler");
-IScheduledFuture<Double> future = executorService.schedule(
-	new DelayedClusterSizeTask(), 10, TimeUnit.SECONDS);
+IScheduledExecutorService executorService = hazelcast.getScheduledExecutorService("myScheduler");
+IScheduledFuture<Integer> future = executorService.schedule(
+        new DelayedClusterSizeTask(), 10, TimeUnit.SECONDS);
 
 int membersCount = future.get(); // Block until we get the result
 ScheduledTaskStatistics stats = future.getStats();
 future.dispose(); // Always dispose futures that are not in use any more, to release resources
-
-int totalTaskRuns = stats.getTotalRuns()); // = 1
+long totalTaskRuns = stats.getTotalRuns(); // = 1
 ```
