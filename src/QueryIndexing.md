@@ -62,6 +62,7 @@ The following is the Spring declarative configuration for the same sample.
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Non-primitive types to be indexed should implement *`Comparable`*.*
 
+
 #### Copying Indexes
 
 The underlying data structures used by the indexes need to copy the query results to make sure that the results are correct. This copying process is performed either when reading the index from the data structure (on-read) or writing to it (on-write).
@@ -77,3 +78,7 @@ You can set one these options using the system property `hazelcast.index.copy.be
 - `COPY_ON_READ` (the default value)
 - `COPY_ON_WRITE`
 - `NEVER`
+ 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Usage of this system property is supported for BINARY and OBJECT in-memory formats. Only in Hazelcast 3.8.7, it is also supported for NATIVE in-memory format.*
+
