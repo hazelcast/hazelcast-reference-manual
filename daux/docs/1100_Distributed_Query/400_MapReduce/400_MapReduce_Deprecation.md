@@ -42,7 +42,7 @@ Benefits:
 
 We'll use the example of the "word count" application which summarizes a set of documents into a mapping from each word to the total number of its occurrences in the documents. This involves both a mapping stage where one document is transformed into a stream of words and a reducing stage that performs a COUNT DISTINCT operation on the stream and populates a Hazelcast IMap with the results.
 
-This is the word count code in MapReduce (also available on [hazlcast-jet-code-samples](https://github.com/hazelcast/hazelcast-jet-code-samples/blob/master/core/mapreduce-migration/src/main/java/WordCountCoreApi.java)):
+This is the word count code in MapReduce (also available on [hazelcast-jet-code-samples](https://github.com/hazelcast/hazelcast-jet-code-samples/blob/v0.4/batch/mapreduce-migration/src/main/java/WordCountCoreApi.java)):
 
 ```java
 JobTracker t = hz.getJobTracker("word-count");
