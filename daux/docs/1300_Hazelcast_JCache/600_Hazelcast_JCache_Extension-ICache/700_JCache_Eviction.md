@@ -48,7 +48,7 @@ The default eviction policy is LRU. Therefore, Hazelcast JCache does not offer t
 
 ##### Custom Eviction Policies
 
-Besides out of the box eviction policies LFU and LRU, you can also specify your custom eviction policies 
+Besides the out-of-the-box eviction policies LFU and LRU, you can also specify your custom eviction policies 
 through the eviction configuration either programmatically or declaratively.
 
 You can provide your `com.hazelcast.cache.CacheEvictionPolicyComparator` implementation to compare `com.hazelcast.cache.CacheEntryView`s. Supplied `CacheEvictionPolicyComparator` is used to compare cache entry views to select the one with higher priority to evict.
