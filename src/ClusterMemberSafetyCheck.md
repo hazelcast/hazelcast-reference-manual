@@ -34,5 +34,5 @@ Similarly, the method `isLocalMemberSafe` does the same check for the local memb
 <br></br>
 ***RELATED INFORMATION***
 
-*For more code samples please refer to <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster/src/main/java" target="_blank">PartitionService Code Samples</a>*.
+*For more code samples please refer to <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster-safety" target="_blank">PartitionService Code Samples</a>*.
 <br></br>
