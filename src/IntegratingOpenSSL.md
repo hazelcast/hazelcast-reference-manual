@@ -5,7 +5,7 @@
 <br></br>
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot integrate OpenSSL into Hazelcast when [Hazelcast Encryption](03_Encryption.md) 
+![image](images/NoteSmall.jpg) ***NOTE:*** *You cannot integrate OpenSSL into Hazelcast when [Hazelcast Encryption](#encryption.md) 
 is enabled.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *You currently cannot use OpenSSL integration with Hazelcast when using IBM JDK.*
