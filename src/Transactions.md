@@ -18,16 +18,13 @@ Hazelcast supports two types of transactions: ONE_PHASE and TWO_PHASE. The type 
 - **TWO_PHASE**: When you select this transaction type, Hazelcast first tries to execute the prepare phase. This phase fails if there are any conflicts. Once the prepare phase is successful, Hazelcast executes the commit phase (writing the changes). Before TWO_PHASE commits, Hazelcast copies the commit log to other members, so in case of a member failure, another member can complete the commit.
 
 ```java
-import java.util.Queue;
-import java.util.Map;
-import java.util.Set;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.Transaction;
+import com.hazelcast.core.*;
+import com.hazelcast.transaction.*;
 
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 TransactionOptions options = new TransactionOptions()
-    .setTransactionType( TransactionType.ONE_PHASE );
+    .setTransactionType( TransactionOptions.TransactionType.ONE_PHASE );
     
 TransactionContext context = hazelcastInstance.newTransactionContext( options );
 context.beginTransaction();
