@@ -7,7 +7,7 @@ control the classes to be served to other members, and create blacklists or whit
 The following is the brief working mechanism of the User Code Deployment feature:
 
 1. Dynamic class loader first checks the local classes, i.e., your classpath, for your custom class. If it is there, Hazelcast does not try to load it from the remote class repository.
-2. Then, it checks the cache of classes loaded from the remote class repository (for this, caching should have been enabled in your local, please refer to the Configuring User Code Deployment section below. If your class is found here, again, Hazelcast does not try to load it from the remote class repository.
+2. Then, it checks the cache of classes loaded from the remote class repository (for this, caching should have been enabled in your local, please refer to the [Configuring User Code Deployment section](/Setting_Up_Clusters/Member_User_Code_Deployment_-_BETA.html#page_Configuring+User+Code+Deployment) below. If your class is found here, again, Hazelcast does not try to load it from the remote class repository.
 3. Finally, dynamic class loader checks the remote class repository. If a member in this repository returns the class, it means your class is found and will be used. You can also put this class into your local class cache as mentioned in the previous step.
 
 
