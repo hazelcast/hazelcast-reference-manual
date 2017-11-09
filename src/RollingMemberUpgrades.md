@@ -56,12 +56,12 @@ one at version `3.9.0`, includes the following steps which should be repeated fo
  At this point all members of the cluster have been upgraded to codebase version `3.9.0` but the cluster still operates at cluster version `3.8`. In order to use `3.9` features
  the cluster version must be changed to `3.9`. There are two ways to accomplish this:
  
- * Use Management Center.
- * Use the command line [cluster.sh script](#using-the-script-cluster-sh).
+- Use [Management Center](http://docs.hazelcast.org/docs/management-center/latest/manual/html/Rolling_Upgrade.html).
+- Use the command line [cluster.sh script](#using-the-script-cluster-sh).
  
 ## Network Partitions and Rolling Upgrades
 
-In the event of network partitions which split your cluster into two subclusters, split brain handling works as explained in the [Network Partitioning section](#network-partitioning-split-brain-syndrome), with the
+In the event of network partitions which split your cluster into two subclusters, split brain handling works as explained in the [Network Partitioning section](#network-partitioning), with the
 additional constraint that two subclusters will only merge as long as they operate on the same cluster version. This is a requirement to ensure that all members participating
 in each one of the subclusters will be able to operate as members of the merged cluster at the same cluster version.
 
@@ -73,7 +73,7 @@ will be operating at the same, upgraded cluster version and will be able to merg
   
 ## Rolling Upgrade FAQ
 
-<br></br>
+<br>
 **How is the cluster version set?**
 
 When a new member starts, it is not yet joined to a cluster; therefore its cluster version is still undetermined. In order for the cluster version to be
@@ -86,18 +86,18 @@ set, one of the following must happen:
  joining member's codebase version is compatible with the current cluster version. If it is found to be compatible, then the member joins and the master
  sends the cluster version, which is set on the joining member. Otherwise, the starting member fails to join and shuts down.
 
-<br></br>
+<br>
 **What if a new Hazelcast minor version changes fundamental cluster protocol communication, like join messages?**
 
-***NOTE:*** *The version numbers used in the paragraph below are only used as an example.*
+![Note](images/Notesmall.jpg) ***NOTE:*** *The version numbers used in the paragraph below are only used as an example.*
 
-On startup, as [explained above](#how-is-the-cluster-version-set), the cluster version is not yet known to a member that has not joined any cluster.
+On startup, as answered in the above question (How is the cluster version set?), the cluster version is not yet known to a member that has not joined any cluster.
 By default the newly started member will use the cluster protocol that corresponds to its codebase version until this member joins a cluster
 (so for codebase `3.9.0` this means implicitly assuming cluster version `3.9`). If, hypothetically, major changes in discovery & join operations
 have been introduced which do not allow the member to join a `3.8` cluster, then the member should be explicitly configured to start
 assuming a `3.8` cluster version.
 
-<br></br>
+<br>
 **Do I have to upgrade clients to work with rolling upgrades?**
 
 Starting with Hazelcast 3.6, the Hazelcast Open Binary Client Protocol was introduced. Clients which implement the Open Binary Client Protocol
@@ -109,7 +109,7 @@ connected to a cluster will operate at the lower version of capabilities until a
 
 It is not recommended due to potential network partitions. It is advised to always stop and start one member in each upgrade step.
 
- <br></br>
+ <br>
 **Can I upgrade my business app together with Hazelcast while doing a rolling member upgrade?**
 
 Yes, but make sure to make the new version of your app compatible with the old one since there will be a timespan when both versions interoperate. Checking if two versions of your app are compatible includes verifying binary and algorithmic compatibility, and some other steps.
