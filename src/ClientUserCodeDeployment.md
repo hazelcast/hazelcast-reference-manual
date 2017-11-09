@@ -70,7 +70,7 @@ UserCodeDeploymentConfig userCodeDeploymentConfig = config.getUserCodeDeployment
 userCodeDeploymentConfig.setEnabled( true );
 ```
 
-Please refer to the [Member User Code Deployment section](#user-code-deployment-beta) for more information on enabling it on the member side and its configuration properties. 
+Please refer to the [Member User Code Deployment section](#member-user-code-deployment-beta) for more information on enabling it on the member side and its configuration properties. 
 
 For the property `class-cache-mode`, Client User Code Deployment supports only the `ETERNAL` mode, regardless of the configuration set at the member side (which can be `ETERNAL` and `OFF`).
 
