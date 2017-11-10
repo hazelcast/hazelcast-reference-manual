@@ -40,20 +40,20 @@ You can also configure an event journal programmatically. The following is a pro
 
 ```java
 EventJournalConfig myMapJournalConfig = new EventJournalConfig()
-                .setMapName("myMap")
-                .setEnabled(true)
-                .setCapacity(5000)
-                .setTimeToLiveSeconds(20);
+    .setMapName("myMap")
+    .setEnabled(true)
+    .setCapacity(5000)
+    .setTimeToLiveSeconds(20);
 
-        EventJournalConfig myCacheJournalConfig = new EventJournalConfig()
-                .setMapName("myCache")
-                .setEnabled(true)
-                .setCapacity(10000)
-                .setTimeToLiveSeconds(0);
-        
-        Config config = new Config();
-        config.addEventJournalConfig(myMapJournalConfig);
-        config.addEventJournalConfig(myCacheJournalConfig);
+EventJournalConfig myCacheJournalConfig = new EventJournalConfig()
+    .setMapName("myCache")
+    .setEnabled(true)
+    .setCapacity(10000)
+    .setTimeToLiveSeconds(0);
+
+Config config = new Config();
+config.addEventJournalConfig(myMapJournalConfig);
+config.addEventJournalConfig(myCacheJournalConfig);
 ```
 
 
