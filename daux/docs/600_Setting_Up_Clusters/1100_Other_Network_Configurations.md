@@ -90,7 +90,7 @@ networkConfig.addOutboundPort(37001);
 
 As shown in the programmatic configuration, you use the method `addOutboundPort` to add only one port. If you need to add a group of ports, then use the method `addOutboundPortDefinition`. 
 
-In the declarative configuration, the element `ports` can be used for both single and multiple port definitions.
+In the declarative configuration, the element `ports` can be used for both single and multiple port definitions. When you set this element to  `0` or  `*`, your operating system (not Hazelcast) will select a free port from the ephemeral range.
 
 ### Reuse Address
 
@@ -119,7 +119,7 @@ networkConfig.setReuseAddress( true );
 
 ### Join
 
-The `join` configuration element is used to discover Hazelcast members and enable them to form a cluster. Hazelcast provides multicast, TCP/IP, EC2, and jclouds&reg; discovery mechanisms. These mechanisms are explained the [Discovering Cluster Members section](index.md). This section describes all the sub-elements and attributes of `join` element. The following are example configurations.
+The `join` configuration element is used to discover Hazelcast members and enable them to form a cluster. Hazelcast provides multicast, TCP/IP, EC2, and jclouds&reg; discovery mechanisms. These mechanisms are explained the [Discovery Mechanisms section](/Setting_Up_Clusters/Discovery_Mechanisms.md). This section describes all the sub-elements and attributes of `join` element. The following are example configurations.
 
 **Declarative:**
 
@@ -275,7 +275,7 @@ interfaceConfig.setEnabled( true )
 
 Hazelcast supports IPv6 addresses seamlessly (This support is switched off by default, please see the note at the end of this section).
 
-All you need is to define IPv6 addresses or interfaces. The only current limitation is that you cannot define wildcard IPv6 addresses in the TCP/IP join configuration (`tcp-ip` element). Interfaces configuration does not have this limitation, you can configure wildcard IPv6 interfaces in the same way as IPv4 interfaces.
+All you need is to define IPv6 addresses or interfaces in the network configuration. The only current limitation is that you cannot define wildcard IPv6 addresses in the TCP/IP join configuration (`tcp-ip` element). Interfaces configuration does not have this limitation, you can configure wildcard IPv6 interfaces in the same way as IPv4 interfaces.
 
 ```xml
 <hazelcast>

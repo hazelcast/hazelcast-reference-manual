@@ -48,7 +48,7 @@ HazelcastInstance member4 = Hazelcast.newHazelcastInstance();
 member4.setIntAttribute( "CPU_CORE_COUNT", 2 );
 ```
 
-For another example, you can tag some members with a filter so that a member in the cluster can load classes from those tagged members. Please see the [User Code Deployment section](/04_Setting_Up_Clusters/07_User_Code_Deployment_-_BETA.md) for more information.
+For another example, you can tag some members with a filter so that a member in the cluster can load classes from those tagged members. Please see the [User Code Deployment section](/04_Setting_Up_Clusters/07_Member_User_Code_Deployment_-_BETA.md) for more information.
 
 You can also configure your member attributes through declarative configuration and start your member afterwards. Here is how you can use the declarative approach:
 

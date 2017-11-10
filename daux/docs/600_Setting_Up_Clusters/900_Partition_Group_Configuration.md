@@ -134,12 +134,18 @@ You can provide your own partition group implementation using the SPI configurat
 Following is a sample code covering the implementation steps mentioned in the above paragraph: 
 
 ```
-public class CustomDiscovery extends JCloudsDiscoveryStrategy {
+public class CustomDiscovery extends AbstractDiscoveryStrategy {
 
-    public CustomDiscovery(Map<String, Comparable> properties) {
-        super(properties);
+    public CustomDiscovery(ILogger logger, Map<String, Comparable> properties) {
+        super(logger, properties);
     }
-    
+
+    @Override
+    public Iterable<DiscoveryNode> discoverNodes() {
+        Iterable<DiscoveryNode> iterable = //TODO implementation 
+        return iterable;
+    }
+
     @Override
     public PartitionGroupStrategy getPartitionGroupStrategy() {
         return new CustomPartitionGroupStrategy();
@@ -148,10 +154,9 @@ public class CustomDiscovery extends JCloudsDiscoveryStrategy {
     private class CustomPartitionGroupStrategy implements PartitionGroupStrategy {
         @Override
         public Iterable<MemberGroup> getMemberGroups() {
-            ...
-            ...
+            Iterable<MemberGroup> iterable = //TODO implementation 
+            return iterable;
         }
     }
 }
-
 ```
