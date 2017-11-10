@@ -1,5 +1,5 @@
 
-You create a `TransactionContext` object to begin, commit, and rollback a transaction. You can obtain transaction-aware instances of queues, maps, sets, lists, multimaps via `TransactionContext`, work with them, and commit/rollback in one shot. You can see the [TransactionContext source code here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/transaction/TransactionContext.java).
+You create a `TransactionContext` object to begin, commit, and rollback a transaction. You can obtain transaction-aware instances of queues, maps, sets, lists, multimaps via `TransactionContext`, work with them, and commit/rollback in one shot. You can see the [TransactionContext API here](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/TransactionContext.html).
 
 Hazelcast supports two types of transactions: ONE_PHASE and TWO_PHASE. The type of transaction controls what happens when a member crashes while a transaction is committing. The default behavior is TWO_PHASE.
 
