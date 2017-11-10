@@ -23,6 +23,8 @@ Hazelcast::MigrationQueueSize=0
 Hazelcast::ClusterSize=2
 ```
 
+Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) to learn more about each state of a Hazelcast cluster and member.
+
 
 ### Health Monitor
 
