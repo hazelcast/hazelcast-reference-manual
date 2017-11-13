@@ -5,7 +5,7 @@
 XA describes the interface between the global transaction manager and the local resource manager. XA allows multiple resources (such as databases, application servers, message queues, transactional caches, etc.) to be accessed within the same transaction, thereby preserving the ACID properties across applications. XA uses a two-phase commit to ensure that all resources either commit or rollback any particular transaction consistently (all do the same).
 
 When you implement the `XAResource` interface, Hazelcast provides XA transactions. You can obtain the `HazelcastXAResource` instance via the `HazelcastInstance getXAResource` method. You can see the
-[HazelcastXAResource source code here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/transaction/HazelcastXAResource.java).
+[HazelcastXAResource API here](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/HazelcastXAResource.html).
 
 Below is example code that uses Atomikos for transaction management.
   
