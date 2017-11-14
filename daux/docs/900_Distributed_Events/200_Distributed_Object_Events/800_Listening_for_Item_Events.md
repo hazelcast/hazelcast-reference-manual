@@ -54,7 +54,7 @@ The following is an example programmatic configuration.
 
 ```java
 setConfig.addItemListenerConfig(
-new ItemListenerConfig( "com.your-package.SampleItemListener", true ) );
+  new ItemListenerConfig( "com.yourpackage.SampleItemListener", true ) );
 ```
 
 
@@ -65,7 +65,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <item-listeners>
      <item-listener include-value="true">
-       com.your-package.SampleItemListener
+       com.yourpackage.SampleItemListener
      </item-listener>
    </item-listeners>
    ...
@@ -78,7 +78,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:set name="default" >
   <hz:item-listeners>
     <hz:item-listener include-value="true"
-      class-name="com.your-package.SampleItemListener"/>
+      class-name="com.yourpackage.SampleItemListener"/>
   </hz:item-listeners>
 </hz:set>
 ```

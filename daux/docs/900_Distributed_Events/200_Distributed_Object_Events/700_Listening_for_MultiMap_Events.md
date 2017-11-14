@@ -41,7 +41,7 @@ The following is an example programmatic configuration.
 
 ```java
 multiMapConfig.addEntryListenerConfig(
-new EntryListenerConfig( "com.your-package.SampleEntryListener",
+  new EntryListenerConfig( "com.yourpackage.SampleEntryListener",
 		                             false, false ) );
 ```
 
@@ -55,7 +55,7 @@ The following is an example of the equivalent declarative configuration.
       <value-collection-type>SET</value-collection-type>
       <entry-listeners>
          <entry-listener include-value="false" local="false">
-            com.your-package.SampleEntryListener
+            com.yourpackage.SampleEntryListener
          </entry-listener>
       </entry-listeners>
    </multimap>
@@ -69,7 +69,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:multimap name="default" value-collection-type="LIST">
    <hz:entry-listeners>
       <hz:entry-listener include-value="false"
-         class-name="com.your-package.SampleEntryListener"/>
+         class-name="com.yourpackage.SampleEntryListener"/>
       <hz:entry-listener implementation="EntryListener" local="false"/>
    </hz:entry-listeners>
 </hz:multimap>

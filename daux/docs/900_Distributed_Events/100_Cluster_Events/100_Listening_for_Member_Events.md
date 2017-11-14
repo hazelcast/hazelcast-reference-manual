@@ -45,7 +45,7 @@ The following is an example programmatic configuration.
 ```java
 Config config = new Config();
 config.addListenerConfig(
-new ListenerConfig( "com.your-package.ClusterMembershipListener" ) );
+new ListenerConfig( "com.yourpackage.ClusterMembershipListener" ) );
 ```
 
 
@@ -56,7 +56,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <listeners>
       <listener>
-         com.your-package.ClusterMembershipListener
+         com.yourpackage.ClusterMembershipListener
       </listener>
    </listeners>
    ...
@@ -67,7 +67,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
- <hz:listener class-name="com.your-package.ClusterMembershipListener"/>
+ <hz:listener class-name="com.yourpackage.ClusterMembershipListener"/>
  <hz:listener implementation="MembershipListener"/>
 </hz:listeners>
 ```
