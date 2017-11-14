@@ -115,6 +115,9 @@ Entry Removed:EntryEvent{entryEventType=REMOVED, member=Member [192.168.1.100]]:
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Please note that the method `IMap.clear()` does not fire an "EntryRemoved" event, but fires a "MapCleared" event.*
 <br></br>
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *A listener runs on the event threads that may also be used by the other listeners. So, you should NEVER block these event threads.*
+<br></br>
 
 #### Partitions and Entry Listeners
 
