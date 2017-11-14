@@ -45,7 +45,7 @@ or from the classpath. We will show how to use an existing `HazelcastInstance` l
 #### Setting up the JCache Entry Point
 
 In the next line, we ask the `CachingProvider` to return a `javax.cache.CacheManager`. This is the general application's entry
-point into JCache. The `CachingProvider` creates and manages named caches.
+point into JCache. The `CacheManager` creates and manages named caches.
 
 #### Configuring the Cache Before Creating It
 
