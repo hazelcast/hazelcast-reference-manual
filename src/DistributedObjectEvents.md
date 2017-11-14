@@ -192,7 +192,7 @@ The following is an example programmatic configuration.
 ```java
 mapConfig.addEntryListenerConfig(
 new EntryListenerConfig( "com.yourpackage.MyEntryListener", 
-		                             false, false ) );
+                                 false, false ) );
 ```
 
 
@@ -202,12 +202,12 @@ The following is an example of the equivalent declarative configuration.
 <hazelcast>
    ...
    <map name="somemap">
-   ...
+      ...
       <entry-listeners>
-	     <entry-listener include-value="false" local="false">
-		 com.your-package.MyEntryListener
-		 </entry-listener>
-	  </entry-listeners>
+         <entry-listener include-value="false" local="false">
+            com.yourpackage.MyEntryListener
+         </entry-listener>
+      </entry-listeners>
    </map>
    ...
 </hazelcast>
@@ -219,7 +219,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:map name="somemap">
    <hz:entry-listeners>
       <hz:entry-listener include-value="true"
-      class-name="com.hazelcast.spring.DummyEntryListener"/>
+         class-name="com.hazelcast.spring.DummyEntryListener"/>
       <hz:entry-listener implementation="dummyEntryListener" local="true"/>
    </hz:entry-listeners>
 </hz:map>
@@ -286,8 +286,8 @@ The following is an example programmatic configuration.
 
 ```java
 multiMapConfig.addEntryListenerConfig(
-new EntryListenerConfig( "com.your-package.SampleEntryListener",
-		                             false, false ) );
+  new EntryListenerConfig( "com.yourpackage.SampleEntryListener",
+    false, false ) );
 ```
 
 
@@ -300,7 +300,7 @@ The following is an example of the equivalent declarative configuration.
       <value-collection-type>SET</value-collection-type>
       <entry-listeners>
          <entry-listener include-value="false" local="false">
-            com.your-package.SampleEntryListener
+            com.yourpackage.SampleEntryListener
          </entry-listener>
       </entry-listeners>
    </multimap>
@@ -314,7 +314,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:multimap name="somemap" value-collection-type="SET">
    <hz:entry-listeners>
       <hz:entry-listener include-value="false"
-         class-name="com.your-package.SampleEntryListener"/>
+         class-name="com.yourpackage.SampleEntryListener"/>
       <hz:entry-listener implementation="EntryListener" local="false"/>
    </hz:entry-listeners>
 </hz:multimap>
@@ -376,7 +376,7 @@ The following is an example programmatic configuration.
 
 ```java
 setConfig.addItemListenerConfig(
-new ItemListenerConfig( "com.your-package.SampleItemListener", true ) );
+new ItemListenerConfig( "com.yourpackage.SampleItemListener", true ) );
 ```
 
 
@@ -387,7 +387,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <item-listeners>
      <item-listener include-value="true">
-       com.your-package.SampleItemListener
+       com.yourpackage.SampleItemListener
      </item-listener>
    </item-listeners>
    ...
@@ -400,7 +400,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:set name="default" >
   <hz:item-listeners>
     <hz:item-listener include-value="true"
-      class-name="com.your-package.SampleItemListener"/>
+      class-name="com.yourpackage.SampleItemListener"/>
   </hz:item-listeners>
 </hz:set>
 ```
@@ -449,7 +449,7 @@ The following is an example programmatic configuration.
 
 ```java
 topicConfig.addMessageListenerConfig(
-new ListenerConfig( "com.your-package.SampleMessageListener" ) );
+  new ListenerConfig( "com.yourpackage.SampleMessageListener" ) );
 ```
 
 
@@ -461,7 +461,7 @@ The following is an example of the equivalent declarative configuration.
    <topic name="default">
       <message-listeners>
          <message-listener>
-         com.your-package.SampleMessageListener
+            com.yourpackage.SampleMessageListener
          </message-listener>
       </message-listeners>
    </topic>   
@@ -475,7 +475,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:topic name="default">
   <hz:message-listeners>
     <hz:message-listener 
-       class-name="com.your-package.SampleMessageListener"/>
+      class-name="com.yourpackage.SampleMessageListener"/>
   </hz:message-listeners>
 </hz:topic>
 ```
