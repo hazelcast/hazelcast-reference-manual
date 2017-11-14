@@ -5,8 +5,17 @@
 Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap` and hence `java.util.Map`. It is the distributed implementation of Java map. You can perform operations like reading and writing from/to a Hazelcast map with the well known get and put methods.
 
 <br>
-![Note](images/NoteSmall.jpg) ***NOTE:*** *IMap data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the [Fast Batch Processing](???link to fast batch processing on .com ???) use case for Hazelcast Jet. Please also see [IMap reader](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IMap+and+ICache+readers) and [IMap writer](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IMap+and+ICache+writers) sections in Hazelcast Jet Reference Manual.*
+
+
+----
+
+
+![Note](images/NoteSmall.jpg) ***NOTE:*** *IMap data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the [Fast Batch Processing](https://jet.hazelcast.org/use-cases/fast-batch-processing/) and [Real-Time Stream Processing](https://jet.hazelcast.org/use-cases/real-time-stream-processing/) use cases for Hazelcast Jet.*
+
+*Please also see [here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG#page_IMap+and+ICache) in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.*
 <br>
+
+----
 
 ### Getting a Map and Putting an Entry
 

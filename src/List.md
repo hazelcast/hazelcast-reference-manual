@@ -10,10 +10,19 @@ Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allo
 * All items are copied to local and iteration occurs locally.
 
 
-<br>
-![Note](images/NoteSmall.jpg) ***NOTE:*** *IList data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Fast Batch Processing. Hazelcast Jet uses IList as a source (reads data from IList) and as a sink (writes data to IList). Please see the [Fast Batch Processing](???link to fast batch processing on .com ???) use case for Hazelcast Jet. Please also see [IList reader](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IList+reader) and [IList writer](http://docs.hazelcast.org/docs/jet/0.4/manual/Vertices_in_the_Library/Sources.html#page_IList+writer) sections in Hazelcast Jet Reference Manual.*
 
 <br>
+
+
+----
+
+
+![Note](images/NoteSmall.jpg) ***NOTE:*** *While IMap and ICache are the recommended data structures to be used by [Hazelcast Jet](https://jet.hazelcast.org/), IList can also be used by it for unit testing or similar non-production situations. Please see [here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG#page_IList) in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job, and drain the results to another IList.*
+
+*Please also see the [Fast Batch Processing](https://jet.hazelcast.org/use-cases/fast-batch-processing/) and [Real-Time Stream Processing](https://jet.hazelcast.org/use-cases/real-time-stream-processing/) use cases for Hazelcast Jet.*
+<br>
+
+----
 
 
 ### Getting a List and Putting Items

@@ -6,71 +6,59 @@
 
 ## Overview
 
-Hazelcast Jet, built on top of the Hazelcast IMDG platform, is a distributed processing engine for large data sets. It reuses the features and services of Hazelcast IMDG, but it is a separate product with features not available in IMDG. 
+Hazelcast Jet, built on top of the Hazelcast IMDG, is a distributed processing engine for fast stream and batch processing of large data sets. It reuses the features and services of Hazelcast IMDG, but it is a separate product with features not available in IMDG. 
 
-With Hazelcast IMDG providing storage functionality, Jet performs parallel execution in a Hazelcast Jet cluster to enable data-intensive applications to operate in near real-time. Jet uses green threads (threads that are scheduled by a runtime library or VM) to achieve this parallel execution.
+With Hazelcast IMDG providing storage functionality, Jet performs parallel execution in a Hazelcast Jet cluster, composed of Jet instances, to enable data-intensive applications to operate in near real-time. Jet uses green threads (threads that are scheduled by a runtime library or VM) to achieve this parallel execution. 
 
-Hazelcast Jet uses directed acyclic graphs (DAG) to model the relationships between individual steps of the data processing. Therefore, it can execute both fast batch- and stream-based data processing applications. 
+Since Jet uses Hazelcast IMDG’s discovery mechanisms, it can be used both on-premises and on the cloud environments. Hazelcast Jet typically runs on several machines that form a cluster. 
 
-Since Jet uses Hazelcast IMDG’s discovery mechanisms, it can be used both on-premises and cloud environments. Hazelcast Jet typically runs on several machines that form a cluster. 
+#### How You Can Use It
 
-Following is the logical architecture of Hazelcast Jet
+The Pipeline API is the primary high-level API of Hazelcast Jet for batch and stream processing. This API is easy-to-use and set-up providing you with the tools to compose batch computations from building blocks such as filters, aggregators and joiners - saving time and resource. With Pipeline API, you can build bounded and unbounded data pipelines on a variety of sources and sinks.
 
-![Jet Logical Arhictecture](images/JetLogicalArch.png)
+In addition to the Pipeline API, Jet also offers a distributed implementation of `java.util.stream`. You can express your computation over any data source Jet supports using the familiar API from the JDK 8. This distributed implementation can be used for simple transform and reduce operations on top of IMap and IList.
 
-## Components
+You can also use Jet's Core API to build custom data sources and sinks, to have a low-level control over the data flow, to fine-tune performance and build DSLs.
 
-Jet's core is a distributed computation engine based on DAG (Directed Acyclic Graph) model. In this model the following components exist:
+Please see the [Work with Jet](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Start_Jet_and_Submit_Jobs_to_It) section in the Hazelcast Jet Reference Manual to see a simple example.
 
-- **Vertex**: Main unit of work in a Jet computation. There are three kinds of vertex in Jet: source, computational, and sink. Source vertex injects data from the environment into the Jet job. Computational vertex accepts data, performs the computation and emits the results; these are the vertices where the main action takes place. Sink vertex drains these results of the Jet job into the environment.
-- **Processor**: Contains the code of the computation to be performed by a vertex. Each vertex’s computation is implemented by a Processor. On each Jet cluster member there are one or more instances of the processor running in parallel for a single vertex.
-- **Edge**: Transfers data from one vertex to the next. It decides which target processor an item should be routed to. This could be guided by the partitioning logic, or could be one of the other choices like broadcast or pooled unicast.
-- **Job**: Unit of work which is executed; it is composed of processors. 
-
-Please refer to the [The DAG section](http://docs.hazelcast.org/docs/jet/0.4/manual/Architecture.html#page_The+DAG) in Hazelcast Jet's Reference Manual for more information on the units of a DAG.
-
-
-## How You Can Use It
-
-You can use Jet in one of the following ways: 
-
-1. Building your DAG using Jet's Core API which exposes the full potential of Jet. To build the DAG, you basically create all the vertices, configure the local parallelism of these vertices, and create the edges using the Core API.
-2. Using `java.util.stream` as a high-level API. The operations of `java.util.stream` are first mapped to a DAG and executed. Then the result of executions is returned in the same way as in JDK`s implementation.
-
-You can refer to the [Word Counting example section](http://docs.hazelcast.org/docs/jet/0.4/manual/Getting_Started/Hazelcast_Jet_101_-_Word_Counting_Batch_Job.html) in Hazelcast Jet's Reference Manual for more information on how to model, implement and run a DAG.
-
-## Where You Can Use It
+#### Where You Can Use It
 
 Hazelcast Jet is appropriate for applications that require a near real-time experience such as operations in IoT architectures (house thermostats, lighting systems, etc.), in-store e-commerce systems and social media platforms. Typical use cases include the following:
 
 - Real-time (low-latency) stream processing
-- Implementing Change Data Capture (CDC)
-- Moving from batch to stream processing
 - Fast batch processing
+- Streaming analytics
+- Complex event processing
+- Implementing event sourcing and CQRS (Command Query Responsibility Segregation)
 - Internet-of-things (IoT) data ingestion, processing and storage
 - Data processing microservice architectures
+- Online trading
+- Social media platforms
+- System log events
 
-The aforementioned applications produce huge amounts of data that require near real-time processing. Hazelcast Jet achieves this by processing the incoming records as soon as possible,  hence lowering the latency, and ingesting the data at high-velocity. Jet's execution model and keeping both the computation and data storage in memory enables high application speeds.
+The aforementioned use cases require huge amounts of data to be processed in near real-time. Hazelcast Jet achieves this by processing the incoming records as soon as possible,  hence lowering the latency, and ingesting the data at high-velocity. Jet's execution model and keeping both the computation and data storage in memory enables high application speeds.
 
 
 ## Data Processing Styles
 
 The data processing is traditionally divided into batch and stream processing.
 
-Batch data is considered as bounded, i.e., finite, and batch processing typically may refer to running a job on a data set which is available in a data center.
+Batch data is considered as bounded, i.e., finite, and fast batch processing typically may refer to running a job on a data set which is available in a data center. You simply provide one or more pre-existing datasets and order Hazelcast Jet to mine them for the information you need.
 
-Stream data is considered as unbounded, i.e., infinite, and stream processing deals with in-flight data before it is stored. It offers lower latency; data is processed on-the-fly and you do not have to wait for the whole data set to arrive in order to run a computation.
+Stream data is considered as unbounded, i.e., infinite, and infinite stream processing deals with in-flight data before it is stored. It offers lower latency; data is processed on-the-fly and you do not have to wait for the whole data set to arrive in order to run a computation.
 
 
 ## Relationship with Hazelcast IMDG
 
-Hazelcast Jet leans on Hazelcast IMDG for cluster management and deployment, data partitioning, and networking; all the services of IMDG are available to your Jet Jobs. A Jet instance is also a fully functional Hazelcast IMDG instance and a Jet cluster is also a Hazelcast IMDG cluster.
+Hazelcast Jet leans on Hazelcast IMDG for cluster management and deployment, data partitioning, and networking; all the services of IMDG are available to your Jet Jobs (units of work which are executed). A Jet instance is also a fully functional Hazelcast IMDG instance and a Jet cluster is also a Hazelcast IMDG cluster. 
 
 A Jet job is implemented as a Hazelcast IMDG proxy, similar to the other services and data structures in Hazelcast. Hazelcast operations are used for different actions that can be performed on a job. Jet can also be used with the Hazelcast Client, which uses the Hazelcast Open Binary Protocol to communicate different actions to the server instance.
 
-Hazelcast Jet can use Hazelcast IMDG's IMap, ICache and IList on the embedded cluster as sources and sinks of data and make use of data locality. IMap and ICache are partitioned data structures distributed across the cluster and Jet members can read from these structures by having each member read just its local partitions. Hazelcast IMDG's IList is stored on a single partition; all the data will be read on the single member that owns that partition. 
+In the Hazelcast Jet world, Hazelcast IMDG can be used for data ingestion prior to processing, 
+connecting multiple Jet jobs, enriching processed events, caching the remote data, distributing Jet-processed data, and running advanced data processing tasks on top of IMDG data structures.
 
-When using an IMap, ICache or IList as a sink, it is not possible to directly make use of data locality because the emitted key-value pair may belong to a non-local partition. In this case the pair must be transmitted over the network to the member which owns that particular partition. 
+Hazelcast Jet can use Hazelcast IMDG's **IMap**, **ICache** and **IList** on the embedded cluster as sources (data structures from which Jet reads data) and sinks (data structures to which Jet writes data). IMap and ICache are partitioned data structures distributed across the cluster and Jet members can read from these structures by having each member read just its local partitions. Hazelcast IMDG's IList is stored on a single partition; all the data will be read on the single member that owns that partition. Please refer to [IMap and ICache](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG#page_IMap+and+ICache) and [IList]([here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG#page_IList) in the Hazelcast Jet Reference Manual to learn how Jet uses these IMDG data structures. In addition to these data structures, Jet can also process a stream of changes of IMap and ICache, using the [Event Journal](#event-journal).
 
 You can use Hazelcast Jet with embedded Hazelcast IMDG or a remote Hazelcast IMDG cluster. Benefits of using Hazelcast Jet with embedded Hazelcast IMDG are as follows:
 

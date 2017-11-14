@@ -88,7 +88,7 @@ networkConfig.addOutboundPort(37001);
 ...
 ```
 
-![Note](images/NoteSmall/jpg) ***NOTE:*** *You can use port ranges and/or comma separated ports.*
+![Note](images/NoteSmall.jpg) ***NOTE:*** *You can use port ranges and/or comma separated ports.*
 
 As shown in the programmatic configuration, you use the method `addOutboundPort` to add only one port. If you need to add a group of ports, then use the method `addOutboundPortDefinition`. 
 
