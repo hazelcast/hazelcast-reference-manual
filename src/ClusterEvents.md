@@ -14,21 +14,19 @@ To write a Membership Listener class, you implement the MembershipListener inter
 The following is an example Membership Listener class.
 
 ```java
-public class ClusterMembershipListener
-     implements MembershipListener {
-     
-public void memberAdded(MembershipEvent membershipEvent) {
-  System.err.println("Added: " + membershipEvent);
-}
+public class ClusterMembershipListener implements MembershipListener {
 
-public void memberRemoved(MembershipEvent membershipEvent) {
-       System.err.println("Removed: " + membershipEvent);
-     }
+  public void memberAdded(MembershipEvent membershipEvent) {
+    System.err.println("Added: " + membershipEvent);
+  }
 
-public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
-       System.err.println("Member attribute changed: " + memberAttributeEvent);
-     }
-     
+  public void memberRemoved(MembershipEvent membershipEvent) {
+    System.err.println("Removed: " + membershipEvent);
+  }
+
+  public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
+    System.err.println("Member attribute changed: " + memberAttributeEvent);
+  }
 }
 ```
 
@@ -50,7 +48,7 @@ The following is an example programmatic configuration.
 ```java
 Config config = new Config();
 config.addListenerConfig(
-new ListenerConfig( "com.your-package.ClusterMembershipListener" ) );
+new ListenerConfig( "com.yourpackage.ClusterMembershipListener" ) );
 ```
 
 
@@ -61,7 +59,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <listeners>
       <listener>
-         com.your-package.ClusterMembershipListener
+         com.yourpackage.ClusterMembershipListener
       </listener>
    </listeners>
    ...
@@ -72,7 +70,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
- <hz:listener class-name="com.your-package.ClusterMembershipListener"/>
+ <hz:listener class-name="com.yourpackage.ClusterMembershipListener"/>
  <hz:listener implementation="MembershipListener"/>
 </hz:listeners>
 ```
@@ -122,7 +120,7 @@ The following is an example programmatic configuration.
 
 ```java
 config.addListenerConfig(
-new ListenerConfig( "com.your-package.SampleDistObjListener" ) );
+new ListenerConfig( "com.yourpackage.SampleDistObjListener" ) );
 ```
 
 
@@ -132,8 +130,8 @@ The following is an example of the equivalent declarative configuration.
 <hazelcast>
    ...
    <listeners>
-	  <listener>
-	  com.your-package.SampleDistObjListener
+      <listener>
+         com.yourpackage.SampleDistObjListener
       </listener>
    </listeners>
    ...
@@ -144,7 +142,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-package.SampleDistObjListener"/>
+   <hz:listener class-name="com.yourpackage.SampleDistObjListener"/>
    <hz:listener implementation="DistributedObjectListener"/>
 </hz:listeners>
 ```
@@ -197,7 +195,7 @@ After you create your class, you can configure your cluster to include migration
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 PartitionService partitionService = hazelcastInstance.getPartitionService();
-partitionService.addMigrationListener( new ClusterMigrationListener () );
+partitionService.addMigrationListener( new ClusterMigrationListener() );
 ```
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
@@ -206,7 +204,7 @@ The following is an example programmatic configuration.
 
 ```java
 config.addListenerConfig( 
-new ListenerConfig( "com.your-package.ClusterMigrationListener" ) );
+new ListenerConfig( "com.yourpackage.ClusterMigrationListener" ) );
 ```
 
 
@@ -216,8 +214,8 @@ The following is an example of the equivalent declarative configuration.
 <hazelcast>
    ...
    <listeners>
-	  <listener>
-	  com.your-package.ClusterMigrationListener
+      <listener>
+         com.yourpackage.ClusterMigrationListener
       </listener>
    </listeners>
    ...
@@ -228,7 +226,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-package.ClusterMigrationListener"/>
+   <hz:listener class-name="com.yourpackage.ClusterMigrationListener"/>
    <hz:listener implementation="MigrationListener"/>
 </hz:listeners>
 ```
@@ -283,11 +281,11 @@ The following is an example of the equivalent declarative configuration.
 ```xml
 <hazelcast>
    ...
-  <partition-lost-listeners>
-     <partition-lost-listener>
-        com.your-package.ConsoleLoggingPartitionLostListener
-     </partition-lost-listener>
- </partition-lost-listeners>
+   <listeners>
+      <listener>
+         com.yourpackage.ConsoleLoggingPartitionLostListener
+      </listener>
+   </listeners>
    ...
 </hazelcast>
 ```
@@ -338,7 +336,7 @@ The following is an example programmatic configuration.
 
 ```java
 config.addListenerConfig(
-new ListenerConfig( "com.your-package.NodeLifecycleListener" ) );
+    new ListenerConfig( "com.yourpackage.NodeLifecycleListener" ) );
 ```
 
 
@@ -348,8 +346,8 @@ The following is an example of the equivalent declarative configuration.
 <hazelcast>
    ...
    <listeners>
-	  <listener>
-	  com.your-package.NodeLifecycleListener
+      <listener>
+         com.yourpackage.NodeLifecycleListener
       </listener>
    </listeners>
    ...
@@ -360,7 +358,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-package.NodeLifecycleListener"/>
+   <hz:listener class-name="com.yourpackage.NodeLifecycleListener"/>
    <hz:listener implementation="LifecycleListener"/>
 </hz:listeners>
 ```
@@ -375,7 +373,7 @@ To write a client listener class, you implement the `ClientListener` interface a
 which are invoked when a client is connected to or disconnected from the cluster. You can add your client listener as shown below.
 
 ```
-hazelcast.getClientService().addClientListener(SampleClientListener);
+hazelcastInstance.getClientService().addClientListener(new SampleClientListener());
 ```
 
 The following is the equivalent declarative configuration.
@@ -383,7 +381,7 @@ The following is the equivalent declarative configuration.
 ```xml
 <listeners>
    <listener>
-      com.your-package.SampleClientListener
+      com.yourpackage.SampleClientListener
    </listener>
 </listeners>
 ```
@@ -392,8 +390,8 @@ The following is the equivalent configuration in the Spring context.
 
 ```xml
 <hz:listeners>
-   <hz:listener class-name="com.your-package.SampleClientListener"/>
-   <hz:listener implementation="com.your-package.SampleClientListener"/>
+   <hz:listener class-name="com.yourpackage.SampleClientListener"/>
+   <hz:listener implementation="com.yourpackage.SampleClientListener"/>
 </hz:listeners>
 ```
 
