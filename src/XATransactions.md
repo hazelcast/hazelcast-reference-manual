@@ -7,11 +7,17 @@ XA describes the interface between the global transaction manager and the local 
 When you implement the `XAResource` interface, Hazelcast provides XA transactions. You can obtain the `HazelcastXAResource` instance via the `HazelcastInstance getXAResource` method. You can see the
 [HazelcastXAResource API here](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/HazelcastXAResource.html).
 
-Below is example code that uses Atomikos for transaction management.
+Below is example code that uses JTA API for transaction management.
   
 ```java
-UserTransactionManager tm = new UserTransactionManager();
-tm.setTransactionTimeout(60);
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
+import com.hazelcast.core.*
+import com.hazelcast.transaction.HazelcastXAResource;
+import com.hazelcast.transaction.TransactionContext;
+
+TransactionManager tm = getTransactionManager(); // depends on JTA implementationtm.setTransactionTimeout(60);
 tm.begin();
 
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
