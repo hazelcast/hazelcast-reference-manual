@@ -12,7 +12,7 @@ With Hazelcast IMDG providing storage functionality, Jet performs parallel execu
 
 Since Jet uses Hazelcast IMDG’s discovery mechanisms, it can be used both on-premises and on the cloud environments. Hazelcast Jet typically runs on several machines that form a cluster. 
 
-#### How You Can Use It
+### How You Can Use It
 
 The Pipeline API is the primary high-level API of Hazelcast Jet for batch and stream processing. This API is easy-to-use and set-up providing you with the tools to compose batch computations from building blocks such as filters, aggregators and joiners - saving time and resource. With Pipeline API, you can build bounded and unbounded data pipelines on a variety of sources and sinks.
 
@@ -22,7 +22,7 @@ You can also use Jet's Core API to build custom data sources and sinks, to have 
 
 Please see the [Work with Jet](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Start_Jet_and_Submit_Jobs_to_It) section in the Hazelcast Jet Reference Manual to see a simple example.
 
-#### Where You Can Use It
+### Where You Can Use It
 
 Hazelcast Jet is appropriate for applications that require a near real-time experience such as operations in IoT architectures (house thermostats, lighting systems, etc.), in-store e-commerce systems and social media platforms. Typical use cases include the following:
 
@@ -40,7 +40,7 @@ Hazelcast Jet is appropriate for applications that require a near real-time expe
 The aforementioned use cases require huge amounts of data to be processed in near real-time. Hazelcast Jet achieves this by processing the incoming records as soon as possible,  hence lowering the latency, and ingesting the data at high-velocity. Jet's execution model and keeping both the computation and data storage in memory enables high application speeds.
 
 
-## Data Processing Styles
+### Data Processing Styles
 
 The data processing is traditionally divided into batch and stream processing.
 
@@ -75,5 +75,11 @@ Jet Jobs use Hazelcast IMDG connector by allowing reading and writing records to
 - Isolating the processing cluster (Jet) from operational data storage cluster (IMDG).
 - Publishing intermediate results, e.g., to show real-time processing stats on a dashboard.
 
+### Hazelcast IMDG Computing vs. Hazelcast Jet
 
+As described in the [Fast-Aggregations section](#fast-aggregations) Hazelcast IMDG has native support for aggregation operations on the contents of its distributed data structures.
+
+Fast-Aggregations are a good fit for simple operations (count, distinct, sum, avg, min, max, etc.). However, they may not be sufficient for operations that group data by key and produce the results of size O(keyCount). The architecture of Hazelcast aggregations is not well suited to this use case, although it will still work even for moderately sized results (up to 100 MB, as a ballpark figure). Hazelcast Jet can be the preferred choice for larger sized results and whenever something more than a single aggregation step is needed. Please see the [Jet Compared with New Aggregations section](#jet-compared-with-new-aggregations).
+
+Another Hazelcast IMDG computing feature is [Entry Processors](#entry-processor). They are used for fast mutating operations in an atomic way, in which the map entry is mutated by executing logic directly on the JVM where the data resides. And this means the network hops are reduced and atomicity is provided in a single step. Keeping this in mind, you can use Hazelcast IMDG Entry Processors when they perform bulk mutations of an IMap, where the processing function is fast and involves a single map entry per call. On the other hand, you can prefer to use Hazelcast Jet when the processing involves multiple entries (aggregations, joins, etc.), or involves multiple computing steps to be made parallel, or when the data source and sink are not a single IMap instance.
 
