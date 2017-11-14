@@ -1,6 +1,6 @@
 
 
-Please refer to <a href="http://hazelcast.org/clients-languages/" target="_blank">Feature Comparison Matrix</a> to see the features implemented across the clients and language APIs.
+Please refer to <a href="https://hazelcast.org/clients-languages/" target="_blank">Feature Comparison Matrix</a> to see the features implemented across the clients and language APIs.
 
 
 ### Python Client

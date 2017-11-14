@@ -106,4 +106,4 @@ the [Join Configuration section](/04_Setting_Up_Clusters/10_Other_Network_Config
 
 ***RELATED INFORMATION***
 
-*You can also check the video tutorials <a href="http://hazelcast.org/getting-started/" target="_blank">here</a>.*
+*You can also check the video tutorials <a href="https://hazelcast.org/getting-started/" target="_blank">here</a>.*

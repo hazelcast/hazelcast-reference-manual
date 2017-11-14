@@ -21,7 +21,7 @@ As an alternative, you can download and install Hazelcast yourself. You only nee
 
 - Download the package `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz` from 
 <a 
-href="http://hazelcast.org/download/" target="_blank">hazelcast.org</a>.
+href="https://hazelcast.org/download/" target="_blank">hazelcast.org</a>.
 
 - Extract the downloaded `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz`.
 
