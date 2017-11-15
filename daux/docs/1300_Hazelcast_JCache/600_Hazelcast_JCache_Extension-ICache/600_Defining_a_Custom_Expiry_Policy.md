@@ -8,7 +8,7 @@ Here is how an `ExpirePolicy` is set on JCache configuration:
 ```java
 CompleteConfiguration<String, String> config =
     new MutableConfiguration<String, String>()
-        setExpiryPolicyFactory(
+        .setExpiryPolicyFactory(
             AccessedExpiryPolicy.factoryOf( Duration.ONE_MINUTE )
         );
 ```
