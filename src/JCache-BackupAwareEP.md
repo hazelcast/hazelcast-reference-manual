@@ -53,7 +53,7 @@ public class UserUpdateEntryProcessor
     return user;
   }
 
-  public EntryProcessor<K, V, T> createBackupEntryProcessor() {
+  public EntryProcessor<Integer, User, User> createBackupEntryProcessor() {
     return this;
   }
 }
