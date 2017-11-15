@@ -30,10 +30,6 @@ Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allo
 Use the HazelcastInstance `getList` method to get the List, then use the `add` method to put items into the List.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import java.util.List;
-import java.util.Iterator;
-
 HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 
 List<Price> list = hz.getList( "IBM-Quote-Frequency" );
@@ -78,9 +74,9 @@ The following are example list configurations.
 
 ```java
 Config config = new Config();
-CollectionConfig collectionList = config.getListConfig();
-collectionList.setName( "MyList" ).setBackupCount( "1" )
-        .setMaxSize( "10" );
+        CollectionConfig collectionList = config.getListConfig("MyList");
+        collectionList.setBackupCount(1)
+                .setMaxSize(10);
 ```
    
 

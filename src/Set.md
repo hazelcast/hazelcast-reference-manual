@@ -17,10 +17,6 @@ Hazelcast Set is a distributed and concurrent implementation of `java.util.Set`.
 Use the HazelcastInstance `getSet` method to get the Set, then use the `add` method to put items into the Set.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import java.util.Set;
-import java.util.Iterator;
-
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 Set<Price> set = hazelcastInstance.getSet( "IBM-Quote-History" );
@@ -47,14 +43,12 @@ The following are the example set configurations.
 
 ```xml
 <set name="default">
-   <backup-count>1</backup-count>
-   <async-backup-count>0</async-backup-count>
-   <max-size>10</max-size>
-   <item-listeners>
-      <item-listener>
-          com.hazelcast.examples.ItemListener
-      </item-listener>
-   <item-listeners>
+    <backup-count>1</backup-count>
+    <async-backup-count>0</async-backup-count>
+    <max-size>10</max-size>
+    <item-listeners>
+        <item-listener>com.hazelcast.examples.ItemListener</item-listener>
+    </item-listeners>
 </set>
 ```
 
@@ -62,9 +56,9 @@ The following are the example set configurations.
 
 ```java
 Config config = new Config();
-CollectionConfig collectionSet = config.getCollectionConfig();
-collectionSet.setName( "MySet" ).setBackupCount( "1" )
-        .setMaxSize( "10" );
+        CollectionConfig collectionSet = config.getSetConfig("MySet");
+        collectionSet.setBackupCount(1)
+                .setMaxSize(10);
 ```
    
 
