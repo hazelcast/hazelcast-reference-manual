@@ -32,7 +32,7 @@ public class User {
 The DAO interface is also kept easy in this example. It provides a simple method to retrieve (find) a user by its `userId`.
 
 ```java
-public interface UserDAO {
+public interface UserDao {
   User findUserById( int userId );
   boolean storeUser( int userId, User user );
   boolean removeUser( int userId );
