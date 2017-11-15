@@ -1,7 +1,7 @@
 
-### ExpirePolicy
+### ExpiryPolicy
 
-In JCache, `javax.cache.expiry.ExpirePolicy` implementations are used to automatically expire cache entries based on different rules.
+In JCache, `javax.cache.expiry.ExpiryPolicy` implementations are used to automatically expire cache entries based on different rules.
 
 Expiry timeouts are defined using `javax.cache.expiry.Duration`, which is a pair of `java.util.concurrent.TimeUnit`, that
 describes a time unit and a long, defining the timeout value. The minimum allowed `TimeUnit` is `TimeUnit.MILLISECONDS`.
@@ -16,6 +16,6 @@ By default, JCache delivers a set of predefined expiry strategies in the standar
 - `ModifiedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on updating the key.
 - `TouchedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on accessing or updating the key.
 
-Because `EternalExpirePolicy` does not expire cache entries, it is still possible to evict values from memory if an underlying
+Because `EternalExpiryPolicy` does not expire cache entries, it is still possible to evict values from memory if an underlying
 `CacheLoader` is defined.
 
