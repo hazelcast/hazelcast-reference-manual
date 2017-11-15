@@ -306,7 +306,7 @@ When an existing `HazelcastInstance` object is available, it can be passed to th
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 
 Properties properties = new Properties();
-properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_ITSELF, 
+properties.put( HazelcastCachingProvider.HAZELCAST_INSTANCE_ITSELF, 
      instance );
 
 CachingProvider cachingProvider = Caching.getCachingProvider();
