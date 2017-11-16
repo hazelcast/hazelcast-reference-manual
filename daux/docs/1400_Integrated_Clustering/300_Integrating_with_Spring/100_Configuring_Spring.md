@@ -160,6 +160,7 @@ Here is an example schema definition for Hazelcast 3.3.x:
 	- `list`
 	- `executorService`
 	- `idGenerator`
+	- `flakeIdGenerator`
 	- `atomicLong`
 	- `atomicReference`
 	- `semaphore`
@@ -183,6 +184,8 @@ Here is an example schema definition for Hazelcast 3.3.x:
     name="executorService"/>
 <hz:idGenerator id="idGenerator" instance-ref="instance" 
     name="idGenerator"/>
+<hz:flakeIdGenerator id="flakeIdGenerator" instance-ref="instance" 
+    name="flakeIdGenerator"/>
 <hz:atomicLong id="atomicLong" instance-ref="instance" name="atomicLong"/>
 <hz:atomicReference id="atomicReference" instance-ref="instance" 
     name="atomicReference"/>
