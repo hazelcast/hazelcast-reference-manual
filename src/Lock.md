@@ -78,7 +78,7 @@ locks are immediately available for live members.
 
 - In the split-brain scenario, the cluster behaves as if it were two different clusters. Since two separate clusters are not aware of each other,
 two members from different clusters can acquire the same lock.
-For more information on places where split brain syndrome can be handled, please see [split brain syndrome](#network-partitioning-split-brain-syndrome).
+For more information on places where split brain syndrome can be handled, please see [split brain syndrome](#split-brain-syndrome).
 
 - Locks are not automatically removed. If a lock is not used anymore, Hazelcast will not automatically garbage collect the lock. 
 This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sure they are destroyed.

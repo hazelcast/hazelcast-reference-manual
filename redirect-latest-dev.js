@@ -1845,7 +1845,7 @@ if ($current == $baseurl + "/docs/latest-dev/manual/html-single/index.html#confi
 }
 
 // Docs 'Network Partitioning - Split-Brain Syndrome' section
-if ($current == $baseurl + "/docs/latest-dev/manual/html-single/index.html#network-partitioning-split-brain-syndrome") {
+if ($current == $baseurl + "/docs/latest-dev/manual/html-single/index.html#split-brain-syndrome") {
 	window.location = $baseurl + "/docs/latest-development/manual/html/Network_Partitioning/index.html";
 }
 
