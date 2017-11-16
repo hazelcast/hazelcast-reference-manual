@@ -1,7 +1,7 @@
 
 ## Aggregators
 
-**NOTE:*** *This feature has been deprecated. Please use the [Fast-Aggregations](#fast-aggregations) instead.*
+***NOTE:*** *This feature has been deprecated. Please use the [Fast-Aggregations](#fast-aggregations) instead.*
 
 Based on the Hazelcast MapReduce framework, Aggregators are ready-to-use data aggregations. These are typical operations like
 sum up values, finding minimum or maximum values, calculating averages, and other operations that you would expect 
