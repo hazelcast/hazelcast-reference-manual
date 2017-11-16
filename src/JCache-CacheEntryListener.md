@@ -14,11 +14,10 @@ executed synchronously (blocking the calling thread) or asynchronously (fully ru
 
 In this example application, the listener is implemented to print event information on the console. That visualizes what is going on in the cache. This application performs the following tasks:
 
-- It implements CacheEntryCreatedListener.
-- It implements the `onCreated` method to call after an entry is created.
-- It implements the `onUpdated` method to call after an entry is updated.
-- It implements the `onRemoved` method to call after an entry is removed.
-- It implements the `onExpired` method to call after an entry expires.
+- It implements the `CacheEntryCreatedListener.onCreated` method to call after an entry is created.
+- It implements the `CacheEntryUpdatedListener.onUpdated` method to call after an entry is updated.
+- It implements the `CacheEntryRemovedListener.onRemoved` method to call after an entry is removed.
+- It implements the `CacheEntryExpiredListener.onExpired` method to call after an entry expires.
 - It implements `printEvents` to print event information on the console.
 
 ```java
