@@ -27,7 +27,7 @@ Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allo
 
 ### Getting a List and Putting Items
 
-Use the HazelcastInstance `getList` method to get the list, then use the list `put` method to put items into the List.
+Use the HazelcastInstance `getList` method to get the List, then use the `add` method to put items into the List.
 
 ```java
 import com.hazelcast.core.Hazelcast;
