@@ -1,7 +1,5 @@
 
 
-# Hazelcast Jet
-
 ![Note](images/NoteSmall.jpg) ***NOTE:*** *This chapter briefly describes Hazelcast Jet. For detailed information and Jet documentation, please visit [jet.hazelcast.org](https://jet.hazelcast.org/).*
 
 ## Overview
