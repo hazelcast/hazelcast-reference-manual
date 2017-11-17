@@ -19,7 +19,7 @@ It has two sets of extensions:
 
 ![Note](images/NoteSmall.jpg) ***NOTE:*** *ICache data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Real-Time Stream Processing (by enabling the Event Journal on your cache) and Fast Batch Processing. Hazelcast Jet uses ICache as a source (reads data from ICache) and as a sink (writes data to ICache). Please see the [Fast Batch Processing](https://jet.hazelcast.org/use-cases/fast-batch-processing/) and [Real-Time Stream Processing](https://jet.hazelcast.org/use-cases/real-time-stream-processing/) use cases for Hazelcast Jet.*
 
-*Please also see [here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG#page_IMap+and+ICache) in the Hazelcast Jet Reference Manual to learn how Jet uses ICache, i.e., how it can read from and write to ICache.*
+*Please also see [here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IMap+and+ICache) in the Hazelcast Jet Reference Manual to learn how Jet uses ICache, i.e., how it can read from and write to ICache.*
 <br>
 
 ----
