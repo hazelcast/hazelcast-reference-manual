@@ -16,7 +16,7 @@ Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap
 
 ### Getting a Map and Putting an Entry
 
-Hazelcast will partition your map entries and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "(1/n `*` total-data) + backups", **n** being the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
+Hazelcast will partition your map entries and their backups, and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "number of map entries * 2 * 1/n" entries, where **n** is the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
 
 Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the HazelcastInstance `getMap` method to get the map, then use the map `put` method to put an entry into the map.
 
@@ -26,7 +26,7 @@ public class FillMapMember {
     HazelcastInstance hzInstance = Hazelcast.newHazelcastInstance();
     Map<String, String> capitalcities = hzInstance.getMap( "capitals" ); 
     capitalcities.put( "1", "Tokyo" );
-    capitalcities.put( "2", "Paris” );
+    capitalcities.put( "2", "Paris" );
     capitalcities.put( "3", "Washington" );
     capitalcities.put( "4", "Ankara" );
     capitalcities.put( "5", "Brussels" );
@@ -63,31 +63,30 @@ the `java.util.concurrent.ConcurrentMap` interface. Methods like
 on the distributed map, as shown in the example below.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import java.util.concurrent.ConcurrentMap;
+public class BasicMapOperations {
 
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    private HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
-Customer getCustomer( String id ) {
-    ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-    Customer customer = customers.get( id );
-    if (customer == null) {
-        customer = new Customer( id );
-        customer = customers.putIfAbsent( id, customer );
+    public Customer getCustomer(String id) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        Customer customer = customers.get(id);
+        if (customer == null) {
+            customer = new Customer(id);
+            customer = customers.putIfAbsent(id, customer);
+        }
+        return customer;
     }
-    return customer;
-}               
 
-public boolean updateCustomer( Customer customer ) {
-    ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-    return ( customers.replace( customer.getId(), customer ) != null );            
-}
-                
-public boolean removeCustomer( Customer customer ) {
-    ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-    return customers.remove( customer.getId(), customer );           
-}
+    public boolean updateCustomer(Customer customer) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        return (customers.replace(customer.getId(), customer) != null);
+    }
+
+    public boolean removeCustomer(Customer customer) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        return customers.remove(customer.getId(), customer);
+    }
+
 ```
 
 All `ConcurrentMap` operations such as `put` and `remove` might wait if the key is locked by another thread in the local or remote JVM. But, they will eventually return with success. `ConcurrentMap` operations never throw a `java.util.ConcurrentModificationException`.

@@ -213,7 +213,7 @@ Hazelcast calls the method `destroy()` before shutting down. You can override th
 
 To pre-populate the in-memory map when the map is first touched/used, use the `MapLoader.loadAllKeys` API.
 
-If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the `hot` keys. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
+If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the keys which are most important to you that you want to load them while initializing the map. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
 
 The `InitialLoadMode` configuration parameter in the class <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapStoreConfig.java" target="_blank">MapStoreConfig</a> has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created, and everything becomes ready to use. Also, if you add indices to your map with the <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapIndexConfig.java" target="_blank">MapIndexConfig</a> class or the [`addIndex`](#indexing-queries) method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
 
@@ -293,7 +293,7 @@ class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapS
 
 #### Accessing a Database Using `Properties`
 
-You can prepare your own `MapLoader` to access a database such as Cassandra and MongDB. For this, you can first declaratively specify the database properties in your `hazelcast.xml` configuration file and then implement the `MapLoaderLifecycleSupport` interface to pass those properties.
+You can prepare your own `MapLoader` to access a database such as Cassandra and MongoDB. For this, you can first declaratively specify the database properties in your `hazelcast.xml` configuration file and then implement the `MapLoaderLifecycleSupport` interface to pass those properties.
 
 You can define the database properties, such as its URL and name, using the `properties` configuration element. The following is a configuration example for MongoDB:
 

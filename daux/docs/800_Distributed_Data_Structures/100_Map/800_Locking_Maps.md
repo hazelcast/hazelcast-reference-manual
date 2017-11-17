@@ -74,7 +74,9 @@ Another way to solve the race issue is by acquiring a predictable `Lock` object 
 
 In Hazelcast, you can apply the optimistic locking strategy with the map's `replace` method. This method compares values in object or data forms depending on the in-memory format configuration. If the values are equal, it replaces the old value with the new one. If you want to use your defined `equals` method, `in-memory-format` should be `OBJECT`. Otherwise, Hazelcast serializes objects to `BINARY` forms and compares them.
 
-See the below example code. 
+See the below example code.
+
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *The below example code is intentionally broken.*
 
 ```java
 public class OptimisticMember {
@@ -118,7 +120,6 @@ public class OptimisticMember {
 }
 ```
 
-![image](../../images/NoteSmall.jpg) ***NOTE:*** *The above example code is intentionally broken.*
 
 #### Pessimistic vs. Optimistic Locking
 
