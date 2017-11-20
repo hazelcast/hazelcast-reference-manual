@@ -25,7 +25,7 @@ User Code Deployment feature is not enabled by default. You can configure this f
 	<provider-mode>LOCAL_CLASSES_ONLY</provider-mode>
 	<blacklist-prefixes>com.foo</blacklist-prefixes>
 	<whitelist-prefixes>com.bar.MyClass</whitelist-prefixes>
-	<provider-filter>HAS_ATTRIBUTE:lite<provider-filter>
+	<provider-filter>HAS_ATTRIBUTE:lite</provider-filter>
 </user-code-deployment>
 ```
 
