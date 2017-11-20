@@ -41,4 +41,4 @@ You set the encryption algorithm, the salt value to use for generating the secre
 
 ***RELATED INFORMATION***
 
-*Please see the [SSL section](#tslssl).*
+*Please see the [SSL section](#tlsssl).*
