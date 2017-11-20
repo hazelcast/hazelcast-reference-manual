@@ -34,7 +34,7 @@ The following is an example programmatic configuration.
 
 ```java
 topicConfig.addMessageListenerConfig(
-new ListenerConfig( "com.your-package.SampleMessageListener" ) );
+  new ListenerConfig( "com.yourpackage.SampleMessageListener" ) );
 ```
 
 
@@ -46,7 +46,7 @@ The following is an example of the equivalent declarative configuration.
    <topic name="default">
       <message-listeners>
          <message-listener>
-         com.your-package.SampleMessageListener
+            com.yourpackage.SampleMessageListener
          </message-listener>
       </message-listeners>
    </topic>   
@@ -60,7 +60,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:topic name="default">
   <hz:message-listeners>
     <hz:message-listener 
-       class-name="com.your-package.SampleMessageListener"/>
+       class-name="com.yourpackage.SampleMessageListener"/>
   </hz:message-listeners>
 </hz:topic>
 ```

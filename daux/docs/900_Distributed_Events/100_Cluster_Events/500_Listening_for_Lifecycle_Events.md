@@ -41,7 +41,7 @@ The following is an example programmatic configuration.
 
 ```java
 config.addListenerConfig(
-new ListenerConfig( "com.your-package.NodeLifecycleListener" ) );
+new ListenerConfig( "com.yourpackage.NodeLifecycleListener" ) );
 ```
 
 
@@ -52,7 +52,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <listeners>
 	  <listener>
-	  com.your-package.NodeLifecycleListener
+	    com.yourpackage.NodeLifecycleListener
       </listener>
    </listeners>
    ...
@@ -63,7 +63,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-package.NodeLifecycleListener"/>
+   <hz:listener class-name="com.yourpackage.NodeLifecycleListener"/>
    <hz:listener implementation="LifecycleListener"/>
 </hz:listeners>
 ```

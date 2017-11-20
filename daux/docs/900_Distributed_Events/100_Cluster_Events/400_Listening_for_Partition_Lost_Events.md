@@ -45,11 +45,11 @@ The following is an example of the equivalent declarative configuration.
 ```xml
 <hazelcast>
    ...
-  <partition-lost-listeners>
-     <partition-lost-listener>
-        com.your-package.ConsoleLoggingPartitionLostListener
-     </partition-lost-listener>
- </partition-lost-listeners>
+   <listeners>
+      <listener>
+        com.yourpackage.ConsoleLoggingPartitionLostListener
+      </listener>
+   </listeners>
    ...
 </hazelcast>
 ```

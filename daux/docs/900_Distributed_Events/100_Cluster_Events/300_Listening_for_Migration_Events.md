@@ -51,7 +51,7 @@ The following is an example programmatic configuration.
 
 ```java
 config.addListenerConfig( 
-new ListenerConfig( "com.your-package.ClusterMigrationListener" ) );
+new ListenerConfig( "com.yourpackage.ClusterMigrationListener" ) );
 ```
 
 
@@ -62,7 +62,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <listeners>
 	  <listener>
-	  com.your-package.ClusterMigrationListener
+	    com.yourpackage.ClusterMigrationListener
       </listener>
    </listeners>
    ...
@@ -73,7 +73,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-package.ClusterMigrationListener"/>
+   <hz:listener class-name="com.yourpackage.ClusterMigrationListener"/>
    <hz:listener implementation="MigrationListener"/>
 </hz:listeners>
 ```

@@ -185,7 +185,7 @@ The following is an example programmatic configuration.
 ```java
 mapConfig.addEntryListenerConfig(
 new EntryListenerConfig( "com.yourpackage.MyEntryListener", 
-		                             false, false ) );
+							false, false ) );
 ```
 
 
@@ -198,7 +198,7 @@ The following is an example of the equivalent declarative configuration.
    ...
       <entry-listeners>
 	     <entry-listener include-value="false" local="false">
-		 com.your-package.MyEntryListener
+		    com.yourpackage.MyEntryListener
 		 </entry-listener>
 	  </entry-listeners>
    </map>
@@ -212,7 +212,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:map name="somemap">
    <hz:entry-listeners>
       <hz:entry-listener include-value="true"
-      class-name="com.hazelcast.spring.DummyEntryListener"/>
+         class-name="com.hazelcast.spring.DummyEntryListener"/>
       <hz:entry-listener implementation="dummyEntryListener" local="true"/>
    </hz:entry-listeners>
 </hz:map>

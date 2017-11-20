@@ -55,7 +55,7 @@ The following is an example programmatic configuration.
 
 ```java
 config.addListenerConfig(
-new ListenerConfig( "com.your-package.SampleDistObjListener" ) );
+new ListenerConfig( "com.yourpackage.SampleDistObjListener" ) );
 ```
 
 
@@ -66,7 +66,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <listeners>
 	  <listener>
-	  com.your-package.SampleDistObjListener
+	    com.yourpackage.SampleDistObjListener
       </listener>
    </listeners>
    ...
@@ -77,7 +77,7 @@ The following is an example of the equivalent Spring configuration.
 
 ```
 <hz:listeners>
-   <hz:listener class-name="com.your-package.SampleDistObjListener"/>
+   <hz:listener class-name="com.yourpackage.SampleDistObjListener"/>
    <hz:listener implementation="DistributedObjectListener"/>
 </hz:listeners>
 ```

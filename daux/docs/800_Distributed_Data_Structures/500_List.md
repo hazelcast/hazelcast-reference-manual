@@ -6,15 +6,23 @@ Hazelcast List is similar to Hazelcast Set, but Hazelcast List also allows dupli
 * Hazelcast List cannot be scaled beyond the capacity of a single machine.
 * All items are copied to local and iteration occurs locally.
 
+<br>
+
+----
+
+![Note](../images/NoteSmall.jpg) ***NOTE:*** *While IMap and ICache are the recommended data structures to be used by [Hazelcast Jet](https://jet.hazelcast.org/), IList can also be used by it for unit testing or similar non-production situations. Please see [here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IList) in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job, and drain the results to another IList.*
+
+*Please also see the [Fast Batch Processing](https://jet.hazelcast.org/use-cases/fast-batch-processing/) and [Real-Time Stream Processing](https://jet.hazelcast.org/use-cases/real-time-stream-processing/) use cases for Hazelcast Jet.*
+
+----
+
+<br>
+
 ### Getting a List and Putting Items
 
-Use the HazelcastInstance `getList` method to get the list, then use the list `put` method to put items into the List.
+Use the HazelcastInstance `getList` method to get the List, then use the `add` method to put items into the List.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import java.util.List;
-import java.util.Iterator;
-
 HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 
 List<Price> list = hz.getList( "IBM-Quote-Frequency" );
@@ -59,9 +67,9 @@ The following are example list configurations.
 
 ```java
 Config config = new Config();
-CollectionConfig collectionList = config.getListConfig();
-collectionList.setName( "MyList" ).setBackupCount( "1" )
-        .setMaxSize( "10" );
+        CollectionConfig collectionList = config.getListConfig("MyList");
+        collectionList.setBackupCount(1)
+                .setMaxSize(10);
 ```
    
 

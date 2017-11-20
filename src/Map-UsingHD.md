@@ -33,7 +33,7 @@ The new eviction algorithm for map with High-Density Memory Store is similar to 
     ```xml
     <map name="nativeMap*">
       <in-memory-format>NATIVE</in-memory-format>
-      <eviction-percentage>25</eviction-percentage> <-- NO IMPACT with NATIVE
+      <eviction-percentage>25</eviction-percentage> <--! NO IMPACT with NATIVE -->
     </map>
     ```
   - These IMap eviction policies for `max-size` cannot be used: `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
@@ -47,8 +47,8 @@ The new eviction algorithm for map with High-Density Memory Store is similar to 
 
           <near-cache>
             <in-memory-format>BINARY</in-memory-format>
-            <max-size>10000</max-size> <-- NO IMPACT with NATIVE
-            <eviction-policy>LFU</eviction-policy> <-- NO IMPACT with NATIVE
+            <max-size>10000</max-size> <--! NO IMPACT with NATIVE -->
+            <eviction-policy>LFU</eviction-policy> <--! NO IMPACT with NATIVE -->
           </near-cache>
 
         </map>
@@ -60,7 +60,7 @@ The new eviction algorithm for map with High-Density Memory Store is similar to 
 
            <near-cache>
              <in-memory-format>NATIVE</in-memory-format>
-             <eviction size="10000" eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_SIZE"/>   <-- Correct configuration with NATIVE
+             <eviction size="10000" eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_SIZE"/>   <--! Correct configuration with NATIVE -->
            </near-cache>
 
          </map>

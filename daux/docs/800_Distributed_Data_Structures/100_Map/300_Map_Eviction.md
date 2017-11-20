@@ -3,7 +3,7 @@ Unless you delete the map entries manually or use an eviction policy, they will 
 
 #### Understanding Map Eviction
 
-Hazelcast Map performs eviction based on partitions. For example, when you specify a size using the `PER_NODE` attribute for `max-size` (please see [Configuring Map Eviction](#configuring-map-eviction)), Hazelcast internally calculates the maximum size for every partition. Hazelcast uses the following equation to calculate the maximum size of a partition:
+Hazelcast Map performs eviction based on partitions. For example, when you specify a size using the `PER_NODE` attribute for `max-size` (please see [Configuring Map Eviction](/Distributed_Data_Structures/Map/Map_Eviction.html#page_Configuring+Map+Eviction)), Hazelcast internally calculates the maximum size for every partition. Hazelcast uses the following equation to calculate the maximum size of a partition:
 
 ```
 partition maximum size = max-size * member-count / partition-count
@@ -47,14 +47,16 @@ The following is an example declarative configuration for map eviction.
 
 Let's describe each element:
 
-- `time-to-live`. Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
-- `max-idle-seconds`. Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
+- `time-to-live-seconds`. Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
+- `max-idle-seconds`. Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
 - `eviction-policy`. Valid values are described below.
 	- NONE: Default policy. If set, no items will be evicted and the property `max-size` will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
 	- LRU: Least Recently Used.
 	- LFU: Least Frequently Used.
+	
+	Apart from the above values, you can also develop and use your own eviction policy. Please see the [Custom Eviction Policy section](/Distributed_Data_Structures/Map/Map_Eviction.html#page_Custom+Eviction+Policy).
 
-- `max-size`. Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
+- `max-size`. Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
 	- `PER_NODE`. Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than the partition count (which is 271 by default).		
 
 		`<max-size policy="PER_NODE">5000</max-size>`
@@ -97,7 +99,7 @@ Let's describe each element:
 
 
 
-![image](../../images/NoteSmall.jpg) ***NOTE:*** *As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-check-millis` are deprecated. They will be ignored if configured since map eviction is based on the sampling of entries. Please see the [Eviction Algorithm section](/11_Hazelcast_JCache/05_Hazelcast_JCache_Extension-ICache/06_JCache_Eviction.md) for details.*
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-check-millis` are deprecated. They will be ignored if configured since map eviction is based on the sampling of entries. Please see the [Eviction Algorithm section](/Hazelcast_JCache/Hazelcast_JCache_Extension-ICache/JCache_Eviction.html#page_Eviction+Algorithm) for details.*
 
 
 #### Example Eviction Configurations
@@ -153,7 +155,7 @@ public class EvictAll {
         HazelcastInstance node1 = Hazelcast.newHazelcastInstance();
         HazelcastInstance node2 = Hazelcast.newHazelcastInstance();
 
-        IMap<Integer, Integer> map = node1.getMap(EvictAll.class.getCanonicalName());
+        IMap<Integer, Integer> map = node1.getMap( "map" );
         for (int i = 0; i < numberOfEntriesToAdd; i++) {
             map.put(i, i);
         }
@@ -185,7 +187,7 @@ Hazelcast may use forced eviction in the cases when the eviction explained in [U
 Forced eviction mechanism is explained below as steps in the given order:
 
 * When the normal eviction is not enough, forced eviction is triggered and first it tries to evict approx. 20% of the entries from the current partition. It retries this five times.
-* If the result of above step is still not enough, forced eviction applies the above step to all maps. This time it might perform eviction from some other partitions too,provided that they are owned by the same thread.
+* If the result of above step is still not enough, forced eviction applies the above step to all maps. This time it might perform eviction from some other partitions too, provided that they are owned by the same thread.
 * If that is still not enough to free up your memory, it evicts not the 20% but all the entries from the current partition.
 * if that is not enough, it will evict all the entries from the other data structures; from the partitions owned by the local thread.
 
