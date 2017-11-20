@@ -18,7 +18,7 @@ The Pipeline API is the primary high-level API of Hazelcast Jet for batch and st
 
 In addition to the Pipeline API, Jet also offers a distributed implementation of `java.util.stream`. You can express your computation over any data source Jet supports using the familiar API from the JDK 8. This distributed implementation can be used for simple transform and reduce operations on top of IMap and IList.
 
-There is also Jet's Core API for advanced users to build custom data sources and sinks, to have a low-level control over the data flow, to fine-tune performance and build DSLs. T
+There is also Jet's Core API for advanced users to build custom data sources and sinks, to have a low-level control over the data flow, to fine-tune performance and build DSLs.
 
 Please see the [Work with Jet](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Start_Jet_and_Submit_Jobs_to_It.html) section in the Hazelcast Jet Reference Manual to see a simple example.
 
