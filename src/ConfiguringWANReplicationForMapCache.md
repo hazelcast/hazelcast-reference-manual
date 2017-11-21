@@ -30,8 +30,6 @@ The following is the equivalent programmatic configuration:
 Config config = new Config();
 
 WanReplicationConfig wrConfig = new WanReplicationConfig();
-WanTargetClusterConfig  wtcConfig = wrConfig.getWanTargetClusterConfig();
-
 wrConfig.setName("my-wan-cluster");
 ...
 config.addWanReplicationConfig(wrConfig);
@@ -90,8 +88,6 @@ The following is the equivalent programmatic configuration:
 Config config = new Config();
 
 WanReplicationConfig wrConfig = new WanReplicationConfig();
-WanTargetClusterConfig  wtcConfig = wrConfig.getWanTargetClusterConfig();
-
 wrConfig.setName("my-wan-cluster");
 ...
 config.addWanReplicationConfig(wrConfig);
