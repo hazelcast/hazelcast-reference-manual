@@ -7,13 +7,14 @@ implementation.
 You can test Hazelcast JCache for compliance by executing the TCK. Just perform the instructions below:
 
 
-1. Checkout the TCK from <a href="https://github.com/jsr107/jsr107tck" target="_blank">https://github.com/jsr107/jsr107tck</a>.
-2. Change the properties in `tck-parent/pom.xml` as shown below.
-3. Run the TCK by `mvn clean install`.
+- Checkout the TCK from <a href="https://github.com/jsr107/jsr107tck" target="_blank">https://github.com/jsr107/jsr107tck</a>.
+- Change the properties in [`pom.xml`](https://github.com/jsr107/jsr107tck/blob/master/pom.xml) as shown below.
+- Run the TCK using the command `mvn clean install`. This will run the tests using an embedded Hazelcast member.
 
 
 ```xml
 <properties>
+  <jcache.version>1.1.0-SNAPSHOT</jcache.version>
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -30,7 +31,7 @@ You can test Hazelcast JCache for compliance by executing the TCK. Just perform 
        to override with the coordinates for your implementation-->
   <implementation-groupId>com.hazelcast</implementation-groupId>
   <implementation-artifactId>hazelcast</implementation-artifactId>
-  <implementation-version>3.4</implementation-version>
+  <implementation-version>Hazelcast version to be tested (should be higher than 3.3)</implementation-version>
 
   <!-- Change the following properties to your CacheManager and
        Cache implementation. Used by the unwrap tests. -->
@@ -50,10 +51,10 @@ You can test Hazelcast JCache for compliance by executing the TCK. Just perform 
   <org.jsr107.tck.management.agentId>
     TCKMbeanServer
   </org.jsr107.tck.management.agentId>
-  <jsr107.api.version>1.0.0</jsr107.api.version>
 
   <!-- ################################################################# -->
 </properties>
 ```
 
-This will run the tests using an embedded Hazelcast Member.
+Please also see [TCK 1.1.0 User Guide](https://docs.google.com/document/u/1/d/1m8d1Z44IFGAd20bXEvT2G--vWXbxaJctk16M2rmbM24/edit#) or [TCK 1.0.0 User Guide](https://docs.google.com/document/d/1w3Ugj_oEqjMlhpCkGQOZkd9iPf955ZWHAVdZzEwYYdU/edit) for more information on the testing instructions.
+
