@@ -33,7 +33,7 @@ And, following is the equivalent programmatic configuration:
  ...
  Map<String, Comparable> props = publisherConfig.getProperties();
  props.put("batch.size", 1000);
- wanConfig.addWanPublisherConfig(publisherConfig)
+ wanConfig.addWanPublisherConfig(publisherConfig);
 ...
 ``` 
 

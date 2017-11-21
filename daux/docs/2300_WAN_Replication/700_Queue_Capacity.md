@@ -27,7 +27,7 @@ And, the following is the equivalent programmatic configuration:
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
  ...
  publisherConfig.setQueueCapacity(15000);
- wanConfig.addWanPublisherConfig(publisherConfig)
+ wanConfig.addWanPublisherConfig(publisherConfig);
 ...
 ``` 
 
