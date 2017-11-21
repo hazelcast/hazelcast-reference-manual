@@ -22,7 +22,6 @@ A part of `hazelcast.xml` is shown as an example below.
 ```xml
 <group>
 	<name>dev</name>
-	<password>dev-pass</password>
 </group>
 <management-center enabled="false">http://localhost:8080/mancenter</management-center>
 <network>
@@ -64,7 +63,6 @@ Let's say you want to compose the declarative configuration for Hazelcast out of
 <hazelcast>
   <group>
       <name>dev</name>
-      <password>dev-pass</password>
   </group>
 </hazelcast>
 ```
@@ -105,7 +103,6 @@ This feature also applies to the declarative configuration of Hazelcast client. 
 <hazelcast-client>
   <group>
       <name>dev</name>
-      <password>dev-pass</password>
   </group>
 </hazelcast-client>
 ```
@@ -262,7 +259,7 @@ If you use Hazelcast with [Spring](https://spring.io/) you can declare beans usi
 ```
 <hz:hazelcast id="instance">
   <hz:config>
-    <hz:group name="dev" password="password"/>
+    <hz:group name="dev"/>
     <hz:network port="5701" port-auto-increment="false">
       <hz:join>
         <hz:multicast enabled="false"/>
@@ -440,7 +437,7 @@ In your Hazelcast and/or Hazelcast Client declarative configuration, you can use
 For example, see the following command that sets two system properties.
 
 ```
--Dgroup.name=dev -Dgroup.password=somepassword
+-Dgroup.name=dev
 ```
 
 Let's get the values of these system properties in the declarative configuration of Hazelcast, as shown below.
@@ -449,7 +446,6 @@ Let's get the values of these system properties in the declarative configuration
 <hazelcast>
   <group>
     <name>${group.name}</name>
-    <password>${group.password}</password>
   </group>
 </hazelcast>
 ```
@@ -460,7 +456,6 @@ This also applies to the declarative configuration of Hazelcast Client, as shown
 <hazelcast-client>
   <group>
     <name>${group.name}</name>
-    <password>${group.password}</password>
   </group>
 </hazelcast-client>
 ```

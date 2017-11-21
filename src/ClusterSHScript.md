@@ -17,7 +17,7 @@ Parameter | Default Value | Description
 `-a` or `--address`|`127.0.0.1`|Defines the IP address of a cluster member. If you want to manage your cluster remotely, you should use this parameter to provide the IP address of a member to this script.
 `-p` or `--port`|`5701`|Defines on which port Hazelcast is running on the local or remote machine. The default value is `5701`.
 `-g` or `--groupname`|`dev`|Defines the name of a cluster group which is used for a simple authentication. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
-`-P` or `--password`|`dev-pass`|Defines the password of a cluster group. Please see the [Creating Cluster Groups section](#creating-cluster-groups).
+`-P` or `--password`|`dev-pass`|Defines the password of a cluster group (valid for Hazelcast releases older than 3.8.2). Please see the [Creating Cluster Groups section](#creating-cluster-groups).
 `-v` or `--version`|None|Defines the cluster version to change to. To be used in conjunction with `change-cluster-version` operation. 
 
 The script `cluster.sh` is self-documented; you can see the parameter descriptions using the command `sh cluster.sh -h` or `sh cluster.sh --help`.
