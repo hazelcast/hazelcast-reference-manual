@@ -50,7 +50,7 @@ characters,  (underscore) is placeholder for only one character.
 
 ***RELATED INFORMATION*** 
 
-*Please see the <a href="http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html">
+*Please see the <a href="http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html" target="_blank">
 Predicates Javadoc</a> for all predicates provided.*
 
 
