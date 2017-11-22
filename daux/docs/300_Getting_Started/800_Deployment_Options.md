@@ -8,7 +8,7 @@ You can deploy your Hazelcast project onto an Amazon EC2 environment using Third
 
 You can find information about this plugin on its GitHub repository at [Hazelcast AWS](https://github.com/hazelcast/hazelcast-aws).
 
-You can find a sample deployment project (`amazon-ec2-vagrant-chef`) with step-by-step instructions in the `hazelcast-integration` folder of the **hazelcast-code-samples** package, which you can download at <a href="http://hazelcast.org/download/" target="_blank">hazelcast.org</a>. Please refer to this sample project for more information.
+You can find a sample deployment project (`amazon-ec2-vagrant-chef`) with step-by-step instructions in the `hazelcast-integration` folder of the **hazelcast-code-samples** package, which you can download at <a href="https://hazelcast.org/download/" target="_blank">hazelcast.org</a>. Please refer to this sample project for more information.
 
 ### Deploying on Azure
 

@@ -39,6 +39,7 @@ In symmetric encryption, each member uses the same key, so the key is shared. He
 You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key, and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
 
 
+
 ***RELATED INFORMATION***
 
 *Please see the [SSL section](#tlsssl).*

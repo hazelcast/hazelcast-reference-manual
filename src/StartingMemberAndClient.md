@@ -110,6 +110,6 @@ the [Join Configuration section](#join) for more information.
 
 ***RELATED INFORMATION***
 
-*You can also check the video tutorials <a href="http://hazelcast.org/getting-started/" target="_blank">here</a>.*
+*You can also check the video tutorials <a href="https://hazelcast.org/getting-started-with-hazelcast/" target="_blank">here</a>.*
 <br> </br>
 
