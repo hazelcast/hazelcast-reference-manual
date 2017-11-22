@@ -1,15 +1,14 @@
 ## JCache - Hazelcast Instance Integration
 
-You can retrieve `javax.cache.Cache` instances directly through `HazelcastInstance::getCache(String name)` method.
-The parameter `name` in `HazelcastInstance::getCache(String name)` is the full cache name except the Hazelcast prefix, i.e., `/hz/`. 
+You can retrieve `javax.cache.Cache` instances using the interface `ICacheManager` of `HazelcastInstance`. This interface has the method `getCache(String name)` where `name` is the prefixed cache name. The prefixes in the cache name are URI and classloader prefixes, which are optional. Please note that the method `getCache(String name)` does not use a cache name with Hazelcast prefix (`/hz/`). Please see the [`ICacheManager` Javadoc](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/ICacheManager.html) for details.
 
-If you create a cache through a `CacheManager` which has its own specified URI scope (and/or specified classloader), 
-it must be prepended to the pure cache name as a prefix while retrieving the cache through `HazelcastInstance::getCache(String name)`. 
+If you create a cache through a `ICacheManager` which has its own specified URI scope (and/or specified classloader), 
+it must be prepended to the pure cache name as a prefix while retrieving the cache through `getCache(String name)`. 
 Prefix generation for full cache name (except the Hazelcast prefix, which is `/hz/`) is exposed through 
 `com.hazelcast.cache.CacheUtil#getPrefixedCacheName(String name, java.net.URI uri, ClassLoader classloader)`. 
-If the URI scope and classloader is not specified, the pure cache name can be used directly while retrieving cache over `HazelcastInstance`.
+If the URI scope and classloader is not specified, the pure cache name can be used directly while retrieving cache over `ICacheManager`.
 
-If you have a cache which is not created, but is defined/exists (cache is specified in Hazelcast configuration but not created yet), you can retrieve this cache by its name.  This also triggers cache creation before retrieving it. This retrieval is supported through `HazelcastInstance`. However, `HazelcastInstance` ***does not*** support creating a cache by specifying configuration; this is supported   by Hazelcast's `CacheManager` as it is.
+If you have a cache which is not created, but is defined/exists (cache is specified in Hazelcast configuration but not created yet), you can retrieve this cache by its name.  This also triggers cache creation before retrieving it. This retrieval is supported through `HazelcastInstance`. However, `HazelcastInstance` ***does not*** support creating a cache by specifying configuration; this is supported by Hazelcast's `ICacheManager` as it is.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If a valid (rather than *1.0.0-PFD* or *0.x* versions) JCache library does not exist on the classpath, `IllegalStateException` is thrown.*
