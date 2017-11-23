@@ -74,8 +74,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.mc.url.change.enabled` | true | bool  |   Management Center changing server url is enabled.
 `hazelcast.member.list.publish.interval.seconds` | 60 | int  |   Interval at which master member publishes a member list.
 `hazelcast.memcache.enabled`| false | bool |   Enable [Memcache](#memcache-client) client request listener service.
-`hazelcast.merge.first.run.delay.seconds` | 300 | int |   Initial run delay of [split brain/merge process](#network-partitioning) in seconds.
-`hazelcast.merge.next.run.delay.seconds` | 120 | int |   Run interval of [split brain/merge process](#network-partitioning) in seconds.
+`hazelcast.merge.first.run.delay.seconds` | 300 | int |   Initial run delay of [split brain/merge process](#split-brain-syndrome) in seconds.
+`hazelcast.merge.next.run.delay.seconds` | 120 | int |   Run interval of [split brain/merge process](#split-brain-syndrome) in seconds.
 `hazelcast.migration.min.delay.on.member.removed.seconds`|5|int|Minimum delay (in seconds) between detection of a member that has left and start of the rebalancing process.
 `hazelcast.operation.backup.timeout.millis`|5000|int|Maximum time a caller to wait for backup responses of an operation. After this timeout, operation response will be returned to the caller even no backup response is received.
 `hazelcast.operation.fail.on.indeterminate.state`| false | bool | When enabled, an operation fails with `IndeterminateOperationStateException`, if it does not receive backup acks in time with respect to backup configuration of its data structure, or the member which owns primary replica of the target partition leaves the cluster.
