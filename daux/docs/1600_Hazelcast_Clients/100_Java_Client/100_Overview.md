@@ -19,7 +19,7 @@ Imagine a trading application where all the trading data are stored and managed 
 
 ##### Feature Comparison for Hazelcast Clients
 
-Please refer to <a href="http://hazelcast.org/clients-languages/" target="_blank">Feature Comparison Matrix</a> to see the features implemented across the clients and language APIs.
+Please refer to <a href="https://hazelcast.org/clients-languages/" target="_blank">Feature Comparison Matrix</a> to see the features implemented across the clients and language APIs.
 
 
 ##### Sample Codes for Clients

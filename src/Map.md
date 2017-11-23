@@ -12,14 +12,14 @@ Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap
 
 ![Note](images/NoteSmall.jpg) ***NOTE:*** *IMap data structure can also be used by [Hazelcast Jet](https://jet.hazelcast.org/) for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the [Fast Batch Processing](https://jet.hazelcast.org/use-cases/fast-batch-processing/) and [Real-Time Stream Processing](https://jet.hazelcast.org/use-cases/real-time-stream-processing/) use cases for Hazelcast Jet.*
 
-*Please also see [here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG#page_IMap+and+ICache) in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.*
+*Please also see [here](http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IMap+and+ICache) in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.*
 <br>
 
 ----
 
 ### Getting a Map and Putting an Entry
 
-Hazelcast will partition your map entries and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "(1/n `*` total-data) + backups", **n** being the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
+Hazelcast will partition your map entries and their backups, and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "number of map entries * 2 * 1/n" entries, where **n** is the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
 
 Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the HazelcastInstance `getMap` method to get the map, then use the map `put` method to put an entry into the map.
 
@@ -29,7 +29,7 @@ public class FillMapMember {
     HazelcastInstance hzInstance = Hazelcast.newHazelcastInstance();
     Map<String, String> capitalcities = hzInstance.getMap( "capitals" ); 
     capitalcities.put( "1", "Tokyo" );
-    capitalcities.put( "2", "Paris” );
+    capitalcities.put( "2", "Paris" );
     capitalcities.put( "3", "Washington" );
     capitalcities.put( "4", "Ankara" );
     capitalcities.put( "5", "Brussels" );
@@ -54,7 +54,7 @@ When you run this code, a cluster member is created with a map whose entries are
 
 #### Creating A Member for Map Backup
 
-Now let's create a second member by running the above code again. This will create a cluster with two members. This is also where backups of entries are created--remember the backup partitions mentioned in the [Hazelcast Overview section](#hazelcast-overview). The following illustration shows two members and how the data and its backup is distributed.
+Now let's create a second member by running the above code again. This will create a cluster with two members. This is also where backups of entries are created - remember the backup partitions mentioned in the [Hazelcast Overview section](#hazelcast-overview). The following illustration shows two members and how the data and its backup is distributed.
 
 ![Map Entries with Backups in Two Members](images/2Nodes.png)
 
@@ -66,30 +66,29 @@ the `java.util.concurrent.ConcurrentMap` interface. Methods like
 on the distributed map, as shown in the example below.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import java.util.concurrent.ConcurrentMap;
+public class BasicMapOperations {
 
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    private HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
-Customer getCustomer( String id ) {
-    ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-    Customer customer = customers.get( id );
-    if (customer == null) {
-        customer = new Customer( id );
-        customer = customers.putIfAbsent( id, customer );
+    public Customer getCustomer(String id) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        Customer customer = customers.get(id);
+        if (customer == null) {
+            customer = new Customer(id);
+            customer = customers.putIfAbsent(id, customer);
+        }
+        return customer;
     }
-    return customer;
-}               
 
-public boolean updateCustomer( Customer customer ) {
-    ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-    return ( customers.replace( customer.getId(), customer ) != null );            
-}
-                
-public boolean removeCustomer( Customer customer ) {
-    ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-    return customers.remove( customer.getId(), customer );           
+    public boolean updateCustomer(Customer customer) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        return (customers.replace(customer.getId(), customer) != null);
+    }
+
+    public boolean removeCustomer(Customer customer) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        return customers.remove(customer.getId(), customer);
+    }
 }
 ```
 

@@ -1,11 +1,11 @@
 
-## Fast-Aggregations
-
-Fast-Aggregations functionality is the successor of the [Aggregators](#aggregators).
+Fast-Aggregations functionality is the successor of the [Aggregators](/500_Aggregators).
 They are equivalent to the MapReduce Aggregators in most of the use cases, but instead of running on the MapReduce engine they run on the Query infrastructure.
 Their performance is tens to hundreds times better since they run in parallel for each partition and are highly optimized for speed and low memory consumption.
 
 ### Aggregator API
+
+
 
 The Fast-Aggregation consists of three phases represented by three methods:
 
@@ -50,8 +50,8 @@ In case of the `DoubleAverage` aggregation, the Aggregator would just divide the
 
 Fast-Aggregations are available on `com.hazelcast.core.IMap` only. IMap offers the method `aggregate` to apply the aggregation logic on the map entries. This method can be called with or without a predicate. You can refer to its [Javadoc](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-) to see the method details.
 
-
 ### Sample Implementation
+
 
 Here's a sample implementation of the Aggregator:
 
@@ -102,7 +102,9 @@ As you can see:
 - the `combine()` method combines the results from all the accumulations.
 - the `aggregate()` method calculates the final result.
 
-### Built-In Aggregations
+
+### Built-in Aggregations
+
 
 The `com.hazelcast.aggregation.Aggregators` class provides a wide variety of built-in Aggregators.
 The full list is presented below:
@@ -123,6 +125,7 @@ To use the any of these Aggregators, instantiate them using the `Aggregators` fa
 Each built-in Aggregator can also navigate to an attribute of the object passed to the `accumulate()` method (via reflection). For example, `Aggregators.distinct("address.city")` will extract the `address.city` attribute from the object passed to the Aggregator and accumulate the extracted value.
 
 ### Configuration Options
+
 
 On each partition, after the entries have been passed to the aggregator, the accumulation runs in parallel.
 It means that each aggregator is cloned and receives a sub-set of the entries received from a partition.

@@ -14,7 +14,7 @@ Embedded dependencies are merged (shaded) with the Hazelcast codebase at compile
 of the Hazelcast distribution.
 
 For license files of embedded dependencies, please see the `license` directory of the Hazelcast distribution, available at our
-<a href="http://hazelcast.org/download/" target="_blank">download page</a>.
+<a href="https://hazelcast.org/download/" target="_blank">download page</a>.
 
 **minimal-json**:
 

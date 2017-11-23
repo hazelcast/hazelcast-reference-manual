@@ -14,8 +14,4 @@ myTopic.getLocalTopicStats().getReceiveOperationCount();
 
 You can disable this feature with topic configuration. Please see the [Configuring Topic section](04_Configuring_Topic.md).
 
-![image](../../images/NoteSmall.jpg) ***NOTE:*** *These statistics values can be also viewed in Hazelcast Management Center*.
-
-
-
-
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *These statistics values can be also viewed in [Hazelcast Management Center](http://docs.hazelcast.org/docs/management-center/latest/manual/html/Monitoring_Topics.html)*.

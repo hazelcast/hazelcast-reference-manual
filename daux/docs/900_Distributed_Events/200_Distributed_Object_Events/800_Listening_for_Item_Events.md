@@ -62,13 +62,13 @@ The following is an example of the equivalent declarative configuration.
 
 ```xml
 <hazelcast>
-   ...
-   <item-listeners>
-     <item-listener include-value="true">
-       com.yourpackage.SampleItemListener
-     </item-listener>
-   </item-listeners>
-   ...
+  <set>
+    <item-listeners>
+      <item-listener include-value="true">
+        com.yourpackage.SampleItemListener
+      </item-listener>
+    </item-listeners>
+  </set>   
 </hazelcast>
 ```
 

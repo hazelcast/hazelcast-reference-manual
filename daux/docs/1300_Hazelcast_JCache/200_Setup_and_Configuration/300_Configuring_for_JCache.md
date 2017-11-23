@@ -35,7 +35,7 @@ Note that this section only describes the JCache provided standard properties. F
   <cache-writer-factory
      class-name="com.example.cache.MyCacheWriterFactory" />
   <expiry-policy-factory
-     class-name="com.example.cache.MyExpirePolicyFactory" />
+     class-name="com.example.cache.MyExpiryPolicyFactory" />
 
   <cache-entry-listeners>
     <cache-entry-listener old-value-required="false" synchronous="false">

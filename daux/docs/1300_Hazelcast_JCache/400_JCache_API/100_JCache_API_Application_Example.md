@@ -25,7 +25,7 @@ public class User {
 The DAO interface is also kept easy in this example. It provides a simple method to retrieve (find) a user by its `userId`.
 
 ```java
-public interface UserDAO {
+public interface UserDao {
   User findUserById( int userId );
   boolean storeUser( int userId, User user );
   boolean removeUser( int userId );
@@ -74,7 +74,7 @@ Let's go through this configuration line by line.
 ##### Setting the Cache Type and Expire Policy
 
 First, we set the expected types for the cache, which is already known from the previous example. On the next line, a
-`javax.cache.expiry.ExpirePolicy` is configured. Almost all integration `ExpirePolicy` implementations are configured using
+`javax.cache.expiry.ExpiryPolicy` is configured. Almost all integration `ExpiryPolicy` implementations are configured using
 `javax.cache.configuration.Factory` instances. `Factory` and `FactoryBuilder` are explained later in this chapter.
 
 ##### Configuring Read-Through and Write-Through

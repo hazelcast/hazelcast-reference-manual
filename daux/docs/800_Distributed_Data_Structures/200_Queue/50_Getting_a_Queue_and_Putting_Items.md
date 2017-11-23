@@ -11,9 +11,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class SampleQueue {
-
   public static void main(String[] args) throws Exception {
-
    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
    BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
    queue.put( new MyTask() );

@@ -1,56 +1,11 @@
 
 
 In order to implement a `ValueExtractor`, extend the abstract `com.hazelcast.query.extractor.ValueExtractor` class
-and implement the `extract()` method.
-
-The `ValueExtractor` interface looks as follows:
-
-```java
-/***
- * Common superclass for all extractors.
- *
- * @param <T> type of the target object to extract the value from
- * @param <A> type of the extraction argument object passed to the extract() method
- *
- */
-public abstract class ValueExtractor<T, A> {
-
-    /**
-     * Extracts custom attribute's value from the given target object.
-     *
-     * @param target    object to extract the value from
-     * @param argument  extraction argument
-     * @param collector collector of the extracted value(s)
-     *
-     */
-    public abstract void extract(T target, A argument, ValueCollector collector);
-
-}
-```
-
-The `extract()` method does not return any value since the extracted value is collected by the `ValueCollector`.
+and implement the `extract()` method. This method does not return any value since the extracted value is collected by the `ValueCollector`.
 In order to return multiple results from a single extraction, invoke the `ValueCollector.collect()` method
 multiple times, so that the collector collects all results.
 
-Here is the `ValueCollector` contract:
-
-```java
-/**
- * Enables collecting values extracted by a {@see com.hazelcast.query.extractor.ValueExtractor}
- */
-public abstract class ValueCollector {
-
-    /**
-     * Collects a value extracted by a ValueExtractor.
-     * <p/>
-     * More than one value may be collected in a single extraction
-     *
-     * @param value value to be collected
-     */
-    public abstract void addObject(Object value);
-
-}
-```
+Please refer to the [`ValueExtractor`](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html) and [`ValueCollector`](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html) Javadocs.
 
 #### ValueExtractor with Portable Serialization
 
@@ -63,40 +18,7 @@ It contains two methods:
  * `read(String path, ValueCollector<T> collector)` - enables passing all results directly to the `ValueCollector`.
  * `read(String path, ValueCallback<T> callback)` - enables filtering, transforming and grouping the result of the read operation and manually passing it to the `ValueCollector`.
 
-Here is the `ValueReader` contract:
-
-```java
-/**
- * Enables reading the value of the attribute specified by the path
- * <p>
- * The path may be:
- * - simple -> it includes a single attribute only, like "name"
- * - nested -> it includes more then a single attribute separated with a dot (.), e.g. person.address.city
- * <p>
- * The path may also includes array cells:
- * - specific quantifier, like person.leg[1] -> returns the leg with index 1
- * - wildcard quantifier, like person.leg[any] -> returns all legs
- * <p>
- * The wildcard quantifier may be used a couple of times, like person.leg[any].finger[any] which returns all fingers
- * from all legs.
- */
-public abstract class ValueReader {
-
-    /**
-     * Read the value of the attribute specified by the path and returns the result via the callback.
-     *
-     */
-    public abstract <T> void read(String path, ValueCallback<T> callback) throws ValueReadingException;
-
-    /**
-     * Read the value of the attribute specified by the path and returns the result directly to the collector.
-     *
-     */
-    public abstract <T> void read(String path, ValueCollector<T> collector) throws ValueReadingException;
-
-}
-
-```
+Please refer to the [`ValueReader`](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html) Javadoc.
 
 #### Returning Multiple Values from a Single Extraction
 

@@ -36,10 +36,6 @@ In symmetric encryption, each member uses the same key, so the key is shared. He
 
 You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key, and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
 
-<br></br>
-![image](../images/NoteSmall.jpg)***NOTE:*** *Encryption cannot be used on Hazelcast clients. Moreover, when you enable encryption on your Hazelcast cluster, the clients will not work, i.e., they will not be able to connect to the cluster.*
-<br></br>
-
 
 ***RELATED INFORMATION***
 
