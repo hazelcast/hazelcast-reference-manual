@@ -1,10 +1,10 @@
 ## JCache - Hazelcast Instance Integration
 
-You can retrieve `javax.cache.Cache` instances using the interface `ICacheManager` of `HazelcastInstance`. This interface has the method `getCache(String name)` where `name` is the prefixed cache name. The prefixes in the cache name are URI and classloader prefixes, which are optional. Please note that the method `getCache(String name)` does not use a cache name with Hazelcast prefix (`/hz/`). Please see the [`ICacheManager` Javadoc](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/ICacheManager.html) for details.
+You can retrieve `javax.cache.Cache` instances using the interface `ICacheManager` of `HazelcastInstance`. This interface has the method `getCache(String name)` where `name` is the prefixed cache name. The prefixes in the cache name are URI and classloader prefixes, which are optional.
 
 If you create a cache through a `ICacheManager` which has its own specified URI scope (and/or specified classloader), 
 it must be prepended to the pure cache name as a prefix while retrieving the cache through `getCache(String name)`. 
-Prefix generation for full cache name (except the Hazelcast prefix, which is `/hz/`) is exposed through 
+Prefix generation for full cache name is exposed through 
 `com.hazelcast.cache.CacheUtil#getPrefixedCacheName(String name, java.net.URI uri, ClassLoader classloader)`. 
 If the URI scope and classloader is not specified, the pure cache name can be used directly while retrieving cache over `ICacheManager`.
 
