@@ -6,10 +6,7 @@
 
 This section explains how you can integrate Hazelcast's WAN replication with [Solace](http://www.solacesystems.com/) messaging platform. With this integration, you can publish and consume WAN replication events to/from Solace appliances. 
 
-Solace, the most powerful global enterprise messaging solution, combines with Hazelcast, the fastest in-memory
-data grid, to drive efficiencies in the processing of global data workloads. This Solace-Hazelcast joint
-solution enables multi-cloud and hybrid-cloud replication of Hazelcast clusters for worldwide operation. It
-enables enterprise grade reliability, WAN scale-out and low latency cluster replication.
+Solace combines with Hazelcast to drive efficiencies in the processing of global data workloads. This joint solution enables multi-cloud and hybrid-cloud replication of Hazelcast clusters. Please see [Hazelcast-Solace partnership](https://hazelcast.com/partner/solace/) for more information.
  
 ### Enabling Integration
  
@@ -21,13 +18,16 @@ To publish and consume WAN replication events on Solace appliances, Hazelcast WA
 You can register these classes using the configuration elements `<wan-publisher>` and `<wan-consumer>` while configuring your WAN replication.
 `SolaceWanPublisher` and `SolaceWanConsumer` are included in the `hazelcast-solace` library which can be found in following Maven coordinates:
 
- ```xml
- <dependency>
-     <groupId>com.hazelcast</groupId>
-     <artifactId>hazelcast-solace</artifactId>
-     <version>1.0.0</version>
- </dependency>
- ```
+```xml
+  <dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-solace</artifactId>
+    <version>1.0.0</version>
+  </dependency>
+```
+ 
+![Note](images/NoteSmall.jpg) ***NOTE:*** *The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the [Hazelcast IMDG Enterprise section](#hazelcast-imdg-enterprise) for information on how to configure this repository.*
+ 
  
 Please see the following sections for configuration details.
  
