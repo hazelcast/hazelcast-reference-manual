@@ -3,24 +3,24 @@ The JCache specification has an option to configure a single `ExpiryPolicy` per 
 offers the possibility to define a custom `ExpiryPolicy` per key by providing a set of method overloads with an `expirePolicy`
 parameter, as in the list of asynchronous methods in the [Async Methods section](04_ICache_Async_Methods). This means that you can pass custom expiry policies to a cache operation.
 
-Here is how an `ExpirePolicy` is set on JCache configuration:
+Here is how an `ExpiryPolicy` is set on JCache configuration:
 
 ```java
 CompleteConfiguration<String, String> config =
     new MutableConfiguration<String, String>()
-        setExpiryPolicyFactory(
+        .setExpiryPolicyFactory(
             AccessedExpiryPolicy.factoryOf( Duration.ONE_MINUTE )
         );
 ```
 
-To pass a custom `ExpirePolicy`, a set of overloads is provided. You can use them as shown in the following code example.
+To pass a custom `ExpiryPolicy`, a set of overloads is provided. You can use them as shown in the following code example.
 
 ```java
 ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
 unwrappedCache.put( 1, "value", new AccessedExpiryPolicy( Duration.ONE_DAY ) );
 ```
 
-The `ExpirePolicy` instance can be pre-created, cached, and re-used, but only for each cache instance. This is because `ExpirePolicy`
+The `ExpiryPolicy` instance can be pre-created, cached, and re-used, but only for each cache instance. This is because `ExpiryPolicy`
 implementations can be marked as `java.io.Closeable`. The following list shows the provided method overloads over `javax.cache.Cache`
 by `com.hazelcast.cache.ICache` featuring the `ExpiryPolicy` parameter:
 

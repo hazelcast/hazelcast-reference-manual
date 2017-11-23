@@ -914,7 +914,7 @@ if ($current == $baseurl + "/docs/latest/manual/html-single/index.html#cacheentr
 	window.location = $baseurl + "/docs/latest/manual/html/Hazelcast_JCache/JCache_API/Implementing_CacheEntryListener.html";
 }
 if ($current == $baseurl + "/docs/latest/manual/html-single/index.html#expirepolicy") {
-	window.location = $baseurl + "/docs/latest/manual/html/Hazelcast_JCache/JCache_API/Implementing_ExpirePolicy.html";
+	window.location = $baseurl + "/docs/latest/manual/html/Hazelcast_JCache/JCache_API/Implementing_ExpiryPolicy.html";
 }
 
 // Docs 'Hazelcast JCache : JCache - Hazelcast Instance Integration' subsection
