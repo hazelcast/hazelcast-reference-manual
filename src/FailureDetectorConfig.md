@@ -98,20 +98,18 @@ For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are 
 #### Requirements
 - Supported OS, as of Java 1.8 *nix environment support this
 - The Java executable must have the `cap_net_raw` capability. 
-
-To do so, run `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
+    - To do so, run `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
 - When running with custom capabilities, the dynamic linker on Linux will reject loading libs from untrusted paths.
-An example of rejected execution `java: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory`
-
-To overcome, the `<JDK_HOME>/jre/lib/amd64/jli/` path needs to be added in the `ld.conf`
-`echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
+    - An example of rejected operation can be the following:
+ `java: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory`
+    - To overcome this rejection, the `<JDK_HOME>/jre/lib/amd64/jli/` path needs to be added in the `ld.conf`, 
+     i.e. run: `echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
 - ICMP Echo Requests must not be blocked by the receiving hosts. `/proc/sys/net/ipv4/icmp_echo_ignore_all` set to `0`
-
-i.e. execute `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
+    - i.e. run `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
 
 If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
 
-To use the Ping Failure Detector.
+To be able to use the Ping Failure Detector, please add the following properties in your Hazelcast declarative configuration file:
 
 ```xml
 <hazelcast>
@@ -133,20 +131,19 @@ To use the Ping Failure Detector.
 - `hazelcast.icmp.parallel.mode` (default true) - Enabling the parallel ping detector, works separately from the other detectors.
 - `hazelcast.icmp.timeout` (default 1000) - Number of milliseconds until a ping attempt is considered failed if there was no reply.
 - `hazelcast.icmp.max.attempts` (default 3) - The maximum number of ping attempts before the member/node gets suspected by the detector.
-- `hazelcast.icmp.interval` (default 1000) - The interval, in millis, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed.
-- `hazelcast.icmp.ttl` (default 0) - The maximum number of hops the packets should go through or 0 for the default
+- `hazelcast.icmp.interval` (default 1000) - The interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed.
+- `hazelcast.icmp.ttl` (default 0) - The maximum number of hops the packets should go through or 0 for the default.
 
-In the above configuration, the Ping detector will attempt 3 pings, one every second, and will wait up-to 500ms for each to complete. If after 3 seconds,
-there was no successful ping, the member will get suspected.
+In the above configuration, the Ping detector will attempt 3 pings, one every second and will wait up-to 1 second for each to complete. If after 3 seconds, there was no successful ping, the member will get suspected.
 
 To enforce the [Requirements](#Requirements) the property `hazelcast.icmp.echo.fail.fast.on.startup` can also be set to `true`, in which case, if any of the requirements
 isn't met, Hazelcast will fail to start.
 
-Below a summary table of all possible combinations of the ping failure detector.
+Below is a summary table of all possible combinations of the ping failure detector.
 
-| ICMP  	| Parallel 	| Fail-Fast 	| Description                                                                                                                                                                                                                                                                                                     | Linux                                                                                                  	| Windows                       	| macOS                                                                	|
-|-------	|----------	|-----------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |--------------------------------------------------------------------------------------------------------	|-------------------------------	|----------------------------------------------------------------------	|
-| false 	| false    	| false     	| Completely disabled                                                                                                                                                                                                         	                                                                                  | N/A                                                                                                    	| N/A                           	| N/A                                                                  	|
-| true  	| false    	| false     	| Legacy ping mode. This works hand-to-hand with the OSI Layer 7 failure detector (see. phi or deadline in sections above). Ping in this mode will only kick in after a period of no hearbeats received, in which case the remote node will be pinged up-to 5 times. If all 5 attempts fail, node gets suspected. | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7                                   	| Supported  TCP Echo on port 7 	|  Supported ICMP Echo if available - Falls back on TCP Echo on port 7 	|
-| true  	| true     	| false     	| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if nodes are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                  | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7                                   	| Supported  TCP Echo on port 7 	| Supported  ICMP Echo if available - Falls back on TCP Echo on port 7 	|
-| true  	| true     	| true      	| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if nodes are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                  | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available 	| Not Supported                 	| Not Supported - Requires root priviledges                            	|
+| ICMP  	| Parallel 	| Fail-Fast 	| Description                                                                                                                                                                                                                                                                                                                                   | Linux                                                                                                  	| Windows                       	| macOS                                                                	|
+|-------	|----------	|-----------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |--------------------------------------------------------------------------------------------------------	|-------------------------------	|----------------------------------------------------------------------	|
+| false 	| false    	| false     	| Completely disabled                                                                                                                                                                                                         	                                                                                                                | N/A                                                                                                    	| N/A                           	| N/A                                                                  	|
+| true  	| false    	| false     	| Legacy ping mode. This works hand-to-hand with the OSI Layer 7 failure detector (see. phi or deadline in sections above). Ping in this mode will only kick in after a period when there are no hearbeats received, in which case the remote Hazelcast member will be pinged up-to 5 times. If all 5 attempts fail, the member gets suspected. | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7                                   	| Supported  TCP Echo on port 7 	|  Supported ICMP Echo if available - Falls back on TCP Echo on port 7 	|
+| true  	| true     	| false     	| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7                                   	| Supported  TCP Echo on port 7 	| Supported  ICMP Echo if available - Falls back on TCP Echo on port 7 	|
+| true  	| true     	| true      	| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available 	| Not Supported                 	| Not Supported - Requires root privileges                            	|
