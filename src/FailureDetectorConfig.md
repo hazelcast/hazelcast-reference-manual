@@ -95,17 +95,19 @@ This failure detector is based on `InetAddress.isReachable()`.
 When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests, whereas, if not enough permissions, it will fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as Host is Reachable.
 
 For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met.
+
 #### Requirements
-- Supported OS, as of Java 1.8 *nix environment support this
+
+- Supported OS: as of Java 1.8 *nix environment supports this.
 - The Java executable must have the `cap_net_raw` capability. 
     - To do so, run `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
 - When running with custom capabilities, the dynamic linker on Linux will reject loading libs from untrusted paths.
     - An example of rejected operation can be the following:
  `java: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory`
     - To overcome this rejection, the `<JDK_HOME>/jre/lib/amd64/jli/` path needs to be added in the `ld.conf`, 
-     i.e. run: `echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
+     i.e., run: `echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
 - ICMP Echo Requests must not be blocked by the receiving hosts. `/proc/sys/net/ipv4/icmp_echo_ignore_all` set to `0`
-    - i.e. run `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
+    - i.e., run `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
 
 If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
 
@@ -136,7 +138,7 @@ To be able to use the Ping Failure Detector, please add the following properties
 
 In the above configuration, the Ping detector will attempt 3 pings, one every second and will wait up-to 1 second for each to complete. If after 3 seconds, there was no successful ping, the member will get suspected.
 
-To enforce the [Requirements](#Requirements) the property `hazelcast.icmp.echo.fail.fast.on.startup` can also be set to `true`, in which case, if any of the requirements
+To enforce the [Requirements](#Requirements), the property `hazelcast.icmp.echo.fail.fast.on.startup` can also be set to `true`, in which case, if any of the requirements
 isn't met, Hazelcast will fail to start.
 
 Below is a summary table of all possible combinations of the ping failure detector.
