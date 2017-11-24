@@ -34,6 +34,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Defining Member Attributes](#defining-member-attributes)|Added information related to member filtering for distributed class loading (user code deployment).
 ||[Management Center](#management-center)|Updated by adding "Metrics-Only" privilege definition and "Enabling TLS/SSL when starting with WAR file" section.
 ||[Diagnostics](#diagnostics)| Added explanations for two new diagnostics plugins: OperationHeartbeats and MemberHeartbeats.
+||[Ping Failure Detector](#ping-failure-detector)| Added as a new section.
 |[Security](#security)|[SSL](#ssl)|Added "Authenticating Mutually" as a new section.|
 ||[Native Client Security](#native-client-security)| Added description for the Cache Permissions.
 ||[Validating Secrets Using Strength Policy](#validating-secrets-using-strength-policy)| Added as a new section.
