@@ -210,22 +210,23 @@ Hazelcast also supports `lazy-init`, `scope` and `depends-on` bean attributes.
 For map-store, you should set either the *class-name* or the *implementation* attribute.
 
 ```xml
-<hz:config>
-  <hz:map name="map1">
-    <hz:near-cache time-to-live-seconds="0" max-idle-seconds="60"
-        eviction-policy="LRU" max-size="5000"  invalidate-on-change="true"/>
+<hz:config id="config">
+    <hz:map name="map1">
+        <hz:map-store enabled="true" class-name="com.foo.DummyStore"
+            write-delay-seconds="0" />
 
-    <hz:map-store enabled="true" class-name="com.foo.DummyStore"
-        write-delay-seconds="0"/>
-  </hz:map>
+        <hz:near-cache time-to-live-seconds="0"
+            max-idle-seconds="60" eviction-policy="LRU" max-size="5000"
+            invalidate-on-change="true" />
+    </hz:map>
 
-  <hz:map name="map2">
-    <hz:map-store enabled="true" implementation="dummyMapStore"
-        write-delay-seconds="0"/>
-  </hz:map>
-
-  <bean id="dummyMapStore" class="com.foo.DummyStore" />
+    <hz:map name="map2">
+        <hz:map-store enabled="true" implementation="dummyMapStore"
+            write-delay-seconds="0" />
+    </hz:map>
 </hz:config>
+
+<bean id="dummyMapStore" class="com.foo.DummyStore" />
 ```
 
 
