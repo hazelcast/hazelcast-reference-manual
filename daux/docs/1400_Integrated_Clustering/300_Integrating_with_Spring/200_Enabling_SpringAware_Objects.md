@@ -10,7 +10,7 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
 
 #### SpringAware Examples
 
-- Configure a Hazelcast Instance (3.3.x) via Spring Configuration and define *someBean* as Spring Bean.
+- Configure a Hazelcast Instance via Spring Configuration and define *someBean* as Spring Bean.
 - Add `<hz:spring-aware />` to Hazelcast configuration to enable @SpringAware.
 
 ```xml
@@ -25,7 +25,7 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
                 http://www.hazelcast.com/schema/spring
                 http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd">
 
-  <context:annotation-config />
+  <context:component-scan base-package="..."/>
 
   <hz:hazelcast id="instance">
     <hz:config>
@@ -87,8 +87,8 @@ public class SomeValue implements Serializable, ApplicationContextAware {
 
 ```java
 HazelcastInstance hazelcastInstance = 
-    (HazelcastInstance) context.getBean( "hazelcast" );
-SomeValue value = (SomeValue) context.getBean( "someValue" )
+    (HazelcastInstance) context.getBean( "instance" );
+SomeValue value = (SomeValue) context.getBean( "someValue" );
 IMap<String, SomeValue> map = hazelcastInstance.getMap( "values" );
 map.put( "key", value );
 ```
@@ -97,7 +97,7 @@ map.put( "key", value );
 
 ```java
 HazelcastInstance hazelcastInstance = 
-    (HazelcastInstance) context.getBean( "hazelcast" );
+    (HazelcastInstance) context.getBean( "instance" );
 IMap<String, SomeValue> map = hazelcastInstance.getMap( "values" );
 SomeValue value = map.get( "key" );
 Assert.assertTrue( value.init );
@@ -137,16 +137,17 @@ public class SomeTask
 
 ```java
 HazelcastInstance hazelcastInstance =
-    (HazelcastInstance) context.getBean( "hazelcast" );
+    (HazelcastInstance) context.getBean( "instance" );
 SomeBean bean = (SomeBean) context.getBean( "someBean" );
 
-Future<Long> f = hazelcastInstance.getExecutorService().submit(new SomeTask());
+Future<Long> f = hazelcastInstance.getExecutorService("executorService")
+    .submit(new SomeTask());
 Assert.assertEquals(bean.value, f.get().longValue());
 
 // choose a member
 Member member = hazelcastInstance.getCluster().getMembers().iterator().next();
 
-Future<Long> f2 = (Future<Long>) hazelcast.getExecutorService()
+Future<Long> f2 = (Future<Long>) hazelcast.getExecutorService("executorService")
     .submitToMember(new SomeTask(), member);
 Assert.assertEquals(bean.value, f2.get().longValue());
 ```
