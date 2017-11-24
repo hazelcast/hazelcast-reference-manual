@@ -171,7 +171,7 @@ Here is an example schema definition for Hazelcast 3.3.x:
 <hz:map id="map" instance-ref="client" name="map" lazy-init="true" />
 <hz:multiMap id="multiMap" instance-ref="instance" name="multiMap"
     lazy-init="false" />
-<hz:replicatedmap id="replicatedmap" instance-ref="instance" 
+<hz:replicatedMap id="replicatedmap" instance-ref="instance"
     name="replicatedmap" lazy-init="false" />
 <hz:queue id="queue" instance-ref="client" name="queue" 
     lazy-init="true" depends-on="instance"/>
