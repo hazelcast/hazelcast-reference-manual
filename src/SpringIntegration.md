@@ -409,7 +409,7 @@ As of version 3.1, Spring Framework provides support for adding caching into an 
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" />
 
-<hz:hazelcast id="hazelcast">
+<hz:hazelcast id="instance">
   ...
 </hz:hazelcast>
 
@@ -423,11 +423,12 @@ Hazelcast uses its Map implementation for underlying cache. You can configure a 
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" />
 
-<hz:hazelcast id="hazelcast">
+<hz:hazelcast id="instance">
   <hz:config>
     ...
 
     <hz:map name="city" time-to-live-seconds="0" in-memory-format="BINARY" />
+  </hz:config>
 </hz:hazelcast>
 
 <bean id="cacheManager" class="com.hazelcast.spring.cache.HazelcastCacheManager">
