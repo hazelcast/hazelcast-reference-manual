@@ -91,14 +91,18 @@ config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.min.std.dev.m
 
 ### Ping Failure Detector
 
+The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accual Failure Detectors. It operate at Layer 3 of the OSI protocol, and providers much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.  
+
 This failure detector is based on `InetAddress.isReachable()`.
-When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests, whereas, if not enough permissions, it will fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as Host is Reachable.
+When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
+
+If not there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as Host is Reachable. Or it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
 
 For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met.
 
-#### Requirements
+#### Requirements and Linux/Unix Configuration
 
-- Supported OS: as of Java 1.8 *nix environment supports this.
+- Supported OS: as of Java 1.8 only Linux/Unix environments are supported.
 - The Java executable must have the `cap_net_raw` capability. 
     - To do so, run `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
 - When running with custom capabilities, the dynamic linker on Linux will reject loading libs from untrusted paths.
@@ -141,7 +145,7 @@ In the above configuration, the Ping detector will attempt 3 pings, one every se
 To enforce the [Requirements](#Requirements), the property `hazelcast.icmp.echo.fail.fast.on.startup` can also be set to `true`, in which case, if any of the requirements
 isn't met, Hazelcast will fail to start.
 
-Below is a summary table of all possible combinations of the ping failure detector.
+Below is a summary table of all possible configuration combinations of the ping failure detector.
 
 | ICMP  	| Parallel 	| Fail-Fast 	| Description                                                                                                                                                                                                                                                                                                                                   | Linux                                                                                                  	| Windows                       	| macOS                                                                	|
 |-------	|----------	|-----------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |--------------------------------------------------------------------------------------------------------	|-------------------------------	|----------------------------------------------------------------------	|
