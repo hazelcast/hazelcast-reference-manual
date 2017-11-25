@@ -96,7 +96,7 @@ The Ping Failure Detector may be configured in addition to one of Deadline and P
 This failure detector is based on `InetAddress.isReachable()`.
 When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
 
-If not there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as Host is Reachable. Or it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
+If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
 
 For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met.
 
