@@ -56,8 +56,8 @@ Let's describe each element:
 	
 	Apart from the above values, you can also develop and use your own eviction policy. Please see the [Custom Eviction Policy section](/Distributed_Data_Structures/Map/Map_Eviction.html#page_Custom+Eviction+Policy).
 
-- `max-size`: Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than `(partition-count/member-count)` (Partition count is 271 by default).
-	- `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than the partition count (which is 271 by default).		
+- `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
+	- `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than `(partition-count/member-count)` (Partition count is 271 by default).		
 
 		`<max-size policy="PER_NODE">5000</max-size>`
 
