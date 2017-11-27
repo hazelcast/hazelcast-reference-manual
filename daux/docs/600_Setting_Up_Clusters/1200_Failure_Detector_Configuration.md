@@ -87,3 +87,70 @@ config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.sample.size",
 config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.min.std.dev.millis", "100");
 [...]
 ```
+
+
+### Ping Failure Detector
+
+The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accual Failure Detectors. It operates at Layer 3 of the OSI protocol, and provides much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.  
+
+This failure detector is based on `InetAddress.isReachable()`.
+When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
+
+If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
+
+For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met.
+
+#### Requirements and Linux/Unix Configuration
+
+- Supported OS: as of Java 1.8 only Linux/Unix environments are supported.
+- The Java executable must have the `cap_net_raw` capability. 
+    - To do so, run `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
+- When running with custom capabilities, the dynamic linker on Linux will reject loading libs from untrusted paths.
+    - An example of rejected operation can be the following:
+ `java: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory`
+    - To overcome this rejection, the `<JDK_HOME>/jre/lib/amd64/jli/` path needs to be added in the `ld.conf`, 
+     i.e., run: `echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
+- ICMP Echo Requests must not be blocked by the receiving hosts. `/proc/sys/net/ipv4/icmp_echo_ignore_all` set to `0`
+    - i.e., run `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
+
+If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
+
+To be able to use the Ping Failure Detector, please add the following properties in your Hazelcast declarative configuration file:
+
+```xml
+<hazelcast>
+    [...]
+	<properties>
+        <property name="hazelcast.icmp.enabled">true</property>
+        <property name="hazelcast.icmp.parallel.mode">true</property>
+        <property name="hazelcast.icmp.timeout">1000</property>
+        <property name="hazelcast.icmp.max.attempts">3</property>
+        <property name="hazelcast.icmp.interval">1000</property>
+        <property name="hazelcast.icmp.ttl">0</property>
+        [...]
+    </properties>
+    [...]
+</hazelcast>
+```
+
+- `hazelcast.icmp.enabled` (default false) - Enables legacy ICMP detection mode, works cooperatively with the existing failure detector, and only kicks-in after a pre-defined period has passed with no heartbeats from a member.
+- `hazelcast.icmp.parallel.mode` (default true) - Enabling the parallel ping detector, works separately from the other detectors.
+- `hazelcast.icmp.timeout` (default 1000) - Number of milliseconds until a ping attempt is considered failed if there was no reply.
+- `hazelcast.icmp.max.attempts` (default 3) - The maximum number of ping attempts before the member/node gets suspected by the detector.
+- `hazelcast.icmp.interval` (default 1000) - The interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed.
+- `hazelcast.icmp.ttl` (default 0) - The maximum number of hops the packets should go through or 0 for the default.
+
+In the above configuration, the Ping detector will attempt 3 pings, one every second and will wait up-to 1 second for each to complete. If after 3 seconds, there was no successful ping, the member will get suspected.
+
+To enforce the requirements stated above, the property `hazelcast.icmp.echo.fail.fast.on.startup` can also be set to `true`, in which case, if any of the requirements
+isn't met, Hazelcast will fail to start.
+
+Below is a summary table of all possible configuration combinations of the ping failure detector.
+
+| ICMP  	| Parallel 	| Fail-Fast 	| Description                                                                                                                                                                                                                                                                                                                                   | Linux                                                                                                  	| Windows                       	| macOS                                                                	|
+|-------	|----------	|-----------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |--------------------------------------------------------------------------------------------------------	|-------------------------------	|----------------------------------------------------------------------	|
+| false 	| false    	| false     	| Completely disabled                                                                                                                                                                                                         	                                                                                                                | N/A                                                                                                    	| N/A                           	| N/A                                                                  	|
+| true  	| false    	| false     	| Legacy ping mode. This works hand-to-hand with the OSI Layer 7 failure detector (see. phi or deadline in sections above). Ping in this mode will only kick in after a period when there are no hearbeats received, in which case the remote Hazelcast member will be pinged up-to 5 times. If all 5 attempts fail, the member gets suspected. | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7                                   	| Supported  TCP Echo on port 7 	|  Supported ICMP Echo if available - Falls back on TCP Echo on port 7 	|
+| true  	| true     	| false     	| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7                                   	| Supported  TCP Echo on port 7 	| Supported  ICMP Echo if available - Falls back on TCP Echo on port 7 	|
+| true  	| true     	| true      	| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available 	| Not Supported                 	| Not Supported - Requires root privileges                            	|
+
