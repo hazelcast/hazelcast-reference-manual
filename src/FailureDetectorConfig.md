@@ -91,7 +91,7 @@ config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.min.std.dev.m
 
 ### Ping Failure Detector
 
-The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accual Failure Detectors. It operate at Layer 3 of the OSI protocol, and providers much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.  
+The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accual Failure Detectors. It operates at Layer 3 of the OSI protocol, and provides much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.  
 
 This failure detector is based on `InetAddress.isReachable()`.
 When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
