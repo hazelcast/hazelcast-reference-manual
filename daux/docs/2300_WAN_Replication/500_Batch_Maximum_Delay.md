@@ -31,7 +31,7 @@ And, the following is the equivalent programmatic configuration:
  ...
  Map<String, Comparable> props = publisherConfig.getProperties();
  props.put("batch.max.delay.millis", 2000);
- wanConfig.addWanPublisherConfig(publisherConfig)
+ wanConfig.addWanPublisherConfig(publisherConfig);
 ...
 ``` 
 
