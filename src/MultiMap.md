@@ -30,14 +30,20 @@ Now let's print the entries in this MultiMap.
 
 ```java
 public class PrintMember {
-  public static void main( String[] args ) { 
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    MultiMap <String, String > map = hazelcastInstance.getMultiMap( "map" );
-    for ( String key : map.keySet() ){
-      Collection <String > values = map.get( key );
-      System.out.println( "%s -> %s\n",key, values );
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        MultiMap<String, String> map = hazelcastInstance.getMultiMap("map");
+
+        map.put("a", "1");
+        map.put("a", "2");
+        map.put("b", "3");
+        System.out.printf("PutMember:Done");
+
+        for (String key: map.keySet()){
+            Collection <String> values = map.get(key);
+            System.out.printf("%s -> %s\n", key, values);
+        }
     }
-  }
 }
 ```
 
@@ -64,18 +70,14 @@ The following are the example MultiMap configurations.
 **Declarative:**
 
 ```xml
-<hazelcast>
-  <multimap name="default">
+<multimap name="default">
     <backup-count>0</backup-count>
     <async-backup-count>1</async-backup-count>
     <value-collection-type>SET</value-collection-type>
     <entry-listeners>
-        <entry-listener include-value="false" local="false">
-           com.hazelcast.examples.EntryListener
-        </entry-listener>
-    </entry-listeners>   
-  </map>
-</hazelcast>
+        <entry-listener include-value="false" local="false" >com.hazelcast.examples.EntryListener</entry-listener>
+    </entry-listeners>
+</multimap>
 ```
 
 **Programmatic:**
@@ -95,7 +97,7 @@ The following are the configuration elements and their descriptions:
 placed on one other member. If it is 2, it will be placed on two other members.
 - `async-backup-count`: The number of asynchronous backups. Behavior is the same as that of the `backup-count` element.
 - `statistics-enabled`: You can retrieve some statistics such as owned entry count, backup entry count, last update time, and locked entry count by setting this parameter's value as "true". The method for retrieving the statistics is `getLocalMultiMapStats()`.
-- `value-collection-type`: Type of the value collection. It can be `Set` or `List`.
+- `value-collection-type`: Type of the value collection. It can be `SET` or `LIST`.
 - `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 include-value to true if you want the item event to contain the entry values, and you can set
 local to true if you want to listen to the entries on the local member.
