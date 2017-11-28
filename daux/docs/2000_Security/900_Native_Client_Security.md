@@ -60,8 +60,8 @@ Hazelcast client authorization is configured by a client permission policy. Haze
     </all-permissions>
         
     <!-- Principals named 'dev' from all endpoints have 'create', 'destroy', 
-         'put', 'read' permissions for map named 'default'. -->
-    <map-permission name="default" principal="dev">
+         'put', 'read' permissions for map named 'myMap'. -->
+    <map-permission name="myMap" principal="dev">
       <actions>
         <action>create</action>
         <action>destroy</action>
