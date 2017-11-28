@@ -67,12 +67,12 @@ The following are example configurations for JCache Split-Brain.
 **Programmatic**:
 
 ```java
-CacheConfig cacheConfigWithBuiltInMergePolicyAsConstantName = new CacheConfig();
-cacheConfig.setMergePolicy(BuiltInCacheMergePolicies.HIGGER_HITS.name());
-  
-CacheConfig cacheConfigWithBuiltInMergePolicyAsFullClassName = new CacheConfig();
-cacheConfig.setMergePolicy(BuiltInCacheMergePolicies.LATEST_ACCESS.getImplementationClassName());
-  
-CacheConfig cacheConfigWithBuiltInMergePolicyAsCustomImpl = new CacheConfig();
-cacheConfig.setMergePolicy("com.mycompany.cache.merge.MyCacheMergePolicy");
+CacheConfig cacheConfig1 = new CacheConfig();
+cacheConfig1.setMergePolicy(BuiltInCacheMergePolicies.HIGHER_HITS.name());
+
+CacheConfig cacheConfig2 = new CacheConfig();
+cacheConfig2.setMergePolicy(BuiltInCacheMergePolicies.LATEST_ACCESS.getImplementationClassName());
+
+CacheConfig cacheConfig3 = new CacheConfig();
+cacheConfig3.setMergePolicy("com.mycompany.cache.merge.MyCacheMergePolicy");
 ```
