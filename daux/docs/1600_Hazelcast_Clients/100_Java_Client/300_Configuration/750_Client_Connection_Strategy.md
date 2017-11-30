@@ -20,7 +20,7 @@ The example declarative and programmatic configurations below show how to config
 
 ```java
 ClientConfig clientConfig = new ClientConfig();
-clientConfig.getClientConfigurationStrategy()
-			.setAsyncStart(true)
-			.setReconnnectMode(ReconnectMode.ASYNC);
+clientConfig.getConnectionStrategyConfig()
+            .setAsyncStart(true)
+            .setReconnectMode(ClientConnectionStrategyConfig.ReconnectMode.ASYNC);
 ```
