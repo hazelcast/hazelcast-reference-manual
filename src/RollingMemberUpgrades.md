@@ -89,7 +89,7 @@ set, one of the following must happen:
 <br>
 **What if a new Hazelcast minor version changes fundamental cluster protocol communication, like join messages?**
 
-![Note](images/Notesmall.jpg) ***NOTE:*** *The version numbers used in the paragraph below are only used as an example.*
+![Note](images/NoteSmall.jpg) ***NOTE:*** *The version numbers used in the paragraph below are only used as an example.*
 
 On startup, as answered in the above question (How is the cluster version set?), the cluster version is not yet known to a member that has not joined any cluster.
 By default the newly started member will use the cluster protocol that corresponds to its codebase version until this member joins a cluster
