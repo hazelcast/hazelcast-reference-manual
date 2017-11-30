@@ -4,6 +4,8 @@
 
 Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.Semaphore`. 
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *The `ISemaphore` may break it's consistency guarantees in some edge cases. Please see [Consistency and Replication Model](#consistency-and-replication-model) for more details on the guarantees Hazelcast provides.*
+
 ### Controlling Thread Counts with Permits
 
 Semaphores offer **permit**s to control the thread counts when performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.

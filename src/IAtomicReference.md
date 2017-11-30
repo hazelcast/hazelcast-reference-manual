@@ -4,6 +4,8 @@
 
 The `IAtomicLong` is very useful if you need to deal with a long, but in some cases you need to deal with a reference. That is why Hazelcast also supports the `IAtomicReference` which is the distributed version of the `java.util.concurrent.atomic.AtomicReference`.
 
+![image](images/NoteSmall.jpg) ***NOTE:*** *The `IAtomicReference` may break it's consistency guarantees in some edge cases. Please see [Consistency and Replication Model](#consistency-and-replication-model) for more details on the guarantees Hazelcast provides.*
+
 Here is an IAtomicReference example.
 
 ```java
