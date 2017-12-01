@@ -62,7 +62,7 @@ Let's describe each element:
 	- LRU: Least Recently Used.
 	- LFU: Least Frequently Used.
 
-	Apart from the above values, you can also develop and use your own eviction policy. Please see the [Custom Eviction Policy section](/Distributed_Data_Structures/Map/Map_Eviction.html#page_Custom+Eviction+Policy).
+	Apart from the above values, you can also develop and use your own eviction policy. Please see the [Custom Eviction Policy section](#custom-eviction-policy).
 
 
 - `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
