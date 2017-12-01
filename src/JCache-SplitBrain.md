@@ -1,6 +1,6 @@
 ### JCache Split-Brain
 
-Split-Brain handling is internally supported as a service inside Hazelcast (see [Network Partitioning](#network-partitioning) for more details) and `JCache` uses same infrastructure with `IMap` to support Split-Brain. You can specify cache merge policy to determine which entry is used while merging. You can also provide your own cache merge policy by implementing the `CacheMergePolicy` interface.
+Split-Brain handling is internally supported as a service inside Hazelcast (see [Network Partitioning](#split-brain-syndrome) for more details) and `JCache` uses same infrastructure with `IMap` to support Split-Brain. You can specify cache merge policy to determine which entry is used while merging. You can also provide your own cache merge policy by implementing the `CacheMergePolicy` interface.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Split-Brain is only supported for heap-based JCache but not for HD-JCache, since merging a high volume of data in consistent way may cause significant performance loss on the system.*
 
@@ -67,12 +67,12 @@ The following are example configurations for JCache Split-Brain.
 **Programmatic**:
 
 ```java
-CacheConfig cacheConfigWithBuiltInMergePolicyAsConstantName = new CacheConfig();
-cacheConfig.setMergePolicy(BuiltInCacheMergePolicies.HIGGER_HITS.name());
+CacheConfig cacheConfig1 = new CacheConfig();
+cacheConfig1.setMergePolicy(BuiltInCacheMergePolicies.HIGHER_HITS.name());
   
-CacheConfig cacheConfigWithBuiltInMergePolicyAsFullClassName = new CacheConfig();
-cacheConfig.setMergePolicy(BuiltInCacheMergePolicies.LATEST_ACCESS.getImplementationClassName());
+CacheConfig cacheConfig2 = new CacheConfig();
+cacheConfig2.setMergePolicy(BuiltInCacheMergePolicies.LATEST_ACCESS.getImplementationClassName());
   
-CacheConfig cacheConfigWithBuiltInMergePolicyAsCustomImpl = new CacheConfig();
-cacheConfig.setMergePolicy("com.mycompany.cache.merge.MyCacheMergePolicy");
+CacheConfig cacheConfig3 = new CacheConfig();
+cacheConfig3.setMergePolicy("com.mycompany.cache.merge.MyCacheMergePolicy");
 ```

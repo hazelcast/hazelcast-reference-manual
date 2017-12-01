@@ -48,7 +48,7 @@ See [Consistency and Replication Model](#consistency-and-replication-model) for 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Backups increase memory usage since they are also kept in memory.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *A map can have both sync and aysnc backups at the same time.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *A map can have both sync and async backups at the same time.*
 
 
 

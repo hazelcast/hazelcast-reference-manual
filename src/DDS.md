@@ -63,9 +63,8 @@ Besides these, Hazelcast also offers the Replicated Map structure as explained i
 Hazelcast offers a `get` method for most of its distributed objects. To load an object, first create a Hazelcast instance and then use the related `get` method on this instance. Following example code snippet creates an Hazelcast instance and a map on this instance.
 
 ```java
-public static void main( String[] args ) {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
 ```
 
 As to the configuration of distributed object, Hazelcast uses the default settings from the file `hazelcast.xml` that comes with your Hazelcast download. Of course, you can provide an explicit configuration in this XML or programmatically according to your needs. Please see the [Understanding Configuration section](#understanding-configuration).
@@ -78,14 +77,14 @@ To destroy a Hazelcast distributed object, you can use the method `destroy`. Thi
 
 ```java
 public class Member {
-   public static void main(String[] args) throws Exception {
-      HazelcastInstance hz1 = Hazelcast.newHazelcastInstance();
-      HazelcastInstance hz2 = Hazelcast.newHazelcastInstance();
-      IQueue<String> q1 = hz1.getQueue("q");
-      IQueue<String> q2 = hz2.getQueue("q");
-      q1.add("foo");
+  public static void main(String[] args) throws Exception {
+    HazelcastInstance hz1 = Hazelcast.newHazelcastInstance();
+    HazelcastInstance hz2 = Hazelcast.newHazelcastInstance();
+    IQueue<String> q1 = hz1.getQueue("q");
+    IQueue<String> q2 = hz2.getQueue("q");
+    q1.add("foo");
       System.out.println("q1.size: "+q1.size()+ " q2.size:"+q2.size());
-      q1.destroy();
+    q1.destroy();
       System.out.println("q1.size: "+q1.size() + " q2.size:"+q2.size());
     }
 }
@@ -105,19 +104,17 @@ As you see, no error is generated and a new queue resource is created.
 Hazelcast uses the name of a distributed object to determine which partition it will be put. Let's load two semaphores as shown below:
 
 ```java
-public static void main( String[] args ) {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-	ISemaphore s1 = hazelcastInstance.getSemaphore("s1");
-	ISemaphore s2 = hazelcastInstance.getSemaphore("s2");
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+ISemaphore s1 = hazelcastInstance.getSemaphore("s1");
+ISemaphore s2 = hazelcastInstance.getSemaphore("s2");
 ```
 
 Since these semaphores have different names, they will be placed into different partitions. If you want to put these two into the same partition, you use the `@` symbol as shown below:
 
 ```java
-public static void main( String[] args ) {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-	ISemaphore s1 = hazelcastInstance.getSemaphore("s1@foo");
-	ISemaphore s2 = hazelcastInstance.getSemaphore("s2@foo");
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+ISemaphore s1 = hazelcastInstance.getSemaphore("s1@foo");
+ISemaphore s2 = hazelcastInstance.getSemaphore("s2@foo");
 ```
 
 Now, these two semaphores will be put into the same partition whose partition key is `foo`. Note that you can use the method `getPartitionKey` to learn the partition key of a distributed object. It may be useful when you want to create an object in the same partition of an existing object. Please see its usage as shown below:
@@ -152,20 +149,20 @@ public class Sample implements DistributedObjectListener {
 
     Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
     for (DistributedObject distributedObject : distributedObjects) {
-      System.out.println(distributedObject.getName() + "," + distributedObject.getId());
+      System.out.println(distributedObject.getName());
     }
   }
 
   @Override
   public void distributedObjectCreated(DistributedObjectEvent event) {
     DistributedObject instance = event.getDistributedObject();
-    System.out.println("Created " + instance.getName() + "," + instance.getId());
+    System.out.println("Created " + instance.getName());
   }
 
   @Override
   public void distributedObjectDestroyed(DistributedObjectEvent event) {
     DistributedObject instance = event.getDistributedObject();
-    System.out.println("Destroyed " + instance.getName() + "," + instance.getId());
+    System.out.println("Destroyed " + instance.getName());
   }
 }
 ```

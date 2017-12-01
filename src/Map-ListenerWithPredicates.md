@@ -30,8 +30,6 @@ When old value does not match predicate,<br/>new value matches predicate | `UPDA
 As an example, let's listen to the changes made on an employee with the surname "Smith". First, let's create the `Employee` class.
 
 ```java
-import java.io.Serializable;
-
 public class Employee implements Serializable {
 
     private final String surname;
@@ -52,9 +50,6 @@ public class Employee implements Serializable {
 Then, let's create a listener with predicate by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
 
 ```java
-import com.hazelcast.core.*;
-import com.hazelcast.query.SqlPredicate;
-
 public class ListenerWithPredicate {
 
     public static void main(String[] args) {
@@ -77,7 +72,7 @@ public class ListenerWithPredicate {
         }
 
         @Override
-        public void entryRemoved(EntryEvent<String, String> event); {
+        public void entryRemoved(EntryEvent<String, String> event) {
             System.out.println("Entry Removed:" + event);
         }
 
@@ -93,10 +88,6 @@ public class ListenerWithPredicate {
 And now, let's play with the employee "smith" and see how that employee will be listened to.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-
 public class Modify {
 
     public static void main(String[] args) {
