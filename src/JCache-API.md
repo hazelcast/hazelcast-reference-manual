@@ -78,10 +78,10 @@ CompleteConfiguration<Integer, User> config =
 
 Let's go through this configuration line by line.
 
-##### Setting the Cache Type and Expire Policy
+##### Setting the Cache Type and Expiry Policy
 
 First, we set the expected types for the cache, which is already known from the previous example. On the next line, a
-`javax.cache.expiry.ExpirePolicy` is configured. Almost all integration `ExpirePolicy` implementations are configured using
+`javax.cache.expiry.ExpiryPolicy` is configured. Almost all integration `ExpiryPolicy` implementations are configured using
 `javax.cache.configuration.Factory` instances. `Factory` and `FactoryBuilder` are explained later in this chapter.
 
 ##### Configuring Read-Through and Write-Through
