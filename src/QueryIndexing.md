@@ -63,7 +63,7 @@ The following is the Spring declarative configuration for the same sample.
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Non-primitive types to be indexed should implement *`Comparable`*.*
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with Hazelcast 3.9, if you configure the data structure to use [High-Density Memory Store](#configuring-high-density-memory-store) ***and*** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full GCs, when doing a lot of updates to index.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with Hazelcast 3.9, if you configure the data structure to use [High-Density Memory Store](#configuring-high-density-memory-store) **and** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full GCs, when doing a lot of updates to index.*
 
 
 #### Copying Indexes

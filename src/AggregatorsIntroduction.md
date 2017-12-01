@@ -151,7 +151,7 @@ contains type safe aggregations of the following types:
 Those aggregations are similar to their counterparts on relational databases and can be equated to SQL statements as set out
 below.
  
-##### Average #####
+##### Average
 
 Calculates an average value based on all selected values.
 
@@ -164,7 +164,7 @@ map.aggregate( Supplier.all( person -> person.getAge() ),
 SELECT AVG(person.age) FROM person;
 ```
 
-##### Sum #####
+##### Sum
 
 Calculates a sum based on all selected values.
 
@@ -177,7 +177,7 @@ map.aggregate( Supplier.all( person -> person.getAge() ),
 SELECT SUM(person.age) FROM person;
 ```
 
-##### Minimum (Min) #####
+##### Minimum (Min)
 
 Finds the minimal value over all selected values.
 
@@ -190,7 +190,7 @@ map.aggregate( Supplier.all( person -> person.getAge() ),
 SELECT MIN(person.age) FROM person;
 ```
 
-##### Maximum (Max) #####
+##### Maximum (Max)
 
 Finds the maximal value over all selected values.
 
@@ -203,7 +203,7 @@ map.aggregate( Supplier.all( person -> person.getAge() ),
 SELECT MAX(person.age) FROM person;
 ```
 
-##### Distinct Values #####   
+##### Distinct Values  
 
 Returns a collection of distinct values over the selected values
 
@@ -216,7 +216,7 @@ map.aggregate( Supplier.all( person -> person.getAge() ),
 SELECT DISTINCT person.age FROM person;
 ```
 
-##### Count #####    
+##### Count  
 
 Returns the element count over all selected values 
 
