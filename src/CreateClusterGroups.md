@@ -46,10 +46,10 @@ If you have a Hazelcast release older than 3.8.2, you need to provide also a gro
 
 ```java
 Config configProd = new Config();
-configApp1.getGroupConfig().setName( "production" ).setPassword( "prod-pass" );
+configProd.getGroupConfig().setName( "production" ).setPassword( "prod-pass" );
 
 Config configDev = new Config();
-configApp2.getGroupConfig().setName( "development" ).setPassword( "dev-pass" );
+configDev.getGroupConfig().setName( "development" ).setPassword( "dev-pass" );
 
 HazelcastInstance h1 = Hazelcast.newHazelcastInstance( configProd );
 HazelcastInstance h2 = Hazelcast.newHazelcastInstance( configDev );
