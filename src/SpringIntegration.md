@@ -178,7 +178,7 @@ Here is an example schema definition for Hazelcast 3.3.x:
 <hz:map id="map" instance-ref="client" name="map" lazy-init="true" />
 <hz:multiMap id="multiMap" instance-ref="instance" name="multiMap"
     lazy-init="false" />
-<hz:replicatedmap id="replicatedmap" instance-ref="instance" 
+<hz:replicatedMap id="replicatedmap" instance-ref="instance"
     name="replicatedmap" lazy-init="false" />
 <hz:queue id="queue" instance-ref="client" name="queue" 
     lazy-init="true" depends-on="instance"/>
@@ -217,22 +217,23 @@ Hazelcast also supports `lazy-init`, `scope` and `depends-on` bean attributes.
 For map-store, you should set either the *class-name* or the *implementation* attribute.
 
 ```xml
-<hz:config>
-  <hz:map name="map1">
-    <hz:near-cache time-to-live-seconds="0" max-idle-seconds="60"
-        eviction-policy="LRU" max-size="5000"  invalidate-on-change="true"/>
+<hz:config id="config">
+    <hz:map name="map1">
+        <hz:map-store enabled="true" class-name="com.foo.DummyStore"
+            write-delay-seconds="0" />
 
-    <hz:map-store enabled="true" class-name="com.foo.DummyStore"
-        write-delay-seconds="0"/>
-  </hz:map>
+        <hz:near-cache time-to-live-seconds="0"
+            max-idle-seconds="60" eviction-policy="LRU" max-size="5000"
+            invalidate-on-change="true" />
+    </hz:map>
 
-  <hz:map name="map2">
-    <hz:map-store enabled="true" implementation="dummyMapStore"
-        write-delay-seconds="0"/>
-  </hz:map>
-
-  <bean id="dummyMapStore" class="com.foo.DummyStore" />
+    <hz:map name="map2">
+        <hz:map-store enabled="true" implementation="dummyMapStore"
+            write-delay-seconds="0" />
+    </hz:map>
 </hz:config>
+
+<bean id="dummyMapStore" class="com.foo.DummyStore" />
 ```
 
 
@@ -249,7 +250,7 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
 
 #### SpringAware Examples
 
-- Configure a Hazelcast Instance (3.3.x) via Spring Configuration and define *someBean* as Spring Bean.
+- Configure a Hazelcast Instance via Spring Configuration and define *someBean* as Spring Bean.
 - Add `<hz:spring-aware />` to Hazelcast configuration to enable @SpringAware.
 
 ```xml
@@ -264,7 +265,7 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
                 http://www.hazelcast.com/schema/spring
                 http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd">
 
-  <context:annotation-config />
+  <context:component-scan base-package="..."/>
 
   <hz:hazelcast id="instance">
     <hz:config>
@@ -326,8 +327,8 @@ public class SomeValue implements Serializable, ApplicationContextAware {
 
 ```java
 HazelcastInstance hazelcastInstance = 
-    (HazelcastInstance) context.getBean( "hazelcast" );
-SomeValue value = (SomeValue) context.getBean( "someValue" )
+    (HazelcastInstance) context.getBean( "instance" );
+SomeValue value = (SomeValue) context.getBean( "someValue" );
 IMap<String, SomeValue> map = hazelcastInstance.getMap( "values" );
 map.put( "key", value );
 ```
@@ -336,7 +337,7 @@ map.put( "key", value );
 
 ```java
 HazelcastInstance hazelcastInstance = 
-    (HazelcastInstance) context.getBean( "hazelcast" );
+    (HazelcastInstance) context.getBean( "instance" );
 IMap<String, SomeValue> map = hazelcastInstance.getMap( "values" );
 SomeValue value = map.get( "key" );
 Assert.assertTrue( value.init );
@@ -376,16 +377,17 @@ public class SomeTask
 
 ```java
 HazelcastInstance hazelcastInstance =
-    (HazelcastInstance) context.getBean( "hazelcast" );
+    (HazelcastInstance) context.getBean( "instance" );
 SomeBean bean = (SomeBean) context.getBean( "someBean" );
 
-Future<Long> f = hazelcastInstance.getExecutorService().submit(new SomeTask());
+Future<Long> f = hazelcastInstance.getExecutorService("executorService")
+    .submit(new SomeTask());
 Assert.assertEquals(bean.value, f.get().longValue());
 
 // choose a member
 Member member = hazelcastInstance.getCluster().getMembers().iterator().next();
 
-Future<Long> f2 = (Future<Long>) hazelcast.getExecutorService()
+Future<Long> f2 = (Future<Long>) hazelcast.getExecutorService("executorService")
     .submitToMember(new SomeTask(), member);
 Assert.assertEquals(bean.value, f2.get().longValue());
 ```
@@ -407,7 +409,7 @@ As of version 3.1, Spring Framework provides support for adding caching into an 
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" />
 
-<hz:hazelcast id="hazelcast">
+<hz:hazelcast id="instance">
   ...
 </hz:hazelcast>
 
@@ -421,11 +423,12 @@ Hazelcast uses its Map implementation for underlying cache. You can configure a 
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" />
 
-<hz:hazelcast id="hazelcast">
+<hz:hazelcast id="instance">
   <hz:config>
     ...
 
     <hz:map name="city" time-to-live-seconds="0" in-memory-format="BINARY" />
+  </hz:config>
 </hz:hazelcast>
 
 <bean id="cacheManager" class="com.hazelcast.spring.cache.HazelcastCacheManager">
@@ -558,13 +561,13 @@ Please refer to Hibernate <a href="https://github.com/hazelcast/hazelcast-hibern
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-transaction-manager" target="_blank">sample application</a> for Hazelcast Transaction Manager in our code samples repository.*
 <br></br>
 
-Starting with Hazelcast 3.7, you can get rid of the boilerplate code to begin, commit or rollback transactions by using <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/HazelcastTransactionManager.java" target="_blank">HazelcastTransactionManager</a>
+Starting with Hazelcast 3.7, you can get rid of the boilerplate code to begin, commit or rollback transactions by using <a href="http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spring/transaction/HazelcastTransactionManager.html" target="_blank">HazelcastTransactionManager</a>
 which is a `PlatformTransactionManager` implementation to be used with Spring Transaction API.
 
 #### Sample Configuration for Hazelcast Transaction Manager
 
 You need to register `HazelcastTransactionManager` as your transaction manager implementation and also you need to
-register <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/ManagedTransactionalTaskContext.java" target="_blank">ManagedTransactionalTaskContext</a>
+register <a href="http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spring/transaction/ManagedTransactionalTaskContext.html" target="_blank">ManagedTransactionalTaskContext</a>
 to access transactional data structures within your service class.
 
 
