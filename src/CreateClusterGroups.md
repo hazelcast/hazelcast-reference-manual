@@ -17,10 +17,10 @@ You can also define the cluster groups using the programmatic configuration. A J
 
 ```java
 Config configProd = new Config();
-configApp1.getGroupConfig().setName( "production" );
+configProd.getGroupConfig().setName( "production" );
 
 Config configDev = new Config();
-configApp2.getGroupConfig().setName( "development" );
+configDev.getGroupConfig().setName( "development" );
 
 HazelcastInstance h1 = Hazelcast.newHazelcastInstance( configProd );
 HazelcastInstance h2 = Hazelcast.newHazelcastInstance( configDev );
