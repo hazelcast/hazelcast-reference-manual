@@ -4,7 +4,7 @@ In your Hazelcast and/or Hazelcast Client declarative configuration, you can use
 For example, see the following command that sets two system properties.
 
 ```
--Dgroup.name=dev -Dgroup.password=somepassword
+-Dgroup.name=dev
 ```
 
 Let's get the values of these system properties in the declarative configuration of Hazelcast, as shown below.
@@ -13,7 +13,6 @@ Let's get the values of these system properties in the declarative configuration
 <hazelcast>
   <group>
     <name>${group.name}</name>
-    <password>${group.password}</password>
   </group>
 </hazelcast>
 ```
@@ -24,7 +23,6 @@ This also applies to the declarative configuration of Hazelcast Client, as shown
 <hazelcast-client>
   <group>
     <name>${group.name}</name>
-    <password>${group.password}</password>
   </group>
 </hazelcast-client>
 ```

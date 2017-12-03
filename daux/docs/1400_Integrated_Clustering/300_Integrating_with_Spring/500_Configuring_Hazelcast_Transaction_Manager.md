@@ -2,13 +2,13 @@
 ***Sample Code***: *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-transaction-manager" target="_blank">sample application</a> for Hazelcast Transaction Manager in our code samples repository.*
 <br></br>
 
-Starting with Hazelcast 3.7, you can get rid of the boilerplate code to begin, commit or rollback transactions by using <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/HazelcastTransactionManager.java" target="_blank">HazelcastTransactionManager</a>
+Starting with Hazelcast 3.7, you can get rid of the boilerplate code to begin, commit or rollback transactions by using <a href="http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spring/transaction/HazelcastTransactionManager.html" target="_blank">HazelcastTransactionManager</a>
 which is a `PlatformTransactionManager` implementation to be used with Spring Transaction API.
 
 #### Sample Configuration for Hazelcast Transaction Manager
 
 You need to register `HazelcastTransactionManager` as your transaction manager implementation and also you need to
-register <a href="https://github.com/hazelcast/hazelcast/blob/master/hazelcast-spring/src/main/java/com/hazelcast/spring/transaction/ManagedTransactionalTaskContext.java" target="_blank">ManagedTransactionalTaskContext</a>
+register <a href="http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spring/transaction/ManagedTransactionalTaskContext.html" target="_blank">ManagedTransactionalTaskContext</a>
 to access transactional data structures within your service class.
 
 

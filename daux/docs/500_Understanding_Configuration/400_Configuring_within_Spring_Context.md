@@ -4,7 +4,7 @@ If you use Hazelcast with [Spring](https://spring.io/) you can declare beans usi
 ```
 <hz:hazelcast id="instance">
   <hz:config>
-    <hz:group name="dev" password="password"/>
+    <hz:group name="dev"/>
     <hz:network port="5701" port-auto-increment="false">
       <hz:join>
         <hz:multicast enabled="false"/>

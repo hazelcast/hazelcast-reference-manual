@@ -10,7 +10,6 @@ A part of `hazelcast.xml` is shown as an example below.
 ```xml
 <group>
 	<name>dev</name>
-	<password>dev-pass</password>
 </group>
 <management-center enabled="false">http://localhost:8080/mancenter</management-center>
 <network>
@@ -52,7 +51,6 @@ Let's say you want to compose the declarative configuration for Hazelcast out of
 <hazelcast>
   <group>
       <name>dev</name>
-      <password>dev-pass</password>
   </group>
 </hazelcast>
 ```
@@ -93,7 +91,6 @@ This feature also applies to the declarative configuration of Hazelcast client. 
 <hazelcast-client>
   <group>
       <name>dev</name>
-      <password>dev-pass</password>
   </group>
 </hazelcast-client>
 ```

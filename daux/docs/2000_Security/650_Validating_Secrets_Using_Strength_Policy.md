@@ -3,7 +3,7 @@
 <font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
 
-Hazelcast IMDG Enterprise offers a secret validation mechanism including a strength policy. The term “secret” here refers to the cluster group password, symmetric encryption password and salt, and other passwords and keys.
+Hazelcast IMDG Enterprise offers a secret validation mechanism including a strength policy. The term secret here refers to the symmetric encryption password, salt, and other passwords and keys.
  
 For this validation, Hazelcast IMDG Enterprise comes with the class DefaultSecretStrengthPolicy to identify all possible weaknesses of secrets and to display a warning in the system logger. Note that, by default, no matter how weak the secrets are, the cluster members will still start after logging this warning; however, this is configurable (please see the “Enforcing the Secret Strength Policy” section).
  

@@ -30,7 +30,7 @@ The first step is configuration. You can configure the Java client declaratively
 
 ```java
 ClientConfig clientConfig = new ClientConfig();
-clientConfig.getGroupConfig().setName("dev").setPassword("dev-pass");
+clientConfig.getGroupConfig().setName("dev");
 clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
 ```
 
