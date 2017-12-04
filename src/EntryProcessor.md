@@ -28,7 +28,7 @@ If entry processing is the major operation for a map and if the map consists of 
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *When `in-memory-format` is `OBJECT`, the old value of the updated entry will be null.*
 
-#### Entry Processing with IMap Methods
+### Entry Processing with IMap Methods
 
 The methods below are in the IMap interface for entry processing.
 
@@ -73,6 +73,17 @@ Map<K, Object> executeOnEntries( EntryProcessor entryProcessor, Predicate predic
 ```
 
 ![image](images/NoteSmall.jpg) ***NOTE***: *Entry Processors run via Operation Threads that are dedicated to specific partitions.  Therefore, with long running Entry Processor executions, other partition operations such as `map.put(key)` cannot be processed. With this in mind, it is good practice to make your Entry Processor executions as quick as possible.*
+
+#### Respecting Locks on Single Keys
+
+The entry processor respects locks ONLY when its executions are performed on a single key. As explained in the above section, the entry processor has the following methods to process a single key:
+
+```
+Object executeOnKey(K key, EntryProcessor entryProcessor);
+ICompletableFuture submitToKey(K key, EntryProcessor entryProcessor);
+```
+
+Therefore, if you want to to perform an entry processor execution on a single key using one of these methods and that key has a lock on it, the execution will wait until the lock on that key is removed.
 
 
 ### `EntryProcessor` Interface
