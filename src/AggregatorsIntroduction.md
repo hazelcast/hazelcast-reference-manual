@@ -262,7 +262,7 @@ transformation steps chained one after another.
 #### Configuring Aggregations
 
 As stated before, the easiest way to configure the resources used by the underlying MapReduce framework is to supply a `JobTracker`
-to the aggregation call itself by passing it to either `IMap::aggregate` or `MultiMap::aggregate`.
+to the aggregation call itself by passing it to either `IMap.aggregate()` or `MultiMap.aggregate()`.
 
 There is another way to implicitly configure the underlying used `JobTracker`. If no specific `JobTracker` was
 passed for the aggregation call, internally one will be created using the following naming specifications:

@@ -30,12 +30,12 @@ To configure the delegating provider at the command line, add the following para
 ```
 
 By default, the delegating `CachingProvider` is automatically picked up by the JCache SPI and provided as shown above. In cases where multiple `javax.cache.spi.CachingProvider` implementations reside on the classpath (like in some Application
-Server scenarios), you can select a `CachingProvider` by explicitly calling `Caching::getCachingProvider`
+Server scenarios), you can select a `CachingProvider` by explicitly calling `Caching.getCachingProvider()`
 overloads and providing them using the canonical class name of the provider to be used. The class names of member and client providers
 provided by Hazelcast are mentioned in the following two subsections.
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast advises that you use the `Caching::getCachingProvider` overloads to select a
+![image](images/NoteSmall.jpg) ***NOTE:*** *Hazelcast advises that you use the `Caching.getCachingProvider()` overloads to select a
 `CachingProvider` explicitly. This ensures that uploading to later environments or Application Server versions doesn't result in
 unexpected behavior like choosing a wrong `CachingProvider`.*
 <br></br>

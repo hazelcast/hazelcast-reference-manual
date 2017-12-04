@@ -59,7 +59,7 @@ public class UserUpdateEntryProcessor
 }
 ```
 
-You can use the additional method `BackupAwareEntryProcessor::createBackupEntryProcessor` to create or return the `EntryProcessor`
+You can use the additional method `BackupAwareEntryProcessor.createBackupEntryProcessor()` to create or return the `EntryProcessor`
 implementation to run on the backup partition (in the example above, the same processor again).
 
 <br></br>

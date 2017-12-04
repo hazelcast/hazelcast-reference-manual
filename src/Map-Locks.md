@@ -149,16 +149,16 @@ Locks can be configured to check the number of currently present members before 
 
 The following actions will then check for lock quorum before being applied:
  
-- `IMap#lock(K)` and `IMap#lock(K, long, java.util.concurrent.TimeUnit)`
-- `IMap#isLocked`
-- `IMap#tryLock(K)`, `IMap#tryLock(K, long, java.util.concurrent.TimeUnit)` and `IMap#tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
-- `IMap#unlock`
-- `IMap#forceUnlock`
-- `MultiMap#lock(K)` and `MultiMap#lock(K, long, java.util.concurrent.TimeUnit)`
-- `MultiMap#isLocked`
-- `MultiMap#tryLock(K)`, `MultiMap#tryLock(K, long, java.util.concurrent.TimeUnit)` and `MultiMap#tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
-- `MultiMap#unlock`
-- `MultiMap#forceUnlock`
+- `IMap.lock(K)` and `IMap.lock(K, long, java.util.concurrent.TimeUnit)`
+- `IMap.isLocked()`
+- `IMap.tryLock(K)`, `IMap.tryLock(K, long, java.util.concurrent.TimeUnit)` and `IMap.tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
+- `IMap.unlock()`
+- `IMap.forceUnlock()`
+- `MultiMap.lock(K)` and `MultiMap.lock(K, long, java.util.concurrent.TimeUnit)`
+- `MultiMap.isLocked()`
+- `MultiMap.tryLock(K)`, `MultiMap.tryLock(K, long, java.util.concurrent.TimeUnit)` and `MultiMap.tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
+- `MultiMap.unlock()`
+- `MultiMap.forceUnlock()`
 
 
 An example of declarative configuration:

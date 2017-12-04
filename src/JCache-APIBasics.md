@@ -14,7 +14,7 @@ The SPI that is implemented to bridge between the JCache API and the implementat
 providers chosen as seen in the [Configuring JCache Provider section](#configuring-jcache-provider) which enable the JCache API to
 interact with Hazelcast clusters.
 
-When a `javax.cache.spi.CachingProvider::getCacheManager` overload is used that takes a `java.lang.ClassLoader` argument, this
+When a `javax.cache.spi.CachingProvider.getCacheManager()` overload is used that takes a `java.lang.ClassLoader` argument, this
 classloader will be part of the scope of the created `java.cache.Cache` and it is not possible to retrieve it on other members.
 We advise not to use those overloads, as they are not meant to be used in distributed environments!
 
@@ -41,7 +41,7 @@ configuration class, please see the reference in [JCache Programmatic Configurat
 **`javax.cache.Cache`**:
 
 This interface represents the cache instance itself. It is comparable to `java.util.Map` but offers special operations dedicated
-to the caching use case. Therefore, for example `javax.cache.Cache::put`, unlike `java.util.Map::put`, does not return the old
+to the caching use case. Therefore, for example `javax.cache.Cache.put()`, unlike `java.util.Map.put()`, does not return the old
 value previously assigned to the given key.
 
 <br></br>

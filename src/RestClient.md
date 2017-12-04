@@ -137,7 +137,7 @@ $ curl -v -X POST -H "Content-Type: text/plain" -d "foo"
     http://10.20.17.1:5701/hazelcast/rest/queues/myEvents
 ```
 
-The above call is equivalent to `HazelcastInstance#getQueue("myEvents").offer("foo");`.
+The above call is equivalent to `HazelcastInstance.getQueue("myEvents").offer("foo");`.
 
 It will return the following if successful:
 
@@ -164,7 +164,7 @@ An example is shown below (**10** being the timeout value).
 $ curl -v -X DELETE \http://10.20.17.1:5701/hazelcast/rest/queues/myEvents/10
 ```
 
-The above call is equivalent to `HazelcastInstance#getQueue("myEvents").poll(10, SECONDS);`. Below is the response.
+The above call is equivalent to `HazelcastInstance.getQueue("myEvents").poll(10, SECONDS);`. Below is the response.
 
 ```plain
 < HTTP/1.1 200 OK
@@ -188,7 +188,7 @@ When the timeout is reached, the response will be `No Content` success, i.e. the
 $ curl -v -X GET \http://10.20.17.1:5701/hazelcast/rest/queues/myEvents/size
 ```
 
-The above call is equivalent to `HazelcastInstance#getQueue("myEvents").size();`. Below is a sample response.
+The above call is equivalent to `HazelcastInstance.getQueue("myEvents").size();`. Below is a sample response.
 
 ```plain
 < HTTP/1.1 200 OK

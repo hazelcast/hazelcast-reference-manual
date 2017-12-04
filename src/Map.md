@@ -60,7 +60,7 @@ Now let's create a second member by running the above code again. This will crea
 
 As you see, when a new member joins the cluster, it takes ownership and loads some of the data in the cluster. Eventually, it will carry almost "(1/n `*` total-data) + backups" of the data, reducing the load on other members.
 
-`HazelcastInstance::getMap` returns an instance of `com.hazelcast.core.IMap` which extends 
+`HazelcastInstance.getMap()` returns an instance of `com.hazelcast.core.IMap` which extends 
 the `java.util.concurrent.ConcurrentMap` interface. Methods like 
 `ConcurrentMap.putIfAbsent(key,value)` and `ConcurrentMap.replace(key,value)` can be used 
 on the distributed map, as shown in the example below.

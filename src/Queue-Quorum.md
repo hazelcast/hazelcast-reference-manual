@@ -6,17 +6,17 @@ Queues can be configured to check for a minimum number of available members befo
 Following is a list of methods that now support quorum checks. The list is grouped by quorum type. 
 
 - WRITE, READ_WRITE
-    - `Collection#addAll`
-    - `Collection#removeAll`, `Collection#retainAll`
-    - `BlockingQueue#offer`, `BlockingQueue#add`, `BlockingQueue#put`
-    - `BlockingQueue#drainTo`
-    - `IQueue#poll`, `Queue#remove`, `IQueue#take`
-    - `BlockingQueue#remove`
+    - `Collection.addAll()`
+    - `Collection.removeAll()`, `Collection.retainAll()`
+    - `BlockingQueue.offer()`, `BlockingQueue.add()`, `BlockingQueue.put()`
+    - `BlockingQueue.drainTo()`
+    - `IQueue.poll()`, `Queue.remove()`, `IQueue.take()`
+    - `BlockingQueue.remove()`
 - READ, READ_WRITE
-    - `Collection#clear`
-    - `Collection#containsAll`, `BlockingQueue#contains`
-    - `Collection#isEmpty`
-    - `Collection#iterator`, `Collection#toArray`
-    - `Queue#peek`, `Queue#element`
-    - `Collection#size`
-    - `BlockingQueue#remainingCapacity`
+    - `Collection.clear()`
+    - `Collection.containsAll()`, `BlockingQueue.contains()`
+    - `Collection.isEmpty()`
+    - `Collection.iterator()`, `Collection.toArray()`
+    - `Queue.peek()`, `Queue.element()`
+    - `Collection.size()`
+    - `BlockingQueue.remainingCapacity()`

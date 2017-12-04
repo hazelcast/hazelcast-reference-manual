@@ -9,7 +9,7 @@ By default, Hazelcast JCache sends the complete changed value to the backup part
 the object is big. The Hazelcast ICache extension can also prevent this. Further information is available at
 [Implementing BackupAwareEntryProcessor](#implementing-backupawareentryprocessor).
 
-An arbitrary number of arguments can be passed to the `Cache::invoke` and `Cache::invokeAll` methods. All of those arguments need
+An arbitrary number of arguments can be passed to the `Cache.invoke()` and `Cache.invokeAll()` methods. All of those arguments need
 to be fully serializable because in a distributed environment like Hazelcast, it is very likely that these arguments have to be passed around the cluster.
 
 The following example performs the following tasks.
@@ -56,14 +56,14 @@ public class UserUpdateEntryProcessor
 ```
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *By executing the bulk `Cache::invokeAll` operation, atomicity is only guaranteed for a
+![image](images/NoteSmall.jpg) ***NOTE:*** *By executing the bulk `Cache.invokeAll()` operation, atomicity is only guaranteed for a
 single cache entry. No transactional rules are applied to the bulk operation.*
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *JCache `EntryProcessor` implementations are not allowed to call
 `javax.cache.Cache` methods. This prevents operations from deadlocking between different calls.*
 <br></br>
 
-In addition, when using a `Cache::invokeAll` method, a `java.util.Map` is returned that maps the key to its
+In addition, when using a `Cache.invokeAll()` method, a `java.util.Map` is returned that maps the key to its
 `javax.cache.processor.EntryProcessorResult`, which itself wraps the actual result or a thrown
 `javax.cache.processor.EntryProcessorException`.
 

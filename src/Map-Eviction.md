@@ -275,7 +275,7 @@ public class MapCustomEvictionPolicy {
 }
 ```
 
-Then you can enable your policy by setting it via the method `MapConfig#setMapEvictionPolicy`
+Then you can enable your policy by setting it via the method `MapConfig.setMapEvictionPolicy()`
 programmatically or via XML declaratively. Following is the example declarative configuration for the eviction policy `OddEvictor` implemented above:
 
 ```xml

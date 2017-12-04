@@ -9,8 +9,8 @@ Hazelcast JCache provides for two different methods of cache configuration:
 
 #### JCache Declarative Configuration
 
-You can declare your JCache cache configuration using the `hazelcast.xml` or `hazelcast-client.xml` configuration files. Using this declarative configuration makes creating the `javax.cache.Cache` fully transparent and automatically ensures internal thread safety. You do not need a call to `javax.cache.Cache::createCache` in this case: you can retrieve the cache using
-`javax.cache.Cache::getCache` overloads and by passing in the name defined in the configuration for the cache.
+You can declare your JCache cache configuration using the `hazelcast.xml` or `hazelcast-client.xml` configuration files. Using this declarative configuration makes creating the `javax.cache.Cache` fully transparent and automatically ensures internal thread safety. You do not need a call to `javax.cache.Cache.createCache()` in this case: you can retrieve the cache using
+`javax.cache.Cache.getCache()` overloads and by passing in the name defined in the configuration for the cache.
 
 To retrieve the cache that you defined in the declaration files, you need only perform a simple call (example below) because the cache is created automatically by the implementation.
 

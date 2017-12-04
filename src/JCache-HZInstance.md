@@ -5,7 +5,7 @@ You can retrieve `javax.cache.Cache` instances using the interface `ICacheManage
 If you create a cache through a `ICacheManager` which has its own specified URI scope (and/or specified classloader), 
 it must be prepended to the pure cache name as a prefix while retrieving the cache through `getCache(String name)`. 
 Prefix generation for full cache name is exposed through 
-`com.hazelcast.cache.CacheUtil#getPrefixedCacheName(String name, java.net.URI uri, ClassLoader classloader)`. 
+`com.hazelcast.cache.CacheUtil.getPrefixedCacheName(String name, java.net.URI uri, ClassLoader classloader)`. 
 If the URI scope and classloader is not specified, the pure cache name can be used directly while retrieving cache over `ICacheManager`.
 
 If you have a cache which is not created, but is defined/exists (cache is specified in Hazelcast configuration but not created yet), you can retrieve this cache by its name.  This also triggers cache creation before retrieving it. This retrieval is supported through `HazelcastInstance`. However, `HazelcastInstance` ***does not*** support creating a cache by specifying configuration; this is supported by Hazelcast's `ICacheManager` as it is.

@@ -6,9 +6,9 @@
 You can listen to map-wide or entry-based events using the listeners provided by the Hazelcast's eventing framework. To listen to these events, implement a `MapListener` sub-interface.
 
 A map-wide event is fired as a result of a map-wide operation. For 
-example, `IMap#clear` or `IMap#evictAll`.
+example, `IMap.clear()` or `IMap.evictAll()`.
 An entry-based event is fired after the operations that affect a 
-specific entry. For example, `IMap#remove` or `IMap#evict`.
+specific entry. For example, `IMap.remove()` or `IMap.evict()`.
 
 #### Catching a Map Event
 

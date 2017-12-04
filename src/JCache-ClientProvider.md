@@ -10,8 +10,8 @@ The Client Provider can connect to multiple clusters at the same time. This can 
 `CacheManager` with different Hazelcast configuration files. For more information, please see
 [Scoping to Join Clusters](#scoping-to-join-clusters).
 
-To request this `CachingProvider` using `Caching#getCachingProvider( String )` or
-`Caching#getCachingProvider( String, ClassLoader )`, use the following fully qualified class name:
+To request this `CachingProvider` using `Caching.getCachingProvider( String )` or
+`Caching.getCachingProvider( String, ClassLoader )`, use the following fully qualified class name:
 
 ```plain
 com.hazelcast.client.cache.impl.HazelcastClientCachingProvider

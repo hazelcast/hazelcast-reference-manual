@@ -155,14 +155,14 @@ Although the check does not provide correctness it can still be useful. In cases
 Following is a list of methods that now support quorum checks. The list is grouped by quorum type. Additionally, since Hazelcast IMap also provides locking support, certain map and multimap methods also allow quorum checks.
 
 - WRITE, READ_WRITE
-    - `Condition#await`, `Condition#awaitUninterruptibly`, `Condition#awaitNanos`, `Condition#awaitUntil`
-    - `Lock#lockInterruptibly`, `ILock#lock`, `IMap#tryLock`, `IMap#lock`, `MultiMap#lock`, `MultiMap#tryLock`
-    - `Condition#signal`, `Condition#signalAll`
+    - `Condition.await(())`, `Condition.awaitUninterruptibly()`, `Condition.awaitNanos()`, `Condition.awaitUntil()`
+    - `Lock.lockInterruptibly()`, `ILock.lock()`, `IMap.tryLock()`, `IMap.lock()`, `MultiMap.lock()`, `MultiMap.tryLock()`
+    - `Condition.signal()`, `Condition.signalAll()`
 - READ, READ_WRITE
-    - `ILock#getLockCount`
-    - `ILock#getRemainingLeaseTime`
-    - `ILock#isLocked`, `IMap#isLocked`, `MultiMap#isLocked`
-    - `ILock#forceUnlock`, `IMap#forceUnlock`, `MultiMap#forceUnlock`, `ILock#unlock`, `IMap#unlock`, `ObjectMultiMapProxy#unlock`
+    - `ILock.getLockCount()`
+    - `ILock.getRemainingLeaseTime()`
+    - `ILock.isLocked()`, `IMap.isLocked()`, `MultiMap.isLocked()`
+    - `ILock.forceUnlock()`, `IMap.forceUnlock()`, `MultiMap.forceUnlock()`, `ILock.unlock()`, `IMap.unlock()`, `ObjectMultiMapProxy.unlock()`
 
 ### Lock Configuration
 

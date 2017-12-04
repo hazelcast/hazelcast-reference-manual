@@ -28,8 +28,8 @@ It has two sets of extensions:
 ### Scoping to Join Clusters
 
 A `CacheManager`, started either as a client or as an embedded member, can be configured to start a new Hazelcast instance or reuse an already existing one to connect to a Hazelcast cluster. To achieve this, request
-a `CacheManager` by passing a `java.net.URI` instance to `CachingProvider::getCacheManager`. The `java.net.URI` instance must point to either a Hazelcast configuration or to the name of a named
-`com.hazelcast.core.HazelcastInstance` instance. In addition to the above, the same can be achieved by passing Hazelcast-specific properties to `CachingProvider::getCacheManager(URI, ClassLoader, Properties)` as detailed in the sections that follow.
+a `CacheManager` by passing a `java.net.URI` instance to `CachingProvider.getCacheManager()`. The `java.net.URI` instance must point to either a Hazelcast configuration or to the name of a named
+`com.hazelcast.core.HazelcastInstance` instance. In addition to the above, the same can be achieved by passing Hazelcast-specific properties to `CachingProvider.getCacheManager(URI, ClassLoader, Properties)` as detailed in the sections that follow.
 
 <br></br>
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Multiple requests for the same `java.net.URI` result in returning a `CacheManager`
@@ -122,7 +122,7 @@ To apply configuration scope you can do either one of the following:
 
 - pass the path to the configuration file using the location property
 `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` (which resolves to `hazelcast.config.location`) as a mapping inside a
-`java.util.Properties` instance to the `CachingProvider#getCacheManager(uri, classLoader, properties)` call.
+`java.util.Properties` instance to the `CachingProvider.getCacheManager(uri, classLoader, properties)` call.
 - use directly the configuration path as the `CacheManager`'s `URI`.
 
 If both `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` property is set and the `CacheManager` `URI` resolves to a valid config file location, then the property value will be used to obtain the configuration for the `HazelcastInstance` the first time a `CacheManager` is created for the given `URI`.
@@ -143,7 +143,7 @@ CacheManager cacheManager = cachingProvider
     .getCacheManager( cacheManagerName, null, properties );
 ```
 
-Here is an example using `HazelcastCachingProvider::propertiesByLocation` helper method:
+Here is an example using `HazelcastCachingProvider.propertiesByLocation()` helper method:
 
 ```java
 CachingProvider cachingProvider = Caching.getCachingProvider();
@@ -199,7 +199,7 @@ You can bind `CacheManager` to an existing and named `HazelcastInstance` instanc
 
 A named scope is applied nearly the same way as the configuration scope. Pass the instance name using:
 
-- either the property `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) as a mapping inside a `java.util.Properties` instance to the `CachingProvider#getCacheManager(uri, classLoader, properties)` call.
+- either the property `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) as a mapping inside a `java.util.Properties` instance to the `CachingProvider.getCacheManager(uri, classLoader, properties)` call.
 - or use the instance name when specifying the `CacheManager`'s `URI`.
 
 If a valid instance name is provided both as property and as `URI`, then the property value takes precedence and is used to resolve the `HazelcastInstance` the first time a `CacheManager` is created for the given `URI`.
@@ -281,7 +281,7 @@ CacheManager cacheManager = cachingProvider
     .getCacheManager( cacheManagerName, null, properties );
 ```
 
-Here is an example using `HazelcastCachingProvider::propertiesByInstanceName` method:
+Here is an example using `HazelcastCachingProvider.propertiesByInstanceName()` method:
 
 ```java
 Config config = new Config();
