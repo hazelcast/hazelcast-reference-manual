@@ -32,13 +32,6 @@ In Hazelcast, when you implement a task as `java.util.concurrent.Callable` (a ta
 Below is an example of a Callable task. SumTask prints out map keys and returns the summed map values.
 
 ```java
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.HazelcastInstanceAware;
-import com.hazelcast.core.IMap;
-
-import java.io.Serializable;
-import java.util.concurrent.Callable;
-
 public class SumTask
     implements Callable<Integer>, Serializable, HazelcastInstanceAware {
         
@@ -64,13 +57,16 @@ public class SumTask
 Another example is the Echo callable below. In its call() method, it returns the local member and the input passed in. Remember that `instance.getCluster().getLocalMember()` returns the local member and `toString()` returns the member's address (IP + port) in String form, just to see which member actually executed the code for our example. Of course, the `call()` method can do and return anything you like. 
 
 ```java
-import java.util.concurrent.Callable;
-import java.io.Serializable;
-
-public class Echo implements Callable<String>, Serializable {
+public class Echo implements Callable<String>, Serializable, HazelcastInstanceAware {
     String input = null;
+    
+    private transient HazelcastInstance hazelcastInstance;
 
     public Echo() {
+    }
+
+    public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
+        this.hazelcastInstance = hazelcastInstance;
     }
 
     public Echo(String input) {
@@ -78,18 +74,16 @@ public class Echo implements Callable<String>, Serializable {
     }
 
     public String call() {
-        Config cfg = new Config();
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
-        return instance.getCluster().getLocalMember().toString() + ":" + input;
+        return hazelcastInstance.getCluster().getLocalMember().toString() + ":" + input;
     }
 }
 ```
 
 #### Executing a Callable Task
 
-To execute a callable task with the executor framework:
+To execute a callable task:
 
-* Obtain an `ExecutorService` instance (generally via `Executors`).
+* Retrieve the Executor from `HazelcastInstance`.
 * Submit a task which returns a `Future`. 
 * After executing the task, you do not have to wait for the execution to complete, you can process other things. 
 * When ready, use the `Future` object to retrieve the result as shown in the code example below.
@@ -97,11 +91,16 @@ To execute a callable task with the executor framework:
 Below, the Echo task is executed.
 
 ```java
-ExecutorService executorService = Executors.newSingleThreadExecutor();
-Future<String> future = executorService.submit( new Echo( "myinput") );
-//while it is executing, do some useful stuff
-//when ready, get the result of your execution
-String result = future.get();
+public class MasterMember {
+  public static void main( String[] args ) throws Exception {
+    HazelcastInstance instance = Hazelcast.newHazelcastInstance();
+    IExecutorService executorService = instance.getExecutorService( "executorService" );
+    Future<String> future = executorService.submit( new Echo( "myinput") );
+      //while it is executing, do some useful stuff
+      //when ready, get the result of your execution
+    String result = future.get();
+  }
+}
 ```
 
 Please note that the Echo callable in the above code sample also implements a Serializable interface, since it may be sent to another member to be processed.
@@ -159,14 +158,10 @@ public class MasterMember {
 }
 ```
 
-
 ### Scaling The Executor Service
-
 
 You can scale the Executor service both vertically (scale up) and horizontally (scale out).
 
-
 To scale up, you should improve the processing capacity of the cluster member (JVM). You can do this by increasing the `pool-size` property mentioned in [Configuring Executor Service](#configuring-executor-service) (i.e., increasing the thread count). However, please be aware of your member's capacity. If you think it cannot handle such an additional load caused by increasing the thread count, you may want to consider improving the member's resources (CPU, memory, etc.). As an example, set the `pool-size` to 5 and run the above `MasterMember`. You will see that `EchoTask` is run as soon as it is produced.
-
 
 To scale out, add more members instead of increasing only one member's capacity. In reality, you may want to expand your cluster by adding more physical or virtual machines. For example, in the EchoTask example in the [Runnable section](#implementing-a-runnable-task), you can create another Hazelcast instance. That instance will automatically get involved in the executions started in `MasterMember` and start processing.
