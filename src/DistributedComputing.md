@@ -35,22 +35,22 @@ Below is an example of a Callable task. SumTask prints out map keys and returns 
 public class SumTask
     implements Callable<Integer>, Serializable, HazelcastInstanceAware {
         
-  private transient HazelcastInstance hazelcastInstance;
+    private transient HazelcastInstance hazelcastInstance;
 
-  public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
-    this.hazelcastInstance = hazelcastInstance;
-  }
-
-  public Integer call() throws Exception {
-    IMap<String, Integer> map = hazelcastInstance.getMap( "map" );
-    int result = 0;
-    for ( String key : map.localKeySet() ) {
-      System.out.println( "Calculating for key: " + key );
-      result += map.get( key );
+    public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
+        this.hazelcastInstance = hazelcastInstance;
     }
-    System.out.println( "Local Result: " + result );
-    return result;
-  }
+
+    public Integer call() throws Exception {
+        IMap<String, Integer> map = hazelcastInstance.getMap( "map" );
+        int result = 0;
+        for ( String key : map.localKeySet() ) {
+            System.out.println( "Calculating for key: " + key );
+            result += map.get( key );
+        }
+        System.out.println( "Local Result: " + result );
+        return result;
+    }
 }
 ```
 
@@ -92,14 +92,15 @@ Below, the Echo task is executed.
 
 ```java
 public class MasterMember {
-  public static void main( String[] args ) throws Exception {
-    HazelcastInstance instance = Hazelcast.newHazelcastInstance();
-    IExecutorService executorService = instance.getExecutorService( "executorService" );
-    Future<String> future = executorService.submit( new Echo( "myinput") );
-      //while it is executing, do some useful stuff
-      //when ready, get the result of your execution
-    String result = future.get();
-  }
+  
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance();
+        IExecutorService executorService = instance.getExecutorService( "executorService" );
+        Future<String> future = executorService.submit( new Echo( "myinput") );
+        //while it is executing, do some useful stuff
+        //when ready, get the result of your execution
+        String result = future.get();
+    }
 }
 ```
 
@@ -117,20 +118,21 @@ Below is Runnable example code. It is a task that waits for some time and echoes
 
 ```java
 public class EchoTask implements Runnable, Serializable {
-  private final String msg;
+    
+    private final String msg;
 
-  public EchoTask( String msg ) {
-    this.msg = msg;
-  }
-
-  @Override
-  public void run() {
-    try {
-      Thread.sleep( 5000 );
-    } catch ( InterruptedException e ) {
+    public EchoTask( String msg ) {
+        this.msg = msg;
     }
+
+    @Override
+    public void run() {
+        try {
+            Thread.sleep( 5000 );
+        } catch ( InterruptedException e ) {
+        }
     System.out.println( "echo:" + msg );
-  }
+    }
 }
 ```
 
@@ -145,16 +147,17 @@ Now let's write a class that submits and executes these echo messages. Executor 
 
 ```java
 public class MasterMember {
-  public static void main( String[] args ) throws Exception {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    IExecutorService executor = hazelcastInstance.getExecutorService( "exec" );
-    for ( int k = 1; k <= 1000; k++ ) {
-      Thread.sleep( 1000 );
-      System.out.println( "Producing echo task: " + k );
-      executor.execute( new EchoTask( String.valueOf( k ) ) );
+  
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        IExecutorService executor = hazelcastInstance.getExecutorService( "exec" );
+        for ( int k = 1; k <= 1000; k++ ) {
+            Thread.sleep( 1000 );
+            System.out.println( "Producing echo task: " + k );
+            executor.execute( new EchoTask( String.valueOf( k ) ) );
+        }
+        System.out.println( "EchoTaskMain finished!" );
     }
-    System.out.println( "EchoTaskMain finished!" );
-  }
 }
 ```
 
