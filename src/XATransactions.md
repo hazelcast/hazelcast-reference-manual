@@ -10,32 +10,30 @@ When you implement the `XAResource` interface, Hazelcast provides XA transaction
 Below is example code that uses JTA API for transaction management.
   
 ```java
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+public class XATransaction {
 
-import com.hazelcast.core.*
-import com.hazelcast.transaction.HazelcastXAResource;
-import com.hazelcast.transaction.TransactionContext;
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        HazelcastXAResource xaResource = hazelcastInstance.getXAResource();
 
-TransactionManager tm = getTransactionManager(); // depends on JTA implementation
-tm.setTransactionTimeout(60);
-tm.begin();
+        TransactionManager tm = getTransactionManager(); // depends on JTA implementation
+        tm.setTransactionTimeout(60);
+        tm.begin();
 
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-HazelcastXAResource xaResource = hazelcastInstance.getXAResource();
 
-Transaction transaction = tm.getTransaction();
-transaction.enlistResource(xaResource);
-// other resources (database, app server etc...) can be enlisted
+        Transaction transaction = tm.getTransaction();
+        transaction.enlistResource(xaResource);
+        // other resources (database, app server etc...) can be enlisted
 
-try {
-  TransactionContext context = xaResource.getTransactionContext();
-  TransactionalMap map = context.getMap("m");
-  map.put("key", "value");
-  // other resource operations
-  
-  tm.commit();
-} catch (Exception e) {
-  tm.rollback();
+       try {
+           TransactionContext context = xaResource.getTransactionContext();
+           TransactionalMap map = context.getMap("m");
+           map.put("key", "value");
+           // other resource operations
+          tm.commit();
+          } catch (Exception e) {
+              tm.rollback();
+          }
+     }
 }
 ```

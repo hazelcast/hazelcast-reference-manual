@@ -18,30 +18,32 @@ Hazelcast supports two types of transactions: ONE_PHASE and TWO_PHASE. The type 
 - **TWO_PHASE**: When you select this transaction type, Hazelcast first tries to execute the prepare phase. This phase fails if there are any conflicts. Once the prepare phase is successful, Hazelcast executes the commit phase (writing the changes). Before TWO_PHASE commits, Hazelcast copies the commit log to other members, so in case of a member failure, another member can complete the commit.
 
 ```java
-import com.hazelcast.core.*;
-import com.hazelcast.transaction.*;
+public class TransactionalMember {
 
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
-TransactionOptions options = new TransactionOptions()
-    .setTransactionType( TransactionOptions.TransactionType.ONE_PHASE );
+        TransactionOptions options = new TransactionOptions()
+            .setTransactionType( TransactionOptions.TransactionType.ONE_PHASE );
     
-TransactionContext context = hazelcastInstance.newTransactionContext( options );
-context.beginTransaction();
+        TransactionContext context = hazelcastInstance.newTransactionContext( options );
+        context.beginTransaction();
 
-TransactionalQueue queue = context.getQueue( "myqueue" );
-TransactionalMap map = context.getMap( "mymap" );
-TransactionalSet set = context.getSet( "myset" );
+        TransactionalQueue queue = context.getQueue( "myqueue" );
+        TransactionalMap map = context.getMap( "mymap" );
+        TransactionalSet set = context.getSet( "myset" );
 
-try {
-  Object obj = queue.poll();
-  //process obj
-  map.put( "1", "value1" );
-  set.add( "value" );
-  //do other things..
-  context.commitTransaction();
-} catch ( Throwable t ) {
-  context.rollbackTransaction();
+        try {
+            Object obj = queue.poll();
+            //process obj
+            map.put( "1", "value1" );
+            set.add( "value" );
+            //do other things
+           context.commitTransaction();
+        } catch ( Throwable t ) {
+            context.rollbackTransaction();
+        }
+    }
 }
 ```
 
