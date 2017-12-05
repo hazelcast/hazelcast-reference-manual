@@ -23,23 +23,24 @@ The following example code uses an `IAtomicLong` resource 1000 times, increments
 
 ```java
 public class SemaphoreMember {
-  public static void main( String[] args ) throws Exception{
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 
-    ISemaphore semaphore = hazelcastInstance.getSemaphore( "semaphore" ); 
-    IAtomicLong resource = hazelcastInstance.getAtomicLong( "resource" ); 
-    for ( int k = 0 ; k < 1000 ; k++ ) {
-      System.out.println( "At iteration: " + k + ", Active Threads: " + resource.get() );
-      semaphore.acquire();
-      try {
-        resource.incrementAndGet();
-        Thread.sleep( 1000 );
-        resource.decrementAndGet();
-      } finally { 
-        semaphore.release();
-      }
-    }
+  
+    public static void main( String[] args ) throws Exception{
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 
+        ISemaphore semaphore = hazelcastInstance.getSemaphore( "semaphore" ); 
+        IAtomicLong resource = hazelcastInstance.getAtomicLong( "resource" ); 
+        for ( int k = 0 ; k < 1000 ; k++ ) {
+            System.out.println( "At iteration: " + k + ", Active Threads: " + resource.get() );
+            semaphore.acquire();
+            try {
+                resource.incrementAndGet();
+                Thread.sleep( 1000 );
+                resource.decrementAndGet();
+            } finally { 
+            semaphore.release();
+            }
+        }
     System.out.println("Finished");
-  }
+    }
 }
 ```
 

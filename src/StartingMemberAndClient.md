@@ -17,6 +17,7 @@ Let's begin.
 
 ```java
 public class GettingStarted {
+    
     public static void main(String[] args) {
         Config cfg = new Config();
         HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
@@ -69,6 +70,7 @@ and prints the size of the `customers` map.
 
 ```java
 public class GettingStartedClient {
+    
     public static void main( String[] args ) {
         ClientConfig clientConfig = new ClientConfig();
         HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );

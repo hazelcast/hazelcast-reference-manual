@@ -12,24 +12,20 @@ as a regular topic. The main difference is that Reliable Topic is backed up by t
 ### Sample Reliable ITopic Code
 
 ```java
-import com.hazelcast.core.Topic;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.MessageListener;
-
 public class Sample implements MessageListener<MyEvent> {
 
-  public static void main( String[] args ) {
-    Sample sample = new Sample();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ITopic topic = hazelcastInstance.getReliableTopic( "default" );
-    topic.addMessageListener( sample );
-    topic.publish( new MyEvent() );
-  }
+    public static void main( String[] args ) {
+        Sample sample = new Sample();
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ITopic topic = hazelcastInstance.getReliableTopic( "default" );
+        topic.addMessageListener( sample );
+        topic.publish( new MyEvent() );
+    }
 
-  public void onMessage( Message<MyEvent> message ) {
-    MyEvent myEvent = message.getMessageObject();
-    System.out.println( "Message received = " + myEvent.toString() );
-  }
+    public void onMessage( Message<MyEvent> message ) {
+        MyEvent myEvent = message.getMessageObject();
+        System.out.println( "Message received = " + myEvent.toString() );
+    }
 }
 ```
 

@@ -33,20 +33,20 @@ there are no atomic guarantees to writes or reads.
 Here is an example of Replicated Map code. The HazelcastInstance's `getReplicatedMap` method gets the Replicated Map, and the Replicated Map's `put` method creates map entries.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import java.util.Collection;
-import java.util.Map;
+public class FillMapMember {
 
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-Map<String, Customer> customers = hazelcastInstance.getReplicatedMap("customers");
-customers.put( "1", new Customer( "Joe", "Smith" ) );
-customers.put( "2", new Customer( "Ali", "Selam" ) );
-customers.put( "3", new Customer( "Avi", "Noyan" ) );
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        Map<String, Customer> customers = hazelcastInstance.getReplicatedMap("customers");
+        customers.put( "1", new Customer( "Joe", "Smith" ) );
+        customers.put( "2", new Customer( "Ali", "Selam" ) );
+        customers.put( "3", new Customer( "Avi", "Noyan" ) );
 
-Collection<Customer> colCustomers = customers.values();
-for ( Customer customer : colCustomers ) {
-  // process customer
+        Collection<Customer> colCustomers = customers.values();
+        for ( Customer customer : colCustomers ) {
+           // process customer
+        }
+    }
 }
 ```
 
@@ -170,39 +170,37 @@ The `HazelcastInstance`'s `getReplicatedMap` method gets a Replicated Map (custo
 entry and updates it. The method `remove` removes the entry.
 
 ```java
-import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ReplicatedMap;
+public class ListeningMember {
 
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-ReplicatedMap<String, Customer> customers =
-    hazelcastInstance.getReplicatedMap( "customers" );
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ReplicatedMap<String, Customer> customers = hazelcastInstance.getReplicatedMap( "customers" );
+        
+        customers.addEntryListener( new EntryListener<String, Customer>() {
+            @Override
+            public void entryAdded( EntryEvent<String, Customer> event ) {
+                log( "Entry added: " + event );
+            }
 
-customers.addEntryListener( new EntryListener<String, Customer>() {
-  @Override
-  public void entryAdded( EntryEvent<String, Customer> event ) {
-    log( "Entry added: " + event );
-  }
+            @Override
+            public void entryUpdated( EntryEvent<String, Customer> event ) {
+                log( "Entry updated: " + event );
+            }
 
-  @Override
-  public void entryUpdated( EntryEvent<String, Customer> event ) {
-    log( "Entry updated: " + event );
-  }
+            @Override
+            public void entryRemoved( EntryEvent<String, Customer> event ) {
+                log( "Entry removed: " + event );
+            }
 
-  @Override
-  public void entryRemoved( EntryEvent<String, Customer> event ) {
-    log( "Entry removed: " + event );
-  }
+            @Override
+                public void entryEvicted( EntryEvent<String, Customer> event ) {
+                // Currently not supported, will never fire
+                }
+        });
 
-  @Override
-  public void entryEvicted( EntryEvent<String, Customer> event ) {
-    // Currently not supported, will never fire
-  }
-});
-
-customers.put( "1", new Customer( "Joe", "Smith" ) ); // add event
-customers.put( "1", new Customer( "Ali", "Selam" ) ); // update event
-customers.remove( "1" ); // remove event
+        customers.put( "1", new Customer( "Joe", "Smith" ) ); // add event
+        customers.put( "1", new Customer( "Ali", "Selam" ) ); // update event
+        customers.remove( "1" ); // remove event
+    }
+}
 ```

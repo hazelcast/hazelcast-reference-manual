@@ -8,22 +8,19 @@ The following example code illustrates a distributed queue that connects a produ
 Let's `put` one integer on the queue every second, 100 integers total.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
-
 public class ProducerMember {
-  public static void main( String[] args ) throws Exception {
-    HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-    IQueue<Integer> queue = hz.getQueue( "queue" );
-    for ( int k = 1; k < 100; k++ ) {
-      queue.put( k );
-      System.out.println( "Producing: " + k );
-      Thread.sleep(1000);
+    
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IQueue<Integer> queue = hz.getQueue( "queue" );
+        for ( int k = 1; k < 100; k++ ) {
+            queue.put( k );
+            System.out.println( "Producing: " + k );
+            Thread.sleep(1000);
+        }
+        queue.put( -1 );
+        System.out.println( "Producer Finished!" );
     }
-    queue.put( -1 );
-    System.out.println( "Producer Finished!" );
-  }
 }
 ``` 
 
@@ -35,25 +32,22 @@ Now, let's create a `Consumer` class to `take` a message from this queue, as sho
 
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
-
 public class ConsumerMember {
-  public static void main( String[] args ) throws Exception {
-    HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-    IQueue<Integer> queue = hz.getQueue( "queue" );
-    while ( true ) {
-      int item = queue.take();
-      System.out.println( "Consumed: " + item );
-      if ( item == -1 ) {
-        queue.put( -1 );
-        break;
-      }
-      Thread.sleep( 5000 );
+
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IQueue<Integer> queue = hz.getQueue( "queue" );
+        while ( true ) {
+            int item = queue.take();
+            System.out.println( "Consumed: " + item );
+            if ( item == -1 ) {
+                queue.put( -1 );
+                break;
+            }
+        Thread.sleep( 5000 );
+        }
+        System.out.println( "Consumer Finished!" );
     }
-    System.out.println( "Consumer Finished!" );
-  }
 }
 ```
 

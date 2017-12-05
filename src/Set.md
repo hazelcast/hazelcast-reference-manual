@@ -27,8 +27,8 @@ set.add( new Price( 11, time4 ) );
 //....
 Iterator<Price> iterator = set.iterator();
 while ( iterator.hasNext() ) { 
-  Price price = iterator.next(); 
-  //analyze
+    Price price = iterator.next(); 
+    //analyze
 }
 ```
 

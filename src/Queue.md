@@ -7,23 +7,20 @@ Hazelcast distributed queue is an implementation of `java.util.concurrent.Blocki
 Use the Hazelcast instance's `getQueue` method to get the queue, then use the queue's `put` method to put items into the queue.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 public class SampleQueue {
-  public static void main(String[] args) throws Exception {
-   HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-   BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
-   queue.put( new MyTask() );
-   MyTask task = queue.take();
+    
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
+        queue.put( new MyTask() );
+        MyTask task = queue.take();
 
-   boolean offered = queue.offer( new MyTask(), 10, TimeUnit.SECONDS );
-   task = queue.poll( 5, TimeUnit.SECONDS );
-   if ( task != null ) {
-     //process task
-   }
-  }
+        boolean offered = queue.offer( new MyTask(), 10, TimeUnit.SECONDS );
+        task = queue.poll( 5, TimeUnit.SECONDS );
+        if ( task != null ) {
+           //process task
+        }
+    }
 } 
 ```
 

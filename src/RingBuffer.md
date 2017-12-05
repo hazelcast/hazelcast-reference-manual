@@ -17,7 +17,7 @@ long sequence = ringbuffer.headSequence();
 while(true){
     String item = ringbuffer.readOne(sequence);
     sequence++;
-    ... process item
+    // process item
 }  
 ```
 
@@ -30,7 +30,7 @@ Adding an item to a Ringbuffer is also easy with the Ringbuffer `add` method:
 
 ```java
 Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");
-ringbuffer.add("someitem")
+ringbuffer.add("someitem");
 ```
 
 Use the method `add` to return the sequence of the inserted item; the sequence value will always be unique. You can use this as a 
@@ -222,7 +222,7 @@ Please see the following example code.
 ```java
 List<String> items = Arrays.asList("1","2","3");
 ICompletableFuture<Long> f = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
-f.get()
+f.get();
 ```  
       
 In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the [Overflow Policy section](#setting-ringbuffer-overflow-policy) 

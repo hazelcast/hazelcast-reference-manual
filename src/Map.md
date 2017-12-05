@@ -24,10 +24,8 @@ Hazelcast will partition your map entries and their backups, and almost evenly d
 Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the HazelcastInstance `getMap` method to get the map, then use the map `put` method to put an entry into the map.
 
 ```java
-public class FillMapMember {
-  public static void main( String[] args ) { 
-    HazelcastInstance hzInstance = Hazelcast.newHazelcastInstance();
-    Map<String, String> capitalcities = hzInstance.getMap( "capitals" ); 
+HazelcastInstance hzInstance = Hazelcast.newHazelcastInstance();
+Map<String, String> capitalcities = hzInstance.getMap( "capitals" ); 
     capitalcities.put( "1", "Tokyo" );
     capitalcities.put( "2", "Paris" );
     capitalcities.put( "3", "Washington" );
@@ -40,10 +38,7 @@ public class FillMapMember {
     capitalcities.put( "10", "Oslo" );
     capitalcities.put( "11", "Moscow" );
     ...
-    ...
     capitalcities.put( "120", "Stockholm" );
-  }
-}
 ```
 
 When you run this code, a cluster member is created with a map whose entries are distributed across the members' partitions. See the below illustration. For now, this is a single member cluster.
@@ -67,9 +62,9 @@ on the distributed map, as shown in the example below.
 
 ```java
 public class BasicMapOperations {
-
+  
     private HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-
+    
     public Customer getCustomer(String id) {
         ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
         Customer customer = customers.get(id);
