@@ -22,8 +22,6 @@ The full example is available <a href="http://github.com/noctarius/hz-map-reduce
 To retrieve a `JobTracker` from Hazelcast, we will start by using the "default" configuration for convenience reasons to show the basic way.
 
 ```java
-import com.hazelcast.mapreduce.*;
-
 JobTracker jobTracker = hazelcastInstance.getJobTracker( "default" );
 ```
 
@@ -117,15 +115,15 @@ A common implementation of that `Mapper` might look like the following example:
 
 ```java
 public class TokenizerMapper implements Mapper<String, String, String, Long> {
-  private static final Long ONE = Long.valueOf( 1L );
+    private static final Long ONE = Long.valueOf( 1L );
 
-  @Override
-  public void map(String key, String document, Context<String, Long> context) {
-    StringTokenizer tokenizer = new StringTokenizer( document.toLowerCase() );
-    while ( tokenizer.hasMoreTokens() ) {
-      context.emit( tokenizer.nextToken(), ONE );
+    @Override
+    public void map(String key, String document, Context<String, Long> context) {
+        StringTokenizer tokenizer = new StringTokenizer( document.toLowerCase() );
+        while ( tokenizer.hasMoreTokens() ) {
+            context.emit( tokenizer.nextToken(), ONE );
+        }
     }
-  }
 }
 ```
 
@@ -153,29 +151,29 @@ For our word count example, we are going to have a simple CombinerFactory and Co
 public class WordCountCombinerFactory
     implements CombinerFactory<String, Long, Long> {
 
-  @Override
-  public Combiner<Long, Long> newCombiner( String key ) {
-    return new WordCountCombiner();
-  }
-
-  private class WordCountCombiner extends Combiner<Long, Long> {
-    private long sum = 0;
-
     @Override
-    public void combine( Long value ) {
-      sum++;
+    public Combiner<Long, Long> newCombiner( String key ) {
+        return new WordCountCombiner();
     }
 
-    @Override
-    public Long finalizeChunk() {
-      return sum;
-    }
+    private class WordCountCombiner extends Combiner<Long, Long> {
+        private long sum = 0;
+
+        @Override
+        public void combine( Long value ) {
+            sum++;
+        }
+
+        @Override
+        public Long finalizeChunk() {
+            return sum;
+        }
         
-    @Override
-    public void reset() {
-      sum = 0;
+        @Override
+        public void reset() {
+            sum = 0;
+        }
     }
-  }
 }
 ```
 
@@ -196,24 +194,24 @@ For our word count example, the implementation will look similar to the followin
 ```java
 public class WordCountReducerFactory implements ReducerFactory<String, Long, Long> {
 
-  @Override
-  public Reducer<Long, Long> newReducer( String key ) {
-    return new WordCountReducer();
-  }
-
-  private class WordCountReducer extends Reducer<Long, Long> {
-    private volatile long sum = 0;
-
     @Override
-    public void reduce( Long value ) {
-      sum += value.longValue();
+    public Reducer<Long, Long> newReducer( String key ) {
+        return new WordCountReducer();
     }
 
-    @Override
-    public Long finalizeReduce() {
-      return sum;
+    private class WordCountReducer extends Reducer<Long, Long> {
+        private volatile long sum = 0;
+
+        @Override
+        public void reduce( Long value ) {
+            sum += value.longValue();
+        }
+
+        @Override
+        public Long finalizeReduce() {
+            return sum;
+        }
     }
-  }
 }
 ```
 
@@ -232,15 +230,15 @@ A collator would look like the following snippet:
 ```java
 public class WordCountCollator implements Collator<Map.Entry<String, Long>, Long> {
 
-  @Override
-  public Long collate( Iterable<Map.Entry<String, Long>> values ) {
-    long sum = 0;
+    @Override
+    public Long collate( Iterable<Map.Entry<String, Long>> values ) {
+        long sum = 0;
 
-    for ( Map.Entry<String, Long> entry : values ) {
-      sum += entry.getValue().longValue();
+        for ( Map.Entry<String, Long> entry : values ) {
+            sum += entry.getValue().longValue();
+        }
+        return sum;
     }
-    return sum;
-  }
 }
 ```
 
@@ -257,10 +255,10 @@ A basic `KeyPredicate` implementation that only maps keys containing the word "h
 ```java
 public class WordCountKeyPredicate implements KeyPredicate<String> {
 
-  @Override
-  public boolean evaluate( String s ) {
-    return s != null && s.toLowerCase().contains( "hazelcast" );
-  }
+    @Override
+    public boolean evaluate( String s ) {
+        return s != null && s.toLowerCase().contains( "hazelcast" );
+    }
 }
 ```
 
@@ -298,10 +296,9 @@ log( "ProcessedRecords: " + processedRecords );
 
 JobPartitionState[] partitionStates = stats.getPartitionStates();
 for ( JobPartitionState partitionState : partitionStates ) {
-  log( "PartitionOwner: " + partitionState.getOwner()
+    log( "PartitionOwner: " + partitionState.getOwner()
           + ", Processing state: " + partitionState.getState().name() );
 }
-
 ```
 
 

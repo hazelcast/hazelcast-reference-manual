@@ -7,12 +7,6 @@ Criteria API is a programming interface offered by Hazelcast that is similar to 
 for the [above example query](#employee-map-query-example).
 
 ```java
-import com.hazelcast.core.IMap;
-import com.hazelcast.query.Predicate;
-import com.hazelcast.query.PredicateBuilder;
-import com.hazelcast.query.EntryObject;
-import com.hazelcast.config.Config;
-
 IMap<String, Employee> map = hazelcastInstance.getMap( "employee" );
 
 EntryObject e = new PredicateBuilder().getEntryObject();
@@ -60,27 +54,27 @@ You can combine predicates using the `and`, `or`, and `not` operators, as shown 
 
 ```java
 public Collection<Employee> getWithNameAndAge( String name, int age ) {
-  Predicate namePredicate = Predicates.equal( "name", name );
-  Predicate agePredicate = Predicates.equal( "age", age );
-  Predicate predicate = Predicates.and( namePredicate, agePredicate );
-  return employeeMap.values( predicate );
+    Predicate namePredicate = Predicates.equal( "name", name );
+    Predicate agePredicate = Predicates.equal( "age", age );
+    Predicate predicate = Predicates.and( namePredicate, agePredicate );
+    return employeeMap.values( predicate );
 }
 ```
 
 ```java
 public Collection<Employee> getWithNameOrAge( String name, int age ) {
-  Predicate namePredicate = Predicates.equal( "name", name );
-  Predicate agePredicate = Predicates.equal( "age", age );
-  Predicate predicate = Predicates.or( namePredicate, agePredicate );
-  return employeeMap.values( predicate );
+    Predicate namePredicate = Predicates.equal( "name", name );
+    Predicate agePredicate = Predicates.equal( "age", age );
+    Predicate predicate = Predicates.or( namePredicate, agePredicate );
+    return employeeMap.values( predicate );
 }
 ```
 
 ```java
 public Collection<Employee> getNotWithName( String name ) {
-  Predicate namePredicate = Predicates.equal( "name", name );
-  Predicate predicate = Predicates.not( namePredicate );
-  return employeeMap.values( predicate );
+    Predicate namePredicate = Predicates.equal( "name", name );
+    Predicate predicate = Predicates.not( namePredicate );
+    return employeeMap.values( predicate );
 }
 ```
 
@@ -92,10 +86,10 @@ below example code which selects all people with a certain name and age.
 
 ```java
 public Collection<Employee> getWithNameAndAgeSimplified( String name, int age ) {
-  EntryObject e = new PredicateBuilder().getEntryObject();
-  Predicate agePredicate = e.get( "age" ).equal( age );
-  Predicate predicate = e.get( "name" ).equal( name ).and( agePredicate );
-  return employeeMap.values( predicate );
+    EntryObject e = new PredicateBuilder().getEntryObject();
+    Predicate agePredicate = e.get( "age" ).equal( age );
+    Predicate predicate = e.get( "name" ).equal( name ).and( agePredicate );
+    return employeeMap.values( predicate );
 }
 ```
 
