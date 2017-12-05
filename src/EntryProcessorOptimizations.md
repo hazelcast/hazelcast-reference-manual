@@ -40,22 +40,10 @@ In this case the threading looks as follows:
 3. partition thread (set new value & unlock key, or just unlock key if the entry has not been modified)
 
 
-The `getExecutorName()` method may also return two constants defined in the `Offloadable` interface:
+The method `getExecutorName()` method may also return two constants defined in the [`Offloadable` interface](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Offloadable.html):
 
-```
-    /**
-     * Constant meaning that there will be no off-loading if returned from the {@link #getExecutorName()} method.
-     */
-    String NO_OFFLOADING = "no-offloading";
-
-    /**
-     * Constant meaning that processing will be off-loaded to the default OFFLOADABLE_EXECUTOR executor.
-     * if returned from the {@link #getExecutorName()} method.
-     */
-    String OFFLOADABLE_EXECUTOR = ExecutionService.OFFLOADABLE_EXECUTOR;
-
-```
-
+- NO_OFFLOADING: Processing will not be offloaded if the method `getExecutorName()` returns this constant; it will be executed as if it does not implement the `Offloadable` interface.
+- OFFLOADABLE_EXECUTOR: Processing will be offloaded to the default `ExecutionService.OFFLOADABLE_EXECUTOR`.
 
 #### ReadOnly Entry Processor
 
