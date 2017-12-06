@@ -14,27 +14,27 @@ Your implementation of `LoginModule` should create an instance of `com.hazelcast
 
 ```java
 public class CustomLoginModule implements LoginModule {
-  CallbackHandler callbackHandler;
-  Subject subject;
-  Credentials credentials;
+    CallbackHandler callbackHandler;
+    Subject subject;
+    Credentials credentials;
     
-  public void initialize( Subject subject, CallbackHandler callbackHandler,
+    public void initialize( Subject subject, CallbackHandler callbackHandler,
                           Map<String, ?> sharedState, Map<String, ?> options ) {
-    this.subject = subject;
-    this.callbackHandler = callbackHandler;
-  }
+        this.subject = subject;
+        this.callbackHandler = callbackHandler;
+    }
 
-  public final boolean login() throws LoginException {
-    CredentialsCallback callback = new CredentialsCallback();
-    try {
-      callbackHandler.handle( new Callback[] { callback } );
-      credentials = callback.getCredentials();
-    } catch ( Exception e ) {
-      throw new LoginException( e.getMessage() );
+    public final boolean login() throws LoginException {
+        CredentialsCallback callback = new CredentialsCallback();
+        try {
+            callbackHandler.handle( new Callback[] { callback } );
+            credentials = callback.getCredentials();
+        } catch ( Exception e ) {
+        throw new LoginException( e.getMessage() );
+        }
+        ...
     }
     ...
-  }
-  ...
 }
 ```
 
@@ -42,29 +42,25 @@ To use the default Hazelcast permission policy, you must create an instance of `
 
 ```java
 public class MyCustomLoginModule implements LoginModule {
-  ...
-  public boolean commit() throws LoginException {
     ...
-    Principal principal = new ClusterPrincipal( credentials );
-    subject.getPrincipals().add( principal );
-        
-    return true;
-  }
-  ...
+    public boolean commit() throws LoginException {
+        ...
+        Principal principal = new ClusterPrincipal( credentials );
+        subject.getPrincipals().add( principal );        
+        return true;
+    }
+    ...
 }
 ```
 
 Hazelcast has an abstract implementation of `LoginModule` that does callback and cleanup operations and holds the resulting `Credentials` instance. `LoginModule`s extending `ClusterLoginModule` can access `Credentials`, `Subject`, `LoginModule` instances and options, and `sharedState` maps. Extending the `ClusterLoginModule` is recommended instead of implementing all required stuff.
 
 ```java
-package com.hazelcast.security;
-...
 public abstract class ClusterLoginModule implements LoginModule {
-
-  protected abstract boolean onLogin() throws LoginException;
-  protected abstract boolean onCommit() throws LoginException;
-  protected abstract boolean onAbort() throws LoginException;
-  protected abstract boolean onLogout() throws LoginException;
+    protected abstract boolean onLogin() throws LoginException;
+    protected abstract boolean onCommit() throws LoginException;
+    protected abstract boolean onAbort() throws LoginException;
+    protected abstract boolean onLogout() throws LoginException;
 }
 ```
 <br></br>

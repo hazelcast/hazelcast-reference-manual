@@ -16,17 +16,17 @@ The following example code enables the socket interceptor for members.
 
 ```java
 public class MySocketInterceptor implements MemberSocketInterceptor {
-  public void init( SocketInterceptorConfig socketInterceptorConfig ) {
-    // initialize interceptor
-  }
+    public void init( SocketInterceptorConfig socketInterceptorConfig ) {
+        // initialize interceptor
+    }
 
-  void onConnect( Socket connectedSocket ) throws IOException {
-    // do something meaningful when a member has connected to the cluster
-  }
+    void onConnect( Socket connectedSocket ) throws IOException {
+        // do something meaningful when a member has connected to the cluster
+    }
 
-  public void onAccept( Socket acceptedSocket ) throws IOException {
-    // do something meaningful when the cluster is ready to accept the member connection
-  }
+    public void onAccept( Socket acceptedSocket ) throws IOException {
+        // do something meaningful when the cluster is ready to accept the member connection
+    }
 }
 ```
 
@@ -49,9 +49,9 @@ public class MySocketInterceptor implements MemberSocketInterceptor {
 
 ```java
 public class MyClientSocketInterceptor implements SocketInterceptor {
-  void onConnect( Socket connectedSocket ) throws IOException {
-    // do something meaningful when connected
-  }
+    void onConnect( Socket connectedSocket ) throws IOException {
+        // do something meaningful when connected
+    }
 }
 
 ClientConfig clientConfig = new ClientConfig();

@@ -12,33 +12,28 @@ One of the key elements in Hazelcast security is the `Credentials` object, which
 Hazelcast calls the `Credentials.setEndpoint()` method when an authentication request arrives at the member before authentication takes place.
 
 ```java
-package com.hazelcast.security;
 public interface Credentials extends Serializable {
-  String getEndpoint();
-  void setEndpoint( String endpoint ) ;    
-  String getPrincipal() ;    
+    String getEndpoint();
+    void setEndpoint( String endpoint ) ;    
+    String getPrincipal() ;    
 }
 ```
 
 Here is an example of extending the `AbstractCredentials` class.
 
 ```java
-package com.hazelcast.security;
-...
 public abstract class AbstractCredentials implements Credentials, DataSerializable {
-  private transient String endpoint;
-  private String principal;
-  ...
+    private transient String endpoint;
+    private String principal;
+    ...
 }
 ```
 
 `UsernamePasswordCredentials`, a custom implementation of Credentials, is in the Hazelcast `com.hazelcast.security` package. `UsernamePasswordCredentials` is used for default configuration during the authentication process of both members and clients.
 
 ```java
-package com.hazelcast.security;
-...
 public class UsernamePasswordCredentials extends Credentials {
-  private byte[] password;
-  ...
+    private byte[] password;
+    ...
 }
 ```
