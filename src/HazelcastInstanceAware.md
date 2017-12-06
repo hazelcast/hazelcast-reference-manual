@@ -11,24 +11,24 @@ Let's implement it for the `Employee` class mentioned in the [Custom Serializati
 public class Employee
     implements Serializable, HazelcastInstanceAware { 
    
-  private static final long serialVersionUID = 1L;
-  private String surname;
-  private transient HazelcastInstance hazelcastInstance;
+    private static final long serialVersionUID = 1L;
+    private String surname;
+    private transient HazelcastInstance hazelcastInstance;
 
-  public Person( String surname ) { 
-    this.surname = surname;
-  }
+    public Person( String surname ) { 
+        this.surname = surname;
+    }
 
-  @Override
-  public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
-    this.hazelcastInstance = hazelcastInstance;
-    System.out.println( "HazelcastInstance set" ); 
-  }
+    @Override
+    public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
+        this.hazelcastInstance = hazelcastInstance;
+        System.out.println( "HazelcastInstance set" ); 
+    }
 
-  @Override
-  public String toString() {
-    return String.format( "Person(surname=%s)", surname ); 
-  }
+    @Override
+    public String toString() {
+        return String.format( "Person(surname=%s)", surname ); 
+    }
 }
 ```
 
