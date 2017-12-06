@@ -16,22 +16,18 @@ As a first step we do some basic configuration setup. We want the user to be abl
 It is recommended that you keep all defined properties in a separate configuration class as public constants (public final static) with sufficient documentation. This allows users to easily look up possible configuration values.
 
 ```java
-package com.hazelcast.examples.spi.discovery;
-
-import com.hazelcast...;
-
 public class HostsDiscoveryConfiguration {
-  /**
-   * 'site-domain' configures the basic site domain for the lookup, to
-   * find other sub-domains of the cluster members and retrieve their assigned
-   * IP addresses.
-   */
-  public static final PropertyDefinition DOMAIN = new SimplePropertyDefinition(
-    "site-domain", PropertyTypeConverter.STRING
-  );
+    /**
+     * 'site-domain' configures the basic site domain for the lookup, to
+     * find other sub-domains of the cluster members and retrieve their assigned
+     * IP addresses.
+     */
+    public static final PropertyDefinition DOMAIN = new SimplePropertyDefinition(
+        "site-domain", PropertyTypeConverter.STRING
+    );
   
-  // Prevent instantiation
-  private HostsDiscoveryConfiguration() {}
+    // Prevent instantiation
+    private HostsDiscoveryConfiguration() {}
 }
 ```
 
@@ -42,32 +38,28 @@ An additional `ValueValidator` could be passed to the definition to make sure th
 As the second step we create the very simple `DiscoveryStrategyFactory` implementation class. To keep things clear we are going to name the discovery strategy after its purpose: looking into the hosts file.
 
 ```java
-package com.hazelcast.examples.spi.discovery;
-
-import com.hazelcast...;
-
 public class HostsDiscoveryStrategyFactory
     implements DiscoveryStrategyFactory {
    
-  private static final Collection<PropertyDefinition> PROPERTIES =
+    private static final Collection<PropertyDefinition> PROPERTIES =
       Collections.singletonList( HostsDiscoveryConfiguration.SITE_DOMAIN );
    
-  public Class<? extends DiscoveryStrategy> getDiscoveryStrategyType() {
-    // Returns the actual class type of the DiscoveryStrategy
-    // implementation, to match it against the configuration
-    return HostsDiscoveryStrategy.class;
-  }
+    public Class<? extends DiscoveryStrategy> getDiscoveryStrategyType() {
+        // Returns the actual class type of the DiscoveryStrategy
+        // implementation, to match it against the configuration
+        return HostsDiscoveryStrategy.class;
+    }
    
-  public Collection<PropertyDefinition> getConfigurationProperties() {
-    return PROPERTIES;
-  }
+    public Collection<PropertyDefinition> getConfigurationProperties() {
+        return PROPERTIES;
+    }
    
-  public DiscoveryStrategy newDiscoveryStrategy( DiscoveryNode discoveryNode,
+    public DiscoveryStrategy newDiscoveryStrategy( DiscoveryNode discoveryNode,
                                           ILogger logger,
                                           Map<String, Comparable> properties ) {
                                           
-    return new HostsDiscoveryStrategy( logger, properties );                                      
-  }   
+        return new HostsDiscoveryStrategy( logger, properties );                                      
+    }   
 }
 ``` 
 
@@ -92,33 +84,28 @@ Now comes the interesting part. We are going to implement the discovery itself. 
 For ease of implementation, we will back our implementation by extending the `AbstractDiscoveryStrategy` and only implementing the absolute minimum ourselves.
 
 ```java
-package com.hazelcast.examples.spi.discovery;
-
-import com.hazelcast...;
-
 public class HostsDiscoveryStrategy
     extends AbstractDiscoveryStrategy {
     
-  private final String siteDomain;  
+    private final String siteDomain;  
     
-  public HostsDiscoveryStrategy( ILogger logger,
+    public HostsDiscoveryStrategy( ILogger logger,
                                  Map<String, Comparable> properties ) {
                                    
-    super( logger, properties );
+        super( logger, properties );
     
-    // Make it possible to override the value from the configuration on
-    // the system's environment or JVM properties
-    // -Ddiscovery.hosts.site-domain=some.domain
-    this.siteDomain = getOrNull( "discovery.hosts",
+        // Make it possible to override the value from the configuration on
+        // the system's environment or JVM properties
+        // -Ddiscovery.hosts.site-domain=some.domain
+        this.siteDomain = getOrNull( "discovery.hosts",
                                  HostsDiscoveryConfiguration.DOMAIN );
-  }                              
+    }                              
   
-  public Iterable<DiscoveryNode> discoverNodes() {
-    List<String> assignments = filterHosts();
-    return mapToDiscoveryNodes( assignments );
-  }
-  
-  // ...
+    public Iterable<DiscoveryNode> discoverNodes() {
+        List<String> assignments = filterHosts();
+        return mapToDiscoveryNodes( assignments );
+    }  
+    // ...
 }
 ```
 
@@ -142,29 +129,29 @@ private static final String HOSTS_WINDOWS =
                    "%SystemRoot%\\system32\\drivers\\etc\\hosts";
 
 private List<String> filterHosts() {
-  String os = System.getProperty( "os.name" );
+    String os = System.getProperty( "os.name" );
       
-  String hostsPath;
-  if ( os.contains( "Windows" ) ) {
-    hostsPath = HOSTS_WINDOWS;
-  } else {
+    String hostsPath;
+    if ( os.contains( "Windows" ) ) {
+        hostsPath = HOSTS_WINDOWS;
+    } else {
     hostsPath = HOSTS_NIX;
-  }
-  
-  File hosts = new File( hostsPath );
-  
-  // Read all lines
-  List<String> lines = readLines( hosts );
-  
-  List<String> assignments = new ArrayList<String>();
-  for ( String line : lines ) {
-    // Example:
-    // 192.168.0.1   host1.cluster.local
-    if ( matchesDomain( line ) ) {
-      assignments.add( line );
     }
-  }
-  return assignments;
+  
+    File hosts = new File( hostsPath );
+  
+    // Read all lines
+    List<String> lines = readLines( hosts );
+  
+    List<String> assignments = new ArrayList<String>();
+    for ( String line : lines ) {
+        // Example:
+        // 192.168.0.1   host1.cluster.local
+        if ( matchesDomain( line ) ) {
+            assignments.add( line );
+        }
+    }
+    return assignments;
 }
 ```
 
@@ -176,19 +163,19 @@ After we now collected the address assignments configured in the hosts file we c
 private Iterable<DiscoveryNode> mapToDiscoveryNodes( List<String> assignments ) {
   Collection<DiscoveryNode> discoveredNodes = new ArrayList<DiscoveryNode>();
   
-  for ( String assignment : assignments ) {
-    String address = sliceAddress( assignment );
-    String hostname = sliceHostname( assignment );
+    for ( String assignment : assignments ) {
+        String address = sliceAddress( assignment );
+        String hostname = sliceHostname( assignment );
     
-    Map<String, Object> attributes = 
-        Collections.singletonMap( "hostname", hostname );
+        Map<String, Object> attributes = 
+          Collections.singletonMap( "hostname", hostname );
     
-    InetAddress inetAddress = mapToInetAddress( address );
-    Address addr = new Address( inetAddress, NetworkConfig.DEFAULT_PORT );
+        InetAddress inetAddress = mapToInetAddress( address );
+        Address addr = new Address( inetAddress, NetworkConfig.DEFAULT_PORT );
     
-    discoveredNodes.add( new SimpleDiscoveryNode( addr, attributes ) );
-  }
-  return discoveredNodes;
+        discoveredNodes.add( new SimpleDiscoveryNode( addr, attributes ) );
+    }
+    return discoveredNodes;
 }
 ```
 

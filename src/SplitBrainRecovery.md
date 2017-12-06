@@ -19,49 +19,7 @@ Each member of the merging cluster will do the following:
 
 ### Merge Policies
 
-Only `IMap`, `ICache` and `ReplicatedMap` support merge policies. `IMap` and `ReplicatedMap` use `com.hazelcast.map.merge.MapMergePolicy`. `ICache` uses `com.hazelcast.cache.CacheMergePolicy`. They are very similar interfaces with some minor differences in parameters.
-
-```java
-public interface MapMergePolicy extends DataSerializable {
-
-    /**
-     * Returns the value of the entry after the merge
-     * of entries with the same key.
-     * You should consider the case where existingEntry's value is null.
-     *
-     * @param mapName       name of the map
-     * @param mergingEntry  entry merging into the destination cluster
-     * @param existingEntry existing entry in the destination cluster
-     * @return final value of the entry. If returns null, then the entry will be removed.
-     */
-    Object merge(String mapName, EntryView mergingEntry, EntryView existingEntry);
-
-}
-```
-
-```java
-public interface CacheMergePolicy extends Serializable {
-
-    /**
-     * <p>
-     * Selects one of the merging and existing cache entries to be merged.
-     * </p>
-     *
-     * <p>
-     * Note that as mentioned also in arguments, the {@link CacheEntryView} instance that represents existing cache entry
-     * may be null if there is no existing entry for the specified key in the the {@link CacheEntryView} instance
-     * that represents merging cache entry.
-     * </p>
-     *
-     * @param cacheName     name of the cache
-     * @param mergingEntry  {@link CacheEntryView} instance that has cache entry to be merged
-     * @param existingEntry {@link CacheEntryView} instance that has existing cache entry.
-     *                      This entry may be <code>null</code> if there is no existing cache entry.
-     * @return the selected value for merging
-     */
-    Object merge(String cacheName, CacheEntryView mergingEntry, CacheEntryView existingEntry);
-}
-```
+Only `IMap`, `ICache` and `ReplicatedMap` support merge policies. `IMap` and `ReplicatedMap` use `com.hazelcast.map.merge.MapMergePolicy`. `ICache` uses `com.hazelcast.cache.CacheMergePolicy`. They are very similar interfaces with some minor differences in parameters. Please refer to [`MapMergePolicy` Javadoc](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/merge/MapMergePolicy.html) and [`CacheMergePolicy` Javadoc](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cache/CacheMergePolicy.html) for their API details.
 
 There are built-in merge policies such as `PassThroughMergePolicy`, `PutIfAbsentMapMergePolicy`, `HigherHitsMapMergePolicy` and `LatestUpdateMapMergePolicy`. Additionally you can develop your own merge policy by implementing the relevant interface. You should set the full class name of your implementation to the merge-policy configuration.  
 

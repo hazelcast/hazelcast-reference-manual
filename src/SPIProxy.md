@@ -13,8 +13,6 @@ First, we need to make the `Counter` interface a distributed object by extending
 
 
 ```java
-import com.hazelcast.core.DistributedObject;
-
 public interface Counter extends DistributedObject {
     int inc(int amount);
 }
@@ -26,13 +24,6 @@ Now, we need to make the `CounterService` class implement not only the `ManagedS
 
 
 ```java
-import com.hazelcast.core.DistributedObject;
-import com.hazelcast.spi.ManagedService;
-import com.hazelcast.spi.NodeEngine;
-import com.hazelcast.spi.RemoteService;
-
-import java.util.Properties;
-
 public class CounterService implements ManagedService, RemoteService {
     public static final String NAME = "CounterService";
 
@@ -74,13 +65,6 @@ The `CounterProxy` returned by the method `createDistributedObject` is a local r
 Now, it is time to implement the `CounterProxy` as shown below. `CounterProxy` extends [AbstractDistributedObject, source code here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/AbstractDistributedObject.java). 
 
 ```java
-import com.hazelcast.spi.AbstractDistributedObject;
-import com.hazelcast.spi.InvocationBuilder;
-import com.hazelcast.spi.NodeEngine;
-import com.hazelcast.util.ExceptionUtil;
-
-import java.util.concurrent.Future;
-
 public class CounterProxy extends AbstractDistributedObject<CounterService> implements Counter {
     private final String name;
 
@@ -156,13 +140,6 @@ For the deserialization, note that the operation must have a *no-arg* constructo
 
 
 ```java
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.spi.Operation;
-import com.hazelcast.spi.PartitionAwareOperation;
-
-import java.io.IOException;
-
 class IncOperation extends Operation implements PartitionAwareOperation {
     private String objectId;
     private int amount, returnValue;
@@ -208,11 +185,6 @@ class IncOperation extends Operation implements PartitionAwareOperation {
 Now, let's run our code.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-
-import java.util.UUID;
-
 public class Member {
     public static void main(String[] args) {
         HazelcastInstance[] instances = new HazelcastInstance[2];
