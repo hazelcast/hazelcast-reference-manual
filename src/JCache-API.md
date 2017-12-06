@@ -21,10 +21,9 @@ The `User` class is the representation of a user table in the database. To keep 
 
 ```java
 public class User {
-  private int userId;
-  private String username;
-
-  // Getters and setters
+    private int userId;
+    private String username;
+    // Getters and setters
 }
 ```
 #### Creating DAO Interface Example
@@ -33,10 +32,10 @@ The DAO interface is also kept easy in this example. It provides a simple method
 
 ```java
 public interface UserDao {
-  User findUserById( int userId );
-  boolean storeUser( int userId, User user );
-  boolean removeUser( int userId );
-  Collection<Integer> allUserIds();
+    User findUserById( int userId );
+    boolean storeUser( int userId, User user );
+    boolean removeUser( int userId );
+    Collection<Integer> allUserIds();
 }
 ```
 #### Configuring JCache Example

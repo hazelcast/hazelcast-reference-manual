@@ -11,13 +11,13 @@ The asynchronous versions of the methods append the phrase `Async` to the method
 ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
 ICompletableFuture<String> future = unwrappedCache.getAndPutAsync( 1, "value" );
 future.andThen( new ExecutionCallback<String>() {
-  public void onResponse( String response ) {
-    System.out.println( "Previous value: " + response );
-  }
+    public void onResponse( String response ) {
+        System.out.println( "Previous value: " + response );
+    }
 
-  public void onFailure( Throwable t ) {
-    t.printStackTrace();
-  }
+    public void onFailure( Throwable t ) {
+        t.printStackTrace();
+    }
 } );
 ```
 

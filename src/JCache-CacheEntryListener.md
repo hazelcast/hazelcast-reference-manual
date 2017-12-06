@@ -27,41 +27,41 @@ public class UserCacheEntryListener
         CacheEntryRemovedListener<Integer, User>,
         CacheEntryExpiredListener<Integer, User> {
 
-  @Override
-  public void onCreated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-      throws CacheEntryListenerException {
+    @Override
+    public void onCreated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
 
-    printEvents( cacheEntryEvents );
-  }
-
-  @Override
-  public void onUpdated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-      throws CacheEntryListenerException {
-
-    printEvents( cacheEntryEvents );
-  }
-
-  @Override
-  public void onRemoved( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-      throws CacheEntryListenerException {
-
-    printEvents( cacheEntryEvents );
-  }
-
-  @Override
-  public void onExpired( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-      throws CacheEntryListenerException {
-
-    printEvents( cacheEntryEvents );
-  }
-
-  private void printEvents( Iterable<CacheEntryEvent<...>> cacheEntryEvents ) {
-    Iterator<CacheEntryEvent<...>> iterator = cacheEntryEvents.iterator();
-    while ( iterator.hasNext() ) {
-      CacheEntryEvent<...> event = iterator.next();
-      System.out.println( event.getEventType() );
+        printEvents( cacheEntryEvents );
     }
-  }
+
+    @Override
+    public void onUpdated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
+
+      printEvents( cacheEntryEvents );
+    }
+
+    @Override
+    public void onRemoved( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
+
+      printEvents( cacheEntryEvents );
+    }
+
+    @Override
+    public void onExpired( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
+
+      printEvents( cacheEntryEvents );
+    }
+
+    private void printEvents( Iterable<CacheEntryEvent<...>> cacheEntryEvents ) {
+        Iterator<CacheEntryEvent<...>> iterator = cacheEntryEvents.iterator();
+        while ( iterator.hasNext() ) {
+            CacheEntryEvent<...> event = iterator.next();
+            System.out.println( event.getEventType() );
+        }
+    }
 }
 ```
 
