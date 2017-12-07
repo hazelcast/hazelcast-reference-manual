@@ -462,7 +462,7 @@ The argument `defaultReadTimeout` applies to all of your Spring caches. If you w
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" />
 
-<hz:hazelcast id="hazelcast">
+<hz:hazelcast id="instance">
   ...
 </hz:hazelcast>
 
@@ -498,7 +498,7 @@ Annotation-Based Configuration does not require any XML definition. To perform A
 ```java
 @Configuration
 @EnableCaching
-public class CachingConfiguration implements CachingConfigurer{
+public class CachingConfiguration extends CachingConfigurerSupport {
     @Bean
     public CacheManager cacheManager() {
         ClientConfig config = new ClientConfig();
@@ -509,6 +509,7 @@ public class CachingConfiguration implements CachingConfigurer{
     public KeyGenerator keyGenerator() {
         return null;
     }
+}
 ```
 
 - Launch Application Context and register `CachingConfiguration`.
