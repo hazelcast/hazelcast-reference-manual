@@ -1,4 +1,4 @@
-# Hazelcast Java Client
+# Hazelcast Clients
 
 There are currently three ways to connect to a running Hazelcast cluster natively:
 
