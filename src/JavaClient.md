@@ -10,7 +10,7 @@ Please also check the [Other Client and Language Implementations](#other-client-
 
 Native Clients enable you to perform almost all Hazelcast operations without being a member of the cluster. It connects to one of the cluster members and delegates all cluster wide operations to it (_dummy client_), or it connects to all of them and delegates operations smartly (_smart client_). When the relied cluster member dies, the client will transparently switch to another live member.
 
-Hundreds or even thousands of clients can be connected to the cluster. By default, there are *core count* * *10* threads on the server side that will handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
+Hundreds or even thousands of clients can be connected to the cluster. By default, there are `core count * 10` threads on the server side that will handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
 
 Imagine a trading application where all the trading data are stored and managed in a Hazelcast cluster with tens of members. Swing/Web applications at the traders' desktops can use Native Clients to access and modify the data in the Hazelcast cluster.
 

@@ -4,7 +4,7 @@ The Java client is the most full featured Hazelcast native client. It is offered
 
 Please also check the [Other Client and Language Implementations](/1600_Hazelcast_Clients/600_Other_Client_and_Language_Implementations.md).
 
-Hundreds or even thousands of clients can be connected to the cluster. By default, there are *core count* * *10* threads on the server side that will handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
+Hundreds or even thousands of clients can be connected to the cluster. By default, there are `core count * 10` threads on the server side that will handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
 
 Imagine a trading application where all the trading data are stored and managed in a Hazelcast cluster with tens of members. Swing/Web applications at the traders' desktops can use clients to access and modify the data in the Hazelcast cluster.
 
