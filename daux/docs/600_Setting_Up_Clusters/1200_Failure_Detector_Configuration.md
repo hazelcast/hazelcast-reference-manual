@@ -102,16 +102,20 @@ For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are 
 
 #### Requirements and Linux/Unix Configuration
 
-- Supported OS: as of Java 1.8 only Linux/Unix environments are supported.
-- The Java executable must have the `cap_net_raw` capability. 
-    - To do so, run `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
-- When running with custom capabilities, the dynamic linker on Linux will reject loading libs from untrusted paths.
-    - An example of rejected operation can be the following:
+- **Supported OS: as of Java 1.8 only Linux/Unix environments are supported**. This detector relies on ICMP, i.e., the protocol behind the `ping` command. It tries to issue the ping attempts periodically, and their responses are used to determine the reachability of the remote member. However, you cannot simply create an ICMP Echo Request because these type of packets do not rely on any of the preexisting transport protocols such as TCP. In order to create such a request, you must have the privileges to create RAW sockets (please see [https://linux.die.net/man/7/raw](https://linux.die.net/man/7/raw)). Most operating systems allow this to the root users, however Unix based ones are more flexible and allow the use of custom privileges per process
+instead of requiring root access. Therefore, this detector is supported only on Linux.
+
+- **The Java executable must have the `cap_net_raw` capability.** As described in the above requirement, on Linux, you have the ability to define extra capabilities to a single process, which would allow the process to interact with the RAW sockets. This interaction is achieved via the capability `cap_net_raw` (please see [https://linux.die.net/man/7/capabilities](https://linux.die.net/man/7/capabilities)). To enable this capability run the following command:
+
+    - `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
+
+- **When running with custom capabilities, the dynamic linker on Linux will reject loading libs from untrusted paths.** Since you have now `cap_net_raw` as a custom capability for a process, it becomes suspicious to the dynamic linker and it will throw an error:
  `java: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory`
-    - To overcome this rejection, the `<JDK_HOME>/jre/lib/amd64/jli/` path needs to be added in the `ld.conf`, 
-     i.e., run: `echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
-- ICMP Echo Requests must not be blocked by the receiving hosts. `/proc/sys/net/ipv4/icmp_echo_ignore_all` set to `0`
-    - i.e., run `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
+    - To overcome this rejection, the `<JDK_HOME>/jre/lib/amd64/jli/` path needs to be added in the `ld.conf`. Run the following command to do this: `echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
+
+- **ICMP Echo Requests must not be blocked by the receiving hosts.** `/proc/sys/net/ipv4/icmp_echo_ignore_all` set to `0`. Run the following command:
+    - `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
+
 
 If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
 
