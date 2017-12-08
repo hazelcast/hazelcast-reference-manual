@@ -1,4 +1,4 @@
-## Configuring Java Client
+### Configuring Java Client
 
 You can configure Hazelcast Java Client declaratively (XML) or programmatically (API).
 
@@ -28,11 +28,11 @@ clientConfig.setLoadBalancer(yourLoadBalancer);
 ```
 
 
-### Configuring Client Network
+#### Configuring Client Network
 
 All network related configuration of Hazelcast Java Client is performed via the `network` element in the declarative configuration file, or in the class `ClientNetworkConfig` when using programmatic configuration. Let's first give the examples for these two approaches. Then we will look at its sub-elements and attributes.
 
-#### Declarative Client Network Configuration
+**Declarative Client Network Configuration:**
 
 Here is an example of configuring network for Java Client declaratively.
 
@@ -74,7 +74,7 @@ Here is an example of configuring network for Java Client declaratively.
 </network>
 ```
 
-#### Programmatic Client Network Configuration
+**Programmatic Client Network Configuration:**
 
 Here is an example of configuring network for Java Client programmatically.
 
@@ -103,7 +103,7 @@ clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
 HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 ```
 
-#### Configuring Address List
+##### Configuring Address List
 
 Address List is the initial list of cluster addresses to which the client will connect. The client uses this list to find an alive member. Although it may be enough to give only one address of a member in the cluster (since all members communicate with each other), it is recommended that you give the addresses for all the members.
 
@@ -135,7 +135,7 @@ If the port part is omitted, then 5701, 5702, and 5703 will be tried in random o
 
 You can provide multiple addresses with ports provided or not, as seen above. The provided list is shuffled and tried in random order. Default value is *localhost*.
 
-#### Setting Outbound Ports
+##### Setting Outbound Ports
 
 You may want to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast Java client to use only defined outbound ports. The following are example configurations.
 
@@ -173,7 +173,7 @@ As shown in the programmatic configuration, you use the method `addOutboundPort`
 
 In the declarative configuration, the element `ports` can be used for both single and multiple port definitions.
 
-#### Setting Smart Routing
+##### Setting Smart Routing
 
 Smart routing defines whether the client mode is smart or dummy. The following are example configurations.
 
@@ -198,7 +198,7 @@ networkConfig().setSmartRouting(true);
 ```
 The default is *smart client* mode.
 
-#### Enabling Redo Operation
+##### Enabling Redo Operation
 
 It enables/disables redo-able operations as described in [Handling Retry-able Operation Failure](#handling-retry-able-operation-failure). The following are the example configurations.
 
@@ -223,7 +223,7 @@ networkConfig().setRedoOperation(true);
 
 Default is *disabled*.
 
-#### Setting Connection Timeout
+##### Setting Connection Timeout
 
 Connection timeout is the timeout value in milliseconds for members to accept client connection requests. The following are the example configurations.
 
@@ -247,7 +247,7 @@ clientConfig.getNetworkConfig().setConnectionTimeout(5000);
 
 The default value is *5000* milliseconds.
 
-#### Setting Connection Attempt Limit
+##### Setting Connection Attempt Limit
 
 While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, all members might be not available. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `ClientNetworkConfig.connectionAttemptLimit` times. This is also the case when an existing client-member connection goes down. The following are example configurations.
 
@@ -271,7 +271,7 @@ clientConfig.getNetworkConfig().setConnectionAttemptLimit(5);
 
 Default value is *2*.
 
-#### Setting Connection Attempt Period
+##### Setting Connection Attempt Period
 
 Connection timeout period is the duration in milliseconds between the connection attempts defined by `ClientNetworkConfig.connectionAttemptLimit`. The following are example configurations.
 
@@ -295,7 +295,7 @@ clientConfig.getNetworkConfig().setConnectionAttemptPeriod(5000);
 
 Default value is *3000*.
 
-#### Setting a Socket Interceptor
+##### Setting a Socket Interceptor
 
 <font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
@@ -347,7 +347,7 @@ socketInterceptorConfig.setClassName(myClientSocketInterceptor);
 *Please see the [Socket Interceptor section](#socket-interceptor) for more information.*
 <br></br>
 
-#### Configuring Network Socket Options
+##### Configuring Network Socket Options
 
 You can configure the network socket options using `SocketOptions`. It has the following methods.
 
@@ -371,7 +371,7 @@ socketOptions.setReuseAddress(true);
 socketOptions.setLingerSeconds(3);
 ```
 
-#### Enabling Client TLS/SSL
+##### Enabling Client TLS/SSL
 
 <font color="#3981DB">**Hazelcast IMDG Enterprise**</font>
 <br></br>
@@ -382,7 +382,7 @@ You can use TLS/SSL to secure the connection between the client and the members.
 
 As explained in the [TLS/SSL section](#tlsssl), Hazelcast members have keyStores used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust. Starting with Hazelcast 3.8.1 release, mutual authentication is introduced. This allows the clients also to have their keyStores and members to have their trustStores so that the members can know which clients they can trust. Please see the [Mutual Authentication section](#mutual-authentication).
 
-#### Configuring Client for AWS
+##### Configuring Client for AWS
 
 The example declarative and programmatic configurations below show how to configure a Java client for connecting to a Hazelcast cluster in AWS.
 
@@ -431,7 +431,7 @@ If the `inside-aws` element is not set, the private addresses of cluster members
 
 IAM roles are used to make secure requests from your clients. You can provide the name of your IAM role that you created previously on your AWS console using the `iam-role` or `setIamRole()` method.
 
-### Configuring Client Load Balancer
+#### Configuring Client Load Balancer
 
 `LoadBalancer` allows you to send operations to one of a number of endpoints (Members). Its main purpose is to determine the next `Member` if queried.  It is up to your implementation to use different load balancing policies. You should implement the interface `com.hazelcast.client.LoadBalancer` for that purpose.
 
@@ -458,30 +458,7 @@ ClientConfig clientConfig = new ClientConfig();
 clientConfig.setLoadBalancer(yourLoadBalancer);
 ```
 
-### Configuring Client Near Cache
-
-The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Since the client always requests data from the cluster members, it can be helpful in some use cases to configure a Near Cache on the client side. Please refer to the [Near Cache section](#near-cache) for a detailed explanation of the Near Cache feature and its configuration.
-
-
-### Client Group Configuration
-Clients should provide a group name and password in order to connect to the cluster.
-You can configure them using `GroupConfig`, as shown below.
-
-```java
-clientConfig.setGroupConfig(new GroupConfig("dev","dev-pass"));
-```
-
-### Client Security Configuration
-
-In the cases where the security established with `GroupConfig` is not enough and you want your clients connecting securely to the cluster, you can use `ClientSecurityConfig`. This configuration has a `credentials` parameter to set the IP address and UID. Please see `ClientSecurityConfig.java` in our code.
-
-
-### Client Serialization Configuration
-
-For the client side serialization, use Hazelcast configuration. Please refer to the [Serialization chapter](#serialization).
-
-
-### Configuring Client Listeners
+#### Configuring Client Listeners
 You can configure global event listeners using `ListenerConfig` as shown below.
 
 
@@ -503,7 +480,7 @@ You can add three types of event listeners.
 - MembershipListener
 - DistributedObjectListener
 
-### Configuring Client Connection Strategy
+#### Configuring Client Connection Strategy
 
 You can configure the client's starting mode as async or sync using the configuration element `async-start`. When it is set to `true` (async), Hazelcast will create the client without waiting a connection to the cluster. In this case, the client instance throws an exception until it connects to the cluster. If it is `false`, the client will not be created until the cluster is ready to use clients and a connection with the cluster is established. Its default value is `false` (sync)
 
@@ -531,11 +508,4 @@ clientConfig.getConnectionStrategyConfig()
             .setAsyncStart(true)
             .setReconnectMode(ClientConnectionStrategyConfig.ReconnectMode.ASYNC);
 ```
-
-### ExecutorPoolSize
-
-Hazelcast has an internal executor service (different from the data structure *Executor Service*) that has threads and queues to perform internal operations such as handling responses. This parameter specifies the size of the pool of threads which perform these operations laying in the executor's queue. If not configured, this parameter has the value as **5 \* *core size of the client*** (i.e. it is 20 for a machine that has 4 cores).
-
-### ClassLoader
-You can configure a custom `classLoader`. It will be used by the serialization service and to load any class configured in configuration, such as event listeners or ProxyFactories.
 

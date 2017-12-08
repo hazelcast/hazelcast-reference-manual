@@ -1,9 +1,24 @@
-## Java Client Overview
+# Hazelcast Clients
+
+Hazelcast offers client and language implementations which enable you to perform Hazelcast operations without being a member of the cluster. These implementations include C++, .NET, Python, Node.js, and Scala. Please check the sections for other clients in this chapter. You can refer to [here](https://hazelcast.org/clients-languages/) to see the feature comparison for Hazelcast clients. You can also refer to <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients" target="_blank">Client Code Samples</a> to see how you can implement and use some features for the clients.
+
+
+## Java Client
 
 The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast IMDG and Hazelcast IMDG Enterprise.  The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data, and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
 
+Hundreds or even thousands of clients can be connected to the cluster. By default, there are `core count * 10` threads on the server side that will handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
 
-### Including Dependencies for Java Clients
+<br><br>
+![image](images/NoteSmall.jpg) ***IMPORTANT:*** *Starting with Hazelcast 3.5, a new Java Native Client Library is introduced in the release package. This library contains clients which use the new Hazelcast Open Binary Client Protocol.*
+
+* *For 3.5.x releases: You can use the new client experimentally with the library `hazelcast-client-new`. This library does not exist for the releases before 3.5. Please do not use this library with the Hazelcast clusters from 3.6.x and higher releases since it is not compatible with those releases.* 
+* *For 3.6.x releases: You can use the new client with the library `hazelcast-client`. The old client's library is `hazelcast-client-legacy`, and you can still use it.*
+* *For 3.7.x and higher releases: There is no more old client for these releases. The only one is the `hazelcast-client` library, which includes clients implemented with the Hazelcast Open Binary Client Protocol.*
+
+### Getting Started
+
+#### Including Dependencies for Java Clients
 
 You should include two dependencies in your classpath to start using the Hazelcast client: `hazelcast.jar` and `hazelcast-client.jar`.
 
@@ -24,7 +39,7 @@ If you prefer to use maven, add the following lines to your `pom.xml`.
 </dependency>
 ```
 
-### Getting Started with Client API
+#### Client API
 
 The first step is configuration. You can configure the Java client declaratively or programmatically. We will use the programmatic approach throughout this tutorial. Please refer to the [Java Client Declarative Configuration section](#configuring-java-client) for details.
 
@@ -62,7 +77,7 @@ client.shutdown();
 
 ```
 
-### Java Client Operation Modes
+#### Java Client Operation Modes
 
 The client has two operation modes because of the distributed nature of the data and cluster.
 
@@ -73,11 +88,11 @@ The client has two operation modes because of the distributed nature of the data
 
 In dummy client mode, the client will only connect to one of the configured addresses. This single member will behave as a gateway to the other members. For any operation requested from the client, it will redirect the request to the relevant member and return the response back to the client returned from this member.
 
-### Handling Failures
+#### Handling Failures
 
 There are two main failure cases you should be aware of, and configurations you can perform to achieve proper behavior.
 
-#### Handling Client Connection Failure
+##### Handling Client Connection Failure
 
 
 While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, all the members might be not available. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `connectionAttemptLimit` times. 
@@ -87,7 +102,7 @@ You can configure `connectionAttemptLimit` for the number of times you want the 
 The client executes each operation through the already established connection to the cluster. If this connection(s) disconnects or drops, the client will try to reconnect as configured.
 
 
-#### Handling Retry-able Operation Failure
+##### Handling Retry-able Operation Failure
 
 While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, set the `redoOperation` to `true`. Please see [Enabling Redo Operation](#enabling-redo-operation).
 
@@ -100,13 +115,13 @@ You can set a timeout for retrying the operations sent to a member. This can be 
 Please see the [Client System Properties section](#client-system-properties).
 
 
-### Using Supported Distributed Data Structures
+#### Using Supported Distributed Data Structures
 
 Most of the Distributed Data Structures are supported by the Java client. When you use clients in other languages, you should check for the exceptions.
 
 As a general rule, you configure these data structures on the server side and access them through a proxy on the client side.
 
-#### Using Map with Java Client
+##### Using Map with Java Client
 
 You can use any [Distributed Map](#map) object with the client, as shown below.
 
@@ -120,7 +135,7 @@ map.remove(1);
 
 Locality is ambiguous for the client, so `addLocalEntryListener` and `localKeySet` are not supported. Please see the [Distributed Map section](#map) for more information.
 
-#### Using MultiMap with Java Client
+##### Using MultiMap with Java Client
 
 A MultiMap usage example is shown below.
 
@@ -136,7 +151,7 @@ Collection<String> values = multiMap.get(1);
 
 `addLocalEntryListener`, `localKeySet` and  `getLocalMultiMapStats` are not supported because locality is ambiguous for the client. Please see the [Distributed MultiMap section](#multimap) for more information.
 
-#### Using Queue with Java Client
+##### Using Queue with Java Client
 
 A sample usage is shown below.
 
@@ -148,11 +163,11 @@ myQueue.offer(“ali”)
 
 `getLocalQueueStats` is not supported because locality is ambiguous for the client. Please see the [Distributed Queue section](#queue) for more information.
 
-#### Using Topic with Java Client
+##### Using Topic with Java Client
 
 `getLocalTopicStats` is not supported because locality is ambiguous for the client.
 
-#### Using Other Supported Distributed Structures
+##### Using Other Supported Distributed Structures
 
 The distributed data structures listed below are also supported by the client. Since their logic is the same in both the member side and client side, you can refer to their sections as listed below.
 
@@ -169,11 +184,11 @@ The distributed data structures listed below are also supported by the client. S
 
 
 
-### Using Client Services
+#### Using Client Services
 
 Hazelcast provides the services discussed below for some common functionalities on the client side.
 
-#### Using Distributed Executor Service
+##### Using Distributed Executor Service
 
 The distributed executor service is for distributed computing. It can be used to execute tasks on the cluster on a designated partition or on all the partitions. It can also be used to process entries. Please see the [Distributed Executor Service section](#executor-service) for more information.
 
@@ -187,7 +202,7 @@ After getting an instance of `IExecutorService`, you can use the instance as the
 ![image](images/NoteSmall.jpg) ***NOTE:*** *This service is only supported by the Java client.*
 
 
-#### Listening to Client Connection
+##### Listening to Client Connection
 
 If you need to track clients and you want to listen to their connection events, you can use the `clientConnected` and `clientDisconnected` methods of the `ClientService` class. This class must be run on the **member** side. The following is an example code.
 
@@ -208,7 +223,7 @@ clientService.addClientListener(new ClientListener() {
 });
 ```
 
-#### Finding the Partition of a Key
+##### Finding the Partition of a Key
 
 You use partition service to find the partition of a key. It will return all partitions. See the example code below.
 
@@ -223,7 +238,7 @@ Set<Partition> partitions = partitionService.getPartitions();
 ```
 
 
-#### Handling Lifecycle
+##### Handling Lifecycle
 
 Lifecycle handling performs the following:
 
@@ -244,15 +259,15 @@ if(lifecycleService.isRunning()){
 lifecycleService.shutdown();
 ```
 
-### Client Listeners
+#### Client Listeners
 
 You can configure listeners to listen to various event types on the client side. You can configure global events not relating to any distributed object through [Client ListenerConfig](#configuring-client-listeners). You should configure distributed object listeners like map entry listeners or list item listeners through their proxies. You can refer to the related sections under each distributed data structure in this reference manual.
 
-### Client Transactions
+#### Client Transactions
 
 Transactional distributed objects are supported on the client side. Please see the [Transactions chapter](#transactions) on how to use them.
 
-### Async Start and Reconnect Modes
+#### Async Start and Reconnect Modes
 
 Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.   
 
@@ -285,5 +300,7 @@ Java client can also be configured to specify how it reconnects after a cluster 
 * Client can open a connection to the cluster without blocking the waiting invocations. All invocations will receive `HazelcastClientOfflineException` during the establishment of cluster connection. If cluster connection is failed to connect, then client shutdown will be triggered.
 
 You can refer to the [Configuring Client Connection Strategy section](#configuring-client-connection-strategy) to learn how to configure these.
+
+
 
 
