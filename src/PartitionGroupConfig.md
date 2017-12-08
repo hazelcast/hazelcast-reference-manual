@@ -89,30 +89,17 @@ partitionGroupConfig.setEnabled( true )
 
 **4. ZONE_AWARE:**
 
-You can use ZONE_AWARE configuration with [Hazelcast AWS Discovery](https://github.com/hazelcast/hazelcast-aws), Hazelcast jclouds or Hazelcast Azure Discovery Service plugins. 
+You can use ZONE_AWARE configuration with [Hazelcast AWS](https://github.com/hazelcast/hazelcast-aws), [Hazelcast jclouds](https://github.com/hazelcast/hazelcast-jclouds) or [Hazelcast Azure](https://github.com/hazelcast/hazelcast-azure) Discovery Service plugins.
 
-As discovery services, these plugins put zone, rack, and host information to the Hazelcast [member attributes](#defining-member-attributes) map during the discovery process. Hazelcast creates the partition groups with respect to member attributes map entries that include zone, rack, and host information, which are the ZONE_AWARE configuration properties.
+As discovery services, these plugins put zone information to the Hazelcast [member attributes](#defining-member-attributes) map during the discovery process. When ZONE_AWARE is configured as partition group type, Hazelcast creates the partition groups with respect to member attributes map entries that include zone information.That means backups are created in the other zones and each zone will be accepted as one partition group.
 
-You can also configure these properties manually using Hazelcast's member attributes, and the following are the related property names:
+This is the list of supported attributes which is set by Discovery Service plugins during a Hazelcast member start-up:
 
 - `hazelcast.partition.group.zone`: For the zones in the same area.
 - `hazelcast.partition.group.rack`: For different racks in the same zone.
 - `hazelcast.partition.group.host`: For a shared physical member if virtualization is used.
 
-Here is how to put them in a declarative configuration:
-
-```
-<member-attributes>
-  <attribute name="hazelcast.partition.group.zone">zone name</attribute>
-  <attribute name="hazelcast.partition.group.rack">rack name</attribute>
-  <attribute name="hazelcast.partition.group.host">host name</attribute>
-</member-attributes>
-```
-
-
-When using ZONE_AWARE configuration, backups are created in the other zones. Each zone will be accepted as one partition group.
-
-![image](images/NoteSmall.jpg) ***NOTE:*** *Some cloud providers have rack information instead of zone information. In such cases, Hazelcast looks for zone, rack, and host information in the given order.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *hazelcast-jclouds offers rack or host information in addition to zone information based on cloud provider. In such cases, Hazelcast looks for zone, rack, and host information in the given order and create partition groups with available information*
 <br></br>
 
 Following are declarative and programmatic configuration snippets that show how to enable ZONE_AWARE grouping.
@@ -134,6 +121,7 @@ You can provide your own partition group implementation using the SPI configurat
 
 Following is a sample code covering the implementation steps mentioned in the above paragraph: 
 
+```
 public class CustomDiscovery extends AbstractDiscoveryStrategy {
 
     public CustomDiscovery(ILogger logger, Map<String, Comparable> properties) {
@@ -159,3 +147,4 @@ public class CustomDiscovery extends AbstractDiscoveryStrategy {
         }
     }
 }
+```
