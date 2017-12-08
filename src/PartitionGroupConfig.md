@@ -93,7 +93,7 @@ You can use ZONE_AWARE configuration with [Hazelcast AWS](https://github.com/haz
 
 As discovery services, these plugins put zone information to the Hazelcast [member attributes](#defining-member-attributes) map during the discovery process. When ZONE_AWARE is configured as partition group type, Hazelcast creates the partition groups with respect to member attributes map entries that include zone information.That means backups are created in the other zones and each zone will be accepted as one partition group.
 
-This is the list of attributes supported Discovery Service plugins set during hazelcast member start-up :
+This is the list of supported attributes which is set by Discovery Service plugins during a Hazelcast member start-up:
 
 - `hazelcast.partition.group.zone`: For the zones in the same area.
 - `hazelcast.partition.group.rack`: For different racks in the same zone.
