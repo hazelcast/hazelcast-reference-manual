@@ -286,6 +286,20 @@ Permission policy should return a `PermissionCollection` containing permissions 
 ```
 	Actions: all, create, destroy, modify, read
 
+- FlakeIdGenerator Permission
+
+```xml
+<flake-id-generator-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</flake-id-generator-permission>
+```
+	Actions: all, create, destroy, modify
+
 
 - Semaphore Permission
 
