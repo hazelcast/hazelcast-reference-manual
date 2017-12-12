@@ -97,6 +97,9 @@ The following information is sent in a phone home:
 	- Flag for Hazelcast Enterprise 
 	- Hash value of license key
 	- Native memory usage
+- Hazelcast Management Center specific: 
+    - Version of management center
+    - Hash value of management center license key
 
 **Phone Home Code**
 
