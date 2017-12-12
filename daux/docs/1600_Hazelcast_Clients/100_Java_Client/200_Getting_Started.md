@@ -168,7 +168,7 @@ The distributed data structures listed below are also supported by the client. S
 - ICountDownLatch
 - ISemaphore
 - IdGenerator
-- FlakeIdGenerator
+- ReliableIdGenerator
 - Lock
 
 ## Using Client Services
