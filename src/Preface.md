@@ -98,8 +98,8 @@ The following information is sent in a phone home:
 	- Hash value of license key
 	- Native memory usage
 - Hazelcast Management Center specific: 
-    - Version of management center
-    - Hash value of management center license key
+    - Hazelcast Management Center version
+    - Hash value of Hazelcast Management Center license key
 
 **Phone Home Code**
 
