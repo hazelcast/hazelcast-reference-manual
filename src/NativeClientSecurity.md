@@ -288,6 +288,19 @@ Permission policy should return a `PermissionCollection` containing permissions 
 ```
 	Actions: all, create, destroy, modify, read
 
+- Reliable IdGenerator Permission
+
+```xml
+<reliable-id-generator-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</reliable-id-generator-permission>
+```
+	Actions: all, create, destroy, modify
 
 - Semaphore Permission
 

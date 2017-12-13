@@ -180,6 +180,7 @@ The distributed data structures listed below are also supported by the client. S
 - [ICountDownLatch](#icountdownlatch)
 - [ISemaphore](#isemaphore)
 - [IdGenerator](#idgenerator)
+- [Reliable IdGenerator](#reliable-idgenerator)
 - [Lock](#lock)
 
 

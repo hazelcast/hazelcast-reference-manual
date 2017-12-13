@@ -167,6 +167,7 @@ Here is an example schema definition for Hazelcast 3.3.x:
 	- `list`
 	- `executorService`
 	- `idGenerator`
+	- `reliableIdGenerator`
 	- `atomicLong`
 	- `atomicReference`
 	- `semaphore`
