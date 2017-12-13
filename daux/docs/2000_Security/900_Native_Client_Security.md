@@ -286,17 +286,17 @@ Permission policy should return a `PermissionCollection` containing permissions 
 ```
 	Actions: all, create, destroy, modify, read
 
-- FlakeIdGenerator Permission
+- ReliableIdGenerator Permission
 
 ```xml
-<flake-id-generator-permission name="name" principal="principal">
+<reliable-id-generator-permission name="name" principal="principal">
   <endpoints>
     ...
   </endpoints>
   <actions>
     ...
   </actions>
-</flake-id-generator-permission>
+</reliable-id-generator-permission>
 ```
 	Actions: all, create, destroy, modify
 

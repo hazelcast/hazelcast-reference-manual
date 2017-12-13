@@ -1,7 +1,7 @@
 
 Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** **Feature was deprecated.** The implementation can produce duplicate IDs in case of network split, even with split-brain protection enabled (during short window while split-brain is detected). Use [Flake ID Generator](1450_FlakeIdGenerator.md) for alternative implementation which does not suffer from this problems.
+![image](../images/NoteSmall.jpg) ***NOTE:*** **Feature was deprecated.** The implementation can produce duplicate IDs in case of network split, even with split-brain protection enabled (during short window while split-brain is detected). Use [Reliable ID Generator](1450_ReliableIdGenerator.md) for an alternative implementation which does not suffer from this problems.
 
 ### Generating Cluster-Wide IDs
 
