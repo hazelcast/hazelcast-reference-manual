@@ -11,5 +11,6 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Distributed Data Structures](#distributed-data-structures)|[Reliable IdGenerator](#reliable-idgenerator)| Added a new section.
 |[Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)|Added [Respecting Locks on Single Keys](#respecting-locks-on-single-keys) as a new section.
-|[System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled |
+|[System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment |
