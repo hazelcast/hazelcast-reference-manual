@@ -286,7 +286,7 @@ Permission policy should return a `PermissionCollection` containing permissions 
 ```
 	Actions: all, create, destroy, modify, read
 
-- ReliableIdGenerator Permission
+- Reliable IdGenerator Permission
 
 ```xml
 <reliable-id-generator-permission name="name" principal="principal">
