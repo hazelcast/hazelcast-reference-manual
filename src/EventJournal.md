@@ -20,7 +20,7 @@ By default, an event journal is configured with a `capacity` of 10000 items. Thi
 a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item. 
 A single array of the event journal keeps events that are only related to the map entries in that partition. In a lot of cases you may want to change this `capacity` number to something that better fits your needs. As the capacity is shared between partitions, keep in mind not to set it to a value which is too low for you. Setting the capacity to a number lower than the partition count will result in an error when initializing the event journal. 
 
-Below is a declarative configuration example of an event journal with a `capacity` of 2000 items:
+Below is a declarative configuration example of an event journal with a `capacity` of 5000 items for a map, and 10000 items for a cache:
 
 ```xml
 <event-journal enabled="true">
