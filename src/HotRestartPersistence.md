@@ -133,13 +133,13 @@ An example configuration is shown below.
 	   <cluster-data-recovery-policy>FULL_RECOVERY_ONLY</cluster-data-recovery-policy>
    </hot-restart-persistence>
    ...
-   <map>
+   <map name="test-map">
 	   <hot-restart enabled="true">
 		   <fsync>false</fsync>
 	   </hot-restart>
    </map>
    ...
-   <cache>
+   <cache name="test-cache">
 	   <hot-restart enabled="true">
 		   <fsync>false</fsync>
 	   </hot-restart>
@@ -164,11 +164,11 @@ hotRestartPersistenceConfig.setClusterDataRecoveryPolicy(HotRestartClusterDataRe
 config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
 
 ...
-MapConfig mapConfig = new MapConfig();
+MapConfig mapConfig = config.getMapConfig("test-map");
 mapConfig.getHotRestartConfig().setEnabled(true);
 
 ...
-CacheConfig cacheConfig = new CacheConfig();
+CacheSimpleConfig cacheConfig = config.getCacheConfig("test-cache");
 cacheConfig.getHotRestartConfig().setEnabled(true);
 ```
 
@@ -376,7 +376,7 @@ An example of how to track the progress via API is shown below:
 
 ```java
 HotRestartService service = instance.getCluster().getHotRestartService();
-HotRestartStateImpl status = service.getBackupTaskStatus();
+BackupTaskStatus status = service.getBackupTaskStatus();
 ...
 ```
 
