@@ -21,7 +21,7 @@ As another scenario, assume the following:
 
 - You have a cluster consisting of members A and B with Hot Restart enabled, which is initially stable.
 - Member B is killed.
-- Member B's Hot Restart [base directory(`base-dir`)](/13_Storage/02_Hot_Restart_Persistence/04_Configuring_Hot_Restart.md) is deleted.
+- Member B's Hot Restart [base directory (`base-dir`)](/13_Storage/02_Hot_Restart_Persistence/04_Configuring_Hot_Restart.md) is deleted.
 - Member B restarts.
 
 Now member B joins the cluster as a fresh, empty member. The cluster will assign some partitions to it, unrelated to the partitions it owned before going down. 
