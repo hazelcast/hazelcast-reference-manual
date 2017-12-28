@@ -51,15 +51,6 @@ clientUserCodeDeploymentConfig.setEnabled(true);
 clientConfig.setUserCodeDeploymentConfig(clientUserCodeDeploymentConfig);
 ```
 
-Note that User Code Deployment should also be enabled on the members to use this feature. 
-
-```java
-Config config = new Config();
-UserCodeDeploymentConfig userCodeDeploymentConfig = config.getUserCodeDeploymentConfig();
-userCodeDeploymentConfig.setEnabled( true );
-```
-
-
 ##### Important to Know
 
 Note that User Code Deployment should also be enabled on the members to use this feature. 
