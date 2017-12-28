@@ -68,7 +68,7 @@ Set configuration has the following elements.
 - `statistics-enabled`: True (default) if statistics gathering is enabled on the Set, false otherwise.
 - `backup-count`: Count of synchronous backups. Set is a non-partitioned data structure, so all entries of a Set reside in one partition. When this parameter is '1', it means there will be one backup of that Set in another member in the cluster. When it is '2', two members will have the backup.
 - `async-backup-count`: Count of asynchronous backups.
-- `max-size`: The maximum number of entries for this Set.
+- `max-size`: The maximum number of entries for this Set. It can be any number between 0 and Integer.MAX_VALUE. Its default value is 0, meaning there is no capacity constraint.
 - `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attributes `include-value` to `true` if you want the item event to contain the item values, and you can set `local` to `true` if you want to listen to the items on the local member.
 
 
