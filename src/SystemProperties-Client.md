@@ -1,5 +1,5 @@
 
-## Client System Properties
+### Client System Properties
 
 There are some advanced client configuration properties to tune some aspects of Hazelcast Client. You can set them as property name and value pairs through declarative configuration, programmatic configuration, or JVM system property. Please see the [System Properties section](#system-properties) to learn how to set these properties.
 
@@ -22,10 +22,3 @@ Property Name | Default Value | Type | Description
 `hazelcast.client.statistics.enabled`|false|bool|If set to true, it enables collecting the client statistics and sending them to the cluster.
 `hazelcast.client.statistics.period.seconds`|3|int|The period in seconds the client statistics are collected and sent to the cluster.
 `hazelcast.client.responsequeue.idlestrategy`|block|string|Specifies whether the response thread for internal operations at the client side will be blocked or not. If you use `block` (the default value) the thread will be blocked and need to be notified which can cause a reduction in the performance. If you use `backoff` there will be no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this will increase CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
-
-
-## Sample Codes for Client
-
-Please refer to <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients" target="_blank">Client Code Samples</a>.
-
-
