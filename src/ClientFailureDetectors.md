@@ -13,7 +13,7 @@ _Deadline Failure Detector_ has two configuration properties:
 - `hazelcast.client.heartbeat.interval`: This is the interval at which client sends heartbeat messages to members. 
 - `hazelcast.client.heartbeat.timeout`: This is the timeout which defines when a cluster member is suspected, because it has not sent any response back to client requests.
 
-The following is a declarative example showing how you can configure the Deadline Failure Detector for your client:
+The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
 
 
 ```xml
@@ -40,7 +40,7 @@ config.setProperty("hazelcast.client.heartbeat.interval", "5000");
 
 #### Client Ping Failure Detector
 
-The Ping Failure Detector may be configured in addition to one of Deadline Failure Detector. It operates at Layer 3 of the OSI protocol, and provides much quicker and more deterministic detection of hardware and other lower level events. 
+The Ping Failure Detector may be configured in addition to the Deadline Failure Detector. It operates at Layer 3 of the OSI protocol, and provides much quicker and more deterministic detection of hardware and other lower level events. 
 When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
 
 If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
@@ -57,7 +57,7 @@ The details of these requirements are explained in the [Requirements section](#r
 
 If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
 
-An example declarative configuration to use the Ping Failure Detector is as follows:
+An example declarative configuration to use the Ping Failure Detector is as follows (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
 
 ```xml
 <hazelcast-client>
