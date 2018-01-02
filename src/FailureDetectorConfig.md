@@ -8,6 +8,9 @@ Hazelcast has two built-in failure detectors; Deadline Failure Detector and Phi 
 Since 3.9.1, Hazelcast provides yet another failure detector, Ping Failure Detector, that if enabled works in parallel with the above ones, but identifies
 failures on OSI Layer 3 (Network Layer). This detector is by default disabled.
 
+Note that, Hazelcast also offers failure detectors for its Java client. Please refer to the [Client Failure Detectors section](#client-failure-detectors) for more information.
+
+
 ### Deadline Failure Detector
 
 _Deadline Failure Detector_ uses an absolute timeout for missing/lost heartbeats. After timeout, a member is considered as crashed/unavailable and marked as suspected.
