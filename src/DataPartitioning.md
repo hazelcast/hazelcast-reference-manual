@@ -9,6 +9,11 @@ By default, Hazelcast offers 271 partitions. When you start a cluster with a sin
 
 When you start a second member on that cluster (creating a Hazelcast cluster with two members), the partition replicas are distributed as shown in the illustration here.
 
+<br></br>
+![image](images/NoteSmall.jpg) ***NOTE:*** *Partition distributions in the below illustrations are shown for the sake of simplicity and for descriptive purposes. Normally, the partitions are not distributed in any order, as they are shown in these illustrations, but are distributed randomly (they do not have to be sequentially distributed to each member). The important point here is that Hazelcast equally distributes the partition primaries and their backup replicas among the members.*
+<br></br>
+
+
 ![Cluster with Two Members - Backups are Created](images/BackupPartitions.jpg)
 
 In the illustration, the partition replicas with black text are primaries and the partition replicas with blue text are backups. The first member has primary replicas of 135 partitions (black), and each of these partitions are backed up in the second member (i.e., the second member owns the backup replicas) (blue). At the same time, the first member also has the backup replicas of the second member's primary partition replicas.
@@ -23,7 +28,6 @@ Hazelcast distributes partitions' primary and backup replicas equally among the 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *Your data can have multiple copies on partition primaries and backups, depending on your backup count. Please see the [Backing Up Maps section](#backing-up-maps).*
 <br></br>
 
-Partition distributions in the above illustrations are for your convenience and descriptive purposes. Normally, the partitions are not distributed in any order (as they are shown in these illustrations), but are distributed randomly. The important point here is that Hazelcast equally distributes the partition primaries and their backup replicas among the members.
 
 Starting with Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
 they can access partitions that are owned by other members in the cluster.
