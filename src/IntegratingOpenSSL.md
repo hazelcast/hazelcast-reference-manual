@@ -156,7 +156,7 @@ Here are the descriptions for the properties:
 * `truststore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates
  trusted by your application. Its type should be `JKS`.
 * `trustStorePassword`: Password to unlock the truststore file.
-* `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLS`. Available values are:
+* `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLSv1.2`. Available values are:
   * SSL
   * SSLv2
   * SSLv3
@@ -165,9 +165,12 @@ Here are the descriptions for the properties:
   * TLSv1.1
   * TLSv1.2
 
-All of the above algorithms support Java 6 and higher versions, except the TLSv1.2 supports Java 7 and higher versions. For 
-the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
-configure only `SSL` or `TLS`, it will be converted to `SSLv3` and `TLSv1.2`.
+For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
+provide only `SSL` or `TLS` as a value for the `protocol` property, they will be converted to `SSLv3` and `TLSv1.2`, respectively.
+
+Except `TLSv1.2`, all of the listed algorithms above for the `protocol` property support Java 6 and higher versions. The protocol `TLSv1.2`, which is the default 
+value for `TLS`, supports Java 7 and higher versions. 
+
 
 ### Configuring Cipher Suites
 
