@@ -77,7 +77,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.max.no.heartbeat.seconds` | 60 | int  |   Maximum timeout of heartbeat in seconds for a member to assume it is dead. ***CAUTION***: *Setting this value too low may cause members to be evicted from the cluster when they are under heavy load: they will be unable to send heartbeat operations in time, so other members will assume that it is dead.*
 `hazelcast.max.no.master.confirmation.seconds` | 150 | int  |   Max timeout of master confirmation from other members.
 `hazelcast.max.wait.seconds.before.join` | 20 | int  |   Maximum wait time before join operation.
-`hazelcast.mc.max.visible.instance.count` | 100 | int  |   Management Center maximum visible instance count.
+`hazelcast.mc.max.visible.instance.count` | Integer.MAX_VALUE | int  |   Management Center maximum visible instance count. ***CAUTION***: *Setting this value to a lower number might prevent some instances from being monitored in Management Center.*
 `hazelcast.mc.max.visible.slow.operations.count`|10|int|Management Center maximum visible slow operations count.
 `hazelcast.mc.url.change.enabled` | true | bool  |   Management Center changing server url is enabled.
 `hazelcast.member.list.publish.interval.seconds` | 60 | int  |   Interval at which master member publishes a member list.
