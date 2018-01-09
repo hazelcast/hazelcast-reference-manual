@@ -53,7 +53,7 @@ As another scenario, assume the following:
 
 - You have a cluster consisting of members A and B with Hot Restart enabled, which is initially stable.
 - Member B is killed.
-- Member B's Hot Restart [base directory(`base-dir`)](#configuring-hot-restart) is deleted.
+- Member B's Hot Restart [base directory (`base-dir`)](#configuring-hot-restart) is deleted.
 - Member B restarts.
 
 Now member B joins the cluster as a fresh, empty member. The cluster will assign some partitions to it, unrelated to the partitions it owned before going down. 
@@ -79,7 +79,7 @@ You can trigger the force start process using the Management Center, REST API an
 
 Please note that force start is a destructive process, which results in deletion of persisted Hot Restart data.
 
-Please refer to the [Hot Restart functionality](#hot-restart) of the Management Center section to learn how you can perform a force start using the Management Center.
+Please refer to the [Hot Restart functionality](http://docs.hazelcast.org/docs/management-center/latest/manual/html/Hot_Restart.html) of the Management Center section to learn how you can perform a force start using the Management Center.
 
 ### Partial Start
 
