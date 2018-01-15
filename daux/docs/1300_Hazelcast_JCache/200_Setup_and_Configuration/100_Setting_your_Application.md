@@ -14,7 +14,7 @@ For Maven users, the coordinates look like the following code:
 <dependency>
   <groupId>javax.cache</groupId>
   <artifactId>cache-api</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 With other build systems, you might need to describe the coordinates in a different way.
@@ -30,7 +30,7 @@ If you use `hazelcast-all.jar`:
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast-all</artifactId>
-  <version>"your Hazelcast version, e.g. 3.7"</version>
+  <version>"your Hazelcast version, e.g., 3.10"</version>
 </dependency>
 ```
 
@@ -40,7 +40,7 @@ If you use `hazelcast.jar`:
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast</artifactId>
-  <version>"your Hazelcast version, e.g. 3.7"</version>
+  <version>"your Hazelcast version, e.g., 3.10"</version>
 </dependency>
 ```
 The users of other build systems have to adjust the definition of the dependency to their needs.
@@ -55,7 +55,7 @@ Maven snippet:
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast-client</artifactId>
-  <version>"your Hazelcast version, e.g. 3.7"</version>
+  <version>"your Hazelcast version, e.g., 3.10"</version>
 </dependency>
 ```
 
