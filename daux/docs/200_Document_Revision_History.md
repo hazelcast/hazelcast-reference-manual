@@ -7,6 +7,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter/Section|Description|
 |:-------|:-----------|
+| Distributed Data Structures and <br> Distributed Computing| Added content for new quorum aware data structures: IExecutorService, DurableExecutorService, IScheduledExecutorService, MultiMap, ISet, IList, Ringbuffer, Replicated Map, Cardinality Estimator, IAtomicLong, IAtomicReference, ISemaphore, ICountdownLatch.
 |[Reliable IdGenerator](/800_Distributed_Data_Structures/1450_Reliable_IdGenerator.md)| Added a new section.
 |[Entry Processor](/1000_Distributed_Computing/400_Entry_Processor)|Added [Respecting Locks on Single Keys](/1000_Distributed_Computing/400_Entry_Processor/100_Performing_Fast_In-Memory_Map_Operations.md) as a new section.
 |[System Properties](/2700_System_Properties)|Added definitions for the following new properties: <br> - 
