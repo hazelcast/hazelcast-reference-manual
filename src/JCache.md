@@ -24,7 +24,7 @@ provider. It also shows examples of basic JCache usage as well as the additional
 To gain a full understanding of the JCache functionality and provided guarantees of different operations, read
 the specification document (which is also the main documentation for functionality) at the specification page of <a href="https://www.jcp.org/en/jsr/detail?id=107" target="_blank">JSR-107</a>.
 
-## Supported JCache versions
+## Supported JCache Versions
 
 Two versions of the JCache specification have been released:
 
@@ -44,4 +44,4 @@ When upgrading from a Hazelcast version which implements JCache 1.0.0 to a versi
  
 Note that these behavioral differences apply on the Hazelcast member that executes the operation. Thus when performing a rolling member upgrade from a JCache 1.0.0-compliant Hazelcast version to a newer Hazelcast version that supports JCache 1.1.0, operations executed on the new members will exhibit JCache 1.1.0 behavior while those executed on old members will implement JCache 1.0.0 behavior.  
 
-The complete list of issues addressed in JCache specification version 1.1.0 is <a href="https://github.com/jsr107/jsr107spec/milestone/2?closed=1" target="_blank">available on github</a>.
+The complete list of issues addressed in JCache specification version 1.1.0 is <a href="https://github.com/jsr107/jsr107spec/milestone/2?closed=1" target="_blank">available on Github</a>.
