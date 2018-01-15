@@ -1,6 +1,6 @@
 ## Split-Brain Protection
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *The term "quorum" used in this section simply refers to the count of members in the cluster. It does NOT refer to an implementation of Paxos or Raft protocols as used in some NoSQL systems.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *The term "quorum" used in this section simply refers to the count of members in the cluster. It does NOT refer to an implementation of Paxos or Raft protocols as used in some NoSQL systems. The mechanism it provides in Hazelcast protects the user in case the number of nodes in a cluster drops below the specified one.*
 
 How to respond to a split-brain scenario depends on whether consistency of data or availability of your application is of primary concern. In either case, because a split-brain scenario is caused by a network failure, you must initiate an effort to identify and correct the network failure. Your cluster cannot be brought back to steady state operation until the underlying network failure is fixed. If consistency is your primary concern, you can use Hazelcast's  Split-Brain Protection feature.
 
