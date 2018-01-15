@@ -205,3 +205,24 @@ customers.put( "1", new Customer( "Joe", "Smith" ) ); // add event
 customers.put( "1", new Customer( "Ali", "Selam" ) ); // update event
 customers.remove( "1" ); // remove event
 ```
+
+### Split-Brain Protection for ReplicatedMap
+
+ReplicatedMap can be configured to check for a minimum number of available members before applying queue operations (see [Split-Brain Protection](/2600_Network_Partitioning/100_Split-Brain_Protection.md)). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+- WRITE, READ_WRITE:
+    - `clear`
+    - `put`
+    - `putAll`
+    - `remove`
+- READ, READ_WRITE:
+    - `containsKey`
+    - `containsValue`
+    - `entrySet`
+    - `get`
+    - `isEmpty`
+    - `keySet`
+    - `size`
+    - `values`

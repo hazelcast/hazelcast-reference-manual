@@ -98,3 +98,43 @@ placed on one other member. If it is 2, it will be placed on two other members.
 - `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 include-value to true if you want the item event to contain the entry values, and you can set
 local to true if you want to listen to the entries on the local member.
+
+### Split-Brain Protection for MultiMap & TransactionalMultiMap
+
+MultiMap & TransactionalMultiMap can be configured to check for a minimum number of available members before applying queue operations (see [Split-Brain Protection](/2600_Network_Partitioning/100_Split-Brain_Protection.md)). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+MultiMap:
+
+- WRITE, READ_WRITE:
+    - `clear`
+    - `forceUnlock`
+    - `lock`
+    - `put`
+    - `remove`
+    - `tryLock`
+    - `unlock`
+- READ, READ_WRITE:
+    - `containsEntry`
+    - `containsKey`
+    - `containsValue`
+    - `entrySet`
+    - `get`
+    - `isLocked`
+    - `keySet`
+    - `localKeySet`
+    - `size`
+    - `valueCount`
+    - `values`
+
+
+TransactionalMultiMap:
+
+- WRITE, READ_WRITE:
+    - `put`
+    - `remove`
+- READ, READ_WRITE:
+    - `size`
+    - `get`
+    - `valueCount`

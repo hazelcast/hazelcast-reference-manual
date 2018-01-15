@@ -97,4 +97,18 @@ Semaphore configuration has the below elements.
 
 ![image](../images/NoteSmall.jpg) ***NOTE:*** *If high performance is more important than not losing the permit information, you can disable the backups by setting `backup-count` to 0.*
 
+### Split-Brain Protection for ISemaphore
 
+ISemaphore can be configured to check for a minimum number of available members before applying queue operations (see [Split-Brain Protection](/2600_Network_Partitioning/100_Split-Brain_Protection.md)). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+- WRITE, READ_WRITE:
+    - `acquire`
+    - `drainPermits`
+    - `init`
+    - `reducePermits`
+    - `release`
+    - `tryAcquire`
+- READ, READ_WRITE:
+    - `availablePermits`
