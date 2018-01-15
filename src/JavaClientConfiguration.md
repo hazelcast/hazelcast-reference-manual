@@ -518,7 +518,7 @@ The example declarative and programmatic configurations below show how to config
 ```xml
 <hazelcast-client>
   ...
-  <client-connection-strategy async-start="true" reconnect-mode="ASYNC" />
+  <connection-strategy async-start="true" reconnect-mode="ASYNC" />
   ...
 </hazelcast-client>
 ```
