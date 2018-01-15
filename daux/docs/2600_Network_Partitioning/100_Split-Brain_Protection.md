@@ -14,6 +14,7 @@ Split-Brain Protection is supported for the following Hazelcast data structures:
 * Cache (for Hazelcast 3.5 and higher versions)
 * Lock (for Hazelcast 3.8 and higher versions)
 * Queue (for Hazelcast 3.8 and higher versions)
+* IExecutorService, DurableExecutorService, IScheduledExecutorService, MultiMap, ISet, IList, Ringbuffer, Replicated Map, Cardinality Estimator, IAtomicLong, IAtomicReference, ISemaphore, ICountdownLatch (for Hazelcast 3.10 and higher versions)
 
 Each data structure to be protected should have the configuration added to it as explained in the [Configuring Split-Brain Protection section](/100_Split-Brain_Protection.md#page_Configuring+Split+Brain-Protection).
 
