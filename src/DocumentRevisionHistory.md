@@ -22,6 +22,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Distributed Data Structures](#distributed-data-structures)|[Lock](#lock)|Added "Lock vs. IMap.lock" as a new section.|
 ||[Event Journal](#event-journal)| Added as a new section to explain the event journal distributed data structure that stores the history of mutation actions on the data structures such as map or cache.
 |[Hazelcast JCache](#hazelcast-jcache)|[Scoping to Join Clusters](#scoping-to-join-clusters)|Enhanced the content to explain and give examples about the Hazelcast instance creations during cache manager starts.
+| ||Added [Supported JCache Versions](#supported-jcache-versions) as a new section along with the updates regarding with JCache 1.1.0 .
 |[Integrated Clustering](#integrated-clustering)|[Integrating with Spring](#integrating-with-spring)| Added "Defining Timeouts for Cache Read Operation" as a new section.
 |[Hazelcast Java Client](#hazelcast-java-client)|[Enabling Client TLS/SSL](#enabling-client-tlsssl)|Added information related to mutual authentication.
 ||[Configuring Client Connection Strategy](#configuring-client-connection-strategy)| Added as a new section.
