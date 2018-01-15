@@ -19,5 +19,5 @@ Following is a list of methods that now support Split-Brain Protection checks. T
     - `submitToKeyOwner`
     - `submitToMember`
     - `submitToMembers`
-- READ, READ_WRITE:
+
 
