@@ -15,8 +15,27 @@ Property Name | Default Value | Type | Description
 `hazelcast.cache.invalidation.batch.size`|100|int|Defines the maximum number of cache invalidation events to be drained and sent to the event listeners in a batch.
 `hazelcast.cache.invalidation.batchfrequency.seconds`|5|int|Defines cache invalidation event batch sending frequency in seconds.
 `hazelcast.clientengine.thread.count`||int|Maximum number of threads to process non-partition-aware client requests, like `map.size()`, query, executor tasks, etc. Default count is 20 times number of cores.
+`hazelcast.diagnostics.directory`|`user.dir`|string|Output directory of the diagnostic log files. NOTE: For detailed information on the diagnostic tool, along with this and the following diagnostic related system properties, please refer to the [Diagnostics section](#diagnostics).
+`hazelcast.diagnostics.enabled`|false|bool|Specifies whether diagnostics tool is enabled or not for the cluster.
+`hazelcast.diagnostics.filename.prefix`||string|Optional prefix for the diagnostics log file.
+`hazelcast.diagnostics.invocation.sample.period.seconds`|0|long|Frequency of scanning all the pending invocations in seconds. 0 means the `Invocations` plugin for diagnostics tool is disabled.
+`hazelcast.diagnostics.invocation.slow.threshold.seconds`|5|long|Threshold period, in seconds, that makes an invocation to be considered as slow.
 `hazelcast.diagnostics.max.rolled.file.count`|10|int|Allowed count of diagnostic files within each roll.
-`hazelcast.diagnostics.max.rolled.file.size.mb`|10|int| Size of each diagnostic file to be rolled.
+`hazelcast.diagnostics.max.rolled.file.size.mb`|50|int| Size of each diagnostic file to be rolled.
+`hazelcast.diagnostics.member-heartbeat.seconds`|10|long|Period for which the MemberHeartbeats plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`|100|int|Maximum allowed deviation for a member-to-member heartbeats.  
+`hazelcast.diagnostics.memberinfo.period.second`|60|long|Frequency, in seconds, at which the cluster information is dumped to the diagnostics log file.
+`hazelcast.diagnostics.metric.level`|Mandatory|string|Level of detail for the diagnostic tool. 
+`hazelcast.diagnostics.metrics.period.seconds`|60|long|Frequency, in seconds, at which the Metrics plugin dumps information to the diagnostics log file.
+`hazelcast.diagnostics.metrics.level`|Mandatory|string|Level of detail for the Metrics plugin of the diagnostic tool. 
+`hazelcast.diagnostics.operation-heartbeat.seconds`|10|long|Period, in seconds, for which the OperationHeartbeats plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`|33|int|Maximum allowed deviation for a member-to-member operation heartbeats.  
+`hazelcast.diagnostics.pending.invocations.period.seconds`|0|long|Period, in seconds, for which the PendingInvocations plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.slowoperations.period.seconds`|60|long| Period, in seconds, for which the SlowOperations plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.storeLatency.period.seconds`|0|long|Period, in seconds, for which the StoreLatency plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.storeLatency.reset.period.seconds`|0|long|Period, in seconds, for resetting the statistics for the StoreLatency plugin of the diagnostics tool.
+`hazelcast.diagnostics.systemlog.enabled`|true|bool|Specifies whether the SystemLog plugin of the diagnostics tool is enabled or not.
+`hazelcast.diagnostics.systemlog.partitions`|false|bool|Specifies whether the SystemLog plugin collects information about partition migrations.
 `hazelcast.executionservice.taskscheduler.remove.oncancel`| false | bool | Controls whether the task scheduler removes tasks immediately upon cancellation. This is disabled by default, because it can cause severe delays on the other operations. By default all cancelled tasks will eventually get removed by the scheduler workers.
 `hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the member assumes the client is dead and closes its connections to the client.
 `hazelcast.compatibility.3.6.client`|false|bool|When this property is true, if the server cannot determine the connected client version, it will assume that it has the version 3.6.x. This property is especially needed if you are using ICache (or JCache).
@@ -30,8 +49,10 @@ Property Name | Default Value | Type | Description
 `hazelcast.event.thread.count` | 5 | int | Number of event handler threads.
 `hazelcast.graceful.shutdown.max.wait` | 600 | int  |   Maximum wait in seconds during graceful shutdown.
 `hazelcast.http.healthcheck.enabled`|false|bool|Enable/disable Hazelcast's HTTP based health check implementation.  When it is enabled, you can retrieve information about your cluster's health status (member state, cluster state, cluster size, etc.) by launching `http://<your member's host IP>:5701/hazelcast/health`.
-`hazelcast.health.monitoring.delay.seconds`|30|int|Health monitoring logging interval in seconds.
+`hazelcast.health.monitoring.delay.seconds`|30|int|Health monitoring logging interval in seconds. NOTE: For detailed information on the health monitoring tool, along with this and the following health monitoring related system properties, please refer to the [Health Check and Monitoring section](#health-check-and-monitoring).
 `hazelcast.health.monitoring.level`|SILENT|string|Health monitoring log level. When *SILENT*, logs are printed only when values exceed some predefined threshold. When *NOISY*, logs are always printed periodically. Set *OFF* to turn off completely.
+`hazelcast.health.monitoring.threshold.cpu.percentage`|70|int|When the health monitoring level is *SILENT*, logs are printed only when the CPU usage exceeds this threshold.
+`hazelcast.health.monitoring.threshold.memory.percentage`|70|int|When the health monitoring level is *SILENT*, logs are printed only when the memory usage exceeds this threshold.
 `hazelcast.heartbeat.interval.seconds` | 5 | int  |   Heartbeat send interval in seconds.
 `hazelcast.hidensity.check.freememory`|true|bool|If enabled and is able to fetch memory statistics via Java's `OperatingSystemMXBean`, it checks whether there is enough free physical memory for the requested number of bytes. If the free memory checker is disabled (false), acts as if the check is succeeded.
 `hazelcast.icmp.echo.fail.fast.on.startup`| true | bool| Specifies whether ICMP Echo Request mode for ping detector is enforced. If OS is not supported, or not configured correctly, as explained in [Requirements and Linux/Unix Configuration](#requirements-and-linux-unix-configuration), Hazelcast will fail to start.
