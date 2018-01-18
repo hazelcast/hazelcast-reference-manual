@@ -68,6 +68,8 @@ memberGroupConfig2.addInterface( "10.10.10.10-100" )
 partitionGroupConfig.addMemberGroupConfig( memberGroupConfig );
 partitionGroupConfig.addMemberGroupConfig( memberGroupConfig2 );
 ```
+![Note](images/NoteSmall.jpg) ***NOTE:*** *While your cluster was forming, if you configured your members to discover each other by their IP addresses, you should use the IP addresses for the `<interface>` element. If your members discovered each other by their hostnames, you should use the hostnames.*
+
 
 **3. PER_MEMBER:**
 
