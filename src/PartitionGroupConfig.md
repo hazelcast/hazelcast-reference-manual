@@ -69,6 +69,9 @@ partitionGroupConfig.addMemberGroupConfig( memberGroupConfig );
 partitionGroupConfig.addMemberGroupConfig( memberGroupConfig2 );
 ```
 
+![Note](images/NoteSmall.jpg) ***NOTE:*** *While your cluster was forming, if you configured your members to discover each other by their IP addresses, you should use the IP addresses for the `<interface>` element. If your members discovered each other by their hostnames, you should use the hostnames.*
+
+
 **3. PER_MEMBER:**
 
 You can give every member its own group. Each member is a group of its own and primary and backup partitions are distributed randomly (not on the same physical member). This gives the least amount of protection and is the default configuration for a Hazelcast cluster. This grouping type provides good redundancy when Hazelcast members are on separate hosts. However, if multiple instances run on the same host, this type is not a good option. 
