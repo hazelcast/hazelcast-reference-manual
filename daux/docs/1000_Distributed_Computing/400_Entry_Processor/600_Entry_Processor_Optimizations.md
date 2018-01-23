@@ -43,6 +43,27 @@ The method `getExecutorName()` method may also return two constants defined in t
 - NO_OFFLOADING: Processing will not be offloaded if the method `getExecutorName()` returns this constant; it will be executed as if it does not implement the `Offloadable` interface.
 - OFFLOADABLE_EXECUTOR: Processing will be offloaded to the default `ExecutionService.OFFLOADABLE_EXECUTOR`.
 
+Note that if the method `getExecutorName()` cannot find an executor whose name matches the one called by this method, then the default executor service is used. Here is the configuration for the "default" executor:
+
+```xml
+<executor-service name="default">
+    <pool-size>16</pool-size>
+    <queue-capacity>0</queue-capacity>
+</executor-service>
+```
+
+An example of an Offloadable called "OffloadedInventoryEntryProcessor" would be as follows:
+
+```xml
+<executor-service name="OffloadedInventoryEntryProcessor”>
+    <pool-size>30</pool-size>
+    <queue-capacity>0</queue-capacity>
+</executor-service>
+```
+
+Remember to set the `pool-size` (count of executor threads per member) according to your execution needs. Please refer to the [Configuring Executor Service section](/1000_Distributed_Computing/100_Executor_Service/800_Configuring_Executor_Service.md) for the configuration details.
+
+
 
 #### ReadOnly Entry Processor
 
