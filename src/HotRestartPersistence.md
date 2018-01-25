@@ -37,27 +37,26 @@ If a member fails to either start, join the cluster in time (within the timeout)
 
 In the case of a restart after a cluster crash, the Hot Restart feature realizes that it was not a clean shutdown and Hazelcast tries to restart the cluster with the last saved data following the process explained above. In some cases, specifically when the cluster crashes while it has an ongoing partition migration process, currently it is not possible to restore the last saved state.
 
-#### Example Scenarios
+#### Restart of a Member in Running Cluster
 
 Assume the following:
 
-- You have a cluster consisting of members A and B with Hot Restart enabled, which is initially stable.
+- You have a cluster consisting of members A, B and C with Hot Restart enabled, which is initially stable.
 - Member B is killed.
 - Member B restarts.
 
-Since only a single member has failed, the cluster performed the standard High Availability routine by recovering member B's data from backups and redistributing the data among the remaining members (the single member A in this case). Member B's persisted Hot Restart data is completely irrelevant.
+Since only a single member has failed, the cluster performed the standard High Availability routine by recovering member B's data from backups and redistributing the data among the remaining members (the members A and B in this case). Member B's persisted Hot Restart data is completely irrelevant.
 
 Furthermore, when a member starts with existing Hot Restart data, it expects to find itself within a cluster that has been shut down as a whole and is now restarting as a whole. Since the reality is that the cluster has been running all along, member B's persisted cluster state does not match the actual state. Therefore, member B aborts initialization and shuts down.
 
 As another scenario, assume the following:
 
-- You have a cluster consisting of members A and B with Hot Restart enabled, which is initially stable.
+- You have a cluster consisting of members A, B and C with Hot Restart enabled, which is initially stable.
 - Member B is killed.
-- Member B's Hot Restart [base directory (`base-dir`)](#configuring-hot-restart) is deleted.
+- Member B's Hot Restart [base directory (`base-dir`)](#configuring-hot-restart) must be deleted.
 - Member B restarts.
 
 Now member B joins the cluster as a fresh, empty member. The cluster will assign some partitions to it, unrelated to the partitions it owned before going down. 
-
 
 ### Force Start
 
