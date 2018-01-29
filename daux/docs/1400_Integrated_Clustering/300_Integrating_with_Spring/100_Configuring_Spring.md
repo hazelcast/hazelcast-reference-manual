@@ -15,7 +15,7 @@ Hazelcast supports Spring 2.5 and higher versions.
 
 ***Classpath Configuration*** 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *To enable Spring integration, either `hazelcast-spring-<version>.jar` or `hazelcast-all-<version>.jar` must be in the classpath.*
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *To enable Spring integration, either `hazelcast-spring-<version>.jar` or `hazelcast-all-<version>.jar` must be in the classpath.*
 
 If you use Maven, add the following lines to your `pom.xml`.
 
