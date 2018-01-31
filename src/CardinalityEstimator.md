@@ -126,5 +126,5 @@ for (String ip : _visitorIpsBuffer_) {
   uniqueVisitorsEstimator.add(ip);
 }
 
-int estimate = uniqueVisitorsEstimator.estimate();
+long estimate = uniqueVisitorsEstimator.estimate();
 ```
