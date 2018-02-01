@@ -20,7 +20,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.cache.invalidation.batch.size`|100|int|Defines the maximum number of cache invalidation events to be drained and sent to the event listeners in a batch.
 `hazelcast.cache.invalidation.batchfrequency.seconds`|5|int|Defines cache invalidation event batch sending frequency in seconds.
 `hazelcast.clientengine.query.thread.count`||int| Number of threads to process query requests coming from the clients. Default count is the number of cores multiplied by 1.
-`hazelcast.clientengine.thread.count`|-1|int|Maximum number of threads to process non-partition-aware client requests, like `map.size()`, query, executor tasks, etc. Default count is 20 times number of cores.
+`hazelcast.clientengine.thread.count`|-1|int|Maximum number of threads to process non-partition-aware client requests, like `map.size()`, executor tasks, etc. Default count is 20 times number of cores.
 `hazelcast.diagnostics.directory`|`user.dir`|string|Output directory of the diagnostic log files. NOTE: For detailed information on the diagnostic tool, along with this and the following diagnostic related system properties, please refer to the [Diagnostics section](/1900_Management/500_Diagnostics.md).
 `hazelcast.diagnostics.enabled`|false|bool|Specifies whether diagnostics tool is enabled or not for the cluster.
 `hazelcast.diagnostics.filename.prefix`||string|Optional prefix for the diagnostics log file.

@@ -23,3 +23,12 @@ Below is the equivalent programmatic configuration.
 Config cfg = new Config();
 cfg.getExecutorConfig("hz:query").setPoolSize(100);
 ```
+
+#### Query Requests from Clients
+
+When dealing with the query requests coming from the clients to your members, Hazelcast offers the following system properties to tune your thread pools:
+
+- `hazelcast.clientengine.thread.count` which is the number of threads to process non-partition-aware client requests, like `map.size()` and executor tasks. Its default value is the number of cores multiplied by 20.
+- `hazelcast.clientengine.query.thread.count` which is the number of threads to process query requests coming from the clients. Its default value is the number of cores.
+
+If there are a lot of query request from the clients, you may want to increase the value of `hazelcast.clientengine.query.thread.count`. In addition to this tuning, you may also consider increasing the value of `hazelcast.clientengine.thread.count` if the CPU load in your system is not high and there is plenty of free memory.
