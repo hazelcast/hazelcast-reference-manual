@@ -49,13 +49,13 @@ HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 
 ### Authorization
 
-Hazelcast client authorization is configured by a client permission policy. Hazelcast has a default permission policy implementation that uses permission configurations defined in the Hazelcast security configuration. Default policy permission checks are done against instance types (map, queue, etc.), instance names (map, queue, name, etc.), instance actions (put, read, remove, add, etc.), client endpoint addresses, and client principal defined by the Credentials object. Instance and principal names and endpoint addresses can be defined as wildcards(*). Please see the [Network Configuration section](#other-network-configurations) and [Using Wildcards section](#using-wildcards).
+Hazelcast client authorization is configured by a client permission policy. Hazelcast has a default permission policy implementation that uses permission configurations defined in the Hazelcast security configuration. Default policy permission checks are done against instance types (map, queue, etc.), instance names (map, queue, name, etc.), instance actions (put, read, remove, add, etc.), client endpoint addresses, and client principal defined by the Credentials object. The default permission policy allows to use comma separated names in the principal attribute configuration. Instance and principal names and endpoint addresses can be defined as wildcards(*). Please see the [Network Configuration section](#other-network-configurations) and [Using Wildcards section](#using-wildcards).
 
 ```xml
 <security enabled="true">
   <client-permissions>
-    <!-- Principal 'admin' from endpoint '127.0.0.1' has all permissions. -->
-    <all-permissions principal="admin">
+    <!-- Principals 'admin' and 'root' from endpoint '127.0.0.1' have all permissions. -->
+    <all-permissions principal="admin,root">
       <endpoints>
         <endpoint>127.0.0.1</endpoint>
       </endpoints>
