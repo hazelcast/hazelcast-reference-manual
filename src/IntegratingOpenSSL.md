@@ -165,11 +165,8 @@ Here are the descriptions for the properties:
   * TLSv1.1
   * TLSv1.2
 
-For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
+  All of the algorithms listed above support Java 6 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
 provide only `SSL` or `TLS` as a value for the `protocol` property, they will be converted to `SSLv3` and `TLSv1.2`, respectively.
-
-Except `TLSv1.2`, all of the listed algorithms above for the `protocol` property support Java 6 and higher versions. The protocol `TLSv1.2`, which is the default 
-value for `TLS`, supports Java 7 and higher versions. 
 
 
 ### Configuring Cipher Suites
