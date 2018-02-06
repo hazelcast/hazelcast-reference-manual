@@ -78,10 +78,10 @@ Following are the definitions of configuration elements:
 - `class-name`: Name of the class implementation for the WAN replication.
 - `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full.
 - `queue-capacity`: Size of the queue of events. Its default value is 10000.
-- `batch.size`: Maximum size of events that are sent to the target cluster in a single batch.
-- `batch.max.delay.millis`: Maximum amount of time to be waited before sending a batch of events in case `batch.size` is not reached. 
-- `snapshot.enabled`: When set to `true`, only the latest events (based on key) are selected and sent in a batch.
-- `response.timeout.millis`: Time in milliseconds to be waited for the acknowledgment of a sent WAN event to target cluster. 
+- `batch.size`: Maximum size of events that are sent to the target cluster in a single batch. Its default value is 500.
+- `batch.max.delay.millis`: Maximum amount of time, in milliseconds, to be waited before sending a batch of events in case `batch.size` is not reached. Its default value is 1000.
+- `snapshot.enabled`: When set to `true`, only the latest events (based on key) are selected and sent in a batch. Its default value is `false`.
+- `response.timeout.millis`: Time in milliseconds to be waited for the acknowledgment of a sent WAN event to target cluster. Its default value is 60000.
 - `ack.type`: Acknowledgment type for each target cluster.
 - `endpoints`: IP addresses of the cluster members for which the WAN replication is implemented.
 - `group.password`: Configures target cluster's group password.

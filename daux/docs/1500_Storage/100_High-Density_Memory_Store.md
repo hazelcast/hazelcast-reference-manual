@@ -43,7 +43,7 @@ Also, you can configure its size, memory allocator type, minimum block size, pag
   
 - **minimum block size:** Minimum size of the blocks in bytes to split and fragment a page block to assign to an allocation request. It is used only by the **POOLED** memory allocator. Default value is **16**.
 - **page size:** Size of the page in bytes to allocate memory as a block. It is used only by the **POOLED** memory allocator. Default value is `1 << 22` = **4194304 Bytes**, about **4 MB**.
-- **metadata space percentage:** Defines the percentage of the allocated native memory that is used for internal memory structures by the High-Density Memory for tracking the used and available memory blocks. It is used only by the **POOLED** memory allocator. Default value is **12.5**. Please note that when the memory runs out, you will get a Native `OutOfMemoryException`;  if your store has a big size of entries, you should consider increasing this percentage.
+- **metadata space percentage:** Defines the percentage of the allocated native memory that is used for internal memory structures by the High-Density Memory for tracking the used and available memory blocks. It is used only by the **POOLED** memory allocator. Default value is **12.5**. Please note that when the memory runs out, you will get a `NativeOutOfMemoryException`;  if your store has a big size of entries, you should consider increasing this percentage.
 
 The following is the programmatic configuration example.
 

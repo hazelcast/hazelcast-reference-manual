@@ -1,9 +1,9 @@
 ## Ringbuffer
 
-Hazelcast Ringbuffer is a distributed data structure that stores its data in a ring-like structure. You can think of it as a circular array with a 
-given capacity. Each Ringbuffer has a tail and a head. The tail is where the items are added and the head is where the items are overwritten 
-or expired. You can reach each element in a Ringbuffer using a sequence ID, which is mapped to the elements between the head 
-and tail (inclusive) of the Ringbuffer. 
+Hazelcast Ringbuffer is a replicated but not partitioned data structure that stores its data in a ring-like structure. You can 
+think of it as a circular array with a given capacity. Each Ringbuffer has a tail and a head. The tail is where the items are 
+added and the head is where the items are overwritten or expired. You can reach each element in a Ringbuffer using a sequence 
+ID, which is mapped to the elements between the head and tail (inclusive) of the Ringbuffer. 
 
 ### Getting a Ringbuffer and Reading Items
 

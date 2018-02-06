@@ -1,5 +1,5 @@
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *The term "quorum" used in this section simply refers to the count of members in the cluster. It does NOT refer to an implementation of Paxos or Raft protocols as used in some NoSQL systems.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *The term "quorum" used in this section simply refers to the count of members in the cluster. It does NOT refer to an implementation of Paxos or Raft protocols as used in some NoSQL systems. The mechanism provided in Hazelcast protects the user in case the number of members in a cluster drops below the specified one.*
 
 How to respond to a split-brain scenario depends on whether consistency of data or availability of your application is of primary concern. In either case, because a split-brain scenario is caused by a network failure, you must initiate an effort to identify and correct the network failure. Your cluster cannot be brought back to steady state operation until the underlying network failure is fixed. If consistency is your primary concern, you can use Hazelcast's  Split-Brain Protection feature.
 
@@ -14,6 +14,7 @@ Split-Brain Protection is supported for the following Hazelcast data structures:
 * Cache (for Hazelcast 3.5 and higher versions)
 * Lock (for Hazelcast 3.8 and higher versions)
 * Queue (for Hazelcast 3.8 and higher versions)
+* IExecutorService, DurableExecutorService, IScheduledExecutorService, MultiMap, ISet, IList, Ringbuffer, Replicated Map, Cardinality Estimator, IAtomicLong, IAtomicReference, ISemaphore, ICountdownLatch (for Hazelcast 3.10 and higher versions)
 
 Each data structure to be protected should have the configuration added to it as explained in the [Configuring Split-Brain Protection section](/100_Split-Brain_Protection.md#page_Configuring+Split+Brain-Protection).
 

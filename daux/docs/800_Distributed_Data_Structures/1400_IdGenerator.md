@@ -1,6 +1,8 @@
 
 Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
 
+![image](../images/NoteSmall.jpg) ***NOTE:*** ***Feature is deprecated.*** *The implementation can produce duplicate IDs in case of a network split, even with split-brain protection being enabled (during short window while split-brain is detected). Please use [FlakeIdGenerator](/1450_FlakeIdGenerator.md) for an alternative implementation which does not suffer from the mentioned issue.*
+
 ### Generating Cluster-Wide IDs
 
 ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10,000 identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 10,000 IDs. This way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.
@@ -48,8 +50,8 @@ Id: 10003
 You can see that the generated IDs are unique and counting upwards. If you see duplicated identifiers, it means your instances could not form a cluster. 
 
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *Generated IDs are unique during the life cycle of the cluster. If the entire cluster is restarted, IDs start from 0, again or you can initialize to a value using the `init()` method of IdGenerator.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *Generated IDs are unique during the life cycle of the cluster. If the entire cluster is restarted, IDs start from 0, again or you can initialize to a value using the `init()` method of `IdGenerator`.*
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** *IdGenerator has one synchronous backup and no asynchronous backups. Its backup count is not configurable.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *`IdGenerator` has one synchronous backup and no asynchronous backups. Its backup count is not configurable.*
 
 

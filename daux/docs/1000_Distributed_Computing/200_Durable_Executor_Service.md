@@ -48,4 +48,21 @@ Following are the descriptions of each configuration element and attribute:
 * `pool-size`: Number of executor threads per member for the executor.
 * `durability`: Count of the backup members on which the execution task will be stored. Its default value is 1.
 * `capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
- 
+
+### Split-Brain Protection for DurableExecutorService
+
+DurableExecutorService can be configured to check for a minimum number of available members before applying queue operations (see [Split-Brain Protection](/2600_Network_Partitioning/100_Split-Brain_Protection.md)). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+- WRITE, READ_WRITE:
+    - `disposeResult`
+    - `execute`
+    - `executeOnKeyOwner`
+    - `retrieveAndDisposeResult`
+    - `shutdown`
+    - `shutdownNow`
+    - `submit`
+    - `submitToKeyOwner`
+- READ, READ_WRITE:
+    - `retrieveResult`

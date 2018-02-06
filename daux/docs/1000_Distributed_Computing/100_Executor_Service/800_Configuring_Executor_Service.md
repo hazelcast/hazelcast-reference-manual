@@ -28,7 +28,3 @@ Executor service configuration has the following elements.
 - `statistics-enabled`: You can retrieve some statistics (such as pending operations count, started operations count, completed operations count, and cancelled operations count) by setting this parameter's value to `true`. The method for retrieving the statistics is `getLocalExecutorStats()`.
 
 
-
-
-
-

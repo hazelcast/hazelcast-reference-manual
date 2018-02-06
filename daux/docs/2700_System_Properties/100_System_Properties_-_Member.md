@@ -19,11 +19,30 @@ Property Name | Default Value | Type | Description
 `hazelcast.cache.invalidation.batch.enabled`|true|bool|Specifies whether the cache invalidation event batch sending is enabled or not.
 `hazelcast.cache.invalidation.batch.size`|100|int|Defines the maximum number of cache invalidation events to be drained and sent to the event listeners in a batch.
 `hazelcast.cache.invalidation.batchfrequency.seconds`|5|int|Defines cache invalidation event batch sending frequency in seconds.
-`hazelcast.clientengine.thread.count`|-1|int|Maximum number of threads to process non-partition-aware client requests, like `map.size()`, query, executor tasks, etc. Default count is 20 times number of cores.
+`hazelcast.clientengine.query.thread.count`||int| Number of threads to process query requests coming from the clients. Default count is the number of cores multiplied by 1.
+`hazelcast.clientengine.thread.count`|-1|int|Maximum number of threads to process non-partition-aware client requests, like `map.size()`, executor tasks, etc. Default count is 20 times number of cores.
+`hazelcast.diagnostics.directory`|`user.dir`|string|Output directory of the diagnostic log files. NOTE: For detailed information on the diagnostic tool, along with this and the following diagnostic related system properties, please refer to the [Diagnostics section](/1900_Management/500_Diagnostics.md).
+`hazelcast.diagnostics.enabled`|false|bool|Specifies whether diagnostics tool is enabled or not for the cluster.
+`hazelcast.diagnostics.filename.prefix`||string|Optional prefix for the diagnostics log file.
+`hazelcast.diagnostics.invocation.sample.period.seconds`|0|long|Frequency of scanning all the pending invocations in seconds. 0 means the `Invocations` plugin for diagnostics tool is disabled.
+`hazelcast.diagnostics.invocation.slow.threshold.seconds`|5|long|Threshold period, in seconds, that makes an invocation to be considered as slow.
 `hazelcast.diagnostics.max.rolled.file.count`|10|int|Allowed count of diagnostic files within each roll.
-`hazelcast.diagnostics.max.rolled.file.size.mb`|10|int| Size of each diagnostic file to be rolled.
-`hazelcast.invalidation.max.tolerated.miss.count`|10|int|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
-`hazelcast.invalidation.reconciliation.interval.seconds`|60|int|Period for which the cluster members are scanned to compare generated invalidation events with the received ones from Near Cache.
+`hazelcast.diagnostics.max.rolled.file.size.mb`|50|int| Size of each diagnostic file to be rolled.
+`hazelcast.diagnostics.member-heartbeat.seconds`|10|long|Period for which the MemberHeartbeats plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`|100|int|Maximum allowed deviation for a member-to-member heartbeats.  
+`hazelcast.diagnostics.memberinfo.period.second`|60|long|Frequency, in seconds, at which the cluster information is dumped to the diagnostics log file.
+`hazelcast.diagnostics.metric.level`|Mandatory|string|Level of detail for the diagnostic tool. 
+`hazelcast.diagnostics.metrics.period.seconds`|60|long|Frequency, in seconds, at which the Metrics plugin dumps information to the diagnostics log file.
+`hazelcast.diagnostics.metrics.level`|Mandatory|string|Level of detail for the Metrics plugin of the diagnostic tool. 
+`hazelcast.diagnostics.operation-heartbeat.seconds`|10|long|Period, in seconds, for which the OperationHeartbeats plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`|33|int|Maximum allowed deviation for a member-to-member operation heartbeats.  
+`hazelcast.diagnostics.pending.invocations.period.seconds`|0|long|Period, in seconds, for which the PendingInvocations plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.slowoperations.period.seconds`|60|long| Period, in seconds, for which the SlowOperations plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.storeLatency.period.seconds`|0|long|Period, in seconds, for which the StoreLatency plugin of the diagnostics tool runs. 0 means this plugin is disabled.
+`hazelcast.diagnostics.storeLatency.reset.period.seconds`|0|long|Period, in seconds, for resetting the statistics for the StoreLatency plugin of the diagnostics tool.
+`hazelcast.diagnostics.systemlog.enabled`|true|bool|Specifies whether the SystemLog plugin of the diagnostics tool is enabled or not.
+`hazelcast.diagnostics.systemlog.partitions`|false|bool|Specifies whether the SystemLog plugin collects information about partition migrations.
+`hazelcast.executionservice.taskscheduler.remove.oncancel`| false | bool | Controls whether the task scheduler removes tasks immediately upon cancellation. This is disabled by default, because it can cause severe delays on the other operations. By default all cancelled tasks will eventually get removed by the scheduler workers.
 `hazelcast.client.max.no.heartbeat.seconds`|300|int|Time after which the member assumes the client is dead and closes its connections to the client.
 `hazelcast.compatibility.3.6.client`|false|bool|When this property is true, if the server cannot determine the connected client version, it will assume that it has the version 3.6.x. This property is especially needed if you are using ICache (or JCache).
 `hazelcast.connect.all.wait.seconds` | 120 | int | Timeout to connect all other cluster members when a member is joining to a cluster.
@@ -36,11 +55,18 @@ Property Name | Default Value | Type | Description
 `hazelcast.event.thread.count` | 5 | int | Number of event handler threads.
 `hazelcast.graceful.shutdown.max.wait` | 600 | int  |   Maximum wait in seconds during graceful shutdown.
 `hazelcast.http.healthcheck.enabled`|false|bool|Enable/disable Hazelcast's HTTP based health check implementation.  When it is enabled, you can retrieve information about your cluster's health status (member state, cluster state, cluster size, etc.) by launching `http://<your member's host IP>:5701/hazelcast/health`.
-`hazelcast.health.monitoring.delay.seconds`|30|int|Health monitoring logging interval in seconds.
+`hazelcast.health.monitoring.delay.seconds`|30|int|Health monitoring logging interval in seconds. NOTE: For detailed information on the health monitoring tool, along with this and the following health monitoring related system properties, please refer to the [Health Check and Monitoring section](/1900_Management/400_Cluster_Utilities/800_Health_Check_and_Monitoring.md).
 `hazelcast.health.monitoring.level`|SILENT|string|Health monitoring log level. When *SILENT*, logs are printed only when values exceed some predefined threshold. When *NOISY*, logs are always printed periodically. Set *OFF* to turn off completely.
+`hazelcast.health.monitoring.threshold.cpu.percentage`|70|int|When the health monitoring level is *SILENT*, logs are printed only when the CPU usage exceeds this threshold.
+`hazelcast.health.monitoring.threshold.memory.percentage`|70|int|When the health monitoring level is *SILENT*, logs are printed only when the memory usage exceeds this threshold.
 `hazelcast.heartbeat.interval.seconds` | 5 | int  |   Heartbeat send interval in seconds.
 `hazelcast.hidensity.check.freememory`|true|bool|If enabled and is able to fetch memory statistics via Java's `OperatingSystemMXBean`, it checks whether there is enough free physical memory for the requested number of bytes. If the free memory checker is disabled (false), acts as if the check is succeeded.
-`hazelcast.icmp.enabled` | false | bool  |   Enable ICMP ping.
+`hazelcast.icmp.echo.fail.fast.on.startup`| true | bool| Specifies whether ICMP Echo Request mode for ping detector is enforced. If OS is not supported, or not configured correctly, as explained in the Ping Failure Detector section, Hazelcast will fail to start.
+`hazelcast.icmp.enabled` | false | bool  |   Specifies whether ICMP ping is enabled or not.
+`hazelcast.icmp.interval` | 1000 | int | Interval between ping attempts in milliseconds. Default and minimum allowed value is 1 second.
+`hazelcast.icmp.max.attempts`| 3 | int | Maximum ping attempts before suspecting a member.
+`hazelcast.icmp.timeout` | 1000 | int |   ICMP timeout in milliseconds. This cannot be more than the value of `hazelcast.icmp.interval` property; it should always be smaller.
+`hazelcast.icmp.parallel.mode`| true | bool | Specifies whether the Ping Failure Detector will work in parallel with the other detectors.
 `hazelcast.icmp.timeout` | 1000 | int |   ICMP timeout in milliseconds.
 `hazelcast.icmp.ttl` | 0 | int |   ICMP TTL (maximum numbers of hops to try).
 `hazelcast.index.copy.behavior` |COPY_ON_READ | string | Defines the behavior for index copying on index read/write. Please refer to the [Copying Indexes section](/Distributed_Query/How_Distributed_Query_Works/Indexing_Queries.md).
@@ -49,6 +75,8 @@ Property Name | Default Value | Type | Description
 `hazelcast.internal.map.expiration.cleanup.operation.count`|3|int|This is a property which is used internally and subject to change in the future releases.
 `hazelcast.internal.map.expiration.cleanup.percentage`|10|int|This is a property which is used internally and subject to change in the future releases.
 `hazelcast.internal.map.expiration.task.period.seconds`|5|int|This is a property which is used internally and subject to change in the future releases.
+`hazelcast.invalidation.max.tolerated.miss.count`|10|int|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
+`hazelcast.invalidation.reconciliation.interval.seconds`|60|int|Period for which the cluster members are scanned to compare generated invalidation events with the received ones from Near Cache.
 `hazelcast.io.balancer.interval.seconds`|20|int|Interval in seconds between IOBalancer executions.
 `hazelcast.io.input.thread.count` | 3 | int | Number of socket input threads.
 `hazelcast.io.output.thread.count` | 3 | int | Number of socket output threads.
@@ -66,17 +94,18 @@ Property Name | Default Value | Type | Description
 `hazelcast.map.invalidation.batchfrequency.seconds` | 10 | int |  If the collected invalidations do not reach the configured batch size, a background process sends them at this interval.
 `hazelcast.map.invalidation.batch.enabled` | true | bool|  Enable or disable batching. When it is set to `false`, all invalidations are sent immediately.
 `hazelcast.map.invalidation.batch.size`| 100 | int | Maximum number of invalidations in a batch.
-`hazelcast.map.load.chunk.size` | 1000 | int |   Chunk size for [MapLoader](/06_Distributed_Data_Structures/00_Map/05_Loading_and_Storing_Persistent_Data.md)'s map initialization process (MapLoader.loadAllKeys()).
+`hazelcast.map.load.chunk.size` | 1000 | int | Maximum size of the key batch sent to the partition owners for value loading and the maximum size of a key batch for which values are loaded in a single partition.
 `hazelcast.map.replica.wait.seconds.for.scheduled.tasks`|10|int|Scheduler delay for map tasks those will be executed on backup members.
 `hazelcast.map.write.behind.queue.capacity`|50000|string|Maximum write-behind queue capacity per member. It is the total of all write-behind queue sizes in a member including backups. Its maximum value is `Integer.MAX_VALUE`. The value of this property is taken into account only if the `write-coalescing` element of the Map Store configuration is `false`. Please refer to the [Map Store section](/06_Distributed_Data_Structures/00_Map/05_Loading_and_Storing_Persistent_Data.md) for the description of the `write-coalescing` element.
 `hazelcast.master.confirmation.interval.seconds` | 30 | int  |   Interval at which members send master confirmation.
+`hazelcast.mastership.claim.member.list.version.increment`|25|int| Hazelcast master member (oldewst in the cluster) increments the member list version for each joining member. Then, these member list versions are used to identify the joined members with unique integers. For this algorithm to work under network partitioning scenarios, without generating duplicate member list join versions for different members, a mastership-claiming member increments the member list version as specified by this parameter, multiplied by its position in the member list. The value of the parameter must be bigger than the cluster size.
 `hazelcast.mastership.claim.timeout.seconds`  | 120  | int  | Timeout which defines when master candidate gives up waiting for response to its mastership claim. After timeout happens, non-responding member will be removed from the member list.
 `hazelcast.max.join.merge.target.seconds`|20|int|Split-brain merge timeout for a specific target.
 `hazelcast.max.join.seconds`|300|int| Join timeout, maximum time to try to join before giving.
 `hazelcast.max.no.heartbeat.seconds` | 60 | int  |   Maximum timeout of heartbeat in seconds for a member to assume it is dead. ***CAUTION***: *Setting this value too low may cause members to be evicted from the cluster when they are under heavy load: they will be unable to send heartbeat operations in time, so other members will assume that it is dead.*
 `hazelcast.max.no.master.confirmation.seconds` | 150 | int  |   Maximum timeout of master confirmation from other members.
 `hazelcast.max.wait.seconds.before.join` | 20 | int  |   Maximum wait time before join operation.
-`hazelcast.mc.max.visible.instance.count` | 100 | int  |   Management Center maximum visible instance count.
+`hazelcast.mc.max.visible.instance.count` | Integer.MAX_VALUE | int  |   Management Center maximum visible instance count. ***CAUTION***: *Setting this value to a lower number might prevent some instances from being monitored in Management Center.*
 `hazelcast.mc.max.visible.slow.operations.count`|10|int|Management Center maximum visible slow operations count.
 `hazelcast.mc.url.change.enabled` | true | bool  |   Management Center changing server url is enabled.
 `hazelcast.member.list.publish.interval.seconds` | 600 | int  |   Interval at which master member publishes a member list.
@@ -84,6 +113,7 @@ Property Name | Default Value | Type | Description
 `hazelcast.merge.first.run.delay.seconds` | 300 | int |   Initial run delay of [split brain/merge process](/2600_Network_Partitioning) in seconds.
 `hazelcast.merge.next.run.delay.seconds` | 120 | int |   Run interval of [split brain/merge process](/2600_Network_Partitioning) in seconds.
 `hazelcast.migration.min.delay.on.member.removed.seconds`|5|int|Minimum delay (in seconds) between detection of a member that has left and start of the rebalancing process.
+`hazelcast.nio.tcp.spoofing.checks` | false | bool | Controls whether more strict checks upon BIND requests towards a cluster member are applied. The checks mainly validate the remote BIND request against the remote address as found in the socket. By default they are disabled, to avoid connectivity issues when deployed under NAT'ed infrastructure.
 `hazelcast.operation.backup.timeout.millis`|5000|int|Maximum time a caller to wait for backup responses of an operation. After this timeout, operation response will be returned to the caller even no backup response is received.
 `hazelcast.operation.call.timeout.millis`| 60000 | int | Timeout to wait for a response when a remote call is sent, in milliseconds.
 `hazelcast.operation.fail.on.indeterminate.state`| false | bool | When enabled, an operation fails with `IndeterminateOperationStateException`, if it does not receive backup acks in time with respect to backup configuration of its data structure, or the member which owns primary replica of the target partition leaves the cluster.

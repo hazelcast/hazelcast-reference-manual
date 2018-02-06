@@ -72,4 +72,4 @@ On the other hand, if you choose TWO_PHASE as the transaction type, the commit l
 
 Consequently, it is recommended that you choose ONE_PHASE as the transaction type if you want better performance, and that you choose TWO_PHASE if reliability of your system is more important than the performance. 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Transactions do not provide any consistency support in case of a split-brain or member failures.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *It should be noted that in split-brain situations or during a member failure, Hazelcast might not be able to always hold ACID guarantees.*

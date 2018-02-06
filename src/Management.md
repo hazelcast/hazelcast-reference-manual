@@ -72,7 +72,7 @@ long getLastAccessTime();
 long getLastUpdateTime();
 
 /**
- * Returns the number of hits (reads) of the locally owned entries.
+ * Returns the number of hits (reads) of the locally owned entries. This is the metric which shows the number of times when an operation on IMap has been routed to the given member. With Clustered REST API, it shows the total sum of hits among the cluster members.
  */
 long getHits();
 
@@ -140,7 +140,7 @@ long getMaxGetLatency();
 long getMaxRemoveLatency();
 
 /**
- * Returns the number of Events Received.
+ * Returns the number of events received. This metric is about the operations that have been invoked on the IMap entries. List of event types includes the following: insertion, update, removal, eviction, clear all, merge, expiration and invalidation.
  */
 long getEventOperationCount();
 

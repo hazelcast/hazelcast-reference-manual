@@ -39,3 +39,36 @@ It is also important to know that if you rely on Java serialization, sometimes (
 -	All methods returning an object will return a private copy. You can modify the private copy, but the rest of the world will be shielded from your changes. If you want these changes to be visible to the rest of the world, you need to write the change back to the `IAtomicReference`; but be careful about introducing a data-race. 
 -	The 'in-memory format' of an `IAtomicReference` is `binary`. The receiving side does not need to have the class definition available unless it needs to be deserialized on the other side, e.g., because a method like 'alter' is executed. This deserialization is done for every call that needs to have the object instead of the binary content, so be careful with expensive object graphs that need to be deserialized.
 -	If you have an object with many fields or an object graph, and you only need to calculate some information or need a subset of fields, you can use the `apply` method. With the `apply` method, the whole object does not need to be sent over the line; only the information that is relevant is sent.
+
+
+### Split-Brain Protection for IAtomicReference
+
+IAtomicReference can be configured to check for a minimum number of available members before applying queue operations (see [Split-Brain Protection](/2600_Network_Partitioning/100_Split-Brain_Protection.md)). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+- WRITE, READ_WRITE:
+    - `alter`
+    - `alterAndGet`
+    - `alterAndGetAsync`
+    - `alterAsync`
+    - `apply`
+    - `applyAsync`
+    - `clear`
+    - `clearAsync`
+    - `compareAndSet`
+    - `compareAndSetAsync`
+    - `getAndAlter`
+    - `getAndAlterAsync`
+    - `getAndSet`
+    - `getAndSetAsync`
+    - `set`
+    - `setAndGet`
+    - `setAsync`
+- READ, READ_WRITE:
+    - `contains`
+    - `containsAsync`
+    - `get`
+    - `getAsync`
+    - `isNull`
+    - `isNullAsync`

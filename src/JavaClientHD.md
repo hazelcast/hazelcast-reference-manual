@@ -1,4 +1,4 @@
-## Using High-Density Memory Store with Java Client
+### Using High-Density Memory Store with Java Client
 
 <font color="##153F75">**Hazelcast IMDG Enterprise HD**</font>
 <br></br>

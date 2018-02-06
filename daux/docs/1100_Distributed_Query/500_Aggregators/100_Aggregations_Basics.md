@@ -1,4 +1,10 @@
 
+***NOTE:*** *This feature has been deprecated. Please use the [Fast-Aggregations](../600_Fast-Aggregations.md) instead.*
+
+
+<br>
+
+
 This section will quickly guide you through the basics of the Aggregations framework and some of its available classes.
 We also will implement a first base example.
 

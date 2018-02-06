@@ -88,7 +88,7 @@ An example of how to track the progress via API is shown below:
 
 ```java
 HotRestartService service = instance.getCluster().getHotRestartService();
-HotRestartStateImpl status = service.getBackupTaskStatus();
+BackupTaskStatus status = service.getBackupTaskStatus();
 ...
 ```
 

@@ -78,6 +78,19 @@ public class Member {
 }
 ```
 
+The output of the above class when run is as follows:
+
+```
+apply.result: 3
+apply.value: 1
+alter.value: 3
+alterAndGet.result: 3
+alterAndGet.value: 3
+getAndAlter.result: 1
+getAndAlter.value: 3
+```
+
+
 ### Reasons to Use Functions with IAtomic
 
 The reason for using a function instead of a simple code line like `atomicLong.set(atomicLong.get() + 2));` is that the IAtomicLong read and write operations are not atomic. Since `IAtomicLong` is a distributed implementation, those operations can be remote ones, which may lead to race problems. By using functions, the data is not pulled into the code, but the code is sent to the data. This makes it more scalable.

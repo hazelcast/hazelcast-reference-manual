@@ -163,10 +163,16 @@ Here is an example schema definition for Hazelcast 3.3.x:
 	- `replicatedmap`
 	- `queue`
 	- `topic`
+	- `reliableTopic`
 	- `set`
 	- `list`
 	- `executorService`
+	- `durableExecutorService`
+ 	- `scheduledExecutorService`
+ 	- `ringbuffer`
+ 	- `cardinalityEstimator`
 	- `idGenerator`
+	- `flakeIdGenerator`
 	- `atomicLong`
 	- `atomicReference`
 	- `semaphore`
@@ -184,12 +190,19 @@ Here is an example schema definition for Hazelcast 3.3.x:
     lazy-init="true" depends-on="instance"/>
 <hz:topic id="topic" instance-ref="instance" name="topic" 
     depends-on="instance, client"/>
+<hz:reliableTopic id="reliableTopic" instance-ref="instance" name="reliableTopic"/>
 <hz:set id="set" instance-ref="instance" name="set" />
 <hz:list id="list" instance-ref="instance" name="list"/>
 <hz:executorService id="executorService" instance-ref="client" 
     name="executorService"/>
+<hz:durableExecutorService id="durableExec" instance-ref="instance" name="durableExec"/>
+<hz:scheduledExecutorService id="scheduledExec" instance-ref="instance" name="scheduledExec"/>
+<hz:ringbuffer id="ringbuffer" instance-ref="instance" name="ringbuffer"/>
+<hz:cardinalityEstimator id="cardinalityEstimator" instance-ref="instance" name="cardinalityEstimator"/>
 <hz:idGenerator id="idGenerator" instance-ref="instance" 
     name="idGenerator"/>
+<hz:flakeIdGenerator id="flakeIdGenerator" instance-ref="instance" 
+    name="flakeIdGenerator"/>
 <hz:atomicLong id="atomicLong" instance-ref="instance" name="atomicLong"/>
 <hz:atomicReference id="atomicReference" instance-ref="instance" 
     name="atomicReference"/>
@@ -458,7 +471,7 @@ The argument `defaultReadTimeout` applies to all of your Spring caches. If you w
 ```xml
 <cache:annotation-driven cache-manager="cacheManager" />
 
-<hz:hazelcast id="hazelcast">
+<hz:hazelcast id="instance">
   ...
 </hz:hazelcast>
 
@@ -494,7 +507,7 @@ Annotation-Based Configuration does not require any XML definition. To perform A
 ```java
 @Configuration
 @EnableCaching
-public class CachingConfiguration implements CachingConfigurer{
+public class CachingConfiguration extends CachingConfigurerSupport {
     @Bean
     public CacheManager cacheManager() {
         ClientConfig config = new ClientConfig();
@@ -505,6 +518,7 @@ public class CachingConfiguration implements CachingConfigurer{
     public KeyGenerator keyGenerator() {
         return null;
     }
+}
 ```
 
 - Launch Application Context and register `CachingConfiguration`.

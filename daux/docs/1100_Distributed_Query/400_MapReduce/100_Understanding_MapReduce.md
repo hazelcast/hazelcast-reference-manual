@@ -1,5 +1,7 @@
 
+![Note](../../images/NoteSmall.jpg) ***NOTE:*** *MapReduce is deprecated since Hazelcast 3.8. You can use [Fast-Aggregations](#fast-aggregations) and [Hazelcast Jet](https://jet.hazelcast.org/) for map aggregations and general data processing, respectively. Please see the [MapReduce Deprecation section](400_MapReduce_Deprecation.md) for more details.*
 
+<br>
 
 This section will give deeper insight into the MapReduce pattern and will help you understand the semantics behind the different MapReduce phases and how they are implemented in Hazelcast.
 
