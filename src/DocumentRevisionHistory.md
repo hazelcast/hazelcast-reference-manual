@@ -16,4 +16,5 @@ This chapter lists the changes made to this document from the previous release.
 |[Distributed Query](#distributed-query)|[Queries Requests from Client](#query-requests-from-clients)|Added as a new section.|
 |[Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)|Added [Respecting Locks on Single Keys](#respecting-locks-on-single-keys) as a new section.
 | [Hazelcast JCache](#hazelcast-jcache)||Added [Supported JCache Versions](#supported-jcache-versions) as a new section.
+|[Hazelcast Clients](#hazelcast-clients)||Added [Configuring Reliable Topic at Client Side](#configuring-reliable-topic-at-client-side) as a new section.
 |[System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment |
