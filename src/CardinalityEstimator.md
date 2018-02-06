@@ -29,13 +29,10 @@ Please see the [cardinality estimator Javadoc](http://docs.hazelcast.org/docs/la
 The following is an example code.
 
 ```
-public class Member {
+HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+CardinalityEstimator visitorsEstimator = hz.getCardinalityEstimator("visitors");
 
-    public static void main(String[] args) {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-        CardinalityEstimator visitorsEstimator = hz.getCardinalityEstimator("visitors");
-
-        InputStreamReader isr = new InputStreamReader(Member.class.getResourceAsStream("visitors.txt"));
+InputStreamReader isr = new InputStreamReader(Member.class.getResourceAsStream("visitors.txt"));
         BufferedReader br = new BufferedReader(isr);
         try {
             String visitor = br.readLine();
@@ -53,6 +50,4 @@ public class Member {
         System.out.printf("Estimated unique visitors seen so far: %d%n", visitorsEstimator.estimate());
 
         Hazelcast.shutdownAll();
-    }
-}
 ```
