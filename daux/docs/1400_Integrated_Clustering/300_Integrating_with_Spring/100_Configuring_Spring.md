@@ -156,9 +156,14 @@ Here is an example schema definition for Hazelcast 3.3.x:
 	- `replicatedmap`
 	- `queue`
 	- `topic`
+	- `reliableTopic`
 	- `set`
 	- `list`
 	- `executorService`
+	- `durableExecutorService`
+	- `scheduledExecutorService`
+	- `ringbuffer`
+	- `cardinalityEstimator`
 	- `idGenerator`
 	- `flakeIdGenerator`
 	- `atomicLong`
@@ -178,10 +183,20 @@ Here is an example schema definition for Hazelcast 3.3.x:
     lazy-init="true" depends-on="instance"/>
 <hz:topic id="topic" instance-ref="instance" name="topic" 
     depends-on="instance, client"/>
+<hz:reliableTopic id="reliableTopic" instance-ref="instance"
+    name="reliableTopic"/>
 <hz:set id="set" instance-ref="instance" name="set" />
 <hz:list id="list" instance-ref="instance" name="list"/>
 <hz:executorService id="executorService" instance-ref="client" 
     name="executorService"/>
+<hz:durableExecutorService id="durableExec" instance-ref="instance"
+    name="durableExec"/>
+<hz:scheduledExecutorService id="scheduledExec" instance-ref="instance"
+    name="scheduledExec"/>
+<hz:ringbuffer id="ringbuffer" instance-ref="instance"
+    name="ringbuffer"/>
+<hz:cardinalityEstimator id="cardinalityEstimator" instance-ref="instance"
+    name="cardinalityEstimator"/>
 <hz:idGenerator id="idGenerator" instance-ref="instance" 
     name="idGenerator"/>
 <hz:flakeIdGenerator id="flakeIdGenerator" instance-ref="instance" 
