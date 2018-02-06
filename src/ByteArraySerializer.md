@@ -11,27 +11,27 @@ Let's implement `ByteArraySerializer` for the `Employee` class mentioned in [Imp
 public class EmployeeByteArraySerializer
     implements ByteArraySerializer<Employee> {
 
-  @Override
-  public void destroy () { 
-  }
+    @Override
+    public void destroy () { 
+    }
 
-  @Override
-  public int getTypeId () {
-    return 1; 
-  }
+    @Override
+    public int getTypeId () {
+        return 1; 
+    }
 
-  @Override
-  public byte[] write( Employee object )
-      throws IOException { 
-    return object.getName().getBytes();
-  }
+    @Override
+    public byte[] write( Employee object )
+          throws IOException { 
+        return object.getName().getBytes();
+    }
 
-  @Override
-  public Employee read( byte[] buffer ) 
-      throws IOException { 
-    String surname = new String( buffer );
-    return new Employee( surname );
-  }
+    @Override
+    public Employee read( byte[] buffer ) 
+          throws IOException { 
+        String surname = new String( buffer );
+        return new Employee( surname );
+    }
 }
 ```
 

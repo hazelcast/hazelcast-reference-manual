@@ -15,19 +15,18 @@ public class IncrementingEntryProcessor
       implements EntryProcessor<Integer, Integer>, EntryBackupProcessor<Integer, Integer>, Serializable {
 
     public Object process( Map.Entry<Integer, Integer> entry ) {
-      Integer value = entry.getValue();
-      entry.setValue( value + 1 );
-      return value + 1;
+        Integer value = entry.getValue();
+        entry.setValue( value + 1 );
+        return value + 1;
     }
 
     public EntryBackupProcessor<Integer, Integer> getBackupProcessor() {
-      return IncrementingEntryProcessor.this;
+        return IncrementingEntryProcessor.this;
     }
 
     public void processBackup( Map.Entry<Integer, Integer> entry ) {
-      entry.setValue( entry.getValue() + 1 );
-    }
-  }
+        entry.setValue( entry.getValue() + 1 );
+    } 
 }
 ```
 
@@ -36,7 +35,7 @@ A sample usage is shown below:
 ```java
 IMap<Integer, Integer> map = hazelcastInstance.getMap( "myMap" );
 for ( int i = 0; i < 100; i++ ) {
-  map.put( i, i );
+    map.put( i, i );
 }
 Map<Integer, Object> res = map.executeOnEntries( new IncrementingEntryProcessor() );
 ```

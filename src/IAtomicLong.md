@@ -8,17 +8,18 @@ The following example code creates an instance, increments it by a million, and 
 
 ```java
 public class Member {
-  public static void main( String[] args ) {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 	
-    IAtomicLong counter = hazelcastInstance.getAtomicLong( "counter" );
-    for ( int k = 0; k < 1000 * 1000; k++ ) {
-	  if ( k % 500000 == 0 ) {
-	    System.out.println( "At: " + k );
-      }
-      counter.incrementAndGet();
+  
+    public static void main( String[] args ) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 	
+        IAtomicLong counter = hazelcastInstance.getAtomicLong( "counter" );
+        for ( int k = 0; k < 1000 * 1000; k++ ) {
+	        if ( k % 500000 == 0 ) {
+	            System.out.println( "At: " + k );
+            }
+            counter.incrementAndGet();
+        }
+        System.out.printf( "Count is %s\n", counter.get() );
     }
-    System.out.printf( "Count is %s\n", counter.get() );
-  }
 }
 ```
 
@@ -30,10 +31,10 @@ You can send functions to an IAtomicLong. `IFunction` is a Hazelcast owned, sing
 
 ```java
 private static class Add2Function implements IFunction <Long, Long> { 
-  @Override
-  public Long apply( Long input ) { 
-    return input + 2;
-  }
+    @Override
+    public Long apply( Long input ) { 
+        return input + 2;
+    }
 }
 ```
 
@@ -50,29 +51,30 @@ The following sample code includes these methods.
 
 ```java
 public class Member {
-  public static void main( String[] args ) {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 		
-    IAtomicLong atomicLong = hazelcastInstance.getAtomicLong( "counter" );
+  
+    public static void main( String[] args ) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 		
+        IAtomicLong atomicLong = hazelcastInstance.getAtomicLong( "counter" );
 
-    atomicLong.set( 1 );
-    long result = atomicLong.apply( new Add2Function() ); 		
-    System.out.println( "apply.result: " + result); 		
-    System.out.println( "apply.value: " + atomicLong.get() );
+        atomicLong.set( 1 );
+        long result = atomicLong.apply( new Add2Function() ); 		
+        System.out.println( "apply.result: " + result); 		
+        System.out.println( "apply.value: " + atomicLong.get() );
 
-    atomicLong.set( 1 );
-    atomicLong.alter( new Add2Function() ); 			
-    System.out.println( "alter.value: " + atomicLong.get() );
+        atomicLong.set( 1 );
+        atomicLong.alter( new Add2Function() ); 			
+        System.out.println( "alter.value: " + atomicLong.get() );
 
-    atomicLong.set( 1 );
-    result = atomicLong.alterAndGet( new Add2Function() ); 		
-    System.out.println( "alterAndGet.result: " + result ); 		
-    System.out.println( "alterAndGet.value: " + atomicLong.get() );
+        atomicLong.set( 1 );
+        result = atomicLong.alterAndGet( new Add2Function() ); 		
+        System.out.println( "alterAndGet.result: " + result ); 		
+        System.out.println( "alterAndGet.value: " + atomicLong.get() );
 
-    atomicLong.set( 1 );
-    result = atomicLong.getAndAlter( new Add2Function() ); 		
-    System.out.println( "getAndAlter.result: " + result ); 		
-    System.out.println( "getAndAlter.value: " + atomicLong.get() );
-  }
+        atomicLong.set( 1 );
+        result = atomicLong.getAndAlter( new Add2Function() ); 		
+        System.out.println( "getAndAlter.result: " + result ); 		
+        System.out.println( "getAndAlter.value: " + atomicLong.get() );
+    }
 }
 ```
 

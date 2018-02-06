@@ -40,12 +40,13 @@ public class Employee implements Serializable {
 To return just the names of the Employees, you can run the query in the following way:
 
 ```java
-        Collection<String> names = employees.project(new Projection<Map.Entry<String, Employee>, String>() {
-            @Override
-            public String transform(Map.Entry<String, Employee> entry) {
-                return entry.getValue().getName();
-            }
-        }, somePredicate);
+Collection<String> names = employees.project(new Projection<Map.Entry<String, Employee>, String>() {
+
+    @Override
+    public String transform(Map.Entry<String, Employee> entry) {
+        return entry.getValue().getName();
+    }
+}, somePredicate);
 ```
 
 

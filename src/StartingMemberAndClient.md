@@ -16,13 +16,8 @@ Let's begin.
 - The following code starts the first Hazelcast member and creates and uses the `customers` map and queue.
 
 ```java
-import com.hazelcast.core.*;
-import com.hazelcast.config.*;
- 
-import java.util.Map;
-import java.util.Queue;
- 
 public class GettingStarted {
+    
     public static void main(String[] args) {
         Config cfg = new Config();
         HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
@@ -74,14 +69,8 @@ This is required to use a Hazelcast client.
 and prints the size of the `customers` map.
 
 ```java
-package com.hazelcast.test;
-
-import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.client.HazelcastClient;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-
 public class GettingStartedClient {
+    
     public static void main( String[] args ) {
         ClientConfig clientConfig = new ClientConfig();
         HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );

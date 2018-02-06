@@ -13,23 +13,20 @@ The following example creates a MultiMap and puts items into it. Use the Hazelca
 
 
 ```java
-public class PutMember {
-  public static void main( String[] args ) {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    MultiMap <String , String > map = hazelcastInstance.getMultiMap( "map" );
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+MultiMap <String , String > map = hazelcastInstance.getMultiMap( "map" );
 
-    map.put( "a", "1" );
-    map.put( "a", "2" );
-    map.put( "b", "3" ); 
-    System.out.println( "PutMember:Done" );
-  }
-}
+map.put( "a", "1" );
+map.put( "a", "2" );
+map.put( "b", "3" ); 
+System.out.println( "PutMember:Done" );
 ```
 
 Now let's print the entries in this MultiMap.
 
 ```java
 public class PrintMember {
+    
     public static void main(String[] args) {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         MultiMap<String, String> map = hazelcastInstance.getMultiMap("map");

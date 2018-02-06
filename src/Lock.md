@@ -12,14 +12,11 @@ the code in a critical section. Also note that the `lock` method is outside the 
 if the lock operation itself fails.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import java.util.concurrent.locks.Lock;
-
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 Lock lock = hazelcastInstance.getLock( "myLock" );
 lock.lock();
 try {
-  // do something here
+    // do something here
 } finally {
   lock.unlock();
 }

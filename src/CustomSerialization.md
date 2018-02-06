@@ -14,11 +14,11 @@ First, let's create a simple object.
 
 ```java
 public class Employee {
-  private String surname;
+    private String surname;
   
-  public Employee( String surname ) {
-    this.surname = surname;
-  }
+    public Employee( String surname ) {
+        this.surname = surname;
+    }
 }
 ```
 
@@ -28,27 +28,27 @@ Now, let's implement StreamSerializer for `Employee` class.
 public class EmployeeStreamSerializer
     implements StreamSerializer<Employee> {
 
-  @Override
-  public int getTypeId () {
-    return 1; 
-  }
+    @Override
+    public int getTypeId () {
+        return 1; 
+    }
 
-  @Override
-  public void write( ObjectDataOutput out, Employee employee )
-      throws IOException { 
-    out.writeUTF(employee.getSurname());
-  }
+    @Override
+    public void write( ObjectDataOutput out, Employee employee )
+        throws IOException { 
+        out.writeUTF(employee.getSurname());
+    }
 
-  @Override
-  public Employee read( ObjectDataInput in ) 
-      throws IOException { 
-    String surname = in.readUTF();
-    return new Employee(surname);
-  }
+    @Override
+    public Employee read( ObjectDataInput in ) 
+        throws IOException { 
+        String surname = in.readUTF();
+        return new Employee(surname);
+    }
 
-  @Override
-  public void destroy () { 
-  }
+    @Override
+    public void destroy () { 
+    }
 }
 ```
 
@@ -75,15 +75,15 @@ Let's take a look at another example implementing `StreamSerializer`.
 
 ```java
 public class Foo {
-  private String foo;
+    private String foo;
   
-  public String getFoo() {
-    return foo;
-  }
+    public String getFoo() {
+        return foo;
+    }
   
-  public void setFoo( String foo ) {
-    this.foo = foo;
-  }
+    public void setFoo( String foo ) {
+        this.foo = foo;
+    }
 }
 ```
 
@@ -94,30 +94,30 @@ Foo into XML. First you need to implement a
 ```java
 public static class FooXmlSerializer implements StreamSerializer<Foo> {
 
-  @Override
-  public int getTypeId() {
-    return 10;
-  }
+    @Override
+    public int getTypeId() {
+        return 10;
+    }
 
-  @Override
-  public void write( ObjectDataOutput out, Foo object ) throws IOException {
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    XMLEncoder encoder = new XMLEncoder( bos );
-    encoder.writeObject( object );
-    encoder.close();
-    out.write( bos.toByteArray() );
-  }
+    @Override
+    public void write( ObjectDataOutput out, Foo object ) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        XMLEncoder encoder = new XMLEncoder( bos );
+        encoder.writeObject( object );
+        encoder.close();
+        out.write( bos.toByteArray() );
+    }
 
-  @Override
-  public Foo read( ObjectDataInput in ) throws IOException {
-    InputStream inputStream = (InputStream) in;
-    XMLDecoder decoder = new XMLDecoder( inputStream );
-    return (Foo) decoder.readObject();
-  }
+    @Override
+    public Foo read( ObjectDataInput in ) throws IOException {
+        InputStream inputStream = (InputStream) in;
+        XMLDecoder decoder = new XMLDecoder( inputStream );
+        return (Foo) decoder.readObject();
+    }
 
-  @Override
-  public void destroy() {
-  }
+    @Override
+    public void destroy() {
+    }
 }
 ```
 

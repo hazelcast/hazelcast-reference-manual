@@ -12,11 +12,11 @@ different features to members in a cluster environment like Hazelcast. Therefore
 public class UserCacheEntryListenerFactory
     implements Factory<CacheEntryListener<Integer, User>> {
 
-  @Override
-  public CacheEntryListener<Integer, User> create() {
-    // Just create a new listener instance
-    return new UserCacheEntryListener();
-  }
+    @Override
+    public CacheEntryListener<Integer, User> create() {
+        // Just create a new listener instance
+        return new UserCacheEntryListener();
+    }
 }
 ```
 

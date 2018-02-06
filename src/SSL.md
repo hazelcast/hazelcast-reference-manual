@@ -24,14 +24,14 @@ The following is the implementation code snippet:
 
 ```java
 public class MySSLContextFactory implements SSLContextFactory {
-  public void init( Properties properties ) throws Exception {
-  }
+    public void init( Properties properties ) throws Exception {
+    }
 
-  public SSLContext getSSLContext() {
-    ...
-    SSLContext sslCtx = SSLContext.getInstance( protocol );
-    return sslCtx;
-  }
+    public SSLContext getSSLContext() {
+        ...
+        SSLContext sslCtx = SSLContext.getInstance( protocol );
+        return sslCtx;
+    }
 }
 ```
 

@@ -10,28 +10,28 @@ The `DataSerializable` interface of Hazelcast overcomes these issues. Here is an
 
 ```java
 public class Address implements DataSerializable {
-  private String street;
-  private int zipCode;
-  private String city;
-  private String state;
+    private String street;
+    private int zipCode;
+    private String city;
+    private String state;
 
-  public Address() {}
+    public Address() {}
 
-  //getters setters..
+    //getters setters..
 
-  public void writeData( ObjectDataOutput out ) throws IOException {
-    out.writeUTF(street);
-    out.writeInt(zipCode);
-    out.writeUTF(city);
-    out.writeUTF(state);
-  }
+    public void writeData( ObjectDataOutput out ) throws IOException {
+        out.writeUTF(street);
+        out.writeInt(zipCode);
+        out.writeUTF(city);
+        out.writeUTF(state);
+    }
 
-  public void readData( ObjectDataInput in ) throws IOException {
-    street = in.readUTF();
-    zipCode = in.readInt();
-    city = in.readUTF();
-    state = in.readUTF();
-  }
+    public void readData( ObjectDataInput in ) throws IOException {
+        street = in.readUTF();
+        zipCode = in.readInt();
+        city = in.readUTF();
+        state = in.readUTF();
+    }
 }
 ```
 
@@ -45,33 +45,33 @@ in the same order. When Hazelcast serializes a `DataSerializable`, it writes the
 
 ```java
 public class Employee implements DataSerializable {
-  private String firstName;
-  private String lastName;
-  private int age;
-  private double salary;
-  private Address address; //address itself is DataSerializable
+    private String firstName;
+    private String lastName;
+    private int age;
+    private double salary;
+    private Address address; //address itself is DataSerializable
 
-  public Employee() {}
+    public Employee() {}
 
-  //getters setters..
+    //getters setters..
 
-  public void writeData( ObjectDataOutput out ) throws IOException {
-    out.writeUTF(firstName);
-    out.writeUTF(lastName);
-    out.writeInt(age);
-    out.writeDouble (salary);
-    address.writeData (out);
-  }
+    public void writeData( ObjectDataOutput out ) throws IOException {
+        out.writeUTF(firstName);
+        out.writeUTF(lastName);
+        out.writeInt(age);
+        out.writeDouble (salary);
+        address.writeData (out);
+    }
 
-  public void readData( ObjectDataInput in ) throws IOException {
-    firstName = in.readUTF();
-    lastName = in.readUTF();
-    age = in.readInt();
-    salary = in.readDouble();
-    address = new Address();
-    // since Address is DataSerializable let it read its own internal state
-    address.readData(in);
-  }
+    public void readData( ObjectDataInput in ) throws IOException {
+        firstName = in.readUTF();
+        lastName = in.readUTF();
+        age = in.readInt();
+        salary = in.readDouble();
+        address = new Address();
+        // since Address is DataSerializable let it read its own internal state
+        address.readData(in);
+    }
 }
 ```
 
@@ -108,40 +108,40 @@ Let's take a look at the following example code and configuration to see `Identi
 public class Employee
     implements IdentifiedDataSerializable {
      
-  private String surname;
+    private String surname;
   
-  public Employee() {}
+    public Employee() {}
   
-  public Employee( String surname ) { 
-    this.surname = surname;
-  }
+    public Employee( String surname ) { 
+        this.surname = surname;
+    }
   
-  @Override
-  public void readData( ObjectDataInput in ) 
+    @Override
+    public void readData( ObjectDataInput in ) 
       throws IOException {
-    this.surname = in.readUTF();
-  }
+        this.surname = in.readUTF();
+    }
   
-  @Override
-  public void writeData( ObjectDataOutput out )
+    @Override
+    public void writeData( ObjectDataOutput out )
       throws IOException { 
-    out.writeUTF( surname );
-  }
+        out.writeUTF( surname );
+    }
   
-  @Override
-  public int getFactoryId() { 
-    return EmployeeDataSerializableFactory.FACTORY_ID;
-  }
+    @Override
+    public int getFactoryId() { 
+        return EmployeeDataSerializableFactory.FACTORY_ID;
+    }
   
-  @Override
-  public int getId() { 
-    return EmployeeDataSerializableFactory.EMPLOYEE_TYPE;
-  }
+    @Override
+    public int getId() { 
+        return EmployeeDataSerializableFactory.EMPLOYEE_TYPE;
+    }
    
-  @Override
-  public String toString() {
-    return String.format( "Employee(surname=%s)", surname ); 
-  }
+    @Override
+    public String toString() {
+        return String.format( "Employee(surname=%s)", surname ); 
+    }
 }
 ```
  
@@ -151,18 +151,18 @@ The methods `getId` and `getFactoryId` return a unique positive number within th
 public class EmployeeDataSerializableFactory 
     implements DataSerializableFactory{
    
-  public static final int FACTORY_ID = 1;
+    public static final int FACTORY_ID = 1;
    
-  public static final int EMPLOYEE_TYPE = 1;
+    public static final int EMPLOYEE_TYPE = 1;
 
-  @Override
-  public IdentifiedDataSerializable create(int typeId) {
-    if ( typeId == EMPLOYEE_TYPE ) { 
-      return new Employee();
-    } else {
-      return null; 
+    @Override
+    public IdentifiedDataSerializable create(int typeId) {
+        if ( typeId == EMPLOYEE_TYPE ) { 
+            return new Employee();
+        } else {
+            return null; 
+        }
     }
-  }
 }
 ```
 

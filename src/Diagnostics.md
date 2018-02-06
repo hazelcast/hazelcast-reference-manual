@@ -147,27 +147,27 @@ It shows statistics including the count of methods for each store (`load`, `load
 
 ```
 17-9-2016 13:12:34 MapStoreLatency[
-                          map[
-                                  loadAllKeys[
-                                          count=1
-                                          totalTime(us)=8
-                                          avg(us)=8
-                                          max(us)=8
-                                          latency-distribution[
-                                                  0..99us=1]]
-                                  load[
-                                          count=100
-                                          totalTime(us)=4,632,190
-                                          avg(us)=46,321
-                                          max(us)=99,178
-                                          latency-distribution[
-                                                  0..99us=1
-                                                  1600..3199us=3
-                                                  3200..6399us=3
-                                                  6400..12799us=7
-                                                  12800..25599us=13
-                                                  25600..51199us=32
-                                                  51200..102399us=41]]]]
+              map[
+                 loadAllKeys[
+                    count=1
+                    totalTime(us)=8
+                    avg(us)=8
+                    max(us)=8
+                    latency-distribution[
+                    0..99us=1]]
+                 load[
+                    count=100
+                    totalTime(us)=4,632,190
+                    avg(us)=46,321
+                    max(us)=99,178
+                    latency-distribution[
+                           0..99us=1
+                           1600..3199us=3
+                           3200..6399us=3
+                           6400..12799us=7
+                           12800..25599us=13
+                           25600..51199us=32
+                           51200..102399us=41]]]]
 ```
 
 According to your store usage, a similar output can be seen for Hazelcast JCache, Queue and Ringbuffer with persistent datastores.
@@ -192,13 +192,13 @@ The following shows an example of the output where an operation heartbeat has no
 
 ```
 20-7-2017 11:12:55 OperationHeartbeats[
-                                  member[10.212.1.119]:5701[
-                                          deviation(%)=146.6666717529297
-                                          noHeartbeat(ms)=37,000
-                                          lastHeartbeat(ms)=1,500,538,375,603
-                                          lastHeartbeat(date-time)=20-7-2017 11:12:55
-                                          now(ms)=1,500,538,338,603
-                                          now(date-time)=20-7-2017 11:12:18]]]
+                      member[10.212.1.119]:5701[
+                                  deviation(%)=146.6666717529297
+                                  noHeartbeat(ms)=37,000
+                                  lastHeartbeat(ms)=1,500,538,375,603
+                                  lastHeartbeat(date-time)=20-7-2017 11:12:55
+                                  now(ms)=1,500,538,338,603
+                                  now(date-time)=20-7-2017 11:12:18]]]
 ```
 
 The OperationHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics

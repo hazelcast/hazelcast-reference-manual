@@ -14,23 +14,23 @@ Let's use the Fibonacci series to explain this. The example code below is the ca
 
 ```java
 public class Fibonacci implements Callable<Long>, Serializable {
-  int input = 0;
+    int input = 0;
 
-  public Fibonacci( int input ) {
-    this.input = input;
-  }
-
-  public Long call() {
-    return calculate( input );
-  }
-
-  private long calculate( int n ) {
-    if (n <= 1) {
-      return n;
-    } else {
-      return calculate( n - 1 ) + calculate( n - 2 );
+    public Fibonacci( int input ) {
+        this.input = input;
     }
-  }
+
+    public Long call() {
+        return calculate( input );
+    }
+
+    private long calculate( int n ) {
+        if (n <= 1) {
+            return n;
+        } else {
+            return calculate( n - 1 ) + calculate( n - 2 );
+        }
+    }
 }
 ```
 
@@ -46,15 +46,15 @@ Callable<Long> task = new Fibonacci( 10 );
 
 es.submit(task, new ExecutionCallback<Long> () {
 
-  @Override
-  public void onResponse( Long response ) {
-    System.out.println( "Fibonacci calculation result = " + response );
-  }
+    @Override
+    public void onResponse( Long response ) {
+        System.out.println( "Fibonacci calculation result = " + response );
+    }
 
-  @Override
-  public void onFailure( Throwable t ) {
-    t.printStackTrace();
-  }
+    @Override
+    public void onFailure( Throwable t ) {
+        t.printStackTrace();
+    }
 });
 ```
 

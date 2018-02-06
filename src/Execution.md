@@ -10,54 +10,47 @@ The distributed executor service is a distributed implementation of `java.util.c
 - `echoOnMembers`: On all or a subset of the cluster members with the `IExecutorService` `submitToMembers` method.
 
 ```java
-import com.hazelcast.core.Member;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.IExecutorService;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;   
-import java.util.Set;
-
 public void echoOnTheMember( String input, Member member ) throws Exception {
-  Callable<String> task = new Echo( input );
-  HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-  IExecutorService executorService = 
+    Callable<String> task = new Echo( input );
+    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    IExecutorService executorService = 
       hazelcastInstance.getExecutorService( "default" );
       
-  Future<String> future = executorService.submitToMember( task, member );
-  String echoResult = future.get();
+    Future<String> future = executorService.submitToMember( task, member );
+    String echoResult = future.get();
 }
 
 public void echoOnTheMemberOwningTheKey( String input, Object key ) throws Exception {
-  Callable<String> task = new Echo( input );
-  HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-  IExecutorService executorService =
+    Callable<String> task = new Echo( input );
+    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    IExecutorService executorService =
       hazelcastInstance.getExecutorService( "default" );
       
-  Future<String> future = executorService.submitToKeyOwner( task, key );
-  String echoResult = future.get();
+    Future<String> future = executorService.submitToKeyOwner( task, key );
+    String echoResult = future.get();
 }
 
 public void echoOnSomewhere( String input ) throws Exception { 
-  HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-  IExecutorService executorService =
+    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    IExecutorService executorService =
       hazelcastInstance.getExecutorService( "default" );
       
-  Future<String> future = executorService.submit( new Echo( input ) );
-  String echoResult = future.get();
+    Future<String> future = executorService.submit( new Echo( input ) );
+    String echoResult = future.get();
 }
 
 public void echoOnMembers( String input, Set<Member> members ) throws Exception {
-  HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-  IExecutorService executorService = 
+    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    IExecutorService executorService = 
       hazelcastInstance.getExecutorService( "default" );
       
-  Map<Member, Future<String>> futures = executorService
+    Map<Member, Future<String>> futures = executorService
       .submitToMembers( new Echo( input ), members );
       
-  for ( Future<String> future : futures.values() ) {
-    String echoResult = future.get();
-    // ...
-  }
+    for ( Future<String> future : futures.values() ) {
+        String echoResult = future.get();
+        // ...
+    }
 }
 ```
 

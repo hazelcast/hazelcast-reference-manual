@@ -30,50 +30,50 @@ Let's take a look at the following class example.
 ```java
 public class Listen {
 
-  public static void main( String[] args ) {
+    public static void main( String[] args ) {
     HazelcastInstance hz = Hazelcast.newHazelcastInstance();
     IMap<String, String> map = hz.getMap( "somemap" );
     map.addEntryListener( new MyEntryListener(), true );
      System.out.println( "EntryListener registered" );
-  }
+    }
 
-  static class MyEntryListener implements EntryAddedListener<String, String>, 
+    static class MyEntryListener implements EntryAddedListener<String, String>, 
                                           EntryRemovedListener<String, String>, 
                                           EntryUpdatedListener<String, String>, 
                                           EntryEvictedListener<String, String> , 
                                           MapEvictedListener, 
                                           MapClearedListener   {
-    @Override
-    public void entryAdded( EntryEvent<String, String> event ) {
-      System.out.println( "Entry Added:" + event );
-    }
+        @Override
+        public void entryAdded( EntryEvent<String, String> event ) {
+            System.out.println( "Entry Added:" + event );
+        }
 
-    @Override
-    public void entryRemoved( EntryEvent<String, String> event ) {
-      System.out.println( "Entry Removed:" + event );
-    }
+        @Override
+        public void entryRemoved( EntryEvent<String, String> event ) {
+            System.out.println( "Entry Removed:" + event );
+        }
 
-    @Override
-    public void entryUpdated( EntryEvent<String, String> event ) {
-      System.out.println( "Entry Updated:" + event );
-    }
+        @Override
+        public void entryUpdated( EntryEvent<String, String> event ) {
+            System.out.println( "Entry Updated:" + event );
+        }
 
-    @Override
-    public void entryEvicted( EntryEvent<String, String> event ) {
-      System.out.println( "Entry Evicted:" + event );
-    }
+        @Override
+        public void entryEvicted( EntryEvent<String, String> event ) {
+            System.out.println( "Entry Evicted:" + event );
+        }
 
-    @Override
-    public void mapEvicted( MapEvent event ) {
-      System.out.println( "Map Evicted:" + event );
-    }
+        @Override
+        public void mapEvicted( MapEvent event ) {
+            System.out.println( "Map Evicted:" + event );
+        }
    
-    @Override
-    public void mapCleared( MapEvent event ) {
-      System.out.println( "Map Cleared:" + event );
-    }
+        @Override
+        public void mapCleared( MapEvent event ) {
+            System.out.println( "Map Cleared:" + event );
+        }
 
-  }
+    }
 }
 ```
 
@@ -82,15 +82,15 @@ Now, let's perform some modifications on the map entries using the following exa
 ```java
 public class Modify {
 
-  public static void main( String[] args ) {
-    HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-    IMap<String, String> map = hz.getMap( "somemap");
-    String key = "" + System.nanoTime();
-    String value = "1";
-    map.put( key, value );
-    map.put( key, "2" );
-    map.delete( key );
-  }
+    public static void main( String[] args ) {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IMap<String, String> map = hz.getMap( "somemap");
+        String key = "" + System.nanoTime();
+        String value = "1";
+        map.put( key, value );
+        map.put( key, "2" );
+        map.delete( key );
+    }
 }
 ```
 
@@ -143,23 +143,26 @@ of `MapPartitionLostListener`, which is also a sub-interface of `MapListener`.
 Let`s consider the following example code:
 
 ```java
-  public static void main(String[] args) {
-    Config config = new Config();
-    // keeps its data if a single node crashes
-    config.getMapConfig("map").setBackupCount(1);
+public class ListenMapPartitionLostEvents {
 
-    HazelcastInstance instance = HazelcastInstanceFactory.newHazelcastInstance(config);
+    public static void main(String[] args) {
+        Config config = new Config();
+        // keeps its data if a single node crashes
+        config.getMapConfig("map").setBackupCount(1);
 
-    IMap<Object, Object> map = instance.getMap("map");
-    map.put(0, 0);
+        HazelcastInstance instance = HazelcastInstanceFactory.newHazelcastInstance(config);
 
-    map.addPartitionLostListener(new MapPartitionLostListener() {
-      @Override
-      public void partitionLost(MapPartitionLostEvent event) {
-        System.out.println(event);
-      }
-    });
-  }
+        IMap<Object, Object> map = instance.getMap("map");
+        map.put(0, 0);
+
+        map.addPartitionLostListener(new MapPartitionLostListener() {
+            @Override
+            public void partitionLost(MapPartitionLostEvent event) {
+                System.out.println(event);
+            }
+        });
+    }
+}
 ```
 
 Within this example code, a `MapPartitionLostListener` implementation is registered to a map 
@@ -238,35 +241,36 @@ You can listen to entry-based events in the MultiMap using `EntryListener`. The 
 
 ```java
 public class SampleEntryListener implements EntryListener<String, String> {
-  @Override
-  public void entryAdded(EntryEvent<String, String> event) {
-    System.out.println("Entry Added: " + event);
-  }
 
-  @Override
-  public void entryRemoved( EntryEvent<String, String> event ) {
-    System.out.println( "Entry Removed: " + event );
-  }
+    @Override
+    public void entryAdded(EntryEvent<String, String> event) {
+        System.out.println("Entry Added: " + event);
+    }
 
-  @Override
-  public void entryUpdated(EntryEvent<String, String> event) {
-    System.out.println( "Entry Updated: " + event );
-  }
+    @Override
+    public void entryRemoved( EntryEvent<String, String> event ) {
+        System.out.println( "Entry Removed: " + event );
+    }
 
-  @Override
-  public void entryEvicted(EntryEvent<String, String> event) {
-    System.out.println( "Entry evicted: " + event );
-  }
+    @Override
+    public void entryUpdated(EntryEvent<String, String> event) {
+        System.out.println( "Entry Updated: " + event );
+    }
 
-  @Override
-  public void mapCleared(MapEvent event) {
-    System.out.println( "Map Cleared: " + event );
-  }
+    @Override
+    public void entryEvicted(EntryEvent<String, String> event) {
+        System.out.println( "Entry evicted: " + event );
+    }
 
-  @Override
-  public void mapEvicted(MapEvent event) {
-    System.out.println( "Map Evicted: " + event );
-  }
+    @Override
+    public void mapCleared(MapEvent event) {
+        System.out.println( "Map Cleared: " + event );
+    }
+
+    @Override
+    public void mapEvicted(MapEvent event) {
+        System.out.println( "Map Evicted: " + event );
+    }
 }
 ```
 
@@ -340,16 +344,15 @@ The following is an example Item Listener class for an `ISet` structure.
 ```java
 public class SampleItemListener implements ItemListener<Price> {
 
-  @Override
-  public void itemAdded(ItemEvent<Price> event) {
-    System.out.println( "Item added:  " + event );
-  }
+    @Override
+    public void itemAdded(ItemEvent<Price> event) {
+        System.out.println( "Item added:  " + event );
+    }
 
-  @Override
-  public void itemRemoved(ItemEvent<Price> event) {
-    System.out.println( "Item removed: " + event );
-  }
-
+    @Override
+    public void itemRemoved(ItemEvent<Price> event) {
+        System.out.println( "Item removed: " + event );
+    }
 }
 ```
 
@@ -425,10 +428,10 @@ The following is an example Message Listener class.
 ```java
 public class SampleMessageListener implements MessageListener<MyEvent> {
 
-  public void onMessage( Message<MyEvent> message ) {
-    MyEvent myEvent = message.getMessageObject();
-    System.out.println( "Message received = " + myEvent.toString() );
-  }
+    public void onMessage( Message<MyEvent> message ) {
+        MyEvent myEvent = message.getMessageObject();
+        System.out.println( "Message received = " + myEvent.toString() );
+    }
 }
 ```
 

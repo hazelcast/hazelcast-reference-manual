@@ -14,100 +14,7 @@ The cardinality estimator service does not provide any ways to configure its pro
 
 ![image](images/NoteSmall.jpg)***NOTE:*** *It is important to understand that this data structure is not 100% accurate, it is used to provide estimates. The error rate is typically a result of `1.04/sqrt(M)` which in our implementation is around 0.81% for high percentiles.*
 
-
-
 The memory consumption of this data structure is close to 16K despite the size of elements in the source data set or stream.
-
-### Cardinality Estimator API
-
-The following is a brief view of the cardinality estimator API:
-
-```
-package com.hazelcast.cardinality;
-
-import com.hazelcast.core.DistributedObject;
-import com.hazelcast.core.ICompletableFuture;
-import com.hazelcast.spi.annotation.Beta;
-
-/**
- * CardinalityEstimator is a redundant and highly available distributed data-structure used
- * for probabilistic cardinality estimation purposes, on unique items, in significantly sized data cultures.
- *
- * CardinalityEstimator is internally based on a HyperLogLog++ data-structure,
- * and uses P^2 byte registers for storage and computation. (Default P = 14)
- */
-@Beta
-public interface CardinalityEstimator extends DistributedObject {
-
-    /**
-     * Add a new object in the estimation set. This is the method you want to
-     * use to feed objects into the estimator.
-     *
-     * Objects are considered identical if they are serialized into the same binary blob.
-     * In other words: It does not use Java equality.
-     */
-    void add(Object obj);
-
-
-    /**
-     * Estimates the cardinality of the aggregation so far.
-     * If it was previously estimated and never invalidated, then a cached version is used.
-     */
-    long estimate();
-
-    /**
-     * Add a new object in the estimation set. This is the method you want to
-     * use to feed objects into the estimator.
-     *
-     * Objects are considered identical if they are serialized into the same binary blob.
-     * In other words: It does not use Java equality.
-     *
-     * This method will dispatch a request and return immediately an ICompletableFuture.
-     * The operations result can be obtained in a blocking way, or a
-     * callback can be provided for execution upon completion, as demonstrated in the following examples:
-     * 1.  ICompletableFuture&lt;Void&gt; future = estimator.addAsync();
-     *     // do something else, then read the result
-     *     Boolean result = future.get(); // this method will block until the result is available
-     * 
-     * 2.  ICompletableFuture&lt;Void&gt; future = estimator.addAsync();
-     *     future.andThen(new ExecutionCallback&lt;Void&gt;() {
-     *          void onResponse(Void response) {
-     *              // do something
-     *          }
-     *
-     *          void onFailure(Throwable t) {
-     *              // handle failure
-     *          }
-     *     });
-     */
-    ICompletableFuture<Void> addAsync(Object obj);
-
-    /**
-     * Estimates the cardinality of the aggregation so far.
-     * If it was previously estimated and never invalidated, then a cached version is used.
-     *
-     * This method will dispatch a request and return immediately an ICompletableFuture.
-     * The operations result can be obtained in a blocking way, or a
-     * callback can be provided for execution upon completion, as demonstrated in the following examples:
-     * 1.  ICompletableFuture&lt;Long&gt; future = estimator.estimateAsync();
-     *     // do something else, then read the result
-     *     Long result = future.get(); // this method will block until the result is available
-     * 
-     * 2.  ICompletableFuture&lt;Long&gt; future = estimator.estimateAsync();
-     *     future.andThen(new ExecutionCallback&lt;Long&gt;() {
-     *          void onResponse(Long response) {
-     *              // do something with the result
-     *          }
-     *
-     *          void onFailure(Throwable t) {
-     *              // handle failure
-     *          }
-     *     });
-     */
-    ICompletableFuture<Long> estimateAsync();
-
-}
-```
 
 There are two phases in using the cardinality estimator.
 
@@ -117,14 +24,30 @@ The provided object is first serialized, and then the byte array is used to gene
 
 2. Compute the estimate of the set so far `estimator.estimate()`.
 
-### Examples
+Please see the [cardinality estimator Javadoc](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cardinality/CardinalityEstimator.html) for more information on its API.
+
+The following is an example code.
 
 ```
-HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
-CardinalityEstimator uniqueVisitorsEstimator = instance.getCardinalityEstimator("visitors");
-for (String ip : _visitorIpsBuffer_) {
-  uniqueVisitorsEstimator.add(ip);
-}
+HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+CardinalityEstimator visitorsEstimator = hz.getCardinalityEstimator("visitors");
 
-long estimate = uniqueVisitorsEstimator.estimate();
+InputStreamReader isr = new InputStreamReader(Member.class.getResourceAsStream("visitors.txt"));
+        BufferedReader br = new BufferedReader(isr);
+        try {
+            String visitor = br.readLine();
+            while (visitor != null) {
+                visitorsEstimator.add(visitor);
+                visitor = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeResource(br);
+            closeResource(isr);
+        }
+
+        System.out.printf("Estimated unique visitors seen so far: %d%n", visitorsEstimator.estimate());
+
+        Hazelcast.shutdownAll();
 ```

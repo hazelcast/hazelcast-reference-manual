@@ -16,13 +16,6 @@ To have the counter as a functioning distributed object, we need a class. This c
 
 
 ```java
-import com.hazelcast.spi.ManagedService;
-import com.hazelcast.spi.NodeEngine;
-
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 public class CounterService implements ManagedService {
     private NodeEngine nodeEngine;
 
@@ -40,7 +33,6 @@ public class CounterService implements ManagedService {
     @Override
     public void reset() {
     }
-
 }
 ```
 

@@ -42,8 +42,8 @@ list.add( new Price( 12 ) );
 //....
 Iterator<Price> iterator = list.iterator();
 while ( iterator.hasNext() ) { 
-  Price price = iterator.next(); 
-  //analyze
+    Price price = iterator.next(); 
+    //analyze
 }
 ```
 

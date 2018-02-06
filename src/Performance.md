@@ -39,33 +39,33 @@ When the keys are the same, entries are stored on the same member. But we someti
 ```java
 public class OrderKey implements Serializable, PartitionAware {
 
-  private final long customerId;
-  private final long orderId;
+    private final long customerId;
+    private final long orderId;
 
-  public OrderKey( long orderId, long customerId ) {
-    this.customerId = customerId;
-    this.orderId = orderId;
-  }
+    public OrderKey( long orderId, long customerId ) {
+        this.customerId = customerId;
+        this.orderId = orderId;
+    }
 
-  public long getCustomerId() {
-    return customerId;
-  }
+    public long getCustomerId() {
+        return customerId;
+    }
 
-  public long getOrderId() {
-    return orderId;
-  }
+    public long getOrderId() {
+        return orderId;
+    }
 
-  public Object getPartitionKey() {
-    return customerId;
-  }
+    public Object getPartitionKey() {
+        return customerId;
+    }
 
-  @Override
-  public String toString() {
-    return "OrderKey{"
-      + "customerId=" + customerId
-      + ", orderId=" + orderId
-      + '}';
-  }
+    @Override
+    public String toString() {
+        return "OrderKey{"
+                + "customerId=" + customerId
+                + ", orderId=" + orderId
+                + '}';
+    }
 }
 ```
 
@@ -89,15 +89,15 @@ Assume that you have a customers map where `customerId` is the key and the custo
 
 ```java
 public static int removeOrder( long customerId, long orderId ) throws Exception {
-  IMap<Long, Customer> mapCustomers = instance.getMap( "customers" );
-  IMap mapOrders = hazelcastInstance.getMap( "orders" );
+    IMap<Long, Customer> mapCustomers = instance.getMap( "customers" );
+    IMap mapOrders = hazelcastInstance.getMap( "orders" );
 
-  mapCustomers.lock( customerId );
-  mapOrders.remove( orderId );
-  Set orders = orderMap.keySet(Predicates.equal( "customerId", customerId ));
-  mapCustomers.unlock( customerId );
+    mapCustomers.lock( customerId );
+    mapOrders.remove( orderId );
+    Set orders = orderMap.keySet(Predicates.equal( "customerId", customerId ));
+    mapCustomers.unlock( customerId );
 
-  return orders.size();
+    return orders.size();
 }
 ```
 

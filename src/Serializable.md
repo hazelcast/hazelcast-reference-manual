@@ -10,12 +10,12 @@ Let's take a look at the example code below for Java Serializable.
 
 ```java
 public class Employee implements Serializable { 
-  private static final long serialVersionUID = 1L;
-  private String surname;
+    private static final long serialVersionUID = 1L;
+    private String surname;
   
-  public Employee( String surname ) { 
-    this.surname = surname;
-  } 
+    public Employee( String surname ) { 
+        this.surname = surname;
+    } 
 }
 ```
 
@@ -29,22 +29,22 @@ Let's take a look at the example code below.
 
 ```java
 public class Employee implements Externalizable { 
-  private String surname;
-  public Employee(String surname) { 
+    private String surname;
+    public Employee(String surname) { 
         this.surname = surname;
-  }
+    }
   
-  @Override
-  public void readExternal( ObjectInput in )
+    @Override
+    public void readExternal( ObjectInput in )
       throws IOException, ClassNotFoundException {
-    this.surname = in.readUTF();
-  }
+        this.surname = in.readUTF();
+    }
     
-  @Override
-  public void writeExternal( ObjectOutput out )
+    @Override
+    public void writeExternal( ObjectOutput out )
       throws IOException {
-    out.writeUTF(surname); 
-  }
+        out.writeUTF(surname); 
+    }
 }
 ```
 

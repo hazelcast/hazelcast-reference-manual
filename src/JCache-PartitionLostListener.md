@@ -8,20 +8,24 @@ from `ICache`.
 Let's consider the following example code:
 
 ```java
-  public static void main(String[] args) {
-    CachingProvider cachingProvider = Caching.getCachingProvider();
-    CacheManager cacheManager = cachingProvider.getCacheManager();
-    Cache<Object, Object> cache = cacheManager.getCache( ... );
+public class PartitionLostListenerUsage {
 
-    ICache<Object, Object> unwrappedCache = cache.unwrap( ICache.class );
 
-    unwrappedCache.addPartitionLostListener(new CachePartitionLostListener() {
-     @Override
-     public void partitionLost(CachePartitionLostEvent event) {
-       System.out.println(event);
-     }
-    });
-  }
+    public static void main(String[] args) {
+        CachingProvider cachingProvider = Caching.getCachingProvider();
+        CacheManager cacheManager = cachingProvider.getCacheManager();
+        Cache<Object, Object> cache = cacheManager.getCache( ... );
+
+        ICache<Object, Object> unwrappedCache = cache.unwrap( ICache.class );
+
+        unwrappedCache.addPartitionLostListener(new CachePartitionLostListener() {
+            @Override
+            public void partitionLost(CachePartitionLostEvent event) {
+                System.out.println(event);
+            }
+        });
+    }
+}
 ```
 
 Within this example code, a `CachePartitionLostListener` implementation is registered to a cache and assumes that this cache is configured with one backup. For this particular cache and any of the partitions in the

@@ -5,8 +5,6 @@ Now, let's start a `HazelcastInstance` as shown below, which will start the `Cou
 
 
 ```java
-import com.hazelcast.core.Hazelcast;
-
 public class Member {
     public static void main(String[] args) {
         Hazelcast.newHazelcastInstance();

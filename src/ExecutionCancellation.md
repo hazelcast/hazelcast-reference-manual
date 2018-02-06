@@ -13,26 +13,26 @@ The Fibonacci callable class below calculates the Fibonacci number for a given n
 
 ```java
 public class Fibonacci implements Callable<Long>, Serializable {
-  int input = 0; 
+    int input = 0; 
 
-  public Fibonacci( int input ) { 
-    this.input = input;
-  } 
+    public Fibonacci( int input ) { 
+        this.input = input;
+    } 
 
-  public Long call() {
-    return calculate( input );
-  }
-
-  private long calculate( int n ) {
-    if ( Thread.currentThread().isInterrupted() ) {
-      return 0;
+    public Long call() {
+        return calculate( input );
     }
-    if ( n <= 1 ) {
-      return n;
-    } else {
-      return calculate( n - 1 ) + calculate( n - 2 );
+
+    private long calculate( int n ) {
+        if ( Thread.currentThread().isInterrupted() ) {
+            return 0;
+        }
+        if ( n <= 1 ) {
+            return n;
+        } else {
+            return calculate( n - 1 ) + calculate( n - 2 );
+        }
     }
-  }
 }
 ```
 
@@ -42,15 +42,15 @@ The `fib()` method below submits the Fibonacci calculation task above for number
 
 ```java
 long fib( int n ) throws Exception {
-  HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-  IExecutorService es = hazelcastInstance.getExecutorService();
-  Future future = es.submit( new Fibonacci( n ) );  
-  try {
-    return future.get( 3, TimeUnit.SECONDS );
-  } catch ( TimeoutException e ) {
-    future.cancel( true );            
-  }
-  return -1;
+    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    IExecutorService es = hazelcastInstance.getExecutorService();
+    Future future = es.submit( new Fibonacci( n ) );  
+    try {
+        return future.get( 3, TimeUnit.SECONDS );
+    } catch ( TimeoutException e ) {
+        future.cancel( true );            
+    }
+    return -1;
 }
 ```
 

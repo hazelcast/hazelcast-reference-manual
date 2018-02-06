@@ -8,9 +8,6 @@ In the previous section, we created a real distributed counter. Now, we need to 
 - `clear`: This method is called when the partition migration is successfully completed and the old partition owner gets rid of all data in the partition. This method is also called when the partition migration operation fails and the to-be-the-new partition owner needs to roll back its changes.
 
 ```java
-import java.util.HashMap;
-import java.util.Map;
-
 class Container {
     private final Map<String, Integer> values = new HashMap();
 
@@ -54,14 +51,6 @@ After you add these three methods to the `Container`, you need to create a `Coun
 An example is shown below.
 
 ```java
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.spi.Operation;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 public class CounterMigrationOperation extends Operation {
 
     Map<String, Integer> migrationData;
@@ -112,13 +101,6 @@ With the `MigrationAwareService` interface, some additional methods are exposed.
 The method `commitMigration` commits the data, meaning that in this case, it clears the partition container of the old owner. 
 
 ```java
-import com.hazelcast.core.DistributedObject;
-import com.hazelcast.partition.MigrationEndpoint;
-import com.hazelcast.spi.*;
-
-import java.util.Map;
-import java.util.Properties;
-
 public class CounterService implements ManagedService, RemoteService, MigrationAwareService {
     public final static String NAME = "CounterService";
     Container[] containers;
@@ -201,9 +183,6 @@ public class CounterService implements ManagedService, RemoteService, MigrationA
 We can run the following code.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-
 public class Member {
     public static void main(String[] args) throws Exception {
         HazelcastInstance[] instances = new HazelcastInstance[3];

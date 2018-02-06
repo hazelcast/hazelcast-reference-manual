@@ -12,16 +12,16 @@ The following code samples describe the mechanism of `ICountDownLatch`. Assume t
 
 ```java
 public class Leader {
-  public static void main( String[] args ) throws Exception {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
-    System.out.println( "Starting" );
-    latch.trySetCount( 1 );
-    Thread.sleep( 30000 );
-    latch.countDown();
-    System.out.println( "Leader finished" );
-    latch.destroy();
-  }
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
+        System.out.println( "Starting" );
+        latch.trySetCount( 1 );
+        Thread.sleep( 30000 );
+        latch.countDown();
+        System.out.println( "Leader finished" );
+        latch.destroy();
+    }
 }
 ```
 
@@ -30,13 +30,13 @@ Since only a single step is needed to be completed as a sample, the above code i
 
 ```java
 public class Follower {
-  public static void main( String[] args ) throws Exception {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
-    System.out.println( "Waiting" );
-    boolean success = latch.await( 10, TimeUnit.SECONDS );
-    System.out.println( "Complete: " + success );
-  }
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
+        System.out.println( "Waiting" );
+        boolean success = latch.await( 10, TimeUnit.SECONDS );
+        System.out.println( "Complete: " + success );
+    }
 } 
 ```
 

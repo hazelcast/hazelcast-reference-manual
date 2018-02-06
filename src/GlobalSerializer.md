@@ -31,33 +31,33 @@ A sample global serializer that integrates with a third party serializer is show
 public class GlobalStreamSerializer
     implements StreamSerializer<Object> {
 
-  private SomeThirdPartySerializer someThirdPartySerializer;
+    private SomeThirdPartySerializer someThirdPartySerializer;
   
-  private init() {
-    //someThirdPartySerializer  = ... 
-  }
+    private init() {
+        //someThirdPartySerializer  = ... 
+    }
   
-  @Override
-  public int getTypeId () {
-    return 123; 
-  }
+    @Override
+    public int getTypeId () {
+        return 123; 
+    }
 
-  @Override
-  public void write( ObjectDataOutput out, Object object ) throws IOException { 
-     byte[] bytes = someThirdPartySerializer.encode(object);
-     out.writeByteArray(bytes);
-  }
+    @Override
+    public void write( ObjectDataOutput out, Object object ) throws IOException { 
+        byte[] bytes = someThirdPartySerializer.encode(object);
+        out.writeByteArray(bytes);
+    }
 
-  @Override
-  public Object read( ObjectDataInput in ) throws IOException { 
-    byte[] bytes = in.readByteArray();
-    return someThirdPartySerializer.decode(bytes);
-  }
+    @Override
+    public Object read( ObjectDataInput in ) throws IOException { 
+        byte[] bytes = in.readByteArray();
+        return someThirdPartySerializer.decode(bytes);
+    }
 
-  @Override
-  public void destroy () {
-     someThirdPartySerializer.destroy();
-  }
+    @Override
+    public void destroy () {
+        someThirdPartySerializer.destroy();
+    }
 }
 ```
 

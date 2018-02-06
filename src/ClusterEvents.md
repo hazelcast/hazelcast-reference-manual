@@ -16,17 +16,17 @@ The following is an example Membership Listener class.
 ```java
 public class ClusterMembershipListener implements MembershipListener {
 
-  public void memberAdded(MembershipEvent membershipEvent) {
-    System.err.println("Added: " + membershipEvent);
-  }
+    public void memberAdded(MembershipEvent membershipEvent) {
+        System.err.println("Added: " + membershipEvent);
+    }
 
-  public void memberRemoved(MembershipEvent membershipEvent) {
-    System.err.println("Removed: " + membershipEvent);
-  }
+    public void memberRemoved(MembershipEvent membershipEvent) {
+        System.err.println("Removed: " + membershipEvent);
+    }
 
-  public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
-    System.err.println("Member attribute changed: " + memberAttributeEvent);
-  }
+    public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
+        System.err.println("Member attribute changed: " + memberAttributeEvent);
+    }
 }
 ```
 
@@ -87,15 +87,15 @@ The following is an example Distributed Object Listener class.
 ```java
 public class SampleDistObjListener implements DistributedObjectListener {
 
-  @Override
-  public void distributedObjectCreated(DistributedObjectEvent event) {
-    DistributedObject instance = event.getDistributedObject();
-    System.out.println("Created " + instance.getName() + ", service=" + instance.getServiceName());
-  }
+    @Override
+    public void distributedObjectCreated(DistributedObjectEvent event) {
+        DistributedObject instance = event.getDistributedObject();
+        System.out.println("Created " + instance.getName() + ", service=" + instance.getServiceName());
+    }
 
-  @Override
-  public void distributedObjectDestroyed(DistributedObjectEvent event) {
-    System.out.println("Destroyed " + event.getObjectName() + ", service=" + event.getServiceName());
+    @Override
+    public void distributedObjectDestroyed(DistributedObjectEvent event) {
+        System.out.println("Destroyed " + event.getObjectName() + ", service=" + event.getServiceName());
   }
 }
 ```
@@ -167,15 +167,15 @@ The following is an example Migration Listener class.
 public class ClusterMigrationListener implements MigrationListener {
      @Override
      public void migrationStarted(MigrationEvent migrationEvent) {
-       System.err.println("Started: " + migrationEvent);
+         System.err.println("Started: " + migrationEvent);
      }
     @Override
      public void migrationCompleted(MigrationEvent migrationEvent) {
-       System.err.println("Completed: " + migrationEvent);
+         System.err.println("Completed: " + migrationEvent);
      }
      @Override
      public void migrationFailed(MigrationEvent migrationEvent) {
-       System.err.println("Failed: " + migrationEvent);
+         System.err.println("Failed: " + migrationEvent);
      }
 }     
 ```
@@ -252,12 +252,12 @@ To write a Partition Lost Listener, you implement the PartitionLostListener inte
 The following is an example Partition Lost Listener class. 
 
 ```java
-    public class ConsoleLoggingPartitionLostListener implements PartitionLostListener {
-        @Override
-        public void partitionLost(PartitionLostEvent event) {
-            System.out.println(event);
-        }
-    } 
+public class ConsoleLoggingPartitionLostListener implements PartitionLostListener {
+    @Override
+    public void partitionLost(PartitionLostEvent event) {
+        System.out.println(event);
+    }
+} 
 ```
 
 When a `PartitionLostEvent` is fired, the partition lost listener given above outputs the partition ID, the replica index that is lost, and the member that has detected the partition loss. The following is an example output.
@@ -313,7 +313,7 @@ The following is an example Lifecycle Listener class.
 public class NodeLifecycleListener implements LifecycleListener {
      @Override
      public void stateChanged(LifecycleEvent event) {
-       System.err.println(event);
+         System.err.println(event);
      }
 }
 ```

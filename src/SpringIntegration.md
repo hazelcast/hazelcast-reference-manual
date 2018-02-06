@@ -311,28 +311,25 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
 @Scope("prototype")
 public class SomeValue implements Serializable, ApplicationContextAware {
 
-  private transient ApplicationContext context;
+    private transient ApplicationContext context;
+    private transient SomeBean someBean;
+    private transient boolean init = false;
 
-  private transient SomeBean someBean;
+    public void setApplicationContext( ApplicationContext applicationContext )
+        throws BeansException {
+        context = applicationContext;
+    }
 
-  private transient boolean init = false;
+    @Autowired
+    public void setSomeBean( SomeBean someBean)  {
+        this.someBean = someBean;
+    }
 
-  public void setApplicationContext( ApplicationContext applicationContext )
-    throws BeansException {
-    context = applicationContext;
-  }
-
-  @Autowired
-  public void setSomeBean( SomeBean someBean)  {
-    this.someBean = someBean;
-  }
-
-  @PostConstruct
-  public void init() {
-    someBean.doSomethingUseful();
-    init = true;
-  }
-  ...
+    @PostConstruct
+    public void init() {
+        someBean.doSomethingUseful();
+        init = true;
+    }
 }
 ```
 
@@ -366,23 +363,22 @@ Assert.assertTrue( value.init );
 public class SomeTask
     implements Callable<Long>, ApplicationContextAware, Serializable {
 
-  private transient ApplicationContext context;
+    private transient ApplicationContext context;
+    private transient SomeBean someBean;
 
-  private transient SomeBean someBean;
+    public Long call() throws Exception {
+        return someBean.value;
+    }
 
-  public Long call() throws Exception {
-    return someBean.value;
-  }
+    public void setApplicationContext( ApplicationContext applicationContext )
+        throws BeansException {
+        context = applicationContext;
+    }
 
-  public void setApplicationContext( ApplicationContext applicationContext )
-      throws BeansException {
-    context = applicationContext;
-  }
-
-  @Autowired
-  public void setSomeBean( SomeBean someBean ) {
-    this.someBean = someBean;
-  }
+    @Autowired
+    public void setSomeBean( SomeBean someBean ) {
+        this.someBean = someBean;
+    }
 }
 ```
 
@@ -451,8 +447,8 @@ Hazelcast uses its Map implementation for underlying cache. You can configure a 
 
 ```
 public interface IDummyBean {
-  @Cacheable("city")
-  String getCity();
+    @Cacheable("city")
+    String getCity();
 }
 ```
 
@@ -634,13 +630,12 @@ To avoid this issue, the target property/attribute can be declared as un-typed `
 
 ```java
 public class SomeBean {
-  @Autowired
-  IMap map; // instead of IMap<K, V> map
+    @Autowired
+    IMap map; // instead of IMap<K, V> map
 
-  @Autowired
-  IQueue queue; // instead of IQueue<E> queue
-
-  ...
+    @Autowired
+    IQueue queue; // instead of IQueue<E> queue
+    ...
 }
 ```
 
@@ -649,22 +644,21 @@ Or, parameters of injection methods (constructor, setter) can be un-typed as sho
 ```java
 public class SomeBean {
 
-  IMap<K, V> map;
+    IMap<K, V> map;
+    IQueue<E> queue;
 
-  IQueue<E> queue;
+    // Instead of IMap<K, V> map
+    public SomeBean(IMap map) {
+        this.map = map;
+    }
 
-  // Instead of IMap<K, V> map
-  public SomeBean(IMap map) {
-    this.map = map;
-  }
+    ...
 
-  ...
-
-  // Instead of IQueue<E> queue
-  public void setQueue(IQueue queue) {
-    this.queue = queue;
-  }
-  ...
+    // Instead of IQueue<E> queue
+    public void setQueue(IQueue queue) {
+        this.queue = queue;
+    }
+    ...
 }
 ```
 <br> </br>

@@ -13,35 +13,31 @@ remote members; it works as fire and forget.*
 Use the HazelcastInstance `getTopic` method to get the Topic, then use the topic `publish` method to publish your messages (`messageObject`).
 
 ```java
-import com.hazelcast.core.Topic;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.MessageListener;
-
 public class Sample implements MessageListener<MyEvent> {
 
-  public static void main( String[] args ) {
-    Sample sample = new Sample();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    ITopic topic = hazelcastInstance.getTopic( "default" );
-    topic.addMessageListener( sample );
-    topic.publish( new MyEvent() );
-  }
-
-  public void onMessage( Message<MyEvent> message ) {
-    MyEvent myEvent = message.getMessageObject();
-    System.out.println( "Message received = " + myEvent.toString() );
-    if ( myEvent.isHeavyweight() ) {
-      messageExecutor.execute( new Runnable() {
-          public void run() {
-            doHeavyweightStuff( myEvent );
-          }
-      } );
+    public static void main( String[] args ) {
+        Sample sample = new Sample();
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ITopic topic = hazelcastInstance.getTopic( "default" );
+        topic.addMessageListener( sample );
+        topic.publish( new MyEvent() );
     }
-  }
 
-  // ...
+    public void onMessage( Message<MyEvent> message ) {
+        MyEvent myEvent = message.getMessageObject();
+        System.out.println( "Message received = " + myEvent.toString() );
+        if ( myEvent.isHeavyweight() ) {
+            messageExecutor.execute( new Runnable() {
+                public void run() {
+                    doHeavyweightStuff( myEvent );
+                }
+            } );
+        }
+    }
 
-  private final Executor messageExecutor = Executors.newSingleThreadExecutor();
+    // ...
+
+    private final Executor messageExecutor = Executors.newSingleThreadExecutor();
 }
 ```
 

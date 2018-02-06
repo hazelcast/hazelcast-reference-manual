@@ -6,9 +6,6 @@ Let's create a Container for every partition in the system. This container will 
 
 
 ```java
-import java.util.HashMap;
-import java.util.Map;
-
 class Container {
     private final Map<String, Integer> values = new HashMap();
 
@@ -49,14 +46,6 @@ The code performs the tasks below.
 Let's integrate the `Container` in the `CounterService`, as shown below.
 
 ```java
-import com.hazelcast.spi.ManagedService;
-import com.hazelcast.spi.NodeEngine;
-import com.hazelcast.spi.RemoteService;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 public class CounterService implements ManagedService, RemoteService {
     public final static String NAME = "CounterService";
     Container[] containers;
@@ -115,14 +104,6 @@ As the last step in creating a Container, we connect the method `IncOperation.ru
 `partitionId` has a range between **0** and **partitionCount** and can be used as an index for the container array. Therefore, you can use `partitionId` to retrieve the container, and once the container has been retrieved, you can access the value. 
 
 ```java
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.spi.Operation;
-import com.hazelcast.spi.PartitionAwareOperation;
-
-import java.io.IOException;
-import java.util.Map;
-
 class IncOperation extends Operation implements PartitionAwareOperation {
     private String objectId;
     private int amount, returnValue;
@@ -174,9 +155,6 @@ class IncOperation extends Operation implements PartitionAwareOperation {
 Let's run the following sample code.
 
 ```java
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-
 public class Member {
     public static void main(String[] args) {
         HazelcastInstance[] instances = new HazelcastInstance[2];

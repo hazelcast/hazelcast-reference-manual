@@ -41,9 +41,9 @@ The first example will produce the sum of some `int` values stored in a Hazelcas
 ```java
 IMap<String, Integer> personAgeMapping = hazelcastInstance.getMap( "person-age" );
 for ( int i = 0; i < 1000; i++ ) {
-  String lastName = RandomUtil.randomLastName();
-  int age = RandomUtil.randomAgeBetween( 20, 80 );
-  personAgeMapping.put( lastName, Integer.valueOf( age ) );
+    String lastName = RandomUtil.randomLastName();
+    int age = RandomUtil.randomAgeBetween( 20, 80 );
+    personAgeMapping.put( lastName, Integer.valueOf( age ) );
 }
 ```
 

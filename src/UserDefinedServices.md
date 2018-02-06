@@ -10,7 +10,7 @@ Here is our counter.
 
 ```java
 public interface Counter{
-   int inc(int amount);
+    int inc(int amount);
 }
 ```
 

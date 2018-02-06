@@ -77,15 +77,16 @@ To destroy a Hazelcast distributed object, you can use the method `destroy`. Thi
 
 ```java
 public class Member {
-  public static void main(String[] args) throws Exception {
-    HazelcastInstance hz1 = Hazelcast.newHazelcastInstance();
-    HazelcastInstance hz2 = Hazelcast.newHazelcastInstance();
-    IQueue<String> q1 = hz1.getQueue("q");
-    IQueue<String> q2 = hz2.getQueue("q");
-    q1.add("foo");
-      System.out.println("q1.size: "+q1.size()+ " q2.size:"+q2.size());
-    q1.destroy();
-      System.out.println("q1.size: "+q1.size() + " q2.size:"+q2.size());
+  
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hz1 = Hazelcast.newHazelcastInstance();
+        HazelcastInstance hz2 = Hazelcast.newHazelcastInstance();
+        IQueue<String> q1 = hz1.getQueue("q");
+        IQueue<String> q2 = hz2.getQueue("q");
+        q1.add("foo");
+            System.out.println("q1.size: "+q1.size()+ " q2.size:"+q2.size());
+        q1.destroy();
+            System.out.println("q1.size: "+q1.size() + " q2.size:"+q2.size());
     }
 }
 ```
@@ -136,30 +137,31 @@ Here is an example of how you can retrieve existing data structure instances (ma
 
 ```java
 public class Sample implements DistributedObjectListener {
-  public static void main(String[] args) {
-    Sample sample = new Sample();
+  
+    public static void main(String[] args) {
+        Sample sample = new Sample();
+        Config config = new Config();
 
-    Config config = new Config();
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-    hazelcastInstance.addDistributedObjectListener(sample);
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+        hazelcastInstance.addDistributedObjectListener(sample);
 
-    Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
-    for (DistributedObject distributedObject : distributedObjects) {
-      System.out.println(distributedObject.getName());
+        Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
+        for (DistributedObject distributedObject : distributedObjects) {
+            System.out.println(distributedObject.getName());
+        }
     }
-  }
 
-  @Override
-  public void distributedObjectCreated(DistributedObjectEvent event) {
+    @Override
+    public void distributedObjectCreated(DistributedObjectEvent event) {
     DistributedObject instance = event.getDistributedObject();
     System.out.println("Created " + instance.getName());
-  }
+    }
 
-  @Override
-  public void distributedObjectDestroyed(DistributedObjectEvent event) {
+    @Override
+    public void distributedObjectDestroyed(DistributedObjectEvent event) {
     DistributedObject instance = event.getDistributedObject();
     System.out.println("Destroyed " + instance.getName());
-  }
+    }
 }
 ```
 

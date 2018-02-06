@@ -220,9 +220,9 @@ public class MapCustomEvictionPolicy {
     public static void main(String[] args) {
         Config config = new Config();
         config.getMapConfig("test")
-                .setMapEvictionPolicy(new OddEvictor())
-                .getMaxSizeConfig()
-                .setMaxSizePolicy(PER_NODE).setSize(10000);
+            .setMapEvictionPolicy(new OddEvictor())
+            .getMaxSizeConfig()
+            .setMaxSizePolicy(PER_NODE).setSize(10000);
 
         HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
         IMap<Integer, Integer> map = instance.getMap("test");

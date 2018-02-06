@@ -64,13 +64,13 @@ You can use the following example code for a recovery case.
 
     ```java
        
-       QueryCache queryCache = map.getQueryCache("cache-name", new SqlPredicate("this > 20"), true);
-       queryCache.addEntryListener(new EventLostListener() {
-           @Override
-           public void eventLost(EventLostEvent event) {
-               queryCache.tryRecover();
-           }
-       }, false);
+    QueryCache queryCache = map.getQueryCache("cache-name", new SqlPredicate("this > 20"), true);
+    queryCache.addEntryListener(new EventLostListener() {
+        @Override
+        public void eventLost(EventLostEvent event) {
+            queryCache.tryRecover();
+        }
+    }, false);
     ```
    
 * You can configure continuous query cache declaratively or programmatically.

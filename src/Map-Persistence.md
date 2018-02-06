@@ -192,16 +192,7 @@ mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
 });
 ```
 
-To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the `MapLoaderLifecycleSupport` interface. This interface has the methods `init()` and `destroy()` as shown below.
-
-```java
-public interface MapLoaderLifecycleSupport {
-
-  void init( HazelcastInstance hazelcastInstance, Properties properties, String mapName );
-
-  void destroy();
-}
-```
+To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the [`MapLoaderLifecycleSupport` interface](http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapLoaderLifecycleSupport.html). This interface has the methods `init()` and `destroy()`.
 
 The method `init()` initializes the `MapLoader` implementation. Hazelcast calls this method when the map is first used on the Hazelcast instance. The `MapLoader` implementation can initialize the required resources for implementing `MapLoader` such as reading a configuration file or creating a database connection.
 
@@ -280,11 +271,11 @@ Here is an example of post processing map store:
 
 ```java
 class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapStore {
-  @Override
-  public void store( Integer key, Employee employee ) {
-    EmployeeId id = saveEmployee();
-    employee.setId( id.getId() );
-  }
+    @Override
+    public void store( Integer key, Employee employee ) {
+        EmployeeId id = saveEmployee();
+        employee.setId( id.getId() );
+    }
 }
 ```
 
