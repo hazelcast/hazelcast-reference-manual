@@ -18,19 +18,19 @@ Hazelcast supports standard Java Security (JAAS) based authentication between cl
     </properties>
   </member-credentials-factory>
   <member-login-modules>
-    <login-module usage="required"
+    <login-module usage="REQUIRED"
         class-name="com.hazelcast.examples.MyRequiredLoginModule">
       <properties>
         <property name="property3">value3</property>
       </properties>
     </login-module>
-    <login-module usage="sufficient"
+    <login-module usage="SUFFICIENT"
         class-name="com.hazelcast.examples.MySufficientLoginModule">
       <properties>
         <property name="property4">value4</property>
       </properties>
     </login-module>
-    <login-module usage="optional"
+    <login-module usage="OPTIONAL"
         class-name="com.hazelcast.examples.MyOptionalLoginModule">
       <properties>
         <property name="property5">value5</property>
