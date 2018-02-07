@@ -16,19 +16,19 @@ The authentication mechanism works the same as cluster member authentication. To
 ```xml
 <security enabled="true">
   <client-login-modules>
-    <login-module usage="required"
+    <login-module usage="REQUIRED"
         class-name="com.hazelcast.examples.MyRequiredClientLoginModule">
       <properties>
         <property name="property3">value3</property>
       </properties>
     </login-module>
-    <login-module usage="sufficient"
+    <login-module usage="SUFFICIENT"
         class-name="com.hazelcast.examples.MySufficientClientLoginModule">
       <properties>
         <property name="property4">value4</property>
       </properties>
     </login-module>
-    <login-module usage="optional"
+    <login-module usage="OPTIONAL"
         class-name="com.hazelcast.examples.MyOptionalClientLoginModule">
       <properties>
         <property name="property5">value5</property>
