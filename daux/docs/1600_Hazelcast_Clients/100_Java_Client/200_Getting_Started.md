@@ -91,7 +91,7 @@ The client executes each operation through the already established connection to
 
 ##### Handling Retry-able Operation Failure
 
-While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, set the `redoOperation` to `true`. Please see [Enabling Redo Operation](/1600_Hazelcast_Clients/100_Java_Client/300_Configuration/100_Client_Network.md).
+While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, you can set the `redoOperation` to `true`. Please see [Enabling Redo Operation](/1600_Hazelcast_Clients/100_Java_Client/300_Configuration/100_Client_Network.md).
 
 You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client will retry an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes: 
 
@@ -99,10 +99,11 @@ You can set a timeout for retrying the operations sent to a member. This can be 
 - Connection between the client and member is closed.
 - Client's heartbeat requests are timed out.
 
-Please see the [System Properties - Client section](/2700_System_Properties/200_System_Properties_-_Client.md).
+Please see the [System Properties - Client section](/2700_System_Properties/200_System_Properties_-_Client.md) for the description of the property `hazelcast.client.invocation.timeout.seconds`.
+
+When a connection problem occurs, an operation is retried if it is certain that it has not run on the member yet or if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect. If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a connection failure between the client and member. But in this case, you should know that some operations may run multiple times. For example, assume that your client sent a `queue.offer` operation to the member, and then the connection is lost. Since there will be no respond for this operation, you will not now whether it has run on the member or not. If you enabled `redoOperation`, it means this operation may run again, which may cause two sane objects in the queue.
 
 ## Using Supported Distributed Data Structures
-
 
 
 Most of the Distributed Data Structures are supported by the Java client. When you use clients in other languages, you should check for the exceptions.
