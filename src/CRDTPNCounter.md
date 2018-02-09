@@ -1,8 +1,16 @@
 
 
-## CRDT PN-Counter (Draft)
+## PN-Counter
 
-Hazelcast offers a lightweight PN-Counter CRDT (Positive-Negative Counter Conflict-Free Replicated Data Type) implementation. Each member of your cluster can increment and decrement the counter value and those updates are propagated to all members. If no member crash occurs, it is guaranteed that each member sees the final value of the counter eventually and the history of the counter value is monotonic. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. With this data type you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads.
+??? What is it, and why the need to implement it, Use cases ???
+
+A Conflict-free Replicated Data Type (CRDT) is a data structure that can replicate across the members in a network. Using this structure, you can update the replicas independently and concurrently without coordination between the replicas.
+
+??? How it works, any sample codes ???
+
+??? How it is configured ???
+
+Hazelcast offers a lightweight PN-Counter (Positive-Negative Counter) implementation, which is a Conflict-Free Replicated Data Type (CRDT). Each cluster member can increment and decrement the counter value and these updates are propagated to all members. If there is no member failure, it is guaranteed that each member sees the final value of the counter eventually and the history of the counter value is monotonic. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. With this data type you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads.
 
 Different callers can read distinct values of the same counter at the same time. A caller picks a member from which it will always access the counter. As Replicas are only eventually consistent, it is possible for caller 1 connected to a replica on member A to read a different value to caller 2 connected to a replica on member B. A caller will always read its writes.
 
