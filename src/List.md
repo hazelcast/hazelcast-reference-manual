@@ -67,6 +67,7 @@ The following are example list configurations.
           com.hazelcast.examples.ItemListener
       </item-listener>
    </item-listeners>
+   <quorum-ref>quorumname</quorum-ref>
 </list>
 ```
 
@@ -74,9 +75,10 @@ The following are example list configurations.
 
 ```java
 Config config = new Config();
-        CollectionConfig collectionList = config.getListConfig("MyList");
-        collectionList.setBackupCount(1)
-                .setMaxSize(10);
+CollectionConfig collectionList = config.getListConfig("MyList");
+collectionList.setBackupCount(1)
+              .setMaxSize(10)
+              .setQuorumName( "quorumname" );
 ```
    
 
@@ -88,7 +90,7 @@ List configuration has the following elements.
 - `async-backup-count`: Number of asynchronous backups.
 - `max-size`: The maximum number of entries for this List.
 - `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values, and you can set the attribute `local` to `true` if you want to listen the items on the local member.
-
+- `quorum-ref`: Name of quorum configuration that you want this List to use. You should set its value as the quorum's name, which you configured under the `quorum` element as explained in the [Split-Brain Protection section](#split-brain-protection).
 
 
 

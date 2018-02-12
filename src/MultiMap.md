@@ -74,6 +74,7 @@ The following are the example MultiMap configurations.
     <entry-listeners>
         <entry-listener include-value="false" local="false" >com.hazelcast.examples.EntryListener</entry-listener>
     </entry-listeners>
+    <quorum-ref>quorumname</quorum-ref>
 </multimap>
 ```
 
@@ -81,11 +82,10 @@ The following are the example MultiMap configurations.
 
 ```java
 MultiMapConfig mmConfig = new MultiMapConfig();
-mmConfig.setName( "default" );
-
-mmConfig.setBackupCount( "0" ).setAsyncBackupCount( "1" );
-         
-mmConfig.setValueCollectionType( "SET" );
+mmConfig.setName( "default" )
+        .setBackupCount( "0" ).setAsyncBackupCount( "1" )
+        .setValueCollectionType( "SET" )
+        .setQuorumName( "quorumname" );
 ```
 
 The following are the configuration elements and their descriptions:
@@ -98,9 +98,7 @@ placed on one other member. If it is 2, it will be placed on two other members.
 - `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 include-value to true if you want the item event to contain the entry values, and you can set
 local to true if you want to listen to the entries on the local member.
-
-
-
+- `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. You should set its value as the quorum's name, which you configured under the `quorum` element as explained in the [Split-Brain Protection section](#split-brain-protection).
 
 
 
