@@ -13,6 +13,7 @@ The following are examples of queue configurations. It includes the `QueueStore`
     <item-listeners>
         <item-listener>com.hazelcast.examples.ItemListener</item-listener>
     </item-listeners>
+    <statistics-enabled>true</statistics-enabled>
     <queue-store>
         <class-name>com.hazelcast.QueueStoreImpl</class-name>
         <properties>
@@ -21,7 +22,7 @@ The following are examples of queue configurations. It includes the `QueueStore`
             <property name="bulk-load">500</property>
         </properties>
     </queue-store>
-    <quorum-ref>quorumRuleWithThreeNodes</quorum-ref>
+    <quorum-ref>quorumname</quorum-ref>
 </queue>
 ```
 
@@ -34,7 +35,7 @@ queueConfig.setName("MyQueue")
            .setBackupCount(1)
            .setMaxSize(0)
            .setStatisticsEnabled(true)
-           .setQuorumName("quorum-name");
+           .setQuorumName("quorumname");
 queueConfig.getQueueStoreConfig()
            .setEnabled(true)
            .setClassName("com.hazelcast.QueueStoreImpl")
