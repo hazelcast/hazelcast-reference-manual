@@ -98,7 +98,7 @@ placed on one other member. If it is 2, it will be placed on two other members.
 - `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 include-value to true if you want the item event to contain the entry values, and you can set
 local to true if you want to listen to the entries on the local member.
-- `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. You should set its value as the quorum's name, which you configured under the `quorum` element as explained in the [Split-Brain Protection section](#split-brain-protection).
+- `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. Please see the [Split-Brain Protection for MultiMap and TransactionalMultiMap section](#split-brain-protection-for-multimap-and-transactionalmultimap).
 
 
 

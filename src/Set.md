@@ -72,5 +72,5 @@ Set configuration has the following elements.
 - `async-backup-count`: Count of asynchronous backups.
 - `max-size`: The maximum number of entries for this Set. It can be any number between 0 and Integer.MAX_VALUE. Its default value is 0, meaning there is no capacity constraint.
 - `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attributes `include-value` to `true` if you want the item event to contain the item values, and you can set `local` to `true` if you want to listen to the items on the local member.
-- `quorum-ref`: Name of quorum configuration that you want this Set to use. You should set its value as the quorum's name, which you configured under the `quorum` element as explained in the [Split-Brain Protection section](#split-brain-protection).
+- `quorum-ref`: Name of quorum configuration that you want this Set to use. Please refer to the [Split-Brain Protection for ISet and TransactionalSet section](#split-brain-protection-for-iset-and-transactionalset).
 

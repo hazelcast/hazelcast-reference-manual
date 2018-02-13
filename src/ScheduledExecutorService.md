@@ -50,6 +50,7 @@ This section presents example configurations for scheduled executor service alon
 	<pool-size>16</pool-size>
 	<durability>1</durability>
 	<capacity>100</capacity>
+	<quorum-ref>quorumname</quorum-ref>
 </scheduled-executor-service>
 ```
 
@@ -60,7 +61,8 @@ Config config = new Config();
 config.getScheduledExecutorConfig( "myScheduledExecSvc" )
       .setPoolSize ( 16 )
       .setCapacity( 100 )
-      .setDurability( 1 );
+      .setDurability( 1 )
+      .setQuorumName( "quorumname" );
 
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
 IScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduledExecutorService("myScheduledExecSvc");
@@ -72,6 +74,7 @@ Following are the descriptions of each configuration element and attribute:
 * `pool-size`: Number of executor threads per member for the executor.
 * `capacity`: Maximum number of tasks that a scheduler can have per partition. Attempt to schedule more, will result in `RejectedExecutionException`. To free up the capacity, tasks should get disposed by the user.
 * `durability`: Durability of the executor.
+* `quorum-ref`: Name of quorum configuration that you want this Scheduled Executor Service to use. Please see the [Split-Brain Protection for IScheduled Executor Service section](#split-brain-protection-for-ischeduled-executor-service).
 
 ### Examples
 

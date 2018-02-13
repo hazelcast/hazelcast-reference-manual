@@ -29,6 +29,7 @@ This section presents example configurations for durable executor service along 
 	<pool-size>8</pool-size>
 	<durability>1</durability>
 	<capacity>1</capacity>
+	<quorum-ref>quorumname</quorum-ref>
 </durable-executor-service>
 ```
 
@@ -39,7 +40,8 @@ Config config = new Config();
 config.getDurableExecutorConfig( "myDurableExecSvc" )
       .setPoolSize ( 8 )
       .setDurability( 1 )
-      .setCapacity( 1 );
+      .setCapacity( 1 )
+      .setQuorumName( "quorumname" );
 
 HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
 DurableExecutorService durableExecSvc = hazelcast.getDurableExecutorService("myDurableExecSvc");
@@ -51,3 +53,4 @@ Following are the descriptions of each configuration element and attribute:
 * `pool-size`: Number of executor threads per member for the executor.
 * `durability`: Number of backups in the cluster for the submitted task; default is 1.
 * `capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
+* `quorum-ref`: Name of quorum configuration that you want this Durable Executor Service to use. Please see the [Split-Brain Protection for Durable Executor Service section](#split-brain-protection-for-durable-executor-service).

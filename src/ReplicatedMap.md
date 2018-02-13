@@ -110,6 +110,7 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
       com.hazelcast.examples.EntryListener
     </entry-listener>
   </entry-listeners>
+  <quorum-ref>quorumname</quorum-ref>
 </replicatedmap>
 ```
 
@@ -119,6 +120,7 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 - `entry-listener`: Full canonical classname of the `EntryListener` implementation.
   - `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. The default value is `true`.
   - `entry-listener#local`: Not used for Replicated Map since listeners are always local.
+- `quorum-ref`: Name of quorum configuration that you want this Replicated Map to use. Please see the [Split-Brain Protection for Replicated Map section](#split-brain-protection-for-replicated-map).
 
 #### Replicated Map Programmatic Configuration
 
@@ -131,7 +133,8 @@ Config config = new Config();
 ReplicatedMapConfig replicatedMapConfig =
     config.getReplicatedMapConfig( "default" );
 
-replicatedMapConfig.setInMemoryFormat( InMemoryFormat.BINARY );
+replicatedMapConfig.setInMemoryFormat( InMemoryFormat.BINARY )
+                   .setQuorumName( "quorumname" );
 ```
 
 All properties that can be configured using the declarative configuration are also available using programmatic configuration
