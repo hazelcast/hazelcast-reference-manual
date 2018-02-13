@@ -34,7 +34,7 @@ Just like `IAtomicLong`, `IAtomicReference` has methods that accept a 'function'
 
 ### Using IAtomicReference
 
-Below are some issues you need to know when you use IAtomicReference.
+Below are some considerations you need to know when you use IAtomicReference.
 
 -	`IAtomicReference` works based on the byte-content and not on the object-reference. If you use the `compareAndSet` method, do not change to original value because its serialized content will then be different. 
 It is also important to know that if you rely on Java serialization, sometimes (especially with hashmaps) the same object can result in different binary content.

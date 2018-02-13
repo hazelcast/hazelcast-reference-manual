@@ -210,6 +210,32 @@ In the declarative configuration example below, a Ringbuffer is configured with 
 </ringbuffer>
 ```
 
+### Configuring Split-Brain Protection for Ringbuffer
+
+Ringbuffer can be configured to check for a minimum number of available members before applying Ringbuffer operations. This is a check to avoid performing successful Ringbuffer operations on all parts of a cluster during a network partition and can be configured using the element `quorum-ref`. You should set this element's value as the quorum's name, which you configured under the `quorum` element as explained in the [Split-Brain Protection section](#split-brain-protection). Following is an example snippet:
+
+```xml
+<ringbuffer name="rb">
+    <quorum-ref>quorumname</quorum-ref>
+</ringbuffer>
+```
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+- WRITE, READ_WRITE:
+    - `add`
+    - `addAllAsync`
+    - `addAsync`
+- READ, READ_WRITE:
+    - `capacity`
+    - `headSequence`
+    - `readManyAsync`
+    - `readOne`
+    - `remainingCapacity`
+    - `size`
+    - `tailSequence`
+
+
 
 ### Adding Batched Items
 
@@ -319,6 +345,7 @@ The following shows the declarative configuration of a Ringbuffer called `rb`. T
     <async-backup-count>0</async-backup-count>
     <time-to-live-seconds>0</time-to-live-seconds>
     <in-memory-format>BINARY</in-memory-format>
+    <quorum-ref>quorumname</quorum-ref>    
 </ringbuffer>
 ```
 
@@ -330,7 +357,8 @@ RingbufferConfig rbConfig = new RingbufferConfig("rb")
     .setBackupCount(1)
     .setAsyncBackupCount(0)
     .setTimeToLiveSeconds(0)
-    .setInMemoryFormat(InMemoryFormat.BINARY);
+    .setInMemoryFormat(InMemoryFormat.BINARY)
+    .setQuorumName("quorumname");
 Config config = new Config();
 config.addRingbufferConfig(rbConfig);
 ```        

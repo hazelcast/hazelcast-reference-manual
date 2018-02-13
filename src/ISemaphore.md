@@ -81,6 +81,7 @@ The following are example semaphore configurations.
    <backup-count>1</backup-count>
    <async-backup-count>0</async-backup-count>
    <initial-permits>3</initial-permits>
+   <quorum-ref>quorumname</quorum-ref>
 </semaphore>
 ```
 
@@ -90,7 +91,8 @@ The following are example semaphore configurations.
 Config config = new Config();
 SemaphoreConfig semaphoreConfig = config.getSemaphoreConfig();
 semaphoreConfig.setName( "semaphore" ).setBackupCount( "1" )
-        .setInitialPermits( "3" );
+        .setInitialPermits( "3" )
+        .setQuorumName( "quorumname" );
 ```
 
 Semaphore configuration has the below elements.
@@ -98,6 +100,7 @@ Semaphore configuration has the below elements.
 - `initial-permits`: the thread count to which the concurrent access is limited. For example, if you set it to "3", concurrent access to the object is limited to 3 threads.
 - `backup-count`: Number of synchronous backups.
 - `async-backup-count`: Number of asynchronous backups.
+- `quorum-ref`: Name of quorum configuration that you want this Semaphore to use. Please see the [Split-Brain Protection for ISemaphore section](#split-brain-protection-for-isemaphore) below.
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *If high performance is more important than not losing the permit information, you can disable the backups by setting `backup-count` to 0.*
 
