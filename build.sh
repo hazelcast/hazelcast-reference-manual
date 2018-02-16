@@ -192,7 +192,7 @@ and this paragraph appear in all copies." >> ${COPYRIGHT_FILE_NAME}
     echo "%"${DATE} >> title.txt
 
     echo "Creating PDF Documentation"
-    createPDF=$( pandoc title.txt ${MERGED_FILE_NAME} -o ${PDF_FILE_NAME} --toc --toc-depth=3 --top-level-division=chapter --number-sections --tab-stop=2 -V papersize:"a4paper" -H themes/margin.sty  --include-before-body=${COPYRIGHT_FILE_NAME} )
+    createPDF=$( pandoc title.txt ${MERGED_FILE_NAME} -o ${PDF_FILE_NAME} --toc --toc-depth=3 --chapters --number-sections --tab-stop=2 -V papersize:"a4paper" -H themes/margin.sty  --include-before-body=${COPYRIGHT_FILE_NAME} )
     if [[ $? -eq 0 ]]; then
         echo "PDF created successfully"
     else
