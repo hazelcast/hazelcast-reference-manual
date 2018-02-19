@@ -116,7 +116,7 @@ Entry Removed:EntryEvent{entryEventType=REMOVED, member=Member [192.168.1.100]]:
 <br></br>
 
 <br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *A listener is not allowed to block a thread. Blocking operations have to be offloaded to another thread (pool).*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Listeners have to offload all blocking operations to another thread (pool).*
 <br></br>
 
 
