@@ -2,19 +2,13 @@
 
 ## PN-Counter
 
-??? What is it, and why the need to implement it, Use cases ???
+A Conflict-free Replicated Data Type (CRDT) is a data structure that can replicate across the members in a network where you can update the replicas independently and concurrently without any coordination between the them.
 
-A Conflict-free Replicated Data Type (CRDT) is a data structure that can replicate across the members in a network. Using this structure, you can update the replicas independently and concurrently without coordination between the replicas.
-
-??? How it works, any sample codes ???
-
-??? How it is configured ???
-
-Hazelcast offers a lightweight PN-Counter (Positive-Negative Counter) implementation, which is a Conflict-Free Replicated Data Type (CRDT). Each cluster member can increment and decrement the counter value and these updates are propagated to all members. If there is no member failure, it is guaranteed that each member sees the final value of the counter eventually and the history of the counter value is monotonic. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. With this data type you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads.
+Hazelcast offers a lightweight PN-Counter (Positive-Negative Counter) implementation, which is a CRDT. Each cluster member can increment and decrement the counter value and these updates are propagated to all members. If there is no member failure, it is guaranteed that each member sees the final value of the counter eventually and the history of the counter value is monotonic. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. With this data type you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads.
 
 Different callers can read distinct values of the same counter at the same time. A caller picks a member from which it will always access the counter. As Replicas are only eventually consistent, it is possible for caller 1 connected to a replica on member A to read a different value to caller 2 connected to a replica on member B. A caller will always read its writes.
 
-**What is it and how it works:** (Draft notes)
+**What is it and how it works:**
 
 The counter supports adding and subtracting values as well as retrieving the current counter value. Each replica of this counter can perform operations locally without coordination with the other replicas, thus increasing availability. The counter guarantees that whenever two members have received the same set of updates, possibly in a different order, their state is identical, and any conflicting updates are merged automatically. If no new updates are made to the shared state, all members that can communicate will eventually have the same data.
 
@@ -36,22 +30,24 @@ final HazelcastInstance instance = Hazelcast.newHazelcastInstance();
         final long value = counter.get();
 ```
 
-Please refer to the [PN-Counter Javadoc](http://docs.hazelcast.org/docs/3.10/javadoc/???/???/???) for its API documentation.
+Please refer to the [PN-Counter Javadoc](http://docs.hazelcast.org/docs/3.10-BETA-1/javadoc/com/hazelcast/crdt/pncounter/PNCounter.java) for its API documentation.
 
 
 ### Configuring PN-Counter
 
-The following are the example declarative and programmatic configuration snippets:
+Following is an example declarative configuration snippet:
 
 ```xml
-???
-```
-
-```java
-???
+<hazelcast>
+  <pn-counter name="default">
+    <replica-count>10<replica-count>
+    <quorum-name>quorumname</quorum-name>
+    <statistics-enabled>true</statistics-enabled>
+  </pn-counter>
+</hazelcast>
 ```
 
 - `name`: Name of your PN-Counter.
 - `replica-count`: Number of replicas on which state for this PN counter will be kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE.
-- `quorum-name`: Name of the quorum ???.
+- `quorum-name`: Name of quorum configuration that you want this PN-Counter to use.
 - `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your PN-Counter. If set to `false`, you cannot collect statistics in your implementation and also Hazelcast Management Center will not show them. Its default value is `true`.
