@@ -58,3 +58,65 @@ connection.active.count=2, client.connection.count=1, connection.count=1
 
 ![Note](images/NoteSmall.jpg) ***NOTE:*** *Please see the [Configuring with System Properties section](#configuring-with-system-properties) to learn how to set system properties.*
 
+### Using Health Check on F5 BIG-IP LTM
+
+The F5® BIG-IP® Local Traffic Manager™ (LTM) can be used as a load balancer for Hazelcast cluster members. This section describes how you can configure a health monitor to check the Hazelcast member states.
+
+#### Monitor Types
+
+Following types of monitors can be used to track Hazelcast cluster members:
+
+- HTTP Monitor: A custom HTTP monitor enables you to send a command to Hazelcast’s Health Check API using HTTP requests. This is a good choice if SSL/TLS is not enabled in your cluster. 
+- HTTPS Monitor: A custom HTTPS monitor enables you to verify the health of Hazelcast cluster members by sending a command to Hazelcast’s Health Check API using Secure Socket Layer (SSL) security. This is a good choice if SSL/TLS is enabled in your cluster.
+- TCP\_HALF\_OPEN Monitor: A TCP\_HALF\_OPEN monitor is a very basic monitor that only checks that the TCP port used by Hazelcast is open and responding to connection requests. It does not interact with the Hazelcast Health Check API. The TCP\_HALF\_OPEN monitor can be used with or without SSL/TLS.
+
+
+#### Configuration
+
+After signing in to the BIG-IP LTM User Interface, follow F5’s [instructions](https://support.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/ltm-monitors-reference-11-6-0/3.html#unique_859105660) to create a new monitor. Next, apply the following configuration according to your monitor type.
+
+##### HTTP/HTTPS Monitors
+
+![Note](images/NoteSmall.jpg) ***NOTE:*** *Please note that you should enable the Hazelcast health check for HTTP/HTTPS monitors to run. To do this, set the `hazelcast.http.healthcheck.enabled` system property to true. By default, it is false.*
+
+**Using a GET request:**
+
+- Set the “Send String” as follows:
+
+```
+GET /hazelcast/health HTTP/1.1\r\n\nHost: [HOST-ADDRESS-OF-HAZELCAST-MEMBER] \r\nConnection: Close\r\n\r\n
+```
+
+- Set the “Receive String” as follows:	
+
+```
+Hazelcast::NodeState=ACTIVE\nHazelcast::ClusterState=ACTIVE\nHazelcast::ClusterSafe=TRUE\nHazelcast::MigrationQueueSize=0\nHazelcast::ClusterSize=([^\s]+)\n
+```
+
+
+The BIG-IP LTM monitors accept regular expressions in these strings allowing you to configure them as needed. The example provided above will remain green even if the cluster size changes.
+
+
+**Using a HEAD request:**
+
+- Set the “Send String” as follows:
+
+```
+HEAD /hazelcast/health HTTP/1.1\r\n\nHost: [HOST-ADDRESS-OF-HAZELCAST-MEMBER] \r\nConnection: Close\r\n\r\n
+```
+
+- Set the “Receive String” as follows:
+
+```	
+200 OK
+```
+
+
+As you can see, the HEAD request only checks for a `200 OK` response. A Hazelcast cluster member will send this status code when it is alive and running without issue. This provides a very basic health check. For increased flexibility, we recommend using the GET request API.
+
+
+##### TCP\_HALF\_OPEN Monitors
+
+- Set the "Type" as `TCP Half Open`.
+- Optionally, set the "Alias Service Port" as the port of Hazelcast cluster member if you want to specify the port in the monitor.
+
