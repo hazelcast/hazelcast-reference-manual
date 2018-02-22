@@ -1,18 +1,18 @@
 
 
-## PN-Counter
+## CRDT PN-Counter
 
-A Conflict-free Replicated Data Type (CRDT) is a data structure that can replicate across the members in a network where you can update the replicas independently and concurrently without any coordination between the them.
+A Conflict-free Replicated Data Type (CRDT) is a data structure that can replicate across the members in a network where you can update the replicas independently and concurrently without any coordination between them: same set of operations on a CRDT yields the same outcome, regardless of order of execution and duplication of operations. Hazelcast offers a lightweight CRDT PN-Counter (Positive-Negative Counter) implementation where each cluster member can increment and decrement the counter value and these updates are propagated to all members. If there is no member failure, it is guaranteed that each member sees the final value of the counter eventually and the history of the counter value is monotonic. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. 
 
-Hazelcast offers a lightweight PN-Counter (Positive-Negative Counter) implementation, which is a CRDT. Each cluster member can increment and decrement the counter value and these updates are propagated to all members. If there is no member failure, it is guaranteed that each member sees the final value of the counter eventually and the history of the counter value is monotonic. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. With this data type you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads.
+Using the CRDT PN-Counter, you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads.
 
-Different callers can read distinct values of the same counter at the same time. A caller picks a member from which it will always access the counter. As Replicas are only eventually consistent, it is possible for caller 1 connected to a replica on member A to read a different value to caller 2 connected to a replica on member B. A caller will always read its writes.
+??? Maybe some real-life use case examples can be mentioned here ???
 
-**What is it and how it works:**
+**How it works**
 
 The counter supports adding and subtracting values as well as retrieving the current counter value. Each replica of this counter can perform operations locally without coordination with the other replicas, thus increasing availability. The counter guarantees that whenever two members have received the same set of updates, possibly in a different order, their state is identical, and any conflicting updates are merged automatically. If no new updates are made to the shared state, all members that can communicate will eventually have the same data.
 
-The updates to the counter are applied locally when invoked on a CRDT replica. A replica can be any Hazelcast instance which is not a client or a lite member. You can configure the number of replicas in the cluster using the `replica-count` configuration element.
+The updates to the counter are applied locally when invoked on a CRDT replica. A CRDT replica can be any Hazelcast instance **which is NOT a client or a lite member**. You can configure the number of replicas in the cluster using the `replica-count` configuration element.
  
 When invoking updates from a non-replica instance, the invocation is remote. This may lead to indeterminate state - the update may be applied but the response has not been received. In this case, the caller will be notified with a `TargetDisconnectedException` when invoked from a client or a `MemberLeftException` when invoked from a member.
  
@@ -30,7 +30,9 @@ final HazelcastInstance instance = Hazelcast.newHazelcastInstance();
         final long value = counter.get();
 ```
 
-Please refer to the [PN-Counter Javadoc](http://docs.hazelcast.org/docs/3.10-BETA-1/javadoc/com/hazelcast/crdt/pncounter/PNCounter.java) for its API documentation.
+??? What does this example do ???
+
+Please refer to the [PN-Counter Javadoc](http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/crdt/pncounter/PNCounter.java) for its API documentation.
 
 
 ### Configuring PN-Counter
