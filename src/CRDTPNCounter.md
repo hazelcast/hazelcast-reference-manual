@@ -1,12 +1,14 @@
+## PN Counter
 
+A Conflict-free Replicated Data Type (CRDT) is a distributed data structure that achieves high availability by relaxing consistency constraints. There may be several replicas for the same data and these replicas can be modified concurrently without coordination. This means that you may achieve high throughput and low latency when updating a CRDT data structure. On the other hand, all of the updates are replicated asynchronously. Each replica will then receive updates made on other replicas eventually and if no new updates are done, all replicas which can communicate to each other will return the same state (converge) after some time.  
+Hazelcast offers a lightweight CRDT PN counter (Positive-Negative Counter) implementation where each hazelcast instance can increment and decrement the counter value and these updates are propagated to all replicas. Only a Hazelcast member can store state for a counter which means that counter method invocations performed on a Hazelcast member are usually local (depending on the configured replica count). If there is no member failure, it is guaranteed that each replica sees the final value of the counter eventually. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. 
 
-## CRDT PN-Counter
+Using the CRDT PN-Counter, you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads. The implementation borrows most methods from the `AtomicLong` which should be familiar in most cases and easily interchangeable in the existing code.
 
-A Conflict-free Replicated Data Type (CRDT) is a data structure that can replicate across the members in a network where you can update the replicas independently and concurrently without any coordination between them: same set of operations on a CRDT yields the same outcome, regardless of order of execution and duplication of operations. Hazelcast offers a lightweight CRDT PN-Counter (Positive-Negative Counter) implementation where each cluster member can increment and decrement the counter value and these updates are propagated to all members. If there is no member failure, it is guaranteed that each member sees the final value of the counter eventually and the history of the counter value is monotonic. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. 
-
-Using the CRDT PN-Counter, you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads.
-
-??? Maybe some real-life use case examples can be mentioned here ???
+Some examples of PN counter are:
+- counting the number of "likes" or "+1"
+- counting the number of logged in users
+- counting the number of page hits/views
 
 **How it works**
 
@@ -30,9 +32,7 @@ final HazelcastInstance instance = Hazelcast.newHazelcastInstance();
         final long value = counter.get();
 ```
 
-??? What does this example do ???
-
-Please refer to the [PN-Counter Javadoc](http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/crdt/pncounter/PNCounter.java) for its API documentation.
+This code snippet creates an instance of a PN counter, increments it by 5 and retrieves the value.
 
 
 ### Configuring PN-Counter
@@ -43,13 +43,50 @@ Following is an example declarative configuration snippet:
 <hazelcast>
   <pn-counter name="default">
     <replica-count>10<replica-count>
-    <quorum-name>quorumname</quorum-name>
     <statistics-enabled>true</statistics-enabled>
   </pn-counter>
 </hazelcast>
 ```
 
 - `name`: Name of your PN-Counter.
-- `replica-count`: Number of replicas on which state for this PN counter will be kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE.
-- `quorum-name`: Name of quorum configuration that you want this PN-Counter to use.
+- `replica-count`: Number of replicas on which state for this PN counter will be kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE. Generally, keeping the state on more replicas means that more Hazelcast members will be able to perform updates locally but it also means that the PN counter state will be kept on more replicas, increasing the network traffic, decreasing the speed at which replica states converge and increasing the size of the PN counter state kept on each replica.
 - `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your PN-Counter. If set to `false`, you cannot collect statistics in your implementation and also Hazelcast Management Center will not show them. Its default value is `true`.
+
+Following is an equivalent snippet of Java configuration:
+
+```java
+PNCounterConfig pnCounterConfig = new PNCounterConfig()
+        .setReplicaCount(10)
+        .setStatisticsEnabled(true);
+Config hazelcastConfig = new Config()
+        .addPNCounterConfig(pnCounterConfig);
+```
+
+### Configuring the CRDT replication mechanism
+
+![Note](images/NoteSmall.jpg) ***NOTE:*** *Configuring the replication mechanism is for advanced use cases only - usually the default configuration will work fine for most cases.*
+
+In some cases, you may want to configure the replication mechanism for all CRDT implementations. The CRDT states are replicated in rounds (the period is configurable) and in each round the state is replicated up to the configured number of members. Generally speaking, you may increase the speed at which replicas converge at the expense of more network traffic or decrease the network traffic at the expense of slower convergence of replicas. 
+Hazelcast implements the state-based replication mechanism - the CRDT state for changed CRDTs is replicated in its entirety to other replicas on each replication round.  
+
+```xml
+<hazelcast>
+  <crdt-replication>
+      <max-concurrent-replication-targets>1</max-concurrent-replication-targets>
+      <replication-period-millis>1000</replication-period-millis>
+  </crdt-replication>
+</hazelcast>
+```
+
+- `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count will lead to states being disseminated more rapidly at the expense of burst-like behaviour - one update to a CRDT will lead to a sudden burst in the number of replication messages in a short time interval. The default value is 1 which means that each replica will replicate state to only one other replica in each replication round. 
+- `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behaviour - less updates will be batched together in one replication message and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. The default value is 1000 ms which means that the changed CRDT state is replicated every 1 second. 
+     
+Following is an equivalent snippet of Java configuration:
+
+```java
+final CRDTReplicationConfig crdtReplicationConfig = new CRDTReplicationConfig()
+        .setMaxConcurrentReplicationTargets(1)
+        .setReplicationPeriodMillis(1000);
+Config hazelcastConfig = new Config()
+        .setCRDTReplicationConfig(crdtReplicationConfig);
+```
