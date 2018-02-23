@@ -19,4 +19,5 @@ This chapter lists the changes made to this document from the previous release.
 | [Hazelcast JCache](#hazelcast-jcache)||Added [Supported JCache Versions](#supported-jcache-versions) as a new section.
 |[Hazelcast Clients](#hazelcast-clients)||Added [Configuring Reliable Topic at Client Side](#configuring-reliable-topic-at-client-side) as a new section.
 |[Management](#management)|| Added [Using Health Check on F5 BIG-IP LTM](#using-health-check-on-f5-big-ip-ltm) as a new section.
-|[System Properties](#system-properties)||Added definitions for the new properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment |
+|[System Properties](#system-properties)||Added definitions for the following system properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment <br> - hazelcast.multicast.group
+|

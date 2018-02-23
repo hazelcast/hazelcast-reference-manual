@@ -14,4 +14,4 @@ This chapter lists the changes made to this document from the previous release.
 |[Entry Processor](/1000_Distributed_Computing/400_Entry_Processor)|Added [Respecting Locks on Single Keys](/1000_Distributed_Computing/400_Entry_Processor/100_Performing_Fast_In-Memory_Map_Operations.md) as a new section.
 | [Hazelcast JCache](/1300_Hazelcast_JCache)|Added Supported JCache Versions as a new section.
 | [Hazelcast Clients](/1600_Hazelcast_Clients/100_Java_Client)| Added [Configuring Reliable Topic at Client Side](/1600_Hazelcast_Clients/100_Java_Client/300_Configuration/800_Other_Configurations.md) as a new section.|
-|[System Properties](/2700_System_Properties)|Added definitions for the following new properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment
+|[System Properties](/2700_System_Properties)|Added definitions for the following properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment <br> - hazelcast.multicast.group
