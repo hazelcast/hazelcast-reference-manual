@@ -13,7 +13,7 @@ implement a corresponding sub-interface of a `MapListener`,
 such as `EntryAddedListener` or `MapClearedListener`. 
 
 <br></br>
-![image](../../images/NoteSmall.jpg) ***NOTE:*** * The `EntryListener` interface still can be implemented (we kept
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *The `EntryListener` interface still can be implemented (we kept
 it for backward compatibility reasons). However, if you need to listen to a 
 different event, one that is not available in the `EntryListener` interface, you should also 
 implement a relevant `MapListener` sub-interface.*
@@ -120,6 +120,9 @@ public class MyEntryListener implements EntryListener{
 ![image](../../images/NoteSmall.jpg) ***NOTE:*** *Please note that the method `IMap.clear()` does not fire an "EntryRemoved" event, but fires a "MapCleared" event.*
 <br></br>
 
+
+
+![image](../../images/NoteSmall.jpg) ***NOTE:*** *Listeners have to offload all blocking operations to another thread (pool).*
 
 #### Partitions and Entry Listeners
 
