@@ -124,12 +124,6 @@ public class MyEntryListener implements EntryListener{
 
 ![image](../../images/NoteSmall.jpg) ***NOTE:*** *Listeners have to offload all blocking operations to another thread (pool).*
 
-#### Partitions and Entry Listeners
-
-A map listener runs on the event threads that are also used by the other listeners. For 
-example, the collection listeners and pub/sub message listeners. This means that the entry 
-listeners can access other partitions. Consider this when you run long tasks, since listening 
-to those tasks may cause the other map/event listeners to starve.
 
 #### Listening for Lost Map Partitions
 
