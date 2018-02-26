@@ -36,17 +36,9 @@ public class FlakeIdGeneratorSample {
 
 ### Node ID Assignment
 
-Flake IDs require a unique node ID to be assigned to each member, from which point the member can generate unique IDs without any coordination. Hazelcast uses the member list version, from the moment when the member joined the cluster, as a unique node ID.
+Flake IDs require a unique node ID to be assigned to each member, from which point the member can generate unique IDs without any coordination. Hazelcast uses the member list version from the moment when the member joined the cluster as a unique node ID.
 
-The join algorithm is specifically designed to ensure that member list join version is unique for each member in the cluster, even during a network split situation:
-
-* If two members join at the same time, they will appear on the different versions of member list.
-* If a new member claims mastership, it causes a jump in the member list version based on its index in the member list multiplied by the value of the `hazelcast.mastership.claim.member.list.version.increment` configuration property. This is to protect against the possibility that the original master is still running in a separate network partition.
-
-The solution provides uniqueness guarantee of the member list join version numbers with the following limitations:
-
-* When there is a split-brain issue, the number of member list changes that can occur in the sub-clusters are capped by the abovementioned configuration parameter.
-* When there is a split-brain issue, if further splits occur in the already split sub-clusters, the uniqueness guarantee can be lost.
+The join algorithm is specifically designed to ensure that member list join version is unique for each member in the cluster. This ensures that IDs are unique even during network splits, with one caveat: at most one member is allowed to join the cluster during a network split. If two members join different subclusters, they are likely to get the same node ID. This will be resolved when the cluster heals, but until then, they can generate duplicate IDs.
 
 ##### Node ID Overflow
 
