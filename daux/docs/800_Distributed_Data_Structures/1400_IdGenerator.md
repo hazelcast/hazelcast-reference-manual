@@ -1,7 +1,7 @@
 
 Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
 
-![image](../images/NoteSmall.jpg) ***NOTE:*** ***Feature is deprecated.*** *The implementation can produce duplicate IDs in case of a network split, even with split-brain protection being enabled (during short window while split-brain is detected). Please use [FlakeIdGenerator](/1450_FlakeIdGenerator.md) for an alternative implementation which does not suffer from the mentioned issue.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** ***Feature is deprecated.*** *The implementation can produce duplicate IDs in case of a network split, even with split-brain protection enabled (during short window while split-brain is detected). Please use [FlakeIdGenerator](/1450_FlakeIdGenerator.md) for an alternative implementation which does not suffer from the issue. Also see [Migration guide](#page_Migrating+to+FlakeIdGenerator) at the end of this page.*
 
 ### Generating Cluster-Wide IDs
 
@@ -55,3 +55,10 @@ You can see that the generated IDs are unique and counting upwards. If you see d
 ![image](../images/NoteSmall.jpg) ***NOTE:*** *`IdGenerator` has one synchronous backup and no asynchronous backups. Its backup count is not configurable.*
 
 
+### Migrating to FlakeIdGenerator
+
+The Flake ID generator provides similar features with more safety guarantees during network splits. The two generators are completely different implementations, but both types of generator generate roughly ordered IDs. So in order to ensure uniqueness of the generated IDs, we can force the Flake ID generator to start at least where the old generator ended. This is likely the case, because the values from Flake generator are quite large compared to values from the old generator. Anyway, here are the steps you need to take: 
+
+* Make sure the version of your Hazelcast cluster and of all clients is at least 3.10.
+* If the current ID from old `IdGenerator` is higher than the ID from `FlakeIdGenerator`, you need to configure ID offset. See [FlakeIdMigrationSample](https://github.com/hazelcast/hazelcast-code-samples/blob/v3.10/distributed-primitives/flake-id-generator/src/main/java/FlakeIdMigrationSample.java) for mor details.
+* Replace all calls to `HazelcastInstance.getIdGenerator()` with `HazelcastInstance.getFlakeIdGenerator()`. If you use Spring configuration, replace `<id-generator>` with `<flake-id-generator>`
