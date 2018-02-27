@@ -19,6 +19,13 @@ Node.js Client implementation for Hazelcast. It is implemented using the Hazelca
 
 Please refer to <a href="https://github.com/hazelcast/hazelcast-nodejs-client" target="_blank">Hazelcast Node.js Client</a> for its documentation. 
 
+### Go Client
+
+Go Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol. 
+
+Please refer to <a href="https://github.com/hazelcast/hazelcast-go-client" target="_blank">Go Client</a> for its documentation. 
+
+
 ### Scala 
 
 The API for Hazelcast Scala is based on Scala 2.11 and Hazelcast 3.6/3.7/3.8 releases. However, these are not hard dependencies provided that you include the relevant Hazelcast dependencies.
