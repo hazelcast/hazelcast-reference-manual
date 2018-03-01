@@ -14,7 +14,7 @@ This chapter lists the changes made to this document from the previous release.
 | Distributed Data Structures and <br> Distributed Computing|| Added content for the data structures that now support Split-Brain Protection: IExecutorService, DurableExecutorService, IScheduledExecutorService, MultiMap, ISet, IList, Ringbuffer, Replicated Map, Cardinality Estimator, IAtomicLong, IAtomicReference, ISemaphore, ICountdownLatch.
 |[Distributed Data Structures](#distributed-data-structures)|[FlakeIdGenerator](#flakeidgenerator)| Added a new section.
 ||[IdGenerator](#idgenerator)|[Migrating to FlakeIdGenerator](#migrating-to-flakeidgenerator) added as a new section.
-||[PN-Counter](#pn-counter)| Added as a new section.
+||[PN Counter](#pn-counter)| Added as a new section.
 |[Distributed Query](#distributed-query)|[Queries Requests from Client](#query-requests-from-clients)|Added as a new section.|
 |[Distributed Computing](#distributed-computing)|[Entry Processor](#entry-processor)|Added [Respecting Locks on Single Keys](#respecting-locks-on-single-keys) as a new section.
 | [Hazelcast JCache](#hazelcast-jcache)||Added [Supported JCache Versions](#supported-jcache-versions) as a new section.

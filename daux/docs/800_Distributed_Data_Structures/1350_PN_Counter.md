@@ -1,4 +1,4 @@
-## PN Counter
+
 
 A Conflict-free Replicated Data Type (CRDT) is a distributed data structure that achieves high availability by relaxing consistency constraints. There may be several replicas for the same data and these replicas can be modified concurrently without coordination. This means that you may achieve high throughput and low latency when updating a CRDT data structure. On the other hand, all of the updates are replicated asynchronously. Each replica will then receive updates made on other replicas eventually and if no new updates are done, all replicas which can communicate to each other will return the same state (converge) after some time. 
  
@@ -22,7 +22,7 @@ When invoking updates from a non-replica instance, the invocation is remote. Thi
  
 The read and write methods provide monotonic read and RYW (read-your-write) guarantees. These guarantees are session guarantees which means that if no replica with the previously observed state is reachable, the session guarantees are lost and the method invocation will throw a `ConsistencyLostException`. This does not mean that an update is lost. All of the updates are part of some replica and will be eventually reflected in the state of all other replicas. This exception just means that you cannot observe your own writes because all replicas that contain your updates are currently unreachable. After you have received a `ConsistencyLostException`, you can either wait for a sufficiently up-to-date replica to become reachable in which case the session can be continued or you can reset the session by calling the method `reset(). If you have called this method, a new session is started with the next invocation to a CRDT replica.
 
-![Note](images/NoteSmall.jpg) ***NOTE:*** *The CRDT state is kept entirely on non-lite (data) members. If there aren't any and the methods here are invoked on a lite member, they fail with a `NoDataMemberInClusterException`.*
+![Note](../images/NoteSmall.jpg) ***NOTE:*** *The CRDT state is kept entirely on non-lite (data) members. If there aren't any and the methods here are invoked on a lite member, they fail with a `NoDataMemberInClusterException`.*
 
 
 The following is an example code.
@@ -66,7 +66,7 @@ Config hazelcastConfig = new Config()
 
 ### Configuring the CRDT replication mechanism
 
-![Note](images/NoteSmall.jpg) ***NOTE:*** *Configuring the replication mechanism is for advanced use cases only - usually the default configuration will work fine for most cases.*
+![Note](../images/NoteSmall.jpg) ***NOTE:*** *Configuring the replication mechanism is for advanced use cases only - usually the default configuration will work fine for most cases.*
 
 In some cases, you may want to configure the replication mechanism for all CRDT implementations. The CRDT states are replicated in rounds (the period is configurable) and in each round the state is replicated up to the configured number of members. Generally speaking, you may increase the speed at which replicas converge at the expense of more network traffic or decrease the network traffic at the expense of slower convergence of replicas. 
 Hazelcast implements the state-based replication mechanism - the CRDT state for changed CRDTs is replicated in its entirety to other replicas on each replication round.  
