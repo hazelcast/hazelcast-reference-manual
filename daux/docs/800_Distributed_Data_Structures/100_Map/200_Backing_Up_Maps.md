@@ -1,7 +1,7 @@
 
 Hazelcast distributes map entries onto multiple cluster members (JVMs). Each member holds some portion of the data.
  
-Distributed maps have one backup by default. If a member goes down, you do not lose data. Backup operations are synchronous, so when a `map.put(key, value)` returns, it is guaranteed that the map entry is replicated to one other member. For the reads, it is also guaranteed that `map.get(key)` returns the latest value of the entry. Consistency is strictly enforced.
+Distributed maps have one backup by default. If a member goes down, your data is recovered using the backups in the cluster. There are two types of backups as described below: _sync_ and _async_.
 
 
 #### Creating Sync Backups
@@ -38,6 +38,7 @@ To create asynchronous backups, select the number of async backups with the `asy
 </hazelcast>
 ```
 
+See [Consistency and Replication Model](/2550_Consistency_and_Replication_Model.md) for more detail.
 
 ![image](../../images/NoteSmall.jpg) ***NOTE:*** *Backups increase memory usage since they are also kept in memory.*
 
@@ -49,7 +50,7 @@ To create asynchronous backups, select the number of async backups with the `asy
 
 By default, Hazelcast has one sync backup copy. If `backup-count` is set to more than 1, then each member will carry both owned entries and backup copies of other members. So for the `map.get(key)` call, it is possible that the calling member has a backup copy of that key. By default, `map.get(key)` will always read the value from the actual owner of the key for consistency.
 
-To enable backup reads (read local backup entries), set the value of the `read-backup-data` property to **true**. Its default value is **false** for higher read consistency. Enabling backup reads can improve performance. 
+To enable backup reads (read local backup entries), set the value of the `read-backup-data` property to **true**. Its default value is **false** for consistency. Enabling backup reads can improve performance but on the other hand it can cause stale reads while still preserving monotonic-reads property.
 
 ```xml
 <hazelcast>
