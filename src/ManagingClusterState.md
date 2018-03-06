@@ -14,7 +14,7 @@ By changing the state of your cluster, you can allow/restrict several cluster op
 - **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 <br></br>
 - **`NO_MIGRATION`**:
-    - In this state, migrations (partition rebalancing) and backup replications are not allowed.
+    - In this state, migrations (partition rebalancing) and backup replications are not allowed. In other words, there will be no data movement between Hazelcast members. However, in case of member failures, backup replicas can be still promoted to the primaries to maintain availability, and migration listeners can be notified for these promotion migrations. Please note that promoting a backup replica to the primary replica is a local operation and does not transfer partition data between Hazelcast members.
     - The cluster accepts new members.
     - All other operations are allowed.
     - You cannot change the state of a cluster to `NO_MIGRATION` when migration/replication tasks are being performed.
