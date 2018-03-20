@@ -32,5 +32,5 @@ When Hazelcast serializes an object into `Data`:
 
 **(7)** If the above check fails, Hazelcast will use the registered Global Serializer if one exists.
 
-If all of the above checks fail, then serialization will fail. When a class implements multiple interfaces, the above steps are important to determine the serialization mechanism that Hazelcast will use. When a class definition is required for any of these serializations, you need to have all the classes needed by the application on your classpath because Hazelcast does not download them automatically.
+If all of the above checks fail, then serialization will fail. When a class implements multiple interfaces, the above steps are important to determine the serialization mechanism that Hazelcast will use. When a class definition is required for any of these serializations, you need to have all the classes needed by the application on your classpath because Hazelcast does not download them automatically, unless you are using [user code deployment](/600_Setting_Up_Clusters/800_Member_User_Code_Deployment_-_BETA.md).
 
