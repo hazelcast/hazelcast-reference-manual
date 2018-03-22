@@ -315,7 +315,7 @@ Also see additional <a href="http://docs.oracle.com/javase/1.5.0/docs/guide/net/
 
 ### Member Address Provider SPI
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *This SPI is not intended to provide addresses of other cluster members with which the Hazelcast instance will form a cluster. To do that, refer to the other network configuration sections above.*
+![image](../images/NoteSmall.jpg) ***NOTE:*** *This SPI is not intended to provide addresses of other cluster members with which the Hazelcast instance will form a cluster. To do that, refer to the other network configuration sections above.*
 
 By default, Hazelcast chooses the public and bind address. You can influence on the choice by defining a `public-address` in the configuration or by using other properties mentioned above. In some cases, though, these properties are not enough and the default address picking strategy will choose wrong addresses. This may be the case when deploying Hazelcast in some cloud environments, such as AWS, when using Docker or when the instance is deployed behind a NAT and the `public-address` property is not enough (please see the [Public Address section](/600_Setting_Up_Clusters/1100_Other_Network_Configurations.md#page_Public+Address)).
 
