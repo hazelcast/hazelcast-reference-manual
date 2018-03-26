@@ -19,11 +19,11 @@ classpath (Maven does that for you). Just add the following lines to your `pom.x
 [source,xml]
 ----
 <dependencies>
-	<dependency>
-		<groupId>com.hazelcast</groupId>
-		<artifactId>hazelcast</artifactId>
-		<version>Hazelcast IMDG Version To Be Installed</version>
-	</dependency>
+   <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast</artifactId>
+      <version>Hazelcast IMDG Version To Be Installed</version>
+    </dependency>
 </dependencies>
 ----
 
@@ -40,12 +40,12 @@ There are two Maven repositories defined for Hazelcast IMDG Enterprise:
 
 ```
 <repository>
-       <id>Hazelcast Private Snapshot Repository</id>
-       <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
+   <id>Hazelcast Private Snapshot Repository</id>
+   <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
 </repository>
 <repository>
-        <id>Hazelcast Private Release Repository</id>
-        <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
+   <id>Hazelcast Private Release Repository</id>
+   <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
 </repository>
 ```
 
@@ -53,14 +53,14 @@ Hazelcast IMDG Enterprise customers may also define dependencies, a sample of wh
 
 ```
 <dependency>
-      <groupId>com.hazelcast</groupId>
-      <artifactId>hazelcast-enterprise</artifactId>
-      <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
+   <groupId>com.hazelcast</groupId>
+   <artifactId>hazelcast-enterprise</artifactId>
+   <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
 <dependency>
-      <groupId>com.hazelcast</groupId>
-      <artifactId>hazelcast-enterprise-all</artifactId>
-      <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
+   <groupId>com.hazelcast</groupId>
+   <artifactId>hazelcast-enterprise-all</artifactId>
+   <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
 ```
 
@@ -312,25 +312,25 @@ Let's begin.
 ----
 public class GettingStarted {
     
-    public static void main(String[] args) {
-        Config cfg = new Config();
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
-        Map<Integer, String> mapCustomers = instance.getMap("customers");
-        mapCustomers.put(1, "Joe");
-        mapCustomers.put(2, "Ali");
-        mapCustomers.put(3, "Avi");
+   public static void main(String[] args) {
+      Config cfg = new Config();
+      HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
+      Map<Integer, String> mapCustomers = instance.getMap("customers");
+      mapCustomers.put(1, "Joe");
+      mapCustomers.put(2, "Ali");
+      mapCustomers.put(3, "Avi");
  
-        System.out.println("Customer with key 1: "+ mapCustomers.get(1));
-        System.out.println("Map Size:" + mapCustomers.size());
+      System.out.println("Customer with key 1: "+ mapCustomers.get(1));
+      System.out.println("Map Size:" + mapCustomers.size());
  
-        Queue<String> queueCustomers = instance.getQueue("customers");
-        queueCustomers.offer("Tom");
-        queueCustomers.offer("Mary");
-        queueCustomers.offer("Jane");
-        System.out.println("First customer: " + queueCustomers.poll());
-        System.out.println("Second customer: "+ queueCustomers.peek());
-        System.out.println("Queue size: " + queueCustomers.size());
-    }
+      Queue<String> queueCustomers = instance.getQueue("customers");
+      queueCustomers.offer("Tom");
+      queueCustomers.offer("Mary");
+      queueCustomers.offer("Jane");
+      System.out.println("First customer: " + queueCustomers.poll());
+      System.out.println("Second customer: "+ queueCustomers.peek());
+      System.out.println("Queue size: " + queueCustomers.size());
+   }
 }
 ----
 +

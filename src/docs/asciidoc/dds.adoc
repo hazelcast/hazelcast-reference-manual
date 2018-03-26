@@ -1,0 +1,2644 @@
+
+[[distributed-data-structures]]
+== Distributed Data Structures
+
+As mentioned in the <<hazelcast-overview, Overview section>>, Hazelcast offers distributed implementations of Java interfaces. Below is the list of these implementations with links to the corresponding sections in this manual.
+
+* **Standard utility collections**
+** <<map, Map>> is the distributed implementation of `java.util.Map`. It lets you read from and write to a Hazelcast map with methods such as `get` and `put`.
+** <<queue, Queue>> is the distributed implementation of `java.util.concurrent.BlockingQueue`. You can add an item in one member and remove it from another one.
+** <<ringbuffer, Ringbuffer>> is implemented for reliable eventing system.
+** <<set, Set>> is the distributed and concurrent implementation of `java.util.Set`. It does not allow duplicate elements and does not preserve their order.
+** <<list, List>> is similar to Hazelcast Set. The only difference is that it allows duplicate elements and preserves their order.
+** <<multimap, Multimap>> is a specialized Hazelcast map. It is a distributed data structure where you can store multiple values for a single key.
+** <<replicated-map, Replicated Map>> does not partition data. It does not spread data to different cluster members. Instead, it replicates the data to all members.
+** <<cardinality-estimator, Cardinality Estimator>> is a data structure which implements Flajolet's HyperLogLog algorithm.
+* **Topic** is the distributed mechanism for publishing messages that are delivered to multiple subscribers. It is also known as the publish/subscribe (pub/sub) messaging model. Please see the <<topic, Topic section>> for more information. Hazelcast also has a structure called Reliable Topic which uses the same interface of Hazelcast Topic. The difference is that it is backed up by the Ringbuffer data structure. Please see the <<reliable-topic, Reliable Topic section>>.
+* **Concurrency utilities**
+** <<lock, Lock>> is the distributed implementation of `java.util.concurrent.locks.Lock`. When you use lock, the critical section that Hazelcast Lock guards is guaranteed to be executed by only one thread in the entire cluster.
+** <<isemaphore, ISemaphore>> is the distributed implementation of `java.util.concurrent.Semaphore`. When performing concurrent activities, semaphores offer permits to control the thread counts.
+** <<iatomiclong, IAtomicLong>> is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. Most of AtomicLong's operations are available. However, these operations involve remote calls and hence their performances differ from AtomicLong, due to being distributed.
+** <<iatomicreference, IAtomicReference>> is the distributed implementation of `java.util.concurrent.atomic.AtomicReference`. When you need to deal with a reference in a distributed environment, you can use Hazelcast IAtomicReference. 
+** <<idgenerator, IdGenerator>> is used to generate cluster-wide unique identifiers. ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. This feature is deprecated, please use <<flakeidgenerator, FlakeIdGenerator>> instead.
+** <<icountdownlatch, ICountdownLatch>> is the distributed implementation of `java.util.concurrent.CountDownLatch`. Hazelcast CountDownLatch is a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
+** <<pn-counter, PN counter>> is a distributed data structure where each Hazelcast instance can increment and decrement the counter value and these updates are propagated to all replicas.
+* <<event-journal, Event Journal>> is a distributed data structure that stores the history of mutation actions on map or cache.
+
+
+[[overview-of-hazelcast-distributed-objects]]
+=== Overview of Hazelcast Distributed Objects
+
+Hazelcast has two types of distributed objects in terms of their partitioning strategies:
+
+. Data structures where each partition stores a part of the instance, namely partitioned data structures.
+. Data structures where a single partition stores the whole instance, namely non-partitioned data structures.
+
+Partitioned Hazelcast data structures are: 
+
+* Map
+* MultiMap
+* Cache (Hazelcast JCache implementation)
+* PN Counter
+* Event Journal
+
+Non-partitioned Hazelcast data structures are:
+
+* Queue
+* Set
+* List
+* Ringbuffer
+* Lock
+* ISemaphore
+* IAtomicLong
+* IAtomicReference
+* FlakeIdGenerator
+* ICountdownLatch
+* Cardinality Estimator
+
+Besides these, Hazelcast also offers the Replicated Map structure as explained in the above *Standard utility collections* list. 
+
+[[loading-and-destroying-a-distributed-object]]
+==== Loading and Destroying a Distributed Object
+
+Hazelcast offers a `get` method for most of its distributed objects. To load an object, first create a Hazelcast instance and then use the related `get` method on this instance. Following example code snippet creates an Hazelcast instance and a map on this instance.
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
+----
+
+As to the configuration of distributed object, Hazelcast uses the default settings from the file `hazelcast.xml` that comes with your Hazelcast download. Of course, you can provide an explicit configuration in this XML or programmatically according to your needs. Please see the <<understanding-configuration, Understanding Configuration section>>.
+
+Note that, most of Hazelcast's distributed objects are created lazily, i.e., a distributed object is created once the first operation accesses it.
+
+If you want to use an object you loaded in other places, you can safely reload it using its reference without creating a new Hazelcast instance (`customers` in the above example).
+
+To destroy a Hazelcast distributed object, you can use the method `destroy`. This method clears and releases all resources of the object. Therefore, you must use it with care since a reload with the same object reference after the object is destroyed creates a new data structure without an error. Please see the following example code where one of the queues are destroyed and the other one is accessed.
+
+[source, java]
+----
+public class Member {
+  
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hz1 = Hazelcast.newHazelcastInstance();
+        HazelcastInstance hz2 = Hazelcast.newHazelcastInstance();
+        IQueue<String> q1 = hz1.getQueue("q");
+        IQueue<String> q2 = hz2.getQueue("q");
+        q1.add("foo");
+            System.out.println("q1.size: "+q1.size()+ " q2.size:"+q2.size());
+        q1.destroy();
+            System.out.println("q1.size: "+q1.size() + " q2.size:"+q2.size());
+    }
+}
+----
+
+If you start the `Member` above, the output will be as shown below:
+
+```
+q1.size: 1 q2.size:1
+q1.size: 0 q2.size:0
+```
+
+As you see, no error is generated and a new queue resource is created.
+
+[[controlling-partitions]]
+==== Controlling Partitions
+
+Hazelcast uses the name of a distributed object to determine which partition it will be put. Let's load two semaphores as shown below:
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+ISemaphore s1 = hazelcastInstance.getSemaphore("s1");
+ISemaphore s2 = hazelcastInstance.getSemaphore("s2");
+----
+
+Since these semaphores have different names, they will be placed into different partitions. If you want to put these two into the same partition, you use the `@` symbol as shown below:
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+ISemaphore s1 = hazelcastInstance.getSemaphore("s1@foo");
+ISemaphore s2 = hazelcastInstance.getSemaphore("s2@foo");
+----
+
+Now, these two semaphores will be put into the same partition whose partition key is `foo`. Note that you can use the method `getPartitionKey` to learn the partition key of a distributed object. It may be useful when you want to create an object in the same partition of an existing object. Please see its usage as shown below:
+
+```
+String partitionKey = s1.getPartitionKey();
+ISemaphore s3 = hazelcastInstance.getSemaphore("s3@"+partitionKey);
+```
+
+[[common-features-of-all-hazelcast-data-structures]]
+==== Common Features of all Hazelcast Data Structures
+
+* If a member goes down, its backup replica (which holds the same data) will dynamically redistribute the data, including the ownership and locks on them, to the remaining live members. As a result, there will not be any data loss.
+* There is no single cluster master that can be a single point of failure. Every member in the cluster has equal rights and responsibilities. No single member is superior. There is no dependency on an external 'server' or 'master'.
+
+[[example-distributed-object-code]]
+==== Example Distributed Object Code
+
+Here is an example of how you can retrieve existing data structure instances (map, queue, set, lock, topic, etc.) and how you can listen for instance events, such as an instance being created or destroyed.
+
+[source,java]
+----
+public class Sample implements DistributedObjectListener {
+  
+    public static void main(String[] args) {
+        Sample sample = new Sample();
+        Config config = new Config();
+
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+        hazelcastInstance.addDistributedObjectListener(sample);
+
+        Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
+        for (DistributedObject distributedObject : distributedObjects) {
+            System.out.println(distributedObject.getName());
+        }
+    }
+
+    @Override
+    public void distributedObjectCreated(DistributedObjectEvent event) {
+    DistributedObject instance = event.getDistributedObject();
+    System.out.println("Created " + instance.getName());
+    }
+
+    @Override
+    public void distributedObjectDestroyed(DistributedObjectEvent event) {
+    DistributedObject instance = event.getDistributedObject();
+    System.out.println("Destroyed " + instance.getName());
+    }
+}
+----
+
+[[map]]
+=== Map
+
+Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap` and hence `java.util.Map`. It is the distributed implementation of Java map. You can perform operations like reading and writing from/to a Hazelcast map with the well known get and put methods.
+
+'''
+NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IMap+and+ICache[here] in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
+
+
+[[getting-a-map-and-putting-an-entry]]
+==== Getting a Map and Putting an Entry
+
+Hazelcast will partition your map entries and their backups, and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "number of map entries * 2 * 1/n" entries, where **n** is the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
+
+Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the HazelcastInstance `getMap` method to get the map, then use the map `put` method to put an entry into the map.
+
+[source,java]
+----
+HazelcastInstance hzInstance = Hazelcast.newHazelcastInstance();
+Map<String, String> capitalcities = hzInstance.getMap( "capitals" ); 
+    capitalcities.put( "1", "Tokyo" );
+    capitalcities.put( "2", "Paris" );
+    capitalcities.put( "3", "Washington" );
+    capitalcities.put( "4", "Ankara" );
+    capitalcities.put( "5", "Brussels" );
+    capitalcities.put( "6", "Amsterdam" );
+    capitalcities.put( "7", "New Delhi" );
+    capitalcities.put( "8", "London" );
+    capitalcities.put( "9", "Berlin" );
+    capitalcities.put( "10", "Oslo" );
+    capitalcities.put( "11", "Moscow" );
+    ...
+    capitalcities.put( "120", "Stockholm" );
+----
+
+When you run this code, a cluster member is created with a map whose entries are distributed across the members' partitions. See the below illustration. For now, this is a single member cluster.
+
+image::1Node.png[Map Entries in a Single Member]
+
+NOTE: Please note that some of the partitions will not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the <<system-properties, System Properties section>>.
+
+[[creating-a-member-for-map-backup]]
+==== Creating A Member for Map Backup
+
+Now let's create a second member by running the above code again. This will create a cluster with two members. This is also where backups of entries are created - remember the backup partitions mentioned in the <<hazelcast-overview, Hazelcast Overview section>>. The following illustration shows two members and how the data and its backup is distributed.
+
+image::2Nodes.png[Map Entries with Backups in Two Members]
+
+As you see, when a new member joins the cluster, it takes ownership and loads some of the data in the cluster. Eventually, it will carry almost "(1/n `*` total-data) + backups" of the data, reducing the load on other members.
+
+`HazelcastInstance.getMap()` returns an instance of `com.hazelcast.core.IMap` which extends 
+the `java.util.concurrent.ConcurrentMap` interface. Methods like 
+`ConcurrentMap.putIfAbsent(key,value)` and `ConcurrentMap.replace(key,value)` can be used 
+on the distributed map, as shown in the example below.
+
+[source,java]
+----
+public class BasicMapOperations {
+  
+    private HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+    
+    public Customer getCustomer(String id) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        Customer customer = customers.get(id);
+        if (customer == null) {
+            customer = new Customer(id);
+            customer = customers.putIfAbsent(id, customer);
+        }
+        return customer;
+    }
+
+    public boolean updateCustomer(Customer customer) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        return (customers.replace(customer.getId(), customer) != null);
+    }
+
+    public boolean removeCustomer(Customer customer) {
+        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
+        return customers.remove(customer.getId(), customer);
+    }
+}
+----
+
+All `ConcurrentMap` operations such as `put` and `remove` might wait if the key is locked by another thread in the local or remote JVM. But, they will eventually return with success. `ConcurrentMap` operations never throw a `java.util.ConcurrentModificationException`.
+
+Also see:
+
+* <<data-affinity, Data Affinity section>>.
+* <<using-wildcards, Map Configuration with wildcards>>.
+
+
+
+[[backing-up-maps]]
+==== Backing Up Maps
+
+Hazelcast distributes map entries onto multiple cluster members (JVMs). Each member holds some portion of the data.
+
+Distributed maps have one backup by default. If a member goes down, your data is recovered using the backups in the cluster. There are two types of backups as described below: _sync_ and _async_.
+
+[[creating-sync-backups]]
+===== Creating Sync Backups
+
+To provide data safety, Hazelcast allows you to specify the number of backup copies you want to have. That way, data on a cluster member will be copied onto other member(s).
+
+To create synchronous backups, select the number of backup copies using the `backup-count` property.
+
+```
+<hazelcast>
+  <map name="default">
+    <backup-count>1</backup-count>
+  </map>
+</hazelcast>
+```
+
+When this count is 1, a map entry will have its backup on one other member in the cluster. If you set it to 2, then a map entry will have its backup on two other members. You can set it to 0 if you do not want your entries to be backed up, e.g., if performance is more important than backing up. The maximum value for the backup count is 6.
+
+Hazelcast supports both synchronous and asynchronous backups. By default, backup operations are synchronous and configured with `backup-count`. In this case, backup operations block operations until backups are successfully copied to backup members (or deleted from backup members in case of remove) and acknowledgements are received. Therefore, backups are updated before a `put` operation is completed, provided that the cluster is stable. Sync backup operations have a blocking cost which may lead to latency issues.
+
+[[creating-async-backups]]
+===== Creating Async Backups
+
+Asynchronous backups, on the other hand, do not block operations. They are fire & forget and do not require acknowledgements; the backup operations are performed at some point in time.
+
+To create asynchronous backups, select the number of async backups with the `async-backup-count` property. An example is shown below.
+
+
+```
+<hazelcast>
+  <map name="default">
+    <backup-count>0</backup-count>
+    <async-backup-count>1</async-backup-count>
+  </map>
+</hazelcast>
+```
+
+See <<consistency-and-replication-model, Consistency and Replication Model>> for more detail.
+
+
+NOTE: Backups increase memory usage since they are also kept in memory.
+
+NOTE: A map can have both sync and async backups at the same time.
+
+
+[[enabling-backup-reads]]
+===== Enabling Backup Reads
+
+By default, Hazelcast has one sync backup copy. If `backup-count` is set to more than 1, then each member will carry both owned entries and backup copies of other members. So for the `map.get(key)` call, it is possible that the calling member has a backup copy of that key. By default, `map.get(key)` will always read the value from the actual owner of the key for consistency.
+
+To enable backup reads (read local backup entries), set the value of the `read-backup-data` property to **true**. Its default value is **false** for consistency. Enabling backup reads can improve performance but on the other hand it can cause stale reads while still preserving monotonic-reads property.
+
+```
+<hazelcast>
+  <map name="default">
+    <backup-count>0</backup-count>
+    <async-backup-count>1</async-backup-count>
+    <read-backup-data>true</read-backup-data>
+  </map>
+</hazelcast>
+```
+
+This feature is available when there is at least one sync or async backup.
+
+Please note that if you are performing a read from a backup, you should take into account that your hits to the keys in the backups are not reflected as hits to the original keys on the primary members. This has an impact on IMap's maximum idle seconds or time-to-live seconds expiration. Therefore, even though there is a hit on a key in backups, your original key on the primary member may expire.
+
+[[map-eviction]]
+==== Map Eviction
+
+NOTE: Starting with Hazelcast 3.7, Hazelcast Map uses a new eviction mechanism which is based on the sampling of entries. Please see the <<eviction-algorithm, Eviction Algorithm section>> for details.
+
+Unless you delete the map entries manually or use an eviction policy, they will remain in the map. Hazelcast supports policy-based eviction for distributed maps. Currently supported policies are LRU (Least Recently Used) and LFU (Least Frequently Used).
+
+[[understanding-map-eviction]]
+===== Understanding Map Eviction
+
+Hazelcast Map performs eviction based on partitions. For example, when you specify a size using the `PER_NODE` attribute for `max-size` (please see <<configuring-map-eviction, Configuring Map Eviction>>), Hazelcast internally calculates the maximum size for every partition. Hazelcast uses the following equation to calculate the maximum size of a partition:
+
+```
+partition maximum size = max-size * member-count / partition-count
+```
+
+The eviction process starts according to this calculated partition maximum size when you try to put an entry. When entry count in that partition exceeds partition maximum size, eviction starts on that partition.
+
+Assume that you have the following figures as examples:
+
+* Partition count: 200
+* Entry count for each partition: 100
+* `max-size` (PER_NODE): 20000
+
+The total number of entries here is 20000 (partition count * entry count for each partition). This means you are at the eviction threshold since you set the `max-size` to 20000. When you try to put an entry
+
+. the entry goes to the relevant partition;
+. the partition checks whether the eviction threshold is reached (`max-size`);
+. only one entry will be evicted.
+
+As a result of this eviction process, when you check the size of your map, it is 19999. After this eviction, subsequent put operations will not trigger the next eviction until the map size is again close to the `max-size`.
+
+NOTE: The above scenario is simply an example that describes how the eviction process works. Hazelcast finds the most optimum number of entries to be evicted according to your cluster size and selected policy.
+
+[[configuring-map-eviction]]
+===== Configuring Map Eviction
+
+The following is an example declarative configuration for map eviction.
+
+```
+<hazelcast>
+  <map name="default">
+    ...
+    <time-to-live-seconds>0</time-to-live-seconds>
+    <max-idle-seconds>0</max-idle-seconds>
+    <eviction-policy>LRU</eviction-policy>
+    <max-size policy="PER_NODE">5000</max-size>
+    ...
+  </map>
+</hazelcast>
+```
+
+Let's describe each element:
+
+* `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
+* `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
+* `eviction-policy`: Valid values are described below.
+** NONE: Default policy. If set, no items will be evicted and the property `max-size` will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
+** LRU: Least Recently Used.
+** LFU: Least Frequently Used.
++
+Apart from the above values, you can also develop and use your own eviction policy. Please see the <<custom-eviction-policy, Custom Eviction Policy section>>.
++
+* `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
+** `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than `(partition-count/member-count)` (Partition count is 271 by default).		
++
+`<max-size policy="PER_NODE">5000</max-size>`
++
+** `PER_PARTITION`: Maximum number of map entries within each partition. Storage size depends on the partition count in a cluster member. This attribute should not be used often. For instance, avoid using this attribute with a small cluster. If the cluster is small, it will be hosting more partitions, and therefore map entries, than that of a larger cluster. Thus, for a small cluster, eviction of the entries will decrease performance (the number of entries is large).
++
+`<max-size policy="PER_PARTITION">27100</max-size>`
++
+* `USED_HEAP_SIZE`: Maximum used heap size in megabytes per map for each Hazelcast instance. Please note that this policy does not work when <<setting-in-memory-format, in-memory format>> is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
++
+`<max-size policy="USED_HEAP_SIZE">4096</max-size>`
++
+** `USED_HEAP_PERCENTAGE`: Maximum used heap size percentage per map for each Hazelcast instance. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when used heap size exceeds 100 MB. Please note that this policy does not work when <<setting-in-memory-format, in-memory format>> is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
++
+`<max-size policy="USED_HEAP_PERCENTAGE">10</max-size>`
++
+** `FREE_HEAP_SIZE`: Minimum free heap size in megabytes for each JVM.
++
+`<max-size policy="FREE_HEAP_SIZE">512</max-size>`
++
+** `FREE_HEAP_PERCENTAGE`: Minimum free heap size percentage for each JVM. If, for example, a JVM is configured to have 1000 MB and this value is 10, then the map entries will be evicted when free heap size is below 100 MB.
++
+`<max-size policy="FREE_HEAP_PERCENTAGE">10</max-size>`
++
+** `USED_NATIVE_MEMORY_SIZE`: ([navy]*Hazelcast IMDG Enterprise HD*) Maximum used native memory size in megabytes per map for each Hazelcast instance.
++
+`<max-size policy="USED_NATIVE_MEMORY_SIZE">1024</max-size>`
++
+** `USED_NATIVE_MEMORY_PERCENTAGE`: ([navy]*Hazelcast IMDG Enterprise HD*) Maximum used native memory size percentage per map for each Hazelcast instance.
++
+`<max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">65</max-size>`
++
+** `FREE_NATIVE_MEMORY_SIZE`: ([navy]*Hazelcast IMDG Enterprise HD*) Minimum free native memory size in megabytes for each Hazelcast instance.
++
+`<max-size policy="FREE_NATIVE_MEMORY_SIZE">256</max-size>`
++
+** `FREE_NATIVE_MEMORY_PERCENTAGE`: ([navy]*Hazelcast IMDG Enterprise HD*) Minimum free native memory size percentage for each Hazelcast instance.
++
+`<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
+
+
+NOTE: As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-check-millis` are deprecated. They will be ignored if configured since map eviction is based on the sampling of entries. Please see the <<eviction-algorithm, Eviction Algorithm section>> for details.
+
+[[example-eviction-configurations]]
+===== Example Eviction Configurations
+
+```
+<map name="documents">
+  <max-size policy="PER_NODE">10000</max-size>
+  <eviction-policy>LRU</eviction-policy>
+  <max-idle-seconds>60</max-idle-seconds>
+</map>
+```
+
+In the above example, `documents` map starts to evict its entries from a member when the map size exceeds 10000 in that member. Then the entries least recently used will be evicted. The entries not used for more than 60 seconds will be evicted as well.
+
+And the following is an example eviction configuration for a map having `NATIVE` as the in-memory format:
+
+```
+<map name="nativeMap*">
+    <in-memory-format>NATIVE</in-memory-format>
+    <eviction-policy>LFU</eviction-policy>
+    <max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">99</max-size>
+</map>
+```
+
+[[evicting-specific-entries]]
+===== Evicting Specific Entries
+
+The eviction policies and configurations explained above apply to all the entries of a map. The entries that meet the specified eviction conditions are evicted.
+
+You may also want to evict some specific map entries.  To do this, you can use the `ttl` and `timeunit` parameters of the method `map.put()`. An example code line is given below.
+
+`myMap.put( "1", "John", 50, TimeUnit.SECONDS )`
+
+The map entry with the key "1" will be evicted 50 seconds after it is put into `myMap`.
+
+[[evicting-all-entries]]
+===== Evicting All Entries
+
+To evict all keys from the map except the locked ones, use the method `evictAll()`. If a MapStore is defined for the map, `deleteAll` is not called by `evictAll`. If you want to call the method `deleteAll`, use `clear()`.
+
+An example is given below.
+
+[source,java]
+----
+public class EvictAll {
+
+    public static void main(String[] args) {
+        final int numberOfKeysToLock = 4;
+        final int numberOfEntriesToAdd = 1000;
+
+        HazelcastInstance node1 = Hazelcast.newHazelcastInstance();
+        HazelcastInstance node2 = Hazelcast.newHazelcastInstance();
+
+        IMap<Integer, Integer> map = node1.getMap( "map" );
+        for (int i = 0; i < numberOfEntriesToAdd; i++) {
+            map.put(i, i);
+        }
+
+        for (int i = 0; i < numberOfKeysToLock; i++) {
+            map.lock(i);
+        }
+
+        // should keep locked keys and evict all others.
+        map.evictAll();
+
+        System.out.printf("# After calling evictAll...\n");
+        System.out.printf("# Expected map size\t: %d\n", numberOfKeysToLock);
+        System.out.printf("# Actual map size\t: %d\n", map.size());
+
+    }
+}
+----
+
+
+NOTE: Only EVICT_ALL event is fired for any registered listeners.
+
+[[forced-eviction]]
+===== Forced Eviction
+
+[blue]*Hazelcast IMDG Enterprise*
+
+
+Hazelcast may use forced eviction in the cases when the eviction explained in <<understanding-map-eviction, Understanding Map Eviction>> is not enough to free up your memory. Note that this is valid if you are using [blue]*Hazelcast IMDG Enterprise* and you set your in-memory format to `NATIVE`.
+
+Forced eviction mechanism is explained below as steps in the given order:
+
+* When the normal eviction is not enough, forced eviction is triggered and first it tries to evict approx. 20% of the entries from the current partition. It retries this five times.
+* If the result of above step is still not enough, forced eviction applies the above step to all maps. This time it might perform eviction from some other partitions too, provided that they are owned by the same thread.
+* If that is still not enough to free up your memory, it evicts not the 20% but all the entries from the current partition.
+* if that is not enough, it will evict all the entries from the other data structures; from the partitions owned by the local thread.
+
+Finally, when all the above steps are not enough, Hazelcast throws a  Native Out of Memory Exception.
+
+[[custom-eviction-policy]]
+===== Custom Eviction Policy
+
+NOTE: This section is valid for Hazelcast 3.7 and higher releases.
+
+
+Apart from the policies such as LRU and LFU, which Hazelcast provides out-of-the-box, you can develop and use your own eviction policy. 
+
+To achieve this, you need to provide an implementation of `MapEvictionPolicy` as in the following `OddEvictor` example:
+
+[source,java]
+----
+public class MapCustomEvictionPolicy {
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        config.getMapConfig("test")
+            .setMapEvictionPolicy(new OddEvictor())
+            .getMaxSizeConfig()
+            .setMaxSizePolicy(PER_NODE).setSize(10000);
+
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
+        IMap<Integer, Integer> map = instance.getMap("test");
+
+        final Queue<Integer> oddKeys = new ConcurrentLinkedQueue<Integer>();
+        final Queue<Integer> evenKeys = new ConcurrentLinkedQueue<Integer>();
+
+        map.addEntryListener(new EntryEvictedListener<Integer, Integer>() {
+            @Override
+            public void entryEvicted(EntryEvent<Integer, Integer> event) {
+                Integer key = event.getKey();
+                if (key % 2 == 0) {
+                    evenKeys.add(key);
+                } else {
+                    oddKeys.add(key);
+                }
+            }
+        }, false);
+
+        // Wait some more time to receive evicted events.
+        parkNanos(SECONDS.toNanos(5));
+
+        for (int i = 0; i < 15000; i++) {
+            map.put(i, i);
+        }
+
+        String msg = "IMap uses sampling based eviction. After eviction is completed, we are expecting " +
+                "number of evicted-odd-keys should be greater than number of evicted-even-keys" +
+                "\nNumber of evicted-odd-keys = %d, number of evicted-even-keys = %d";
+        out.println(format(msg, oddKeys.size(), evenKeys.size()));
+
+        instance.shutdown();
+    }
+
+    /**
+     * Odd evictor tries to evict odd keys first.
+     */
+    private static class OddEvictor extends MapEvictionPolicy {
+
+        @Override
+        public int compare(EntryView o1, EntryView o2) {
+            Integer key = (Integer) o1.getKey();
+            if (key % 2 != 0) {
+                return -1;
+            }
+
+            return 1;
+        }
+    }
+}
+----
+
+Then you can enable your policy by setting it via the method `MapConfig.setMapEvictionPolicy()`
+programmatically or via XML declaratively. Following is the example declarative configuration for the eviction policy `OddEvictor` implemented above:
+
+```
+<map name="test">
+   ...
+   <map-eviction-policy-class-name>com.package.OddEvictor</map-eviction-policy-class-name>
+   ....
+</map>
+```
+
+If you Hazelcast with Spring, you can enable your policy as shown below.
+
+```
+<hz:map name="test">
+    <hz:map-eviction-policy class-name="com.package.OddEvictor"/>
+</hz:map>
+```
+
+[[setting-in-memory-format]]
+==== Setting In-Memory Format
+
+IMap (and a few other Hazelcast data structures, such as ICache) has an `in-memory-format` configuration option. By default, Hazelcast stores data into memory in binary (serialized) format. Sometimes it can be efficient to store the entries in their object form, especially in cases of local processing, such as entry processor and queries.
+
+To set how the data will be stored in memory, set `in-memory-format` in the configuration. You have the following format options:
+
+* `BINARY` (default): The data (both the key and value) will be stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as `put` and `get`.
+* `OBJECT`: The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing will not contain the deserialization cost. Note that when you use `OBJECT` as the in-memory format, the key will still be stored in binary format, and the value will be stored in object format.
+* `NATIVE`: ([navy]*Hazelcast IMDG Enterprise HD*) This format behaves the same as BINARY, however, instead of heap memory, key and value will be stored in the off-heap memory.
+
+Regular operations like `get` rely on the object instance. When the `OBJECT` format is used and a `get` is performed, the map does not return the stored instance, but creates a clone. Therefore, this whole `get` operation first includes a serialization on the member owning the instance, and then a deserialization on the member calling the instance. When the `BINARY` format is used, only a deserialization is required; `BINARY` is faster.
+
+Similarly, a `put` operation is faster when the `BINARY` format is used. If the format was `OBJECT`, the map would create a clone of the instance, and there would first be a serialization and then a deserialization. When BINARY is used, only a deserialization is needed.
+
+NOTE: If a value is stored in `OBJECT` format, a change on a returned value does not affect the stored instance. In this case, the returned instance is not the actual one but a clone. Therefore, changes made on an object after it is returned will not reflect on the actual stored data. Similarly, when a value is written to a map and the value is stored in `OBJECT` format, it will be a copy of the `put` value. Therefore, changes made on the object after it is stored will not reflect on the stored data.
+
+[[using-high-density-memory-store-with-map]]
+==== Using High-Density Memory Store with Map
+
+[navy]*Hazelcast IMDG Enterprise HD*
+
+Hazelcast instances are Java programs. In case of `BINARY` and `OBJECT` in-memory formats, Hazelcast stores your distributed data into the heap of its server instances. Java heap is subject to garbage collection (GC). In case of larger heaps, garbage collection might cause your application to pause for tens of seconds (even minutes for really large heaps), badly affecting your application performance and response times.
+
+As the data gets bigger, you either run the application with larger heap, which would result in longer GC pauses or run multiple instances with smaller heap which can turn into an operational nightmare if the number of such instances becomes very high.
+
+To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can configure your map to use High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
+
+```
+<map name="nativeMap*">
+   <in-memory-format>NATIVE</in-memory-format>
+</map>
+```
+
+Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>.
+
+[[required-configuration-changes-when-using-native]]
+===== Required configuration changes when using NATIVE
+
+Note that the eviction mechanism is different for `NATIVE` in-memory format.
+The new eviction algorithm for map with High-Density Memory Store is similar to that of JCache with High-Density Memory Store and is described <<eviction-algorithm, here>>.
+
+* Eviction percentage has no effect.
++
+```
+<map name="nativeMap*">
+    <in-memory-format>NATIVE</in-memory-format>
+    <eviction-percentage>25</eviction-percentage> <--! NO IMPACT with NATIVE -->
+</map>
+```
++
+* These IMap eviction policies for `max-size` cannot be used: `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
+* Near Cache eviction configuration is also different for `NATIVE` in-memory format. For a Near Cache configuration with in-memory format set to `BINARY`:
++    
+```
+<map name="nativeMap*">
+   <near-cache>
+      <in-memory-format>BINARY</in-memory-format>
+      <max-size>10000</max-size> <--! NO IMPACT with NATIVE -->
+      <eviction-policy>LFU</eviction-policy> <--! NO IMPACT with NATIVE -->
+   </near-cache>
+</map>
+```
++
+the equivalent configuration for `NATIVE` in-memory format would be similar to the following:
++
+```
+<map name="nativeMap*">
+   <near-cache>
+      <in-memory-format>NATIVE</in-memory-format>
+      <eviction size="10000" eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_SIZE"/>   <--! Correct configuration with NATIVE -->
+   </near-cache>
+</map>
+```
++
+* Near Cache eviction policy `ENTRY_COUNT` cannot be used for `max-size-policy`.
+
+
+NOTE: Please refer to the <<high-density-memory-store, High-Density Memory Store section>> for more information.
+
+[[loading-and-storing-persistent-data]]
+==== Loading and Storing Persistent Data
+
+Hazelcast allows you to load and store the distributed map entries from/to a persistent data store such as a relational database. To do this, you can use Hazelcast's `MapStore` and `MapLoader` interfaces.
+
+When you provide a `MapLoader` implementation and request an entry (`IMap.get()`) that does not exist in memory, `MapLoader`'s `load` or `loadAll` methods will load that entry from the data store. This loaded entry is placed into the map and will stay there until it is removed or evicted.
+
+When a `MapStore` implementation is provided, an entry is also put into a user defined data store. 
+
+NOTE: Data store needs to be a centralized system that is
+accessible from all Hazelcast members. Persistence to a local file system is not supported.
+
+NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface as you can see in the interface https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MapStore.java[code].
+
+
+Following is a `MapStore` example.
+
+[source,java]
+----
+public class PersonMapStore implements MapStore<Long, Person> {
+    private final Connection con;
+
+    public PersonMapStore() {
+        try {
+            con = DriverManager.getConnection("jdbc:hsqldb:mydatabase", "SA", "");
+            con.createStatement().executeUpdate(
+                    "create table if not exists person (id bigint, name varchar(45))");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public synchronized void delete(Long key) {
+        System.out.println("Delete:" + key);
+        try {
+            con.createStatement().executeUpdate(
+                    format("delete from person where id = %s", key));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public synchronized void store(Long key, Person value) {
+        try {
+            con.createStatement().executeUpdate(
+                    format("insert into person values(%s,'%s')", key, value.name));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public synchronized void storeAll(Map<Long, Person> map) {
+        for (Map.Entry<Long, Person> entry : map.entrySet())
+            store(entry.getKey(), entry.getValue());
+    }
+
+    public synchronized void deleteAll(Collection<Long> keys) {
+        for (Long key : keys) delete(key);
+    }
+
+    public synchronized Person load(Long key) {
+        try {
+            ResultSet resultSet = con.createStatement().executeQuery(
+                    format("select name from person where id =%s", key));
+            try {
+                if (!resultSet.next()) return null;
+                String name = resultSet.getString(1);
+                return new Person(name);
+            } finally {
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public synchronized Map<Long, Person> loadAll(Collection<Long> keys) {
+        Map<Long, Person> result = new HashMap<Long, Person>();
+        for (Long key : keys) result.put(key, load(key));
+        return result;
+    }
+
+    public Iterable<Long> loadAllKeys() {
+        return null;
+    }
+}
+----
+
+NOTE: During the initial loading process, MapStore uses a thread different from the partition threads that are used by the ExecutorService. After the initialization is completed, the `map.get` method looks up any nonexistent value from the database in a partition thread, or the `map.put` method looks up the database to return the previously associated value for a key also in a partition thread.
+
+
+NOTE: For more MapStore/MapLoader code samples, please see https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java[here].
+
+Hazelcast supports read-through, write-through, and write-behind persistence modes, which are explained in the subsections below.
+
+[[using-read-through-persistence]]
+===== Using Read-Through Persistence
+
+If an entry does not exist in memory when an application asks for it, Hazelcast asks the loader implementation to load that entry from the data store.  If the entry exists there, the loader implementation gets it, hands it to Hazelcast, and Hazelcast puts it into memory. This is read-through persistence mode.
+
+[[setting-write-through-persistence]]
+===== Setting Write-Through Persistence
+
+`MapStore` can be configured to be write-through by setting the `write-delay-seconds` property to **0**. This means the entries will be put to the data store synchronously.
+
+In this mode, when the `map.put(key,value)` call returns:
+
+* `MapStore.store(key,value)` is successfully called so the entry is persisted.
+* In-Memory entry is updated.
+* In-Memory backup copies are successfully created on other cluster members (if `backup-count` is greater than 0).
+
+If `MapStore` throws an exception then the exception is propagated to the original `put` or `remove` call in the form of `RuntimeException`.
+
+NOTE: There is a key difference in the behaviors of `map.remove(key)` and `map.delete(key)`, i.e., the latter results in `MapStore.delete(key)` to be invoked whereas the former only removes the entry from IMap.
+
+[[setting-write-behind-persistence]]
+===== Setting Write-Behind Persistence
+
+You can configure `MapStore` as write-behind by setting the `write-delay-seconds` property to a value bigger than **0**. This means the modified entries will be put to the data store asynchronously after a configured delay. 
+
+NOTE: In write-behind mode, Hazelcast coalesces updates on a specific key by default, which means it applies only the last update on that key. However, you can set `MapStoreConfig.setWriteCoalescing()` to `FALSE` and you can store all updates performed on a key to the data store.
+
+NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception will be thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the <<system-properties, System Properties section>> for information on this property and how to set the system properties.
+
+
+In write-behind mode, when the `map.put(key,value)` call returns:
+
+* In-Memory entry is updated.
+* In-Memory backup copies are successfully created on other cluster members (if `backup-count` is greater than 0).
+* The entry is marked as dirty so that after `write-delay-seconds`, it can be persisted with `MapStore.store(key,value)` call.
+* For fault tolerance, dirty entries are stored in a queue on the primary member and also on a back-up member.
+
+The same behavior goes for the `map.remove(key)`, the only difference is that  `MapStore.delete(key)` is called when the entry will be deleted.
+
+If `MapStore` throws an exception, then Hazelcast tries to store the entry again. If the entry still cannot be stored, a log message is printed and the entry is re-queued. 
+
+For batch write operations, which are only allowed in write-behind mode, Hazelcast will call `MapStore.storeAll(map)` and `MapStore.deleteAll(collection)` to do all writes in a single call.
+
+NOTE: If a map entry is marked as dirty, meaning that it is waiting to be persisted to the `MapStore` in a write-behind scenario, the eviction process forces the entry to be stored. This way you have control over the number of entries waiting to be stored, and thus you can prevent a possible OutOfMemory exception.
+
+NOTE: `MapStore` or `MapLoader` implementations should not use Hazelcast Map/Queue/MultiMap/List/Set operations. Your implementation should only work with your data store. Otherwise, you may get into deadlock situations.
+
+Here is a sample configuration:
+
+```
+<hazelcast>
+  ...
+  <map name="default">
+    ...
+    <map-store enabled="true" initial-mode="LAZY">
+      <class-name>com.hazelcast.examples.DummyStore</class-name>
+      <write-delay-seconds>60</write-delay-seconds>
+      <write-batch-size>1000</write-batch-size>
+      <write-coalescing>true</write-coalescing>
+    </map-store>
+  </map>
+</hazelcast>
+```
+
+The following are the descriptions of MapStore configuration elements and attributes:
+
+* `class-name`: Name of the class implementing MapLoader and/or MapStore.
+* `write-delay-seconds`: Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through so MapStore.store(key, value) will be called as soon as the entry is updated. Otherwise it is write-behind so updates will be stored after write-delay-seconds value by calling Hazelcast.storeAll(map). Default value is 0.
+* `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries will be tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
+* `write-coalescing`: In write-behind mode, Hazelcast coalesces updates on a specific key by default; it applies only the last update on it. You can set this element to `false` to store all updates performed on a key to the data store.
+* `enabled`: True to enable this map-store, false to disable. Default value is true.
+* `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded. Please see the <<initializing-map-on-startup, Initializing Map on Startup section>> for more details.
+
+[[storing-entries-to-multiple-maps]]
+===== Storing Entries to Multiple Maps
+
+A configuration can be applied to more than one map using wildcards (see <<using-wildcards, Using Wildcards>>), meaning that the configuration is shared among the maps. But `MapStore` does not know which entries to store when there is one configuration applied to multiple maps.
+
+To store entries when there is one configuration applied to multiple maps, use Hazelcast's `MapStoreFactory` interface. Using the `MapStoreFactory` interface, `MapStore`s for each map can be created when a wildcard configuration is used. Example code is shown below.
+
+[source,java]
+----
+Config config = new Config();
+MapConfig mapConfig = config.getMapConfig( "*" );
+MapStoreConfig mapStoreConfig = mapConfig.getMapStoreConfig();
+mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
+  @Override
+  public MapLoader<Object, Object> newMapStore( String mapName, Properties properties ) {
+    return null;
+  }
+});
+----
+
+To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface]. This interface has the methods `init()` and `destroy()`.
+
+The method `init()` initializes the `MapLoader` implementation. Hazelcast calls this method when the map is first used on the Hazelcast instance. The `MapLoader` implementation can initialize the required resources for implementing `MapLoader` such as reading a configuration file or creating a database connection.
+
+Hazelcast calls the method `destroy()` before shutting down. You can override this method  to cleanup the resources held by this `MapLoader` implementation, such as closing the database connections.
+
+[[initializing-map-on-startup]]
+===== Initializing Map on Startup
+
+To pre-populate the in-memory map when the map is first touched/used, use the `MapLoader.loadAllKeys` API.
+
+If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the keys which are most important to you that you want to load them while initializing the map. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
+
+The `InitialLoadMode` configuration parameter in the class https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapStoreConfig.java[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created, and everything becomes ready to use. Also, if you add indices to your map with the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapIndexConfig.java[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
+
+Here is the `MapLoader` initialization flow:
+
+. When `getMap()` is first called from any member, initialization will start depending on the value of `InitialLoadMode`. If it is set to `EAGER`, initialization starts on all partitions as soon as the map is touched, i.e., all partitions will be loaded when `getMap` is called.  If it is set to `LAZY`, data will be loaded partition by partition, i.e., each partition will be loaded with its first touch.
+. Hazelcast will call `MapLoader.loadAllKeys()` to get all your keys on one of the members.
+. That member will distribute keys to all other members in batches.
+. Each member will load values of all its owned keys by calling `MapLoader.loadAll(keys)`.
+. Each member puts its owned entries into the map by calling `IMap.putTransient(key,value)`.
+
+NOTE: If the load mode is `LAZY` and the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since all the data is not loaded in this case (`LAZY` mode), please note that there may still be entries in your datastore.*
+
+NOTE: If you do not want the MapStore start to load as soon as the first cluster member starts, you can use the system property `hazelcast.initial.min.cluster.size`. For example, if you set its value as `3`, loading process will be blocked until all three members are completely up.*
+
+
+NOTE: The return type of `loadAllKeys()` is changed from `Set` to `Iterable` with the release of Hazelcast 3.5. MapLoader implementations from previous releases are also supported and do not need to be adapted.
+
+[[loading-keys-incrementally]]
+===== Loading Keys Incrementally
+
+If the number of keys to load is large, it is more efficient to load them incrementally rather than loading them all at once. To support incremental loading, the `MapLoader.loadAllKeys()` method returns an `Iterable` which can be lazily populated with the results of a database query. 
+
+Hazelcast iterates over the `Iterable` and, while doing so, sends out the keys to their respective owner members. The `Iterator` obtained from `MapLoader.loadAllKeys()` may also implement the `Closeable` interface, in which case `Iterator` is closed once the iteration is over. This is intended for releasing resources such as closing a JDBC result set. 
+
+[[forcing-all-keys-to-be-loaded]]
+===== Forcing All Keys To Be Loaded
+
+The method `loadAll` loads some or all keys into a data store in order to optimize the multiple load operations. The method has two signatures; the same method can take two different parameter lists. One signature loads the given keys and the other loads all keys. Please see the example code below.
+
+[source,java]
+----
+public class LoadAll {
+
+    public static void main(String[] args) {
+        final int numberOfEntriesToAdd = 1000;
+        final String mapName = LoadAll.class.getCanonicalName();
+        final Config config = createNewConfig(mapName);
+        final HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
+        final IMap<Integer, Integer> map = node.getMap(mapName);
+       
+        populateMap(map, numberOfEntriesToAdd);
+        System.out.printf("# Map store has %d elements\n", numberOfEntriesToAdd);
+   
+        map.evictAll();
+        System.out.printf("# After evictAll map size\t: %d\n", map.size());
+        
+        map.loadAll(true);
+        System.out.printf("# After loadAll map size\t: %d\n", map.size());
+    }
+}
+----
+
+[[post-processing-objects-in-map-store]]
+===== Post-Processing Objects in Map Store
+
+In some scenarios, you may need to modify the object after storing it into the map store.
+For example, you can get an ID or version auto-generated by your database and then need to modify your object stored in the distributed map, but not to break the synchronization between the database and the data grid. 
+
+To post-process an object in the map store, implement the `PostProcessingMapStore` interface to put the modified object into the distributed map. This will trigger an extra step of `Serialization`, so use it only when needed. (This is only valid when using the `write-through` map store configuration.)
+
+Here is an example of post processing map store:
+
+[source,java]
+----
+class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapStore {
+    @Override
+    public void store( Integer key, Employee employee ) {
+        EmployeeId id = saveEmployee();
+        employee.setId( id.getId() );
+    }
+}
+----
+
+NOTE: Please note that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.
+
+[[accessing-a-database-using-properties]]
+===== Accessing a Database Using `Properties`
+
+You can prepare your own `MapLoader` to access a database such as Cassandra and MongoDB. For this, you can first declaratively specify the database properties in your `hazelcast.xml` configuration file and then implement the `MapLoaderLifecycleSupport` interface to pass those properties.
+
+You can define the database properties, such as its URL and name, using the `properties` configuration element. The following is a configuration example for MongoDB:
+
+```
+    <map name="supplements">
+        <map-store enabled="true" initial-mode="LAZY">
+            <class-name>com.hazelcast.loader.YourMapStoreImplementation</class-name>
+            <properties>
+                <property name="mongo.url">mongodb://localhost:27017</property>
+                <property name="mongo.db">mydb</property>
+                <property name="mongo.collection">supplements</property>
+            </properties>
+        </map-store>
+    </map>
+```
+
+After you specified the database properties in your configuration, you need to implement the `MapLoaderLifecycleSupport` interface and give those properties in the `init()` method, as shown below:
+
+[source,java]
+----
+public class YourMapStoreImplementation implements MapStore<String, Supplement>, MapLoaderLifecycleSupport {
+
+    private MongoClient mongoClient;
+    private MongoCollection collection;
+
+    public YourMapStoreImplementation() {
+    }
+
+    @Override
+    public void init(HazelcastInstance hazelcastInstance, Properties properties, String mapName) {
+        String mongoUrl = (String) properties.get("mongo.url");
+        String dbName = (String) properties.get("mongo.db");
+        String collectionName = (String) properties.get("mongo.collection");
+        this.mongoClient = new MongoClient(new MongoClientURI(mongoUrl));
+        this.collection = mongoClient.getDatabase(dbName).getCollection(collectionName);
+    }
+----
+
+You can refer to the full example https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/mongodb[here].
+
+[[creating-near-cache-for-map]]
+==== Creating Near Cache for Map
+
+The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Please refer to the <<near-cache, Near Cache section>> for a detailed explanation of the Near Cache feature and its configuration.
+
+
+[[locking-maps]]
+==== Locking Maps
+
+Hazelcast Distributed Map (IMap) is thread-safe to meet your thread safety requirements. When these requirements increase or you want to have more control on the concurrency, consider the Hazelcast solutions described here.
+
+Let's work on a sample case as shown below.
+
+[source,java]
+----
+public class RacyUpdateMember {
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IMap<String, Value> map = hz.getMap( "map" );
+        String key = "1";
+        map.put( key, new Value() );
+        System.out.println( "Starting" );
+        for ( int k = 0; k < 1000; k++ ) {
+            if ( k % 100 == 0 ) System.out.println( "At: " + k );
+            Value value = map.get( key );
+            Thread.sleep( 10 );
+            value.amount++;
+            map.put( key, value );
+        }
+        System.out.println( "Finished! Result = " + map.get(key).amount );
+    }
+
+    static class Value implements Serializable {
+        public int amount;
+    }
+}
+----
+
+If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic locking or optimistic locking. 
+
+[[pessimistic-looking]]
+===== Pessimistic Locking
+
+One way to solve the race issue is by using pessimistic locking - lock the map entry until you are finished with it.
+
+To perform pessimistic locking, use the lock mechanism provided by the Hazelcast distributed map, i.e., the `map.lock` and `map.unlock` methods. See the below example code.
+
+[source,java]
+----
+public class PessimisticUpdateMember {
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IMap<String, Value> map = hz.getMap( "map" );
+        String key = "1";
+        map.put( key, new Value() );
+        System.out.println( "Starting" );
+        for ( int k = 0; k < 1000; k++ ) {
+            map.lock( key );
+            try {
+                Value value = map.get( key );
+                Thread.sleep( 10 );
+                value.amount++;
+                map.put( key, value );
+            } finally {
+                map.unlock( key );
+            }
+        }
+        System.out.println( "Finished! Result = " + map.get( key ).amount );
+    }
+
+    static class Value implements Serializable {
+        public int amount;
+    }
+}
+----
+
+The IMap lock will automatically be collected by the garbage collector when the lock is released and no other waiting conditions exist on the lock.
+
+The IMap lock is reentrant, but it does not support fairness.
+
+Another way to solve the race issue is by acquiring a predictable `Lock` object from Hazelcast. This way, every value in the map can be given a lock, or you can create a stripe of locks.
+
+[[optimistic-locking]]
+===== Optimistic Locking
+
+In Hazelcast, you can apply the optimistic locking strategy with the map's `replace` method. This method compares values in object or data forms depending on the in-memory format configuration. If the values are equal, it replaces the old value with the new one. If you want to use your defined `equals` method, `in-memory-format` should be `OBJECT`. Otherwise, Hazelcast serializes objects to `BINARY` forms and compares them.
+
+See the below example code.
+
+NOTE: The below example code is intentionally broken.
+
+[source,java]
+----
+public class OptimisticMember {
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IMap<String, Value> map = hz.getMap( "map" );
+        String key = "1";
+        map.put( key, new Value() );
+        System.out.println( "Starting" );
+        for ( int k = 0; k < 1000; k++ ) {
+            if ( k % 10 == 0 ) System.out.println( "At: " + k );
+            for (; ; ) {
+                Value oldValue = map.get( key );
+                Value newValue = new Value( oldValue );
+                Thread.sleep( 10 );
+                newValue.amount++;
+                if ( map.replace( key, oldValue, newValue ) )
+                    break;
+            }
+        }
+        System.out.println( "Finished! Result = " + map.get( key ).amount );
+    }
+
+    static class Value implements Serializable {
+        public int amount;
+
+        public Value() {
+        }
+
+        public Value( Value that ) {
+            this.amount = that.amount;
+        }
+
+        public boolean equals( Object o ) {
+            if ( o == this ) return true;
+            if ( !( o instanceof Value ) ) return false;
+            Value that = ( Value ) o;
+            return that.amount == this.amount;
+        }
+    }
+}
+----
+
+[[pessimistic-vs-optimistic-locking]]
+===== Pessimistic vs. Optimistic Locking
+
+The locking strategy you choose will depend on your locking requirements.
+
+Optimistic locking is better for mostly read-only systems. It has a performance boost over pessimistic locking.
+
+Pessimistic locking is good if there are lots of updates on the same key. It is more robust than optimistic locking from the perspective of data consistency.
+
+In Hazelcast, use `IExecutorService` to submit a task to a key owner, or to a member or members. This is the recommended way to perform task executions, rather than using pessimistic or optimistic locking techniques. `IExecutorService` will have fewer network hops and less data over wire, and tasks will be executed very near to the data. Please refer to the <<data-affinity, Data Affinity section>>.
+
+[[solving-the-aba-problem]]
+===== Solving the ABA Problem
+
+The ABA problem occurs in environments when a shared resource is open to change by multiple threads. Even if one thread sees the same value for a particular key in consecutive reads, it does not mean that nothing has changed between the reads. Another thread may change the value, do work, and change the value back, while the first thread thinks that nothing has changed.
+
+To prevent these kind of problems, you can assign a version number and check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields will be equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy, and it is used in environments that do not expect intensive concurrent changes on a specific key.
+
+In Hazelcast, you can apply the <<optimistic-locking, optimistic locking>> strategy with the map `replace` method.
+
+[[lock-split-brain-protection-with-pessimistic-locking]]
+===== Lock Split-Brain Protection with Pessimistic Locking
+
+Locks can be configured to check the number of currently present members before applying a locking operation. If the check fails, the lock operation will fail with a `QuorumException` (see <<split-brain-protection, Split-Brain Protection>>). As pessimistic locking uses lock operations internally, it will also use the configured lock quorum. This means that you can configure a lock quorum with the same name or a pattern that matches the map name. Note that the quorum for IMap locking actions can be different from the quorum for other IMap actions.  
+
+The following actions will then check for lock quorum before being applied:
+ 
+* `IMap.lock(K)` and `IMap.lock(K, long, java.util.concurrent.TimeUnit)`
+* `IMap.isLocked()`
+* `IMap.tryLock(K)`, `IMap.tryLock(K, long, java.util.concurrent.TimeUnit)` and `IMap.tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
+* `IMap.unlock()`
+* `IMap.forceUnlock()`
+* `MultiMap.lock(K)` and `MultiMap.lock(K, long, java.util.concurrent.TimeUnit)`
+* `MultiMap.isLocked()`
+* `MultiMap.tryLock(K)`, `MultiMap.tryLock(K, long, java.util.concurrent.TimeUnit)` and `MultiMap.tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.concurrent.TimeUnit)`
+* `MultiMap.unlock()`
+* `MultiMap.forceUnlock()`
+
+An example of declarative configuration:
+ 
+```
+<map name="myMap">
+  <quorum-ref>map-actions-quorum</quorum-ref>
+</map>
+
+<lock name="myMap">
+    <quorum-ref>map-lock-actions-quorum</quorum-ref>
+</lock>
+```
+
+Here the configured map will use the `map-lock-actions-quorum` quorum for map lock actions and the `map-actions-quorum` quorum for other map actions.
+
+
+[[accessing-entry-statistics]]
+==== Accessing Entry Statistics
+
+Hazelcast keeps statistics about each map entry, such as creation time, last update time, last access time, number of hits, and version. To access the map entry statistics, use an `IMap.getEntryView(key)` call. Here is an example.
+
+[source,java]
+----
+HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+EntryView entry = hz.getMap( "quotes" ).getEntryView( "1" );
+System.out.println ( "size in memory  : " + entry.getCost() );
+System.out.println ( "creationTime    : " + entry.getCreationTime() );
+System.out.println ( "expirationTime  : " + entry.getExpirationTime() );
+System.out.println ( "number of hits  : " + entry.getHits() );
+System.out.println ( "lastAccessedTime: " + entry.getLastAccessTime() );
+System.out.println ( "lastUpdateTime  : " + entry.getLastUpdateTime() );
+System.out.println ( "version         : " + entry.getVersion() );
+System.out.println ( "key             : " + entry.getKey() );
+System.out.println ( "value           : " + entry.getValue() );
+----
+
+[[map-listener]]
+==== Map Listener
+
+Please refer to the <<listening-for-map-events, Listening for Map Events section>>.
+
+
+[[listening-to-map-entries-with-predicates]]
+==== Listening to Map Entries with Predicates
+
+You can listen to the modifications performed on specific map entries. You can think of it as an entry listener with predicates. Please see the <<listening-for-map-events, Listening for Map Events section>> for information on how to add entry listeners to a map.
+
+
+NOTE: The default backwards-compatible event publishing strategy only publishes
+`UPDATED` events when map entries are updated to a value that matches the predicate with which the listener was registered.
+This implies that when using the default event publishing strategy, your listener will not be notified about an entry whose
+value is updated from one that matches the predicate to a new value that does not match the predicate.
+
+Since version 3.7, when you configure Hazelcast members with property `hazelcast.map.entry.filtering.natural.event.types` set to `true`,
+handling of entry updates conceptually treats value transition as entry, update or exit with regards to the predicate value space.
+The following table compares how a listener is notified about an update to a map entry value under the default
+backwards-compatible Hazelcast behavior (when property `hazelcast.map.entry.filtering.natural.event.types` is not set or is set
+to `false`) versus when set to `true`:
+
+|===
+
+|| Default | `hazelcast.map.entry.filtering.natural.event.types = true`
+
+| When old value matches predicate, new value does not match predicate
+| No event is delivered to entry listener
+| `REMOVED` event is delivered to entry listener
+
+| When old value matches predicate, new value matches predicate
+| `UPDATED` event is delivered to entry listener
+| `UPDATED` event is delivered to entry listener
+
+| When old value does not match predicate, new value does not match predicate
+| No event is delivered to entry listener
+| No event is delivered to entry listener
+
+| When old value does not match predicate, new value matches predicate
+| `UPDATED` event is delivered to entry listener
+| `ADDED` event is delivered to entry listener  
+|===
+
+As an example, let's listen to the changes made on an employee with the surname "Smith". First, let's create the `Employee` class.
+
+[source,java]
+----
+public class Employee implements Serializable {
+
+    private final String surname;
+
+    public Employee(String surname) {
+        this.surname = surname;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "surname='" + surname + '\'' +
+                '}';
+    }
+}
+----
+
+Then, let's create a listener with predicate by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
+
+[source,java]
+----
+public class ListenerWithPredicate {
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        config.setProperty("hazelcast.map.entry.filtering.natural.event.types", "true");
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
+        IMap<String, String> map = hz.getMap("map");
+        map.addEntryListener(new MyEntryListener(),
+                new SqlPredicate("surname=smith"), true);
+        System.out.println("Entry Listener registered");
+    }
+
+    static class MyEntryListener
+            implements EntryAddedListener<String, String>,
+                       EntryUpdatedListener<String, String>,
+                       EntryRemovedListener<String, String> {
+        @Override
+        public void entryAdded(EntryEvent<String, String> event) {
+            System.out.println("Entry Added:" + event);
+        }
+
+        @Override
+        public void entryRemoved(EntryEvent<String, String> event) {
+            System.out.println("Entry Removed:" + event);
+        }
+
+        @Override
+        public void entryUpdated(EntryEvent<String, String> event) {
+            System.out.println("Entry Updated:" + event);
+        }
+        
+    }
+}
+----
+
+And now, let's play with the employee "smith" and see how that employee will be listened to.
+
+[source,java]
+----
+public class Modify {
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        config.setProperty("hazelcast.map.entry.filtering.natural.event.types", "true");
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
+        IMap<String, Employee> map = hz.getMap("map");
+
+        map.put("1", new Employee("smith"));
+        map.put("2", new Employee("jordan"));
+        System.out.println("done");
+        System.exit(0);
+    }
+}
+----
+
+When you first run the class `ListenerWithPredicate` and then run `Modify`, you will see output similar to the listing below.
+
+```
+entryAdded:EntryEvent {Address[192.168.178.10]:5702} key=1,oldValue=null,
+value=Person{name= smith }, event=ADDED, by Member [192.168.178.10]:5702
+```
+
+NOTE: Please refer to <<continuous-query-cache, Continuous Query Cache>> for more information.
+
+[[removing-map-entries-in-bulk-with-predicates]]
+==== Removing Map Entries in Bulk with Predicates
+
+You can remove all map entries that match your predicate. For this, Hazelcast offers the method `removeAll()`. Its syntax is as follows:
+
+```
+void removeAll(Predicate<K, V> predicate);
+```
+
+Normally the map entries matching the predicate are found with a full scan of the map. If the entries are indexed, Hazelcast uses the index search to find them. With index, you can expect that finding the entries is faster.
+
+
+NOTE: When `removeAll()` is called, ALL entries in the caller member's Near Cache are also removed.
+
+[[adding-interceptors]]
+==== Adding Interceptors
+
+You can add intercept operations and execute your own business logic synchronously blocking the operations. You can change the returned value from a `get` operation, change the value in `put`, or `cancel` operations by throwing an exception.
+
+Interceptors are different from listeners. With listeners, you take an action after the operation has been completed. Interceptor actions are synchronous and you can alter the behavior of operation, change its values, or totally cancel it.
+
+Map interceptors are chained, so adding the same interceptor multiple times to the same map can result in duplicate effects. This can easily happen when the interceptor is added to the map at member initialization, so that each member adds the same interceptor. When you add the interceptor in this way, be sure to implement the `hashCode()` method to return the same value for every instance of the interceptor. It is not strictly necessary, but it is a good idea to also implement `equals()` as this will ensure that the map interceptor can be removed reliably.
+
+The IMap API has two methods for adding and removing an interceptor to the map: `addInterceptor` and `removeInterceptor`. Please also refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/MapInterceptor.html[`MapInterceptor` interface] to see the methods used to intercept the changes in a map.
+
+The following is an example usage.
+
+[source,java]
+----
+public class InterceptorTest {
+
+    @org.junit.Test
+    public void testMapInterceptor() throws InterruptedException {
+        HazelcastInstance hazelcastInstance1 = Hazelcast.newHazelcastInstance();
+        HazelcastInstance hazelcastInstance2 = Hazelcast.newHazelcastInstance();
+        IMap<Object, Object> map = hazelcastInstance1.getMap( "testMapInterceptor" );
+        SimpleInterceptor interceptor = new SimpleInterceptor();
+        String interceptorId = map.addInterceptor( interceptor );
+        map.put( 1, "New York" );
+        map.put( 2, "Istanbul" );
+        map.put( 3, "Tokyo" );
+        map.put( 4, "London" );
+        map.put( 5, "Paris" );
+        map.put( 6, "Cairo" );
+        map.put( 7, "Hong Kong" );
+
+        try {
+            map.remove( 1 );
+        } catch ( Exception ignore ) {
+        }
+        try {
+            map.remove( 2 );
+        } catch ( Exception ignore ) {
+        }
+
+        assertEquals( map.size(), 6) ;
+
+        assertEquals( map.get( 1 ), null );
+        assertEquals( map.get( 2 ), "ISTANBUL:" );
+        assertEquals( map.get( 3 ), "TOKYO:" );
+        assertEquals( map.get( 4 ), "LONDON:" );
+        assertEquals( map.get( 5 ), "PARIS:" );
+        assertEquals( map.get( 6 ), "CAIRO:" );
+        assertEquals( map.get( 7 ), "HONG KONG:" );
+
+        map.removeInterceptor( interceptorId );
+        map.put( 8, "Moscow" );
+
+        assertEquals( map.get( 8 ), "Moscow" );
+        assertEquals( map.get( 1 ), null );
+        assertEquals( map.get( 2 ), "ISTANBUL" );
+        assertEquals( map.get( 3 ), "TOKYO" );
+        assertEquals( map.get( 4 ), "LONDON" );
+        assertEquals( map.get( 5 ), "PARIS" );
+        assertEquals( map.get( 6 ), "CAIRO" );
+        assertEquals( map.get( 7 ), "HONG KONG" );
+    }
+
+    static class SimpleInterceptor implements MapInterceptor, Serializable {
+
+        @Override
+        public Object interceptGet( Object value ) {
+            if (value == null)
+                return null;
+            return value + ":";
+        }
+
+        @Override
+        public void afterGet( Object value ) {
+        }
+
+        @Override
+        public Object interceptPut( Object oldValue, Object newValue ) {
+            return newValue.toString().toUpperCase();
+        }
+
+        @Override
+        public void afterPut( Object value ) {
+        }
+
+        @Override
+        public Object interceptRemove( Object removedValue ) {
+            if(removedValue.equals( "ISTANBUL" ))
+                throw new RuntimeException( "you can not remove this" );
+            return removedValue;
+        }
+
+        @Override
+        public void afterRemove( Object value ) {
+            // do something
+        }
+    }
+}
+----
+
+[[preventing-out-of-memory-exceptions]]
+==== Preventing Out of Memory Exceptions
+
+It is very easy to trigger an out of memory exception (OOME) with query-based map methods, especially with large clusters or heap sizes. For example, on a cluster with five members having 10 GB of data and 25 GB heap size per member, a single call of `IMap.entrySet()` fetches 50 GB of data and crashes the calling instance.
+
+A call of `IMap.values()` may return too much data for a single member. This can also happen with a real query and an unlucky choice of predicates, especially when the parameters are chosen by a user of your application.
+
+To prevent this, you can configure a maximum result size limit for query based operations. This is not a limit like `SELECT * FROM map LIMIT 100`, which you can achieve by a <<filtering-with-paging-predicates, Paging Predicate>>. A maximum result size limit for query based operations is meant to be a last line of defense to prevent your members from retrieving more data than they can handle.
+
+The Hazelcast component which calculates this limit is the `QueryResultSizeLimiter`.
+
+[[setting-query-result-size-limit]]
+===== Setting Query Result Size Limit
+
+If the `QueryResultSizeLimiter` is activated, it calculates a result size limit per partition. Each `QueryOperation` runs on all partitions of a member, so it collects result entries as long as the member limit is not exceeded. If that happens, a `QueryResultSizeExceededException` is thrown and propagated to the calling instance.
+
+This feature depends on an equal distribution of the data on the cluster members to calculate the result size limit per member. Therefore, there is a minimum value defined in `QueryResultSizeLimiter.MINIMUM_MAX_RESULT_LIMIT`. Configured values below the minimum will be increased to the minimum.
+
+[[local-pre-check]]
+===== Local Pre-check
+
+In addition to the distributed result size check in the `QueryOperations`, there is a local pre-check on the calling instance. If you call the method from a client, the pre-check is executed on the member that invokes the `QueryOperations`.
+
+Since the local pre-check can increase the latency of a `QueryOperation`, you can configure how many local partitions should be considered for the pre-check, or you can deactivate the feature completely.
+
+[[scope-of-result-size-limit]]
+===== Scope of Result Size Limit
+
+Besides the designated query operations, there are other operations that use predicates internally. Those method calls will throw the `QueryResultSizeExceededException` as well. Please see the following matrix to see the methods that are covered by the query result size limit.
+
+image::Map-QueryResultSizeLimiterScope.png[Methods Covered by Query Result Size Limit]
+
+[[configuring-query-result-size]]
+===== Configuring Query Result Size
+
+The query result size limit is configured via the following system properties.
+
+* `hazelcast.query.result.size.limit`: Result size limit for query operations on maps. This value defines the maximum number of returned elements for a single query result. If a query exceeds this number of elements, a QueryResultSizeExceededException is thrown.
+* `hazelcast.query.max.local.partition.limit.for.precheck`: Maximum value of local partitions to trigger local pre-check for TruePredicate query operations on maps.
+
+Please refer to the <<system-properties, System Properties section>> to see the full descriptions of these properties and how to set them.
+
+[[queue]]
+=== Queue
+
+Hazelcast distributed queue is an implementation of `java.util.concurrent.BlockingQueue`. Being distributed, Hazelcast distributed queue enables all cluster members to interact with it. Using Hazelcast distributed queue, you can add an item in one cluster member and remove it from another one.
+
+[[getting-a-queue-and-putting-items]]
+==== Getting a Queue and Putting Items
+
+Use the Hazelcast instance's `getQueue` method to get the queue, then use the queue's `put` method to put items into the queue.
+
+[source,java]
+----
+public class SampleQueue {
+    
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
+        queue.put( new MyTask() );
+        MyTask task = queue.take();
+
+        boolean offered = queue.offer( new MyTask(), 10, TimeUnit.SECONDS );
+        task = queue.poll( 5, TimeUnit.SECONDS );
+        if ( task != null ) {
+           //process task
+        }
+    }
+} 
+----
+
+FIFO ordering will apply to all queue operations across the cluster. The user objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
+
+Hazelcast distributed queue performs no batching while iterating over the queue. All items will be copied locally and iteration will occur locally.
+
+Hazelcast distributed queue uses `ItemListener` to listen to the events that occur when items are added to and removed from the queue. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
+
+[[creating-an-example-queue]]
+==== Creating an Example Queue
+
+The following example code illustrates a distributed queue that connects a producer and consumer.
+
+[[putting-items-on-the-queue]]
+===== Putting Items on the Queue
+
+Let's `put` one integer on the queue every second, 100 integers total.
+
+[source,java]
+----
+public class ProducerMember {
+    
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IQueue<Integer> queue = hz.getQueue( "queue" );
+        for ( int k = 1; k < 100; k++ ) {
+            queue.put( k );
+            System.out.println( "Producing: " + k );
+            Thread.sleep(1000);
+        }
+        queue.put( -1 );
+        System.out.println( "Producer Finished!" );
+    }
+}
+---- 
+
+`Producer` puts a **-1** on the queue to show that the `put`s are finished. 
+
+[[taking-items-off-the-queue]]
+===== Taking Items off the Queue
+
+Now, let's create a `Consumer` class to `take` a message from this queue, as shown below.
+
+[source,java]
+----
+public class ConsumerMember {
+
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+        IQueue<Integer> queue = hz.getQueue( "queue" );
+        while ( true ) {
+            int item = queue.take();
+            System.out.println( "Consumed: " + item );
+            if ( item == -1 ) {
+                queue.put( -1 );
+                break;
+            }
+        Thread.sleep( 5000 );
+        }
+        System.out.println( "Consumer Finished!" );
+    }
+}
+----
+
+As seen in the above example code, `Consumer` waits five seconds before it consumes the next message. It stops once it receives **-1**. Also note that `Consumer` puts **-1** back on the queue before the loop is ended. 
+
+When you first start `Producer` and then start `Consumer`, items produced on the queue will be consumed from the same queue.
+
+[[balancing-the-queue-operations]]
+===== Balancing the Queue Operations
+
+From the above example code, you can see that an item is produced every second and consumed every five seconds. Therefore, the consumer keeps growing. To balance the produce/consume operation, let's start another consumer. This way, consumption is distributed to these two consumers, as seen in the sample outputs below. 
+
+The second consumer is started. After a while, here is the first consumer output:
+
+```
+...
+Consumed 13 
+Consumed 15
+Consumer 17
+...
+```
+
+Here is the second consumer output:
+
+```
+...
+Consumed 14 
+Consumed 16
+Consumer 18
+...
+```
+
+In the case of a lot of producers and consumers for the queue, using a list of queues may solve the queue bottlenecks. In this case, be aware that the order of the messages sent to different queues is not guaranteed. Since in most cases strict ordering is not important, a list of queues is a good solution.
+
+NOTE: The items are taken from the queue in the same order they were put on the queue. However, if there is more than one consumer, this order is not guaranteed.
+
+[[itemids-when-offering-items]]
+===== ItemIDs When Offering Items
+
+Hazelcast gives an `itemId` for each item you offer, which is an incrementing sequence identification for the queue items. You should consider the following to understand the `itemId` assignment behavior:
+
+* When a Hazelcast member has a queue, and that queue is configured to have at least one backup, and that member is restarted, the `itemId` assignment resumes from the last known highest `itemId` before the restart; `itemId` assignment does not start from the beginning for the new items.
+* When the whole cluster is restarted, the same behavior explained in the above consideration applies if your queue has a persistent data store (`QueueStore`). If the queue has `QueueStore`, the `itemId` for the new items are given, starting from the highest `itemId` found in the IDs returned by the method `loadAllKeys`. If the method `loadAllKeys` does not return anything, the `itemId`s will started from the beginning after a cluster restart.
+* The above two considerations mean there will be no duplicated `itemId`s in the memory or in the persistent data store.
+
+[[setting-a-bounded-queue]]
+==== Setting a Bounded Queue
+
+A bounded queue is a queue with a limited capacity. When the bounded queue is full, no more items can be put into the queue until some items are taken out.
+
+To turn a Hazelcast distributed queue into a bounded queue, set the capacity limit with the `max-size` property. You can set the `max-size` property in the configuration, as shown below. `max-size` specifies the maximum size of the queue. Once the queue size reaches this value, `put` operations will be blocked until the queue size goes below `max-size`, which happens when a consumer removes items from the queue.
+
+Let's set **10** as the maximum size of our example queue in <<creating-an-example-queue, Creating an Example Queue>>.
+
+
+```
+<hazelcast>
+  ...
+  <queue name="queue">
+    <max-size>10</max-size>
+  </queue>
+  ...
+</hazelcast>
+```
+
+When the producer is started, ten items are put into the queue and then the queue will not allow more `put` operations. When the consumer is started, it will remove items from the queue. This means that the producer can `put` more items into the queue until there are ten items in the queue again, at which point the `put` operation again becomes blocked.
+
+In this example code, the producer is five times faster than the consumer. It will effectively always be waiting for the consumer to remove items before it can put more on the queue. For this example code, if maximum throughput is the goal, it would be a good option to start multiple consumers to prevent the queue from filling up.
+
+[[queueing-with-persistent-datastore]]
+==== Queueing with Persistent Datastore
+
+Hazelcast allows you to load and store the distributed queue items from/to a persistent datastore using the interface `QueueStore`. If queue store is enabled, each item added to the queue will also be stored at the configured queue store. When the number of items in the queue exceeds the memory limit, the subsequent items are persisted in the queue store, they are not stored in the queue memory.
+
+The `QueueStore` interface enables you to store, load, and delete queue items with methods like `store`, `storeAll`, `load` and `delete`. The following example class includes all of the `QueueStore` methods.
+
+[source,java]
+----
+public class TheQueueStore implements QueueStore<Item> {
+    @Override
+    public void delete(Long key) {
+        System.out.println("delete");
+    }
+
+    @Override
+    public void store(Long key, Item value) {
+        System.out.println("store");
+    }
+
+    @Override
+    public void storeAll(Map<Long, Item> map) {
+        System.out.println("store all");
+    }
+
+    @Override
+    public void deleteAll(Collection<Long> keys) {
+        System.out.println("deleteAll");
+    }
+
+    @Override
+    public Item load(Long key) {
+        System.out.println("load");
+        return null;
+    }
+
+    @Override
+    public Map<Long, Item> loadAll(Collection<Long> keys) {
+        System.out.println("loadAll");
+        return null;
+    }
+
+    @Override
+    public Set<Long> loadAllKeys() {
+        System.out.println("loadAllKeys");
+        return null;
+    }
+}
+----
+
+
+`Item` must be serializable. The following is an example queue store configuration.
+
+
+```
+<queue-store>
+  <class-name>com.hazelcast.QueueStoreImpl</class-name>
+  <properties>
+    <property name="binary">false</property>
+    <property name="memory-limit">1000</property>
+    <property name="bulk-load">500</property>
+  </properties>
+</queue-store>
+```
+
+Let's explain the queue store properties.
+
+* **Binary**: By default, Hazelcast stores the queue items in serialized form, and before it inserts the queue items into the queue store, it deserializes them. If you are not reaching the queue store from an external application, you might prefer that the items be inserted in binary form. Do this by setting the `binary` property to true: then you can get rid of the deserialization step, which is a performance optimization. The `binary` property is false by default.
+* **Memory Limit**: This is the number of items after which Hazelcast will store items only to the datastore. For example, if the memory limit is 1000, then the 1001st item will be put only to the datastore. This feature is useful when you want to avoid out-of-memory conditions. If you want to always use memory, you can set it to `Integer.MAX_VALUE`. The default number for `memory-limit` is 1000.
+* **Bulk Load**: When the queue is initialized, items are loaded from `QueueStore` in bulks. Bulk load is the size of these bulks. The default value of `bulk-load` is 250.
+
+[[split-brain-protection-for-queue]]
+==== Split-Brain Protection for Queue
+
+Queues can be configured to check for a minimum number of available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition. 
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE
+** `Collection.addAll()`
+** `Collection.removeAll()`, `Collection.retainAll()`
+** `BlockingQueue.offer()`, `BlockingQueue.add()`, `BlockingQueue.put()`
+** `BlockingQueue.drainTo()`
+** `IQueue.poll()`, `Queue.remove()`, `IQueue.take()`
+** `BlockingQueue.remove()`
+* READ, READ_WRITE
+** `Collection.clear()`
+** `Collection.containsAll()`, `BlockingQueue.contains()`
+** `Collection.isEmpty()`
+** `Collection.iterator()`, `Collection.toArray()`
+** `Queue.peek()`, `Queue.element()`
+** `Collection.size()`
+** `BlockingQueue.remainingCapacity()`
+
+[[configuring-queue]]
+==== Configuring Queue
+
+The following are examples of queue configurations. It includes the `QueueStore` configuration, which is explained in the <<queueing-with-persistent-datastore, Queueing with Persistent Datastore>> section.
+
+**Declarative:**
+
+```
+<queue name="default">
+    <max-size>0</max-size>
+    <backup-count>1</backup-count>
+    <async-backup-count>0</async-backup-count>
+    <empty-queue-ttl>-1</empty-queue-ttl>
+    <item-listeners>
+        <item-listener>com.hazelcast.examples.ItemListener</item-listener>
+    </item-listeners>
+    <statistics-enabled>true</statistics-enabled>
+    <queue-store>
+        <class-name>com.hazelcast.QueueStoreImpl</class-name>
+        <properties>
+            <property name="binary">false</property>
+            <property name="memory-limit">10000</property>
+            <property name="bulk-load">500</property>
+        </properties>
+    </queue-store>
+    <quorum-ref>quorumname</quorum-ref>
+</queue>
+```
+
+**Programmatic:**
+
+[source,java]
+----
+Config config = new Config();
+QueueConfig queueConfig = config.getQueueConfig("default");
+queueConfig.setName("MyQueue")
+           .setBackupCount(1)
+           .setMaxSize(0)
+           .setStatisticsEnabled(true)
+           .setQuorumName("quorumname");
+queueConfig.getQueueStoreConfig()
+           .setEnabled(true)
+           .setClassName("com.hazelcast.QueueStoreImpl")
+           .setProperty("binary", "false");
+config.addQueueConfig(queueConfig);
+----
+
+
+Hazelcast distributed queue has one synchronous backup by default. By having this backup, when a cluster member with a queue goes down, another member having the backup of that queue will continue. Therefore, no items are lost. You can define the number of synchronous backups for a queue using the `backup-count` element in the declarative configuration. A queue can also have asynchronous backups: you can define the number of asynchronous backups using the `async-backup-count` element.
+
+To set the maximum size of the queue, use the `max-size` element. To purge unused or empty queues after a period of time, use the `empty-queue-ttl` element. If you define a value (time in seconds) for the `empty-queue-ttl` element, then your queue will be destroyed if it stays empty or unused for the time in seconds that you give.
+
+The following is the full list of queue configuration elements with their descriptions.
+
+* `max-size`: Maximum number of items in the queue. It is used to set an upper bound for the queue. You will not be able to put more items when the queue reaches to this maximum size whether you have a queue store configured or not.
+* `backup-count`: Number of synchronous backups. Queue is a non-partitioned data structure, so all entries of a queue reside in one partition. When this parameter is '1', it means there will be one backup of that queue in another member in the cluster. When it is '2', two members will have the backup.
+* `async-backup-count`: Number of asynchronous backups.
+* `empty-queue-ttl`: Used to purge unused or empty queues. If you define a value (time in seconds) for this element, then your queue will be destroyed if it stays empty or unused for that time.
+* `item-listeners`: Adds listeners (listener classes) for the queue items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values, and you can set `local` to `true` if you want to listen to the items on the local member.
+* `queue-store`: Includes the queue store factory class name and the properties  *binary*, *memory limit* and *bulk load*. Please refer to <<queueing-with-persistent-datastore, Queueing with Persistent Datastore>>.
+* `statistics-enabled`: If set to `true`, you can retrieve statistics for this queue using the method `getLocalQueueStats()`.
+* `quorum-ref` : Name of quorum configuration that you want this queue to use.
+
+[[multimap]]
+=== MultiMap
+
+Hazelcast `MultiMap` is a specialized map where you can store multiple values under a single key. Just like any other distributed data structure implementation in Hazelcast, `MultiMap` is distributed and thread-safe.
+
+Hazelcast `MultiMap` is not an implementation of `java.util.Map` due to the difference in method signatures. It supports most features of Hazelcast Map except for indexing, predicates and MapLoader/MapStore. Yet, like Hazelcast Map, entries are almost evenly distributed onto all cluster members. When a new member joins the cluster, the same ownership logic used in the distributed map applies.
+
+[[getting-a-multimap-and-putting-an-entry]]
+==== Getting a MultiMap and Putting an Entry
+
+The following example creates a MultiMap and puts items into it. Use the HazelcastInstance `getMultiMap` method to get the MultiMap, then use the MultiMap `put` method to put an entry into the MultiMap.
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+MultiMap <String , String > map = hazelcastInstance.getMultiMap( "map" );
+
+map.put( "a", "1" );
+map.put( "a", "2" );
+map.put( "b", "3" ); 
+System.out.println( "PutMember:Done" );
+```
+
+Now let's print the entries in this MultiMap.
+
+```java
+public class PrintMember {
+    
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        MultiMap<String, String> map = hazelcastInstance.getMultiMap("map");
+
+        map.put("a", "1");
+        map.put("a", "2");
+        map.put("b", "3");
+        System.out.printf("PutMember:Done");
+
+        for (String key: map.keySet()){
+            Collection <String> values = map.get(key);
+            System.out.printf("%s -> %s\n", key, values);
+        }
+    }
+}
+----
+
+After you run the first code sample, run the `PrintMember` sample. You will see the key **`a`** has two values, as shown below.
+
+`b -> [3]`
+
+`a -> [2, 1]`
+
+Hazelcast MultiMap uses `EntryListener` to listen to events which occur when entries are added to, updated in or removed from the MultiMap. Please refer to the <<listening-for-multimap-events, Listening for MultiMap Events section>> for information on how to create an entry listener class and register it.
+
+[[configuring-multimap]]
+==== Configuring MultiMap
+
+When using MultiMap, the collection type of the values can be either **Set** or **List**. Configure the collection type with the `valueCollectionType` parameter. If you choose `Set`, duplicate and null values are not allowed in your collection and ordering is irrelevant. If you choose `List`, ordering is relevant and your collection can include duplicate and null values.
+
+You can also enable statistics for your MultiMap with the `statisticsEnabled` parameter. If you enable `statisticsEnabled`, statistics can be retrieved with `getLocalMultiMapStats()` method.
+
+
+NOTE: Currently, eviction is not supported for the MultiMap data structure.
+
+
+The following are the example MultiMap configurations.
+
+**Declarative:**
+
+```
+<multimap name="default">
+    <backup-count>0</backup-count>
+    <async-backup-count>1</async-backup-count>
+    <value-collection-type>SET</value-collection-type>
+    <entry-listeners>
+        <entry-listener include-value="false" local="false" >com.hazelcast.examples.EntryListener</entry-listener>
+    </entry-listeners>
+    <quorum-ref>quorumname</quorum-ref>
+</multimap>
+```
+
+**Programmatic:**
+
+[source,java]
+----
+MultiMapConfig mmConfig = new MultiMapConfig();
+mmConfig.setName( "default" )
+        .setBackupCount( "0" ).setAsyncBackupCount( "1" )
+        .setValueCollectionType( "SET" )
+        .setQuorumName( "quorumname" );
+----
+
+The following are the configuration elements and their descriptions:
+
+* `backup-count`: Defines the number of synchronous backups. For example, if it is set to 1, backup of a partition will be
+placed on one other member. If it is 2, it will be placed on two other members.
+* `async-backup-count`: The number of asynchronous backups. Behavior is the same as that of the `backup-count` element.
+* `statistics-enabled`: You can retrieve some statistics such as owned entry count, backup entry count, last update time, and locked entry count by setting this parameter's value as "true". The method for retrieving the statistics is `getLocalMultiMapStats()`.
+* `value-collection-type`: Type of the value collection. It can be `SET` or `LIST`.
+* `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
+include-value to true if you want the item event to contain the entry values, and you can set
+local to true if you want to listen to the entries on the local member.
+* `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. Please see the <<split-brain-protection-for-multimap-and-transactionalmultimap, Split-Brain Protection for MultiMap and TransactionalMultiMap section>>.
+
+[[split-brain-protection-for-multimap-and-transactionalmultimap]]
+### Split-Brain Protection for MultiMap and TransactionalMultiMap
+
+MultiMap & TransactionalMultiMap can be configured to check for a minimum number of available members before applying their operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+MultiMap:
+
+* WRITE, READ_WRITE:
+** `clear`
+** `forceUnlock`
+** `lock`
+** `put`
+** `remove`
+** `tryLock`
+** `unlock`
+* READ, READ_WRITE:
+** `containsEntry`
+** `containsKey`
+** `containsValue`
+** `entrySet`
+** `get`
+** `isLocked`
+** `keySet`
+** `localKeySet`
+** `size`
+** `valueCount`
+** `values`
+
+
+TransactionalMultiMap:
+
+* WRITE, READ_WRITE:
+** `put`
+** `remove`
+* READ, READ_WRITE:
+** `size`
+** `get`
+** `valueCount`
+
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for MultiMap can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/MultiMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<multimap name="default">
+    ...
+    <quorum-ref>quorumname</quorum-ref>
+    ...
+</multimap>
+```
+
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+
+[[set]]
+=== Set
+
+Hazelcast Set is a distributed and concurrent implementation of `java.util.Set`.
+
+* Hazelcast Set does not allow duplicate elements.
+* Hazelcast Set does not preserve the order of elements.
+* Hazelcast Set is a non-partitioned data structure--all the data that belongs to a set will live on one single partition in that member.
+* Hazelcast Set cannot be scaled beyond the capacity of a single machine. Since the whole set lives on a single partition, storing a large amount of data on a single set may cause memory pressure. Therefore, you should use multiple sets to store a large amount of data. This way, all the sets will be spread across the cluster, sharing the load.
+* A backup of Hazelcast Set is stored on a partition of another member in the cluster so that data is not lost in the event of a primary member failure.
+* All items are copied to the local member and iteration occurs locally.
+* The equals method implemented in Hazelcast Set uses a serialized byte version of objects, as opposed to `java.util.HashSet`.
+
+[[getting-a-set-and-putting-items]]
+==== Getting a Set and Putting Items
+
+Use the HazelcastInstance `getSet` method to get the Set, then use the `add` method to put items into the Set.
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+
+Set<Price> set = hazelcastInstance.getSet( "IBM-Quote-History" );
+set.add( new Price( 10, time1 ) );
+set.add( new Price( 11, time2 ) );
+set.add( new Price( 12, time3 ) );
+set.add( new Price( 11, time4 ) );
+//....
+Iterator<Price> iterator = set.iterator();
+while ( iterator.hasNext() ) { 
+    Price price = iterator.next(); 
+    //analyze
+}
+----
+
+Hazelcast Set uses `ItemListener` to listen to events that occur when items are added to and removed from the Set. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
+
+[[configuring-set]]
+==== Configuring Set
+
+The following are the example set configurations.
+
+
+**Declarative:**
+
+```
+<set name="default">
+    <backup-count>1</backup-count>
+    <async-backup-count>0</async-backup-count>
+    <max-size>10</max-size>
+    <item-listeners>
+        <item-listener>com.hazelcast.examples.ItemListener</item-listener>
+    </item-listeners>
+    <quorum-ref>quorumname</quorum-ref>    
+</set>
+```
+
+**Programmatic:**
+
+[source,java]
+----
+Config config = new Config();
+        CollectionConfig collectionSet = config.getSetConfig("MySet");
+        collectionSet.setBackupCount(1)
+                .setMaxSize(10)
+                .setQuorumName( "quorumname" );                
+----
+   
+
+Set configuration has the following elements.
+
+
+* `statistics-enabled`: True (default) if statistics gathering is enabled on the Set, false otherwise.
+* `backup-count`: Count of synchronous backups. Set is a non-partitioned data structure, so all entries of a Set reside in one partition. When this parameter is '1', it means there will be one backup of that Set in another member in the cluster. When it is '2', two members will have the backup.
+* `async-backup-count`: Count of asynchronous backups.
+* `max-size`: The maximum number of entries for this Set. It can be any number between 0 and Integer.MAX_VALUE. Its default value is 0, meaning there is no capacity constraint.
+* `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attributes `include-value` to `true` if you want the item event to contain the item values, and you can set `local` to `true` if you want to listen to the items on the local member.
+* `quorum-ref`: Name of quorum configuration that you want this Set to use. Please refer to the <<split-brain-protection-for-iset-and-transactionalset, Split-Brain Protection for ISet and TransactionalSet section>>.
+
+[[split-brain-protection-for-iset-and-transactionalset]]
+==== Split-Brain Protection for ISet and TransactionalSet
+
+ISet & TransactionalSet can be configured to check for a minimum number of available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+ISet:
+
+* WRITE, READ_WRITE:
+** `add`
+** `addAll`
+** `clear`
+** `remove`
+** `removeAll`
+* READ, READ_WRITE:
+** `contains`
+** `containsAll`
+** `isEmpty`
+** `iterator`
+** `size`
+** `toArray`
+
+
+TransactionalSet:
+
+* WRITE, READ_WRITE:
+** `add`
+** `remove`
+* READ, READ_WRITE:
+** `size`
+
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for ISet can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SetConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<set name="default">
+    ...
+    <quorum-ref>quorumname</quorum-ref>
+    ...
+</set>
+```
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+[[list]]
+=== List
+
+Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allows duplicate elements.
+
+* Besides allowing duplicate elements, Hazelcast List preserves the order of elements.
+* Hazelcast List is a non-partitioned data structure where values and each backup are represented by their own single partition.
+* Hazelcast List cannot be scaled beyond the capacity of a single machine.
+* All items are copied to local and iteration occurs locally.
+
+
+'''
+NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IList[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job, and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
+
+[[getting-a-list-and-putting-items]]
+==== Getting a List and Putting Items
+
+Use the HazelcastInstance `getList` method to get the List, then use the `add` method to put items into the List.
+
+[source,java]
+----
+HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+
+List<Price> list = hz.getList( "IBM-Quote-Frequency" );
+list.add( new Price( 10 ) );
+list.add( new Price( 11 ) );
+list.add( new Price( 12 ) );
+list.add( new Price( 11 ) );
+list.add( new Price( 12 ) );
+        
+//....
+Iterator<Price> iterator = list.iterator();
+while ( iterator.hasNext() ) { 
+    Price price = iterator.next(); 
+    //analyze
+}
+----
+
+
+Hazelcast List uses `ItemListener` to listen to events that occur when items are added to and removed from the List. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
+
+[[configuring-list]]
+==== Configuring List
+
+
+The following are example list configurations.
+
+**Declarative:**
+
+```
+<list name="default">
+   <backup-count>1</backup-count>
+   <async-backup-count>0</async-backup-count>
+   <max-size>10</max-size>
+   <item-listeners>
+      <item-listener>
+          com.hazelcast.examples.ItemListener
+      </item-listener>
+   </item-listeners>
+   <quorum-ref>quorumname</quorum-ref>
+</list>
+```
+
+**Programmatic:**
+
+[source,java]
+----
+Config config = new Config();
+CollectionConfig collectionList = config.getListConfig("MyList");
+collectionList.setBackupCount(1)
+              .setMaxSize(10)
+              .setQuorumName( "quorumname" );
+----
+   
+
+List configuration has the following elements.
+
+
+* `statistics-enabled`: True (default) if statistics gathering is enabled on the list, false otherwise.
+* `backup-count`: Number of synchronous backups. List is a non-partitioned data structure, so all entries of a List reside in one partition. When this parameter is '1', there will be one backup of that List in another member in the cluster. When it is '2', two members will have the backup.
+* `async-backup-count`: Number of asynchronous backups.
+* `max-size`: The maximum number of entries for this List.
+* `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values, and you can set the attribute `local` to `true` if you want to listen the items on the local member.
+* `quorum-ref`: Name of quorum configuration that you want this List to use. Please see the <<split-brain-protection-for-ilist-and-transactionallist, Split-Brain Protection for IList and TransactionalList section>>.
+
+[[split-brain-protection-for-ilist-and-transactionallist]]
+==== Split-Brain Protection for IList and TransactionalList
+
+IList & TransactionalList can be configured to check for a minimum number of available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+IList:
+
+* WRITE, READ_WRITE:
+** `add`
+** `addAll`
+** `clear`
+** `remove`
+** `removeAll`
+** `set`
+* READ, READ_WRITE:
+** `add`
+** `contains`
+** `containsAll`
+** `get`
+** `indexOf`
+** `isEmpty`
+** `iterator`
+** `lastIndexOf`
+** `listIterator`
+** `size`
+** `subList`
+** `toArray`
+
+
+TransactionalList:
+
+* WRITE, READ_WRITE:
+** `add`
+** `remove`
+* READ, READ_WRITE:
+** `size`
+
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for IList can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ListConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<list name="default">
+   ...
+   <quorum-ref>quorumname</quorum-ref>
+   ...
+</list>
+```
+
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+[[ringbuffer]]
+=== Ringbuffer
+
+Hazelcast Ringbuffer is a replicated but not partitioned data structure that stores its data in a ring-like structure. You can 
+think of it as a circular array with a given capacity. Each Ringbuffer has a tail and a head. The tail is where the items are 
+added and the head is where the items are overwritten or expired. You can reach each element in a Ringbuffer using a sequence 
+ID, which is mapped to the elements between the head and tail (inclusive) of the Ringbuffer. 
+
+[[getting-a-ringbuffer-and-reading-items]]
+==== Getting a Ringbuffer and Reading Items
+
+Reading from Ringbuffer is simple: get the Ringbuffer with the HazelcastInstance `getRingbuffer` method, get its current head with
+the `headSequence` method, and start reading. Use the method `readOne` to return the item at the 
+given sequence; `readOne` blocks if no item is available. To read the next item, increment the sequence by one.
+
+[source,java]
+----
+Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");
+long sequence = ringbuffer.headSequence();
+while(true){
+    String item = ringbuffer.readOne(sequence);
+    sequence++;
+    // process item
+}  
+----
+
+By exposing the sequence, you can now move the item from the Ringbuffer as long as the item is still available. If the item is not available
+any longer, `StaleSequenceException` is thrown.
+
+[[adding-items-to-a-ringbuffer]]
+==== Adding Items to a Ringbuffer
+
+Adding an item to a Ringbuffer is also easy with the Ringbuffer `add` method:
+
+[source,java]
+----
+Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");
+ringbuffer.add("someitem");
+----
+
+Use the method `add` to return the sequence of the inserted item; the sequence value will always be unique. You can use this as a 
+very cheap way of generating unique IDs if you are already using Ringbuffer.
+
+[[iqueue-vs-ringbuffer]]
+==== IQueue vs. Ringbuffer
+
+Hazelcast Ringbuffer can sometimes be a better alternative than an Hazelcast IQueue. Unlike IQueue, Ringbuffer does not remove the items, it only
+reads items using a certain position. There are many advantages to this approach:
+
+* The same item can be read multiple times by the same thread. This is useful for realizing semantics of read-at-least-once or 
+read-at-most-once.
+* The same item can be read by multiple threads. Normally you could use an IQueue per thread for the same semantic, but this is 
+less efficient because of the increased remoting. A take from an IQueue is destructive, so the change needs to be applied for backup 
+also, which is why a `queue.take()` is more expensive than a `ringBuffer.read(...)`.
+* Reads are extremely cheap since there is no change in the Ringbuffer. Therefore no replication is required. 
+* Reads and writes can be batched to speed up performance. Batching can dramatically improve the performance of Ringbuffer.
+ 
+[[configuring-ringbuffer-capacity]]
+==== Configuring Ringbuffer Capacity
+
+By default, a Ringbuffer is configured with a `capacity` of 10000 items. This creates an array with a size of 10000. If 
+a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item. 
+In a lot of cases you may want to change this `capacity` number to something that better fits your needs. 
+
+Below is a declarative configuration example of a Ringbuffer with a `capacity` of 2000 items.
+
+```
+<ringbuffer name="rb">
+    <capacity>2000</capacity>
+</ringbuffer>
+```
+
+Currently, Hazelcast Ringbuffer is not a partitioned data structure; its data is stored in a single partition and the replicas
+ are stored in another partition. Therefore, create a Ringbuffer that can safely fit in a single cluster member. 
+
+[[backing-up-ringbuffer]]
+==== Backing Up Ringbuffer
+
+Hazelcast Ringbuffer has a single synchronous backup by default. You can control the Ringbuffer backup just like most of the other Hazelcast 
+distributed data structures by setting the synchronous and asynchronous backups: `backup-count` and `async-backup-count`. In the example below, a Ringbuffer is configured with no
+synchronous backups and one asynchronous backup:
+
+```
+<ringbuffer name="rb">
+    <backup-count>0</backup-count>
+    <async-backup-count>1</async-backup-count>
+</ringbuffer>
+```
+
+An asynchronous backup will probably give you better performance. However, there is a chance that the item added will be lost 
+when the member owning the primary crashes before the backup could complete. You may want to consider batching
+methods if you need high performance but do not want to give up on consistency.
+
+[[configuring-ringbuffer-time-to-live]]
+==== Configuring Ringbuffer Time To Live
+
+You can configure Hazelcast Ringbuffer with a time to live in seconds. Using this setting, you can control how long the items remain in 
+the Ringbuffer before they are expired. By default, the time to live is set to 0, meaning that unless the item is overwritten, 
+it will remain in the Ringbuffer indefinitely. If you set a time to live and an item is added, then, depending on the Overflow Policy, 
+either the oldest item is overwritten, or the call is rejected. 
+
+In the example below, a Ringbuffer is configured with a time to live of 180 seconds.
+
+```
+<ringbuffer name="rb">
+    <time-to-live-seconds>180</time-to-live-seconds>
+</ringbuffer>
+```
+
+[[setting-ringbuffer-overflow-policy]]
+==== Setting Ringbuffer Overflow Policy
+
+Using the overflow policy, you can determine what to do if the oldest item in the Ringbuffer is not old enough to expire when
+ more items than the configured Ringbuffer capacity are being added. The below options are currently available.
+ 
+* `OverflowPolicy.OVERWRITE`: The oldest item is overwritten. 
+* `OverflowPolicy.FAIL`: The call is aborted. The methods that make use of the OverflowPolicy return `-1` to indicate that adding
+the item has failed. 
+
+Overflow policy gives you fine control on what to do if the Ringbuffer is full. You can also use the overflow policy to apply 
+a back pressure mechanism. The following example code shows the usage of an exponential backoff.
+
+[source,java]
+----
+long sleepMs = 100;
+for (; ; ) {
+    long result = ringbuffer.addAsync(item, OverflowPolicy.FAIL).get();
+    if (result != -1) {
+        break;
+    }
+    
+    TimeUnit.MILLISECONDS.sleep(sleepMs);
+    sleepMs = min(5000, sleepMs * 2);
+}
+----
+
+[[ringbuffer-with-persistent-datastore]]
+==== Ringbuffer with Persistent Datastore
+
+Hazelcast allows you to load and store the Ringbuffer items from/to a persistent datastore using the interface `RingbufferStore`. If a Ringbuffer store is enabled, each item added to the Ringbuffer will also be stored at the configured Ringbuffer store. 
+
+If the Ringbuffer store is configured, you can get items with sequences which are no longer in the actual Ringbuffer but are only in the Ringbuffer store. This will probably be much slower but still allow you to continue consuming items from the Ringbuffer even if they are overwritten with newer items in the Ringbuffer.
+
+When a Ringbuffer is being instantiated, it will check if the Ringbuffer store is configured and will request the latest sequence in the Ringbuffer store. This is to enable the Ringbuffer to start with sequences larger than the ones in the Ringbuffer store. In this case, the Ringbuffer is empty but you can still request older items from it (which will be loaded from the Ringbuffer store).
+
+The Ringbuffer store will store items in the same format as the Ringbuffer. If the `BINARY` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<byte[]>` meaning that the Ringbuffer will receive items in the binary format. If the `OBJECT` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<K>`, where `K` is the type of item being stored (meaning that the Ringbuffer store will receive the deserialized object).
+
+When adding items to the Ringbuffer, the method `storeAll` allows you to store items in batches.
+
+The following example class includes all of the `RingbufferStore` methods.
+
+[source,java]
+----
+public class TheRingbufferObjectStore implements RingbufferStore<Item> {
+
+    @Override
+    public void store(long sequence, Item data) {
+        System.out.println("Object store");
+    }
+
+    @Override
+    public void storeAll(long firstItemSequence, Item[] items) {
+        System.out.println("Object store all");
+    }
+
+    @Override
+    public Item load(long sequence) {
+        System.out.println("Object load");
+        return null;
+    }
+
+    @Override
+    public long getLargestSequence() {
+        System.out.println("Object get largest sequence");
+        return -1;
+    }
+}
+----
+
+
+`Item` must be serializable. The following is an example of a Ringbuffer with the Ringbuffer store configured and enabled.
+
+
+```
+    <ringbuffer name="default">
+        <capacity>10000</capacity>
+        <time-to-live-seconds>30</time-to-live-seconds>
+        <backup-count>1</backup-count>
+        <async-backup-count>0</async-backup-count>
+        <in-memory-format>BINARY</in-memory-format>
+        <ringbuffer-store>
+            <class-name>com.hazelcast.RingbufferStoreImpl</class-name>
+        </ringbuffer-store>
+    </ringbuffer>
+```
+
+Below are the explanations for the Ringbuffer store configuration elements: 
+
+* **class-name**: Name of the class implementing the `RingbufferStore` interface.    
+* **factory-class-name**: Name of the class implementing the `RingbufferStoreFactory` interface. This interface allows a factory class to be registered instead of a class implementing the `RingbufferStore` interface.
+    
+Either the `class-name` or the `factory-class-name` element should be used.
+
+[[configuring-ringbuffer-in-memory-format]]
+==== Configuring Ringbuffer In-Memory Format
+
+You can configure Hazelcast Ringbuffer with an in-memory format that controls the format of the Ringbuffer's stored items. By default, `BINARY` in-memory format is used, 
+meaning that the object is stored in a serialized form. You can select the `OBJECT` in-memory format, which is useful when filtering is 
+applied or when the `OBJECT` in-memory format has a smaller memory footprint than `BINARY`. 
+
+In the declarative configuration example below, a Ringbuffer is configured with the `OBJECT` in-memory format:
+
+```
+<ringbuffer name="rb">
+    <in-memory-format>OBJECT</in-memory-format>
+</ringbuffer>
+```
+
+[[configuring-split-brain-protection-for-ringbuffer]]
+==== Configuring Split-Brain Protection for Ringbuffer
+
+Ringbuffer can be configured to check for a minimum number of available members before applying Ringbuffer operations. This is a check to avoid performing successful Ringbuffer operations on all parts of a cluster during a network partition and can be configured using the element `quorum-ref`. You should set this element's value as the quorum's name, which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>. Following is an example snippet:
+
+```
+<ringbuffer name="rb">
+    <quorum-ref>quorumname</quorum-ref>
+</ringbuffer>
+```
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE:
+** `add`
+** `addAllAsync`
+** `addAsync`
+* READ, READ_WRITE:
+** `capacity`
+** `headSequence`
+** `readManyAsync`
+** `readOne`
+** `remainingCapacity`
+** `size`
+** `tailSequence`
+
+[[adding-batched-items]]
+==== Adding Batched Items
+
+In the previous examples, the method `ringBuffer.add()` is used to add an item to the Ringbuffer. The problems with this method 
+are that it always overwrites and that it does not support batching. Batching can have a huge
+impact on the performance. You can use the method `addAllAsync` to support batching. 
+
+Please see the following example code.
+
+```
+List<String> items = Arrays.asList("1","2","3");
+ICompletableFuture<Long> f = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
+f.get();
+```  
+      
+In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the <<setting-ringbuffer-overflow-policy, Overflow Policy section>> for more information.
+
+[[reading-batched-items]]
+==== Reading Batched Items
+
+In the previous example, the `readOne` method read items from the Ringbuffer. `readOne` is simple but not very efficient for the following reasons:
+
+* `readOne` does not use batching.
+* `readOne` cannot filter items at the source; the items need to be retrieved before being filtered.
+
+The method `readManyAsync` can read a batch of items and can filter items at the source. 
+
+Please see the following example code.
+
+```
+ICompletableFuture<ReadResultSet<E>> readManyAsync(
+   long startSequence, 
+   int minCount,                                              
+   int maxCount, 
+   IFunction<E, Boolean> filter);
+```
+
+The meanings of the `readManyAsync` arguments are given below.
+
+* `startSequence`: Sequence of the first item to read.
+* `minCount`: Minimum number of items to read. If you do not want to block, set it to 0. If you want to block for at least one item,
+set it to 1.
+* `maxCount`: Maximum number of the items to retrieve. Its value cannot exceed 1000.
+* `filter`: A function that accepts an item and checks if it should be returned. If no filtering should be applied, set it to null.
+
+A full example is given below.
+
+```
+long sequence = rb.headSequence();
+for(;;) {
+    ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, 1, 10, null);
+    ReadResultSet<String> rs = f.get();
+    for (String s : rs) {
+        System.out.println(s);
+    }
+    sequence+=rs.readCount();
+}
+``` 
+       
+Please take a careful look at how your sequence is being incremented. You cannot always rely on the number of items being returned
+if the items are filtered out.
+
+[[using-async-methods]]
+==== Using Async Methods
+
+Hazelcast Ringbuffer provides asynchronous methods for more powerful operations like batched writing or batched reading with filtering. 
+To make these methods synchronous, just call the method `get()` on the returned future.
+
+Please see the following example code.
+
+```
+ICompletableFuture f = ringbuffer.addAsync(item, OverflowPolicy.FAIL);
+f.get();
+```
+
+However, you can also use `ICompletableFuture` to get notified when the operation has completed. The advantage of `ICompletableFuture` is that the thread used for the call is not blocked till the response is returned.
+
+Please see the below code as an example of when you want to 
+get notified when a batch of reads has completed.
+
+```
+ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, min, max, someFilter);
+f.andThen(new ExecutionCallback<ReadResultSet<String>>() {
+   @Override
+   public void onResponse(ReadResultSet<String> response) {
+        for (String s : response) {
+            System.out.println("Received:" + s);
+        }
+   }
+
+   @Override
+   public void onFailure(Throwable t) {
+        t.printStackTrace();
+   }
+});
+```
+
+[[ringbuffer-configuration-examples]]
+==== Ringbuffer Configuration Examples
+
+The following shows the declarative configuration of a Ringbuffer called `rb`. The configuration is modeled after the Ringbuffer defaults.
+
+```
+<ringbuffer name="rb">
+    <capacity>10000</capacity>
+    <backup-count>1</backup-count>
+    <async-backup-count>0</async-backup-count>
+    <time-to-live-seconds>0</time-to-live-seconds>
+    <in-memory-format>BINARY</in-memory-format>
+    <quorum-ref>quorumname</quorum-ref>    
+</ringbuffer>
+```
+
+You can also configure a Ringbuffer programmatically. The following is a programmatic version of the above declarative configuration.
+
+```
+RingbufferConfig rbConfig = new RingbufferConfig("rb")
+    .setCapacity(10000)
+    .setBackupCount(1)
+    .setAsyncBackupCount(0)
+    .setTimeToLiveSeconds(0)
+    .setInMemoryFormat(InMemoryFormat.BINARY)
+    .setQuorumName("quorumname");
+Config config = new Config();
+config.addRingbufferConfig(rbConfig);
+```        
+
+
+
+
+
+
+
+
