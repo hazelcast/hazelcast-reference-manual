@@ -1941,7 +1941,7 @@ local to true if you want to listen to the entries on the local member.
 * `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. Please see the <<split-brain-protection-for-multimap-and-transactionalmultimap, Split-Brain Protection for MultiMap and TransactionalMultiMap section>>.
 
 [[split-brain-protection-for-multimap-and-transactionalmultimap]]
-### Split-Brain Protection for MultiMap and TransactionalMultiMap
+==== Split-Brain Protection for MultiMap and TransactionalMultiMap
 
 MultiMap & TransactionalMultiMap can be configured to check for a minimum number of available members before applying their operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
@@ -2635,10 +2635,1614 @@ Config config = new Config();
 config.addRingbufferConfig(rbConfig);
 ```        
 
+[[topic]]
+=== Topic
+
+Hazelcast provides a distribution mechanism for publishing messages that are delivered to multiple subscribers. This is
+also known as a publish/subscribe (pub/sub) messaging model. Publishing and subscribing operations are cluster wide.
+When a member subscribes to a topic, it is actually registering for messages published by any member in the cluster,
+including the new members that joined after you add the listener.
+
+NOTE: Publish operation is async. It does not wait for operations to run in
+remote members; it works as fire and forget.*
+
+[[getting-a-topic-and-publishing-messages]]
+==== Getting a Topic and Publishing Messages
+
+Use the HazelcastInstance `getTopic` method to get the Topic, then use the topic `publish` method to publish your messages (`messageObject`).
+
+[source,java]
+----
+public class Sample implements MessageListener<MyEvent> {
+
+    public static void main( String[] args ) {
+        Sample sample = new Sample();
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ITopic topic = hazelcastInstance.getTopic( "default" );
+        topic.addMessageListener( sample );
+        topic.publish( new MyEvent() );
+    }
+
+    public void onMessage( Message<MyEvent> message ) {
+        MyEvent myEvent = message.getMessageObject();
+        System.out.println( "Message received = " + myEvent.toString() );
+        if ( myEvent.isHeavyweight() ) {
+            messageExecutor.execute( new Runnable() {
+                public void run() {
+                    doHeavyweightStuff( myEvent );
+                }
+            } );
+        }
+    }
+
+    // ...
+
+    private final Executor messageExecutor = Executors.newSingleThreadExecutor();
+}
+----
+
+Hazelcast Topic uses the `MessageListener` interface to listen for events that occur when a message is received. Please refer to the <<listening-for-topic-messages, Listening for Topic Messages section>> for information on how to create a message listener class and register it.
+
+
+[[getting-topic-statistics]]
+==== Getting Topic Statistics
+
+Topic has two statistic variables that you can query. These values are incremental and local to the member.
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+ITopic<Object> myTopic = hazelcastInstance.getTopic( "myTopicName" );
+
+myTopic.getLocalTopicStats().getPublishOperationCount();
+myTopic.getLocalTopicStats().getReceiveOperationCount();
+----
+
+
+`getPublishOperationCount` and `getReceiveOperationCount` returns the total number of published and received messages since the start of this member, respectively. Please note that these values are not backed up, so if the member goes down, these values will be lost.
+
+You can disable this feature with topic configuration. Please see the <<configuring-topic, Configuring Topic section>>.
+
+NOTE: These statistics values can be also viewed in Management Center. Please see the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Monitoring Topics section] in Hazelcast Management Center Reference Manual.
+
+[[understanding-topic-behavior]]
+==== Understanding Topic Behavior
+
+Each cluster member has a list of all registrations in the cluster. When a new member is registered for a topic, it sends a registration message to all members in the cluster. Also, when a new member joins the cluster, it will receive all registrations made so far in the cluster.
+
+The behavior of a topic varies depending on the value of the configuration parameter `globalOrderEnabled`.
+
+[[ordering-messages-as-published]]
+===== Ordering Messages as Published
+
+If `globalOrderEnabled` is disabled, messages are not ordered and listeners (subscribers) process the messages in the order that the messages are published. If cluster member M publishes messages *m1, m2, m3, ..., mn* to a topic **T**, then Hazelcast makes sure that all of the subscribers of topic **T** will receive and process *m1, m2, m3, ..., mn* in the given order.
+
+Here is how it works. Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
+	
+In this example, *member1* publishes two messages, `a1` and `a2`, and *member3* publishes two messages, `c1` and `c2`. When *member1* and *member3* publish a message, they will check their local list for registered members, they will discover that *member1* and *member2* are in their lists, and then they will fire messages to those members. One possible order of the messages received could be the following.
+
+*member1* -> `c1`, `a1`, `a2`, `c2`
+
+*member2* -> `c1`, `c2`, `a1`, `a2`
+
+[[ordering-messages-for-members]]
+===== Ordering Messages for Members
+
+If `globalOrderEnabled` is enabled, all members listening to the same topic will get its messages in the same order.
+
+Here is how it works. Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
+
+In this example, *member1* publishes two messages: `a1` and `a2`, and *member3* publishes two messages: `c1` and `c2`. When a member publishes messages over the topic `news`, it first calculates which partition the `news` ID corresponds to. Then it sends an operation to the owner of the partition for that member to publish messages. Let's assume that `news` corresponds to a partition that *member2* owns. *member1* and *member3* first sends all messages to *member2*. Assume that the messages are published in the following order:
+
+*member1* -> `a1`, `c1`, `a2`, `c2`
+
+*member2* then publishes these messages by looking at registrations in its local list. It sends these messages to *member1* and *member2* (it makes a local dispatch for itself).
+
+*member1* -> `a1`, `c1`, `a2`, `c2`
+
+*member2* -> `a1`, `c1`, `a2`, `c2`
+
+This way we guarantee that all members will see the events in the same order.
+
+[[keeping-generated-and-published-order-the-same]]
+===== Keeping Generated and Published Order the Same
+
+In both cases, there is a `StripedExecutor` in EventService that is responsible for dispatching the received message. For all events in Hazelcast, the order that events are generated and the order they are published to the user are guaranteed to be the same via this `StripedExecutor`.
+
+In `StripedExecutor`, there are as many threads as are specified in the property  `hazelcast.event.thread.count` (default is five). For a specific event source (for a particular topic name), *hash of that source's name % 5* gives the ID of the responsible thread. Note that there can be another event source (entry listener of a map, item listener of a collection, etc.) corresponding to the same thread. In order not to make other messages to block, heavy processing should not be done in this thread. If there is time-consuming work that needs to be done, the work should be handed over to another thread. Please see the <<getting-a-topic-and-publishing-messages, Getting a Topic and Publishing Messages section>>.
 
 
 
+[[configuring-topic]]
+==== Configuring Topic
+
+To configure a topic, set the topic name, decide on statistics and global ordering, and set message listeners.
+Default values are:
+
+* `global-ordering` is **false**, meaning that by default, there is no guarantee of global order.
+* `statistics` is **true**, meaning that by default, statistics are calculated.
+
+You can see the example configuration snippets below. 
+
+**Declarative:**
+
+```
+<hazelcast>
+  ...
+  <topic name="yourTopicName">
+    <global-ordering-enabled>true</global-ordering-enabled>
+    <statistics-enabled>true</statistics-enabled>
+    <message-listeners>
+      <message-listener>MessageListenerImpl</message-listener>
+    </message-listeners>
+  </topic>
+  ...
+</hazelcast>
+```
+
+**Programmatic:**
+
+[source,java]
+----
+TopicConfig topicConfig = new TopicConfig();
+topicConfig.setGlobalOrderingEnabled( true );
+topicConfig.setStatisticsEnabled( true );
+topicConfig.setName( "yourTopicName" );
+MessageListener<String> implementation = new MessageListener<String>() {
+  @Override
+  public void onMessage( Message<String> message ) {
+    // process the message
+  }
+};
+topicConfig.addMessageListenerConfig( new ListenerConfig( implementation ) );
+HazelcastInstance instance = Hazelcast.newHazelcastInstance()
+----
+
+Topic configuration has the following elements.
+
+* `statistics-enabled`: Default is `true`, meaning statistics are calculated.
+* `global-ordering-enabled`: Default is `false`, meaning there is no global order guarantee.
+* `message-listeners`: Lets you add listeners (listener classes) for the topic messages.
 
 
+
+Besides the above elements, there are the following system properties that are topic related but not topic specific:
+
+* `hazelcast.event.queue.capacity` with a default value of 1,000,000
+* `hazelcast.event.queue.timeout.millis` with a default value of 250
+* `hazelcast.event.thread.count` with a default value of 5
+
+For a description of these parameters, please see the <<global-event-configuration, Global Event Configuration section.
+
+[[reliable-topic]]
+=== Reliable Topic
+
+The Reliable Topic data structure was introduced in Hazelcast 3.5. The Reliable Topic uses the same `ITopic` interface
+as a regular topic. The main difference is that Reliable Topic is backed up by the Ringbuffer (also introduced with Hazelcast 
+3.5) data structure. The following are the advantages of this approach:
+
+* Events are not lost since the Ringbuffer is configured with one synchronous backup by default.
+* Each Reliable `ITopic` gets its own Ringbuffer; if a topic has a very fast producer, it will not lead to problems at topics that run at a slower pace.
+* Since the event system behind a regular `ITopic` is shared with other data structures, e.g., collection listeners, 
+  you can run into isolation problems. This does not happen with the Reliable `ITopic`.
+
+[[sample-reliable-itopic-code]]
+==== Sample Reliable ITopic Code
+
+[source,java]
+----
+public class Sample implements MessageListener<MyEvent> {
+
+    public static void main( String[] args ) {
+        Sample sample = new Sample();
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ITopic topic = hazelcastInstance.getReliableTopic( "default" );
+        topic.addMessageListener( sample );
+        topic.publish( new MyEvent() );
+    }
+
+    public void onMessage( Message<MyEvent> message ) {
+        MyEvent myEvent = message.getMessageObject();
+        System.out.println( "Message received = " + myEvent.toString() );
+    }
+}
+----
+
+You can configure the Reliable `ITopic` using its Ringbuffer. If a Reliable Topic has the name `Foo`, then you can configure this topic
+by adding a `ReliableTopicConfig` for a Ringbuffer with the name `Foo`. By default, a Ringbuffer does not have any TTL (time to live) and
+it has a limited capacity; you may want to change that configuration.
+
+By default, the Reliable `ITopic` uses a shared thread pool. If you need better isolation, you can configure a custom executor on the 
+`ReliableTopicConfig`. 
+
+Because the reads on a Ringbuffer are not destructive, batching is easy to apply. `ITopic` uses read batching and reads
+ten items at a time (if available) by default.
+
+[[slow-consumers]]
+==== Slow Consumers
+
+The Reliable `ITopic` provides control and a way to deal with slow consumers. It is unwise to keep events for a slow consumer in memory 
+indefinitely since you do not know when the slow consumer is going to catch up. You can control the size of the Ringbuffer by using its capacity. For the cases when a Ringbuffer runs out of its capacity, you can specify the following policies for the `TopicOverloadPolicy` configuration:
+
+* `DISCARD_OLDEST`: Overwrite the oldest item, even if a TTL is set. In this case the fast producer supersedes a slow consumer.
+* `DISCARD_NEWEST`: Discard the newest item.
+* `BLOCK`: Wait until the items are expired in the Ringbuffer.
+* `ERROR`: Immediately throw `TopicOverloadException` if there is no space in the Ringbuffer.
+
+[[configuring-reliable-topic]]
+==== Configuring Reliable Topic
+
+The following are example Reliable Topic configurations.
+
+
+**Declarative:**
+
+```
+<reliable-topic name="default">
+    <statistics-enabled>true</statistics-enabled>
+    <message-listeners>
+        <message-listener>
+        ...
+        </message-listener>
+    </message-listeners>
+    <read-batch-size>10</read-batch-size>
+    <topic-overload-policy>BLOCK</topic-overload-policy>
+</reliable-topic>
+```
+
+**Programmatic:**
+
+[source,java]
+----
+Config config = new Config();
+ReliableTopicConfig rtConfig = config.getReliableTopicConfig( "default" );
+rtConfig.setTopicOverloadPolicy( TopicOverloadPolicy.BLOCK )
+        .setReadBatchSize( 10 )
+        .setStatisticsEnabled( true );
+----
+
+Reliable Topic configuration has the following elements.
+
+* `statistics-enabled`: Enables or disables the statistics collection for the Reliable Topic. The default value is `true`.
+* `message-listener`: Message listener class that listens to the messages when they are added or removed.
+* `read-batch-size`: Minimum number of messages that Reliable Topic will try to read in batches. The default value is 10.
+* `topic-overload-policy`: Policy to handle an overloaded topic. Available values are `DISCARD_OLDEST`, `DISCARD_NEWEST`, `BLOCK` and `ERROR`. The default value is `BLOCK. See <<slow-consumers, Slow Consumers>> for definitions of these policies.
+
+
+[[lock]]
+=== Lock
+
+ILock is the distributed implementation of `java.util.concurrent.locks.Lock`, meaning that if you lock using an ILock, the critical
+section that it guards is guaranteed to be executed by only one thread in the entire cluster, provided that there are no network failures. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
+
+[[using-try-catch-blocks-with-locks]]
+==== Using Try-Catch Blocks with Locks
+
+Always use locks with *try*-*catch* blocks. This will ensure that locks are released if an exception is thrown from
+the code in a critical section. Also note that the `lock` method is outside the *try*-*catch* block because we do not want to unlock
+if the lock operation itself fails.
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Lock lock = hazelcastInstance.getLock( "myLock" );
+lock.lock();
+try {
+    // do something here
+} finally {
+  lock.unlock();
+}
+----
+
+[[releasing-locks-with-trylock-timeout]]
+### Releasing Locks with tryLock Timeout
+
+If a lock is not released in the cluster, another thread that is trying to get the
+lock can wait forever. To avoid this, use `tryLock` with a timeout value. You can
+set a high value (normally it should not take that long) for `tryLock`. You can check the return value of `tryLock` as follows:
+
+[source,java]
+----
+if ( lock.tryLock ( 10, TimeUnit.SECONDS ) ) {
+  try {  
+    // do some stuff here..  
+  } finally {  
+    lock.unlock();  
+  }   
+} else {
+  // warning
+}
+----
+
+[[avoiding-waiting-threads-with-lease-time]]
+==== Avoiding Waiting Threads with Lease Time
+
+You can also avoid indefinitely waiting threads by using lock with lease time - the lock will be released in the given lease time. The lock can be safely unlocked before the lease time expires. Note that the unlock operation can
+throw an `IllegalMonitorStateException` if the lock is released because the lease time expires. If that is the case, critical section guarantee is broken.
+
+Please see the below example.
+
+[source,java]
+----
+lock.lock( 5, TimeUnit.SECONDS )
+try {
+  // do some stuff here..
+} finally {
+  try {
+    lock.unlock();
+  } catch ( IllegalMonitorStateException ex ){
+    // WARNING Critical section guarantee can be broken
+  }
+}
+----
+
+You can also specify a lease time when trying to acquire a lock: `tryLock(time, unit, leaseTime, leaseUnit)`. In that case, it tries to acquire the lock within the specified lease time. If the lock is not available, the current thread becomes disabled for thread scheduling purposes until either it acquires the lock or the specified waiting time elapses. Note that this lease time cannot be longer than the time you specify with the system property `hazelcast.lock.max.lease.time.seconds`. Please see the <<system-properties, System Properties section>> to see the description of this property and to learn how to set a system property.
+
+
+[[understanding-lock-behavior]]
+==== Understanding Lock Behavior
+
+* Locks are fail-safe. If a member holds a lock and some other members go down, the cluster will keep your locks safe and available.
+Moreover, when a member leaves the cluster, all the locks acquired by that dead member will be removed so that those
+locks are immediately available for live members.
+* Locks are re-entrant. The same thread can lock multiple times on the same lock. Note that for other threads to be able to require this lock, the owner of the lock must call `unlock` as many times as the owner called `lock`.
+* In the split-brain scenario, the cluster behaves as if it were two different clusters. Since two separate clusters are not aware of each other,
+two members from different clusters can acquire the same lock.
+For more information on places where split brain syndrome can be handled, please see <<split-brain-syndrome, Split-Brain syndrome>>.
+* Locks are not automatically removed. If a lock is not used anymore, Hazelcast will not automatically garbage collect the lock. 
+This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sure they are destroyed.
+* Hazelcast IMap also provides locking support on the entry level with the method `IMap.lock(key)`. Although the same infrastructure 
+is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it directly.
+
+[[ilock-vs-imaplock]]
+===== ILock vs. IMap.lock
+
+ILock-based locks use system resources even when they are not acquired. You have to call `destroy()`, but this can have a side effect when another thread is trying to acquire it. ILock-based lock is a good choice when you have a limited number of locks. The IMap-based locks are auto-destructed. They use no resources when they are not acquired. This implies they are invisible for monitoring unless they are being hold by some thread.
+
+[[synchronizing-threads-with-icondition]]
+==== Synchronizing Threads with ICondition
+
+`ICondition` is the distributed implementation of the `notify`, `notifyAll` and `wait` operations on the Java object. You can use it to synchronize
+threads across the cluster. More specifically, you use `ICondition` when a thread's work depends on another thread's output. A good example
+is producer/consumer methodology. 
+
+Please see the below code examples for a producer/consumer implementation.
+
+**Producer thread:**
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Lock lock = hazelcastInstance.getLock( "myLockId" );
+ICondition condition = lock.newCondition( "myConditionId" );
+
+lock.lock();
+try {
+  while ( !shouldProduce() ) {
+    condition.await(); // frees the lock and waits for signal
+                       // when it wakes up it re-acquires the lock
+                       // if available or waits for it to become
+                       // available
+  }
+  produce();
+  condition.signalAll();
+} finally {
+  lock.unlock();
+}
+----
+
+NOTE: The method `await()` takes time value and time unit as arguments. If you specify a negative value for the time, it is interpreted as infinite.
+
+**Consumer thread:**
+
+[source,java]
+----
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+Lock lock = hazelcastInstance.getLock( "myLockId" );
+ICondition condition = lock.newCondition( "myConditionId" );
+
+lock.lock();
+try {
+  while ( !canConsume() ) {
+    condition.await(); // frees the lock and waits for signal
+                       // when it wakes up it re-acquires the lock if 
+                       // available or waits for it to become
+                       // available
+  }
+  consume();
+  condition.signalAll();
+} finally {
+  lock.unlock();
+}
+----
+
+[[split-brain-protection-for-lock]]
+==== Split-Brain Protection for Lock
+
+Locks can be configured to check for a minimum number of available members before applying lock operations (see [Split-Brain Protection](#split-brain-protection)). This is a check to avoid performing successful lock operations on all parts of a cluster during a network partition. Due to the implementation details, the check does not guarantee that the lock will fail in all conditions of a network partition and it can happen that two members can acquire the same lock.
+
+Once the membership change has been detected, the lock operations will fail with a `QuorumException` if enough size of members are not present. In essence, this does not provide correctness but rather narrows down the window of opportunity in which locks can continue operations on several members concurrently.
+
+Although the check does not provide correctness it can still be useful. In cases where members acquire the lock to perform some costly but idempotent operation, configuring lock quorum can further prevent some cases where the cluster has been split into several sub-clusters and more than one member perform the same operation.
+
+Following is a list of methods that now support quorum checks. The list is grouped by quorum type. Additionally, since Hazelcast IMap also provides locking support, certain map and multimap methods also allow quorum checks.
+
+* WRITE, READ_WRITE
+** `Condition.await(())`, `Condition.awaitUninterruptibly()`, `Condition.awaitNanos()`, `Condition.awaitUntil()`
+** `Lock.lockInterruptibly()`, `ILock.lock()`, `IMap.tryLock()`, `IMap.lock()`, `MultiMap.lock()`, `MultiMap.tryLock()`
+** `Condition.signal()`, `Condition.signalAll()`
+* READ, READ_WRITE
+** `ILock.getLockCount()`
+** `ILock.getRemainingLeaseTime()`
+** `ILock.isLocked()`, `IMap.isLocked()`, `MultiMap.isLocked()`
+** `ILock.forceUnlock()`, `IMap.forceUnlock()`, `MultiMap.forceUnlock()`, `ILock.unlock()`, `IMap.unlock()`, `ObjectMultiMapProxy.unlock()`
+
+[[lock-configuration]]
+==== Lock Configuration
+
+As mentioned in the <<split-brain-protection-for-lock, Split-brain Protection for Lock section>>, Lock allows for split-brain protection. 
+
+An example of declarative configuration is as follows:
+
+```
+<lock name="myLock">
+    <quorum-ref>quorum-name</quorum-ref>
+</lock>
+```
+
+* `quorum-ref` : Name of quorum configuration that you want this lock to use.
+
+An example of programmatic configuration is as follows:
+
+[source,java]
+----
+Config config = new Config();
+LockConfig lockConfig = new LockConfig();
+lockConfig.setName("myLock")
+          .setQuorumName("quorum-name");
+config.addLockConfig(lockConfig);
+----
+
+NOTE: As mentioned above, a quorum definition for a lock that has the same name or a pattern that matches a map name will force the map locking actions to use the defined quorum. It is important to keep this in mind when using lock quorum and map locking actions.
+
+[[iatomiclong]]
+=== IAtomicLong
+
+Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and thus their performances differ from AtomicLong.
+
+
+The following example code creates an instance, increments it by a million, and prints the count.
+
+[source,java]
+----
+public class Member {
+  
+    public static void main( String[] args ) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 	
+        IAtomicLong counter = hazelcastInstance.getAtomicLong( "counter" );
+        for ( int k = 0; k < 1000 * 1000; k++ ) {
+	        if ( k % 500000 == 0 ) {
+	            System.out.println( "At: " + k );
+            }
+            counter.incrementAndGet();
+        }
+        System.out.printf( "Count is %s\n", counter.get() );
+    }
+}
+----
+
+When you start other instances with the code above, you will see the count as *member count* times *a million*.
+
+[[sending-functions-to-iatomiclong]]
+==== Sending Functions to IAtomicLong
+
+You can send functions to an IAtomicLong. `IFunction` is a Hazelcast owned, single method interface. The following sample `IFunction` implementation adds two to the original value.
+
+[source,java]
+----
+private static class Add2Function implements IFunction <Long, Long> { 
+    @Override
+    public Long apply( Long input ) { 
+        return input + 2;
+    }
+}
+----
+
+[[executing-functions-on-iatomiclong]]
+==== Executing Functions on IAtomicLong
+
+You can use the following methods to execute functions on IAtomicLong.
+
+* `apply`: Applies the function to the value in IAtomicLong without changing the actual value and returning the result.
+* `alter`: Alters the value stored in the IAtomicLong by applying the function. It will not send back a result.
+* `alterAndGet`: Alters the value stored in the IAtomicLong by applying the function, storing the result in the IAtomicLong and returning the result.
+* `getAndAlter`: Alters the value stored in the IAtomicLong by applying the function and returning the original value.
+
+The following sample code includes these methods.
+
+[source,java]
+----
+public class Member {
+  
+    public static void main( String[] args ) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 		
+        IAtomicLong atomicLong = hazelcastInstance.getAtomicLong( "counter" );
+
+        atomicLong.set( 1 );
+        long result = atomicLong.apply( new Add2Function() ); 		
+        System.out.println( "apply.result: " + result); 		
+        System.out.println( "apply.value: " + atomicLong.get() );
+
+        atomicLong.set( 1 );
+        atomicLong.alter( new Add2Function() ); 			
+        System.out.println( "alter.value: " + atomicLong.get() );
+
+        atomicLong.set( 1 );
+        result = atomicLong.alterAndGet( new Add2Function() ); 		
+        System.out.println( "alterAndGet.result: " + result ); 		
+        System.out.println( "alterAndGet.value: " + atomicLong.get() );
+
+        atomicLong.set( 1 );
+        result = atomicLong.getAndAlter( new Add2Function() ); 		
+        System.out.println( "getAndAlter.result: " + result ); 		
+        System.out.println( "getAndAlter.value: " + atomicLong.get() );
+    }
+}
+----
+
+The output of the above class when run is as follows:
+
+```
+apply.result: 3
+apply.value: 1
+alter.value: 3
+alterAndGet.result: 3
+alterAndGet.value: 3
+getAndAlter.result: 1
+getAndAlter.value: 3
+```
+
+[[reasons-to-use-functions-with-iatomic]]
+==== Reasons to Use Functions with IAtomic
+
+The reason for using a function instead of a simple code line like `atomicLong.set(atomicLong.get() + 2));` is that the IAtomicLong read and write operations are not atomic. Since `IAtomicLong` is a distributed implementation, those operations can be remote ones, which may lead to race problems. By using functions, the data is not pulled into the code, but the code is sent to the data. This makes it more scalable.
+
+NOTE: IAtomicLong has one synchronous backup and no asynchronous backups. Its backup count is not configurable.
+
+[[split-brain-protection-for-iatomiclong]]
+==== Split-Brain Protection for IAtomicLong
+
+IAtomicLong can be configured to check for a minimum number of available members before applying its operations (see [Split-Brain Protection](#split-brain-protection)). This is a check to avoid performing successful operations on all parts of a cluster during a network partition.  Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE:
+** `addAndGet`
+** `addAndGetAsync`
+** `alter`
+** `alterAndGet`
+** `alterAndGetAsync`
+** `alterAsync`
+** `apply`
+** `applyAsync`
+** `compareAndSet`
+** `compareAndSetAsync`
+** `decrementAndGet`
+** `decrementAndGetAsync`
+** `getAndAdd`
+** `getAndAddAsync`
+** `getAndAlter`
+** `getAndAlterAsync`
+** `getAndIncrement`
+** `getAndIncrementAsync`
+** `getAndSet`
+** `getAndSetAsync`
+** `incrementAndGet`
+** `incrementAndGetAsync`
+** `set`
+** `setAsync`
+* READ, READ_WRITE:
+** `get`
+** `getAsync`
+
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for IAtomicLong can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicLongConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<atomic-long name="default">
+   ...
+   <quorum-ref>quorumname</quorum-ref>
+   ...
+</atomic-long>
+```
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+
+[[isemaphore]]
+=== ISemaphore
+
+Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.Semaphore`. 
+
+[[controlling-thread-counts-with-permits]]
+==== Controlling Thread Counts with Permits
+
+Semaphores offer **permit**s to control the thread counts when performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.
+
+NOTE: ISemaphore with a single permit may be considered a lock. Unlike the locks, however, when semaphores are used, any thread can release the permit, and semaphores can have multiple permits.
+
+NOTE: Hazelcast ISemaphore does not support fairness at all times. There are some edge cases where the fairness is not honored, e.g., when the permit becomes available at the time when an internal timeout occurs.
+
+When a permit is acquired on ISemaphore:
+
+* if there are permits, the number of permits in the semaphore is decreased by one and the calling thread performs its activity. If there is contention, the longest waiting thread will acquire the permit before all other threads.
+* if no permits are available, the calling thread blocks until a permit becomes available. When a timeout happens during this block, the thread is interrupted.
+
+[[example-semaphore-code]]
+==== Example Semaphore Code
+
+The following example code uses an `IAtomicLong` resource 1000 times, increments the resource when a thread starts to use it, and decrements it when the thread completes.
+
+[source,java]
+----
+public class SemaphoreMember {
+  
+    public static void main( String[] args ) throws Exception{
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 
+        ISemaphore semaphore = hazelcastInstance.getSemaphore( "semaphore" ); 
+        IAtomicLong resource = hazelcastInstance.getAtomicLong( "resource" ); 
+        for ( int k = 0 ; k < 1000 ; k++ ) {
+            System.out.println( "At iteration: " + k + ", Active Threads: " + resource.get() );
+            semaphore.acquire();
+            try {
+                resource.incrementAndGet();
+                Thread.sleep( 1000 );
+                resource.decrementAndGet();
+            } finally { 
+            semaphore.release();
+            }
+        }
+    System.out.println("Finished");
+    }
+}
+----
+
+Let's limit the concurrent access to this resource by allowing at most three threads. You can configure it declaratively by setting the `initial-permits` property, as shown below.
+
+```
+<semaphore name="semaphore"> 
+  <initial-permits>3</initial-permits>
+</semaphore>
+```
+
+NOTE: If there is a shortage of permits while the semaphore is being created, value of this property can be set to a negative number.
+
+If you execute the above `SemaphoreMember` class 5 times, the output will be similar to the following:
+
+`At iteration: 0, Active Threads: 1`
+
+`At iteration: 1, Active Threads: 2`
+
+`At iteration: 2, Active Threads: 3`
+
+`At iteration: 3, Active Threads: 3`
+
+`At iteration: 4, Active Threads: 3`
+
+As you can see, the maximum count of concurrent threads is equal or smaller than three. If you remove the semaphore acquire/release statements in `SemaphoreMember`, you will see that there is no limitation on the number of concurrent usages.
+
+Hazelcast also provides backup support for `ISemaphore`. When a member goes down, you can have another member take over the semaphore with the permit information (permits are automatically released when a member goes down). To enable this, configure synchronous or asynchronous backup with the properties `backup-count` and `async-backup-count` (by default, synchronous backup is already enabled).
+
+[[configuring-semaphore]]
+==== Configuring Semaphore
+
+The following are example semaphore configurations.
+
+**Declarative:**
+
+```
+<semaphore name="semaphore">
+   <backup-count>1</backup-count>
+   <async-backup-count>0</async-backup-count>
+   <initial-permits>3</initial-permits>
+   <quorum-ref>quorumname</quorum-ref>
+</semaphore>
+```
+
+**Programmatic:**
+
+[source,java]
+----
+Config config = new Config();
+SemaphoreConfig semaphoreConfig = config.getSemaphoreConfig();
+semaphoreConfig.setName( "semaphore" ).setBackupCount( "1" )
+        .setInitialPermits( "3" )
+        .setQuorumName( "quorumname" );
+----
+
+Semaphore configuration has the below elements.
+
+* `initial-permits`: the thread count to which the concurrent access is limited. For example, if you set it to "3", concurrent access to the object is limited to 3 threads.
+* `backup-count`: Number of synchronous backups.
+* `async-backup-count`: Number of asynchronous backups.
+* `quorum-ref`: Name of quorum configuration that you want this Semaphore to use. Please see the <<split-brain-protection-for-isemaphore, Split-Brain Protection for ISemaphore section>> below.
+
+NOTE: If high performance is more important than not losing the permit information, you can disable the backups by setting `backup-count` to 0.
+
+[[split-brain-protection-for-isemaphore]]
+==== Split-Brain Protection for ISemaphore
+
+ISemaphore can be configured to check for a minimum number of available members before applying its operations (see [Split-Brain Protection](#split-brain-protection)). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE:
+** `acquire`
+** `drainPermits`
+** `init`
+** `reducePermits`
+** `release`
+** `tryAcquire`
+* READ, READ_WRITE:
+** `availablePermits`
+
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for ISemaphore can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SemaphoreConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<semaphore name="default">
+   ...
+   <quorum-ref>quorumname</quorum-ref>
+   ...
+</semaphore>
+```
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+[[iatomicreference]]
+=== IAtomicReference
+
+The `IAtomicLong` is very useful if you need to deal with a long, but in some cases you need to deal with a reference. That is why Hazelcast also supports the `IAtomicReference` which is the distributed version of the `java.util.concurrent.atomic.AtomicReference`.
+
+Here is an IAtomicReference example.
+
+[source,java]
+----
+public class Member {
+    public static void main(String[] args) {
+        Config config = new Config();
+
+        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
+
+        IAtomicReference<String> ref = hz.getAtomicReference("reference");
+        ref.set("foo");
+        System.out.println(ref.get());
+        System.exit(0);
+    } 
+}
+----
+
+When you execute the above example, you will see the following output.
+
+`foo`
+
+[[sending-functions-to-iatomicreference]]
+==== Sending Functions to IAtomicReference
+
+Just like `IAtomicLong`, `IAtomicReference` has methods that accept a 'function' as an argument, such as `alter`, `alterAndGet`, `getAndAlter` and `apply`. There are two big advantages of using these methods:
+
+* From a performance point of view, it is better to send the function to the data then the data to the function. Often the function is a lot smaller than the data and therefore cheaper to send over the line. Also the function only needs to be transferred once to the target machine, and the data needs to be transferred twice.
+* You do not need to deal with concurrency control. If you would perform a load, transform, store, you could run into a data race since another thread might have updated the value you are about to overwrite. 
+
+[[using-iatomicreference]]
+==== Using IAtomicReference
+
+Below are some considerations you need to know when you use IAtomicReference.
+
+* `IAtomicReference` works based on the byte-content and not on the object-reference. If you use the `compareAndSet` method, do not change to original value because its serialized content will then be different. It is also important to know that if you rely on Java serialization, sometimes (especially with hashmaps) the same object can result in different binary content.
+* `IAtomicReference` will always have one synchronous backup.
+* All methods returning an object will return a private copy. You can modify the private copy, but the rest of the world will be shielded from your changes. If you want these changes to be visible to the rest of the world, you need to write the change back to the `IAtomicReference`; but be careful about introducing a data-race. 
+* The 'in-memory format' of an `IAtomicReference` is `binary`. The receiving side does not need to have the class definition available unless it needs to be deserialized on the other side, e.g., because a method like 'alter' is executed. This deserialization is done for every call that needs to have the object instead of the binary content, so be careful with expensive object graphs that need to be deserialized.
+* If you have an object with many fields or an object graph, and you only need to calculate some information or need a subset of fields, you can use the `apply` method. With the `apply` method, the whole object does not need to be sent over the line; only the information that is relevant is sent.
+
+[[split-brain-protection-for-iatomicreference]]
+==== Split-Brain Protection for IAtomicReference
+
+IAtomicReference can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE:
+** `alter`
+** `alterAndGet`
+** `alterAndGetAsync`
+** `alterAsync`
+** `apply`
+** `applyAsync`
+** `clear`
+** `clearAsync`
+** `compareAndSet`
+** `compareAndSetAsync`
+** `getAndAlter`
+** `getAndAlterAsync`
+** `getAndSet`
+** `getAndSetAsync`
+** `set`
+** `setAndGet`
+** `setAsync`
+* READ, READ_WRITE:
+** `contains`
+** `containsAsync`
+** `get`
+** `getAsync`
+** `isNull`
+** `isNullAsync`
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for IAtomicReference can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicReferenceConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<atomic-reference name="default">
+   ...
+   <quorum-ref>quorumname</quorum-ref>
+   ...
+</atomic-reference>
+```
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+[[icountdownlatch]]
+=== ICountDownLatch
+
+Hazelcast `ICountDownLatch` is the distributed implementation of `java.util.concurrent.CountDownLatch`.
+
+[[gate-keeping-concurrent-activities]]
+==== Gate-Keeping Concurrent Activities
+
+`CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
+
+The following code samples describe the mechanism of `ICountDownLatch`. Assume that there is a leader process and there are follower processes that will wait until the leader completes. Here is the leader:
+
+[source,java]
+----
+public class Leader {
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
+        System.out.println( "Starting" );
+        latch.trySetCount( 1 );
+        Thread.sleep( 30000 );
+        latch.countDown();
+        System.out.println( "Leader finished" );
+        latch.destroy();
+    }
+}
+----
+
+Since only a single step is needed to be completed as a sample, the above code initializes the latch with 1. Then, the code sleeps for a while to simulate a process and starts the countdown. Finally, it clears up the latch. Let's write a follower:
+
+[source,java]
+----
+public class Follower {
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
+        System.out.println( "Waiting" );
+        boolean success = latch.await( 10, TimeUnit.SECONDS );
+        System.out.println( "Complete: " + success );
+    }
+} 
+----
+
+The follower class above first retrieves `ICountDownLatch` and then calls the `await` method to enable the thread to listen for the latch. The method `await` has a timeout value as a parameter. This is useful when the `countDown` method fails. To see `ICountDownLatch` in action, start the leader first and then start one or more followers. You will see that the followers will wait until the leader completes.
+
+[[recovering-from-failure]]
+==== Recovering From Failure
+
+In a distributed environment, the counting down cluster member may go down. In this case, all listeners are notified immediately and automatically by Hazelcast. The state of the current process just before the failure should be verified and 'how to continue now' should be decided, e.g., restart all process operations, continue with the first failed process operation, and throw an exception.
+
+[[using-icountdownlatch]]
+==== Using ICountDownLatch
+
+Although the `ICountDownLatch` is a very useful synchronization aid, you will probably not use it on a daily basis. Unlike Java's implementation, Hazelcast's `ICountDownLatch` count can be reset after a countdown has finished, but not during an active count.
+
+NOTE: ICountDownLatch has 1 synchronous backup and no asynchronous backups. Its backup count is not configurable. Also, the count cannot be re-set during an active count, it should be re-set after the countdown is finished.
+
+[[split-brain-protection-for-icountdownlatch]]
+==== Split-Brain Protection for ICountDownLatch
+
+ICountDownLatch can be configured to check for a minimum number of available members before applying ICountDownLatch operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE:
+** `countDown`
+** `trySetCount`
+* READ, READ_WRITE:
+** `await`
+** `getCount`
+
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for ICountDownLatch can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CountDownLatchConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<count-down-latch name="default">
+   ...
+   <quorum-ref>quorumname</quorum-ref>
+   ...
+</count-down-latch>
+```
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+[[pn-counter]]
+=== PN Counter
+
+A Conflict-free Replicated Data Type (CRDT) is a distributed data structure that achieves high availability by relaxing consistency constraints. There may be several replicas for the same data and these replicas can be modified concurrently without coordination. This means that you may achieve high throughput and low latency when updating a CRDT data structure. On the other hand, all of the updates are replicated asynchronously. Each replica will then receive updates made on other replicas eventually and if no new updates are done, all replicas which can communicate to each other will return the same state (converge) after some time. 
+ 
+Hazelcast offers a lightweight CRDT PN counter (Positive-Negative Counter) implementation where each Hazelcast instance can increment and decrement the counter value and these updates are propagated to all replicas. Only a Hazelcast member can store state for a counter which means that counter method invocations performed on a Hazelcast member are usually local (depending on the configured replica count). If there is no member failure, it is guaranteed that each replica sees the final value of the counter eventually. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state. 
+
+Using the PN Counter, you can get a distributed counter, increment and decrement it, and query its value with RYW (read-your-writes) and monotonic reads. The implementation borrows most methods from the `AtomicLong` which should be familiar in most cases and easily interchangeable in the existing code.
+
+Some examples of PN counter are:
+
+* counting the number of "likes" or "+1"
+* counting the number of logged in users
+* counting the number of page hits/views
+
+**How it works**
+
+The counter supports adding and subtracting values as well as retrieving the current counter value. Each replica of this counter can perform operations locally without coordination with the other replicas, thus increasing availability. The counter guarantees that whenever two members have received the same set of updates, possibly in a different order, their state is identical, and any conflicting updates are merged automatically. If no new updates are made to the shared state, all members that can communicate will eventually have the same data.
+
+The updates to the counter are applied locally when invoked on a CRDT replica. A CRDT replica can be any Hazelcast instance **which is NOT a client or a lite member**. You can configure the number of replicas in the cluster using the `replica-count` configuration element.
+ 
+When invoking updates from a non-replica instance, the invocation is remote. This may lead to indeterminate state - the update may be applied but the response has not been received. In this case, the caller will be notified with a `TargetDisconnectedException` when invoked from a client or a `MemberLeftException` when invoked from a member.
+ 
+The read and write methods provide monotonic read and RYW (read-your-write) guarantees. These guarantees are session guarantees which means that if no replica with the previously observed state is reachable, the session guarantees are lost and the method invocation will throw a `ConsistencyLostException`. This does not mean that an update is lost. All of the updates are part of some replica and will be eventually reflected in the state of all other replicas. This exception just means that you cannot observe your own writes because all replicas that contain your updates are currently unreachable. After you have received a `ConsistencyLostException`, you can either wait for a sufficiently up-to-date replica to become reachable in which case the session can be continued or you can reset the session by calling the method `reset(). If you have called this method, a new session is started with the next invocation to a CRDT replica.
+
+NOTE: The CRDT state is kept entirely on non-lite (data) members. If there aren't any and the methods here are invoked on a lite member, they fail with a `NoDataMemberInClusterException`.
+
+
+The following is an example code.
+
+[source,java]
+----
+final HazelcastInstance instance = Hazelcast.newHazelcastInstance();
+        final PNCounter counter = instance.getPNCounter("counter");
+        counter.addAndGet(5);
+        final long value = counter.get();
+----
+
+This code snippet creates an instance of a PN counter, increments it by 5 and retrieves the value.
+
+[[configuring-pn-counter]]
+==== Configuring PN Counter
+
+Following is an example declarative configuration snippet:
+
+```
+<hazelcast>
+  <pn-counter name="default">
+    <replica-count>10<replica-count>
+    <statistics-enabled>true</statistics-enabled>
+  </pn-counter>
+</hazelcast>
+```
+
+* `name`: Name of your PN Counter.
+* `replica-count`: Number of replicas on which state for this PN counter will be kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE. Generally, keeping the state on more replicas means that more Hazelcast members will be able to perform updates locally but it also means that the PN counter state will be kept on more replicas, increasing the network traffic, decreasing the speed at which replica states converge and increasing the size of the PN counter state kept on each replica.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your PN Counter. If set to `false`, you cannot collect statistics in your implementation and also Hazelcast Management Center will not show them. Its default value is `true`.
+
+Following is an equivalent snippet of Java configuration:
+
+[source,java]
+----
+PNCounterConfig pnCounterConfig = new PNCounterConfig()
+        .setReplicaCount(10)
+        .setStatisticsEnabled(true);
+Config hazelcastConfig = new Config()
+        .addPNCounterConfig(pnCounterConfig);
+----
+
+[[configuring-the-crdt-replication-mechanism]]
+==== Configuring the CRDT replication mechanism
+
+NOTE: Configuring the replication mechanism is for advanced use cases only - usually the default configuration will work fine for most cases.
+
+In some cases, you may want to configure the replication mechanism for all CRDT implementations. The CRDT states are replicated in rounds (the period is configurable) and in each round the state is replicated up to the configured number of members. Generally speaking, you may increase the speed at which replicas converge at the expense of more network traffic or decrease the network traffic at the expense of slower convergence of replicas. 
+Hazelcast implements the state-based replication mechanism - the CRDT state for changed CRDTs is replicated in its entirety to other replicas on each replication round.  
+
+```
+<hazelcast>
+  <crdt-replication>
+      <max-concurrent-replication-targets>1</max-concurrent-replication-targets>
+      <replication-period-millis>1000</replication-period-millis>
+  </crdt-replication>
+</hazelcast>
+```
+
+* `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count will lead to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT will lead to a sudden burst in the number of replication messages in a short time interval. The default value is 1 which means that each replica will replicate state to only one other replica in each replication round. 
+* `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates will be batched together in one replication message and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. The default value is 1000 ms which means that the changed CRDT state is replicated every 1 second. 
+     
+Following is an equivalent snippet of Java configuration:
+
+[source,java]
+----
+final CRDTReplicationConfig crdtReplicationConfig = new CRDTReplicationConfig()
+        .setMaxConcurrentReplicationTargets(1)
+        .setReplicationPeriodMillis(1000);
+Config hazelcastConfig = new Config()
+        .setCRDTReplicationConfig(crdtReplicationConfig);
+----
+
+
+[[idgenerator]]
+=== IdGenerator
+
+Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
+
+NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs in case of a network split, even with split-brain protection enabled (during short window while split-brain is detected). Please use <<flakeIdgenerator, FlakeIdGenerator>> for an alternative implementation which does not suffer from the issue. Also see the <<migrating-to-flakeIdgenerator, Migration guide>> at the end of this section.
+
+[[generating-cluster-wide-ids]]
+==== Generating Cluster-Wide IDs
+
+ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10,000 identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 10,000 IDs. This way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.
+
+Let's write a sample identifier generator.
+
+```
+public class IdGeneratorExample {
+  
+    public static void main( String[] args ) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        IdGenerator idGen = hazelcastInstance.getIdGenerator( "newId" );
+        while (true) {
+            Long id = idGen.newId();
+            System.err.println( "Id: " + id );
+            Thread.sleep( 1000 );
+        }
+    }
+}
+```
+
+Let's run the above code two times. The output will be similar to the following.
+
+```
+Members [1] {
+  Member [127.0.0.1]:5701 this
+}
+Id: 1
+Id: 2
+Id: 3
+```
+
+
+```
+Members [2] {
+  Member [127.0.0.1]:5701
+  Member [127.0.0.1]:5702 this
+}
+Id: 10001
+Id: 10002
+Id: 10003
+```
+
+[[unique-ids-and-duplicate-ids]]
+==== Unique IDs and Duplicate IDs
+
+You can see that the generated IDs are unique and counting upwards. If you see duplicated identifiers, it means your instances could not form a cluster. 
+
+
+NOTE: Generated IDs are unique during the life cycle of the cluster. If the entire cluster is restarted, IDs start from 0, again or you can initialize to a value using the `init()` method of IdGenerator.
+
+NOTE: IdGenerator has one synchronous backup and no asynchronous backups. Its backup count is not configurable.
+
+[[migrating-to-flakeidgenerator]]
+==== Migrating to FlakeIdGenerator
+
+The Flake ID generator provides similar features with more safety guarantees during network splits. The two generators are completely different implementations, but both types of generator generate roughly ordered IDs. So in order to ensure uniqueness of the generated IDs, we can force the Flake ID generator to start at least where the old generator ended. This is likely the case, because the values from Flake generator are quite large compared to values from the old generator. Anyway, here are the steps you need to take: 
+
+* Make sure the version of your Hazelcast cluster and of all clients is at least 3.10.
+* If the current ID from old `IdGenerator` is higher than the ID from `FlakeIdGenerator`, you need to configure ID offset. See https://github.com/hazelcast/hazelcast-code-samples/blob/v3.10/distributed-primitives/flake-id-generator/src/main/java/FlakeIdMigrationSample.java[FlakeIdMigrationSample] for mor details.
+* Replace all calls to `HazelcastInstance.getIdGenerator()` with `HazelcastInstance.getFlakeIdGenerator()`. If you use Spring configuration, replace `<id-generator>` with `<flake-id-generator>`
+
+[[flakeidgenerator]]
+=== FlakeIdGenerator
+
+Hazelcast Flake ID Generator is used to generate cluster-wide unique identifiers. Generated identifiers are `long` primitive values and are k-ordered (roughly ordered). IDs are in the range from 0 to Long.MAX_VALUE.
+
+[[generating-cluster-wide-flake-ids]]
+==== Generating Cluster-Wide IDs
+
+The IDs contain timestamp component and a node ID component, which is assigned when the member joins the cluster. This allows the IDs to be ordered and unique without any coordination between the members, which makes the generator safe even in split-brain scenarios (for limitations in this case, please see the <<node-id-assignment, Node ID assignment section>> below).
+
+Timestamp component is in milliseconds since 1.1.2018, 0:00 UTC and has 41 bits. This caps the useful lifespan of the generator to little less than 70 years (until ~2088). The sequence component is 6 bits. If more than 64 IDs are requested in single millisecond, IDs will gracefully overflow to the next millisecond and uniqueness is guaranteed in this case. The implementation does not allow overflowing by more than 15 seconds, if IDs are requested at higher rate, the call will block. Note, however, that clients are able to generate even faster because each call goes to a different (random) member and the 64 IDs/ms limit is for single member.
+
+[[flakeidgenerator-performance]]
+==== Performance
+
+Operation on member is always local, if the member has valid node ID, otherwise it's remote. On client, the newId() method goes to a random member and gets a batch of IDs, which will then be returned locally for limited time. The pre-fetch size and the validity time can be configured for each client and member.
+
+[[flakeidgenerator-example]]
+==== Example
+
+Let's write a sample identifier generator.
+
+[source,java]
+----
+public class FlakeIdGeneratorSample {
+    public static void main(String[] args) {
+        HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
+
+        ClientConfig clientConfig = new ClientConfig()
+                .addFlakeIdGeneratorConfig(new FlakeIdGeneratorConfig("idGenerator")
+                        .setPrefetchCount(10));
+        HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
+
+        FlakeIdGenerator idGenerator = client.getFlakeIdGenerator("idGenerator");
+        for (int i = 0; i < 10000; i++) {
+            sleepSeconds(1);
+            System.out.printf("Id: %s\n", idGenerator.newId());
+        }
+    }
+}
+----
+
+[[node-id-assignment]]
+==== Node ID Assignment
+
+Flake IDs require a unique node ID to be assigned to each member, from which point the member can generate unique IDs without any coordination. Hazelcast uses the member list version from the moment when the member joined the cluster as a unique node ID.
+
+The join algorithm is specifically designed to ensure that member list join version is unique for each member in the cluster. This ensures that IDs are unique even during network splits, with one caveat: at most one member is allowed to join the cluster during a network split. If two members join different subclusters, they are likely to get the same node ID. This will be resolved when the cluster heals, but until then, they can generate duplicate IDs.
+
+[[node-id-overflow]]
+===== Node ID Overflow
+
+Node ID component of the ID has 16 bits. Members with the member list join version higher than 2^16 won't be able to generate IDs, but functionality will be preserved by forwarding to another member. It is possible to generate IDs on any member or client as long as there is at least one member with join version smaller than 2^16 in the cluster. The remedy is to restart the cluster: the node ID component will be reset and assigned starting from zero again. Uniqueness after the restart will be preserved thanks to the timestamp component.
+
+[[replicated-map]]
+=== Replicated Map
+
+A Replicated Map is a distributed key-value data structure where the data is replicated to all members in the cluster. It provides full replication of entries to all members for high speed access. The following are its features:
+
+* When you have a Replicated Map in the  cluster, your clients can communicate with any cluster member.
+* All cluster members are able to perform write operations.
+* It supports all methods of the interface `java.util.Map`.
+* It supports automatic initial fill up when a new member is started.
+* It provides statistics for entry access, write and update so that you can monitor it using Hazelcast Management Center.
+* New members joining to the cluster pull all the data from the existing members.
+* You can listen to entry events using listeners. Please refer to <<using-entrylistener-on-replicated-map, Using EntryListener on Replicated Map>>. 
+
+[[replicating-instead-of-partitioning]]
+==== Replicating Instead of Partitioning
+
+A Replicated Map does not partition data
+(it does not spread data to different cluster members); instead, it replicates the data to all members. All other data structures are partitioned in design. 
+
+Replication leads to higher memory consumption. However, a Replicated Map has faster read and write access since the data is available on all members.
+
+Writes could take place on local/remote members in order to provide write-order, eventually being replicated to all other members.
+
+Replicated Map is suitable for objects, catalog data, or idempotent calculable data (such as HTML pages). It fully implements the `java.util.Map` interface, but it lacks the methods from `java.util.concurrent.ConcurrentMap` since
+there are no atomic guarantees to writes or reads.
+
+NOTE: If Replicated Map is used from a dummy client and this dummy client is connected to a lite member, the entry listeners cannot be registered/de-registered.
+
+NOTE: You cannot use Replicated Map from a lite member. A `com.hazelcast.replicatedmap.ReplicatedMapCantBeCreatedOnLiteMemberException` is thrown if `com.hazelcast.core.HazelcastInstance.getReplicatedMap(name)` is invoked on a lite member.
+
+[[example-replicated-map-code]]
+==== Example Replicated Map Code
+
+Here is an example of Replicated Map code. The HazelcastInstance's `getReplicatedMap` method gets the Replicated Map, and the Replicated Map's `put` method creates map entries.
+
+[source,java]
+----
+public class FillMapMember {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        Map<String, Customer> customers = hazelcastInstance.getReplicatedMap("customers");
+        customers.put( "1", new Customer( "Joe", "Smith" ) );
+        customers.put( "2", new Customer( "Ali", "Selam" ) );
+        customers.put( "3", new Customer( "Avi", "Noyan" ) );
+
+        Collection<Customer> colCustomers = customers.values();
+        for ( Customer customer : colCustomers ) {
+           // process customer
+        }
+    }
+}
+----
+
+`HazelcastInstance.getReplicatedMap()` returns `com.hazelcast.core.ReplicatedMap` which, as stated above, extends the
+`java.util.Map` interface.
+
+The `com.hazelcast.core.ReplicatedMap` interface has some additional methods for registering entry listeners or retrieving values in an expected order.
+
+[[considerations-for-replicated-map]]
+==== Considerations for Replicated Map
+
+If you have a large cluster or very high occurrences of updates, the Replicated Map may not scale linearly as expected since it has to replicate update operations to all members in the cluster.
+
+Since the replication of updates is performed in an asynchronous manner, we recommend you enable back pressure in case your system has high occurrences of updates. Please refer to the <<back-pressure, Back Pressure>> section to learn how to enable it.
+
+Replicated Map has an anti-entropy system that will converge values to a common one if some of the members are missing replication updates.
+
+Replicated Map does not guarantee eventual consistency because there are some edge cases that fail to provide consistency.
+
+Replicated Map uses the internal partition system of Hazelcast in order to serialize updates happening on the same key at the same time. This happens by sending updates of the same key to the same Hazelcast member in the cluster.
+
+Due to the asynchronous nature of replication, a Hazelcast member could die before successfully replicating a "write" operation to other members after sending the "write completed" response to its caller during the write process. In this scenario, Hazelcast's internal partition system will promote one of the replicas of the partition as the primary one. The new primary partition will not have the latest "write" since the dead member could not successfully replicate the update. (This will leave the system in a state that the caller is the only one that has the update and the rest of the cluster have not.) In this case even the anti-entropy system simply could not converge the value since the source of true information is lost for the update. This leads to a break in the eventual consistency because different values can be read from the system for the same key.
+
+Other than the aforementioned scenario, the Replicated Map will behave like an eventually consistent system with read-your-writes and monotonic-reads consistency.
+
+[[configuration-design-for-replicated-map]]
+==== Configuration Design for Replicated Map
+
+There are several technical design decisions you should consider when you configure a Replicated Map.
+
+**Initial Provisioning**
+
+If a new member joins the cluster, there are two ways you can handle the initial provisioning that is executed to replicate all existing
+values to the new member. Each involves how you configure the async fill up.
+
+First, you can configure async fill up to true, which does not block reads while the fill up operation is underway. That way,
+you have immediate access on the new member, but it will take time until all the values are eventually accessible. Not yet
+replicated values are returned as non-existing (null).
+
+Second, you can configure for a synchronous initial fill up (by configuring the async fill up to false), which blocks every read or write access to the map until the
+fill up operation is finished. Use this with caution since it might block your application from operating.
+
+[[configuring-replicated-map]]
+==== Configuring Replicated Map
+
+Replicated Map can be configured programmatically or declaratively.
+
+**Declarative Configuration:**
+
+You can declare your Replicated Map configuration in the Hazelcast configuration file `hazelcast.xml`. Please see the following example.
+
+```
+<replicatedmap name="default">
+  <in-memory-format>BINARY</in-memory-format>
+  <async-fillup>true</async-fillup>
+  <statistics-enabled>true</statistics-enabled>
+  <entry-listeners>
+    <entry-listener include-value="true">
+      com.hazelcast.examples.EntryListener
+    </entry-listener>
+  </entry-listeners>
+  <quorum-ref>quorumname</quorum-ref>
+</replicatedmap>
+```
+
+* `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. The default value is `OBJECT`.
+* `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. The default value is `true`. If set to `false` (i.e., synchronous initial fill up), no exception will be thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
+* `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. The default value is `true`.
+* `entry-listener`: Full canonical classname of the `EntryListener` implementation.
+** `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. The default value is `true`.
+** `entry-listener#local`: Not used for Replicated Map since listeners are always local.
+* `quorum-ref`: Name of quorum configuration that you want this Replicated Map to use. Please see the <<split-brain-protection-for-replicated-map, Split-Brain Protection for Replicated Map section>>.
+
+
+**Programmatic Configuration:**
+
+You can configure a Replicated Map programmatically, as you can do for all other data structures in Hazelcast. You must create the configuration upfront, when you instantiate the `HazelcastInstance`.
+A basic example of how to configure the Replicated Map using the programmatic approach is shown in the following snippet.
+
+[source,java]
+----
+Config config = new Config();
+
+ReplicatedMapConfig replicatedMapConfig =
+    config.getReplicatedMapConfig( "default" );
+
+replicatedMapConfig.setInMemoryFormat( InMemoryFormat.BINARY )
+                   .setQuorumName( "quorumname" );
+----
+
+All properties that can be configured using the declarative configuration are also available using programmatic configuration
+by transforming the tag names into getter or setter names.
+
+[[in-memory-format-on-replicated-map]]
+===== In-Memory Format on Replicated Map
+
+Currently, two `in-memory-format` values are usable with the Replicated Map.
+
+* `OBJECT` (default): The data will be stored in deserialized form. This configuration is the default choice since
+the data replication is mostly used for high speed access. Please be aware that changing the values without a `Map.put()` is
+not reflected on the other members but is visible on the changing members for later value accesses.
+* `BINARY`: The data is stored in serialized binary format and has to be deserialized on every request. This
+option offers higher encapsulation since changes to values are always discarded as long as the newly changed object is
+not explicitly `Map.put()` into the map again.
+
+[[using-entrylistener-on-replicated-map]]
+==== Using EntryListener on Replicated Map
+
+A `com.hazelcast.core.EntryListener` used on a Replicated Map serves the same purpose as it would on other
+data structures in Hazelcast. You can use it to react on add, update, and remove operations. Replicated Maps do not yet support eviction.
+
+[[difference-in-entrylistener-on-replicated-map]]
+===== Difference in EntryListener on Replicated Map
+
+The fundamental difference in Replicated Map behavior, compared to the other data structures, is that an EntryListener only reflects
+changes on local data. Since replication is asynchronous, all listener events are fired only when an operation is finished
+on a local member. Events can fire at different times on different members.
+
+[[example-of-replicated-map-entrylistener]]
+===== Example of Replicated Map EntryListener
+
+Here is a code example for using EntryListener on a Replicated Map.
+
+The `HazelcastInstance`'s `getReplicatedMap` method gets a Replicated Map (customers), and the `ReplicatedMap`'s `addEntryListener` method adds an entry listener to the Replicated Map. Then, the `ReplicatedMap`'s `put` method adds a Replicated Map
+entry and updates it. The method `remove` removes the entry.
+
+[source,java]
+----
+public class ListeningMember {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        ReplicatedMap<String, Customer> customers = hazelcastInstance.getReplicatedMap( "customers" );
+        
+        customers.addEntryListener( new EntryListener<String, Customer>() {
+            @Override
+            public void entryAdded( EntryEvent<String, Customer> event ) {
+                log( "Entry added: " + event );
+            }
+
+            @Override
+            public void entryUpdated( EntryEvent<String, Customer> event ) {
+                log( "Entry updated: " + event );
+            }
+
+            @Override
+            public void entryRemoved( EntryEvent<String, Customer> event ) {
+                log( "Entry removed: " + event );
+            }
+
+            @Override
+                public void entryEvicted( EntryEvent<String, Customer> event ) {
+                // Currently not supported, will never fire
+                }
+        });
+
+        customers.put( "1", new Customer( "Joe", "Smith" ) ); // add event
+        customers.put( "1", new Customer( "Ali", "Selam" ) ); // update event
+        customers.remove( "1" ); // remove event
+    }
+}
+----
+
+[[split-brain-protection-for-replicated-map]]
+==== Split-Brain Protection for Replicated Map
+
+Replicated Map can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE:
+** `clear`
+** `put`
+** `putAll`
+** `remove`
+* READ, READ_WRITE:
+** `containsKey`
+** `containsValue`
+** `entrySet`
+** `get`
+** `isEmpty`
+** `keySet`
+** `size`
+** `values`
+
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for Replicated Map can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ReplicatedMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<replicatedmap name="default">
+   ...
+   <quorum-ref>quorumname</quorum-ref>
+   ...
+</replicatedmap>
+```
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+[[cardinality-estimator]]
+=== Cardinality Estimator Service
+
+Hazelcast's cardinality estimator service is a data structure which implements Flajolet's HyperLogLog algorithm for estimating cardinalities of unique objects in theoretically huge data sets.
+The implementation offered by Hazelcast includes improvements from Google's version of the algorithm, i.e., HyperLogLog++.
+
+The cardinality estimator service does not provide any ways to configure its properties, but rather uses some well tested defaults.
+
+* `P`: Precision - 14, using the 14 LSB of the hash for the index.
+* `M`: 2 ^ P = 16384 (16K) registers
+* `P'`: Sparse Precision - 25
+* `Durability`: How many backups for each estimator, default 2
+
+NOTE: It is important to understand that this data structure is not 100% accurate, it is used to provide estimates. The error rate is typically a result of `1.04/sqrt(M)` which in our implementation is around 0.81% for high percentiles.
+
+The memory consumption of this data structure is close to 16K despite the size of elements in the source data set or stream.
+
+There are two phases in using the cardinality estimator.
+
+. Add objects to the instance of the estimator, e.g., for IPs `estimator.add("0.0.0.0.")`. The provided object is first serialized, and then the byte array is used to generate a hash for that object.
++
+NOTE: Objects must be serializable in a form that Hazelcast understands.
++
+. Compute the estimate of the set so far `estimator.estimate()`.
+
+Please see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cardinality/CardinalityEstimator.html[cardinality estimator Javadoc] for more information on its API.
+
+The following is an example code.
+
+[source,java]
+----
+HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+CardinalityEstimator visitorsEstimator = hz.getCardinalityEstimator("visitors");
+
+InputStreamReader isr = new InputStreamReader(Member.class.getResourceAsStream("visitors.txt"));
+        BufferedReader br = new BufferedReader(isr);
+        try {
+            String visitor = br.readLine();
+            while (visitor != null) {
+                visitorsEstimator.add(visitor);
+                visitor = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeResource(br);
+            closeResource(isr);
+        }
+
+        System.out.printf("Estimated unique visitors seen so far: %d%n", visitorsEstimator.estimate());
+
+        Hazelcast.shutdownAll();
+----
+
+[[split-brain-protection-for-cardinality-estimator]]
+==== Split-Brain Protection for Cardinality Estimator
+
+Cardinality Estimator can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+
+Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+
+* WRITE, READ_WRITE:
+** `add`
+** `addAsync`
+* READ, READ_WRITE:
+** `estimate`
+** `estimateAsync`
+
+**Configuring Split-Brain Protection**
+
+Split-Brain protection for Cardinality Estimator can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+
+```
+<cardinality-estimator name="default">
+   ...
+   <quorum-ref>quorumname</quorum-ref>
+   ...
+</cardinality-estimator>
+```
+
+The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+
+
+**Configuring Merge Policy**
+
+While recovering from a Split-Brain syndrome, Cardinality Estimator in the small cluster merges into the bigger cluster based on a configured merge policy. When an estimator merges into the cluster, an estimator with the same name might already exist in the cluster.
+So the merge policy resolves these kinds of conflicts with different out-of-the-box strategies. It can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setMergePolicyConfig()`], or declaratively using the element `merge-policy`. Following is an example declarative configuration:
+
+```
+<cardinality-estimator name="default">
+   ...
+   <merge-policy>HyperLogLogMergePolicy</merge-policy>
+   ...
+</cardinality-estimator>
+```
+
+Following out-of-the-box merge policies are available:
+
+* `DiscardMergePolicy`: Estimator from the smaller cluster will be discarded.
+* `HyperLogLogMergePolicy`: Estimator will merge with the existing one, using the algorithmic merge for HyperLogLog. This is the default policy.
+* `PassThroughMergePolicy`: Estimator from the smaller cluster wins.
+* `PutIfAbsentMergePolicy`: Estimator from the smaller cluster wins if it doesn't exist in the cluster.
+
+[[event-journal]]
+=== Event Journal
+
+The event journal is a distributed data structure that stores the history of mutation actions on map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) will create an event which will be stored in the event journal. The event will store the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or by configuring expiration and eviction.  By reading from the event journal you can recreate the state of the map or cache at any point in time. 
+
+NOTE: Currently the event journal does not expose a public API for reading the event journal in Hazelcast IMDG. The event journal can be used to stream event data to Hazelcast Jet, so it should be used in conjunction with http://jet.hazelcast.org/[Hazelcast Jet]. Because of this we will describe how to configure it but not how to use it from IMDG. If you enable and configure the event journal, you may only reach it through private API and you will most probably not get any benefits but the journal will retain events nevertheless and consume heap space.
+
+The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer (partitioned by ringbuffer item) and shares many similarities with it.
+
+[[interaction-with-evictions-and-expiration-for-imap]]
+==== Interaction with Evictions and Expiration for IMap
+ 
+Configuring IMap with eviction and expiration can cause the event journal to contain different events on the different replicas of the same partition. You can run into issues if you are reading from the event journal and the partition owner is terminated. A backup replica will then be promoted into the partition owner but the event journal will contain different events. The event count should stay the same but the entries which you previously thought were evicted and expired could now be "alive" and vice versa.
+
+This is because eviction and expiration randomly choose entries to be evicted/expired. The entry is not coordinated between partition replicas. In these cases, the event journal diverges and will not converge at any future point but will remain inconsistent just as well as the contents of the internal record stores are inconsistent between replicas. You may say that the event journal on a specific replica is in-sync with the record store on that replica but the event journals and record stores between replicas are out-of-sync. 
+
+[[configuring-event-journal-capacity]]
+==== Configuring Event Journal Capacity
+
+By default, an event journal is configured with a `capacity` of 10000 items. This creates a single array per partition, roughly the size of the capacity divided by the number of partitions. Thus, if the configured capacity is 10000 and the number of partitions is 271, we will create 271 arrays of size 36 (10000/271). If 
+a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item. 
+A single array of the event journal keeps events that are only related to the map entries in that partition. In a lot of cases you may want to change this `capacity` number to something that better fits your needs. As the capacity is shared between partitions, keep in mind not to set it to a value which is too low for you. Setting the capacity to a number lower than the partition count will result in an error when initializing the event journal. 
+
+Below is a declarative configuration example of an event journal with a `capacity` of 5000 items for a map, and 10000 items for a cache:
+
+```
+<event-journal enabled="true">
+    <mapName>myMap</mapName>
+    <capacity>5000</capacity>
+    <time-to-live-seconds>20</time-to-live-seconds>
+</event-journal>
+
+<event-journal enabled="true">
+    <cacheName>myCache</cacheName>
+    <capacity>10000</capacity>
+    <time-to-live-seconds>0</time-to-live-seconds>
+</event-journal>
+``` 
+
+You can also configure an event journal programmatically. The following is a programmatic version of the above declarative configuration:
+
+[source,java]
+----
+EventJournalConfig myMapJournalConfig = new EventJournalConfig()
+    .setMapName("myMap")
+    .setEnabled(true)
+    .setCapacity(5000)
+    .setTimeToLiveSeconds(20);
+
+EventJournalConfig myCacheJournalConfig = new EventJournalConfig()
+    .setMapName("myCache")
+    .setEnabled(true)
+    .setCapacity(10000)
+    .setTimeToLiveSeconds(0);
+
+Config config = new Config();
+config.addEventJournalConfig(myMapJournalConfig);
+config.addEventJournalConfig(myCacheJournalConfig);
+----
+
+
+The `mapName` and `cacheName` attributes define the map or cache to which this event journal configuration applies. You can use pattern-matching and the `default` keyword when doing so. For instance, by using a `mapName` of `journaled*`, the journal configuration will apply to all maps whose names start with "journaled" and don't have other journal configurations that match (e.g., if you would have a more specific journal configuration with an exact name match). If you specify the `mapName` or `cacheName` as `default`, the journal configuration will apply to all maps and caches that don't have any other journal configuration. This means that potentially all maps and/or caches will have one single event journal configuration.
+
+[[event-journal-partitioning]]
+==== Event Journal Partitioning
+
+The event journal is a partitioned data structure. The partitioning is done by the event key. Because of this, the map and cache entry with a specific key is co-located with the events for that key and will be migrated accordingly.
+Also, the backup count for the event journal is equal to the backup count of the map or cache for which it contains events. The events on the backup replicas will be created with the map or cache backup operations and no additional network traffic is introduced when appending events to the event journal. 
+
+[[configuring-event-journal-ttl]]
+==== Configuring Event Journal time-to-live
+
+You can configure Hazelcast event journal with a `time-to-live` in seconds. Using this setting, you can control how long the items remain in 
+the event journal before they are expired. By default, the `time-to-live` is set to 0, meaning that unless the item is overwritten, 
+it will remain in the journal indefinitely. The expiration time of the existing journal events is checked whenever a new event is appended to the event journal or when the event journal is being read. If the journal is not being read or written to, the journal may keep expired items indefinitely. 
+
+In the example below, an event journal is configured with a `time-to-live` of 180 seconds:
+
+```
+<event-journal enabled="true">
+    <cacheName>myCache</cacheName>
+    <capacity>10000</capacity>
+    <time-to-live-seconds>180</time-to-live-seconds>
+</event-journal>
+```
 
 
