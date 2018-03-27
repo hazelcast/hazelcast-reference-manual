@@ -1,0 +1,486 @@
+
+
+=== JCache API
+
+This section explains the JCache API by providing simple examples and use cases. While walking through the examples, we will have
+a look at a couple of the standard API classes and see how these classes are used.
+
+==== JCache API Application Example 
+
+The code in this subsection creates a small account application by providing a caching layer over an imagined database abstraction. The
+database layer will be simulated using single demo data in a simple DAO interface. To show the difference between the "database"
+access and retrieving values from the cache, a small waiting time is used in the DAO implementation to simulate network and
+database latency.
+
+===== Creating User Class Example
+
+Before we implement the JCache caching layer, let's have a quick look at some basic
+classes we need for this example.
+
+The `User` class is the representation of a user table in the database. To keep it simple, it has just two properties:
+`userId` and `username`.
+
+```
+public class User {
+    private int userId;
+    private String username;
+    // Getters and setters
+}
+```
+===== Creating DAO Interface Example
+
+The DAO interface is also kept easy in this example. It provides a simple method to retrieve (find) a user by its `userId`.
+
+```
+public interface UserDao {
+    User findUserById( int userId );
+    boolean storeUser( int userId, User user );
+    boolean removeUser( int userId );
+    Collection<Integer> allUserIds();
+}
+```
+===== Configuring JCache Example
+
+To show most of the standard features, the configuration example is a little more complex.
+
+[source,java]
+----
+// Create javax.cache.configuration.CompleteConfiguration subclass
+CompleteConfiguration<Integer, User> config =
+    new MutableConfiguration<Integer, User>()
+        // Configure the cache to be typesafe
+        .setTypes( Integer.class, User.class )
+        // Configure to expire entries 30 secs after creation in the cache
+        .setExpiryPolicyFactory( FactoryBuilder.factoryOf(
+            new AccessedExpiryPolicy( new Duration( TimeUnit.SECONDS, 30 ) )
+        ) )
+        // Configure read-through of the underlying store
+        .setReadThrough( true )
+        // Configure write-through to the underlying store
+        .setWriteThrough( true )
+        // Configure the javax.cache.integration.CacheLoader
+        .setCacheLoaderFactory( FactoryBuilder.factoryOf(
+            new UserCacheLoader( userDao )
+        ) )
+        // Configure the javax.cache.integration.CacheWriter
+        .setCacheWriterFactory( FactoryBuilder.factoryOf(
+            new UserCacheWriter( userDao )
+        ) )
+        // Configure the javax.cache.event.CacheEntryListener with no
+        // javax.cache.event.CacheEntryEventFilter, to include old value
+        // and to be executed synchronously
+        .addCacheEntryListenerConfiguration(
+            new MutableCacheEntryListenerConfiguration<Integer, User>(
+                new UserCacheEntryListenerFactory(),
+                null, true, true
+            )
+        );
+----
+
+Let's go through this configuration line by line.
+
+====== Setting the Cache Type and Expire Policy
+
+First, we set the expected types for the cache, which is already known from the previous example. On the next line, a
+`javax.cache.expiry.ExpiryPolicy` is configured. Almost all integration `ExpiryPolicy` implementations are configured using
+`javax.cache.configuration.Factory` instances. `Factory` and `FactoryBuilder` are explained later in this chapter.
+
+====== Configuring Read-Through and Write-Through
+
+The next two lines configure the thread that will be read-through and write-through to the underlying backend resource that is configured
+over the next few lines. The JCache API offers `javax.cache.integration.CacheLoader` and `javax.cache.integration.CacheWriter` to
+implement adapter classes to any kind of backend resource, e.g., JPA, JDBC, or any other backend technology implementable in Java.
+The interface provides the typical CRUD operations like `create`, `get`, `update`, `delete`, and some bulk operation versions of those
+common operations. We will look into the implementation of those implementations later.
+
+====== Configuring Entry Listeners
+
+The last configuration setting defines entry listeners based on sub-interfaces of `javax.cache.event.CacheEntryListener`. This
+config does not use a `javax.cache.event.CacheEntryEventFilter` since the listener is meant to be fired on every change that
+happens on the cache. Again we will look in the implementation of the listener in later in this chapter.
+
+====== Full Example Code
+
+A full running example that is presented in this
+subsection is available in the https://github.com/hazelcast/hazelcast-code-samples/tree/master/jcache/src/main/java/com/hazelcast/examples/application[code samples repository].
+The application is built to be a command line app. It offers a small shell to accept different commands. After startup, you can
+enter `help` to see all available commands and their descriptions.
+
+==== JCache Base Classes
+
+In the <<example-jcache-application, Example JCache Application section>>, we have already seen a couple of the base classes and explained how those work. The following are quick descriptions of them:
+
+**`javax.cache.Caching`**:
+
+The access point into the JCache API. It retrieves the general `CachingProvider` backed by any compliant JCache
+implementation, such as Hazelcast JCache.
+
+**`javax.cache.spi.CachingProvider`**:
+
+The SPI that is implemented to bridge between the JCache API and the implementation itself. Hazelcast members and clients use different
+providers chosen as seen in the <<configuring-jcache-provider, Configuring JCache Provider section>> which enable the JCache API to
+interact with Hazelcast clusters.
+
+When a `javax.cache.spi.CachingProvider.getCacheManager()` overload is used that takes a `java.lang.ClassLoader` argument, this
+classloader will be part of the scope of the created `java.cache.Cache` and it is not possible to retrieve it on other members.
+We advise not to use those overloads, as they are not meant to be used in distributed environments!
+
+**`javax.cache.CacheManager`**:
+
+The `CacheManager` provides the capability to create new and manage existing JCache caches.
+
+NOTE: A `javax.cache.Cache` instance created with key and value types in the configuration
+provides a type checking of those types at retrieval of the cache. For that reason, all non-types retrieval methods like
+`getCache` throw an exception because types cannot be checked.
+
+**`javax.cache.configuration.Configuration`**, **`javax.cache.configuration.MutableConfiguration`**:
+
+These two classes are used to configure a cache prior to retrieving it from a `CacheManager`. The `Configuration` interface,
+therefore, acts as a common super type for all compatible configuration classes such as `MutableConfiguration`.
+
+Hazelcast itself offers a special implementation (`com.hazelcast.config.CacheConfig`) of the `Configuration` interface which
+offers more options on the specific Hazelcast properties that can be set to configure features like synchronous and asynchronous
+backups counts or selecting the underlying <<setting-in-memory-format, in-memory format>> of the cache. For more information on this
+configuration class, please see the reference in <<jcache-programmatic-configuration, JCache Programmatic Configuration section>>.
+
+**`javax.cache.Cache`**:
+
+This interface represents the cache instance itself. It is comparable to `java.util.Map` but offers special operations dedicated
+to the caching use case. Therefore, for example `javax.cache.Cache.put()`, unlike `java.util.Map.put()`, does not return the old
+value previously assigned to the given key.
+
+
+NOTE: Bulk operations on the `Cache` interface guarantee atomicity per entry but not over
+all given keys in the same bulk operations since no transactional behavior is applied over the whole batch process.
+
+==== Implementing Factory and FactoryBuilder
+
+The `javax.cache.configuration.Factory` implementations configure features like
+`CacheEntryListener`, `ExpiryPolicy`, and `CacheLoader`s or `CacheWriter`s. These factory implementations are required to distribute the
+different features to members in a cluster environment like Hazelcast. Therefore, these factory implementations have to be serializable.
+
+`Factory` implementations are easy to do, as they follow the default Provider- or Factory-Pattern. The sample class
+`UserCacheEntryListenerFactory` shown below implements a custom JCache `Factory`.
+
+[source,java]
+----
+public class UserCacheEntryListenerFactory
+    implements Factory<CacheEntryListener<Integer, User>> {
+
+    @Override
+    public CacheEntryListener<Integer, User> create() {
+        // Just create a new listener instance
+        return new UserCacheEntryListener();
+    }
+}
+----
+
+To simplify the process for the users, JCache API offers a set of helper methods collected in
+`javax.cache.
+configuration.FactoryBuilder`. In the above configuration example, `FactoryBuilder.factoryOf()` creates a
+singleton factory for the given instance.
+
+
+==== Implementing CacheLoader
+
+`javax.cache.integration.CacheLoader` loads cache entries from any external backend resource. 
+
+===== Cache read-through 
+
+If the cache is
+configured to be `read-through`, then `CacheLoader.load()` is called transparently from the cache when the key or the value is not
+yet found in the cache. If no value is found for a given key, it returns null.
+
+If the cache is not configured to be `read-through`, nothing is loaded automatically. The user code must call `javax.cache.Cache.loadAll()` to load data for the given set of keys into the cache.
+
+For the bulk load operation (`loadAll()`), some keys may not be found in the returned result set. In this case, a `javax.cache.integration.CompletionListener` parameter can be used as an asynchronous callback after all the key-value pairs are loaded because loading many key-value pairs can take lots of time.
+
+===== CacheLoader Example
+
+Let's look at the `UserCacheLoader` implementation. This implementation is quite straight forward.
+
+- It implements `CacheLoader`.
+- It overrides the `load` method to compute or retrieve the value corresponding to `key`.
+- It overrides the `loadAll` method to compute or retrieve the values corresponding to `keys`.
+
+An important note is that
+any kind of exception has to be wrapped into `javax.cache.integration.CacheLoaderException`.
+
+[source,java]
+----
+public class UserCacheLoader
+    implements CacheLoader<Integer, User>, Serializable {
+
+    private final UserDao userDao;
+
+    public UserCacheLoader( UserDao userDao ) {
+        // Store the dao instance created externally
+        this.userDao = userDao;
+    }
+
+    @Override
+    public User load( Integer key ) throws CacheLoaderException {
+        // Just call through into the dao
+        return userDao.findUserById( key );
+    }
+
+    @Override
+    public Map<Integer, User> loadAll( Iterable<? extends Integer> keys )
+        throws CacheLoaderException {
+
+        // Create the resulting map  
+        Map<Integer, User> loaded = new HashMap<Integer, User>();
+        // For every key in the given set of keys
+        for ( Integer key : keys ) {
+            // Try to retrieve the user
+            User user = userDao.findUserById( key );
+            // If user is not found do not add the key to the result set
+            if ( user != null ) {
+                loaded.put( key, user );
+            }
+        }
+        return loaded;
+    }
+}
+----
+
+
+==== CacheWriter
+
+You use a `javax.cache.integration.CacheWriter` to update an external backend resource. If the cache is configured to be
+`write-through`, this process is executed transparently to the user's code. Otherwise, there is currently no way to trigger
+writing changed entries to the external resource to a user-defined point in time.
+
+If bulk operations throw an exception, `java.util.Collection` has to be cleaned of all successfully written keys so
+the cache implementation can determine what keys are written and can be applied to the cache state.
+
+The following example performs the following tasks:
+
+- It implements `CacheWriter`.
+- It overrides the `write` method to write the specified entry to the underlying store.
+- It overrides the `writeAll` method to write the specified entires to the underlying store.
+- It overrides the `delete` method to delete the key entry from the store.
+- It overrides the `deleteAll` method to delete the data and keys from the underlying store for the given collection of keys, if present.
+
+[source,java]
+----
+public class UserCacheWriter
+    implements CacheWriter<Integer, User>, Serializable {
+
+    private final UserDao userDao;
+
+    public UserCacheWriter( UserDao userDao ) {
+        // Store the dao instance created externally
+        this.userDao = userDao;
+    }
+
+    @Override
+    public void write( Cache.Entry<? extends Integer, ? extends User> entry )
+        throws CacheWriterException {
+
+        // Store the user using the dao
+        userDao.storeUser( entry.getKey(), entry.getValue() );
+    }
+
+    @Override
+    public void writeAll( Collection<Cache.Entry<...>> entries )
+        throws CacheWriterException {
+
+        // Retrieve the iterator to clean up the collection from
+        // written keys in case of an exception
+        Iterator<Cache.Entry<...>> iterator = entries.iterator();
+        while ( iterator.hasNext() ) {
+            // Write entry using dao
+            write( iterator.next() );
+            // Remove from collection of keys
+            iterator.remove();
+        }
+    }
+
+    @Override
+    public void delete( Object key ) throws CacheWriterException {
+        // Test for key type
+        if ( !( key instanceof Integer ) ) {
+            throw new CacheWriterException( "Illegal key type" );
+        }
+        // Remove user using dao
+        userDao.removeUser( ( Integer ) key );
+    }
+
+    @Override
+    public void deleteAll( Collection<?> keys ) throws CacheWriterException {
+        // Retrieve the iterator to clean up the collection from
+        // written keys in case of an exception
+        Iterator<?> iterator = keys.iterator();
+        while ( iterator.hasNext() ) {
+            // Write entry using dao
+            delete( iterator.next() );
+            // Remove from collection of keys
+            iterator.remove();
+        }
+    }
+}
+----
+
+Again, the implementation is pretty straightforward and also as above all exceptions thrown by the external resource, like
+`java.sql.SQLException` has to be wrapped into a `javax.cache.integration.CacheWriterException`. Note this is a different
+exception from the one thrown by `CacheLoader`.
+
+==== Implementing EntryProcessor
+
+With `javax.cache.processor.EntryProcessor`, you can apply an atomic function to a cache entry. In a distributed
+environment like Hazelcast, you can move the mutating function to the member that owns the key. If the value
+object is big, it might prevent traffic by sending the object to the mutator and sending it back to the owner to update it.
+
+By default, Hazelcast JCache sends the complete changed value to the backup partition. Again, this can cause a lot of traffic if
+the object is big. The Hazelcast ICache extension can also prevent this. Further information is available at
+<<implementing-backupawareentryprocessor, Implementing BackupAwareEntryProcessor>>.
+
+An arbitrary number of arguments can be passed to the `Cache.invoke()` and `Cache.invokeAll()` methods. All of those arguments need
+to be fully serializable because in a distributed environment like Hazelcast, it is very likely that these arguments have to be passed around the cluster.
+
+The following example performs the following tasks.
+
+- It implements `EntryProcessor`.
+- It overrides the `process` method to process an entry.
+
+[source,java]
+----
+public class UserUpdateEntryProcessor
+    implements EntryProcessor<Integer, User, User> {
+
+    @Override
+    public User process( MutableEntry<Integer, User> entry, Object... arguments )
+        throws EntryProcessorException {
+
+        // Test arguments length
+        if ( arguments.length < 1 ) {
+            throw new EntryProcessorException( "One argument needed: username" );
+        }
+
+        // Get first argument and test for String type
+        Object argument = arguments[0];
+        if ( !( argument instanceof String ) ) {
+            throw new EntryProcessorException(
+            "First argument has wrong type, required java.lang.String" );
+        }
+
+        // Retrieve the value from the MutableEntry
+        User user = entry.getValue();
+
+        // Retrieve the new username from the first argument
+        String newUsername = ( String ) arguments[0];
+
+        // Set the new username
+        user.setUsername( newUsername );
+
+        // Set the changed user to mark the entry as dirty
+        entry.setValue( user );
+
+        // Return the changed user to return it to the caller
+        return user;
+    }
+}
+----
+
+
+NOTE: By executing the bulk `Cache.invokeAll()` operation, atomicity is only guaranteed for a
+single cache entry. No transactional rules are applied to the bulk operation.
+
+NOTE: JCache `EntryProcessor` implementations are not allowed to call
+`javax.cache.Cache` methods. This prevents operations from deadlocking between different calls.
+
+In addition, when using a `Cache.invokeAll()` method, a `java.util.Map` is returned that maps the key to its
+`javax.cache.processor.EntryProcessorResult`, which itself wraps the actual result or a thrown
+`javax.cache.processor.EntryProcessorException`.
+
+==== CacheEntryListener
+
+The `javax.cache.event.CacheEntryListener` implementation is straight forward. `CacheEntryListener` is a super-interface that is used as a marker for listener classes in JCache. The specification brings a set of sub-interfaces.
+
+- `CacheEntryCreatedListener`: Fires after a cache entry is added (even on read-through by a `CacheLoader`) to the cache.
+- `CacheEntryUpdatedListener`: Fires after an already existing cache entry updates.
+- `CacheEntryRemovedListener`: Fires after a cache entry was removed (not expired) from the cache.
+- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be a parallel process-- it is only required to be executed on the keys that are requested by `Cache.get()` and some other operations. For a full table of expiry please see https://www.jcp.org/en/jsr/detail?id=107[https://www.jcp.org/en/jsr/detail?id=107] point 6.  
+
+To configure `CacheEntryListener`, add a `javax.cache.configuration.CacheEntryListenerConfiguration` instance to
+the JCache configuration class, as seen in the above example configuration. In addition, listeners can be configured to be
+executed synchronously (blocking the calling thread) or asynchronously (fully running in parallel).
+
+In this example application, the listener is implemented to print event information on the console. That visualizes what is going on in the cache. This application performs the following tasks:
+
+- It implements the `CacheEntryCreatedListener.onCreated` method to call after an entry is created.
+- It implements the `CacheEntryUpdatedListener.onUpdated` method to call after an entry is updated.
+- It implements the `CacheEntryRemovedListener.onRemoved` method to call after an entry is removed.
+- It implements the `CacheEntryExpiredListener.onExpired` method to call after an entry expires.
+- It implements `printEvents` to print event information on the console.
+
+[source,java]
+----
+public class UserCacheEntryListener
+    implements CacheEntryCreatedListener<Integer, User>,
+        CacheEntryUpdatedListener<Integer, User>,
+        CacheEntryRemovedListener<Integer, User>,
+        CacheEntryExpiredListener<Integer, User> {
+
+    @Override
+    public void onCreated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
+
+        printEvents( cacheEntryEvents );
+    }
+
+    @Override
+    public void onUpdated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
+
+      printEvents( cacheEntryEvents );
+    }
+
+    @Override
+    public void onRemoved( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
+
+      printEvents( cacheEntryEvents );
+    }
+
+    @Override
+    public void onExpired( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
+        throws CacheEntryListenerException {
+
+      printEvents( cacheEntryEvents );
+    }
+
+    private void printEvents( Iterable<CacheEntryEvent<...>> cacheEntryEvents ) {
+        Iterator<CacheEntryEvent<...>> iterator = cacheEntryEvents.iterator();
+        while ( iterator.hasNext() ) {
+            CacheEntryEvent<...> event = iterator.next();
+            System.out.println( event.getEventType() );
+        }
+    }
+}
+----
+
+==== ExpiryPolicy
+
+In JCache, `javax.cache.expiry.ExpiryPolicy` implementations are used to automatically expire cache entries based on different rules.
+
+Expiry timeouts are defined using `javax.cache.expiry.Duration`, which is a pair of `java.util.concurrent.TimeUnit`, that
+describes a time unit and a long, defining the timeout value. The minimum allowed `TimeUnit` is `TimeUnit.MILLISECONDS`.
+The long value `durationAmount` must be equal or greater than zero. A value of zero (or `Duration.ZERO`) indicates that the
+cache entry expires immediately.
+
+By default, JCache delivers a set of predefined expiry strategies in the standard API.
+
+- `AccessedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on accessing the key.
+- `CreatedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is never updated.
+- `EternalExpiryPolicy`: Never expires. This is the default behavior, similar to `ExpiryPolicy` being set to null.
+- `ModifiedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on updating the key.
+- `TouchedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on accessing or updating the key.
+
+Because `EternalExpiryPolicy` does not expire cache entries, it is still possible to evict values from memory if an underlying
+`CacheLoader` is defined.
+
+
+
+

@@ -1,5 +1,5 @@
 
-## Testing for JCache Specification Compliance
+=== Testing for JCache Specification Compliance
 
 Hazelcast JCache is fully compliant with the JSR 107 TCK (Technology Compatibility Kit), and therefore is officially a JCache
 implementation. 
@@ -7,11 +7,11 @@ implementation.
 You can test Hazelcast JCache for compliance by executing the TCK. Just perform the instructions below:
 
 
-- Checkout branch `v1.1.0` of the TCK from <a href="https://github.com/jsr107/jsr107tck" target="_blank">https://github.com/jsr107/jsr107tck</a>.
-- Change the properties in [`pom.xml`](https://github.com/jsr107/jsr107tck/blob/master/pom.xml) as shown below. Alternatively, you can set the values of these properties directly on the maven command line without editing any files as shown in the command line example below. 
+- Checkout branch `v1.1.0` of the TCK from https://github.com/jsr107/jsr107tck[https://github.com/jsr107/jsr107tck].
+- Change the properties in https://github.com/jsr107/jsr107tck/blob/master/pom.xml[`pom.xml`] as shown below. Alternatively, you can set the values of these properties directly on the maven command line without editing any files as shown in the command line example below. 
 - Run the TCK using the command `mvn clean install`. This will run the tests using an embedded Hazelcast member.
 
-```xml
+```
 <properties>
   <jcache.version>1.1.0</jcache.version>
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,7 +47,7 @@ You can test Hazelcast JCache for compliance by executing the TCK. Just perform 
 
 Complete command line example:
 
-```bash
+```
 $ git clone https://github.com/jsr107/jsr107tck
 (clones JSR107 TCK repository to local directory jsr107tck)
 
@@ -61,8 +61,7 @@ $ mvn -Dimplementation-groupId=com.hazelcast -Dimplementation-artifactId=hazelca
      -DCacheManagerImpl=com.hazelcast.cache.impl.HazelcastServerCacheManager \
      -DCacheImpl=com.hazelcast.cache.ICache -DCacheEntryImpl=com.hazelcast.cache.impl.CacheEntry \
      clean install
-
 ```
 
-Please also see [TCK 1.1.0 User Guide](https://docs.google.com/document/u/1/d/1m8d1Z44IFGAd20bXEvT2G--vWXbxaJctk16M2rmbM24/edit#) or [TCK 1.0.0 User Guide](https://docs.google.com/document/d/1w3Ugj_oEqjMlhpCkGQOZkd9iPf955ZWHAVdZzEwYYdU/edit) for more information on the testing instructions.
+Please also see https://docs.google.com/document/u/1/d/1m8d1Z44IFGAd20bXEvT2G--vWXbxaJctk16M2rmbM24/edit#[TCK 1.1.0 User Guide] or https://docs.google.com/document/d/1w3Ugj_oEqjMlhpCkGQOZkd9iPf955ZWHAVdZzEwYYdU/edit[TCK 1.0.0 User Guide] for more information on the testing instructions.
 

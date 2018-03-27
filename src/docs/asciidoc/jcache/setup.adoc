@@ -1,0 +1,233 @@
+
+
+=== JCache Setup and Configuration
+
+This section shows what is necessary to provide the JCache API and the Hazelcast JCache implementation for your application. In
+addition, it demonstrates the different configuration options and describes the configuration properties.
+
+==== Setting up Your Application
+
+To provide your application with this JCache functionality, your application needs the JCache API inside its classpath. This API is the bridge between the specified JCache standard and the implementation provided by Hazelcast.
+
+The method of integrating the JCache API JAR into the application classpath depends on the build system used. For Maven, Gradle, SBT,
+Ivy, and many other build systems, all using Maven-based dependency repositories, perform the integration by adding
+the Maven coordinates to the build descriptor.
+
+As already mentioned, you have to add JCache
+coordinates next to the default Hazelcast coordinates that might be already part of the application.
+
+For Maven users, the coordinates look like the following code:
+
+```
+<dependency>
+  <groupId>javax.cache</groupId>
+  <artifactId>cache-api</artifactId>
+  <version>1.1.0</version>
+</dependency>
+```
+With other build systems, you might need to describe the coordinates in a different way.
+
+===== Activating Hazelcast as JCache Provider
+
+To activate Hazelcast as the JCache provider implementation, add either `hazelcast-all.jar` or
+`hazelcast.jar` to the classpath (if not already available) by either one of the following Maven snippets.
+
+If you use `hazelcast-all.jar`:
+
+```
+<dependency>
+  <groupId>com.hazelcast</groupId>
+  <artifactId>hazelcast-all</artifactId>
+  <version>"your Hazelcast version, e.g. 3.10"</version>
+</dependency>
+```
+
+If you use `hazelcast.jar`:
+
+```
+<dependency>
+  <groupId>com.hazelcast</groupId>
+  <artifactId>hazelcast</artifactId>
+  <version>"your Hazelcast version, e.g. 3.10"</version>
+</dependency>
+```
+The users of other build systems have to adjust the definition of the dependency to their needs.
+
+===== Connecting Clients to Remote Member
+
+When the users want to use Hazelcast clients to connect to a remote cluster, the `hazelcast-client.jar` dependency is also required
+on the client side applications. This JAR is already included in `hazelcast-all.jar`. Or, you can add it to the classpath using the following
+Maven snippet:
+
+```
+<dependency>
+  <groupId>com.hazelcast</groupId>
+  <artifactId>hazelcast-client</artifactId>
+  <version>"your Hazelcast version, e.g. 3.10"</version>
+</dependency>
+```
+
+For other build systems, for instance, ANT, the users have to download these dependencies from either the JSR-107 specification and
+Hazelcast community website (https://hazelcast.org/[http://www.hazelcast.org]) or from the Maven repository search page
+(http://search.maven.org[http://search.maven.org]).
+
+==== Example JCache Application
+
+Before moving on to configuration, let's have a look at a basic introductory example. The following code shows how to use the Hazelcast JCache integration
+inside an application in an easy but typesafe way.
+
+[source,java]
+----
+// Retrieve the CachingProvider which is automatically backed by
+// the chosen Hazelcast member or client provider
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+// Create a CacheManager
+CacheManager cacheManager = cachingProvider.getCacheManager();
+
+// Create a simple but typesafe configuration for the cache
+CompleteConfiguration<String, String> config =
+    new MutableConfiguration<String, String>()
+        .setTypes( String.class, String.class );
+
+// Create and get the cache
+Cache<String, String> cache = cacheManager.createCache( "example", config );
+// Alternatively to request an already existing cache
+// Cache<String, String> cache = cacheManager
+//     .getCache( name, String.class, String.class );
+
+// Put a value into the cache
+cache.put( "world", "Hello World" );
+
+// Retrieve the value again from the cache
+String value = cache.get( "world" );
+
+// Print the value 'Hello World'
+System.out.println( value );
+----
+
+Although the example is simple, let's go through the code lines one by one.
+
+===== Getting the Hazelcast JCache Implementation
+
+First of all, we retrieve the `javax.cache.spi.CachingProvider` using the static method from
+`javax.cache.Caching.getCachingManager()`, which automatically picks up Hazelcast as the underlying JCache implementation, if
+available in the classpath. This way, the Hazelcast implementation of a `CachingProvider` will automatically start a new Hazelcast
+member or client (depending on the chosen provider type) and pick up the configuration from either the command line parameter
+or from the classpath. We will show how to use an existing `HazelcastInstance` later in this chapter; for now, we keep it simple.
+
+===== Setting up the JCache Entry Point
+
+In the next line, we ask the `CachingProvider` to return a `javax.cache.CacheManager`. This is the general application's entry
+point into JCache. The `CacheManager` creates and manages named caches.
+
+===== Configuring the Cache Before Creating It
+
+The next few lines create a simple `javax.cache.configuration.MutableConfiguration` to configure the cache before actually
+creating it. In this case, we only configure the key and value types to make the cache typesafe which is highly recommended and
+checked on retrieval of the cache.
+
+===== Creating the Cache
+
+To create the cache, we call `javax.cache.CacheManager.createCache()` with a name for the cache and the previously created
+configuration; the call returns the created cache. If you need to retrieve a previously created cache, you can use the corresponding method overload `javax.cache.CacheManager.getCache()`. If the cache was created using type parameters, you must retrieve the cache afterward using the type checking version of `getCache`.
+
+===== get, put, and getAndPut
+
+The following lines are simple `put` and `get` calls from the `java.util.Map` interface. The
+`javax.cache.Cache.put()` has a `void` return type and does not return the previously assigned value of the key. To imitate the
+`java.util.Map.put()` method, the JCache cache has a method called `getAndPut`.
+
+==== Configuring for JCache
+
+Hazelcast JCache provides for two different methods of cache configuration:
+
+* programmatically: the typical Hazelcast way, using the Config API seen above, and
+* declaratively: using `hazelcast.xml` or `hazelcast-client.xml`.
+
+===== JCache Declarative Configuration
+
+You can declare your JCache cache configuration using the `hazelcast.xml` or `hazelcast-client.xml` configuration files. Using this declarative configuration makes creating the `javax.cache.Cache` fully transparent and automatically ensures internal thread safety. You do not need a call to `javax.cache.Cache.createCache()` in this case: you can retrieve the cache using
+`javax.cache.Cache.getCache()` overloads and by passing in the name defined in the configuration for the cache.
+
+To retrieve the cache that you defined in the declaration files, you need only perform a simple call (example below) because the cache is created automatically by the implementation.
+
+```
+CachingProvider cachingProvider = Caching.getCachingProvider();
+CacheManager cacheManager = cachingProvider.getCacheManager();
+Cache<Object, Object> cache = cacheManager
+    .getCache( "default", Object.class, Object.class );
+```
+
+Note that this section only describes the JCache provided standard properties. For the Hazelcast specific properties, please see the <<icache-configuration, ICache Configuration section>>.
+
+```
+<cache name="default">
+  <key-type class-name="java.lang.Object" />
+  <value-type class-name="java.lang.Object" />
+  <statistics-enabled>false</statistics-enabled>
+  <management-enabled>false</management-enabled>
+
+  <read-through>true</read-through>
+  <write-through>true</write-through>
+  <cache-loader-factory
+     class-name="com.example.cache.MyCacheLoaderFactory" />
+  <cache-writer-factory
+     class-name="com.example.cache.MyCacheWriterFactory" />
+  <expiry-policy-factory
+     class-name="com.example.cache.MyExpiryPolicyFactory" />
+
+  <cache-entry-listeners>
+    <cache-entry-listener old-value-required="false" synchronous="false">
+      <cache-entry-listener-factory
+         class-name="com.example.cache.MyEntryListenerFactory" />
+      <cache-entry-event-filter-factory
+         class-name="com.example.cache.MyEntryEventFilterFactory" />
+    </cache-entry-listener>
+    ...
+  </cache-entry-listeners>
+</cache>
+```
+
+* `key-type#class-name`: Fully qualified class name of the cache key type. Its default value is `java.lang.Object`.
+* `value-type#class-name`: Fully qualified class name of the cache value type. Its default value is `java.lang.Object`.
+* `statistics-enabled`: If set to true, statistics like cache hits and misses are collected. Its default value is false.
+* `management-enabled`: If set to true, JMX beans are enabled and collected statistics are provided. It doesn't automatically enable statistics collection. Defaults to false.
+* `read-through`: If set to true, enables read-through behavior of the cache to an underlying configured `javax.cache.integration.CacheLoader` which is also known as lazy-loading. Its default value is false.
+* `write-through`: If set to true, enables write-through behavior of the cache to an underlying configured `javax.cache.integration.CacheWriter` which passes any changed value to the external backend resource. Its default value is false.
+* `cache-loader-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.integration.CacheLoader` instance to the cache.
+* `cache-writer-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.integration.CacheWriter` instance to the cache.
+* `expiry-policy-factory#-class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.expiry.ExpiryPolicy` instance to the cache.
+* `cache-entry-listener`: A set of attributes and elements, explained below, to describe a `javax.cache.event.CacheEntryListener`.
+** `cache-entry-listener#old-value-required`: If set to true, previously assigned values for the affected keys will be sent to the `javax.cache.event.CacheEntryListener` implementation. Setting this attribute to true creates additional traffic. Its default value is false.
+** `cache-entry-listener#synchronous`: If set to true, the `javax.cache.event.CacheEntryListener` implementation will be called in a synchronous manner. Its default value is false.
+** `cache-entry-listener/entry-listener-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.CacheEntryListener` instance.
+** `cache-entry-listener/entry-event-filter-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.CacheEntryEventFilter` instance.
+
+
+NOTE: The JMX MBeans provided by Hazelcast JCache show statistics of the local member only.
+To show the cluster-wide statistics, the user should collect statistic information from all members and accumulate them to
+the overall statistics.
+
+===== JCache Programmatic Configuration
+
+To configure the JCache programmatically:
+
+* either instantiate `javax.cache.configuration.MutableConfiguration` if you will use
+only the JCache standard configuration,
+* or instantiate `com.hazelcast.config.CacheConfig` for a deeper Hazelcast integration.
+
+`com.hazelcast.config.CacheConfig` offers additional options that are specific to Hazelcast, such as asynchronous and synchronous backup counts.
+Both classes share the same supertype interface `javax.cache.configuration.CompleteConfiguration` which is part of the JCache
+standard.
+
+
+NOTE: To stay vendor independent, try to keep your code as near as possible to the standard JCache API. We recommend that you use declarative configuration and that you use the `javax.cache.configuration.Configuration` or `javax.cache.configuration.CompleteConfiguration` interfaces in
+your code only when you need to pass the configuration instance throughout your code.
+
+If you don't need to configure Hazelcast specific properties, we recommend that you instantiate
+`javax.cache.configuration.MutableConfiguration` and that you use the setters to configure Hazelcast as shown in the example in the
+<<example-jcache-application, Example JCache Application section>>. Since the configurable properties are the same as the ones explained in the <<jcache-declarative-configuration, JCache Declarative Configuration section>>, they are not mentioned here. For Hazelcast specific properties, please read the <<icache-configuration, ICache Configuration section>> section.
+
+
+

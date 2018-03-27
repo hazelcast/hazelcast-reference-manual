@@ -1,14 +1,5 @@
 
-# Hazelcast JCache
-
-This chapter describes the basics of JCache, the standardized Java caching layer API. The JCache
-caching API is specified by the Java Community Process (JCP) as Java Specification Request (JSR) 107.
-
-Caching keeps data in memory that either are slow to calculate/process or originate from another underlying backend system.
-Caching is used to prevent additional request round trips for frequently used data. In both cases, caching can be used to
-gain performance or decrease application latencies.
-
-## JCache Overview
+=== JCache Overview
 
 Starting with Hazelcast 3.3.1, Hazelcast offers a specification-compliant JCache implementation. To show our commitment to this
 important specification that the Java world was waiting for over a decade, we did not just provide a simple wrapper around our existing
@@ -22,26 +13,26 @@ operations to give the user extra power.
 This chapter gives a basic understanding of how to configure your application and how to setup Hazelcast to be your JCache
 provider. It also shows examples of basic JCache usage as well as the additionally offered features that are not part of JSR-107.
 To gain a full understanding of the JCache functionality and provided guarantees of different operations, read
-the specification document (which is also the main documentation for functionality) at the specification page of <a href="https://www.jcp.org/en/jsr/detail?id=107" target="_blank">JSR-107</a>.
+the specification document (which is also the main documentation for functionality) at the specification page of https://www.jcp.org/en/jsr/detail?id=107[JSR-107].
 
-## Supported JCache Versions
+==== Supported JCache Versions
 
 Two versions of the JCache specification have been released:
 
- - The original release, version 1.0.0, was released in March 2014. Hazelcast versions 3.3.1 up to 3.9.2 (included) implement version 1.0.0 of the JCache specification. 
- - A maintenance release, version 1.1.0 was released in December 2017. Hazelcast version 3.9.3 and higher implement JCache specification version 1.1.0.
+* The original release, version 1.0.0, was released in March 2014. Hazelcast versions 3.3.1 up to 3.9.2 (included) implement version 1.0.0 of the JCache specification. 
+* A maintenance release, version 1.1.0 was released in December 2017. Hazelcast version 3.9.3 and higher implement JCache specification version 1.1.0.
  
 JCache 1.1.0 is backwards compatible with JCache 1.0.0. As a maintenance release, it introduces clarifications and bug fixes in the specification, reference implementation
 and TCK, without introducing any additional features. 
  
-### Upgrading from JCache 1.0.0 to 1.1.0
+==== Upgrading from JCache 1.0.0 to 1.1.0
  
 When upgrading from a Hazelcast version which implements JCache 1.0.0 to a version that implements version 1.1.0 of the specification, some behavioral differences must be taken into account:
 
- - Invoking `CacheManager.getCacheNames` on a closed `CacheManager` will return an empty iterator under JCache 1.0.0, while under JCache 1.1.0 will throw an `IllegalStateException`.
- - Runtime type checking is removed from `CacheManager.getCache(String)`, so when using JCache 1.1.0 one may obtain a `Cache` by name even when its configured key/value types are not known.
- - Statistics effects of `Cache.putIfAbsent` on misses and hits are properly applied when using JCache 1.1.0, while under JCache 1.0.0 misses and hits were not updated.
+* Invoking `CacheManager.getCacheNames` on a closed `CacheManager` will return an empty iterator under JCache 1.0.0, while under JCache 1.1.0 will throw an `IllegalStateException`.
+* Runtime type checking is removed from `CacheManager.getCache(String)`, so when using JCache 1.1.0 one may obtain a `Cache` by name even when its configured key/value types are not known.
+* Statistics effects of `Cache.putIfAbsent` on misses and hits are properly applied when using JCache 1.1.0, while under JCache 1.0.0 misses and hits were not updated.
  
 Note that these behavioral differences apply on the Hazelcast member that executes the operation. Thus when performing a rolling member upgrade from a JCache 1.0.0-compliant Hazelcast version to a newer Hazelcast version that supports JCache 1.1.0, operations executed on the new members will exhibit JCache 1.1.0 behavior while those executed on old members will implement JCache 1.0.0 behavior.  
 
-The complete list of issues addressed in JCache specification version 1.1.0 is <a href="https://github.com/jsr107/jsr107spec/milestone/2?closed=1" target="_blank">available on Github</a>.
+The complete list of issues addressed in JCache specification version 1.1.0 is https://github.com/jsr107/jsr107spec/milestone/2?closed=1"[available on Github].

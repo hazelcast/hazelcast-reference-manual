@@ -1,0 +1,977 @@
+
+=== Hazelcast JCache Extension - ICache
+
+Hazelcast provides extension methods to Cache API through the interface `com.hazelcast.cache.ICache`.
+
+It has two sets of extensions:
+
+* Asynchronous version of all cache operations. See [Async Operations](#icache-async-methods).
+* Cache operations with custom `ExpiryPolicy` parameter to apply on that specific operation. See [Custom ExpiryPolicy](#defining-a-custom-expirypolicy).
+
+
+'''
+NOTE: ICache data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your cache) and Fast Batch Processing. Hazelcast Jet uses ICache as a source (reads data from ICache) and as a sink (writes data to ICache). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#imap-and-icache[here] in the Hazelcast Jet Reference Manual to learn how Jet uses ICache, i.e., how it can read from and write to ICache.
+
+==== Scoping to Join Clusters
+
+A `CacheManager`, started either as a client or as an embedded member, can be configured to start a new Hazelcast instance or reuse an already existing one to connect to a Hazelcast cluster. To achieve this, request
+a `CacheManager` by passing a `java.net.URI` instance to `CachingProvider.getCacheManager()`. The `java.net.URI` instance must point to either a Hazelcast configuration or to the name of a named
+`com.hazelcast.core.HazelcastInstance` instance. In addition to the above, the same can be achieved by passing Hazelcast-specific properties to `CachingProvider.getCacheManager(URI, ClassLoader, Properties)` as detailed in the sections that follow.
+
+NOTE: Multiple requests for the same `java.net.URI` result in returning a `CacheManager`
+instance that shares the same `HazelcastInstance` as the `CacheManager` returned by the previous call.
+
+===== Examples
+
+The following examples illustrate how `HazelcastInstance`s are created or reused during the creation of a new `CacheManager`. Complete reference on the `HazelcastInstance` lookup mechanism is provided in the sections that follow.
+
+====== Starting the Default `CacheManager`
+
+Assuming no other `HazelcastInstance` exists in the same JVM, the `cacheManager` below will start a new `HazelcastInstance`, configured according to the configuration lookup rules as defined for `Hazelcast.newHazelcastInstance()` in case of an embedded member or `HazelcastClient.newHazelcastClient()` for a client-side `CacheManager`.
+
+```
+CachingProvider caching = Caching.getCachingProvider();
+CacheManager cacheManager = caching.getCacheManager();
+```
+
+====== Reusing Existing `HazelcastInstance` with the Default `CacheManager`
+
+When using both Hazelcast-specific features and JCache, a `HazelcastInstance` might be already available to your JCache configuration. By configuring an instance name in `hazelcast.xml` in the classpath root, the `CacheManager` will locate the existing instance by name and reuse it.
+
+* `hazelcast.xml`:
++  
+```
+  <?xml version="1.0" encoding="UTF-8"?>
+  <hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.9.xsd" xmlns="http://www.hazelcast.com/schema/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <instance-name>hz-member-1</instance-name>
+  </hazelcast>
+```
++  
+* `HazelcastInstance` & `CacheManager` startup:
++
+```
+  // start hazelcast, configured with default hazelcast.xml 
+  HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+  // start the default CacheManager -- it will locate the default hazelcast.xml configuration
+  // and identify the existing HazelcastInstance by its name
+  CachingProvider caching = Caching.getCachingProvider();
+  CacheManager cacheManager = caching.getCacheManager();
+```
+ 
+====== Starting a `CacheManager` with a New `HazelcastInstance` Configured with a Non-default Configuration File
+
+Given a configuration file named `hazelcast-jcache.xml` in the package `com.domain`, a `CacheManager` can be configured to start a new `HazelcastInstance`:
+
+* By passing the `URI` to the configuration file as the `CacheManager`'s `URI`:
++
+```
+  CachingProvider caching = Caching.getCachingProvider();
+  CacheManager cacheManager = caching.getCacheManager(new URI("classpath:com/domain/hazelcast-jcache.xml"), null);
+```
++
+* By specifying the configuration file location as a property:
++
+```
+  Properties properties = HazelcastCachingProvider.propertiesByLocation("classpath:com/domain/aaa-hazelcast.xml");
+  CachingProvider caching = Caching.getCachingProvider();
+  CacheManager cacheManager = caching.getCacheManager(new URI("any-uri-will-do"), null, properties);
+```
+
+Note that if the Hazelcast configuration file does specify an instance name, then any `CacheManager`s referencing the same configuration file will locate by name and reuse the same `HazelcastInstance`.
+
+====== Reusing an Existing Named `HazelcastInstance`
+
+Assuming a `HazelcastInstance` named `hc-instance` is already started, it can be used as the `HazelcastInstance` to back a `CacheManager`:
+ 
+* By using the instance's name as the `CacheManager`'s `URI`:
++
+```
+  CachingProvider caching = Caching.getCachingProvider();
+  CacheManager cacheManager = caching.getCacheManager(new URI("hc-instance"), null);
+```
++
+* By specifying the instance name as a property:
++
+```
+  Properties properties = HazelcastCachingProvider.propertiesByInstanceName("hc-instance");
+  CachingProvider caching = Caching.getCachingProvider();
+  CacheManager cacheManager = caching.getCacheManager(new URI("any-uri-will-do"), null, properties);
+```
+
+===== Applying Configuration Scope
+
+To connect or join different clusters, apply a configuration scope to the `CacheManager`. If the same `URI` is
+used to request a `CacheManager` that was created previously, those `CacheManager`s share the same underlying `HazelcastInstance`.
+
+To apply configuration scope you can do either one of the following:
+
+- pass the path to the configuration file using the location property
+`HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` (which resolves to `hazelcast.config.location`) as a mapping inside a
+`java.util.Properties` instance to the `CachingProvider.getCacheManager(uri, classLoader, properties)` call.
+- use directly the configuration path as the `CacheManager`'s `URI`.
+
+If both `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` property is set and the `CacheManager` `URI` resolves to a valid config file location, then the property value will be used to obtain the configuration for the `HazelcastInstance` the first time a `CacheManager` is created for the given `URI`.
+ 
+Here is an example of using configuration scope:
+
+[source,java]
+----
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+// Create Properties instance pointing to a Hazelcast config file
+Properties properties = new Properties();
+// "scope-hazelcast.xml" resides in package com.domain.config
+properties.setProperty( HazelcastCachingProvider.HAZELCAST_CONFIG_LOCATION,
+    "classpath:com/domain/config/scoped-hazelcast.xml" );
+
+URI cacheManagerName = new URI( "my-cache-manager" );
+CacheManager cacheManager = cachingProvider
+    .getCacheManager( cacheManagerName, null, properties );
+----
+
+Here is an example using `HazelcastCachingProvider.propertiesByLocation()` helper method:
+
+[source,java]
+----
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+// Create Properties instance pointing to a Hazelcast config file in root package
+String configFile = "classpath:scoped-hazelcast.xml";
+Properties properties = HazelcastCachingProvider
+    .propertiesByLocation( configFile );
+
+URI cacheManagerName = new URI( "my-cache-manager" );
+CacheManager cacheManager = cachingProvider
+    .getCacheManager( cacheManagerName, null, properties );
+----
+
+The retrieved `CacheManager` is scoped to use the `HazelcastInstance` that was just created and configured using the given XML
+configuration file.
+
+Available protocols for config file URL include `classpath` to point to a classpath location, `file` to point to a filesystem
+location, and `http` and `https` for remote web locations. In addition, everything that does not specify a protocol is recognized
+as a placeholder that can be configured using a system property.
+
+```
+String configFile = "my-placeholder";
+Properties properties = HazelcastCachingProvider
+    .propertiesByLocation( configFile );
+```
+
+You can set this on the command line:
+
+```
+-Dmy-placeholder=classpath:my-configs/scoped-hazelcast.xml
+```
+
+You should consider the following rules about the Hazelcast instance name when you specify the configuration file location using `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` (which resolves to `hazelcast.config.location`):
+
+* If you also specified the `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) property, this property is used as the instance name even though you configured the instance name in the configuration file.
+* If you do not specify `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` but you configure the instance name in the configuration file using the element `<instance-name>`, this element's value will be used as the instance name.
+* If you do not specify an instance name via property or in the configuration file, the URL of the configuration file location is used as the instance name.
+
+NOTE: No check is performed to prevent creating multiple `CacheManager`s with the same cluster
+configuration on different configuration files. If the same cluster is referred from different configuration files, multiple
+cluster members or clients are created.
+
+NOTE: The configuration file location will not be a part of the resulting identity of the
+`CacheManager`. An attempt to create a `CacheManager` with a different set of properties but an already used name will result in
+undefined behavior.
+
+===== Binding to a Named Instance
+
+You can bind `CacheManager` to an existing and named `HazelcastInstance` instance. If the `instanceName` is specified in `com.hazelcast.config.Config`, it can be used directly by passing it to `CachingProvider` implementation. Otherwise (`instanceName` not set or instance is a client instance) you must get the instance name from the `HazelcastInstance` instance via the `String getName()` method to pass the `CachingProvider` implementation. Please note that `instanceName` is not configurable for the client side `HazelcastInstance` instance and is auto-generated by using group name (if it is specified). In general, `String getName()` method over `HazelcastInstance` is safer and the preferable way to get the name of the instance. Multiple `CacheManager`s created using an equal `java.net.URI` will share the same `HazelcastInstance`.
+
+A named scope is applied nearly the same way as the configuration scope. Pass the instance name using:
+
+- either the property `HazelcastCachingProvider#HAZELCAST_INSTANCE_NAME` (which resolves to `hazelcast.instance.name`) as a mapping inside a `java.util.Properties` instance to the `CachingProvider.getCacheManager(uri, classLoader, properties)` call.
+- or use the instance name when specifying the `CacheManager`'s `URI`.
+
+If a valid instance name is provided both as property and as `URI`, then the property value takes precedence and is used to resolve the `HazelcastInstance` the first time a `CacheManager` is created for the given `URI`.
+
+Here is an example of Named Instance Scope with specified name:
+
+[source,java]
+----
+Config config = new Config();
+config.setInstanceName( "my-named-hazelcast-instance" );
+// Create a named HazelcastInstance
+Hazelcast.newHazelcastInstance( config );
+
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+// Create Properties instance pointing to a named HazelcastInstance
+Properties properties = new Properties();
+properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_NAME,
+     "my-named-hazelcast-instance" );
+
+URI cacheManagerName = new URI( "my-cache-manager" );
+CacheManager cacheManager = cachingProvider
+    .getCacheManager( cacheManagerName, null, properties );
+----
+
+Here is an example of Named Instance Scope with specified name passed as `URI` of the `CacheManager`:
+
+[source,java]
+----
+Config config = new Config();
+config.setInstanceName( "my-named-hazelcast-instance" );
+// Create a named HazelcastInstance
+Hazelcast.newHazelcastInstance( config );
+
+CachingProvider cachingProvider = Caching.getCachingProvider();
+URI cacheManagerName = new URI( "my-named-hazelcast-instance" );
+CacheManager cacheManager = cachingProvider
+    .getCacheManager( cacheManagerName, null);
+----
+
+Here is an example of Named Instance Scope with auto-generated name:
+
+[source,java]
+----
+Config config = new Config();
+// Create a auto-generated named HazelcastInstance
+HazelcastInstance instance = Hazelcast.newHazelcastInstance( config );
+String instanceName = instance.getName();
+
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+// Create Properties instance pointing to a named HazelcastInstance
+Properties properties = new Properties();
+properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_NAME, 
+     instanceName );
+
+URI cacheManagerName = new URI( "my-cache-manager" );
+CacheManager cacheManager = cachingProvider
+    .getCacheManager( cacheManagerName, null, properties );
+----
+
+Here is an example of Named Instance Scope with auto-generated name on client instance:
+
+[source,java]
+----
+ClientConfig clientConfig = new ClientConfig();
+ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
+networkConfig.addAddress("127.0.0.1", "127.0.0.2");
+
+// Create a client side HazelcastInstance
+HazelcastInstance instance = HazelcastClient.newHazelcastClient( clientConfig );
+String instanceName = instance.getName();
+
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+// Create Properties instance pointing to a named HazelcastInstance
+Properties properties = new Properties();
+properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_NAME, 
+     instanceName );
+
+URI cacheManagerName = new URI( "my-cache-manager" );
+CacheManager cacheManager = cachingProvider
+    .getCacheManager( cacheManagerName, null, properties );
+----
+
+Here is an example using `HazelcastCachingProvider.propertiesByInstanceName()` method:
+
+[source,java]
+----
+Config config = new Config();
+config.setInstanceName( "my-named-hazelcast-instance" );
+// Create a named HazelcastInstance
+Hazelcast.newHazelcastInstance( config );
+
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+// Create Properties instance pointing to a named HazelcastInstance
+Properties properties = HazelcastCachingProvider
+    .propertiesByInstanceName( "my-named-hazelcast-instance" );
+
+URI cacheManagerName = new URI( "my-cache-manager" );
+CacheManager cacheManager = cachingProvider
+    .getCacheManager( cacheManagerName, null, properties );
+----
+
+NOTE: The `instanceName` will not be a part of the resulting identity of the `CacheManager`.
+An attempt to create a `CacheManager` with a different set of properties but an already used name will result in undefined behavior.
+
+===== Binding to an Existing Hazelcast Instance Object
+
+When an existing `HazelcastInstance` object is available, it can be passed to the `CacheManager` by setting the property `HazelcastCachingProvider#HAZELCAST_INSTANCE_ITSELF`:
+
+[source,java]
+----
+// Create a member HazelcastInstance
+HazelcastInstance instance = Hazelcast.newHazelcastInstance();
+
+Properties properties = new Properties();
+properties.put( HazelcastCachingProvider.HAZELCAST_INSTANCE_ITSELF, 
+     instance );
+
+CachingProvider cachingProvider = Caching.getCachingProvider();
+// cacheManager initialized for uri will be bound to instance
+CacheManager cacheManager = cachingProvider.getCacheManager(uri, classLoader, properties);
+----
+
+==== Namespacing
+
+The `java.net.URI`s that don't use the above-mentioned Hazelcast-specific schemes are recognized as namespacing. Those
+`CacheManager`s share the same underlying default `HazelcastInstance` created (or set) by the `CachingProvider`, but they cache with the
+same names and different namespaces on the `CacheManager` level, and therefore they won't share the same data. This is useful where multiple
+applications might share the same Hazelcast JCache implementation, e.g., on application or OSGi servers, but are developed by
+independent teams. To prevent interfering on caches using the same name, every application can use its own namespace when
+retrieving the `CacheManager`.
+
+Here is an example of using namespacing.
+
+```
+CachingProvider cachingProvider = Caching.getCachingProvider();
+
+URI nsApp1 = new URI( "application-1" );
+CacheManager cacheManagerApp1 = cachingProvider.getCacheManager( nsApp1, null );
+
+URI nsApp2 = new URI( "application-2" );
+CacheManager cacheManagerApp2 = cachingProvider.getCacheManager( nsApp2, null );
+```
+
+That way both applications share the same `HazelcastInstance` instance but not the same caches.
+
+==== Retrieving an ICache Instance
+
+Besides <<scoping-to-join-clusters, Scoping to Join Clusters>> and <<namespacing, Namespacing>>, which are implemented using the URI feature of the
+specification, all other extended operations are required to retrieve the `com.hazelcast.cache.ICache` interface instance from
+the JCache `javax.cache.Cache` instance. For Hazelcast, both interfaces are implemented on the same object instance. It
+is recommended that you stay with the specification method to retrieve the `ICache` version, since `ICache` might be subject to change without notification.
+
+To retrieve or unwrap the `ICache` instance, you can execute the following code example:
+
+```
+CachingProvider cachingProvider = Caching.getCachingProvider();
+CacheManager cacheManager = cachingProvider.getCacheManager();
+Cache<Object, Object> cache = cacheManager.getCache( ... );
+
+ICache<Object, Object> unwrappedCache = cache.unwrap( ICache.class );
+```
+
+After unwrapping the `Cache` instance into an `ICache` instance, you have access to all of the following operations, e.g.,
+<<icache-async-methods, ICache Async Methods>> and <<icache-convenience-methods, ICache Convenience Methods>>.
+
+
+==== ICache Configuration
+
+As mentioned in the <<jcache-declarative-configuration, JCache Declarative Configuration section>>, the Hazelcast ICache extension offers
+additional configuration properties over the default JCache configuration. These additional properties include internal storage format, backup counts, eviction policy and quorum reference.
+
+The declarative configuration for ICache is a superset of the previously discussed JCache configuration:
+
+```
+<cache>
+  <!-- ... default cache configuration goes here ... -->
+  <backup-count>1</backup-count>
+  <async-backup-count>1</async-backup-count>
+  <in-memory-format>BINARY</in-memory-format>
+  <eviction size="10000" max-size-policy="ENTRY_COUNT" eviction-policy="LRU" />
+  <partition-lost-listeners>
+     <partition-lost-listener>CachePartitionLostListenerImpl</partition-lost-listener>
+ </partition-lost-listeners>
+ <quorum-ref>quorum-name</quorum-ref>
+ <disable-per-entry-invalidation-events>true</disable-per-entry-invalidation-events>
+</cache>
+```
+
+* `backup-count`: Number of synchronous backups. Those backups are executed before the mutating cache operation is finished. The mutating operation is blocked. `backup-count` default value is 1.
+* `async-backup-count`: Number of asynchronous backups. Those backups are executed asynchronously so the mutating operation is not blocked and it will be done immediately. `async-backup-count` default value is 0.  
+* `in-memory-format`: Internal storage format. For more information, please see the <<setting-in-memory-format, in-memory format section>>. Default is `BINARY`.
+* `eviction`: Defines the used eviction strategies and sizes for the cache. For more information on eviction, please see the <<jcache-eviction, JCache Eviction>>.
+** `size`: Maximum number of records or maximum size in bytes depending on the `max-size-policy` property. Size can be any integer between `0` and `Integer.MAX_VALUE`. Default max-size-policy is `ENTRY_COUNT` and default size is `10.000`.
+** `max-size-policy`: Maximum size. If maximum size is reached, the cache is evicted based on the eviction policy. Default max-size-policy is `ENTRY_COUNT` and default size is `10.000`. The following eviction policies are available:
+*** `ENTRY_COUNT`: Maximum number of cache entries in the cache. **Available on heap based cache record store only.**
+*** `USED_NATIVE_MEMORY_SIZE`: Maximum used native memory size in megabytes per cache for each Hazelcast instance. **Available on High-Density Memory cache record store only.**
+*** `USED_NATIVE_MEMORY_PERCENTAGE`: Maximum used native memory size percentage per cache for each Hazelcast instance. **Available on High-Density Memory cache record store only.**
+*** `FREE_NATIVE_MEMORY_SIZE`: Minimum free native memory size in megabytes for each Hazelcast instance. **Available on High-Density Memory cache record store only.**
+*** `FREE_NATIVE_MEMORY_PERCENTAGE`: Minimum free native memory size percentage for each Hazelcast instance. **Available on High-Density Memory cache record store only.**
+** `eviction-policy`: Eviction policy that compares values to find the best matching eviction candidate. Default is `LRU`.
+*** `LRU`: Less Recently Used - finds the best eviction candidate based on the lastAccessTime.
+*** `LFU`: Less Frequently Used - finds the best eviction candidate based on the number of hits.
+* `partition-lost-listeners` : Defines listeners for dispatching partition lost events for the cache. For more information, please see the <<icache-partition-lost-listener, ICache Partition Lost Listener section>>.
+* `quorum-ref` : Name of quorum configuration that you want this cache to use.
+* `disable-per-entry-invalidation-events` : Disables invalidation events for each entry; but full-flush invalidation events are still enabled. Full-flush invalidation means the invalidation of events for all entries when `clear` is called. The default value is `false`.
+
+Since `javax.cache.configuration.MutableConfiguration` misses the above additional configuration properties, Hazelcast ICache extension
+provides an extended configuration class called `com.hazelcast.config.CacheConfig`. This class is an implementation of `javax.cache.configuration.CompleteConfiguration` and all the properties shown above can be configured
+using its corresponding setter methods.
+
+NOTE:At the client side, ICache can be configured only programmatically.
+
+
+==== ICache Async Methods
+
+As another addition of Hazelcast ICache over the normal JCache specification, Hazelcast provides asynchronous versions of almost
+all methods, returning a `com.hazelcast.core.ICompletableFuture`. By using these methods and the returned future objects, you can use JCache in a reactive way by registering zero or more callbacks on the future to prevent blocking the current thread.
+
+
+The asynchronous versions of the methods append the phrase `Async` to the method name. The example code below uses the method `putAsync()`.
+
+[source,java]
+----
+ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
+ICompletableFuture<String> future = unwrappedCache.getAndPutAsync( 1, "value" );
+future.andThen( new ExecutionCallback<String>() {
+    public void onResponse( String response ) {
+        System.out.println( "Previous value: " + response );
+    }
+
+    public void onFailure( Throwable t ) {
+        t.printStackTrace();
+    }
+} );
+----
+
+Following methods
+are available in asynchronous versions:
+
+* `get(key)`:
+** `getAsync(key)`
+** `getAsync(key, expiryPolicy)`
+* `put(key, value)`:
+** `putAsync(key, value)`
+** `putAsync(key, value, expiryPolicy)`
+* `putIfAbsent(key, value)`:
+** `putIfAbsentAsync(key, value)`
+** `putIfAbsentAsync(key, value, expiryPolicy)`
+* `getAndPut(key, value)`:
+** `getAndPutAsync(key, value)`
+** `getAndPutAsync(key, value, expiryPolicy)`
+* `remove(key)`:
+** `removeAsync(key)`
+* `remove(key, value)`:
+** `removeAsync(key, value)`
+* `getAndRemove(key)`:
+** `getAndRemoveAsync(key)`
+* `replace(key, value)`:
+** `replaceAsync(key, value)`
+** `replaceAsync(key, value, expiryPolicy)`
+* `replace(key, oldValue, newValue)`:
+** `replaceAsync(key, oldValue, newValue)`
+** `replaceAsync(key, oldValue, newValue, expiryPolicy)`
+* `getAndReplace(key, value)`:
+** `getAndReplaceAsync(key, value)`
+** `getAndReplaceAsync(key, value, expiryPolicy)`
+
+The methods with a given `javax.cache.expiry.ExpiryPolicy` are further discussed in the
+<<defining-a-custom-expirypolicy, Defining a Custom ExpiryPolicy>>.
+
+NOTE: Asynchronous versions of the methods are not compatible with synchronous events.
+
+==== Defining a Custom ExpiryPolicy
+
+The JCache specification has an option to configure a single `ExpiryPolicy` per cache. Hazelcast ICache extension
+offers the possibility to define a custom `ExpiryPolicy` per key by providing a set of method overloads with an `expirePolicy`
+parameter, as in the list of asynchronous methods in the <<icache-async-methods, Async Methods section>>. This means that you can pass custom expiry policies to a cache operation.
+
+Here is how an `ExpiryPolicy` is set on JCache configuration:
+
+```
+CompleteConfiguration<String, String> config =
+    new MutableConfiguration<String, String>()
+        .setExpiryPolicyFactory(
+            AccessedExpiryPolicy.factoryOf( Duration.ONE_MINUTE )
+        );
+```
+
+To pass a custom `ExpiryPolicy`, a set of overloads is provided. You can use them as shown in the following code example.
+
+```
+ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
+unwrappedCache.put( 1, "value", new AccessedExpiryPolicy( Duration.ONE_DAY ) );
+```
+
+The `ExpiryPolicy` instance can be pre-created, cached, and re-used, but only for each cache instance. This is because `ExpiryPolicy`
+implementations can be marked as `java.io.Closeable`. The following list shows the provided method overloads over `javax.cache.Cache`
+by `com.hazelcast.cache.ICache` featuring the `ExpiryPolicy` parameter:
+
+* `get(key)`:
+** `get(key, expiryPolicy)`
+* `getAll(keys)`:
+** `getAll(keys, expirePolicy)`
+* `put(key, value)`:
+** `put(key, value, expirePolicy)`
+* `getAndPut(key, value)`:
+** `getAndPut(key, value, expirePolicy)`
+* `putAll(map)`:
+** `putAll(map, expirePolicy)`
+* `putIfAbsent(key, value)`:
+** `putIfAbsent(key, value, expirePolicy)`
+* `replace(key, value)`:
+** `replace(key, value, expirePolicy)`
+* `replace(key, oldValue, newValue)`:
+** `replace(key, oldValue, newValue, expirePolicy)`
+* `getAndReplace(key, value)`:
+** `getAndReplace(key, value, expirePolicy)`
+
+Asynchronous method overloads are not listed here. Please see <<icache-async-methods, ICache Async Methods>> for the list of asynchronous method overloads.
+
+
+==== JCache Eviction
+
+Caches are generally not expected to grow to an infinite size. Implementing an <<expirepolicy, expiry policy>> is one way you can
+prevent infinite growth, but sometimes it is hard to define a meaningful expiration timeout. Therefore, Hazelcast JCache provides the eviction feature. Eviction offers the possibility of removing entries based on the cache size or amount of used memory
+(Hazelcast IMDG Enterprise Only) and not based on timeouts.
+
+===== Eviction and Runtime
+
+Since a cache is designed for high throughput and fast reads, Hazelcast put a lot of effort into designing the eviction system to be as
+predictable as possible. All built-in implementations provide an amortized O(1) runtime. The default operation runtime is
+rendered as O(1), but it can be faster than the normal runtime cost if the algorithm finds an expired entry while sampling.
+
+===== Cache Types
+
+Most importantly, typical production systems have two common types of caches:
+
+- **Reference Caches**: Caches for reference data are normally small and are used to speed up the de-referencing as a lookup table. Those
+caches are commonly tend to be small and contain a previously known, fixed number of elements, e.g., states of the USA or
+abbreviations of elements.
+- **Active DataSet Caches**:  The other type of caches normally caches an active data set. These caches run to their maximum
+size and evict the oldest or not frequently used entries to keep in memory bounds. They sit in front of a database or HTML
+generators to cache the latest requested data.
+
+Hazelcast JCache eviction supports both types of caches using a slightly different approach based on the configured maximum size
+of the cache. For detailed information, please see the <<eviction-algorithm, Eviction Algorithm section>>.
+
+===== Configuring Eviction Policies
+
+Hazelcast JCache provides two commonly known eviction policies, LRU and LFU, but loosens the rules for predictable runtime
+behavior. LRU, normally recognized as `Least Recently Used`, is implemented as `Less Recently Used`, and LFU known as `Least Frequently Used` is implemented as
+`Less Frequently Used`. The details about this difference are explained in the
+<<eviction-algorithm, Eviction Algorithm section>>.
+
+Eviction Policies are configured by providing the corresponding abbreviation to the configuration as shown in the [ICache Configuration section](#icache-configuration). As already mentioned, two built-in policies are available:
+
+To configure the use of the LRU (Less Recently Used) policy:
+
+```
+<eviction size="10000" max-size-policy="ENTRY_COUNT" eviction-policy="LRU" />
+```
+
+And to configure the use of the LFU (Less Frequently Used) policy:
+
+```
+<eviction size="10000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU" />
+```
+
+The default eviction policy is LRU. Therefore, Hazelcast JCache does not offer the possibility of performing no eviction.
+
+====== Custom Eviction Policies
+
+Besides the out-of-the-box eviction policies LFU and LRU, you can also specify your custom eviction policies 
+through the eviction configuration either programmatically or declaratively.
+
+You can provide your `com.hazelcast.cache.CacheEvictionPolicyComparator` implementation to compare `com.hazelcast.cache.CacheEntryView`s. Supplied `CacheEvictionPolicyComparator` is used to compare cache entry views to select the one with higher priority to evict.
+
+Here is an example for custom eviction policy comparator implementation for JCache:
+
+[source,java]
+----
+public class MyCacheEvictionPolicyComparator
+        extends CacheEvictionPolicyComparator<Long, String> {
+
+    @Override
+    public int compare(CacheEntryView<Long, String> e1, CacheEntryView<Long, String> e2) {
+        long id1 = e1.getKey();
+        long id2 = e2.getKey();
+        if (id1 > id2) {
+            return FIRST_ENTRY_HAS_HIGHER_PRIORITY_TO_BE_EVICTED; // -1
+        } else if (id1 < id2) {
+            return SECOND_ENTRY_HAS_HIGHER_PRIORITY_TO_BE_EVICTED; // +1
+        } else {
+            return BOTH_OF_ENTRIES_HAVE_SAME_PRIORITY_TO_BE_EVICTED; // 0
+        }
+    }
+
+}
+----
+
+Custom eviction policy comparator can be specified through the eviction configuration 
+by giving the full class name of the `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) 
+implementation or by specifying its instance itself.
+
+**Programmatic:**
+
+You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
+through `EvictionConfig`. This approach is useful when eviction configuration is specified at the client side 
+and custom `EvictionPolicyComparator` implementation class itself does not exist at the client but at server side.
+
+```
+CacheConfig cacheConfig = new CacheConfig();
+...
+EvictionConfig evictionConfig = 
+    new EvictionConfig(50000, 
+                       MaxSizePolicy.ENTRY_COUNT, 
+                       "com.mycompany.MyEvictionPolicyComparator");
+cacheConfig.setEvictionConfig(evictionConfig);
+```
+
+You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) instance itself directly through `EvictionConfig`. 
+
+```
+CacheConfig cacheConfig = new CacheConfig();
+...
+EvictionConfig evictionConfig = 
+    new EvictionConfig(50000, 
+                       MaxSizePolicy.ENTRY_COUNT, 
+                       new MyEvictionPolicyComparator());
+cacheConfig.setEvictionConfig(evictionConfig);
+```
+
+**Declarative:**
+
+You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
+in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast configuration XML file.
+
+```
+<cache name="cacheWithCustomEvictionPolicyComparator"> 
+    <eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/> 
+</cache>
+```
+
+**Declarative for Spring:**
+
+You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
+in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast *Spring* configuration XML file.
+
+```
+<hz:cache name="cacheWithCustomEvictionPolicyComparator">
+    <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/>
+</hz:cache>
+```
+
+You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) bean in the `<eviction>` tag 
+by referencing through `comparator-bean` attribute in Hazelcast *Spring* configuration XML file
+
+```
+<hz:cache name="cacheWithCustomEvictionPolicyComparator">
+    <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-bean="myEvictionPolicyComparatorBean"/>
+</hz:cache>
+```
+
+===== Eviction Strategy
+
+Eviction strategies implement the logic of selecting one or more eviction candidates from the underlying storage implementation and
+passing them to the eviction policies. Hazelcast JCache provides an amortized O(1) cost implementation for this strategy to select a
+fixed number of samples from the current partition that it is executed against.
+
+The default implementation is `com.hazelcast.cache.impl.eviction.impl.strategy.sampling.SamplingBasedEvictionStrategy` which, as
+mentioned, samples 15 random elements. A detailed description of the algorithm will be explained in the next section.
+
+===== Eviction Algorithm
+
+The Hazelcast JCache eviction algorithm is specially designed for the use case of high performance caches and with predictability
+in mind. The built-in implementations provide an amortized O(1) runtime and therefore provide a highly predictable runtime behavior
+which does not rely on any kind of background threads to handle the eviction. Therefore, the algorithm takes some assumptions into
+account to prevent network operations and concurrent accesses.
+
+As an explanation of how the algorithm works, let's examine the following flowchart step by step.
+
+image::EvictionFlowchart.png[Hazelcast JCache Eviction Algorithm]
+
+. A new cache is created. Without any special settings, the eviction is configured to kick in when the **cache** exceeds 10.000
+elements and an LRU (Less Recently Used) policy is set up.
+. The user puts in a new entry, e.g., a key-value pair.
+. For every put, the eviction strategy evaluates the current cache size and decides if an eviction is necessary or not. If not, the entry is stored in step 10.
+. If eviction is required, a new sampling is started. The built-in sampler is implemented as an lazy iterator.
+. The sampling algorithm selects a random sample from the underlying data storage.
+. The eviction strategy tests whether the sampled entry is already expired (lazy expiration). If expired, the sampling stops and the entry is removed in step 9.
+. If not yet expired, the entry (eviction candidate) is compared to the last best matching candidate (based on the eviction policy) and the new best matching candidate is remembered.
+. The sampling is repeated 15 times and then the best matching eviction candidate is returned to the eviction strategy.
+. The expired or best matching eviction candidate is removed from the underlying data storage.
+. The new put entry is stored.
+. The put operation returns to the user.
+
+As seen in the flowchart, the general eviction operation is easy. As long as the cache does not reach its maximum capacity,
+or you execute updates (put/replace), no eviction is executed.
+
+To prevent network operations and concurrent access, as mentioned earlier, the cache size is estimated based on the size of the
+currently handled partition. Due to the imbalanced partitions, the single partitions might start to evict
+earlier than the other partitions.
+
+As mentioned in the <<cache-types, Cache Types section>>, typically two types of caches are found in the production systems. For small caches,
+referred to as *Reference Caches*, the eviction algorithm has a special set of rules depending on the maximum configured cache
+size. Please see the <<reference-caches, Reference Caches section>> for details. The other type of cache is referred to as an *Active DataSet Cache*,
+which in most cases makes heavy use of the eviction to keep the most active data set in the memory. Those kinds of caches use a very
+simple but efficient way to estimate the cluster-wide cache size.
+
+All of the following calculations have a well known set of fixed variables:
+
+- `GlobalCapacity`: User defined maximum cache size (cluster-wide).
+- `PartitionCount`: Number of partitions in the cluster (defaults to 271).
+- `BalancedPartitionSize`: Number of elements in a balanced partition state, `BalancedPartitionSize := GlobalCapacity / PartitionCount`.
+- `Deviation`: An approximated standard deviation (tests proofed it to be pretty near), `Deviation := sqrt(BalancedPartitionSize)`.
+
+====== Reference Caches
+
+A Reference Cache is typically small and the number of elements to store in the reference caches is normally 
+known prior to creating the cache. Typical examples of reference caches are lookup tables for abbreviations or the states of a
+country. They tend to have a fixed but small element number and the eviction is an unlikely event, and rather undesirable behavior.
+
+Since an imbalanced partition is a worse problem in small and mid-sized caches than in caches with millions of entries, the normal
+estimation rule (as discussed in a bit) is not applied to these kinds of caches. To prevent unwanted eviction on the small and
+mid-sized caches, Hazelcast implements a special set of rules to estimate the cluster size.
+
+To adjust the imbalance of partitions as found in the typical runtime, the actual calculated maximum cache size (known as the eviction
+threshold) is slightly higher than the user defined size. That means more elements can be stored into the cache
+than expected by the user. This needs to be taken into account especially for large objects, since those can easily exceed the
+expected memory consumption!
+
+**Small caches:**
+
+If a cache is configured with no more than `4.000` elements, this cache is considered to be a small cache. The actual partition
+size is derived from the number of elements (`GlobalCapacity`) and the deviation using the following formula:
+
+```
+MaxPartitionSize := Deviation * 5 + BalancedPartitionSize
+```
+
+This formula ends up with big partition sizes which, summed up, exceed the expected maximum cache size (set by the user). 
+Since the small caches typically have a well known maximum number of elements, this is not a big
+issue. Only if the small caches are used for a use case other than as a reference cache, this needs to be taken into account.
+
+**Mid-sized caches**
+
+A mid-sized cache is defined as a cache with a maximum number of elements that is bigger than `4.000` but not bigger than
+`1.000.000` elements. The calculation of mid-sized caches is similar to that of the small caches but with a different
+multiplier. To calculate the maximum number of elements per partition, the following formula is used:
+
+```
+MaxPartitionSize := Deviation * 3 + BalancedPartitionSize
+```
+
+====== Active DataSet Caches
+
+For large caches, where the maximum cache size is bigger than `1.000.000` elements, there is no additional calculation needed. The maximum
+partition size is considered to be equal to `BalancedPartitionSize` since statistically big partitions are expected to almost
+balance themselves. Therefore, the formula is as easy as the following:
+
+```
+MaxPartitionSize := BalancedPartitionSize
+```
+
+====== Cache Size Estimation
+
+As mentioned earlier, Hazelcast JCache provides an estimation algorithm to prevent cluster-wide network operations, concurrent
+access to other partitions and background tasks. It also offers a highly predictable operation runtime when the eviction is necessary.
+
+The estimation algorithm is based on the previously calculated maximum partition size (please see the <<reference-caches, Reference Caches section>> and <<active-dataset-caches, Active DataSet Caches section>>) and is calculated
+against the current partition only.
+
+The algorithm to reckon the number of stored entries in the cache (cluster-wide) and decide if the eviction is necessary is shown in the
+following pseudo-code example:
+
+```
+RequiresEviction[Boolean] := CurrentPartitionSize >= MaxPartitionSize
+```
+
+==== JCache Near Cache
+
+The Hazelcast JCache implementation supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Please refer to the <<near-cache, Near Cache section>> for a detailed explanation of the Near Cache feature and its configuration.
+
+NOTE: Near Cache for JCache is only available for clients, NOT members.
+
+
+==== ICache Convenience Methods
+
+In addition to the operations explained in <<icache-async-methods, ICache Async Methods>> and <<defining-a-custom-expirypolicy, Defining a Custom ExpiryPolicy>>, Hazelcast ICache also provides a set of convenience methods. These methods are not part of the JCache specification.
+
+ - `size()`: Returns the total entry count of the distributed cache.
+ - `destroy()`: Destroys the cache and removes its data, which makes it different from the method `javax.cache.Cache.close()`; the `close` method closes the cache so no further operational methods (get, put, remove, etc. Please see Section 4.1.6 in JCache Specification which can be downloaded from http://download.oracle.com/otndocs/jcp/jcache-1_0-fr-eval-spec/index.html[here]) can be executed on it - data is not necessarily destroyed, if you get again the same `Cache` from the same `CacheManager`, the data will be there. In the case of `destroy()`, both the cache is destroyed and cache's data is removed.
+ - `isDestroyed()`: Determines whether the ICache instance is destroyed or not.
+ - `getLocalCacheStatistics()`: Returns a `com.hazelcast.cache.CacheStatistics` instance, both on Hazelcast members and clients, providing the same statistics data as the JMX beans.
+
+Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cache/ICache.html[ICache Javadoc] to see all the methods provided by ICache.
+
+==== Implementing BackupAwareEntryProcessor
+
+Another feature, especially interesting for distributed environments like Hazelcast, is the JCache specified
+`javax.cache.processor.EntryProcessor`. For more general information, please see the <<implementing-entryprocessor, Implementing EntryProcessor section>>.
+
+Since Hazelcast provides backups of cached entries on other members, the default way to backup an object changed by an
+`EntryProcessor` is to serialize the complete object and send it to the backup partition. This can be a huge network overhead for big objects.
+
+Hazelcast offers a sub-interface for `EntryProcessor` called `com.hazelcast.cache.BackupAwareEntryProcessor`. This allows you to create or pass another `EntryProcessor` to run on backup
+partitions and apply delta changes to the backup entries.
+
+The backup partition `EntryProcessor` can either be the currently running processor (by returning `this`) or it can be
+a specialized `EntryProcessor` implementation (different from the currently running one) that does different operations or leaves
+out operations, e.g., sending emails.
+
+If we again take the `EntryProcessor` example from the demonstration application provided in the <<implementing-entryprocessor, Implementing EntryProcessor section>>,
+the changed code will look like the following snippet.
+
+[source,java]
+----
+public class UserUpdateEntryProcessor
+    implements BackupAwareEntryProcessor<Integer, User, User> {
+
+    @Override
+    public User process( MutableEntry<Integer, User> entry, Object... arguments )
+        throws EntryProcessorException {
+
+        // Test arguments length
+        if ( arguments.length < 1 ) {
+            throw new EntryProcessorException( "One argument needed: username" );
+        }
+
+        // Get first argument and test for String type
+        Object argument = arguments[0];
+        if ( !( argument instanceof String ) ) {
+            throw new EntryProcessorException(
+            "First argument has wrong type, required java.lang.String" );
+        }
+
+        // Retrieve the value from the MutableEntry
+        User user = entry.getValue();
+
+        // Retrieve the new username from the first argument
+        String newUsername = ( String ) arguments[0];
+
+        // Set the new username
+        user.setUsername( newUsername );
+
+        // Set the changed user to mark the entry as dirty
+        entry.setValue( user );
+
+        // Return the changed user to return it to the caller
+        return user;
+    }
+
+    public EntryProcessor<Integer, User, User> createBackupEntryProcessor() {
+        return this;
+    }
+}
+----
+
+You can use the additional method `BackupAwareEntryProcessor.createBackupEntryProcessor()` to create or return the `EntryProcessor`
+implementation to run on the backup partition (in the example above, the same processor again).
+
+NOTE: For the backup runs, the returned value from the backup processor is ignored and not
+returned to the user.
+
+
+==== ICache Partition Lost Listener
+
+You can listen to `CachePartitionLostEvent` instances by registering an implementation
+of `CachePartitionLostListener`, which is also a sub-interface of `java.util.EventListener`
+from `ICache`.
+
+Let's consider the following example code:
+
+[source,java]
+----
+public class PartitionLostListenerUsage {
+
+
+    public static void main(String[] args) {
+        CachingProvider cachingProvider = Caching.getCachingProvider();
+        CacheManager cacheManager = cachingProvider.getCacheManager();
+        Cache<Object, Object> cache = cacheManager.getCache( ... );
+
+        ICache<Object, Object> unwrappedCache = cache.unwrap( ICache.class );
+
+        unwrappedCache.addPartitionLostListener(new CachePartitionLostListener() {
+            @Override
+            public void partitionLost(CachePartitionLostEvent event) {
+                System.out.println(event);
+            }
+        });
+    }
+}
+----
+
+Within this example code, a `CachePartitionLostListener` implementation is registered to a cache and assumes that this cache is configured with one backup. For this particular cache and any of the partitions in the
+system, if the partition owner member and its first backup member crash simultaneously, the
+given `CachePartitionLostListener` receives a
+corresponding `CachePartitionLostEvent`. If only a single member crashes in the cluster,
+a `CachePartitionLostEvent` is not fired for this cache since backups for the partitions
+owned by the crashed member are kept on other members.
+
+Please refer to the <<listening-for-partition-lost-events, Partition Lost Listener section>> for more
+information about partition lost detection and partition lost events.
+
+==== JCache Split-Brain
+
+Split-Brain handling is internally supported as a service inside Hazelcast (see <<split-brain-syndrome, Network Partitioning>> for more details) and `JCache` uses same infrastructure with `IMap` to support Split-Brain. You can specify cache merge policy to determine which entry is used while merging. You can also provide your own cache merge policy by implementing the `CacheMergePolicy` interface.
+
+NOTE: Split-Brain is only supported for heap-based JCache but not for HD-JCache, since merging a high volume of data in consistent way may cause significant performance loss on the system.
+
+===== `CacheMergePolicy` Interface
+
+After split clusters are joined again, they merge their entries with each other. This merge process is handled over the `CacheMergePolicy` interface.
+The `CacheMergePolicy` instance takes two entries: the owned entry, and the merging entry which comes from the joined cluster. The `CacheEntryView` instance wraps the key, value, and some metadata about the entry (such as creation time, expiration time, and access hit). Then the `CacheMergePolicy` instance selects one of the entries and returns it.
+The returned entry is used as the stored cache entry.
+
+====== `CacheEntryView`
+
+Wraps key, value and some metadata (such as expiration time, last access time, and access hit of cache entry) and exposes them to outside as read only.
+
+====== `CacheMergePolicy`
+
+Policy for merging cache entries. Entries from joined clusters are merged by using this policy to select one of them from source and target. 
+Passed `CacheEntryView` instances wrap the key and value as their original types, with conversion to object from their storage types. 
+If the user doesn't need the original types of key and value, you should use `StorageTypeAwareCacheMergePolicy`, which is a sub-type of this interface.
+
+====== `StorageTypeAwareCacheMergePolicy` 
+
+Marker interface indicating that the key and value wrapped by `CacheEntryView` will be not converted to their original types. 
+The motivation of this interface is that while merging cache entries, actual key and value are not usually not checked. Therefore, there is no need to convert them to their original types.
+
+At worst case, value is returned from the merge method as selected, meaning that in all cases, value is accessed. So even if the the conversion is done as lazy, it will be processed at this point. By default, key and value are converted to their original types unless this `StorageTypeAwareCacheMergePolicy` is used.
+
+Another motivation for using this interface is that at the member side, there is no need to locate classes of stored entries. Entries can be put from the client with `BINARY` in-memory format and the classpath of the client can be different from the member. So in this case, if entries try to convert to their original types while merging, `ClassNotFoundException` is thrown here.
+
+As a result, both for performance and for the `ClassNotFoundException` mentioned above, it is strongly recommended that you use this interface if the original values of key and values are not needed.
+
+===== Configuration
+
+There are four built-in cache merge policies:
+
+- **Pass Through:** Merges cache entry from source to destination directly. You can specify this policy with its full class name as `com.hazelcast.cache.merge.PassThroughCacheMergePolicy` or with its constant name as `PASS_THROUGH`.
+- **Put If Absent:** Merges cache entry from source to destination if it does not exist in the destination cache. You can specify this policy with its full class name as `com.hazelcast.cache.merge.PutIfAbsentCacheMergePolicy` or with its constant name as `PUT_IF_ABSENT`.
+- **Higher Hits:** Merges cache entry from source to destination cache if the source entry has more hits than the destination one. You can specify this policy with its full class name as `com.hazelcast.cache.merge.HigherHitsCacheMergePolicy` or with its constant name as `HIGHER_HITS`.
+- **Latest Access:** Merges cache entry from source to destination cache if the source entry has been accessed more recently than the destination entry. You can specify this policy with its full class name as `com.hazelcast.cache.merge.LatestAccessCacheMergePolicy` or with its constant name as `LATEST_ACCESS`.
+
+NOTE: Starting with Hazelcast 3.9, the default `Cache` merge policy is **Put If Absent**. It was **Pass Through** before Hazelcast 3.9.
+
+You can access full class names or constant names of all built-in cache merge policies over `com.hazelcast.cache.BuiltInCacheMergePolicies` enum. You can specify merge policy configuration for cache declaratively or programmatically.
+
+The following are example configurations for JCache Split-Brain.
+
+**Declarative**:
+
+```
+<cache name="cacheWithBuiltInMergePolicyAsConstantName">
+    ...
+    <merge-policy>HIGHER_HITS</merge-policy>
+    ...
+</cache><cache name="cacheWithBuiltInMergePolicyAsFullClassName">
+    ...
+    <merge-policy>com.hazelcast.cache.merge.LatestAccessCacheMergePolicy</merge-policy>
+    ...
+</cache>
+<cache name="cacheWithBuiltInMergePolicyAsCustomImpl">
+    ...
+    <merge-policy>com.mycompany.cache.merge.MyCacheMergePolicy</merge-policy>
+    ...
+</cache>
+```
+
+**Programmatic**:
+
+```
+CacheConfig cacheConfig1 = new CacheConfig();
+cacheConfig1.setMergePolicy(BuiltInCacheMergePolicies.HIGHER_HITS.name());
+
+CacheConfig cacheConfig2 = new CacheConfig();
+cacheConfig2.setMergePolicy(BuiltInCacheMergePolicies.LATEST_ACCESS.getImplementationClassName());
+
+CacheConfig cacheConfig3 = new CacheConfig();
+cacheConfig3.setMergePolicy("com.mycompany.cache.merge.MyCacheMergePolicy");
+```
+
+

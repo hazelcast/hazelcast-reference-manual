@@ -1,4 +1,6 @@
-## JCache - Hazelcast Instance Integration
+
+
+=== JCache - Hazelcast Instance Integration
 
 You can retrieve `javax.cache.Cache` instances using the interface `ICacheManager` of `HazelcastInstance`. This interface has the method `getCache(String name)` where `name` is the prefixed cache name. The prefixes in the cache name are URI and classloader prefixes, which are optional.
 
@@ -10,11 +12,9 @@ If the URI scope and classloader is not specified, the pure cache name can be us
 
 If you have a cache which is not created, but is defined/exists (cache is specified in Hazelcast configuration but not created yet), you can retrieve this cache by its name.  This also triggers cache creation before retrieving it. This retrieval is supported through `HazelcastInstance`. However, `HazelcastInstance` ***does not*** support creating a cache by specifying configuration; this is supported by Hazelcast's `ICacheManager` as it is.
 
-<br></br>
-![image](images/NoteSmall.jpg) ***NOTE:*** *If a valid (rather than *1.0.0-PFD* or *0.x* versions) JCache library does not exist on the classpath, `IllegalStateException` is thrown.*
-<br></br>
+NOTE: If a valid (rather than *1.0.0-PFD* or *0.x* versions) JCache library does not exist on the classpath, `IllegalStateException` is thrown.
 
-### JCache and Hazelcast Instance Awareness
+==== JCache and Hazelcast Instance Awareness
 
 `HazelcastInstance` is injected into the following cache API interfaces (provided by `javax.cache.Cache` and `com.hazelcast.cache.ICache`)  if they implement `HazelcastInstanceAware` interface:
 
@@ -26,3 +26,4 @@ If you have a cache which is not created, but is defined/exists (cache is specif
 * `CacheEntryEventFilter` [provided by `javax.cache.Cache`]
 * `CompletionListener` [provided by `javax.cache.Cache`]
 * `CachePartitionLostListener` [provided by `com.hazelcast.cache.ICache`]
+
