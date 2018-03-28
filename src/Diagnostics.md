@@ -241,26 +241,28 @@ You can control the MemberHeartbeats plugin using the following properties:
 The WAN diagnostics plugin provides information about the WAN replication.
 
 It is disabled by default and can be configured using the following property:
+
 - `hazelcast.diagnostics.wan.period.seconds` : The frequency this plugin is writing the collected information to the disk. 0 disables the plugin.
 
 
 The following shows an example of the output:
+
 ```                                                                                                                                   
 10-11-2017 14:11:32 1510319492497 WanBatchSenderLatency[
-                          targetClusterGroupName[
-                                  [127.0.0.1]:5801[
-                                          count=1
-                                          totalTime(us)=2,010,567
-                                          avg(us)=2,010,567
-                                          max(us)=2,010,567
-                                          latency-distribution[
-                                                  1638400..3276799us=1]]
-                                  [127.0.0.1]:5802[
-                                          count=1
-                                          totalTime(us)=1,021,867
-                                          avg(us)=1,021,867
-                                          max(us)=1,021,867
-                                          latency-distribution[
-                                                  819200..1638399us=1]]]]
+            targetClusterGroupName[
+                    [127.0.0.1]:5801[
+                            count=1
+                            totalTime(us)=2,010,567
+                            avg(us)=2,010,567
+                            max(us)=2,010,567
+                            latency-distribution[
+                                    1638400..3276799us=1]]
+                    [127.0.0.1]:5802[
+                            count=1
+                            totalTime(us)=1,021,867
+                            avg(us)=1,021,867
+                            max(us)=1,021,867
+                            latency-distribution[
+                                    819200..1638399us=1]]]]
 ```
 
