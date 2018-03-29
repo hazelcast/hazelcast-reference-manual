@@ -1,9 +1,44 @@
 === Hazelcast IMDG Reference Manual
 
 
-.Build The Documentation:
+==== Building the Documentation
+
+Following command is used to build the document in the repo's root folder.
+
 ----
 ./gradlew build
 ----
 
+
+==== Where Are the Generated Documents
+
 The resulting documents can be found in `build/asciidoc/`.
+
+==== How to Produce Different Output Formats
+
+In the file `build.gradle`, you will see the "backends" tag:
+
+----
+backends = [ 'html5', /*'pdf',*/ /* 'multipage_html5',*/ /*'epub3'*/ ]
+----
+
+In this line, you can comment out (using `/\*` and `*/`) the formats that you do not want the generator to produce.
+
+==== How to Add a New Chapter
+
+In the file `build.gradle`, you will see the "sources" tag:
+
+----
+sources {
+    include 'index.adoc'
+}
+----
+
+The file `index.adoc` is the one which includes the chapters in the given order and also some parameters. It is located in the folder `src/docs/asciidocs/`.
+
+When you want to add a new chapter, just create a text file (the extension of the file must be `adoc`) in the folder `src/docs/asciidocs/` and add the name of the file to `index.adoc`.
+
+==== AsciiDoc?
+
+
+You can refer to https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/ when writing content in AsciiDoc language.
