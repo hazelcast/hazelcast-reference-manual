@@ -1,0 +1,1307 @@
+
+== Extending Hazelcast
+
+This chapter describes the different possibilities to extend Hazelcast with additional services or features.
+
+=== User Defined Services
+
+In the case of special/custom needs, you can use Hazelcast's SPI (Service Provider Interface) module to develop your own distributed data structures and services on top of Hazelcast. Hazelcast SPI is an internal, low-level API which is expected to change in each release except for the patch releases. Your structures and services evolve as the SPI changes. 
+
+Throughout this section, we create an example distributed counter that will be the guide to reveal the Hazelcast Services SPI usage.
+
+Here is our counter.
+
+```
+public interface Counter{
+    int inc(int amount);
+}
+```
+
+This counter will have the following features:
+- It will be stored in Hazelcast. 
+- Different cluster members can call it. 
+- It will be scalable, meaning that the capacity for the number of counters scales with the number of cluster members.
+- It will be highly available, meaning that if a member hosting this counter goes down, a backup will be available on a different member.
+
+All these features are done with the steps below. Each step adds a new functionality to this counter.
+
+. Create the class.
+. Enable the class.
+. Add properties.
+. Place a remote call.
+. Create the containers.
+. Enable partition migration.
+. Create the backups.
+
+==== Creating the Service Class
+
+To have the counter as a functioning distributed object, we need a class. This class (named CounterService in the following example code) is the gateway between Hazelcast internals and the counter, allowing us to add features to the counter. The following example code creates the class `CounterService`. Its lifecycle is managed by Hazelcast. 
+
+`CounterService` should implement the interface `com.hazelcast.spi.ManagedService` as shown below. The `com.hazelcast.spi.ManagedService` [source code is here](https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/ManagedService.java).
+
+`CounterService` implements the following methods. 
+
+- `init`: This is called when `CounterService` is initialized. `NodeEngine` enables access to Hazelcast internals such as `HazelcastInstance` and `PartitionService`. Also, the object `Properties` will provide us with the ability to create our own properties.
+- `shutdown`: This is called when `CounterService` is shutdown. It cleans up the resources.
+- `reset`: This is called when cluster members face the Split-Brain issue. This occurs when disconnected members that have created their own cluster are merged back into the main cluster. Services can also implement the `SplitBrainHandleService` to indicate that they can take part in the merge process. For `CounterService` we are going to implement `reset` as a no-op.
+
+```
+public class CounterService implements ManagedService {
+    private NodeEngine nodeEngine;
+
+    @Override
+    public void init( NodeEngine nodeEngine, Properties properties ) {
+        System.out.println( "CounterService.init" );
+        this.nodeEngine = nodeEngine;
+    }
+
+    @Override
+    public void shutdown( boolean terminate ) {
+        System.out.println( "CounterService.shutdown" );
+    }
+
+    @Override
+    public void reset() {
+    }
+}
+```
+
+==== Enabling the Service Class
+
+Now, we need to enable the class `CounterService`. The declarative way of doing this is shown below.
+
+```
+<network>
+   <join><multicast enabled="true"/> </join>
+</network>
+<services>
+   <service enabled="true">
+      <name>CounterService</name>
+      <class-name>CounterService</class-name>
+   </service>
+</services>
+```
+
+The `CounterService` is declared within the `services` configuration element. 
+
+- Set the `enabled` attribute to `true` to enable the service.
+- Set the `name` attribute to the name of the service. It should be a unique name (`CounterService` in our case) since it will be looked up when a remote call is made. Note that the value of this attribute will be sent at each request, and that a longer `name` value means more data (de)serialization. A good practice is to give an understandable name with the shortest possible length.
+- Set the `class-name` attribute to the class name of the service (`CounterService` in our case). The class should have a *no-arg* constructor. Otherwise, the object cannot be initialized.
+
+Note that multicast is enabled as the join mechanism. In the later sections for the `CounterService` example, we will see why.
+
+==== Adding Properties to the Service
+
+The `init` method for `CounterService` takes the `Properties` object as an argument. This means we can add properties to the service that are passed to the `init` method; see <<creating-the-service-class, Creating the Service Class>>. You can add properties declaratively as shown below. (You likely want to name your properties something other than someproperty.)
+
+```
+<service enabled="true">
+   <name>CounterService</name>
+   <class-name>CounterService</class-name>
+   <properties> 
+      <someproperty>10</someproperty>
+   </properties>
+</service>
+```
+
+If you want to parse a more complex XML, you can use the interface `com.hazelcast.spi.ServiceConfigurationParser`. It gives you access to the XML DOM tree.
+
+==== Starting the Service
+
+Now, let's start a `HazelcastInstance` as shown below, which will start the `CounterService`.
+
+
+```
+public class Member {
+    public static void main(String[] args) {
+        Hazelcast.newHazelcastInstance();
+    }
+}
+```
+
+Once it starts, the `CounterService init` method prints the following output.
+
+`CounterService.init`
+
+Once the HazelcastInstance is shutdown (for example, with Ctrl+C), the `CounterService shutdown` method prints the following output.
+
+`CounterService.shutdown`
+
+
+==== Placing a Remote Call via Proxy
+
+In the previous sections for the `CounterService` example, we started `CounterService` as part of a HazelcastInstance startup.
+
+Now, let's connect the `Counter` interface to `CounterService` and perform a remote call to the cluster member hosting the counter data. Then, we will return a dummy result. 
+
+Remote calls are performed via a proxy in Hazelcast. Proxies expose the methods at the client side. Once a method is called, proxy creates an operation object, sends this object to the cluster member responsible from executing that operation, and then sends the result. 
+
+===== Making Counter a Distributed Object
+
+First, we need to make the `Counter` interface a distributed object by extending the `DistributedObject` interface, as shown below.
+
+
+```
+public interface Counter extends DistributedObject {
+    int inc(int amount);
+}
+```
+
+===== Implementing ManagedService and RemoteService
+
+Now, we need to make the `CounterService` class implement not only the `ManagedService` interface, but also the interface `com.hazelcast.spi.RemoteService`. This way, a client will be able to get a handle of a counter proxy. You can read the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/RemoteService.java[source code for RemoteService here].
+
+
+```
+public class CounterService implements ManagedService, RemoteService {
+    public static final String NAME = "CounterService";
+
+    private NodeEngine nodeEngine;
+
+    @Override
+    public DistributedObject createDistributedObject(String objectName) {
+        return new CounterProxy(objectName, nodeEngine, this);
+    }
+
+    @Override
+    public void destroyDistributedObject(String objectName) {
+        // for the time being a no-op, but in the later examples this will be implemented
+    }
+
+    @Override
+    public void init(NodeEngine nodeEngine, Properties properties) {
+        this.nodeEngine = nodeEngine;
+    }
+
+    @Override
+    public void shutdown(boolean terminate) {
+    }
+
+    @Override
+    public void reset() {
+    }
+}
+```
+
+The `CounterProxy` returned by the method `createDistributedObject` is a local representation to (potentially) remote managed data and logic.
+
+NOTE: Note that caching and removing the proxy instance are done outside of this service.
+
+
+===== Implementing CounterProxy
+
+Now, it is time to implement the `CounterProxy` as shown below. `CounterProxy` extends https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/AbstractDistributedObject.java[AbstractDistributedObject, source code here]. 
+
+```
+public class CounterProxy extends AbstractDistributedObject<CounterService> implements Counter {
+    private final String name;
+
+    public CounterProxy(String name, NodeEngine nodeEngine, CounterService counterService) {
+        super(nodeEngine, counterService);
+        this.name = name;
+    }
+
+    @Override
+    public String getServiceName() {
+        return CounterService.NAME;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int inc(int amount) {
+        NodeEngine nodeEngine = getNodeEngine();
+        IncOperation operation = new IncOperation(name, amount);
+        int partitionId = nodeEngine.getPartitionService().getPartitionId(name);
+        InvocationBuilder builder = nodeEngine.getOperationService()
+                .createInvocationBuilder(CounterService.NAME, operation, partitionId);
+        try {
+            final Future<Integer> future = builder.invoke();
+            return future.get();
+        } catch (Exception e) {
+            throw ExceptionUtil.rethrow(e);
+        }
+    }
+}
+```
+
+
+`CounterProxy` is a local representation of remote data/functionality. It does not include the counter state. Therefore, the method `inc` should be invoked on the cluster member hosting the real counter. You can invoke it using Hazelcast SPI; then it will send the operations to the correct member and return the results.
+
+Let's dig deeper into the method `inc`.
+
+- First, we create `IncOperation` with a given `name` and `amount`.
+- Then, we get the partition ID based on the `name`; by this way, all operations for a given name will result in the same partition ID.
+- Then, we create an `InvocationBuilder` where the connection between operation and partition is made.
+- Finally, we invoke the `InvocationBuilder` and wait for its result. This waiting is performed with a `future.get()`. In our case, timeout is not important. However, it is a good practice to use a timeout for a real system since operations should complete in a certain amount of time. 
+
+===== Dealing with Exceptions
+
+Hazelcast's `ExceptionUtil` is a good solution when it comes to dealing with execution exceptions. When the execution of the operation fails with an exception, an `ExecutionException` is thrown and handled with the method `ExceptionUtil.rethrow(Throwable)`. 
+
+If it is an `InterruptedException`, we have two options: either propagate the exception or just use the `ExceptionUtil.rethrow` for all exceptions. Please see the example code below.
+
+
+```
+  try {
+     final Future<Integer> future = invocation.invoke();
+     return future.get();
+  } catch(InterruptedException e){
+     throw e;
+  } catch(Exception e){
+     throw ExceptionUtil.rethrow(e);
+  }
+```
+
+===== Implementing the PartitionAwareOperation Interface
+
+Now, let's write the `IncOperation`. It implements the `PartitionAwareOperation` interface, meaning that it will be executed on the partition that hosts the counter. See the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/PartitionAwareOperation.java[PartitionAwareOperation source code here].
+
+The method `run` does the actual execution. Since `IncOperation` will return a response, the method `returnsResponse` returns `true`. If your method is asynchronous and does not need to return a response, it is better to return `false` since it will be faster. The actual response is stored in the field `returnValue`; retrieve it with the method `getResponse`.
+
+There are two more methods in this code: `writeInternal` and `readInternal`. Since `IncOperation` needs to be serialized, these two methods are overridden, and hence, `objectId` and `amount` are serialized and available when those operations are executed. 
+
+For the deserialization, note that the operation must have a *no-arg* constructor.
+
+```
+class IncOperation extends Operation implements PartitionAwareOperation {
+    private String objectId;
+    private int amount, returnValue;
+
+    // Important to have a no-arg constructor for deserialization
+    public IncOperation() {
+    }
+
+    public IncOperation(String objectId, int amount) {
+        this.amount = amount;
+        this.objectId = objectId;
+    }
+
+    @Override
+    public void run() throws Exception {
+        System.out.println("Executing " + objectId + ".inc() on: " + getNodeEngine().getThisAddress());
+        returnValue = 0;
+    }
+
+    @Override
+    public Object getResponse() {
+        return returnValue;
+    }
+
+    @Override
+    protected void writeInternal(ObjectDataOutput out) throws IOException {
+        super.writeInternal(out);
+        out.writeUTF(objectId);
+        out.writeInt(amount);
+    }
+
+    @Override
+    protected void readInternal(ObjectDataInput in) throws IOException {
+        super.readInternal(in);
+        objectId = in.readUTF();
+        amount = in.readInt();
+    }
+}
+```
+
+===== Running the Code
+
+Now, let's run our code.
+
+```
+public class Member {
+    public static void main(String[] args) {
+        HazelcastInstance[] instances = new HazelcastInstance[2];
+        for (int k = 0; k < instances.length; k++)
+            instances[k] = Hazelcast.newHazelcastInstance();
+
+        Counter[] counters = new Counter[4];
+        for (int k = 0; k < counters.length; k++)
+            counters[k] = instances[0].getDistributedObject(CounterService.NAME, k+"counter");
+
+        for (Counter counter : counters)
+            System.out.println(counter.inc(1));
+
+        System.out.println("Finished");
+        System.exit(0);
+    }
+}
+```
+
+Once run, you will see the output as below.
+
+`Executing 0counter.inc() on: Address[192.168.1.103]:5702`
+
+`0`
+
+`Executing 1counter.inc() on: Address[192.168.1.103]:5702`
+
+`0`
+
+`Executing 2counter.inc() on: Address[192.168.1.103]:5701`
+
+`0`
+
+`Executing 3counter.inc() on: Address[192.168.1.103]:5701`
+
+`0`
+
+`Finished`
+
+Note that counters are stored in different cluster members. Also note that increment is not active for now since the value remains as **0**. 
+
+Until now, we have performed the basics to get this up and running. In the next section, we will make a real counter, cache the proxy instances and deal with proxy instance destruction.
+
+
+==== Creating Containers
+
+Let's create a Container for every partition in the system. This container will contain all counters and proxies.
+
+```
+class Container {
+    private final Map<String, Integer> values = new HashMap();
+
+    int inc(String id, int amount) {
+        Integer counter = values.get(id);
+        if (counter == null) {
+            counter = 0;
+        }
+        counter += amount;
+        values.put(id, counter);
+        return counter;
+    }
+    
+    public void init(String objectName) {
+        values.put(objectName,0);
+    }
+
+    public void destroy(String objectName) {
+        values.remove(objectName);
+    }
+    
+    ...
+}
+```
+
+Hazelcast guarantees that a single thread will be active in a single partition. Therefore, when accessing a container, concurrency control will not be an issue. 
+
+The code in our example uses a `Container` instance per partition approach. With this approach, there will not be any mutable shared state between partitions. This approach also makes operations on partitions simpler since you do not need to filter out data that does not belong to a certain partition. 
+
+The code performs the tasks below.
+
+- It creates a container for every partition with the method `init`.
+- It creates the proxy with the method `createDistributedObject`.
+- It removes the value of the object with the method `destroyDistributedObject`, otherwise we may get an OutOfMemory exception.
+
+===== Integrating the Container in the CounterService
+
+Let's integrate the `Container` in the `CounterService`, as shown below.
+
+```
+public class CounterService implements ManagedService, RemoteService {
+    public final static String NAME = "CounterService";
+    Container[] containers;
+    private NodeEngine nodeEngine;
+
+    @Override
+    public void init(NodeEngine nodeEngine, Properties properties) {
+        this.nodeEngine = nodeEngine;
+        containers = new Container[nodeEngine.getPartitionService().getPartitionCount()];
+        for (int k = 0; k < containers.length; k++)
+            containers[k] = new Container();
+    }
+
+    @Override
+    public void shutdown(boolean terminate) {
+    }
+
+    @Override
+    public CounterProxy createDistributedObject(String objectName) {
+        int partitionId = nodeEngine.getPartitionService().getPartitionId(objectName);
+        Container container = containers[partitionId];
+        container.init(objectName);
+        return new CounterProxy(objectName, nodeEngine, this);
+    }
+
+    @Override
+    public void destroyDistributedObject(String objectName) {
+        int partitionId = nodeEngine.getPartitionService().getPartitionId(objectName);
+        Container container = containers[partitionId];
+        container.destroy(objectName);
+    }
+
+    @Override
+    public void reset() {
+    }
+
+    public static class Container {
+        final Map<String, Integer> values = new HashMap<String, Integer>();
+
+        private void init(String objectName) {
+            values.put(objectName, 0);
+        }
+
+        private void destroy(String objectName){
+            values.remove(objectName);
+        }
+    }
+}
+```
+
+
+===== Connecting the IncOperation.run Method to the Container
+
+As the last step in creating a Container, we connect the method `IncOperation.run` to the Container, as shown below.
+
+`partitionId` has a range between **0** and **partitionCount** and can be used as an index for the container array. Therefore, you can use `partitionId` to retrieve the container, and once the container has been retrieved, you can access the value. 
+
+```
+class IncOperation extends Operation implements PartitionAwareOperation {
+    private String objectId;
+    private int amount, returnValue;
+
+    public IncOperation() {
+    }
+
+    public IncOperation(String objectId, int amount) {
+        this.amount = amount;
+        this.objectId = objectId;
+    }
+
+    @Override
+    public void run() throws Exception {
+        System.out.println("Executing " + objectId + ".inc() on: " + getNodeEngine().getThisAddress());
+        CounterService service = getService();
+        CounterService.Container container = service.containers[getPartitionId()];
+        Map<String, Integer> valuesMap = container.values;
+
+        Integer counter = valuesMap.get(objectId);
+        counter += amount;
+        valuesMap.put(objectId, counter);
+        returnValue = counter;
+    }
+
+    @Override
+    public Object getResponse() {
+        return returnValue;
+    }
+
+    @Override
+    protected void writeInternal(ObjectDataOutput out) throws IOException {
+        super.writeInternal(out);
+        out.writeUTF(objectId);
+        out.writeInt(amount);
+    }
+
+    @Override
+    protected void readInternal(ObjectDataInput in) throws IOException {
+        super.readInternal(in);
+        objectId = in.readUTF();
+        amount = in.readInt();
+    }
+}
+```
+
+===== Running the Sample Code
+
+Let's run the following sample code.
+
+```java
+public class Member {
+    public static void main(String[] args) {
+        HazelcastInstance[] instances = new HazelcastInstance[2];
+        for (int k = 0; k < instances.length; k++)
+            instances[k] = Hazelcast.newHazelcastInstance();
+
+        Counter[] counters = new Counter[4];
+        for (int k = 0; k < counters.length; k++)
+            counters[k] = instances[0].getDistributedObject(CounterService.NAME, k+"counter");
+
+        System.out.println("Round 1");
+        for (Counter counter: counters)
+            System.out.println(counter.inc(1));
+
+        System.out.println("Round 2");
+        for (Counter counter: counters)
+            System.out.println(counter.inc(1));
+
+        System.out.println("Finished");
+        System.exit(0);
+    }
+}
+```
+
+The output will be as follows. It indicates that we have now a basic distributed counter up and running.
+
+```
+Round 1
+Executing 0counter.inc() on: Address[192.168.1.103]:5702
+1
+Executing 1counter.inc() on: Address[192.168.1.103]:5702
+1
+Executing 2counter.inc() on: Address[192.168.1.103]:5701
+1
+Executing 3counter.inc() on: Address[192.168.1.103]:5701
+1
+Round 2
+Executing 0counter.inc() on: Address[192.168.1.103]:5702
+2
+Executing 1counter.inc() on: Address[192.168.1.103]:5702
+2
+Executing 2counter.inc() on: Address[192.168.1.103]:5701
+2
+Executing 3counter.inc() on: Address[192.168.1.103]:5701
+2
+Finished
+```
+
+==== Partition Migration
+
+In the previous section, we created a real distributed counter. Now, we need to make sure that the content of the partition containers is migrated to different cluster members when a member joins or leaves the cluster. To make this happen, first we need to add three new methods (`applyMigrationData`, `toMigrationData` and `clear`) to the `Container`.
+
+- `toMigrationData`: This method is called when Hazelcast wants to start the partition migration from the member owning the partition. The result of the `toMigrationData` method is the partition data in a form that can be serialized to another member.
+- `applyMigrationData`: This method is called when `migrationData` (created by the method `toMigrationData`) will be applied to the member that will be the new partition owner.
+- `clear`: This method is called when the partition migration is successfully completed and the old partition owner gets rid of all data in the partition. This method is also called when the partition migration operation fails and the to-be-the-new partition owner needs to roll back its changes.
+
+```
+class Container {
+    private final Map<String, Integer> values = new HashMap();
+
+    int inc(String id, int amount) {
+        Integer counter = values.get(id);
+        if (counter == null) {
+            counter = 0;
+        }
+        counter += amount;
+        values.put(id, counter);
+        return counter;
+    }
+
+    void clear() {
+        values.clear();
+    }
+
+    void applyMigrationData(Map<String, Integer> migrationData) {
+        values.putAll(migrationData);
+    }
+
+    Map<String, Integer> toMigrationData() {
+        return new HashMap(values);
+    }
+
+    public void init(String objectName) {
+        values.put(objectName,0);
+    }
+
+    public void destroy(String objectName) {
+        values.remove(objectName);
+    }
+}
+```
+
+
+===== Transferring migrationData
+
+After you add these three methods to the `Container`, you need to create a `CounterMigrationOperation` class that transfers `migrationData` from one member to another and calls the method `applyMigrationData` on the correct partition of the new partition owner. 
+
+An example is shown below.
+
+```
+public class CounterMigrationOperation extends Operation {
+
+    Map<String, Integer> migrationData;
+
+    public CounterMigrationOperation() {
+    }
+
+    public CounterMigrationOperation(Map<String, Integer> migrationData) {
+        this.migrationData = migrationData;
+    }
+
+    @Override
+    public void run() throws Exception {
+        CounterService service = getService();
+        Container container = service.containers[getPartitionId()];
+        container.applyMigrationData(migrationData);
+    }
+
+    @Override
+    protected void writeInternal(ObjectDataOutput out) throws IOException {
+        out.writeInt(migrationData.size());
+        for (Map.Entry<String, Integer> entry : migrationData.entrySet()) {
+            out.writeUTF(entry.getKey());
+            out.writeInt(entry.getValue());
+        }
+    }
+
+    @Override
+    protected void readInternal(ObjectDataInput in) throws IOException {
+        int size = in.readInt();
+        migrationData = new HashMap<String, Integer>();
+        for (int i = 0; i < size; i++)
+            migrationData.put(in.readUTF(), in.readInt());
+    }
+}
+```
+
+NOTE: During a partition migration, no other operations are executed on the related partition.
+
+===== Letting Hazelcast Know CounterService Can Do Partition Migrations
+
+We need to make our `CounterService` class implement the `MigrationAwareService` interface. This will let Hazelcast know that the `CounterService` can perform partition migration.
+
+With the `MigrationAwareService` interface, some additional methods are exposed. For example, the method `prepareMigrationOperation` returns all the data of the partition that is going to be moved. You can read the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/MigrationAwareService.java[MigrationAwareService source code here].
+
+The method `commitMigration` commits the data, meaning that in this case, it clears the partition container of the old owner. 
+
+```
+public class CounterService implements ManagedService, RemoteService, MigrationAwareService {
+    public final static String NAME = "CounterService";
+    Container[] containers;
+    private NodeEngine nodeEngine;
+
+    @Override
+    public void init(NodeEngine nodeEngine, Properties properties) {
+        this.nodeEngine = nodeEngine;
+        containers = new Container[nodeEngine.getPartitionService().getPartitionCount()];
+        for (int k = 0; k < containers.length; k++)
+            containers[k] = new Container();
+    }
+
+    @Override
+    public void shutdown(boolean terminate) {
+    }
+
+    @Override
+    public DistributedObject createDistributedObject(String objectName) {
+        int partitionId = nodeEngine.getPartitionService().getPartitionId(objectName);
+        Container container = containers[partitionId];
+        container.init(objectName);
+        return new CounterProxy(objectName, nodeEngine,this);
+    }
+
+    @Override
+    public void destroyDistributedObject(String objectName) {
+        int partitionId = nodeEngine.getPartitionService().getPartitionId(objectName);
+        Container container = containers[partitionId];
+        container.destroy(objectName);
+    }
+
+    @Override
+    public void beforeMigration(PartitionMigrationEvent e) {
+        //no-op
+    }
+
+    @Override
+    public void clearPartitionReplica(int partitionId) {
+        Container container = containers[partitionId];
+        container.clear();
+    }
+
+    @Override
+    public Operation prepareReplicationOperation(PartitionReplicationEvent e) {
+        if (e.getReplicaIndex() > 1) {
+            return null;
+        }
+        Container container = containers[e.getPartitionId()];
+        Map<String, Integer> data = container.toMigrationData();
+        return data.isEmpty() ? null : new CounterMigrationOperation(data);
+    }
+
+    @Override
+    public void commitMigration(PartitionMigrationEvent e) {
+        if (e.getMigrationEndpoint() == MigrationEndpoint.SOURCE) {
+            Container c = containers[e.getPartitionId()];
+            c.clear();
+        }
+
+        //todo
+    }
+
+    @Override
+    public void rollbackMigration(PartitionMigrationEvent e) {
+        if (e.getMigrationEndpoint() == MigrationEndpoint.DESTINATION) {
+            Container c = containers[e.getPartitionId()];
+            c.clear();
+        }
+    }
+
+    @Override
+    public void reset() {
+    }
+}
+```
+
+===== Running the Sample Code
+
+We can run the following code.
+
+```
+public class Member {
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance[] instances = new HazelcastInstance[3];
+        for (int k = 0; k < instances.length; k++)
+            instances[k] = Hazelcast.newHazelcastInstance();
+
+        Counter[] counters = new Counter[4];
+        for (int k = 0; k < counters.length; k++)
+            counters[k] = instances[0].getDistributedObject(CounterService.NAME, k + "counter");
+
+        for (Counter counter : counters)
+            System.out.println(counter.inc(1));
+
+        Thread.sleep(10000);
+
+        System.out.println("Creating new members");
+
+        for (int k = 0; k < 3; k++) {
+            Hazelcast.newHazelcastInstance();
+        }
+
+        Thread.sleep(10000);
+
+        for (Counter counter : counters)
+            System.out.println(counter.inc(1));
+
+        System.out.println("Finished");
+        System.exit(0);
+    }
+}
+```
+
+And we get the following output.
+
+```
+Executing 0counter.inc() on: Address[192.168.1.103]:5702
+Executing backup 0counter.inc() on: Address[192.168.1.103]:5703
+1
+Executing 1counter.inc() on: Address[192.168.1.103]:5703
+Executing backup 1counter.inc() on: Address[192.168.1.103]:5701
+1
+Executing 2counter.inc() on: Address[192.168.1.103]:5701
+Executing backup 2counter.inc() on: Address[192.168.1.103]:5703
+1
+Executing 3counter.inc() on: Address[192.168.1.103]:5701
+Executing backup 3counter.inc() on: Address[192.168.1.103]:5703
+1
+Creating new members
+Executing 0counter.inc() on: Address[192.168.1.103]:5705
+Executing backup 0counter.inc() on: Address[192.168.1.103]:5703
+2
+Executing 1counter.inc() on: Address[192.168.1.103]:5703
+Executing backup 1counter.inc() on: Address[192.168.1.103]:5704
+2
+Executing 2counter.inc() on: Address[192.168.1.103]:5705
+Executing backup 2counter.inc() on: Address[192.168.1.103]:5704
+2
+Executing 3counter.inc() on: Address[192.168.1.103]:5704
+Executing backup 3counter.inc() on: Address[192.168.1.103]:5705
+2
+Finished
+```
+
+You can see that the counters have moved. `0counter` moved from *192.168.1.103:5702* to *192.168.1.103:5705* and it is incremented correctly. Our counters can now move around in the cluster. You will see the counters will be redistributed once you add or remove a cluster member.
+
+==== Creating Backups
+
+Finally, we make sure that the counter data is available on another member when a member goes down. To do this, have the `IncOperation` class implement the `BackupAwareOperation` interface contained in the SPI package. See the following code.
+
+```
+class IncOperation extends Operation
+	implements PartitionAwareOperation, BackupAwareOperation {
+   ...   
+   
+   @Override
+   public int getAsyncBackupCount() {
+      return 0;
+   }
+
+   @Override
+   public int getSyncBackupCount() {
+      return 1;
+   }
+
+   @Override
+   public boolean shouldBackup() {
+      return true;
+   }
+
+   @Override
+   public Operation getBackupOperation() {
+      return new IncBackupOperation(objectId, amount);
+   }
+}
+```
+
+The methods `getAsyncBackupCount` and `getSyncBackupCount` specify the count for asynchronous and synchronous backups. Our sample has one synchronous backup and no asynchronous backups. In the above code, counts of the backups are hard-coded, but they can also be passed to `IncOperation` as parameters. 
+
+The method `shouldBackup` specifies whether our Operation needs a backup or not. For our sample, it returns `true`, meaning the Operation will always have a backup even if there are no changes. Of course, in real systems, we want to have backups if there is a change. For `IncOperation` for example, having a backup when `amount` is null would be a good practice.
+
+The method `getBackupOperation` returns the operation (`IncBackupOperation`) that actually performs the backup creation; the backup itself is an operation and will run on the same infrastructure. 
+
+If a backup should be made and `getSyncBackupCount` returns **3**, then three `IncBackupOperation` instances are created and sent to the three machines containing the backup partition. If fewer machines are available, then backups need to be created. Hazelcast will just send a smaller number of operations. 
+
+===== Performing the Backup with IncBackupOperation
+
+Now, let's have a look at the `IncBackupOperation`. It implements `BackupOperation`, you can see the
+https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/BackupOperation.java[source code for BackupOperation here].
+
+```
+public class IncBackupOperation
+	extends Operation implements BackupOperation {
+   private String objectId;
+   private int amount;
+
+   public IncBackupOperation() {
+   }
+
+   public IncBackupOperation(String objectId, int amount) {
+      this.amount = amount;
+      this.objectId = objectId;
+   }
+
+   @Override
+   protected void writeInternal(ObjectDataOutput out) throws IOException {
+      super.writeInternal(out);
+      out.writeUTF(objectId);
+      out.writeInt(amount);
+   }
+
+   @Override
+   protected void readInternal(ObjectDataInput in) throws IOException {
+      super.readInternal(in);
+      objectId = in.readUTF();
+      amount = in.readInt();
+   }
+
+   @Override
+   public void run() throws Exception {
+      CounterService service = getService();
+      System.out.println("Executing backup " + objectId + ".inc() on: " 
+        + getNodeEngine().getThisAddress());
+      Container c = service.containers[getPartitionId()];
+      c.inc(objectId, amount);
+   }
+}
+```
+
+NOTE: Hazelcast will also make sure that a new IncOperation for that particular key will not be executed before the (synchronous) backup operation has completed.
+
+
+===== Running the Sample Code
+
+Let's see the backup functionality in action with the following code.
+
+```
+public class Member {
+   public static void main(String[] args) throws Exception {
+      HazelcastInstance[] instances = new HazelcastInstance[2];
+      for (int k = 0; k < instances.length; k++) 
+         instances[k] = Hazelcast.newHazelcastInstance();
+    
+      Counter counter = instances[0].getDistributedObject(CounterService.NAME, "counter");
+      counter.inc(1);
+      System.out.println("Finished");
+      System.exit(0);
+    }
+}
+```
+
+Once it is run, the following output will be seen.
+
+```
+Executing counter0.inc() on: Address[192.168.1.103]:5702
+Executing backup counter0.inc() on: Address[192.168.1.103]:5701
+Finished
+```
+
+As it can be seen, both `IncOperation` and `IncBackupOperation` are executed. Notice that these operations have been executed on different cluster members to guarantee high availability.
+
+
+=== OperationParker
+
+`OperationParker` is an interface offered by SPI for the objects, such as Lock and Semaphore, to be used when a thread needs to wait for a lock to be released. You can see the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/spi/impl/operationparker/OperationParker.java[OperationParker source code here].
+
+`OperationParker` keeps a list of waiters. For each notify operation:
+
+- it looks for a waiter,
+- it asks the waiter whether it wants to keep waiting,
+- if the waiter responds *no*, the service executes its registered operation (operation itself knows where to send a response),
+- it rinses and repeats until a waiter wants to keep waiting.
+
+
+Each waiter can sit on a wait-notify queue for, at most, its operation's call timeout. For example, by default, each waiter can wait here for at most 1 minute. A continuous task scans expired/timed-out waiters and invalidates them with `CallTimeoutException`. Each waiter on the remote side should retry and keep waiting if it still wants to wait. This is a liveness check for remote waiters. 
+
+This way, it is possible to distinguish an unresponsive member and a long (~infinite) wait. On the caller side, if the waiting thread does not get a response for either a call timeout or for more than *2 times the call-timeout*, it will exit with `OperationTimeoutException`.  
+
+Note that this behavior breaks the fairness. Hazelcast does not support fairness for any of the data structures with blocking operations, such as Lock and Semaphore.
+
+
+=== Discovery SPI
+
+By default, Hazelcast is bundled with multiple ways to define and find other members in the same network. Commonly used, especially with development, is the Multicast discovery. This sends out a multicast request to a network segment and awaits other members to answer with their IP addresses. In addition, Hazelcast supports fixed IP addresses: https://jclouds.apache.org/reference/providers/[JClouds] or https://aws.amazon.com/de/ec2/[AWS (Amazon EC2)] based discoveries.
+  
+Since there is an ever growing number of public and private cloud environments, as well as numerous Service Discovery systems in the wild, Hazelcast provides cloud or service discovery vendors with the option to implement their own discovery strategy.
+  
+Over the course of this section, we will build a simple discovery strategy based on the `/etc/hosts` file.
+
+
+==== Discovery SPI Interfaces and Classes
+
+The Hazelcast Discovery SPI (Member Discovery Extensions) consists of multiple interfaces and abstract classes. In the following subsections, we will have a quick look at all of them and shortly introduce the idea and usage behind them. The example will follow in the next section, <<discovery-strategy, Discovery Strategy>>.
+
+===== DiscoveryStrategy: Implement
+
+The `com.hazelcast.spi.discovery.DiscoveryStrategy` interface is the main entry point for vendors to implement their corresponding member discovery strategies. Its main purpose is to return discovered members on request. The `com.hazelcast.spi.discovery.DiscoveryStrategy` interface also offers light lifecycle capabilities for setup and teardown logic (for example, opening or closing sockets or REST API clients).
+
+`DiscoveryStrategy`s can also do automatic registration / de-registration on service discovery systems if necessary. You can use the provided `DiscoveryNode` that is passed to the factory method to retrieve local addresses and ports, as well as metadata.
+ 
+===== AbstractDiscoveryStrategy: Abstract Class
+
+The `com.hazelcast.spi.discovery.AbstractDiscoveryStrategy` is a convenience abstract class meant to ease the implementation of strategies. It basically provides additional support for reading / resolving configuration properties and empty implementations of lifecycle methods if unnecessary. 
+ 
+===== DiscoveryStrategyFactory: Factory Contract
+
+The `com.hazelcast.spi.discovery.DiscoveryStrategyFactory` interface describes the factory contract that creates a certain `DiscoveryStrategy`. `DiscoveryStrategyFactory` s are registered automatically at startup of a Hazelcast member or client whenever they are found in the classpath. For automatic discovery, factories need to announce themselves as SPI services using a resource file according to the https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html[Java Service Provider Interface]. The service registration file must be part of the JAR file, located under `META-INF/services/com.hazelcast.spi.discovery.DiscoveryStrategyFactory`, and consist of a line with the full canonical class name of the `DiscoveryStrategy` per provided strategy implementation.
+
+===== DiscoveryNode: Describe a Member
+ 
+The `com.hazelcast.spi.discovery.DiscoveryNode` abstract class describes a member in the Discovery SPI. It is used for multiple purposes, since it will be returned from strategies for discovered members. It is also passed to `DiscoveryStrategyFactory`s factory method to define the local member itself if created on a Hazelcast member; on Hazelcast clients, null will be passed.
+
+===== SimpleDiscoveryNode: Default DiscoveryNode
+
+`com.hazelcast.spi.discovery.SimpleDiscoveryNode` is a default implementation of the `DiscoveryNode`. It is meant for convenience use of the Discovery SPI and can be returned from vendor implementations if no special needs are required. 
+
+===== NodeFilter: Filter Members
+
+You can configure `com.hazelcast.spi.discovery.NodeFilter` before startup and you can implement logic to do additional filtering of members. This might be necessary if query languages for discovery strategies are not expressive enough to describe members or to overcome inefficiencies of strategy implementations.
+ 
+NOTE: The `DiscoveryStrategy` vendor does not need to take possibly configured filters into account as their use is transparent to the strategies.
+
+===== DiscoveryService: Support In Integrator Systems
+
+A `com.hazelcast.spi.discovery.integration.DiscoveryService` is part of the integration domain. `DiscoveryStrategy` vendors do not need to implement `DiscoveryService` because it is meant to support the Discovery SPI in situations where vendors integrate Hazelcast into their own systems or frameworks. Certain needs might be necessary as part of the classloading or https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html[Java Service Provider Interface] lookup.
+
+===== DiscoveryServiceProvider: Provide a DiscoveryService
+
+Use the `com.hazelcast.spi.discovery.integration.DiscoveryServiceProvider` to provide a `DiscoveryService` to the Hazelcast discovery subsystem. Configure the provider with the Hazelcast configuration API.
+
+===== DiscoveryServiceSettings: Configure DiscoveryService
+
+A `com.hazelcast.spi.discovery.integration.DiscoveryServiceSettings` instance is passed to the `DiscoveryServiceProvider` at creation time to configure the `DiscoveryService`.
+
+===== DiscoveryMode: Member or Client
+
+The `com.hazelcast.spi.discovery.integration.DiscoveryMode` enum tells if a created `DiscoveryService` is running on a Hazelcast member or client, and to change behavior accordingly.   
+
+
+==== Discovery Strategy
+
+This subsection will walk through the implementation of a simple `DiscoveryStrategy` and their necessary setup.
+
+===== Discovery Strategy Example
+
+The example strategy will use the local `/etc/hosts` (and on Windows it will use the equivalent to the \*nix hosts file named `%SystemRoot%\system32\drivers\etc\hosts`) to lookup IP addresses of different hosts. The strategy implementation expects hosts to be configured with hostname sub-groups under the same domain. So far to theory, let's get into it.
+
+The full example's source code can be found in the https://github.com/hazelcast/hazelcast-code-samples[Hazelcast examples repository]. 
+
+===== Configuring Site Domain
+
+As a first step we do some basic configuration setup. We want the user to be able to configure the site domain for the discovery inside the hosts file, therefore we define a configuration property called `site-domain`. The configuration is not optional: it must be configured before the creation of the `HazelcastInstance`, either via XML or the Hazelcast Config API.
+     
+It is recommended that you keep all defined properties in a separate configuration class as public constants (public final static) with sufficient documentation. This allows users to easily look up possible configuration values.
+
+```
+public class HostsDiscoveryConfiguration {
+    /**
+     * 'site-domain' configures the basic site domain for the lookup, to
+     * find other sub-domains of the cluster members and retrieve their assigned
+     * IP addresses.
+     */
+    public static final PropertyDefinition DOMAIN = new SimplePropertyDefinition(
+        "site-domain", PropertyTypeConverter.STRING
+    );
+  
+    // Prevent instantiation
+    private HostsDiscoveryConfiguration() {}
+}
+```
+
+An additional `ValueValidator` could be passed to the definition to make sure the configured value looks like a domain or has a special format.
+
+===== Creating Discovery
+
+As the second step we create the very simple `DiscoveryStrategyFactory` implementation class. To keep things clear we are going to name the discovery strategy after its purpose: looking into the hosts file.
+
+```
+public class HostsDiscoveryStrategyFactory
+    implements DiscoveryStrategyFactory {
+   
+    private static final Collection<PropertyDefinition> PROPERTIES =
+      Collections.singletonList( HostsDiscoveryConfiguration.SITE_DOMAIN );
+   
+    public Class<? extends DiscoveryStrategy> getDiscoveryStrategyType() {
+        // Returns the actual class type of the DiscoveryStrategy
+        // implementation, to match it against the configuration
+        return HostsDiscoveryStrategy.class;
+    }
+   
+    public Collection<PropertyDefinition> getConfigurationProperties() {
+        return PROPERTIES;
+    }
+   
+    public DiscoveryStrategy newDiscoveryStrategy( DiscoveryNode discoveryNode,
+                                          ILogger logger,
+                                          Map<String, Comparable> properties ) {
+                                          
+        return new HostsDiscoveryStrategy( logger, properties );                                      
+    }   
+}
+``` 
+
+This factory now defines properties known to the discovery strategy implementation and provides a clean way to instantiate it. While creating the `HostsDiscoveryStrategy` we ignore the passed `DiscoveryNode` since this strategy will not support automatic registration of new nodes. In cases where the strategy does not support registration, the environment has to handle this in some provided way.
+
+NOTE: Remember that, when created on a Hazelcast client, the provided `DiscoveryNode` will be null, as there is no local member in existence.
+
+Next, we register the `DiscoveryStrategyFactory` to make Hazelcast pick it up automatically at startup. As described earlier, this is done according to the https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html[Java Service Provider Interface] specification. The filename is the name of the interface itself. Therefore we create a new resource file called `com.hazelcast.spi.discovery.DiscoveryStrategyFactory` and place it under `META-INF/services`. The content is the full canonical class name of our factory implementation. 
+ 
+```
+com.hazelcast.examples.spi.discovery.HostsDiscoveryStrategyFactory
+```
+
+If our JAR file will contain multiple factories, each consecutive line can define another full canonical `DiscoveryStrategyFactory` implementation class name.
+
+===== Implementing Discovery Strategy
+
+Now comes the interesting part. We are going to implement the discovery itself. The previous parts we did are normally pretty similar for all strategies aside from the configuration properties itself. However, implementing the discovery heavily depends on the way the strategy has to come up with IP addresses of other Hazelcast members.
+
+===== Extending The `AbstractDiscoveryStrategy`
+
+For ease of implementation, we will back our implementation by extending the `AbstractDiscoveryStrategy` and only implementing the absolute minimum ourselves.
+
+```
+public class HostsDiscoveryStrategy
+    extends AbstractDiscoveryStrategy {
+    
+    private final String siteDomain;  
+    
+    public HostsDiscoveryStrategy( ILogger logger,
+                                 Map<String, Comparable> properties ) {
+                                   
+        super( logger, properties );
+    
+        // Make it possible to override the value from the configuration on
+        // the system's environment or JVM properties
+        // -Ddiscovery.hosts.site-domain=some.domain
+        this.siteDomain = getOrNull( "discovery.hosts",
+                                 HostsDiscoveryConfiguration.DOMAIN );
+    }                              
+  
+    public Iterable<DiscoveryNode> discoverNodes() {
+        List<String> assignments = filterHosts();
+        return mapToDiscoveryNodes( assignments );
+    }  
+    // ...
+}
+```
+
+===== Overriding Discovery Configuration
+
+So far our implementation will retrieve the configuration property for the `site-domain`. Our implementation offers the option to override the value from the configuration (XML or Config API) right from the system environment or JVM properties. That can be useful when the `hazelcast.xml` defines a setup for an developer system (like `cluster.local`) and operations wants to override it for the real deployment. By providing a prefix (in this case `discovery.hosts`) we created an external property named `discovery.hosts.site-domain` which can be set as an environment variable or passed as a JVM property from the startup script.
+
+The lookup priority is explained in the following list, priority is from top to bottom:
+
+* JVM properties (or `hazelcast.xml` <properties/> section)
+* System environment
+* Configuration properties
+
+===== Implementing Lookup
+
+Since we now have the value for our property we can implement the actual lookup and mapping as already prepared in the `discoverNodes` method. The following part is very specific to this special discovery strategy, for completeness we're showing it anyways.
+  
+```
+private static final String HOSTS_NIX = "/etc/hosts";
+private static final String HOSTS_WINDOWS =
+                   "%SystemRoot%\\system32\\drivers\\etc\\hosts";
+
+private List<String> filterHosts() {
+    String os = System.getProperty( "os.name" );
+      
+    String hostsPath;
+    if ( os.contains( "Windows" ) ) {
+        hostsPath = HOSTS_WINDOWS;
+    } else {
+    hostsPath = HOSTS_NIX;
+    }
+  
+    File hosts = new File( hostsPath );
+  
+    // Read all lines
+    List<String> lines = readLines( hosts );
+  
+    List<String> assignments = new ArrayList<String>();
+    for ( String line : lines ) {
+        // Example:
+        // 192.168.0.1   host1.cluster.local
+        if ( matchesDomain( line ) ) {
+            assignments.add( line );
+        }
+    }
+    return assignments;
+}
+```
+
+===== Mapping to `DiscoveryNode`s
+
+After we now collected the address assignments configured in the hosts file we can go to the final step and map those to the `DiscoveryNode`s to return them from our strategy.
+ 
+```
+private Iterable<DiscoveryNode> mapToDiscoveryNodes( List<String> assignments ) {
+  Collection<DiscoveryNode> discoveredNodes = new ArrayList<DiscoveryNode>();
+  
+    for ( String assignment : assignments ) {
+        String address = sliceAddress( assignment );
+        String hostname = sliceHostname( assignment );
+    
+        Map<String, Object> attributes = 
+          Collections.singletonMap( "hostname", hostname );
+    
+        InetAddress inetAddress = mapToInetAddress( address );
+        Address addr = new Address( inetAddress, NetworkConfig.DEFAULT_PORT );
+    
+        discoveredNodes.add( new SimpleDiscoveryNode( addr, attributes ) );
+    }
+    return discoveredNodes;
+}
+```
+
+With that mapping we now have a full discovery, executed whenever Hazelcast asks for IPs. So why don't we read them in once and cache them? The answer is simple, it might happen that members go down or come up over time. Since we expect the hosts file to be injected into the running container it also might change over time. We want to get the latest available members, therefore we read the file on request.
+
+===== Configuring `DiscoveryStrategy`
+
+To actually use the new `DiscoveryStrategy` implementation we need to configure it like in the following example:
+
+```
+<hazelcast>
+  <!-- activate Discovery SPI -->
+  <properties>
+    <property name="hazelcast.discovery.enabled">true</property>
+  </properties>
+  
+  <network>
+    <join>
+      <!-- deactivating other discoveries -->
+      <multicast enabled="false"/>
+      <tcp-ip enabled="false" />
+      <aws enabled="false"/>
+      
+      <!-- activate our discovery strategy -->
+      <discovery-strategies>
+      
+        <!-- class equals to the DiscoveryStrategy not the factory! -->
+        <discovery-strategy enabled="true"
+            class="com.hazelcast.examples.spi.discovery.HostsDiscoveryStrategy">
+            
+          <properties>
+            <property name="site-domain">cluster.local</property>
+          </properties>
+        </discovery-strategy>
+      </discovery-strategies>
+    </join>
+  </network>
+</hazelcast>
+```
+
+To find out further details, please have a look at the Discovery SPI Javadoc.
+
+
+==== DiscoveryService (Framework integration)
+
+Since the `DiscoveryStrategy` is meant for cloud vendors or implementors of service discovery systems, the `DiscoveryService` is meant for integrators. In this case, integrators means people integrating Hazelcast into their own systems or frameworks. In those situations, there are sometimes special requirements on how to lookup framework services like the discovery strategies or similar services. Integrators can extend or implement their own `DiscoveryService` and `DiscoveryServiceProvider` and inject it using the Hazelcast Config API (`com.hazelcast.config.DiscoveryConfig`) prior to instantiating the `HazelcastInstance`. In any case, integrators might have to remember that a `DiscoveryService` might have to change behavior based on the runtime environment (Hazelcast member or client), and then the `DiscoveryServiceSettings` should provide information about the started `HazelcastInstance`.
+
+Since the implementation heavily depends on one's needs, there is no reason to provide an example of how to implement your own `DiscoveryService`. However, Hazelcast provides a default implementation which can be a good example to get started. This default implementation is `com.hazelcast.spi.discovery.impl.DefaultDiscoveryService`.
+
+
+=== Config Properties SPI
+
+The Config Properties SPI is an easy way that you can configure SPI plugins using a prebuilt system of automatic conversion and validation.
+
+==== Config Properties SPI Classes
+
+The Config Properties SPI consists of a small set of classes and provided implementations.
+
+===== PropertyDefinition: Define a Single Property
+
+The `com.hazelcast.config.properties.PropertyDefinition` interface defines a single property inside a given configuration. It consists of a key string and type (in form of a `com.hazelcast.core.TypeConverter`).
+
+You can mark properties as optional and you can have an additional validation step to make sure the provided value matches certain rules (like port numbers must be between 0-65535 or similar).
+
+===== SimplePropertyDefinition: Basic PropertyDefinition
+
+For convenience, the `com.hazelcast.config.properties.SimplePropertyDefinition` class is provided. This class is a basic implementation of the `PropertyDefinition` interface and should be enough for most situations. In case of additional needs, you are free to provide your own implementation of the `PropertyDefinition` interface.
+  
+===== PropertyTypeConverter: Set of TypeConverters
+
+The `com.hazelcast.config.properties.PropertyTypeConverter` enum provides a preset of `TypeConverter`s. Provided are the most common basic types:
+
+* String
+* Short
+* Integer
+* Long
+* Float
+* Double
+* Boolean
+ 
+===== ValueValidator and ValidationException
+
+The `com.hazelcast.config.properties.ValueValidator` interface implements additional value validation. The configured value will be validated before it is returned to the requester. If validation fails, a `com.hazelcast.config.properties.ValidationException` is thrown and the requester has to handle it or throw the exception further.
+
+==== Config Properties SPI Example
+
+This sub-section will show a quick example of how to setup, configure and use the Config Properties SPI.
+
+===== Defining a Config PropertyDefinition
+
+Defining a property is as easy as giving it a name and a type.
+
+```
+PropertyDefinition property = new SimplePropertyDefinition(
+    "my-key", PropertyTypeConverter.STRING
+);
+```
+
+We defined a property named `my-key` with a type of a string. If none of the predefined `TypeConverter`s matches the need, users are free to provide their own implementation.
+
+===== Providing a value in XML
+
+The above property is now configurable in two ways:
+
+```
+<!-- option 1 -->
+<my-key>value</my-key>
+
+<!-- option 2 -->
+<property name="my-key">value</property>
+```
+
+NOTE: In any case, both options are useable interchangeably, however the later version is recommended by Hazelcast for schema applicability.
+
+===== Retrieving a PropertyDefinition Value
+
+To eventually retrieve a value, use the `PropertyDefinition` to get and convert the value automatically.
+
+```
+public <T> T getConfig( PropertyDefinition property, 
+                        Map<String, Comparable> properties ) {
+
+  Map<String, Comparable> properties = ...;
+  TypeConverter typeConverter = property.typeConverter();
+
+  Comparable value = properties.get( property.key() );
+  return typeConverter.convert( value );
+}
+```
+

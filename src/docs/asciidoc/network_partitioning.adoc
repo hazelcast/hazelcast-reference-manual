@@ -1,0 +1,305 @@
+
+== Network Partitioning
+
+=== Split-Brain Syndrome
+
+In general, network partitioning is a network failure that causes the members to split into multiple groups such that a member in a group cannot communicate with members in other groups. In a partition scenario, all sides of the original cluster will operate independently assuming members in other sides are failed. Network partitioning is also called as _Split-Brain Syndrome_.
+
+Even though this communication failure is called as _network partitioning_, in practice a process or an entire OS that's suspending/pausing very long can cause communication interruptions. If these interruptions take long enough time to assume that the other side is crashed, the cluster splits into multiple partitions and they start operating independently. That's why any communication failure/interruption long enough can be classified as network partitioning.
+
+Moreover, communication failures don't have to be symmetrical. A network failure can interrupt only one side of the channel or a suspended process/member may not even observe the rest as crashed. That kind of network partitioning can be called as _partial network partitioning_.
+
+=== Dealing with Network Partitions
+
+Hazelcast handles network partitions using the following solutions:
+
+* Split-Brain Protection (Quorums): Split-Brain Protection could be used when consistency is the major concern on a network partitioning. It requires a minimum cluster size to keep a particular data structure available. When cluster size is below the defined quorum size, then subsequent operations will be rejected with a `QuorumException`. See <<split-brain-protection, Split-Brain Protection section>>.
+* Split-Brain Recovery (Merge Policies): Split-Brain Recovery is to make data structures available and operational on both sides of a network partition, and merge their data once the network partitioning problem is resolved. See <<split-brain-recovery, Split-Brain Recovery section>>.
+
+
+NOTE: Split-Brain Recovery is not supported for the data structures whose in-memory format is `NATIVE`.
+
+=== Split-Brain Protection
+
+NOTE: The term "quorum" used in this section simply refers to the count of members in the cluster. It does NOT refer to an implementation of Paxos or Raft protocols as used in some NoSQL systems. The mechanism provided in Hazelcast protects the user in case the number of members in a cluster drops below the specified one.
+
+How to respond to a split-brain scenario depends on whether consistency of data or availability of your application is of primary concern. In either case, because a split-brain scenario is caused by a network failure, you must initiate an effort to identify and correct the network failure. Your cluster cannot be brought back to steady state operation until the underlying network failure is fixed. If consistency is your primary concern, you can use Hazelcast's  Split-Brain Protection feature.
+
+Hazelcast's Split-Brain Protection enables you to specify the minimum cluster size required for operations to occur. This is achieved by defining and configuring a split-brain protection cluster quorum. If the cluster size is below the defined quorum, the operations are rejected and the rejected operations return a `QuorumException` to their callers.
+
+Your application continues its operations on the remaining operating cluster. Any application instances connected to the cluster with sizes below the defined quorum will be receiving exceptions which, depending on the programming and monitoring setup, should generate alerts. The key point is that rather than applications continuing in error with stale data, they are prevented from doing so.
+
+Split-Brain Protection is supported for the following Hazelcast data structures:
+
+* IMap (for Hazelcast 3.5 and higher versions)
+* Transactional Map (for Hazelcast 3.5 and higher versions)
+* ICache (for Hazelcast 3.5 and higher versions)
+* ILock (for Hazelcast 3.8 and higher versions)
+* IQueue (for Hazelcast 3.8 and higher versions)
+* IExecutorService, DurableExecutorService, IScheduledExecutorService, MultiMap, ISet, IList, Ringbuffer, Replicated Map, Cardinality Estimator, IAtomicLong, IAtomicReference, ISemaphore, ICountdownLatch (for Hazelcast 3.10 and higher versions)
+
+Each data structure to be protected should have the configuration added to it as explained in the <<configuring-split-brain-protection, Configuring Split-Brain Protection section>>.
+
+==== Time Window for Split-Brain Protection
+
+Cluster Membership is established and maintained by heartbeats. A network partitioning will present some members as being unreachable. While configurable, it is normally seconds or tens of seconds before the cluster is adjusted to exclude unreachable members. The cluster size is based on the currently understood number of members.
+
+For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection, a time window to detect quorum is not satisfied anymore. Length of this window depends on the failure detector. Given guarantee is, every member will eventually detect the failed members and will reject the operation on the data structure which requires the quorum.
+
+For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
+
+
+==== Configuring Split-Brain Protection
+
+You can set up Split-Brain Protection Cluster Quorum using either declarative or programmatic configuration.
+
+Assume that you have a 7-member Hazelcast Cluster and you want to set the minimum number of four members for the cluster to continue operating. In this case, if a split-brain happens, the sub-clusters of sizes 1, 2, and 3 will be prevented from being used. Only the sub-cluster of four members will be allowed to be used.
+
+NOTE: It is preferable to have an odd-sized initial cluster size to prevent a single network partitioning (split-brain) from creating two equal sized clusters.
+
+
+The following are map configurations for the example 7-member cluster scenario described above:
+
+**Declarative:**
+
+```
+<hazelcast>
+....
+<quorum name="quorumRuleWithFourMembers" enabled="true">
+  <quorum-size>4</quorum-size>
+</quorum>
+
+<map name="default">
+<quorum-ref>quorumRuleWithFourMembers</quorum-ref>
+</map>
+....
+</hazelcast>
+
+```
+
+**Programmatic:**
+
+```
+QuorumConfig quorumConfig = new QuorumConfig();
+quorumConfig.setName("quorumRuleWithFourMembers")
+quorumConfig.setEnabled(true);
+quorumConfig.setSize(4);
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.setQuorumName("quorumRuleWithFourMembers");
+
+Config config = new Config();
+config.addQuorumConfig(quorumConfig);
+config.addMapConfig(mapConfig);
+
+```
+
+Quorum configuration has the following elements.
+
+
+- `quorum-size`: Minimum number of members required in a cluster for the cluster to remain in an operational state. If the number of members is below the defined minimum at any time, the operations are rejected and the rejected operations return a QuorumException to their callers.
+- `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
+
+
+
+==== Configuring Quorum Listeners
+
+You can register quorum listeners to be notified about quorum results. Quorum listeners are local to the member where they are registered, so they receive only events that occurred on that local member.
+
+Quorum listeners can be configured via declarative or programmatic configuration. The following examples are such configurations.
+
+**Declarative:**
+
+```
+<hazelcast>
+....
+<quorum name="quorumRuleWithFourMembers" enabled="true">
+  <quorum-size>4</quorum-size>
+  <quorum-listeners>
+    <quorum-listener>com.company.quorum.FourMemberQuorumListener</quorum-listener>
+  </quorum-listeners>
+</quorum>
+
+<map name="default">
+  <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
+</map>
+....
+</hazelcast>
+```
+
+**Programmatic:**
+
+```
+QuorumListenerConfig listenerConfig = new QuorumListenerConfig();
+// You can either directly set quorum listener implementation of your own
+listenerConfig.setImplementation(new QuorumListener() {
+            @Override
+            public void onChange(QuorumEvent quorumEvent) {
+                if (quorumEvent.isPresent()) {
+                       // handle quorum presence
+                } else {
+                    // handle quorum absence
+                }
+            }
+        });
+// Or you can give the name of the class that implements QuorumListener interface.
+listenerConfig.setClassName("com.company.quorum.ThreeMemberQuorumListener");
+
+QuorumConfig quorumConfig = new QuorumConfig();
+quorumConfig.setName("quorumRuleWithFourMembers")
+quorumConfig.setEnabled(true);
+quorumConfig.setSize(4);
+quorumConfig.addListenerConfig(listenerConfig);
+
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.setQuorumName("quorumRuleWithFourMembers");
+
+Config config = new Config();
+config.addQuorumConfig(quorumConfig);
+config.addMapConfig(mapConfig);
+```
+
+==== Querying Quorum Results
+
+Split Brain Protection Quorum service gives you the ability to query quorum results over the `Quorum` instances. Quorum instances let you query the result of a particular quorum.
+
+Here is a Quorum interface that you can interact with.
+
+```
+/**
+ * {@link Quorum} provides access to the current status of a quorum.
+ */
+public interface Quorum {
+    /**
+     * Returns true if quorum is present, false if absent.
+     *
+     * @return boolean presence of the quorum
+     */
+    boolean isPresent();
+}
+```
+You can retrieve the quorum instance for a particular quorum over the quorum service, as in the following example.
+
+```
+String quorumName = "at-least-one-storage-member";
+QuorumConfig quorumConfig = new QuorumConfig();
+quorumConfig.setName(quorumName)
+quorumConfig.setEnabled(true);
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.setQuorumName(quorumName);
+
+Config config = new Config();
+config.addQuorumConfig(quorumConfig);
+config.addMapConfig(mapConfig);
+
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+QuorumService quorumService = hazelcastInstance.getQuorumService();
+Quorum quorum = quorumService.getQuorum(quorumName);
+
+boolean quorumPresence = quorum.isPresent();
+```
+
+=== Split-Brain Recovery
+
+Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will going to initiate merge process is decided. This decision is based on the size of clusters; the smaller cluster will merge into the bigger one. If they have equal number of members then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
+
+After merging side is decided, master (the eldest) member of the merging cluster initiates the cluster merge process by sending merge instruction to the members in its cluster.
+While recovering from partitioning, Hazelcast uses merge policies for some data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging records. Hazelcast provides an interface to be implemented and also few built-in policies ready to use.
+
+Remaining data structures discard the data from merging side.
+
+Each member of the merging cluster will do the following:
+
+- Pause.
+- Take a snapshot of local data structures those support merge policies.
+- Discard all data structure data.
+- Close all of its network connections (detach from its cluster).
+- Join to the new cluster.
+- Send merge requests to the new cluster for local snapshot.
+- Resume.
+
+==== Merge Policies
+
+Only `IMap`, `ICache` and `ReplicatedMap` support merge policies. `IMap` and `ReplicatedMap` use `com.hazelcast.map.merge.MapMergePolicy`. `ICache` uses `com.hazelcast.cache.CacheMergePolicy`. They are very similar interfaces with some minor differences in parameters. Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/merge/MapMergePolicy.html[`MapMergePolicy` Javadoc] and http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cache/CacheMergePolicy.html[`CacheMergePolicy` Javadoc] for their API details.
+
+There are built-in merge policies such as `PassThroughMergePolicy`, `PutIfAbsentMapMergePolicy`, `HigherHitsMapMergePolicy` and `LatestUpdateMapMergePolicy`. Additionally you can develop your own merge policy by implementing the relevant interface. You should set the full class name of your implementation to the merge-policy configuration.  
+
+For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
+
+==== Specifying Merge Policies
+
+Here is how merge policies are specified per map:
+
+```
+<hazelcast>
+  ...
+  <map name="default">
+    <backup-count>1</backup-count>
+    <eviction-policy>NONE</eviction-policy>
+    <max-size>0</max-size>
+    <eviction-percentage>25</eviction-percentage>
+    <!--
+      While recovering from split-brain (network partitioning),
+      map entries in the small cluster will merge into the bigger cluster
+      based on the policy set here. When an entry merges into the
+      cluster, there might be an existing entry with the same key already.
+      Values of these entries might be different for that same key.
+      Which value should be set for the key? Conflict is resolved by
+      the policy set here. Default policy is PutIfAbsentMapMergePolicy.
+
+      Following are the built-in merge policies:
+      com.hazelcast.map.merge.PassThroughMergePolicy; entry will be added if
+          there is no existing entry for the key.
+      com.hazelcast.map.merge.PutIfAbsentMapMergePolicy; entry will be
+          added if the merging entry doesn't exist in the cluster.
+      com.hazelcast.map.merge.HigherHitsMapMergePolicy; entry with the
+          higher hits wins.
+      com.hazelcast.map.merge.LatestUpdateMapMergePolicy; entry with the
+          latest update wins.
+    -->
+    <merge-policy>MY_MERGE_POLICY_CLASS</merge-policy>
+  </map>
+
+  ...
+</hazelcast>
+```
+
+Here is how merge policies are specified per cache:
+
+```
+<hazelcast>
+  ...
+    <cache name="default">
+        ...
+        <!--       
+        While recovering from split-brain (network partitioning), cache entries in the small cluster
+        merge into the bigger cluster based on the policy set here.
+        When an entry merges into the cluster, an entry with the same key might already exist in the cluster.
+        The values of these entries might be different for that same key. Which value should be set for the
+        key? The conflict is resolved by the policy set here.
+
+        There are built-in merge policies, such as:
+        com.hazelcast.cache.merge.PassThroughCacheMergePolicy or PASS_THROUGH:
+            The entry will be added directly even though there is an existing entry for the key.
+        com.hazelcast.cache.merge.PutIfAbsentCacheMergePolicy or PUT_IF_ABSENT:
+            The entry will be added if there is no existing entry for the key.
+        com.hazelcast.cache.merge.HigherHitsCacheMergePolicy or HIGHER_HITS:
+            The entry with the higher number of hits wins.
+        com.hazelcast.cache.merge.LatestAccessCacheMergePolicy or LATEST_ACCESS:
+            The entry which has been accessed more recently wins.
+
+        Default policy is com.hazelcast.cache.merge.PutIfAbsentCacheMergePolicy
+        -->
+        <merge-policy>MY_MERGE_POLICY_CLASS</merge-policy>        
+    </cache>
+    ...
+</hazelcast>    
+```
+
+NOTE: IMap, ICache and ReplicatedMap are  the only Hazelcast distributed data structures that merge after a split-brain syndrome. For the other data structures, e.g., Queue, Topic, and Lock, one instance from the larger cluster is chosen after split-brain syndrome.
+
+NOTE: Currently, merge functionality is not supported for High-Density Memory Store backed IMap and ICache data structures. Data on the smaller cluster side belonging to IMap and ICache instances with `NATIVE` in-memory format are discarded during the merge process.
+
+

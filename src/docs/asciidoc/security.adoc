@@ -1,0 +1,1289 @@
+
+
+== Security
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+This chapter describes the security features of Hazelcast. These features allow you to perform security activities, such as intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level, and using SSL socket communication. All of the Security features explained in this chapter are the features of [blue]#Hazelcast IMDG Enterprise# edition.
+
+=== Enabling JAAS Security
+
+
+With Hazelcast's extensible, JAAS based security feature, you can:
+
+- authenticate both cluster members and clients, 
+- and perform access control checks on client operations. Access control can be done according to endpoint principal and/or endpoint address. 
+
+You can enable security declaratively or programmatically, as shown below.
+
+```
+<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config
+    http://www.hazelcast.com/schema/config/hazelcast-config-3.9.xsd"
+    xmlns="http://www.hazelcast.com/schema/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+  ...
+    
+  <security enabled="true">
+    ...
+  </security>
+</hazelcast>
+```
+
+
+```
+Config cfg = new Config();
+SecurityConfig securityCfg = cfg.getSecurityConfig();
+securityCfg.setEnabled( true );
+```
+
+Also, see the <<setting-the-license-key, Setting License Key section>> for information on how to set your [blue]#Hazelcast IMDG Enterprise# license.
+
+=== Socket Interceptor
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+
+Hazelcast allows you to intercept socket connections before a member joins a cluster or a client connects to a member of a cluster. This allow you to add custom hooks to join and perform connection procedures (like identity checking using Kerberos, etc.). 
+
+To use the socket interceptor, implement `com.hazelcast.nio.MemberSocketInterceptor` for members and `com.hazelcast.nio.SocketInterceptor` for clients.
+
+The following example code enables the socket interceptor for members.
+
+[source,java]
+----
+public class MySocketInterceptor implements MemberSocketInterceptor {
+    public void init( SocketInterceptorConfig socketInterceptorConfig ) {
+        // initialize interceptor
+    }
+
+    void onConnect( Socket connectedSocket ) throws IOException {
+        // do something meaningful when a member has connected to the cluster
+    }
+
+    public void onAccept( Socket acceptedSocket ) throws IOException {
+        // do something meaningful when the cluster is ready to accept the member connection
+    }
+}
+----
+
+```
+<hazelcast>
+  ...
+  <network>
+    ...
+    <socket-interceptor enabled="true">
+      <class-name>com.hazelcast.examples.MySocketInterceptor</class-name>
+      <properties>
+        <property name="kerberos-host">kerb-host-name</property>
+        <property name="kerberos-config-file">kerb.conf</property>
+      </properties>
+    </socket-interceptor>
+  </network>
+  ...
+</hazelcast>
+```
+
+[source,java]
+----
+public class MyClientSocketInterceptor implements SocketInterceptor {
+    void onConnect( Socket connectedSocket ) throws IOException {
+        // do something meaningful when connected
+    }
+}
+
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.setGroupConfig( new GroupConfig( "dev", "dev-pass" ) )
+    .addAddress( "10.10.3.4" );
+
+MyClientSocketInterceptor clientSocketInterceptor = new MyClientSocketInterceptor();
+clientConfig.setSocketInterceptor( clientSocketInterceptor );
+HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
+----
+
+
+=== Security Interceptor
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+Hazelcast allows you to intercept every remote operation executed by the client. This lets you add a very flexible custom security logic. To do this, implement `com.hazelcast.security.SecurityInterceptor`.
+
+[source,java]
+----
+public class MySecurityInterceptor implements SecurityInterceptor {
+
+    public void before( Credentials credentials, String serviceName,
+                      String methodName, Parameters parameters )
+          throws AccessControlException {
+        // credentials: client credentials 
+        // serviceName: MapService.SERVICE_NAME, QueueService.SERVICE_NAME, ... etc
+        // methodName: put, get, offer, poll, ... etc
+        // parameters: holds parameters of the executed method, iterable.
+    }
+
+    public void after( Credentials credentials, String serviceName,
+                     String methodName, Parameters parameters ) {
+        // can be used for logging etc.
+    }
+}
+----
+
+The `before` method will be called before processing the request on the remote server. The `after` method will be called after the processing. Exceptions thrown while executing the `before` method will propagate to the client, but exceptions thrown while executing the `after` method will be suppressed.  
+
+
+=== Encryption
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+Hazelcast allows you to encrypt the entire socket level communication among all Hazelcast members and clients. Encryption is based on http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture]. 
+
+Hazelcast provides symmetric and asymmetric encryption. For asymmetric encryption, SSL/TLS cryptographic protocols are used. For symmetric encryption, the following algorithms are used.
+
+* DES/ECB/PKCS5Padding
+* PBEWithMD5AndDES
+* Blowfish
+* DESede
+
+Hazelcast uses MD5 message-digest algorithm as the cryptographic hash function. You can also use the salting process by giving a salt and password which are then concatenated and processed with MD5, and the resulting output is stored with the salt.
+
+
+In symmetric encryption, each member uses the same key, so the key is shared. Here is an example configuration for symmetric encryption.
+
+
+```
+<hazelcast>
+  ...
+  <network>
+    ...
+    <symmetric-encryption enabled="true">
+      <algorithm>PBEWithMD5AndDES</algorithm>
+      <salt>thesalt</salt>
+      <password>thepass</password>
+      <iteration-count>19</iteration-count>
+    </symmetric-encryption>
+  </network>
+  ...
+</hazelcast>
+```
+
+You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key, and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
+
+
+NOTE: Please see the <<tlsssl, SSL section>>.
+
+[[tlsssl]]
+=== TLS/SSL
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+NOTE: You cannot use TLS/SSL when [Hazelcast Encryption](#encryption) is enabled.
+
+One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which you can use to establish an encrypted communication across your cluster with key stores and trust stores. Note that, if you are developing applications using Java 8, you will be using its successor TLS (Transport Layer Security).
+
+
+NOTE: It is NOT recommended to reuse the key stores and trust stores for external applications.
+
+==== TLS/SSL for Hazelcast Members
+
+Hazelcast allows you to encrypt socket level communication between Hazelcast members and between Hazelcast clients and members, for end to end encryption. To use it, you need to implement `com.hazelcast.nio.ssl.SSLContextFactory` and configure the SSL section in the network configuration.
+
+The following is the implementation code snippet:
+
+[source,java]
+----
+public class MySSLContextFactory implements SSLContextFactory {
+    public void init( Properties properties ) throws Exception {
+    }
+
+    public SSLContext getSSLContext() {
+        ...
+        SSLContext sslCtx = SSLContext.getInstance( protocol );
+        return sslCtx;
+    }
+}
+----
+
+The following is the base declarative configuration for the implemented `SSLContextFactory`:
+
+```
+<hazelcast>
+  ...
+  <network>
+    ...
+    <ssl enabled="true">
+      <factory-class-name>
+          com.hazelcast.examples.MySSLContextFactory
+      </factory-class-name>
+      <properties>
+        <property name="foo">bar</property>
+      </properties>
+    </ssl>
+  </network>
+  ...
+</hazelcast>
+```
+
+Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLContextFactory`, which uses the configured keystore to initialize `SSLContext`; see the following example configuration for TLS/SSL.
+
+```xml
+<hazelcast>
+  ...
+  <network>
+    ...
+    <ssl enabled="true">
+      <factory-class-name>
+          com.hazelcast.nio.ssl.BasicSSLContextFactory
+      </factory-class-name>
+      <properties>
+        <property name="keyStore">keyStore</property>
+        <property name="keyStorePassword">keyStorePassword</property>
+        <property name="trustStore">trustStore</property>
+        <property name="trustStorePassword">trustStorePassword</property>
+        <property name="keyManagerAlgorithm">SunX509</property>
+        <property name="trustManagerAlgorithm">SunX509</property>
+        <property name="protocol">TLS</property>
+      </properties>
+    </ssl>
+  </network>
+  ...
+</hazelcast>
+```
+
+Here are the descriptions for the properties:
+ 
+* `keystore`: Path of your keystore file. Note that your keystore's type must be `JKS`.
+* `keyStorePassword`: Password to access the key from your keystore file.
+* `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
+* `keyStoreType`: The type of the keystore. Its default value is `JKS`. 
+* `truststore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application. Its type should be `JKS`.
+* `trustStorePassword`: Password to unlock the truststore file.
+* `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
+* `trustStoreType`: The type of the truststore. Its default value is `JKS`. 
+* `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLS`. Available values are:
+** SSL
+** SSLv2
+** SSLv3
+** TLS
+** TLSv1
+** TLSv1.1
+** TLSv1.2
++
+All of the above algorithms support Java 6 and higher versions, except the TLSv1.2 supports Java 7 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you write only `SSL` or `TLS`, your application will choose the SSL or TLS version according to your Java version.
+
+===== Other Property Configuration Options
+
+You can set all the properties presented in this section using the `javax.net.ssl` prefix, e.g., `javax.net.ssl.keyStore` and `javax.net.ssl.keyStorePassword`.
+
+Also note that these properties can be specified using the related Java system properties and also Java's `-D` command line option. See below equivalent examples:
+
+```
+System.setProperty("javax.net.ssl.trustStore", "/user/home/hazelcast.ts");
+```
+
+Or, 
+
+```
+-Djavax.net.ssl.trustStore=/user/home/hazelcast.ts
+```
+ 
+
+==== TLS/SSL for Hazelcast Clients
+
+Hazelcast clients which support TLS/SSL should have the following properties to configure the TLS/SSL:
+
+```
+Properties clientSslProps = TestKeyStoreUtil.createSslProperties();
+clientSslProps.setProperty("javax.net.ssl.trustStore", getTrustStoreFilePath());
+clientSslProps.setProperty("javax.net.ssl.trustStorePassword", "123456");
+ClientConfig config = new ClientConfig();
+config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(clientSslProps));
+```
+
+==== Mutual Authentication
+
+As explained above, Hazelcast members have keyStore used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust. 
+
+Starting with Hazelcast 3.8.1, mutual authentication is introduced. This allows the clients also to have their keyStores and members to have their trustStores so that the members can know which clients they can trust.
+
+To enable mutual authentication, you need to set the following property at the member side:
+
+```
+props.setProperty("javax.net.ssl.mutualAuthentication", "REQUIRED");
+```
+
+And at the client side, you need to set the following properties:
+
+```
+clientSslProps.setProperty("javax.net.ssl.keyStore", getKeyStoreFilePath());
+clientSslProps.setProperty("javax.net.ssl.keyStorePassword", "123456");
+```
+
+Please see the below example snippet to see the full configuration at the member side:
+
+```
+Config cfg = new Config();
+Properties props = new Properties();
+ 
+props.setProperty("javax.net.ssl.keyStore", getKeyStoreFilePath());
+props.setProperty("javax.net.ssl.trustStore", getTrustStoreFilePath());
+props.setProperty("javax.net.ssl.keyStorePassword", "123456");
+props.setProperty("javax.net.ssl.trustStorePassword", "123456");
+props.setProperty("javax.net.ssl.mutualAuthentication", "REQUIRED");
+ 
+cfg.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(props));
+Hazelcast.newHazelcastInstance(cfg);
+```
+
+The property `javax.net.ssl.mutualAuthentication` has two options:
+
+* REQUIRED: If the client does not provide a keystore or the provided keys are not included in the member's truststore, the client will not be authenticated.
+* OPTIONAL: If the client does not provide a keystore, it will be authenticated. But if the client provides keys that are not included in the member's truststore, the client will not be authenticated.
+
+
+NOTE: When a new client is introduced with a new keystore, the truststore at the member side should be updated accordingly to include new clients' information to be able to accept it.
+
+
+Please see the below example snippet to see the full configuration at the client side:
+
+```
+Properties clientSslProps = new Properties();
+clientSslProps.setProperty("javax.net.ssl.keyStore", getKeyStoreFilePath());
+clientSslProps.setProperty("javax.net.ssl.trustStore", getTrustStoreFilePath());
+clientSslProps.setProperty("javax.net.ssl.keyStorePassword", "123456");
+clientSslProps.setProperty("javax.net.ssl.trustStorePassword", "123456");
+ClientConfig config = new ClientConfig();
+config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(clientSslProps));
+ 
+HazelcastClient.newHazelcastClient(config);
+```
+
+
+==== TLS/SSL Performance Improvements for Java
+
+TLS/SSL can have a significant impact on performance. There are a few ways to increase the performance. 
+
+The first thing that can be done is making sure that AES intrensics are used. Modern CPUs (2010 or newer Westmere) have hardware support for AES encryption/decryption and if a Java 8 or newer JVM is
+used, the JIT will automatically make use of these AES instructions. They can also be explicitly enabled using `-XX:+UseAES -XX:+UseAESIntrinsics`, 
+or disabled using `-XX:-UseAES -XX:-UseAESIntrinsics`. 
+
+A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available 
+for a block, the algorithm relies on random number generation to pad. Under Linux, the JVM automatically makes use of `/dev/random` for 
+the generation of random numbers. `/dev/random` relies on entropy to be able to generate random numbers. However if this entropy is 
+insufficient to keep up with the rate requiring random numbers, it can slow down the encryption/decryption since `/dev/random` will
+block; it could block for minutes waiting for sufficient entropy . This can be fixed
+by adding the following system property `-Djava.security.egd=file:/dev/./urandom`. For a more permanent solution, modify 
+`<JAVA_HOME>/jre/lib/security/java.security` file, look for the `securerandom.source=/dev/urandom` and change it 
+to `securerandom.source=file:/dev/./urandom`. Switching to `/dev/urandom` could be controversial because the `/dev/urandom` will not 
+block if there is a shortage of entropy and the returned random values could theoretically be vulnerable to a cryptographic attack. 
+If this is a concern in your application, use `/dev/random` instead.
+
+Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client 
+automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
+be changed using the `hazelcast.client.io.input.thread.count` and `hazelcast.client.io.input.thread.count` client system properties.
+By default it is 1 input thread and 1 output thread. If TLS/SSL is enabled, it will default to 3 input threads and 3 output threads.
+Having more client I/O threads than members in the cluster will not lead to an increased performance. So with a 2-member cluster,
+2 in and 2 out threads will give the best performance.
+
+==== TLS/SSL Debugging
+
+To assist with TLS/SSL issues, the following system property can be used:
+
+```
+-Djavax.net.debug=all
+```
+
+The property will provide a lot of logging output including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information please see http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html[Debugging TSL/SSL Connections].
+
+==== TLS/SSL for Hazelcast Management Center
+
+In order to use secured communication between cluster and Management Center, you have to configure the cluster, see http://docs.hazelcast.org/docs/management-center/latest/manual/html-single/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center].
+
+
+=== Integrating OpenSSL
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+
+NOTE: You cannot integrate OpenSSL into Hazelcast when <<encryption, Hazelcast Encryption>> is enabled.
+
+NOTE: You currently cannot use OpenSSL integration with Hazelcast when using IBM JDK.
+
+TLS/SSL in Java is normally provided by the JRE. However, the performance overhead can be significant; even with AES intrensics
+enabled. If you are using Linux, Hazelcast provides OpenSSL integration for TLS/SSL which can provide significant performance
+improvements.
+
+OpenSSL can be used on clients and/or members. For best performance, it is recommended to install on a client and member, and 
+configure the appropriate cipher suite(s).
+
+Integrating OpenSSL into Hazelcast is achieved with the following steps:
+
+- Installing OpenSSL
+- Configuring Hazelcast to use OpenSSL
+- Configuring Cipher Suites
+
+Below sections explain these steps.
+
+==== Installing OpenSSL
+
+Install OpenSSL. Make sure that you are installing 1.0.1 or newer release. Please refer to its documentation at 
+https://github.com/openssl/openssl/blob/master/INSTALL[github.com/openssl]. 
+
+On the major distributions, OpenSSL is installed by default. 
+
+==== Apache Portable Runtime library
+
+Install Apache Portable Runtime library. Please refer to https://apr.apache.org/download.cgi[apr.apache.org]. 
+
+For RHEL:
+
+`sudo yum -y install apr`
+
+For Ubuntu:
+
+`sudo apt-get -y install libapr1`
+
+==== Netty Libraries
+
+For the OpenSSL integration in Java, the [Netty](https://netty.io/) library is used. 
+
+Make sure the following libraries from the Netty framework are on the classpath:
+
+** `netty-buffer-4.1.8.Final.jar`
+** `netty-codec-4.1.8.Final.jar`
+** `netty-common-4.1.8.Final.jar`
+** `netty-buffer-4.1.8.Final.jar`
+** `netty-resolver-4.1.8.Final.jar`
+** `netty-transport-4.1.8.Final.jar`
+** `netty-tcnative-boringssl-static-1.1.33.Fork26-linux-x86_64.jar`
+
+For a Maven based project, the following snippet adds the JARs.
+
+```
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-tcnative-boringssl-static</artifactId>
+            <version>1.1.33.Fork26</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        ...
+   </dependencies>
+```
+
+If your projects require a smaller set of dependencies, then instead of using the larger `netty-all` JAR from the previous snippet,
+use the following snippet which contains all the essentials JARs.
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-tcnative-boringssl-static</artifactId>
+            <version>1.1.33.Fork26</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>4.1.8.Final</version>
+        </dependency>
+        ...
+   </dependencies>
+```
+    
+NOTE: It is very important that the version of Netty JAR(s) corresponds to a very specific version of `netty-tcnative`. In case of doubt, the simplest thing to do is to download the `netty-<version>.tar.bz2` file from the https://netty.io/downloads.html[Netty] website and check which `netty-tcnative` version is used for that Netty release.*
+  
+==== Configuring Hazelcast for OpenSSL
+
+Configuring OpenSSL in Hazelcast is straight forward. On the client and/or member side, the following snippet enables TLS/SSL
+using OpenSSL:
+
+```
+<network>
+    ...
+    <ssl enabled="true">
+        <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
+         
+        <properties>
+            <property name="keyStore">hazelcast.keystore</property>
+            <property name="keyStorePassword">123456</property>
+            <property name="keyManagerAlgorithm">SunX509</property>
+            <property name="trustManagerAlgorithm">SunX509</property>
+            <property name="trustStore">hazelcast.truststore</property>
+            <property name="trustStorePassword">123456</property>
+            <property name="protocol">TLSv1.2</property>
+        </properties>
+    </ssl>
+</network>
+```
+The configuration is almost the same as regular TLS/SSL integration. The main difference is the `OpenSSLEngineFactory` factory class.
+
+Here are the descriptions for the properties:
+ 
+* `keystore`: Path of your keystore file. Note that your keystore's type must be `JKS`.
+* `keyStorePassword`: Password to access the key from your keystore file.
+* `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
+* `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
+* `truststore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates
+ trusted by your application. Its type should be `JKS`.
+* `trustStorePassword`: Password to unlock the truststore file.
+* `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLSv1.2`. Available values are:
+** SSL
+** SSLv2
+** SSLv3
+** TLS
+** TLSv1
+** TLSv1.1
+** TLSv1.2
++
+All of the algorithms listed above support Java 6 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
+provide only `SSL` or `TLS` as a value for the `protocol` property, they will be converted to `SSLv3` and `TLSv1.2`, respectively.
+
+
+==== Configuring Cipher Suites
+
+To get the best performance out of OpenSSL, the correct https://en.wikipedia.org/wiki/Cipher_suite[cipher suites] need to be configured.
+Each cipher suite has different performance and security characteristics and depending on the hardware and selected cipher suite, the overhead of TLS can range from dramatic to almost negligible.
+
+The cipher suites are configured using the `ciphersuites` property as shown below:
+
+```
+<ssl enabled="true">
+    <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
+     
+    <properties>
+        <property name="keyStore">upload/hazelcast.keystore</property>
+        ...
+        ...
+        ...
+        <property name="ciphersuites">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                                      TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA</property>
+    </properties>
+</ssl>
+```
+
+The `ciphersuites` property accepts a comma separated list (spaces, enters, tabs are filtered out) of cipher suites in the order 
+of preference.
+
+You can configure a member and client with different cipher suites; but there should be at least one shared cipher suite. 
+
+One of the cipher suites that gave very low overhead but still provides solid security is the 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'.
+However in our measurements this cipher suite only performs well using OpenSSL; using the regular Java TLS integration, it performs
+badly. So keep that in mind when configuring a client using regular SSL and a member using OpenSSL.
+
+Please check with your security expert to determine which cipher suites are appropriate and run performance tests to see which ones perform
+well in your environment.
+
+If you don't configure the cipher suites, then both client and/or member will determine a cipher suite by themselves during the TLS/SSL 
+handshake. This can lead to suboptimal performance and lower security than required.
+
+==== Other Ways of Configuring Properties
+
+You can set all the properties presented in this section using the `javax.net.ssl` prefix, e.g., `javax.net.ssl.keyStore` 
+and `javax.net.ssl.keyStorePassword`.
+
+Also note that these properties can be specified using the related Java system properties and also Java's `-D` command line 
+option. This is very useful if you require a more flexible configuration e.g. when doing performance tests.
+
+See below examples equivalent to each other:
+
+```
+System.setProperty("javax.net.ssl.trustStore", "/user/home/hazelcast.ts");
+```
+
+Or, 
+
+```
+-Djavax.net.ssl.trustStore=/user/home/hazelcast.ts
+```
+
+Another two examples equivalent to each other:
+
+
+```
+System.setProperty("javax.net.ssl.ciphersuites", "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA");
+```
+
+Or,
+
+
+```
+-Djavax.net.ssl.ciphersuites=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA
+```
+
+=== Credentials
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+
+One of the key elements in Hazelcast security is the `Credentials` object, which carries all credentials of an endpoint (member or client). Credentials is an interface which extends `Serializable`. You can either implement the three methods in the `Credentials` interface, or you can extend the `AbstractCredentials` class, which is an abstract implementation of `Credentials`.
+
+Hazelcast calls the `Credentials.setEndpoint()` method when an authentication request arrives at the member before authentication takes place.
+
+```
+public interface Credentials extends Serializable {
+    String getEndpoint();
+    void setEndpoint( String endpoint ) ;    
+    String getPrincipal() ;    
+}
+```
+
+Here is an example of extending the `AbstractCredentials` class.
+
+```
+public abstract class AbstractCredentials implements Credentials, DataSerializable {
+    private transient String endpoint;
+    private String principal;
+    ...
+}
+```
+
+`UsernamePasswordCredentials`, a custom implementation of Credentials, is in the Hazelcast `com.hazelcast.security` package. `UsernamePasswordCredentials` is used for default configuration during the authentication process of both members and clients.
+
+```java
+public class UsernamePasswordCredentials extends Credentials {
+    private byte[] password;
+    ...
+}
+```
+
+=== Validating Secrets Using Strength Policy
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+Hazelcast IMDG Enterprise offers a secret validation mechanism including a strength policy. The term "secret" here refers to the symmetric encryption password, salt and other passwords and keys.
+ 
+For this validation, Hazelcast IMDG Enterprise comes with the class DefaultSecretStrengthPolicy to identify all possible weaknesses of secrets and to display a warning in the system logger. Note that, by default, no matter how weak the secrets are, the cluster members will still start after logging this warning; however, this is configurable (please see the “Enforcing the Secret Strength Policy” section).
+ 
+Requirements (rules) for the secrets are as follows:
+
+* Minimum length of eight characters; and
+* Large keyspace use, ensuring the use of at least three of the following: 
+** mixed case; 
+** alpha;
+** numerals;
+** special characters; and
+** no dictionary words. 
+ 
+The rules “Minimum length of eight characters” and “no dictionary words” can be configured using the following system properties:
+ 
+`hazelcast.security.secret.policy.min.length`: Set the minimum secret length. The default is 8 characters. 
+
+Example: 
+
+```
+-Dhazelcast.security.secret.policy.min.length=10
+```
+ 
+`hazelcast.security.dictionary.policy.wordlist.path`: Set the path of a wordlist available in the file system. The default is `/usr/share/dict/words`.
+
+Example:
+
+```
+-Dhazelcast.security.dictionary.policy.wordlist.path=”/Desktop/myWordList”
+```
+ 
+==== Using a Custom Secret Strength Policy
+
+You can implement SecretStrengthPolicy to develop your custom strength policy for a more flexible or strict security. After you implement it, you can use the following system property to point to your custom class:
+ 
+`hazelcast.security.secret.strength.default.policy.class`: Set the full name of the custom class.  
+ 
+Example:
+
+```
+-Dhazelcast.security.secret.strength.default.policy.class=”com.impl.myStrengthPolicy”
+```
+ 
+==== Enforcing the Secret Strength Policy
+
+By default, secret strength policy is NOT enforced. This means, if a weak secret is detected, an informative warning will be showed in the system logger and the members will continue to initialize. However, you can enforce the policy using the following system property so that the members will not be started until the weak secret errors are fixed:
+ 
+`hazelcast.security.secret.strength.policy.enforced`: Set to “true” to enforce the secret strength policy. The default is “false”. To enforce:
+ 
+```
+-Dhazelcast.security.secret.strength.policy.enforced=true
+```
+ 
+The following is a sample warning when secret strength policy is NOT enforced, i.e., the above system property is set to “false”:
+
+``` 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SECURITY WARNING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Group password does not meet the current policy and complexity requirements.
+*Must not be set to the default.
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+```
+
+The following is a sample warning when secret strength policy is enforced, i.e., the above system property is set to “true”:
+ 
+```
+WARNING: [192.168.2.112]:5701 [dev] [3.9-SNAPSHOT]
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SECURITY WARNING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Symmetric Encryption Password does not meet the current policy and complexity requirements.
+*Must contain at least 1 number.
+*Must contain at least 1 special character.
+Group Password does not meet the current policy and complexity requirements.
+*Must not be set to the default.
+*Must have at least 1 lower and 1 upper case characters.
+*Must contain at least 1 number.
+*Must contain at least 1 special character.
+Symmetric Encryption Salt does not meet the current policy and complexity requirements.
+*Must contain 8 or more characters.
+*Must contain at least 1 number.
+*Must contain at least 1 special character.
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Exception in thread "main" com.hazelcast.security.WeakSecretException: Weak secrets found in configuration, check output above for more details.
+at com.hazelcast.security.impl.WeakSecretsConfigChecker.evaluateAndReport(WeakSecretsConfigChecker.java:49)
+at com.hazelcast.instance.EnterpriseNodeExtension.printNodeInfo(EnterpriseNodeExtension.java:197)
+at com.hazelcast.instance.Node.<init>(Node.java:194)
+at com.hazelcast.instance.HazelcastInstanceImpl.createNode(HazelcastInstanceImpl.java:163)
+at com.hazelcast.instance.HazelcastInstanceImpl.<init>(HazelcastInstanceImpl.java:130)
+at com.hazelcast.instance.HazelcastInstanceFactory.constructHazelcastInstance(HazelcastInstanceFactory.java:195)
+at com.hazelcast.instance.HazelcastInstanceFactory.newHazelcastInstance(HazelcastInstanceFactory.java:174)
+at com.hazelcast.instance.HazelcastInstanceFactory.newHazelcastInstance(HazelcastInstanceFactory.java:124)
+at com.hazelcast.core.Hazelcast.newHazelcastInstance(Hazelcast.java:58)
+```
+
+=== ClusterLoginModule
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+All security attributes are carried in the `Credentials` object. `Credentials` is used by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule] s during the authentication process. User supplied attributes from `LoginModule`s are accessed by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html[CallbackHandler] s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.
+
+Your implementation of `LoginModule` should create an instance of `com.hazelcast.security.CredentialsCallback` and call the `handle(Callback[] callbacks)` method of `CallbackHandler` during the login process. 
+
+`CredentialsCallback.getCredentials()` returns the supplied `Credentials` object.
+
+[source,java]
+----
+public class CustomLoginModule implements LoginModule {
+    CallbackHandler callbackHandler;
+    Subject subject;
+    Credentials credentials;
+    
+    public void initialize( Subject subject, CallbackHandler callbackHandler,
+                          Map<String, ?> sharedState, Map<String, ?> options ) {
+        this.subject = subject;
+        this.callbackHandler = callbackHandler;
+    }
+
+    public final boolean login() throws LoginException {
+        CredentialsCallback callback = new CredentialsCallback();
+        try {
+            callbackHandler.handle( new Callback[] { callback } );
+            credentials = callback.getCredentials();
+        } catch ( Exception e ) {
+        throw new LoginException( e.getMessage() );
+        }
+        ...
+    }
+    ...
+}
+----
+
+To use the default Hazelcast permission policy, you must create an instance of `com.hazelcast.security.ClusterPrincipal` that holds the `Credentials` object, and you must add it to `Subject.principals onLoginModule.commit()` as shown below.
+
+```
+public class MyCustomLoginModule implements LoginModule {
+    ...
+    public boolean commit() throws LoginException {
+        ...
+        Principal principal = new ClusterPrincipal( credentials );
+        subject.getPrincipals().add( principal );        
+        return true;
+    }
+    ...
+}
+```
+
+Hazelcast has an abstract implementation of `LoginModule` that does callback and cleanup operations and holds the resulting `Credentials` instance. `LoginModule`s extending `ClusterLoginModule` can access `Credentials`, `Subject`, `LoginModule` instances and options, and `sharedState` maps. Extending the `ClusterLoginModule` is recommended instead of implementing all required stuff.
+
+```
+public abstract class ClusterLoginModule implements LoginModule {
+    protected abstract boolean onLogin() throws LoginException;
+    protected abstract boolean onCommit() throws LoginException;
+    protected abstract boolean onAbort() throws LoginException;
+    protected abstract boolean onLogout() throws LoginException;
+}
+```
+
+
+==== Enterprise Integration
+
+Using the above API, you can implement a `LoginModule` that performs authentication against the Security System of your choice, such as an LDAP store like https://directory.apache.org/[Apache Directory] or some other corporate standard you might have. For example, you may wish to have your clients send an identification token in the `Credentials` object. This token can then be sent to your back-end security system via the `LoginModule` that runs on the cluster side.
+
+Additionally, the same system may authenticate the user and also then return the roles that are attributed to the user. These roles can then be used for data structure authorization. 
+
+NOTE: Please refer to http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html[JAAS Reference Guide] for further information.
+
+
+=== Cluster Member Security
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+Hazelcast supports standard Java Security (JAAS) based authentication between cluster members. To implement it, you configure one or more LoginModules and an instance of `com.hazelcast.security.ICredentialsFactory`. Although Hazelcast has default implementations using cluster groups and UsernamePasswordCredentials on authentication, it is recommended that you implement the LoginModules and an instance of `com.hazelcast.security.ICredentialsFactory` according to your specific needs and environment.
+
+```
+<security enabled="true">
+  <member-credentials-factory 
+      class-name="com.hazelcast.examples.MyCredentialsFactory">
+    <properties>
+      <property name="property1">value1</property>
+      <property name="property2">value2</property>
+    </properties>
+  </member-credentials-factory>
+  <member-login-modules>
+    <login-module usage="REQUIRED"
+        class-name="com.hazelcast.examples.MyRequiredLoginModule">
+      <properties>
+        <property name="property3">value3</property>
+      </properties>
+    </login-module>
+    <login-module usage="SUFFICIENT"
+        class-name="com.hazelcast.examples.MySufficientLoginModule">
+      <properties>
+        <property name="property4">value4</property>
+      </properties>
+    </login-module>
+    <login-module usage="OPTIONAL"
+        class-name="com.hazelcast.examples.MyOptionalLoginModule">
+      <properties>
+        <property name="property5">value5</property>
+      </properties>
+    </login-module>
+  </member-login-modules>
+  ...
+</security>
+```
+
+You can define as many as LoginModules as you want in configuration. They are executed in the order listed in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
+
+```
+package com.hazelcast.security;
+/**
+ * ICredentialsFactory is used to create Credentials objects to be used
+ * during member authentication before connection accepted by master member.
+ */
+public interface ICredentialsFactory {
+
+  void configure( GroupConfig groupConfig, Properties properties );
+
+  Credentials newCredentials();
+
+  void destroy();
+}
+```
+
+Properties defined in the configuration are passed to the `ICredentialsFactory.configure()` method as `java.util.Properties` and to the `LoginModule.initialize()` method as `java.util.Map`.
+
+
+=== Native Client Security
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+
+Hazelcast's Client security includes both authentication and authorization.
+
+==== Authentication
+
+The authentication mechanism works the same as cluster member authentication. To implement client authentication, you configure a Credential and one or more LoginModules. The client side does not have and does not need a factory object to create Credentials objects like `ICredentialsFactory`. You must create the credentials at the client side and send them to the connected member during the connection process.
+
+```
+<security enabled="true">
+  <client-login-modules>
+    <login-module usage="REQUIRED"
+        class-name="com.hazelcast.examples.MyRequiredClientLoginModule">
+      <properties>
+        <property name="property3">value3</property>
+      </properties>
+    </login-module>
+    <login-module usage="SUFFICIENT"
+        class-name="com.hazelcast.examples.MySufficientClientLoginModule">
+      <properties>
+        <property name="property4">value4</property>
+      </properties>
+    </login-module>
+    <login-module usage="OPTIONAL"
+        class-name="com.hazelcast.examples.MyOptionalClientLoginModule">
+      <properties>
+        <property name="property5">value5</property>
+      </properties>
+    </login-module>
+  </client-login-modules>
+  ...
+</security>
+```
+
+You can define as many as `LoginModules` as you want in configuration. Those are executed in the order given in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
+
+```
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.setCredentials( new UsernamePasswordCredentials( "dev", "dev-pass" ) );
+HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
+```
+
+==== Authorization
+
+Hazelcast client authorization is configured by a client permission policy. Hazelcast has a default permission policy implementation that uses permission configurations defined in the Hazelcast security configuration. Default policy permission checks are done against instance types (map, queue, etc.), instance names (map, queue, name, etc.), instance actions (put, read, remove, add, etc.), client endpoint addresses, and client principal defined by the Credentials object. The default permission policy allows to use comma separated names in the principal attribute configuration. Instance and principal names and endpoint addresses can be defined as wildcards(*). Please see the <<other-network-configurations, Network Configuration section>> and <<using-wildcards, Using Wildcards section>>.
+
+```
+<security enabled="true">
+  <client-permissions>
+    <!-- Principals 'admin' and 'root' from endpoint '127.0.0.1' have all permissions. -->
+    <all-permissions principal="admin,root">
+      <endpoints>
+        <endpoint>127.0.0.1</endpoint>
+      </endpoints>
+    </all-permissions>
+        
+    <!-- Principals named 'dev' from all endpoints have 'create', 'destroy', 
+         'put', 'read' permissions for map named 'myMap'. -->
+    <map-permission name="myMap" principal="dev">
+      <actions>
+        <action>create</action>
+        <action>destroy</action>
+        <action>put</action>
+        <action>read</action>
+      </actions>
+    </map-permission>
+        
+    <!-- All principals from endpoints '127.0.0.1' or matching to '10.10.*.*' 
+         have 'put', 'read', 'remove' permissions for map
+         whose name matches to 'com.foo.entity.*'. -->
+    <map-permission name="com.foo.entity.*">
+      <endpoints>
+        <endpoint>10.10.*.*</endpoint>
+        <endpoint>127.0.0.1</endpoint>
+      </endpoints>
+      <actions>
+        <action>put</action>
+        <action>read</action>
+        <action>remove</action>
+      </actions>
+    </map-permission>
+        
+    <!-- Principals named 'dev' from endpoints matching to either 
+         '192.168.1.1-100' or '192.168.2.*' 
+         have 'create', 'add', 'remove' permissions for all queues. -->
+    <queue-permission name="*" principal="dev">
+      <endpoints>
+        <endpoint>192.168.1.1-100</endpoint>
+        <endpoint>192.168.2.*</endpoint>
+      </endpoints>
+      <actions>
+        <action>create</action>
+        <action>add</action>
+        <action>remove</action>
+      </actions>
+    </queue-permission>
+        
+    <!-- All principals from all endpoints have transaction permission.-->
+    <transaction-permission />
+  </client-permissions>
+</security>
+```
+
+You can also define your own policy by implementing `com.hazelcast.security.IPermissionPolicy`.
+
+```
+package com.hazelcast.security;
+/**
+ * IPermissionPolicy is used to determine any Subject's 
+ * permissions to perform a security sensitive Hazelcast operation.
+ *
+ */
+public interface IPermissionPolicy {
+  void configure( SecurityConfig securityConfig, Properties properties );
+    
+  PermissionCollection getPermissions( Subject subject,
+                                       Class<? extends Permission> type );
+    
+  void destroy();
+}
+```
+
+Permission policy implementations can access client-permissions that are in configuration by using
+`SecurityConfig.
+getClientPermissionConfigs()` when Hazelcast calls the method `configure(SecurityConfig securityConfig, Properties properties)`.
+
+The `IPermissionPolicy.getPermissions(Subject subject, Class<? extends Permission> type)` method is used to determine a client request that has been granted permission to perform a security-sensitive operation. 
+
+Permission policy should return a `PermissionCollection` containing permissions of the given type for the given `Subject`. The Hazelcast access controller will call `PermissionCollection.implies(Permission)` on returning `PermissionCollection` and it will decide whether or not the current `Subject` has permission to access the requested resources.
+
+==== Permissions
+
+* All Permission
++
+```
+<all-permissions principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+</all-permissions>
+```
++
+* Map Permission
++
+```
+<map-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</map-permission>
+```
++
+Actions: all, create, destroy, put, read, remove, lock, intercept, index, listen
++
+* Queue Permission
++
+```
+<queue-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</queue-permission>
+```
++
+Actions: all, create, destroy, add, remove, read, listen
++
+* Multimap Permission
++
+```
+<multimap-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</multimap-permission>
+```
++
+Actions: all, create, destroy, put, read, remove, listen, lock
++
+* Topic Permission
++
+```
+<topic-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</topic-permission>
+```
++
+Actions: create, destroy, publish, listen
++
+* List Permission
++
+```
+<list-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</list-permission>
+```
++
+Actions: all, create, destroy, add, read, remove, listen
++
+* Set Permission
++
+```
+<set-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</set-permission>
+```
++
+Actions: all, create, destroy, add, read, remove, listen
++
+* Lock Permission
++
+```
+<lock-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</lock-permission>
+```
++
+Actions: all, create, destroy, lock, read
++
+* AtomicLong Permission
++
+```
+<atomic-long-permission name="name" principal="principal">
+  <endpoints>
+        ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</atomic-long-permission>
+```
++
+Actions: all, create, destroy, read, modify
++
+* CountDownLatch Permission
++
+```
+<countdown-latch-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</countdown-latch-permission>
+```
++
+Actions: all, create, destroy, modify, read
++	
+* IdGenerator Permission
++
+```
+<id-generator-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</id-generator-permission>
+```
++
+Actions: all, create, destroy, modify, read
++
+* FlakeIdGenerator Permission
++
+```
+<flake-id-generator-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</flake-id-generator-permission>
+```
++
+Actions: all, create, destroy, modify
++
+* Semaphore Permission
++
+```
+<semaphore-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</semaphore-permission>
+```
++
+Actions: all, create, destroy, acquire, release, read
++
+* Executor Service Permission
++
+```
+<executor-service-permission name="name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</executor-service-permission>
+```
++
+Actions: all, create, destroy
++
+* Transaction Permission
++
+```
+<transaction-permission principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+</transaction-permission>
+```
++
+* Cache Permission
++
+```
+<cache-permission name="/hz/cache-name" principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</cache-permission>
+```
++
+Actions: all, create, destroy, put, read, remove, listen
++
+* User Code Deployment Permission
++
+```
+<user-code-deployment-permission principal="principal">
+  <endpoints>
+    ...
+  </endpoints>
+  <actions>
+    ...
+  </actions>
+</user-code-deployment-permission>
+```
++
+Actions: all, deploy
+
+NOTE: The name provided in `cache-permission` must be the Hazelcast distributed object name corresponding to the `Cache` as described in <<jcache-hazelcast-instance-integration, JCache - Hazelcast Instance Integration>>.
+
+

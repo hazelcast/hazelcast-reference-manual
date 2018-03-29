@@ -1,8 +1,9 @@
-# OSGI
+
+== OSGI
 
 This chapter explains how Hazelcast is supported on OSGI (Open Service Gateway Initiatives) environments.
 
-## OSGI Support
+=== OSGI Support
 
 Hazelcast bundles provide OSGI services so that Hazelcast users can manage (create, access, shutdown) Hazelcast instances through these services on OSGI environments. When you enable the property `hazelcast.osgi.start` (default is disabled), when an Hazelcast OSGI service is activated, a default Hazelcast instance is created automatically.
 
@@ -14,23 +15,21 @@ Hazelcast OSGI service's lifecycle (and the owned/created instances's lifecycles
 
 The Hazelcast IMDG Enterprise JAR package is also an OSGI bundle like the Hazelcast Open Source JAR package.
 
-## API
+=== API
 
 **`HazelcastOSGiService`:** Contract point for Hazelcast services on top of OSGI. Registered to `org.osgi.framework.BundleContext` as the OSGI service so the other bundles can access and use Hazelcast on the OSGI environment through this service.
 
 **`HazelcastOSGiInstance`:** Contract point for `HazelcastInstance` implementations based on OSGI service. `HazelcastOSGiService` provides proxy Hazelcast instances typed `HazelcastOSGiInstance` which is a subtype of `HazelcastInstance` and these instances delegate all calls to the underlying `HazelcastInstance`.
 
-## Configuring Hazelcast OSGI Support
+=== Configuring Hazelcast OSGI Support
 
 `HazelcastOSGiService` uses three configurations:
 
 - **`hazelcast.osgi.start`:** If this property is enabled (it is disabled by default), when an `HazelcastOSGiService` is activated, a default Hazelcast instance is created automatically.
-<br></br>
 - **`hazelcast.osgi.register.disabled`:** If this property is disabled (it is disabled by default), when a Hazelcast instance is created by `HazelcastOSGiService`, the created `HazelcastOSGiInstance` is registered automatically as OSGI service with type of `HazelcastOSGiInstance` and it is deregistered automatically when the created `HazelcastOSGiInstance` is shutdown.
-<br></br>
 - **`hazelcast.osgi.grouping.disabled`:** If this property is disabled (it is disabled by default), every created `HazelcastOSGiInstance` is grouped as their owner `HazelcastOSGiService` and do not join each other unless no group name is specified in the `GroupConfig` of `Config`.
 
-## Design
+=== Design
 
 `HazelcastOSGiService` is specific to each Hazelcast bundle. This means that every Hazelcast bundle has its own `HazelcastOSGiService` instance.
 
@@ -40,15 +39,15 @@ Each `HazelcastOSGiService` instance has a different service ID as the combinati
 
 `HazelcastOSGiService` instance lifecycle is the same with the owner Hazelcast bundle. This means that when the owner bundle is deactivated, the owned `HazelcastOSGiService` instance is deactivated, and all active Hazelcast instances that are created and served by that `HazelcastOSGiService` instance are also shutdown and deregistered. When the Hazelcast bundle is re-activated, its `HazelcastOSGiService` instance is registered again as the OSGI service.
 
-![](images/Design.png)
+image::Design.png[OSGI Design]
 
-## Using Hazelcast OSGI Service
+=== Using Hazelcast OSGI Service
 
-### Getting Hazelcast OSGI Service Instances
+==== Getting Hazelcast OSGI Service Instances
 
 You can access all `HazelcastOSGiService` instances through `org.osgi.framework.BundleContext` for each Hazelcast bundle as follows:
 
-```java
+```
 for (ServiceReference serviceRef : context.getServiceReferences(HazelcastOSGiService.class.getName(), null)) {
     HazelcastOSGiService service = (HazelcastOSGiService) context.getService(serviceRef);
     String serviceId = service.getId();
@@ -56,11 +55,11 @@ for (ServiceReference serviceRef : context.getServiceReferences(HazelcastOSGiSer
 } 
 ```
  
-### Managing and Using Hazelcast instances
+==== Managing and Using Hazelcast instances
 
 You can use `HazelcastOSGiService` instance to create and shutdown Hazelcast instances on OSGI environments. The created Hazelcast instances are `HazelcastOSGiInstance` typed (which is sub-type of `HazelcastInstance`) and are just proxies to the underlying Hazelcast instance. There are several methods in `HazelcastOSGiService` to use Hazelcast instances on OSGI environments as shown below.
 
-```java
+```
 // Get the default Hazelcast instance owned by `hazelcastOsgiService`
 // Returns null if `HAZELCAST_OSGI_START` is not enabled
 HazelcastOSGiInstance defaultInstance = hazelcastOsgiService.getDefaultHazelcastInstance();
