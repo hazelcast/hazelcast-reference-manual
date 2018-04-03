@@ -11,7 +11,6 @@ A continuous query cache is beneficial when you need to query the distributed `I
 The following code snippet shows how you can access a continuous query cache from a member.
      
 ```java
-
 QueryCacheConfig queryCacheConfig = new QueryCacheConfig("cache-name");
 queryCacheConfig.getPredicateConfig().setImplementation(new OddKeysPredicate());
        
@@ -25,7 +24,6 @@ HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
 IEnterpriseMap<Integer, String> map = (IEnterpriseMap) node.getMap("map-name");
        
 QueryCache<Integer, String> cache = map.getQueryCache("cache-name");
-
 ```     
 
 ### Accessing Continuous Query Cache from Client Side
@@ -36,7 +34,6 @@ a client instance instead of a member instance.
 
      
 ```java
-
 QueryCacheConfig queryCacheConfig = new QueryCacheConfig("cache-name");
 queryCacheConfig.getPredicateConfig().setImplementation(new OddKeysPredicate());
        
@@ -47,7 +44,6 @@ HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
 IEnterpriseMap<Integer, Integer> clientMap = (IEnterpriseMap) client.getMap("map-name");
        
 QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
-
 ```
 
 ### Features of Continuous Query Cache
@@ -73,11 +69,61 @@ You can use the following example code for a recovery case.
     }, false);
     ```
    
-* You can configure continuous query cache declaratively or programmatically.
 * You can populate a continuous query cache with only the keys of its entries and retrieve the subsequent values directly via `QueryCache.get()` from the underlying `IMap`. This helps to decrease the initial population time when the values are very large.
-<br></br>
+
+### Configuring Continuous Query Cache
+
+You can configure continuous query cache declaratively or programmatically; the latter is mostly explained in the previous section. The parent configuration element is `<query-caches>` which should be placed within your `<map>` configuration. You can create your query caches using the  `<query-cache>` sub-element under `<query-caches>`.
+
+The following is an example declarative configuration.
 
 
+```
+<map>
+   <query-caches>
+      <query-cache name="myContQueryCache">
+         <include-value>true</include-value>
+         <predicate type="class-name">com.hazelcast.examples.ExamplePredicate</predicate>
+         <entry-listeners>
+            <entry-listener>...</entry-listener>
+         </entry-listeners>
+         <in-memory-format>BINARY</in-memory-format>
+         <populate>true</populate>
+		  <coalesce>false</coalesce>
+		  <batch-size>2</batch-size>
+		  <delay-seconds>3</delay-seconds>
+		  <buffer-size>32</buffer-size>
+		  <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
+		  <indexes>
+			 <index ordered="true">...</index>
+		  </indexes>
+	   </query-cache>
+    </query-caches>
+</map>
+```
 
+Here are the descriptions of configuration elements and attributes:
 
+* `name`: Name of your continuous query cache.
+* `<include-value>`: Specifies whether the value will be cached too. Its default value is true.
+* `<predicate>`: Predicate to filter events which will be applied to the query cache.
+* `<entry-listeners>`: Adds listeners (listener classes) for your query cache entries. Please see the [Registering Map Listeners section](#registering-map-listeners).
+* `<in-memory-format>`: Type of the data to be stored in your query cache. Please see the [Setting In-Memory Format section](#setting-in-memory-format). Its default value is BINARY.
+* `<populate>`: Specifies whether the initial population of your query cache is enabled. Its default value is true.
+* `<coalesce>`: Specifies whether the coalescing of your query cache is enabled. Its default value is false.
+* `<delay-seconds>`: Minimum time in seconds that an event waits in the member's buffer. Its default value is 0.
+* `<batch-size>`: Batch size used to determine the number of events sent in a batch to your query cache. Its default value is 1.
+* `<buffer-size>`: Maximum number of events which can be stored in a partition buffer. Its default value is 16.
+* `<eviction>`: Configuration for the eviction of your query cache. Please see the [Configuring Map Eviction section](#configuring-map-eviction).
+* `<indexes>`: Indexes for your query cache defined by using this element's `<index>` sub-elements. Please see the [Configuring IMap Indexes section](#configuring-imap-indexes).
+
+Please take the following configuration considerations and publishing logic into account:
+
+If  `<delay-seconds>` is equal to or smaller than **0**, then `<batch-size>` loses its function. Each time there is an event, all the entries in the buffer are pushed to the subscriber.
+
+If `<delay-seconds>` is bigger than **0**, the following logic applies:
+
+* If `<coalesce>` is set to **true**, the buffer is checked for an event with the same key; if so, it is overridden by the current event. Then:
+ * The current size of the buffer is checked: if the current size of the buffer is equal to or larger than `<batch-size>`, then the events counted as much as the `<batch-size>` are pushed to the subscriber. Otherwise, no events are sent.
+ * After finishing with checking `<batch-size>`, the `<delay-seconds>` is checked. The buffer is scanned from the oldest to youngest entries; all the entries that are older than `<delay-seconds>` are pushed to the subscriber.
 
