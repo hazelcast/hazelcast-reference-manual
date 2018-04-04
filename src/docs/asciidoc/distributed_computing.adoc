@@ -681,6 +681,8 @@ If you are doing the process described above, you should consider using entry pr
 
 NOTE: Entry processor is meant to process a single entry per call. Processing multiple entries and data structures in an entry processor is not supported as it may result in deadlocks.
 
+IMPORTANT: Note that Hazelcast Jet is a good fit when you want to perform processing that involves multiple entries (aggregations, joins, etc.), or involves multiple computing steps to be made parallel. Hazelcast Jet contains an Entry Processor Sink to allow you to update Hazelcast IMDG data as a result of your Hazelcast Jet computation. Please refer to http://docs.hazelcast.org/docs/jet/latest/manual/index.html#hazelcast-imap-and-icache[Hazelcast Jet's Reference Manual].
+
 
 ==== Performing Fast In-Memory Map Operations
 
