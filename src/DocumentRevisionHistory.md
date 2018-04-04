@@ -22,6 +22,7 @@ This chapter lists the changes made to this document from the previous release.
 |[Management](#management)|| Added [Using Health Check on F5 BIG-IP LTM](#using-health-check-on-f5-big-ip-ltm) as a new section.
 ||[Managing Cluster and Member States](#managing-cluster-and-member-states)| Added more information on the state `NO_MIGRATION`.|
 ||[Diagnostics](#diagnostics)|Added content for the [WanDiagnostics](#wandiagnostics) plugin.
+||| Added the REST call for Hot Backup to the [Using REST API for Cluster Management section](#using-rest-api-for-cluster-management).
 |[WAN](#wan)|[Defining WAN Replication](#defining-wan-replication)| Added information on the property `discovery.useEndpointPrivateAddress`|
 |[System Properties](#system-properties)||Added definitions for the following system properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment <br> - hazelcast.multicast.group
 |

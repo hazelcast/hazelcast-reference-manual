@@ -58,6 +58,17 @@ curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/m
 ![image](images/NoteSmall.jpg) ***NOTE:*** *You can also perform the above operations using the Hot Restart tab of Hazelcast Management Center or using the script `cluster.sh`. Please see the [Hot Restart section](http://docs.hazelcast.org/docs/management-center/latest/manual/html/Hot_Restart.html) and [Using the Script cluster.sh section](#using-the-script-cluster-sh).*
 <br></br>
 
+**Initiating Hot Backup:***
+
+To initiate the Hot Backup, use the following `curl` command:
+
+```
+curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/hotBackup 
+```
+<br></br>
+
+
+
 **Querying the current cluster version:**
 
 To get the current cluster version, use the following `curl` command:
