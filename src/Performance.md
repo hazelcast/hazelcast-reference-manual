@@ -255,13 +255,12 @@ You can also use other system property configuring options as explained in the [
 
 ## Running in EC2
 
-For the best performance is it best to select the newest Linux AMI's.
+For the best performance of your Hazelcast in AWS EC2: 
 
-HVM based instances give the best performance.
-
-Select at least a system with 8 vCPUs e..g. c4.2xlarge. For an overview of all types of EC2 instances, check https://www.ec2instances.info.
-
-Consider setting a placement group. A placement group can have a significant impact on performance.
+* It is best to select the newest Linux AMIs.
+* HVM based instances give the best performance.
+* Select at least a system with 8 vCPUs, e.g., c4.2xlarge. For an overview of all types of EC2 instances, please check [https://www.ec2instances.info](https://www.ec2instances.info).
+* Consider setting a placement group. A placement group can have a significant impact on the performance.
 
 
 
