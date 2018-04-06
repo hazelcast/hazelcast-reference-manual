@@ -258,6 +258,18 @@ As stated previously, above strategies are defined **per map** in your Hazelcast
 
 You can also use other system property configuring options as explained in the <<configuring-with-system-properties, Configuring with System Properties section>>.
 
+
+=== Running in EC2
+
+For the best performance of your Hazelcast in AWS EC2: 
+
+* It is best to select the newest Linux AMIs.
+* HVM based instances give the best performance.
+* Select at least a system with 8 vCPUs, e.g., c4.2xlarge. For an overview of all types of EC2 instances, please check https://www.ec2instances.info.
+* Consider setting a placement group. A placement group can have a significant impact on the performance.
+
+
+
 === Back Pressure
 
 Hazelcast uses operations to make remote calls. For example, a `map.get` is an operation and a `map.put` is one operation for the primary 
