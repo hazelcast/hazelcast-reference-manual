@@ -1630,7 +1630,7 @@ The following shows an example of the output:
 
 === Health Check and Monitoring
 
-Hazelcast provides an HTTP based health check implementation and a Health Monitoring utility explained as below.
+Hazelcast provides the HTTP-based Health Check endpoint, Health Check script and Health Monitoring utility.
 
 
 ==== Health Check
@@ -1652,6 +1652,45 @@ Hazelcast::ClusterSize=2
 ```
 
 Please refer to the <<managing-cluster-and-member-states, Managing Cluster and Member States section>> to learn more about each state of a Hazelcast cluster and member.
+
+
+### Health Check Script
+
+The `healthcheck.sh` script comes with the Hazelcast package. Internally, it uses the HTTP-based Health Check endpoint and that is why you also need to set the `hazelcast.http.healthcheck.enabled` system property to `true`. 
+
+You can use the script to check health parameters in the following manner:
+
+```
+$ ./healthcheck.sh <parameters>
+```
+
+The following parameters can be used:
+
+* `-o`, `--operation`: Health check operation. It can be `all`, `node-state`, `cluster-state`, `cluster-safe`, `migration-queue-size` and `cluster-size`.
+* `-a`, `--address`: Defines which IP address Hazelcast member is running on. Its default value is `127.0.0.1`.
+* `-p`, `--port`: Defines which port Hazelcast member is running on. Its default value is `5701`.
+
+
+*_Example 1: Checking Member State of a Healthy Cluster:_*
+
+Assuming the member is deployed under the address `127.0.0.1:5701` and it is in the healthy state, the following output is expected:
+
+
+```
+$ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o node-state
+ACTIVE
+```
+
+*_Example 2: Checking Safety of a Non-Existing Cluster:_*
+
+Assuming there is no member running under the address `127.0.0.1:5701`, the following output is expected:
+
+```
+$ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o cluster-safe
+Error while checking health of hazelcast cluster on ip 127.0.0.1 on port 5701.
+Please check that cluster is running and that health check is enabled (property set to true: 'hazelcast.http.healthcheck.enabled' or 'hazelcast.rest.enabled').
+```
+
 
 
 ==== Health Monitor
