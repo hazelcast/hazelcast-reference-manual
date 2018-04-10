@@ -2,7 +2,7 @@
 
 ## Health Check and Monitoring
 
-Hazelcast provides the HTTP-based Health Check endpoint, the Health Check script, and the Health Monitoring utility.
+Hazelcast provides the HTTP-based Health Check endpoint, Health Check script and Health Monitoring utility.
 
 ### HTTP Health Check
 
@@ -24,11 +24,11 @@ Hazelcast::ClusterSize=2
 
 Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) to learn more about each state of a Hazelcast cluster and member.
 
-### Health Check script
+### Health Check Ccript
 
-The `healthcheck.sh` script comes with the Hazelcast package. Internally, it uses the HTTP-based Health endpoint and that is why you also need to set the `hazelcast.http.healthcheck.enabled` system property to `true`. 
+The `healthcheck.sh` script comes with the Hazelcast package. Internally, it uses the HTTP-based Health Check endpoint and that is why you also need to set the `hazelcast.http.healthcheck.enabled` system property to `true`. 
 
-You can use the script to check Health parameters in the following manner:
+You can use the script to check health parameters in the following manner:
 
 ```
 $ ./healthcheck.sh <parameters>
@@ -36,25 +36,22 @@ $ ./healthcheck.sh <parameters>
 
 The following parameters can be used:
 
-```
-Parameters:
-  -o, --operation     : Health check operation. Operation can be 'all', 'node-state','cluster-state','cluster-safe','migration-queue-size','cluster-size'.
-  -a, --address       : Defines which ip address hazelcast node is running on. Default value is '127.0.0.1'.
-  -p, --port          : Defines which port hazelcast node is running on. Default value is '5701'.
-```
+* `-o`, `--operation`: Health check operation. It can be `all`, `node-state`, `cluster-state`, `cluster-safe`, `migration-queue-size` and `cluster-size`.
+* `-a`, `--address`: Defines which IP address Hazelcast member is running on. Its default value is `127.0.0.1`.
+* `-p`, `--port`: Defines which port Hazelcast member is running on. Its default value is `5701`.
 
-#### Example 1: Check Node State of a Healthy Cluster
+#### Example 1: Checking Member State of a Healthy Cluster
 
-Assuming the node is deployed under the address: `127.0.0.1:5701` and it's in the healthy state, the following output is expected.
+Assuming the member is deployed under the address `127.0.0.1:5701` and it is in the healthy state, the following output is expected:
 
 ```
 $ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o node-state
 ACTIVE
 ```
 
-#### Example 2: Check Cluster Safe of a Non-Existing Cluster
+#### Example 2: Checking Safety of a Non-Existing Cluster
 
-Assuming there is no node running under the address: `127.0.0.1:5701`, the following output is expected.
+Assuming there is no member running under the address `127.0.0.1:5701`, the following output is expected:
 
 ```
 $ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o cluster-safe
