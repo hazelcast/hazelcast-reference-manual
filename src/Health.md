@@ -2,10 +2,9 @@
 
 ## Health Check and Monitoring
 
-Hazelcast provides an HTTP based health check implementation and a Health Monitoring utility explained as below.
+Hazelcast provides the HTTP-based Health Check endpoint, the Health Check script, and the Health Monitoring utility.
 
-
-### Health Check
+### HTTP Health Check
 
 This is Hazelcast's HTTP based health check implementation which provides basic information about your cluster and member (on which it is launched). 
 
@@ -25,6 +24,43 @@ Hazelcast::ClusterSize=2
 
 Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) to learn more about each state of a Hazelcast cluster and member.
 
+### Health Check script
+
+The `healthcheck.sh` script comes with the Hazelcast package. Internally, it uses the HTTP-based Health endpoint and that is why you also need to set the `hazelcast.http.healthcheck.enabled` system property to `true`. 
+
+You can use the script to check Health parameters in the following manner:
+
+```
+$ ./healthcheck.sh <parameters>
+```
+
+The following parameters can be used:
+
+```
+Parameters:
+  -o, --operation     : Health check operation. Operation can be 'all', 'node-state','cluster-state','cluster-safe','migration-queue-size','cluster-size'.
+  -a, --address       : Defines which ip address hazelcast node is running on. Default value is '127.0.0.1'.
+  -p, --port          : Defines which port hazelcast node is running on. Default value is '5701'.
+```
+
+#### Example 1: Check Node State of a Healthy Cluster
+
+Assuming the node is deployed under the address: `127.0.0.1:5701` and it's in the healthy state, the following output is expected.
+
+```
+$ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o node-state
+ACTIVE
+```
+
+#### Example 2: Check Cluster Safe of a Non-Existing Cluster
+
+Assuming there is no node running under the address: `127.0.0.1:5701`, the following output is expected.
+
+```
+$ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o cluster-safe
+Error while checking health of hazelcast cluster on ip 127.0.0.1 on port 5701.
+Please check that cluster is running and that health check is enabled (property set to true: 'hazelcast.http.healthcheck.enabled' or 'hazelcast.rest.enabled').
+```
 
 ### Health Monitor
 
