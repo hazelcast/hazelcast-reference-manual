@@ -24,7 +24,7 @@ Hazelcast::ClusterSize=2
 
 Please refer to the [Managing Cluster and Member States section](#managing-cluster-and-member-states) to learn more about each state of a Hazelcast cluster and member.
 
-### Health Check Ccript
+### Health Check Script
 
 The `healthcheck.sh` script comes with the Hazelcast package. Internally, it uses the HTTP-based Health Check endpoint and that is why you also need to set the `hazelcast.http.healthcheck.enabled` system property to `true`. 
 
