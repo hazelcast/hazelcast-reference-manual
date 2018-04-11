@@ -16,7 +16,8 @@ Hazelcast Map performs eviction based on partitions. For example, when you speci
 ```
 partition-maximum-size = max-size * member-count / partition-count
 ```
-![image](images/NoteSmall.jpg) ***NOTE:*** *In the equation above when partition-maximum-size is under 1, it will be set to 1, otherwise partitions will be emptied immediately by eviction due to the exceedance of under 1 max size.*
+
+![image](images/NoteSmall.jpg) ***NOTE:*** *If the `partition-maximum-size` is less than 1 in the equation above, it will be set to 1 (otherwise, the partitions would be emptied immediately by eviction due to the exceedance of `max-size` being less than 1).*
 
 The eviction process starts according to this calculated partition maximum size when you try to put an entry. When entry count in that partition exceeds partition maximum size, eviction starts on that partition.
 
