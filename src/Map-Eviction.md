@@ -14,8 +14,9 @@ Unless you delete the map entries manually or use an eviction policy, they will 
 Hazelcast Map performs eviction based on partitions. For example, when you specify a size using the `PER_NODE` attribute for `max-size` (please see [Configuring Map Eviction](#configuring-map-eviction)), Hazelcast internally calculates the maximum size for every partition. Hazelcast uses the following equation to calculate the maximum size of a partition:
 
 ```
-partition maximum size = max-size * member-count / partition-count
+partition-maximum-size = max-size * member-count / partition-count
 ```
+![image](images/NoteSmall.jpg) ***NOTE:*** *In the equation above when partition-maximum-size is under 1, it will be set to 1, otherwise partitions will be emptied immediately by eviction due to the exceedance of under 1 max size.*
 
 The eviction process starts according to this calculated partition maximum size when you try to put an entry. When entry count in that partition exceeds partition maximum size, eviction starts on that partition.
 
@@ -66,7 +67,7 @@ Let's describe each element:
 
 
 - `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
-	- `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy. If you use this option, please note that you cannot set the `max-size` to a value lower than `(partition-count/member-count)` (Partition count is 271 by default).		
+	- `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy. 		
 
 		`<max-size policy="PER_NODE">5000</max-size>`
 
