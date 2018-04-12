@@ -476,9 +476,11 @@ HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 
 ## Variable Replacers
 
-Variable replacers for `hazelcast.xml` and `hazelcast-client.xml` allow masking sensitive strings (e.g.,  usernames, passwords) in the configuration files. Their usage is not limited to security related values. The replacers can be configured in the declarative configuration files (XMLs) and they are used to replace custom strings during loading the configuration.
+Variable replacers are used to replace custom strings during loading the configuration, e.g., they can be used to mask sensitive information such as usernames and passwords. Of course their usage is not limited to security related information.
 
-Variable replacers are defined within the `<config-replacers>` element under the configuration XML root element, as shown below.
+Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml` and `hazelcast-client.xml`.
+
+Variable replacers are configured within the element `<config-replacers>` under `<hazelcast>`, as shown below.
 
 ```xml
 <hazelcast>
@@ -496,27 +498,25 @@ Variable replacers are defined within the `<config-replacers>` element under the
 </hazelcast>
 ```
 
-As you can see, `<config-replacers>` is the parent element for your replacers, which are delcared using the `<replacer>` sub-elements. You can define multiple replacers under the `<config-replacers>.`
-
-Element and attribute explanations ???
+As you can see, `<config-replacers>` is the parent element for your replacers, which are declared using the `<replacer>` sub-elements. You can define multiple replacers under the `<config-replacers>.` Here are the descriptions of elements and attributes used for the replacer configuration:
 
 * `fail-if-value-missing`: Specifies whether the loading configuration process stops when replacement value is missing. It is an optional attribute and its default value is true.
-* `class-name`: Fully class name of the replacer.
+* `class-name`: Full class name of the replacer.
 * `<properties>`: Contains names and values of properties used to configure a replacer. Each property is defined using the `<property>` sub-element. All of the properties are explained in the upcoming sections.
 
-The following replacer classes are provided by Hazelcast (note that you can also implement your own replacers):
+The following replacer classes are provided by Hazelcast as example implementations of the `ConfigReplacer` interface. Note that you can also implement your own replacers.
 
 * `EncryptionReplacer`
 * `ExecReplacer`
 * `PropertyReplacer`
 
-Each implementation is explained the below sections.
+Each example replacer is explained in the below sections.
 
 ### EnrcyptionReplacer
 
-The `EncryptionReplacer` replaces encrypted variables by its plain form. The secret key for encryption/decryption is generated from a password which can be a value in a file and/or environment specific values, such as MAC address and actual user data.
+This example `EncryptionReplacer` replaces encrypted variables by its plain form. The secret key for encryption/decryption is generated from a password which can be a value in a file and/or environment specific values, such as MAC address and actual user data.
 
-Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and the replacer prefix is `ENC`. Here are the properties used to configure this replacer:
+Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and the replacer prefix is `ENC`. Here are the properties used to configure this example replacer:
 
 * `cipherAlgorithm`: Cipher algorithm used for the encryption/decryption. Its default value is AES.
 * `keyLengthBits`: Length (in bits) of the secret key to be generated. Its default value is 128.
@@ -528,8 +528,16 @@ Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and th
 * `secretKeyFactoryAlgorithm`: Algorithm used to generate a secret key from a password. Its default value is PBKDF2WithHmacSHA256.
 * `securityProvider`: Name of a Java Security Provider to be used for retrieving the configured secret key factory and the cipher. Its default value is null.
 
+??? Example code/configuration
 
 
+### ExecReplacer
+
+This example `ExecReplacer` runs an external command and uses its standard output as the value for the variable.
+
+Its full class name is `com.hazelcast.config.replacer.ExecReplacer` and the replacer prefix is `EXEC`. Here are the properties used to configure this example replacer:
+
+property descriptions??
 
 
 ### Implementing Custom Replacers
