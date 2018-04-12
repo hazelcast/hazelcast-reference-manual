@@ -507,7 +507,6 @@ As you can see, `<config-replacers>` is the parent element for your replacers, w
 The following replacer classes are provided by Hazelcast as example implementations of the `ConfigReplacer` interface. Note that you can also implement your own replacers.
 
 * `EncryptionReplacer`
-* `ExecReplacer`
 * `PropertyReplacer`
 
 Each example replacer is explained in the below sections.
@@ -583,33 +582,6 @@ INFO: [LOCAL] [aGroup] [3.10-SNAPSHOT] Prefer IPv4 stack is true.
 ```
 
 As you can see in the logs, the correctly decrypted group name value ("aGroup") is used.
-
-### ExecReplacer
-
-This example `ExecReplacer` runs an external command and uses its standard output as the value for the variable.
-
-Its full class name is `com.hazelcast.config.replacer.ExecReplacer` and the replacer prefix is `EXEC`. Here are the properties used to configure this example replacer:
-
-* `argumentSeparator`: A regular expression used as a separator between arguments. It can be used when command path or argument contains whitespaces.  Its default value is whitespace (\s+).
-* `requiresZeroExitCode`: Specifies whether a non-zero exit code is allowed to continue with the replacement. Its default value is true.
-
-Here is an example configuration:
-
-```xml
-<hazelcast>
-    <config-replacers>
-        <replacer class-name="com.hazelcast.config.replacer.ExecReplacer">
-            <properties>
-                <property name="argumentSeparator">#</property>
-            </properties>
-        </replacer>
-    </config-replacers>
-    <group>
-        <!-- read group name from "hazelcast group.txt" file -->
-        <name>$EXEC{cat#/opt/hazelcast group.txt}</name>
-    </group>
-</hazelcast>
-```
 
 ### PropertyReplacer
 
