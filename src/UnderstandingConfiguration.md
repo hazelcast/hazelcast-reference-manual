@@ -509,6 +509,9 @@ The following replacer classes are provided by Hazelcast as example implementati
 * `EncryptionReplacer`
 * `PropertyReplacer`
 
+![](images/NoteSmall.jpg) ***NOTE:*** *There is also a `ExecReplacer` which runs an external command and uses its standard output as the value for the variable. Please refer to its [code sample](https://github.com/hazelcast/hazelcast-code-samples/tree/master/variable-replacers).*
+
+
 Each example replacer is explained in the below sections.
 
 ### EnrcyptionReplacer
