@@ -17,7 +17,7 @@ Hazelcast handles network partitions using the following solutions:
 * Split-Brain Recovery (Merge Policies): Split-Brain Recovery is to make data structures available and operational on both sides of a network partition, and merge their data once the network partitioning problem is resolved. See <<split-brain-recovery, Split-Brain Recovery section>>.
 
 
-NOTE: Split-Brain Recovery is not supported for the data structures whose in-memory format is `NATIVE`.
+NOTE: Starting with Hazelcast 3.10, Split-Brain Recovery is supported for the data structures whose in-memory format is `NATIVE`.
 
 === Split-Brain Protection
 
@@ -300,6 +300,6 @@ Here is how merge policies are specified per cache:
 
 NOTE: IMap, ICache and ReplicatedMap are  the only Hazelcast distributed data structures that merge after a split-brain syndrome. For the other data structures, e.g., Queue, Topic, and Lock, one instance from the larger cluster is chosen after split-brain syndrome.
 
-NOTE: Currently, merge functionality is not supported for High-Density Memory Store backed IMap and ICache data structures. Data on the smaller cluster side belonging to IMap and ICache instances with `NATIVE` in-memory format are discarded during the merge process.
+NOTE: Starting with Hazelcast 3.10, merge functionality is supported for High-Density Memory Store backed IMap and ICache data structures. For older versions, data on the smaller cluster side belonging to IMap and ICache instances with `NATIVE` in-memory format are discarded during the merge process.
 
 
