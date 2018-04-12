@@ -11,6 +11,7 @@ This chapter lists the changes made to this document from the previous release.
 
 |Chapter|Section|Description|
 |:-------|:-------|:-----------|
+|[Understanding Configuration](#understanding-configuration)| | Added [Variable Replacers](#variable-replacers) as a new section.
 | Distributed Data Structures and <br> Distributed Computing|| Added content for the data structures that now support Split-Brain Protection: IExecutorService, DurableExecutorService, IScheduledExecutorService, MultiMap, ISet, IList, Ringbuffer, Replicated Map, Cardinality Estimator, IAtomicLong, IAtomicReference, ISemaphore, ICountdownLatch.
 |[Distributed Data Structures](#distributed-data-structures)|[FlakeIdGenerator](#flakeidgenerator)| Added a new section.
 ||[IdGenerator](#idgenerator)|[Migrating to FlakeIdGenerator](#migrating-to-flakeidgenerator) added as a new section.

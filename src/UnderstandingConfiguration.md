@@ -478,7 +478,7 @@ HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 
 Variable replacers are used to replace custom strings during loading the configuration, e.g., they can be used to mask sensitive information such as usernames and passwords. Of course their usage is not limited to security related information.
 
-Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml` and `hazelcast-client.xml`.
+Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured only declaratively: in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml` and `hazelcast-client.xml`. You can refer to `ConfigReplacer` s [Javadoc](http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html) for basic information on how a replacer works.
 
 Variable replacers are configured within the element `<config-replacers>` under `<hazelcast>`, as shown below.
 
@@ -500,9 +500,9 @@ Variable replacers are configured within the element `<config-replacers>` under 
 
 As you can see, `<config-replacers>` is the parent element for your replacers, which are declared using the `<replacer>` sub-elements. You can define multiple replacers under the `<config-replacers>.` Here are the descriptions of elements and attributes used for the replacer configuration:
 
-* `fail-if-value-missing`: Specifies whether the loading configuration process stops when replacement value is missing. It is an optional attribute and its default value is true.
+* `fail-if-value-missing`: Specifies whether the loading configuration process stops when a replacement value is missing. It is an optional attribute and its default value is true.
 * `class-name`: Full class name of the replacer.
-* `<properties>`: Contains names and values of properties used to configure a replacer. Each property is defined using the `<property>` sub-element. All of the properties are explained in the upcoming sections.
+* `<properties>`: Contains names and values of the properties used to configure a replacer. Each property is defined using the `<property>` sub-element. All of the properties are explained in the upcoming sections.
 
 The following replacer classes are provided by Hazelcast as example implementations of the `ConfigReplacer` interface. Note that you can also implement your own replacers.
 
@@ -528,8 +528,61 @@ Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and th
 * `secretKeyFactoryAlgorithm`: Algorithm used to generate a secret key from a password. Its default value is PBKDF2WithHmacSHA256.
 * `securityProvider`: Name of a Java Security Provider to be used for retrieving the configured secret key factory and the cipher. Its default value is null.
 
-??? Example code/configuration
+![Note](images/NoteSmall.jpg) ***NOTE***: *Older Java versions may not support all the algorithms used as defaults. Please use the property values supported your Java version.*
 
+
+As a usage example, let's create a password file and generate the encrypted strings out of this file.
+
+1 -  Create the password file: `echo '/Za-uG3dDfpd,5.-' > /opt/master-password
+
+2 -  Define the encrypted variables:
+
+```
+java -cp hazelcast-*.jar \
+    -DpasswordFile=/opt/master-password \
+    -DpasswordUserProperties=false \
+    com.hazelcast.config.replacer.EncryptionReplacer \
+    "aGroup"
+$ENC{Gw45stIlan0=:531:yVN9/xQpJ/Ww3EYkAPvHdA==}
+
+java -cp hazelcast-*.jar \
+    -DpasswordFile=/opt/master-password \
+    -DpasswordUserProperties=false \
+    com.hazelcast.config.replacer.EncryptionReplacer \
+    "aPasswordToEncrypt"
+$ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
+```
+
+3 - Configure the replacer and put the encrypted variables into the configuration:
+
+```xml
+<hazelcast>
+    <config-replacers>
+        <replacer class-name="com.hazelcast.config.replacer.EncryptionReplacer">
+            <properties>
+                <property name="passwordFile">/opt/master-password</property>
+                <property name="passwordUserProperties">false</property>
+            </properties>
+        </replacer>
+    </config-replacers>
+    <group>
+        <name>$ENC{Gw45stIlan0=:531:yVN9/xQpJ/Ww3EYkAPvHdA==}</name>
+        <password>$ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}</password>
+    </group>
+</hazelcast>
+```
+
+4 - Check if the decryption works:
+
+```
+java -jar hazelcast-*.jar
+Apr 06, 2018 10:15:43 AM com.hazelcast.config.XmlConfigLocator
+INFO: Loading 'hazelcast.xml' from working directory.
+Apr 06, 2018 10:15:44 AM com.hazelcast.instance.AddressPicker
+INFO: [LOCAL] [aGroup] [3.10-SNAPSHOT] Prefer IPv4 stack is true.
+```
+
+As you can see in the logs, the correctly decrypted group name value ("aGroup") is used.
 
 ### ExecReplacer
 
@@ -537,7 +590,32 @@ This example `ExecReplacer` runs an external command and uses its standard outpu
 
 Its full class name is `com.hazelcast.config.replacer.ExecReplacer` and the replacer prefix is `EXEC`. Here are the properties used to configure this example replacer:
 
-property descriptions??
+* `argumentSeparator`: A regular expression used as a separator between arguments. It can be used when command path or argument contains whitespaces.  Its default value is whitespace (\s+).
+* `requiresZeroExitCode`: Specifies whether a non-zero exit code is allowed to continue with the replacement. Its default value is true.
+
+Here is an example configuration:
+
+```xml
+<hazelcast>
+    <config-replacers>
+        <replacer class-name="com.hazelcast.config.replacer.ExecReplacer">
+            <properties>
+                <property name="argumentSeparator">#</property>
+            </properties>
+        </replacer>
+    </config-replacers>
+    <group>
+        <!-- read group name from "hazelcast group.txt" file -->
+        <name>$EXEC{cat#/opt/hazelcast group.txt}</name>
+    </group>
+</hazelcast>
+```
+
+### PropertyReplacer
+
+The `PropertyReplacer` replaces variables by properties with the given name. Usually the system properties are used, e.g., `${user.name}`. There is no need to define it in the declarative configuration files.
+
+Its full class name is `com.hazelcast.config.replacer.PropertyReplacer` and the replacer prefix is empty string ("").
 
 
 ### Implementing Custom Replacers
