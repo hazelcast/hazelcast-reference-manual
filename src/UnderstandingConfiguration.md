@@ -535,7 +535,7 @@ Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and th
 
 As a usage example, let's create a password file and generate the encrypted strings out of this file.
 
-1 -  Create the password file: `echo '/Za-uG3dDfpd,5.-' > /opt/master-password
+1 -  Create the password file: `echo '/Za-uG3dDfpd,5.-' > /opt/master-password`
 
 2 -  Define the encrypted variables:
 
