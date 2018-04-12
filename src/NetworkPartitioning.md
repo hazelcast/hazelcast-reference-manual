@@ -18,4 +18,4 @@ Hazelcast handles network partitions using the following solutions:
 - Split-Brain Recovery (Merge Policies): Split-Brain Recovery is to make data structures available and operational on both sides of a network partition, and merge their data once the network partitioning problem is resolved. See [Split-Brain Recovery section](#split-brain-recovery).
 
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *Split-Brain Recovery is not supported for the data structures whose in-memory format is `NATIVE`.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *By starting version 3.10, Split-Brain Recovery is supported for the data structures whose in-memory format is `NATIVE`.*
