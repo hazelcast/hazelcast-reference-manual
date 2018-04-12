@@ -97,4 +97,4 @@ Here is how merge policies are specified per cache:
 
 ![image](images/NoteSmall.jpg) ***NOTE:*** *IMap, ICache and ReplicatedMap are  the only Hazelcast distributed data structures that merge after a split-brain syndrome. For the other data structures, e.g., Queue, Topic, and Lock, one instance from the larger cluster is chosen after split-brain syndrome.*
 
-![image](images/NoteSmall.jpg) ***NOTE:*** *By starting version 3.10, merge functionality is supported for High-Density Memory Store backed IMap and ICache data structures. For older versions, data on the smaller cluster side belonging to IMap and ICache instances with `NATIVE` in-memory format are discarded during the merge process.*
+![image](images/NoteSmall.jpg) ***NOTE:*** *Starting with Hazelcast 3.10, merge functionality is supported for High-Density Memory Store backed IMap and ICache data structures. For older versions, data on the smaller cluster side belonging to IMap and ICache instances with `NATIVE` in-memory format are discarded during the merge process.*
