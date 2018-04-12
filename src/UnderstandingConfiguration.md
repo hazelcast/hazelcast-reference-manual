@@ -472,3 +472,74 @@ builder.setProperties(properties);
 Config config = builder.build();
 HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 ```
+
+
+## Variable Replacers
+
+Variable replacers for `hazelcast.xml` and `hazelcast-client.xml` allow masking sensitive strings (e.g.,  usernames, passwords) in the configuration files. Their usage is not limited to security related values. The replacers can be configured in the declarative configuration files (XMLs) and they are used to replace custom strings during loading the configuration.
+
+Variable replacers are defined within the `<config-replacers>` element under the configuration XML root element, as shown below.
+
+```xml
+<hazelcast>
+    ...
+    <config-replacers fail-if-value-missing="false">
+        <replacer class-name="com.acme.MyReplacer">
+            <properties>
+                <property name="propName">value</property>
+                ...
+            </properties>
+        </replacer>
+        <replacer class-name="example.AnotherReplacer"/>
+    </config-replacers>
+    ...
+</hazelcast>
+```
+
+As you can see, `<config-replacers>` is the parent element for your replacers, which are delcared using the `<replacer>` sub-elements. You can define multiple replacers under the `<config-replacers>.`
+
+Element and attribute explanations ???
+
+* `fail-if-value-missing`: Specifies whether the loading configuration process stops when replacement value is missing. It is an optional attribute and its default value is true.
+* `class-name`: Fully class name of the replacer.
+* `<properties>`: Contains names and values of properties used to configure a replacer. Each property is defined using the `<property>` sub-element. All of the properties are explained in the upcoming sections.
+
+The following replacer classes are provided by Hazelcast (note that you can also implement your own replacers):
+
+* `EncryptionReplacer`
+* `ExecReplacer`
+* `PropertyReplacer`
+
+Each implementation is explained the below sections.
+
+### EnrcyptionReplacer
+
+The `EncryptionReplacer` replaces encrypted variables by its plain form. The secret key for encryption/decryption is generated from a password which can be a value in a file and/or environment specific values, such as MAC address and actual user data.
+
+Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and the replacer prefix is `ENC`. Here are the properties used to configure this replacer:
+
+* `cipherAlgorithm`: Cipher algorithm used for the encryption/decryption. Its default value is AES.
+* `keyLengthBits`: Length (in bits) of the secret key to be generated. Its default value is 128.
+* `passwordFile`: Path to a file whose content should be used as a part of the encryption password. When the property is not provided no file is used as a part of the password. Its default value is null.
+* `passwordNetworkInterface`: Name of network interface which MAC address should be used be used as a part of the encryption password. When the property is not provided no network interface property is used as a part of the password. Its default value is null.
+* `passwordUserProperties`: Specifies whether the current user properties (`user.name` and `user.home`) should be used as a part of the encryption password. Its default value is true.
+* `saltLengthBytes`: Length (in bytes) of a random password salt. Its default value is 8.
+* `secretKeyAlgorithm`:  Name of the secret-key algorithm to be associated with the generated secret key. Its default value is AES.
+* `secretKeyFactoryAlgorithm`: Algorithm used to generate a secret key from a password. Its default value is PBKDF2WithHmacSHA256.
+* `securityProvider`: Name of a Java Security Provider to be used for retrieving the configured secret key factory and the cipher. Its default value is null.
+
+
+
+
+
+### Implementing Custom Replacers
+
+You can also provide your own replacer implementations. All replacers have to implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer`. A simple snippet is shown below.
+
+```java
+public interface ConfigReplacer {
+    void init(Properties properties);
+    String getPrefix();
+    String getReplacement(String maskedValue);
+}
+```
