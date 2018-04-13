@@ -472,3 +472,126 @@ builder.setProperties(properties);
 Config config = builder.build();
 HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 ```
+
+
+## Variable Replacer
+
+Variable replacer is used to replace custom strings during loading the configuration, e.g., they can be used to mask sensitive information such as usernames and passwords. Of course their usage is not limited to security related information.
+
+Variable replacer implements the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and it is configured only declaratively: in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml` and `hazelcast-client.xml`. You can refer to `ConfigReplacer` s [Javadoc](http://docs.hazelcast.org/docs/3.9.4/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html) for basic information on how a replacer works.
+
+As for various other feature properties in Hazelcast, the element `<properties>` (under `<hazelcast>`) is used to configure a replacer. It contains names and values of the related properties and each property is defined using the `<property>` sub-elements.
+
+An example snippet is shown below.
+
+```xml
+<hazelcast>
+    <properties>
+        <property name="hazelcast.config.replacer.class">com.acme.MyReplacer</property>
+        <property name="hazelcast.config.replacer.fail-if-value-missing">false</property>
+        <property name="com.acme.MyReplacer.myProperty">my value</property>
+        <property name="com.acme.MyReplacer.anotherProperty">value</property>
+        ...
+    </properties>
+    ...
+</hazelcast>
+
+```
+
+You can define only one replacer. Here are the property descriptions:
+
+* `hazelcast.config.replacer.class`: This is the full class name of the replacer you have implemented.
+* `hazelcast.config.replacer.fail-if-value-missing`: Specifies whether the loading configuration process stops when a replacement value is missing. It is an optional attribute and its default value is true.
+
+Besides the two main properties described above, you define all the other replacer related properties (i.e., init properties) again by using the `<property>` sub-element. Each init property takes the value of `hazelcast.config.replacer.class` as a prefix. As you can see in the above snippet, the class name `com.acme.MyReplacer` is used as a prefix for the properties `myProperty` and `anotherProperty`.
+
+Let's go through an example replacer implementation provided by Hazelcast: `EncryptionReplacer` (there is also a `PropertyReplacer` and note that you can also implement your own replacer, which are both explained in the upcoming sections).
+
+![](images/NoteSmall.jpg) ***NOTE:*** *Defining and configuring the replacers will be handled differently in the upcoming minor releases (starting with 3.10). Please follow the related documentation and release notes in those releases.*
+
+### EncryptionReplacer
+
+This example `EncryptionReplacer` replaces encrypted variables by its plain form. The secret key for encryption/decryption is generated from a password which can be a value in a file and/or environment specific values, such as MAC address and actual user data.
+
+Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and the replacer prefix is `ENC`. Here are the properties used to configure this example replacer:
+
+* `cipherAlgorithm`: Cipher algorithm used for the encryption/decryption. Its default value is AES.
+* `keyLengthBits`: Length (in bits) of the secret key to be generated. Its default value is 128.
+* `passwordFile`: Path to a file whose content should be used as a part of the encryption password. When the property is not provided no file is used as a part of the password. Its default value is null.
+* `passwordNetworkInterface`: Name of network interface which MAC address should be used be used as a part of the encryption password. When the property is not provided no network interface property is used as a part of the password. Its default value is null.
+* `passwordUserProperties`: Specifies whether the current user properties (`user.name` and `user.home`) should be used as a part of the encryption password. Its default value is true.
+* `saltLengthBytes`: Length (in bytes) of a random password salt. Its default value is 8.
+* `secretKeyAlgorithm`:  Name of the secret-key algorithm to be associated with the generated secret key. Its default value is AES.
+* `secretKeyFactoryAlgorithm`: Algorithm used to generate a secret key from a password. Its default value is PBKDF2WithHmacSHA256.
+* `securityProvider`: Name of a Java Security Provider to be used for retrieving the configured secret key factory and the cipher. Its default value is null.
+
+![Note](images/NoteSmall.jpg) ***NOTE***: *Older Java versions may not support all the algorithms used as defaults. Please use the property values supported your Java version.*
+
+
+As a usage example, let's create a password file and generate the encrypted strings out of this file.
+
+1 -  Create the password file: `echo '/Za-uG3dDfpd,5.-' > /opt/master-password`
+
+2 -  Define the encrypted variables:
+
+```
+java -cp hazelcast-*.jar \
+    -DpasswordFile=/opt/master-password \
+    -DpasswordUserProperties=false \
+    com.hazelcast.config.replacer.EncryptionReplacer \
+    "aGroup"
+$ENC{Gw45stIlan0=:531:yVN9/xQpJ/Ww3EYkAPvHdA==}
+
+java -cp hazelcast-*.jar \
+    -DpasswordFile=/opt/master-password \
+    -DpasswordUserProperties=false \
+    com.hazelcast.config.replacer.EncryptionReplacer \
+    "aPasswordToEncrypt"
+$ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
+```
+
+3 - Configure the replacer and put the encrypted variables into the configuration:
+
+```xml
+<hazelcast>
+    <properties>
+        <property name="hazelcast.config.replacer.class">com.hazelcast.config.replacer.EncryptionReplacer</property>
+        <property name="hazelcast.config.replacer.fail-if-value-missing">false</property>
+        <property name="com.hazelcast.config.replacer.EncryptionReplacer.passwordFile">/opt/master-password</property>
+        <property name="com.hazelcast.config.replacer.EncryptionReplacer.passwordUserProperties">false</property>
+    </properties>
+    <group>
+        <name>$ENC{Gw45stIlan0=:531:yVN9/xQpJ/Ww3EYkAPvHdA==}</name>
+        <password>$ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}</password>
+    </group>
+</hazelcast>
+```
+
+4 - Check if the decryption works:
+
+```
+java -jar hazelcast-*.jar
+Apr 06, 2018 10:15:43 AM com.hazelcast.config.XmlConfigLocator
+INFO: Loading 'hazelcast.xml' from working directory.
+Apr 06, 2018 10:15:44 AM com.hazelcast.instance.AddressPicker
+INFO: [LOCAL] [aGroup] [3.9.4-SNAPSHOT] Prefer IPv4 stack is true.
+```
+
+As you can see in the logs, the correctly decrypted group name value ("aGroup") is used.
+
+### PropertyReplacer
+
+The `PropertyReplacer` replaces variables by properties with the given name. Usually the system properties are used, e.g., `${user.name}`. There is no need to define it in the declarative configuration files. Its full class name is `com.hazelcast.config.replacer.PropertyReplacer` and the replacer prefix is empty string ("").
+
+
+### Implementing Custom Replacers
+
+You can also provide your own replacer implementations. All replacers have to implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer`. A simple snippet is shown below.
+
+```java
+public interface ConfigReplacer {
+    void init(Properties properties);
+    String getPrefix();
+    String getReplacement(String maskedValue);
+}
+```
