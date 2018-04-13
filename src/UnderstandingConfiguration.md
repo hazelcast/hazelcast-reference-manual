@@ -514,7 +514,7 @@ The following replacer classes are provided by Hazelcast as example implementati
 
 Each example replacer is explained in the below sections.
 
-### EnrcyptionReplacer
+### EncryptionReplacer
 
 This example `EncryptionReplacer` replaces encrypted variables by its plain form. The secret key for encryption/decryption is generated from a password which can be a value in a file and/or environment specific values, such as MAC address and actual user data.
 
