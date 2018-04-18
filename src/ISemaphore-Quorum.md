@@ -10,6 +10,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
     - `drainPermits`
     - `init`
     - `reducePermits`
+    - `increasePermits`
     - `release`
     - `tryAcquire`
 - READ, READ_WRITE:
