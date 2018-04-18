@@ -25,6 +25,7 @@ This chapter lists the changes made to this document from the previous release.
 ||[Managing Cluster and Member States](#managing-cluster-and-member-states)| Added more information on the state `NO_MIGRATION`.|
 ||[Diagnostics](#diagnostics)|Added content for the [WanDiagnostics](#wandiagnostics) plugin.
 ||| Added the REST call for Hot Backup to the [Using REST API for Cluster Management section](#using-rest-api-for-cluster-management).
+|[Network Partitioning](#network-paritioning)|| The section [Split-Brain Recovery](#split-brain-recovery) updated to include information of all data structures supporting split-brain recovery.
 |[Performance](#performance)|| Added [Running in EC2](#running-in-ec2) as a new section.
 |[WAN](#wan)|[Defining WAN Replication](#defining-wan-replication)| Added information on the property `discovery.useEndpointPrivateAddress`|
 |[System Properties](#system-properties)||Added definitions for the following system properties: <br> - hazelcast.partition.migration.fragments.enabled <br> - hazelcast.mastership.claim.member.list.version.increment <br> - hazelcast.multicast.group
