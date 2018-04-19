@@ -54,7 +54,12 @@ Using a clickable Hazelcast Tile for Pivotal Cloud Foundry (PCF), you can deploy
 
 ### Hazelcast OpenShift Integration
 
-Hazelcast can run inside OpenShift benefiting from its cluster management software Kubernetes for discovery of members. Using Hazelcast Docker images, templates and default configuration files, you can deploy Hazelcast IMDG and Hazelcast IMDG Enterprise onto OpenShift. This discovery feature is provided as a Hazelcast plugin. Please see its [documentation](https://github.com/hazelcast/hazelcast-openshift) for information on this deployment.
+Hazelcast can run inside OpenShift benefiting from its cluster management software Kubernetes for discovery of members. Using Hazelcast Docker images, templates and default configuration files, you can deploy Hazelcast IMDG, Hazelcast IMDG Enterprise, and Management Center onto OpenShift. Please see the documentation:
+
+* [Hazelcast IMDG and Hazelcast IMDG Enterprise](https://github.com/hazelcast/hazelcast-openshift)
+* [Management Center](https://github.com/hazelcast/management-center-openshift)
+
+Please also see the [Hazelcast for OpenShift](https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift) guide, which presents how to set up local OpenShift environment, start Hazelcast cluster, configure Management Center, and finally run a sample client application.
 
 ### Eureka Cloud Discovery
 
