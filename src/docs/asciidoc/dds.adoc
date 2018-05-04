@@ -3061,7 +3061,7 @@ try {
 [[split-brain-protection-for-lock]]
 ==== Split-Brain Protection for Lock
 
-Locks can be configured to check for a minimum number of available members before applying lock operations (see [Split-Brain Protection](#split-brain-protection)). This is a check to avoid performing successful lock operations on all parts of a cluster during a network partition. Due to the implementation details, the check does not guarantee that the lock will fail in all conditions of a network partition and it can happen that two members can acquire the same lock.
+Locks can be configured to check for a minimum number of available members before applying lock operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful lock operations on all parts of a cluster during a network partition. Due to the implementation details, the check does not guarantee that the lock will fail in all conditions of a network partition and it can happen that two members can acquire the same lock.
 
 Once the membership change has been detected, the lock operations will fail with a `QuorumException` if enough size of members are not present. In essence, this does not provide correctness but rather narrows down the window of opportunity in which locks can continue operations on several members concurrently.
 
@@ -3214,7 +3214,7 @@ NOTE: IAtomicLong has one synchronous backup and no asynchronous backups. Its ba
 [[split-brain-protection-for-iatomiclong]]
 ==== Split-Brain Protection for IAtomicLong
 
-IAtomicLong can be configured to check for a minimum number of available members before applying its operations (see [Split-Brain Protection](#split-brain-protection)). This is a check to avoid performing successful operations on all parts of a cluster during a network partition.  Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+IAtomicLong can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful operations on all parts of a cluster during a network partition.  Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
 
 * WRITE, READ_WRITE:
 ** `addAndGet`
@@ -3374,7 +3374,7 @@ NOTE: If high performance is more important than not losing the permit informati
 [[split-brain-protection-for-isemaphore]]
 ==== Split-Brain Protection for ISemaphore
 
-ISemaphore can be configured to check for a minimum number of available members before applying its operations (see [Split-Brain Protection](#split-brain-protection)). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+ISemaphore can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
 Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
 
