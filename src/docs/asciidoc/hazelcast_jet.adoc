@@ -21,7 +21,7 @@ In addition to the Pipeline API, Jet also offers a distributed implementation of
 
 There is also Jet's Core API for advanced users to build custom data sources and sinks, to have a low-level control over the data flow, to fine-tune performance and build DSLs.
 
-Please see the http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#start-jet[Work with Jet] section in the Hazelcast Jet Reference Manual to see a simple example.
+Please see the http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#work-with-jet[Work with Jet] section in the Hazelcast Jet Reference Manual to see a simple example.
 
 ==== Where You Can Use It
 
@@ -59,7 +59,7 @@ A Jet job is implemented as a Hazelcast IMDG proxy, similar to the other service
 In the Hazelcast Jet world, Hazelcast IMDG can be used for data ingestion prior to processing, 
 connecting multiple Jet jobs, enriching processed events, caching the remote data, distributing Jet-processed data, and running advanced data processing tasks on top of IMDG data structures.
 
-Hazelcast Jet can use Hazelcast IMDG's **IMap**, **ICache** and **IList** on the embedded cluster as sources (data structures from which Jet reads data) and sinks (data structures to which Jet writes data). IMap and ICache are partitioned data structures distributed across the cluster and Jet members can read from these structures by having each member read just its local partitions. Hazelcast IMDG's IList is stored on a single partition; all the data will be read on the single member that owns that partition. Please refer to http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#imap-and-icache[IMap and ICache] and http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#ilist[IList] in the Hazelcast Jet Reference Manual to learn how Jet uses these IMDG data structures. In addition to these data structures, Jet can also process a stream of changes of IMap and ICache, using the <<event-journal, Event Journal>>.
+Hazelcast Jet can use Hazelcast IMDG's **IMap**, **ICache** and **IList** on the embedded cluster as sources (data structures from which Jet reads data) and sinks (data structures to which Jet writes data). IMap and ICache are partitioned data structures distributed across the cluster and Jet members can read from these structures by having each member read just its local partitions. Hazelcast IMDG's IList is stored on a single partition; all the data will be read on the single member that owns that partition. Please refer to http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#connector-imdg[IMap and ICache] and http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#imdg-list[IList] in the Hazelcast Jet Reference Manual to learn how Jet uses these IMDG data structures. In addition to these data structures, Jet can also process a stream of changes of IMap and ICache, using the <<event-journal, Event Journal>>.
 
 You can use Hazelcast Jet with embedded Hazelcast IMDG or a remote Hazelcast IMDG cluster. Benefits of using Hazelcast Jet with embedded Hazelcast IMDG are as follows:
 
