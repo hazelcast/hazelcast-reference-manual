@@ -62,8 +62,11 @@ NativeMemoryConfig nativeMemoryConfig =
 The following is the declarative configuration example.
 
 ```
-<native-memory enabled="true" allocator-type="POOLED">
-  <size value="512" unit="MEGABYTES"/>
+<native-memory allocator-type="POOLED" enabled="true">
+     <size unit="MEGABYTES" value="512"/>
+     <min-block-size>16</min-block-size>
+     <page-size>4194304</page-size>
+     <metadata-space-percentage>12.5</metadata-space-percentage>
 </native-memory>
 ```
 
