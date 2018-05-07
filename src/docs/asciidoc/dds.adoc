@@ -720,7 +720,7 @@ When a `MapStore` implementation is provided, an entry is also put into a user d
 NOTE: Data store needs to be a centralized system that is
 accessible from all Hazelcast members. Persistence to a local file system is not supported.
 
-NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface as you can see in the interface https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/MapStore.java[code].
+NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface as you can see in the interface http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapStore.html[code].
 
 
 Following is a `MapStore` example.
@@ -909,7 +909,7 @@ To pre-populate the in-memory map when the map is first touched/used, use the `M
 
 If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the keys which are most important to you that you want to load them while initializing the map. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
 
-The `InitialLoadMode` configuration parameter in the class https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapStoreConfig.java[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created, and everything becomes ready to use. Also, if you add indices to your map with the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/config/MapIndexConfig.java[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
+The `InitialLoadMode` configuration parameter in the class http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapStoreConfig.html[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created, and everything becomes ready to use. Also, if you add indices to your map with the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapIndexConfig.html[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
 
 Here is the `MapLoader` initialization flow:
 

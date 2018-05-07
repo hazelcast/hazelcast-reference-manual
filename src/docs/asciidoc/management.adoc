@@ -950,7 +950,7 @@ Starting with Hazelcast 3.6, Hazelcast introduces cluster and member states in a
 
 ===== Cluster States
 
-By changing the state of your cluster, you can allow/restrict several cluster operations or change the behavior of those operations. You can use the methods `changeClusterState()` and `shutdown()` which are in the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java[Cluster interface] to change your cluster's state.
+By changing the state of your cluster, you can allow/restrict several cluster operations or change the behavior of those operations. You can use the methods `changeClusterState()` and `shutdown()` which are in the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface] to change your cluster's state.
 
 Hazelcast clusters have the following states:
 
@@ -974,7 +974,7 @@ Hazelcast clusters have the following states:
 ** If a member leaves while the cluster is in this state, the member will be removed from the partition table if cluster state moves back to `ACTIVE`. 
 ** This state rejects ALL operations immediately EXCEPT the read-only operations like `map.get()` and `cache.get()`, replication and cluster heartbeat tasks. 
 ** You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
-** You can make use of `PASSIVE` state along with the <<hot-restart-persistence, Hot Restart Persistence>> feature. Please see https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java#L245[Cluster Shutdown API] for more info.
+** You can make use of `PASSIVE` state along with the <<hot-restart-persistence, Hot Restart Persistence>> feature. Please see http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html#shutdown--[Cluster Shutdown API] for more info.
 * **`IN_TRANSITION`**: 
 ** This state shows that the state of the cluster is in transition. 
 ** You cannot set your cluster's state as `IN_TRANSITION` explicitly. 
@@ -999,7 +999,7 @@ public interface Cluster {
     void shutdown(TransactionOptions transactionOptions);
 ```
 
-Please refer to the https://github.com/hazelcast/hazelcast/blob/master/hazelcast/src/main/java/com/hazelcast/core/Cluster.java[Cluster interface] for information on these methods.
+Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface] for information on these methods.
 
 ===== Cluster Member States
 
