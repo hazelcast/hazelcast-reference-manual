@@ -8,47 +8,48 @@ buildscript {
         classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.16'
         classpath 'org.asciidoctor:asciidoctorj-epub3:1.5.0-alpha.8.1'
     }
-
-    ext.hadoop_version = '2.7.3'
 }
 
 apply plugin: 'org.asciidoctor.convert'
 apply plugin: 'idea'
 apply plugin: 'java'
 
+
+ext {
+    imdgVersion = '3.11-SNAPSHOT'
+}
+
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
 }
 
-// compileJava {
-//    sourceCompatibility = 1.8
-//    targetCompatibility = 1.8
-// }
+ compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
 
-// dependencies {
-//    compile 'com.hazelcast.jet:hazelcast-jet:0.6-SNAPSHOT'
-//    compile 'com.hazelcast.jet:hazelcast-jet-kafka:0.6-SNAPSHOT'
-//    compile 'com.hazelcast.jet:hazelcast-jet-hadoop:0.6-SNAPSHOT'
-//    compile "org.apache.hadoop:hadoop-hdfs:$hadoop_version"
-//    compile "org.apache.hadoop:hadoop-common:$hadoop_version"
-//    compile "org.apache.hadoop:hadoop-mapreduce-client-core:$hadoop_version"
-//}
+ dependencies {
+     compile "com.hazelcast:hazelcast:$imdgVersion"
+     compile "com.hazelcast:hazelcast-client:$imdgVersion"
+}
 
 asciidoctor {
-//    dependsOn compileJava
-//    inputs.files compileJava.outputs
-    requires file('./multipage-html5-converter.rb')
+    dependsOn compileJava
+    inputs.files compileJava.outputs
+    /* requires file('./multipage-html5-converter.rb') */
 
     sources {
       include 'index.adoc'
     }
 
     backends = [ 'html5' /*, 'pdf', 'multipage_html5', 'epub3'*/ ]
-//    attributes \
-//        'javasource' : project.sourceSets.main.java.srcDirs[0].absolutePath
+    attributes \
+        'imdg-version': project.imdgVersion,
+        'javasource' : project.sourceSets.main.java.srcDirs[0].absolutePath
 }
 
 build {
