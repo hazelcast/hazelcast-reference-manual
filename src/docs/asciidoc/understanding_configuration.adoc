@@ -286,20 +286,7 @@ Starting with Hazelcast 3.9, it is possible to dynamically add configuration for
  
 [source,java]
 ----
-Config config = new Config();
-MapConfig mapConfig = new MapConfig("sessions");
-config.addMapConfig(mapConfig);
-
-HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
-
-// need to configure another map with no sync backups
-MapConfig noBackupsMap = new MapConfig("dont-backup").setBackupCount(0);
-
-// DO NOT DO THIS -- never modify the original Config object
-// config.addMapConfig(noBackupsMap);
-
-// Instead do this. The added config will be propagated to all members of the cluster
-instance.getConfig().addMapConfig(noBackupsMap);
+include::{javasource}/DynamicConfiguration.java[tag=dynconf]
 ----
 
 Dynamic configuration elements must be fully configured before the invocation of `add*Config` method: at that point, the configuration object will be delivered to every member of the cluster and added to each member's dynamic configuration, so mutating the configuration object after the `add*Config` invocation will have no effect.
