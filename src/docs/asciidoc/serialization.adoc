@@ -897,6 +897,32 @@ It may be a good practice to inject a HazelcastInstance into a domain object, e.
 
 We recommend you only set the HazelcastInstance field while using `setHazelcastInstance` method and you not execute operations on the HazelcastInstance. The reason is that when HazelcastInstance is injected for a `HazelcastInstanceAware` implementation, it may not be up and running at the injection time.
 
+=== Untrusted Deserialization Protection
+
+Hazelcast offers a Java deserialization protection based on blacklisting and whitelisting the class/package names.
+
+This protection is controlled using the following system properties: 
+
+* `hazelcast.serialization.filter.enabled`: Enables Java deserialization protection which is a filtering mechanism based on blacklists and whitelists. Its default value is false.
+* `hazelcast.serialization.filter.blacklist.classes`: Comma separated list of blacklisted class names. Its default value is empty.
+* `hazelcast.serialization.filter.blacklist.packages`: Comma separated list of blacklisted package names. Its default value is empty.
+* `hazelcast.serialization.filter.whitelist.classes`: Comma separated list of whitelisted class names. Its default value is empty.
+* `hazelcast.serialization.filter.whitelist.packages`: Comma separated list of whitelisted package names. Its default value is empty.
+
+Once the protection is enabled, the following filtering rules are used when objects are deserialized.
+
+* When whitelist is not provided:
+** if the deserialized object's `getClass().getName()` is blacklisted or `getClass().getPackage().getName()` is blacklisted, then deserialization fails;
+** deserialization is allowed otherwise.
+* When whitelist is provided:
+** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is blacklisted, then deserialization fails;
+** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is whitelisted, then deserialization is allowed;
+** deserialization fails otherwise.
+
+When deserialization fails, a `SecurityException` is thrown. If both `hazelcast.serialization.filter.blacklist.classes` and `hazelcast.serialization.filter.blacklist.packages` properties are empty and deserialization protection is enabled, then a hardcoded list of well known vulnerable classes and packages is used.
+
+Note that the safest way to provide a protection against untrusted deserialization is using whitelisting (also keep in mind that maintaining such a whitelist can be difficult).
+
 === Serialization Configuration Wrap-Up
 
 This section summarizes the configuration of serialization options, explained in the above sections, into all-in-one examples. The following are example serialization configurations.
