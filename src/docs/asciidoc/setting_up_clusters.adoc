@@ -240,16 +240,9 @@ You can also define the cluster groups using the programmatic configuration. A J
 
 [source,java]
 ----
-Config configProd = new Config();
-configProd.getGroupConfig().setName( "production" );
-
-Config configDev = new Config();
-configDev.getGroupConfig().setName( "development" );
-
-HazelcastInstance h1 = Hazelcast.newHazelcastInstance( configProd );
-HazelcastInstance h2 = Hazelcast.newHazelcastInstance( configDev );
-HazelcastInstance h3 = Hazelcast.newHazelcastInstance( configDev );
+include::{javasource}/GroupingClusters.java[tag=groupingclusters]
 ----
+
 
 [[cluster-groups-before-hazelcast-382]]
 ==== Cluster Groups before Hazelcast 3.8.2
