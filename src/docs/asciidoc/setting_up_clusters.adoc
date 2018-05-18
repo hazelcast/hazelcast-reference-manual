@@ -303,15 +303,9 @@ User Code Deployment feature is not enabled by default. You can configure this f
 
 [source,java]
 ----
-Config config = new Config();
-UserCodeDeploymentConfig distCLConfig = config.getUserCodeDeploymentConfig();
-distCLConfig.setEnabled( true )
-        .setClassCacheMode( ClassCacheMode.ETERNAL )
-        .setProviderMode( ProviderMode.LOCAL_CLASSES_ONLY )
-        .setBlacklistedPrefixes( "com.foo" )
-        .setWhitelistedPrefixes( "com.bar.MyClass" )
-        .setProviderFilter( "HAS_ATTRIBUTE:lite" );
+include::{javasource}/MemberUCD.java[tag=ucd]
 ----
+
 
 User Code Deployment has the following configuration elements and attributes:
 
@@ -488,23 +482,11 @@ Following are declarative and programmatic configuration examples that show how 
 </partition-group>
 ```
 
-```
-Config config = ...;
-PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
-partitionGroupConfig.setEnabled( true )
-    .setGroupType( MemberGroupType.CUSTOM );
+[source,java]
+----
+include::{javasource}/PartitionGrouping.java[tag=partitiongrouping]
+----
 
-MemberGroupConfig memberGroupConfig = new MemberGroupConfig();
-memberGroupConfig.addInterface( "10.10.0.*" )
-.addInterface( "10.10.3.*" ).addInterface("10.10.5.*" );
-
-MemberGroupConfig memberGroupConfig2 = new MemberGroupConfig();
-memberGroupConfig2.addInterface( "10.10.10.10-100" )
-.addInterface( "10.10.1.*").addInterface( "10.10.2.*" );
-
-partitionGroupConfig.addMemberGroupConfig( memberGroupConfig );
-partitionGroupConfig.addMemberGroupConfig( memberGroupConfig2 );
-```
 
 NOTE: While your cluster was forming, if you configured your members to discover each other by their IP addresses, you should use the IP addresses for the `<interface>` element. If your members discovered each other by their hostnames, you should use the hostnames.
 
