@@ -76,21 +76,9 @@ If you want to use an object you loaded in other places, you can safely reload i
 
 To destroy a Hazelcast distributed object, you can use the method `destroy`. This method clears and releases all resources of the object. Therefore, you must use it with care since a reload with the same object reference after the object is destroyed creates a new data structure without an error. Please see the following example code where one of the queues are destroyed and the other one is accessed.
 
-[source, java]
+[source,java]
 ----
-public class Member {
-  
-    public static void main(String[] args) throws Exception {
-        HazelcastInstance hz1 = Hazelcast.newHazelcastInstance();
-        HazelcastInstance hz2 = Hazelcast.newHazelcastInstance();
-        IQueue<String> q1 = hz1.getQueue("q");
-        IQueue<String> q2 = hz2.getQueue("q");
-        q1.add("foo");
-            System.out.println("q1.size: "+q1.size()+ " q2.size:"+q2.size());
-        q1.destroy();
-            System.out.println("q1.size: "+q1.size() + " q2.size:"+q2.size());
-    }
-}
+include::{javasource}/MapMember.java[tag=mapmember]
 ----
 
 If you start the `Member` above, the output will be as shown below:
@@ -143,34 +131,9 @@ Here is an example of how you can retrieve existing data structure instances (ma
 
 [source,java]
 ----
-public class Sample implements DistributedObjectListener {
-  
-    public static void main(String[] args) {
-        Sample sample = new Sample();
-        Config config = new Config();
-
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-        hazelcastInstance.addDistributedObjectListener(sample);
-
-        Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
-        for (DistributedObject distributedObject : distributedObjects) {
-            System.out.println(distributedObject.getName());
-        }
-    }
-
-    @Override
-    public void distributedObjectCreated(DistributedObjectEvent event) {
-    DistributedObject instance = event.getDistributedObject();
-    System.out.println("Created " + instance.getName());
-    }
-
-    @Override
-    public void distributedObjectDestroyed(DistributedObjectEvent event) {
-    DistributedObject instance = event.getDistributedObject();
-    System.out.println("Destroyed " + instance.getName());
-    }
-}
+include::{javasource}/SampleDOL.java[tag=sampledol]
 ----
+
 
 [[map]]
 === Map
@@ -488,34 +451,9 @@ An example is given below.
 
 [source,java]
 ----
-public class EvictAll {
-
-    public static void main(String[] args) {
-        final int numberOfKeysToLock = 4;
-        final int numberOfEntriesToAdd = 1000;
-
-        HazelcastInstance node1 = Hazelcast.newHazelcastInstance();
-        HazelcastInstance node2 = Hazelcast.newHazelcastInstance();
-
-        IMap<Integer, Integer> map = node1.getMap( "map" );
-        for (int i = 0; i < numberOfEntriesToAdd; i++) {
-            map.put(i, i);
-        }
-
-        for (int i = 0; i < numberOfKeysToLock; i++) {
-            map.lock(i);
-        }
-
-        // should keep locked keys and evict all others.
-        map.evictAll();
-
-        System.out.printf("# After calling evictAll...\n");
-        System.out.printf("# Expected map size\t: %d\n", numberOfKeysToLock);
-        System.out.printf("# Actual map size\t: %d\n", map.size());
-
-    }
-}
+include::{javasource}/EvictAll.java[tag=evictall]
 ----
+
 
 
 NOTE: Only EVICT_ALL event is fired for any registered listeners.
@@ -724,6 +662,7 @@ NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface 
 
 
 Following is a `MapStore` example.
+
 
 [source,java]
 ----
@@ -1043,27 +982,7 @@ Let's work on a sample case as shown below.
 
 [source,java]
 ----
-public class RacyUpdateMember {
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-        IMap<String, Value> map = hz.getMap( "map" );
-        String key = "1";
-        map.put( key, new Value() );
-        System.out.println( "Starting" );
-        for ( int k = 0; k < 1000; k++ ) {
-            if ( k % 100 == 0 ) System.out.println( "At: " + k );
-            Value value = map.get( key );
-            Thread.sleep( 10 );
-            value.amount++;
-            map.put( key, value );
-        }
-        System.out.println( "Finished! Result = " + map.get(key).amount );
-    }
-
-    static class Value implements Serializable {
-        public int amount;
-    }
-}
+include::{javasource}/RacyUpdateMember.java[tag=racy]
 ----
 
 If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic locking or optimistic locking. 
@@ -1075,34 +994,12 @@ One way to solve the race issue is by using pessimistic locking - lock the map e
 
 To perform pessimistic locking, use the lock mechanism provided by the Hazelcast distributed map, i.e., the `map.lock` and `map.unlock` methods. See the below example code.
 
+
 [source,java]
 ----
-public class PessimisticUpdateMember {
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-        IMap<String, Value> map = hz.getMap( "map" );
-        String key = "1";
-        map.put( key, new Value() );
-        System.out.println( "Starting" );
-        for ( int k = 0; k < 1000; k++ ) {
-            map.lock( key );
-            try {
-                Value value = map.get( key );
-                Thread.sleep( 10 );
-                value.amount++;
-                map.put( key, value );
-            } finally {
-                map.unlock( key );
-            }
-        }
-        System.out.println( "Finished! Result = " + map.get( key ).amount );
-    }
-
-    static class Value implements Serializable {
-        public int amount;
-    }
-}
+include::{javasource}/PessimisticUpdateMember.java[tag=pum]
 ----
+
 
 The IMap lock will automatically be collected by the garbage collector when the lock is released and no other waiting conditions exist on the lock.
 
@@ -1121,46 +1018,9 @@ NOTE: The below example code is intentionally broken.
 
 [source,java]
 ----
-public class OptimisticMember {
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-        IMap<String, Value> map = hz.getMap( "map" );
-        String key = "1";
-        map.put( key, new Value() );
-        System.out.println( "Starting" );
-        for ( int k = 0; k < 1000; k++ ) {
-            if ( k % 10 == 0 ) System.out.println( "At: " + k );
-            for (; ; ) {
-                Value oldValue = map.get( key );
-                Value newValue = new Value( oldValue );
-                Thread.sleep( 10 );
-                newValue.amount++;
-                if ( map.replace( key, oldValue, newValue ) )
-                    break;
-            }
-        }
-        System.out.println( "Finished! Result = " + map.get( key ).amount );
-    }
-
-    static class Value implements Serializable {
-        public int amount;
-
-        public Value() {
-        }
-
-        public Value( Value that ) {
-            this.amount = that.amount;
-        }
-
-        public boolean equals( Object o ) {
-            if ( o == this ) return true;
-            if ( !( o instanceof Value ) ) return false;
-            Value that = ( Value ) o;
-            return that.amount == this.amount;
-        }
-    }
-}
+include::{javasource}/OptimisticMember.java[tag=om]
 ----
+
 
 [[pessimistic-vs-optimistic-locking]]
 ===== Pessimistic vs. Optimistic Locking
@@ -1283,81 +1143,24 @@ As an example, let's listen to the changes made on an employee with the surname 
 
 [source,java]
 ----
-public class Employee implements Serializable {
-
-    private final String surname;
-
-    public Employee(String surname) {
-        this.surname = surname;
-    }
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "surname='" + surname + '\'' +
-                '}';
-    }
-}
+include::{javasource}/Employee.java[tag=emp]
 ----
 
 Then, let's create a listener with predicate by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
 
 [source,java]
 ----
-public class ListenerWithPredicate {
-
-    public static void main(String[] args) {
-        Config config = new Config();
-        config.setProperty("hazelcast.map.entry.filtering.natural.event.types", "true");
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
-        IMap<String, String> map = hz.getMap("map");
-        map.addEntryListener(new MyEntryListener(),
-                new SqlPredicate("surname=smith"), true);
-        System.out.println("Entry Listener registered");
-    }
-
-    static class MyEntryListener
-            implements EntryAddedListener<String, String>,
-                       EntryUpdatedListener<String, String>,
-                       EntryRemovedListener<String, String> {
-        @Override
-        public void entryAdded(EntryEvent<String, String> event) {
-            System.out.println("Entry Added:" + event);
-        }
-
-        @Override
-        public void entryRemoved(EntryEvent<String, String> event) {
-            System.out.println("Entry Removed:" + event);
-        }
-
-        @Override
-        public void entryUpdated(EntryEvent<String, String> event) {
-            System.out.println("Entry Updated:" + event);
-        }
-        
-    }
-}
+include::{javasource}/ListenerWithPredicate.java[tag=lwp]
 ----
+
 
 And now, let's play with the employee "smith" and see how that employee will be listened to.
 
 [source,java]
 ----
-public class Modify {
-
-    public static void main(String[] args) {
-        Config config = new Config();
-        config.setProperty("hazelcast.map.entry.filtering.natural.event.types", "true");
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
-        IMap<String, Employee> map = hz.getMap("map");
-
-        map.put("1", new Employee("smith"));
-        map.put("2", new Employee("jordan"));
-        System.out.println("done");
-        System.exit(0);
-    }
-}
+include::{javasource}/Modify.java[tag=modify]
 ----
+
 
 When you first run the class `ListenerWithPredicate` and then run `Modify`, you will see output similar to the listing below.
 
