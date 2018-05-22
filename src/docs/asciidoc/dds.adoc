@@ -1748,20 +1748,9 @@ Use the HazelcastInstance `getSet` method to get the Set, then use the `add` met
 
 [source,java]
 ----
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-
-Set<Price> set = hazelcastInstance.getSet( "IBM-Quote-History" );
-set.add( new Price( 10, time1 ) );
-set.add( new Price( 11, time2 ) );
-set.add( new Price( 12, time3 ) );
-set.add( new Price( 11, time4 ) );
-//....
-Iterator<Price> iterator = set.iterator();
-while ( iterator.hasNext() ) { 
-    Price price = iterator.next(); 
-    //analyze
-}
+include::{javasource}/set/SampleSet.java[tag=set]
 ----
+
 
 Hazelcast Set uses `ItemListener` to listen to events that occur when items are added to and removed from the Set. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
 
@@ -1789,12 +1778,9 @@ The following are the example set configurations.
 
 [source,java]
 ----
-Config config = new Config();
-        CollectionConfig collectionSet = config.getSetConfig("MySet");
-        collectionSet.setBackupCount(1)
-                .setMaxSize(10)
-                .setQuorumName( "quorumname" );                
+include::{javasource}/set/SetConfiguration.java[tag=sc]
 ----
+
    
 
 Set configuration has the following elements.
