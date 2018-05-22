@@ -1981,14 +1981,9 @@ given sequence; `readOne` blocks if no item is available. To read the next item,
 
 [source,java]
 ----
-Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");
-long sequence = ringbuffer.headSequence();
-while(true){
-    String item = ringbuffer.readOne(sequence);
-    sequence++;
-    // process item
-}  
+include::{javasource}/ringbuffer/SampleRB.java[tag=rb]
 ----
+
 
 By exposing the sequence, you can now move the item from the Ringbuffer as long as the item is still available. If the item is not available
 any longer, `StaleSequenceException` is thrown.
@@ -2000,7 +1995,7 @@ Adding an item to a Ringbuffer is also easy with the Ringbuffer `add` method:
 
 [source,java]
 ----
-Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");
+Ringbuffer<String> ringbuffer = hz.getRingbuffer("SampleRB");
 ringbuffer.add("someitem");
 ----
 
@@ -2088,17 +2083,9 @@ a back pressure mechanism. The following example code shows the usage of an expo
 
 [source,java]
 ----
-long sleepMs = 100;
-for (; ; ) {
-    long result = ringbuffer.addAsync(item, OverflowPolicy.FAIL).get();
-    if (result != -1) {
-        break;
-    }
-    
-    TimeUnit.MILLISECONDS.sleep(sleepMs);
-    sleepMs = min(5000, sleepMs * 2);
-}
+include::{javasource}/ringbuffer/Writer.java[tag=writer]
 ----
+
 
 [[ringbuffer-with-persistent-datastore]]
 ==== Ringbuffer with Persistent Datastore
@@ -2323,17 +2310,10 @@ The following shows the declarative configuration of a Ringbuffer called `rb`. T
 
 You can also configure a Ringbuffer programmatically. The following is a programmatic version of the above declarative configuration.
 
-```
-RingbufferConfig rbConfig = new RingbufferConfig("rb")
-    .setCapacity(10000)
-    .setBackupCount(1)
-    .setAsyncBackupCount(0)
-    .setTimeToLiveSeconds(0)
-    .setInMemoryFormat(InMemoryFormat.BINARY)
-    .setQuorumName("quorumname");
-Config config = new Config();
-config.addRingbufferConfig(rbConfig);
-```        
+[source,java]
+----
+include::{javasource}/ringbuffer/RBConfiguration.java[tag=rbc]
+----
 
 [[topic]]
 === Topic
