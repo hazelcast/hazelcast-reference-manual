@@ -451,7 +451,7 @@ An example is given below.
 
 [source,java]
 ----
-include::{javasource}/EvictAll.java[tag=evictall]
+include::{javasource}/map/EvictAll.java[tag=evictall]
 ----
 
 
@@ -982,7 +982,7 @@ Let's work on a sample case as shown below.
 
 [source,java]
 ----
-include::{javasource}/RacyUpdateMember.java[tag=racy]
+include::{javasource}/map/RacyUpdateMember.java[tag=racy]
 ----
 
 If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic locking or optimistic locking. 
@@ -997,7 +997,7 @@ To perform pessimistic locking, use the lock mechanism provided by the Hazelcast
 
 [source,java]
 ----
-include::{javasource}/PessimisticUpdateMember.java[tag=pum]
+include::{javasource}/map/PessimisticUpdateMember.java[tag=pum]
 ----
 
 
@@ -1018,7 +1018,7 @@ NOTE: The below example code is intentionally broken.
 
 [source,java]
 ----
-include::{javasource}/OptimisticMember.java[tag=om]
+include::{javasource}/map/OptimisticMember.java[tag=om]
 ----
 
 
@@ -1143,14 +1143,14 @@ As an example, let's listen to the changes made on an employee with the surname 
 
 [source,java]
 ----
-include::{javasource}/Employee.java[tag=emp]
+include::{javasource}/map/Employee.java[tag=emp]
 ----
 
 Then, let's create a listener with predicate by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
 
 [source,java]
 ----
-include::{javasource}/ListenerWithPredicate.java[tag=lwp]
+include::{javasource}/map/ListenerWithPredicate.java[tag=lwp]
 ----
 
 
@@ -1158,7 +1158,7 @@ And now, let's play with the employee "smith" and see how that employee will be 
 
 [source,java]
 ----
-include::{javasource}/Modify.java[tag=modify]
+include::{javasource}/map/Modify.java[tag=modify]
 ----
 
 
@@ -1340,21 +1340,7 @@ Use the Hazelcast instance's `getQueue` method to get the queue, then use the qu
 
 [source,java]
 ----
-public class SampleQueue {
-    
-    public static void main(String[] args) throws Exception {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
-        queue.put( new MyTask() );
-        MyTask task = queue.take();
-
-        boolean offered = queue.offer( new MyTask(), 10, TimeUnit.SECONDS );
-        task = queue.poll( 5, TimeUnit.SECONDS );
-        if ( task != null ) {
-           //process task
-        }
-    }
-} 
+include::{javasource}/queue/SampleQueue.java[tag=samplequeue]
 ----
 
 FIFO ordering will apply to all queue operations across the cluster. The user objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
@@ -1375,21 +1361,9 @@ Let's `put` one integer on the queue every second, 100 integers total.
 
 [source,java]
 ----
-public class ProducerMember {
-    
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-        IQueue<Integer> queue = hz.getQueue( "queue" );
-        for ( int k = 1; k < 100; k++ ) {
-            queue.put( k );
-            System.out.println( "Producing: " + k );
-            Thread.sleep(1000);
-        }
-        queue.put( -1 );
-        System.out.println( "Producer Finished!" );
-    }
-}
----- 
+include::{javasource}/queue/ProducerMember.java[tag=producer]
+----
+ 
 
 `Producer` puts a **-1** on the queue to show that the `put`s are finished. 
 
@@ -1400,24 +1374,9 @@ Now, let's create a `Consumer` class to `take` a message from this queue, as sho
 
 [source,java]
 ----
-public class ConsumerMember {
-
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-        IQueue<Integer> queue = hz.getQueue( "queue" );
-        while ( true ) {
-            int item = queue.take();
-            System.out.println( "Consumed: " + item );
-            if ( item == -1 ) {
-                queue.put( -1 );
-                break;
-            }
-        Thread.sleep( 5000 );
-        }
-        System.out.println( "Consumer Finished!" );
-    }
-}
+include::{javasource}/queue/ConsumerMember.java[tag=consumer]
 ----
+
 
 As seen in the above example code, `Consumer` waits five seconds before it consumes the next message. It stops once it receives **-1**. Also note that `Consumer` puts **-1** back on the queue before the loop is ended. 
 
@@ -1612,19 +1571,9 @@ The following are examples of queue configurations. It includes the `QueueStore`
 
 [source,java]
 ----
-Config config = new Config();
-QueueConfig queueConfig = config.getQueueConfig("default");
-queueConfig.setName("MyQueue")
-           .setBackupCount(1)
-           .setMaxSize(0)
-           .setStatisticsEnabled(true)
-           .setQuorumName("quorumname");
-queueConfig.getQueueStoreConfig()
-           .setEnabled(true)
-           .setClassName("com.hazelcast.QueueStoreImpl")
-           .setProperty("binary", "false");
-config.addQueueConfig(queueConfig);
+include::{javasource}/queue/QueueConfiguration.java[tag=queueconf]
 ----
+
 
 
 Hazelcast distributed queue has one synchronous backup by default. By having this backup, when a cluster member with a queue goes down, another member having the backup of that queue will continue. Therefore, no items are lost. You can define the number of synchronous backups for a queue using the `backup-count` element in the declarative configuration. A queue can also have asynchronous backups: you can define the number of asynchronous backups using the `async-backup-count` element.
