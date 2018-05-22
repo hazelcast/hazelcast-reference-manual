@@ -1605,35 +1605,14 @@ The following example creates a MultiMap and puts items into it. Use the Hazelca
 
 [source,java]
 ----
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-MultiMap <String , String > map = hazelcastInstance.getMultiMap( "map" );
-
-map.put( "a", "1" );
-map.put( "a", "2" );
-map.put( "b", "3" ); 
-System.out.println( "PutMember:Done" );
-```
+include::{javasource}/multimap/SampleMultiMap.java[tag=mm]
+----
 
 Now let's print the entries in this MultiMap.
 
-```java
-public class PrintMember {
-    
-    public static void main(String[] args) {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        MultiMap<String, String> map = hazelcastInstance.getMultiMap("map");
-
-        map.put("a", "1");
-        map.put("a", "2");
-        map.put("b", "3");
-        System.out.printf("PutMember:Done");
-
-        for (String key: map.keySet()){
-            Collection <String> values = map.get(key);
-            System.out.printf("%s -> %s\n", key, values);
-        }
-    }
-}
+[source,java]
+----
+include::{javasource}/multimap/PrintMember.java[tag=pm]
 ----
 
 After you run the first code sample, run the `PrintMember` sample. You will see the key **`a`** has two values, as shown below.
@@ -1675,12 +1654,9 @@ The following are the example MultiMap configurations.
 
 [source,java]
 ----
-MultiMapConfig mmConfig = new MultiMapConfig();
-mmConfig.setName( "default" )
-        .setBackupCount( "0" ).setAsyncBackupCount( "1" )
-        .setValueCollectionType( "SET" )
-        .setQuorumName( "quorumname" );
+include::{javasource}/multimap/MultiMapConfiguration.java[tag=mmc]
 ----
+
 
 The following are the configuration elements and their descriptions:
 
