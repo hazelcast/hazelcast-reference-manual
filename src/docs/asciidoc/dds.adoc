@@ -1861,22 +1861,9 @@ Use the HazelcastInstance `getList` method to get the List, then use the `add` m
 
 [source,java]
 ----
-HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-
-List<Price> list = hz.getList( "IBM-Quote-Frequency" );
-list.add( new Price( 10 ) );
-list.add( new Price( 11 ) );
-list.add( new Price( 12 ) );
-list.add( new Price( 11 ) );
-list.add( new Price( 12 ) );
-        
-//....
-Iterator<Price> iterator = list.iterator();
-while ( iterator.hasNext() ) { 
-    Price price = iterator.next(); 
-    //analyze
-}
+include::{javasource}/list/SampleList.java[tag=list]
 ----
+
 
 
 Hazelcast List uses `ItemListener` to listen to events that occur when items are added to and removed from the List. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
@@ -1907,12 +1894,9 @@ The following are example list configurations.
 
 [source,java]
 ----
-Config config = new Config();
-CollectionConfig collectionList = config.getListConfig("MyList");
-collectionList.setBackupCount(1)
-              .setMaxSize(10)
-              .setQuorumName( "quorumname" );
+include::{javasource}/list/ListConfiguration.java[tag=lc]
 ----
+
    
 
 List configuration has the following elements.
