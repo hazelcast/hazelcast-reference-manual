@@ -128,7 +128,12 @@ You can set a timeout for retrying the operations sent to a member. This can be 
 
 Please see the <<client-system-properties, Client System Properties section>> for the description of the property `hazelcast.client.invocation.timeout.seconds`.
 
-When a connection problem occurs, an operation is retried if it is certain that it has not run on the member yet or if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect. If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a connection failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member, and then the connection is lost. Since there will be no respond for this operation, you will not now whether it has run on the member or not. If you enabled `redoOperation`, it means this operation may run again, which may cause two sane objects in the queue.
+When any failure happens between a client and member (such as an exception at the member side, connection issues, etc.), an operation is retried if:
+
+* it is certain that it has not run on the member yet, or 
+* if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect. 
+
+If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member, and then the connection is lost. Since there will be no respond for this operation, you will not now whether it has run on the member or not. If you enabled `redoOperation`, it means this operation may run again, which may cause two sane objects in the queue.
 
 
 ===== Using Supported Distributed Data Structures
