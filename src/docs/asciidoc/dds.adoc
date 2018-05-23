@@ -2371,11 +2371,7 @@ Topic has two statistic variables that you can query. These values are increment
 
 [source,java]
 ----
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-ITopic<Object> myTopic = hazelcastInstance.getTopic( "myTopicName" );
-
-myTopic.getLocalTopicStats().getPublishOperationCount();
-myTopic.getLocalTopicStats().getReceiveOperationCount();
+include::{javasource}/topic/TopicStats.java[tag=ts]
 ----
 
 
@@ -2464,18 +2460,7 @@ You can see the example configuration snippets below.
 
 [source,java]
 ----
-TopicConfig topicConfig = new TopicConfig();
-topicConfig.setGlobalOrderingEnabled( true );
-topicConfig.setStatisticsEnabled( true );
-topicConfig.setName( "yourTopicName" );
-MessageListener<String> implementation = new MessageListener<String>() {
-  @Override
-  public void onMessage( Message<String> message ) {
-    // process the message
-  }
-};
-topicConfig.addMessageListenerConfig( new ListenerConfig( implementation ) );
-HazelcastInstance instance = Hazelcast.newHazelcastInstance()
+include::{javasource}/topic/TopicConfiguration.java[tag=tc]
 ----
 
 Topic configuration has the following elements.
