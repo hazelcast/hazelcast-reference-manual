@@ -451,7 +451,7 @@ An example is given below.
 
 [source,java]
 ----
-include::{javasource}/map/EvictAll.java[tag=evictall]
+include::{javasource}/dds/map/EvictAll.java[tag=evictall]
 ----
 
 
@@ -982,7 +982,7 @@ Let's work on a sample case as shown below.
 
 [source,java]
 ----
-include::{javasource}/map/RacyUpdateMember.java[tag=racy]
+include::{javasource}/dds/map/RacyUpdateMember.java[tag=racy]
 ----
 
 If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic locking or optimistic locking. 
@@ -997,7 +997,7 @@ To perform pessimistic locking, use the lock mechanism provided by the Hazelcast
 
 [source,java]
 ----
-include::{javasource}/map/PessimisticUpdateMember.java[tag=pum]
+include::{javasource}/dds/map/PessimisticUpdateMember.java[tag=pum]
 ----
 
 
@@ -1018,7 +1018,7 @@ NOTE: The below example code is intentionally broken.
 
 [source,java]
 ----
-include::{javasource}/map/OptimisticMember.java[tag=om]
+include::{javasource}/dds/map/OptimisticMember.java[tag=om]
 ----
 
 
@@ -1143,14 +1143,14 @@ As an example, let's listen to the changes made on an employee with the surname 
 
 [source,java]
 ----
-include::{javasource}/map/Employee.java[tag=emp]
+include::{javasource}/dds/map/Employee.java[tag=emp]
 ----
 
 Then, let's create a listener with predicate by adding a listener that tracks `ADDED`, `UPDATED` and `REMOVED` entry events with the `surname` predicate.
 
 [source,java]
 ----
-include::{javasource}/map/ListenerWithPredicate.java[tag=lwp]
+include::{javasource}/dds/map/ListenerWithPredicate.java[tag=lwp]
 ----
 
 
@@ -1158,7 +1158,7 @@ And now, let's play with the employee "smith" and see how that employee will be 
 
 [source,java]
 ----
-include::{javasource}/map/Modify.java[tag=modify]
+include::{javasource}/dds/map/Modify.java[tag=modify]
 ----
 
 
@@ -1340,7 +1340,7 @@ Use the Hazelcast instance's `getQueue` method to get the queue, then use the qu
 
 [source,java]
 ----
-include::{javasource}/queue/SampleQueue.java[tag=samplequeue]
+include::{javasource}/dds/queue/SampleQueue.java[tag=samplequeue]
 ----
 
 FIFO ordering will apply to all queue operations across the cluster. The user objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
@@ -1361,7 +1361,7 @@ Let's `put` one integer on the queue every second, 100 integers total.
 
 [source,java]
 ----
-include::{javasource}/queue/ProducerMember.java[tag=producer]
+include::{javasource}/dds/queue/ProducerMember.java[tag=producer]
 ----
  
 
@@ -1374,7 +1374,7 @@ Now, let's create a `Consumer` class to `take` a message from this queue, as sho
 
 [source,java]
 ----
-include::{javasource}/queue/ConsumerMember.java[tag=consumer]
+include::{javasource}/dds/queue/ConsumerMember.java[tag=consumer]
 ----
 
 
@@ -1571,7 +1571,7 @@ The following are examples of queue configurations. It includes the `QueueStore`
 
 [source,java]
 ----
-include::{javasource}/queue/QueueConfiguration.java[tag=queueconf]
+include::{javasource}/dds/queue/QueueConfiguration.java[tag=queueconf]
 ----
 
 
@@ -1605,14 +1605,14 @@ The following example creates a MultiMap and puts items into it. Use the Hazelca
 
 [source,java]
 ----
-include::{javasource}/multimap/SampleMultiMap.java[tag=mm]
+include::{javasource}/dds/multimap/SampleMultiMap.java[tag=mm]
 ----
 
 Now let's print the entries in this MultiMap.
 
 [source,java]
 ----
-include::{javasource}/multimap/PrintMember.java[tag=pm]
+include::{javasource}/dds/multimap/PrintMember.java[tag=pm]
 ----
 
 After you run the first code sample, run the `PrintMember` sample. You will see the key **`a`** has two values, as shown below.
@@ -1654,7 +1654,7 @@ The following are the example MultiMap configurations.
 
 [source,java]
 ----
-include::{javasource}/multimap/MultiMapConfiguration.java[tag=mmc]
+include::{javasource}/dds/multimap/MultiMapConfiguration.java[tag=mmc]
 ----
 
 
@@ -1748,7 +1748,7 @@ Use the HazelcastInstance `getSet` method to get the Set, then use the `add` met
 
 [source,java]
 ----
-include::{javasource}/set/SampleSet.java[tag=set]
+include::{javasource}/dds/set/SampleSet.java[tag=set]
 ----
 
 
@@ -1778,7 +1778,7 @@ The following are the example set configurations.
 
 [source,java]
 ----
-include::{javasource}/set/SetConfiguration.java[tag=sc]
+include::{javasource}/dds/set/SetConfiguration.java[tag=sc]
 ----
 
    
@@ -1861,7 +1861,7 @@ Use the HazelcastInstance `getList` method to get the List, then use the `add` m
 
 [source,java]
 ----
-include::{javasource}/list/SampleList.java[tag=list]
+include::{javasource}/dds/list/SampleList.java[tag=list]
 ----
 
 
@@ -1894,7 +1894,7 @@ The following are example list configurations.
 
 [source,java]
 ----
-include::{javasource}/list/ListConfiguration.java[tag=lc]
+include::{javasource}/dds/list/ListConfiguration.java[tag=lc]
 ----
 
    
@@ -1981,7 +1981,7 @@ given sequence; `readOne` blocks if no item is available. To read the next item,
 
 [source,java]
 ----
-include::{javasource}/ringbuffer/SampleRB.java[tag=rb]
+include::{javasource}/dds/ringbuffer/SampleRB.java[tag=rb]
 ----
 
 
@@ -2083,7 +2083,7 @@ a back pressure mechanism. The following example code shows the usage of an expo
 
 [source,java]
 ----
-include::{javasource}/ringbuffer/Writer.java[tag=writer]
+include::{javasource}/dds/ringbuffer/Writer.java[tag=writer]
 ----
 
 
@@ -2312,7 +2312,7 @@ You can also configure a Ringbuffer programmatically. The following is a program
 
 [source,java]
 ----
-include::{javasource}/ringbuffer/RBConfiguration.java[tag=rbc]
+include::{javasource}/dds/ringbuffer/RBConfiguration.java[tag=rbc]
 ----
 
 [[topic]]
@@ -2371,7 +2371,7 @@ Topic has two statistic variables that you can query. These values are increment
 
 [source,java]
 ----
-include::{javasource}/topic/TopicStats.java[tag=ts]
+include::{javasource}/dds/topic/TopicStats.java[tag=ts]
 ----
 
 
@@ -2460,7 +2460,7 @@ You can see the example configuration snippets below.
 
 [source,java]
 ----
-include::{javasource}/topic/TopicConfiguration.java[tag=tc]
+include::{javasource}/dds/topic/TopicConfiguration.java[tag=tc]
 ----
 
 Topic configuration has the following elements.
@@ -2589,18 +2589,11 @@ if the lock operation itself fails.
 
 [source,java]
 ----
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-Lock lock = hazelcastInstance.getLock( "myLock" );
-lock.lock();
-try {
-    // do something here
-} finally {
-  lock.unlock();
-}
+include::{javasource}/dds/lock/SampleLock.java[tag=lock]
 ----
 
 [[releasing-locks-with-trylock-timeout]]
-### Releasing Locks with tryLock Timeout
+==== Releasing Locks with tryLock Timeout
 
 If a lock is not released in the cluster, another thread that is trying to get the
 lock can wait forever. To avoid this, use `tryLock` with a timeout value. You can
@@ -2761,11 +2754,7 @@ An example of programmatic configuration is as follows:
 
 [source,java]
 ----
-Config config = new Config();
-LockConfig lockConfig = new LockConfig();
-lockConfig.setName("myLock")
-          .setQuorumName("quorum-name");
-config.addLockConfig(lockConfig);
+include::{javasource}/dds/lock/LockConfiguration.java[tag=lc]
 ----
 
 NOTE: As mentioned above, a quorum definition for a lock that has the same name or a pattern that matches a map name will force the map locking actions to use the defined quorum. It is important to keep this in mind when using lock quorum and map locking actions.
@@ -2780,20 +2769,7 @@ The following example code creates an instance, increments it by a million, and 
 
 [source,java]
 ----
-public class Member {
-  
-    public static void main( String[] args ) {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 	
-        IAtomicLong counter = hazelcastInstance.getAtomicLong( "counter" );
-        for ( int k = 0; k < 1000 * 1000; k++ ) {
-	        if ( k % 500000 == 0 ) {
-	            System.out.println( "At: " + k );
-            }
-            counter.incrementAndGet();
-        }
-        System.out.printf( "Count is %s\n", counter.get() );
-    }
-}
+include::{javasource}/dds/iatomiclong/IAtomicLongSample.java[tag=ial]
 ----
 
 When you start other instances with the code above, you will see the count as *member count* times *a million*.
@@ -2805,12 +2781,7 @@ You can send functions to an IAtomicLong. `IFunction` is a Hazelcast owned, sing
 
 [source,java]
 ----
-private static class Add2Function implements IFunction <Long, Long> { 
-    @Override
-    public Long apply( Long input ) { 
-        return input + 2;
-    }
-}
+include::{javasource}/dds/iatomiclong/IAtomicLongExecuteFuncs.java[tag=add2func]
 ----
 
 [[executing-functions-on-iatomiclong]]
@@ -2827,33 +2798,9 @@ The following sample code includes these methods.
 
 [source,java]
 ----
-public class Member {
-  
-    public static void main( String[] args ) {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 		
-        IAtomicLong atomicLong = hazelcastInstance.getAtomicLong( "counter" );
-
-        atomicLong.set( 1 );
-        long result = atomicLong.apply( new Add2Function() ); 		
-        System.out.println( "apply.result: " + result); 		
-        System.out.println( "apply.value: " + atomicLong.get() );
-
-        atomicLong.set( 1 );
-        atomicLong.alter( new Add2Function() ); 			
-        System.out.println( "alter.value: " + atomicLong.get() );
-
-        atomicLong.set( 1 );
-        result = atomicLong.alterAndGet( new Add2Function() ); 		
-        System.out.println( "alterAndGet.result: " + result ); 		
-        System.out.println( "alterAndGet.value: " + atomicLong.get() );
-
-        atomicLong.set( 1 );
-        result = atomicLong.getAndAlter( new Add2Function() ); 		
-        System.out.println( "getAndAlter.result: " + result ); 		
-        System.out.println( "getAndAlter.value: " + atomicLong.get() );
-    }
-}
+include::{javasource}/dds/iatomiclong/IAtomicLongExecuteFuncs.java[tag=ialef]
 ----
+
 
 The output of the above class when run is as follows:
 
@@ -2950,27 +2897,9 @@ The following example code uses an `IAtomicLong` resource 1000 times, increments
 
 [source,java]
 ----
-public class SemaphoreMember {
-  
-    public static void main( String[] args ) throws Exception{
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(); 
-        ISemaphore semaphore = hazelcastInstance.getSemaphore( "semaphore" ); 
-        IAtomicLong resource = hazelcastInstance.getAtomicLong( "resource" ); 
-        for ( int k = 0 ; k < 1000 ; k++ ) {
-            System.out.println( "At iteration: " + k + ", Active Threads: " + resource.get() );
-            semaphore.acquire();
-            try {
-                resource.incrementAndGet();
-                Thread.sleep( 1000 );
-                resource.decrementAndGet();
-            } finally { 
-            semaphore.release();
-            }
-        }
-    System.out.println("Finished");
-    }
-}
+include::{javasource}/dds/semaphore/SemaphoreMember.java[tag=sm]
 ----
+
 
 Let's limit the concurrent access to this resource by allowing at most three threads. You can configure it declaratively by setting the `initial-permits` property, as shown below.
 
@@ -3018,12 +2947,9 @@ The following are example semaphore configurations.
 
 [source,java]
 ----
-Config config = new Config();
-SemaphoreConfig semaphoreConfig = config.getSemaphoreConfig();
-semaphoreConfig.setName( "semaphore" ).setBackupCount( "1" )
-        .setInitialPermits( "3" )
-        .setQuorumName( "quorumname" );
+include::{javasource}/dds/semaphore/SemaphoreMember.java[tag=sc]
 ----
+
 
 Semaphore configuration has the below elements.
 
@@ -3075,19 +3001,9 @@ Here is an IAtomicReference example.
 
 [source,java]
 ----
-public class Member {
-    public static void main(String[] args) {
-        Config config = new Config();
-
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
-
-        IAtomicReference<String> ref = hz.getAtomicReference("reference");
-        ref.set("foo");
-        System.out.println(ref.get());
-        System.exit(0);
-    } 
-}
+include::{javasource}/dds/IAtomicReferenceSample.java[tag=iar]
 ----
+
 
 When you execute the above example, you will see the following output.
 
@@ -3173,34 +3089,16 @@ The following code samples describe the mechanism of `ICountDownLatch`. Assume t
 
 [source,java]
 ----
-public class Leader {
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
-        System.out.println( "Starting" );
-        latch.trySetCount( 1 );
-        Thread.sleep( 30000 );
-        latch.countDown();
-        System.out.println( "Leader finished" );
-        latch.destroy();
-    }
-}
+include::{javasource}/dds/countdownlatch/Leader.java[tag=leader]
 ----
 
 Since only a single step is needed to be completed as a sample, the above code initializes the latch with 1. Then, the code sleeps for a while to simulate a process and starts the countdown. Finally, it clears up the latch. Let's write a follower:
 
 [source,java]
 ----
-public class Follower {
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
-        System.out.println( "Waiting" );
-        boolean success = latch.await( 10, TimeUnit.SECONDS );
-        System.out.println( "Complete: " + success );
-    }
-} 
+include::{javasource}/dds/countdownlatch/Follower.java[tag=follower]
 ----
+
 
 The follower class above first retrieves `ICountDownLatch` and then calls the `await` method to enable the thread to listen for the latch. The method `await` has a timeout value as a parameter. This is useful when the `countDown` method fails. To see `ICountDownLatch` in action, start the leader first and then start one or more followers. You will see that the followers will wait until the leader completes.
 
@@ -3277,11 +3175,9 @@ The following is an example code.
 
 [source,java]
 ----
-final HazelcastInstance instance = Hazelcast.newHazelcastInstance();
-        final PNCounter counter = instance.getPNCounter("counter");
-        counter.addAndGet(5);
-        final long value = counter.get();
+include::{javasource}/dds/PNCounterSample.java[tag=pnc]
 ----
+
 
 This code snippet creates an instance of a PN counter, increments it by 5 and retrieves the value.
 
@@ -3307,11 +3203,7 @@ Following is an equivalent snippet of Java configuration:
 
 [source,java]
 ----
-PNCounterConfig pnCounterConfig = new PNCounterConfig()
-        .setReplicaCount(10)
-        .setStatisticsEnabled(true);
-Config hazelcastConfig = new Config()
-        .addPNCounterConfig(pnCounterConfig);
+include::{javasource}/dds/PNCounterSample.java[tag=pncc]
 ----
 
 [[configuring-the-crdt-replication-mechanism]]
@@ -3338,12 +3230,9 @@ Following is an equivalent snippet of Java configuration:
 
 [source,java]
 ----
-final CRDTReplicationConfig crdtReplicationConfig = new CRDTReplicationConfig()
-        .setMaxConcurrentReplicationTargets(1)
-        .setReplicationPeriodMillis(1000);
-Config hazelcastConfig = new Config()
-        .setCRDTReplicationConfig(crdtReplicationConfig);
+include::{javasource}/dds/CRDTReplication.java[tag=crdt]
 ----
+
 
 
 [[idgenerator]]
@@ -3359,6 +3248,12 @@ NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs 
 ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10,000 identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 10,000 IDs. This way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.
 
 Let's write a sample identifier generator.
+
+
+[source,java]
+----
+include::{javasource}/dds/IdGeneratorSample.java[tag=idg]
+----
 
 ```
 public class IdGeneratorExample {
