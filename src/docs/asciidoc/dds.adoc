@@ -3255,20 +3255,7 @@ Let's write a sample identifier generator.
 include::{javasource}/dds/IdGeneratorSample.java[tag=idg]
 ----
 
-```
-public class IdGeneratorExample {
-  
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        IdGenerator idGen = hazelcastInstance.getIdGenerator( "newId" );
-        while (true) {
-            Long id = idGen.newId();
-            System.err.println( "Id: " + id );
-            Thread.sleep( 1000 );
-        }
-    }
-}
-```
+
 
 Let's run the above code two times. The output will be similar to the following.
 
@@ -3402,22 +3389,9 @@ Here is an example of Replicated Map code. The HazelcastInstance's `getReplicate
 
 [source,java]
 ----
-public class FillMapMember {
-
-    public static void main(String[] args) {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        Map<String, Customer> customers = hazelcastInstance.getReplicatedMap("customers");
-        customers.put( "1", new Customer( "Joe", "Smith" ) );
-        customers.put( "2", new Customer( "Ali", "Selam" ) );
-        customers.put( "3", new Customer( "Avi", "Noyan" ) );
-
-        Collection<Customer> colCustomers = customers.values();
-        for ( Customer customer : colCustomers ) {
-           // process customer
-        }
-    }
-}
+include::{javasource}/dds/replicatedmap/FillMapMember.java[tag=fmm]
 ----
+
 
 `HazelcastInstance.getReplicatedMap()` returns `com.hazelcast.core.ReplicatedMap` which, as stated above, extends the
 `java.util.Map` interface.
@@ -3497,14 +3471,9 @@ A basic example of how to configure the Replicated Map using the programmatic ap
 
 [source,java]
 ----
-Config config = new Config();
-
-ReplicatedMapConfig replicatedMapConfig =
-    config.getReplicatedMapConfig( "default" );
-
-replicatedMapConfig.setInMemoryFormat( InMemoryFormat.BINARY )
-                   .setQuorumName( "quorumname" );
+include::{javasource}/dds/replicatedmap/ReplicatedMapConfiguration.java[tag=rmc]
 ----
+
 
 All properties that can be configured using the declarative configuration are also available using programmatic configuration
 by transforming the tag names into getter or setter names.
@@ -3544,40 +3513,9 @@ entry and updates it. The method `remove` removes the entry.
 
 [source,java]
 ----
-public class ListeningMember {
-
-    public static void main(String[] args) {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        ReplicatedMap<String, Customer> customers = hazelcastInstance.getReplicatedMap( "customers" );
-        
-        customers.addEntryListener( new EntryListener<String, Customer>() {
-            @Override
-            public void entryAdded( EntryEvent<String, Customer> event ) {
-                log( "Entry added: " + event );
-            }
-
-            @Override
-            public void entryUpdated( EntryEvent<String, Customer> event ) {
-                log( "Entry updated: " + event );
-            }
-
-            @Override
-            public void entryRemoved( EntryEvent<String, Customer> event ) {
-                log( "Entry removed: " + event );
-            }
-
-            @Override
-                public void entryEvicted( EntryEvent<String, Customer> event ) {
-                // Currently not supported, will never fire
-                }
-        });
-
-        customers.put( "1", new Customer( "Joe", "Smith" ) ); // add event
-        customers.put( "1", new Customer( "Ali", "Selam" ) ); // update event
-        customers.remove( "1" ); // remove event
-    }
-}
+include::{javasource}/dds/replicatedmap/ListeningMember.java[tag=lm]
 ----
+
 
 [[split-brain-protection-for-replicated-map]]
 ==== Split-Brain Protection for Replicated Map
@@ -3647,28 +3585,9 @@ The following is an example code.
 
 [source,java]
 ----
-HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-CardinalityEstimator visitorsEstimator = hz.getCardinalityEstimator("visitors");
-
-InputStreamReader isr = new InputStreamReader(Member.class.getResourceAsStream("visitors.txt"));
-        BufferedReader br = new BufferedReader(isr);
-        try {
-            String visitor = br.readLine();
-            while (visitor != null) {
-                visitorsEstimator.add(visitor);
-                visitor = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            closeResource(br);
-            closeResource(isr);
-        }
-
-        System.out.printf("Estimated unique visitors seen so far: %d%n", visitorsEstimator.estimate());
-
-        Hazelcast.shutdownAll();
+include::{javasource}/dds/CardinalityEstimatorSample.java[tag=ces]
 ----
+
 
 [[split-brain-protection-for-cardinality-estimator]]
 ==== Split-Brain Protection for Cardinality Estimator
@@ -3762,21 +3681,7 @@ You can also configure an event journal programmatically. The following is a pro
 
 [source,java]
 ----
-EventJournalConfig myMapJournalConfig = new EventJournalConfig()
-    .setMapName("myMap")
-    .setEnabled(true)
-    .setCapacity(5000)
-    .setTimeToLiveSeconds(20);
-
-EventJournalConfig myCacheJournalConfig = new EventJournalConfig()
-    .setMapName("myCache")
-    .setEnabled(true)
-    .setCapacity(10000)
-    .setTimeToLiveSeconds(0);
-
-Config config = new Config();
-config.addEventJournalConfig(myMapJournalConfig);
-config.addEventJournalConfig(myCacheJournalConfig);
+include::{javasource}/dds/EventJournalConfiguration.java[tag=ejc]
 ----
 
 
