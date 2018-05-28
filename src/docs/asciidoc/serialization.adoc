@@ -899,20 +899,22 @@ We recommend you only set the HazelcastInstance field while using `setHazelcastI
 
 === Untrusted Deserialization Protection
 
-Hazelcast offers a Java deserialization protection based on blacklisting and whitelisting the class/package names.
+Hazelcast offers a Java deserialization protection based on whitelisting and blacklisting the class/package names. These listings support prefixes.
 
 This protection is controlled using the configuration element `java-serialization-filter` under `serialization`, as shown in the example below.
-
+op
 [source,xml]
 ----
 <hazelcast>
     <serialization>
-        <java-serialization-filter>
+        <java-serialization-filter defaults-disabled="true">
             <whitelist>
-                <class>java.lang.String</class>
-                <class>example.Foo</class>
-                <package>com.acme.app</package>
-                <package>com.acme.app.subpkg</package>
+		<class>example.Foo</class>
+		<package>com.acme.app</package>
+		<prefix>com.hazelcast.</package>
+		<prefix>java.</package>
+		<prefix>javax.</package>
+		<prefix>[</package>
             </whitelist>
             <blacklist>
                 <class>com.acme.app.BeanComparator</class>
@@ -928,11 +930,20 @@ As an alternative, you can also configure it programmatically using the `JavaSer
 ----
 Config config = new Config();
 JavaSerializationFilterConfig javaSerializationFilterConfig = new JavaSerializationFilterConfig();
-javaSerializationFilterConfig.getBlacklist().addClasses(SomeDeserialized.class.getName());
+javaSerializationFilterConfig.getWhitelist().addClasses(SomeDeserialized.class.getName());
 config.getSerializationConfig().setJavaSerializationFilterConfig(javaSerializationFilterConfig);
 ----
 
 NOTE: Untrusted deserialization protection is not enabled by default. You can enable it simply by setting the element `java-serialization-filter` or using a non-null `JavaSerializationFilterConfig` object.
+
+The protection uses a whitelist as the default configuration. When this list is not explicitly provided, the following default prefixes are used for the whitelist:
+
+* `java`
+* `com.hazelcast.`
+* `[` (for primitives and arrays)
+
+If you do not want to use the default whitelist prefixes, you must set the `defaults-disabled` attribute to true.
+
 
 Once the protection is enabled, the following filtering rules are used when objects are deserialized.
 
@@ -944,9 +955,9 @@ Once the protection is enabled, the following filtering rules are used when obje
 ** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is whitelisted, then deserialization is allowed;
 ** deserialization fails otherwise.
 
-When deserialization fails, a `SecurityException` is thrown. When the blacklist is not explicitly provided, a default hardcoded value with some well known vulnerable class names is used.
+When deserialization fails, a `SecurityException` is thrown. 
 
-Note that the safest way to provide a protection against untrusted deserialization is using whitelisting (also keep in mind that maintaining such a whitelist can be difficult).
+NOTE: Note that the safest way to provide a protection against untrusted deserialization is using whitelisting (also keep in mind that maintaining such a whitelist can be difficult).
 
 
 === Serialization Configuration Wrap-Up
