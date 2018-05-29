@@ -30,53 +30,17 @@ Below is an example of a Callable task. SumTask prints out map keys and returns 
 
 [source,java]
 ----
-public class SumTask
-    implements Callable<Integer>, Serializable, HazelcastInstanceAware {
-        
-    private transient HazelcastInstance hazelcastInstance;
-
-    public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
-        this.hazelcastInstance = hazelcastInstance;
-    }
-
-    public Integer call() throws Exception {
-        IMap<String, Integer> map = hazelcastInstance.getMap( "map" );
-        int result = 0;
-        for ( String key : map.localKeySet() ) {
-            System.out.println( "Calculating for key: " + key );
-            result += map.get( key );
-        }
-        System.out.println( "Local Result: " + result );
-        return result;
-    }
-}
+include::{javasource}/distributedcomputing/SumTask.java[tag=st]
 ----
+
 
 Another example is the Echo callable below. In its call() method, it returns the local member and the input passed in. Remember that `instance.getCluster().getLocalMember()` returns the local member and `toString()` returns the member's address (IP + port) in String form, just to see which member actually executed the code for our example. Of course, the `call()` method can do and return anything you like. 
 
 [source,java]
 ----
-public class Echo implements Callable<String>, Serializable, HazelcastInstanceAware {
-    String input = null;
-    
-    private transient HazelcastInstance hazelcastInstance;
-
-    public Echo() {
-    }
-
-    public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
-        this.hazelcastInstance = hazelcastInstance;
-    }
-
-    public Echo(String input) {
-        this.input = input;
-    }
-
-    public String call() {
-        return hazelcastInstance.getCluster().getLocalMember().toString() + ":" + input;
-    }
-}
+include::{javasource}/distributedcomputing/Echo.java[tag=echo]
 ----
+
 
 ===== Executing a Callable Task
 
@@ -91,18 +55,9 @@ Below, the Echo task is executed.
 
 [source,java]
 ----
-public class MasterMember {
-  
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance();
-        IExecutorService executorService = instance.getExecutorService( "executorService" );
-        Future<String> future = executorService.submit( new Echo( "myinput") );
-        //while it is executing, do some useful stuff
-        //when ready, get the result of your execution
-        String result = future.get();
-    }
-}
+include::{javasource}/distributedcomputing/MasterMember.java[tag=mm]
 ----
+
 
 Please note that the Echo callable in the above code sample also implements a Serializable interface, since it may be sent to another member to be processed.
 
@@ -116,24 +71,9 @@ Below is Runnable example code. It is a task that waits for some time and echoes
 
 [source,java]
 ----
-public class EchoTask implements Runnable, Serializable {
-    
-    private final String msg;
-
-    public EchoTask( String msg ) {
-        this.msg = msg;
-    }
-
-    @Override
-    public void run() {
-        try {
-            Thread.sleep( 5000 );
-        } catch ( InterruptedException e ) {
-        }
-    System.out.println( "echo:" + msg );
-    }
-}
+include::{javasource}/distributedcomputing/EchoTask.java[tag=et]
 ----
+
 
 ===== Executing a Runnable Task
 
@@ -146,19 +86,7 @@ Now let's write a class that submits and executes these echo messages. Executor 
 
 [source,java]
 ----
-public class MasterMember {
-  
-    public static void main( String[] args ) throws Exception {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        IExecutorService executor = hazelcastInstance.getExecutorService( "exec" );
-        for ( int k = 1; k <= 1000; k++ ) {
-            Thread.sleep( 1000 );
-            System.out.println( "Producing echo task: " + k );
-            executor.execute( new EchoTask( String.valueOf( k ) ) );
-        }
-        System.out.println( "EchoTaskMain finished!" );
-    }
-}
+include::{javasource}/distributedcomputing/RunnableMasterMember.java[tag=rmm]
 ----
 
 [[scaling-the-executor-service]]
@@ -242,29 +170,9 @@ The Fibonacci callable class below calculates the Fibonacci number for a given n
 
 [source,java]
 ----
-public class Fibonacci implements Callable<Long>, Serializable {
-    int input = 0; 
-
-    public Fibonacci( int input ) { 
-        this.input = input;
-    } 
-
-    public Long call() {
-        return calculate( input );
-    }
-
-    private long calculate( int n ) {
-        if ( Thread.currentThread().isInterrupted() ) {
-            return 0;
-        }
-        if ( n <= 1 ) {
-            return n;
-        } else {
-            return calculate( n - 1 ) + calculate( n - 2 );
-        }
-    }
-}
+include::{javasource}/distributedcomputing/FibonacciCallable.java[tag=fc]
 ----
+
 
 ===== Example Method to Execute and Cancel the Task
 
@@ -272,18 +180,9 @@ The `fib()` method below submits the Fibonacci calculation task above for number
 
 [source,java]
 ----
-long fib( int n ) throws Exception {
-    HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    IExecutorService es = hazelcastInstance.getExecutorService();
-    Future future = es.submit( new Fibonacci( n ) );  
-    try {
-        return future.get( 3, TimeUnit.SECONDS );
-    } catch ( TimeoutException e ) {
-        future.cancel( true );            
-    }
-    return -1;
-}
+include::{javasource}/distributedcomputing/FibonacciCallable.java[tag=fib]
 ----
+
 
 `fib(20)` will probably take less than 3 seconds. However, `fib(50)` will take much longer. (This is not an example for writing better Fibonacci calculation code, but for showing how to cancel a running execution that takes too long.) The method `future.cancel(false)` can only cancel execution before it is running (executing), but `future.cancel(true)` can interrupt running executions provided that your code is able to handle the interruption. If you are willing to cancel an already running task, then your task should be designed to handle interruptions. If the `calculate (int n)` method did not have the `(Thread.currentThread().isInterrupted())` line, then you would not be able to cancel the execution after it is started.
 
@@ -301,25 +200,7 @@ Let's use the Fibonacci series to explain this. The example code below is the ca
 
 [source,java]
 ----
-public class Fibonacci implements Callable<Long>, Serializable {
-    int input = 0;
-
-    public Fibonacci( int input ) {
-        this.input = input;
-    }
-
-    public Long call() {
-        return calculate( input );
-    }
-
-    private long calculate( int n ) {
-        if (n <= 1) {
-            return n;
-        } else {
-            return calculate( n - 1 ) + calculate( n - 2 );
-        }
-    }
-}
+include::{javasource}/distributedcomputing/Fibonacci2.java[tag=ec]
 ----
 
 ===== Example Method to Callback the Task
@@ -328,22 +209,7 @@ The example code below submits the Fibonacci calculation to `ExecutionCallback` 
 
 [source,java]
 ----
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-IExecutorService es = hazelcastInstance.getExecutorService("default");
-Callable<Long> task = new Fibonacci( 10 );
-
-es.submit(task, new ExecutionCallback<Long> () {
-
-    @Override
-    public void onResponse( Long response ) {
-        System.out.println( "Fibonacci calculation result = " + response );
-    }
-
-    @Override
-    public void onFailure( Throwable t ) {
-        t.printStackTrace();
-    }
-});
+include::{javasource}/distributedcomputing/MasterMemberCallback.java[tag=mmc]
 ----
 
 [[selecting-members-for-task-execution]]
@@ -387,12 +253,9 @@ The following are example configurations for executor service.
 
 [source,java]
 ----
-Config config = new Config();
-ExecutorConfig executorConfig = config.getExecutorConfig("exec");
-executorConfig.setPoolSize( 1 ).setQueueCapacity( 10 )
-          .setStatisticsEnabled( true )
-          .setQuorumName( "quorumname" );
+include::{javasource}/distributedcomputing/ExecutorConfiguration.java[tag=execconf]
 ----
+
 
 Executor service configuration has the following elements.
 
@@ -473,15 +336,7 @@ This section presents example configurations for durable executor service along 
 
 [source,java]
 ----
-Config config = new Config();
-config.getDurableExecutorConfig( "myDurableExecSvc" )
-      .setPoolSize ( 8 )
-      .setDurability( 1 )
-      .setCapacity( 1 )
-      .setQuorumName( "quorumname" );
-
-HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
-DurableExecutorService durableExecSvc = hazelcast.getDurableExecutorService("myDurableExecSvc");
+include::{javasource}/distributedcomputing/DurableExecutorConfiguration.java[tag=dec]
 ----
  
 Following are the descriptions of each configuration element and attribute:
@@ -582,15 +437,7 @@ This section presents example configurations for scheduled executor service alon
 
 [source,java]
 ----
-Config config = new Config();
-config.getScheduledExecutorConfig( "myScheduledExecSvc" )
-      .setPoolSize ( 16 )
-      .setCapacity( 100 )
-      .setDurability( 1 )
-      .setQuorumName( "quorumname" );
-
-HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
-IScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduledExecutorService("myScheduledExecSvc");
+include::{javasource}/distributedcomputing/ScheduledExecutorConfiguration.java[tag=sec]
 ----
 
 Following are the descriptions of each configuration element and attribute:
