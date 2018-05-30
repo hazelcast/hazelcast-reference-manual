@@ -82,19 +82,10 @@ This type of quorum function determines the presence of quorum based on the coun
 
 **Programmatic configuration:**
 
-```
-QuorumConfig quorumConfig = new QuorumConfig();
-quorumConfig.setName("quorumRuleWithFourMembers")
-quorumConfig.setEnabled(true);
-quorumConfig.setSize(4);
-
-MapConfig mapConfig = new MapConfig();
-mapConfig.setQuorumName("quorumRuleWithFourMembers");
-
-Config config = new Config();
-config.addQuorumConfig(quorumConfig);
-config.addMapConfig(mapConfig);
-```
+[source,java]
+----
+include::{javasource}/networkpartitioning/MemberCountQuorum.java[tag=mcq]
+----
 
 ===== Probabilistic Quorum Function
 
@@ -145,20 +136,11 @@ The probabilistic quorum function can be configured with the following parameter
 
 **Programmatic configuration**
 
-```
-QuorumConfig quorumConfig = 
-        QuorumConfig.newProbabilisticQuorumConfigBuilder("probabilist-quorum", 3)
-          .withAcceptableHeartbeatPauseMillis(5000)
-          .withMaxSampleSize(500)
-          .withSuspicionThreshold(10)
-          .build();
-quorumConfig.setType(QuorumType.READ_WRITE);
-SetConfig setConfig = new SetConfig("split-brain-protected-set");
-setConfig.setQuorumName("probabilist-quorum");
-Config config = new Config();
-config.addQuorumConfig(quorumConfig);
-config.addSetConfig(setConfig);
-```
+[source,java]
+----
+include::{javasource}/networkpartitioning/ProbabilisticQuorum.java[tag=pq]
+----
+
 
 ===== Recently-Active Quorum Function
 
@@ -182,17 +164,10 @@ A quorum with a recently-active quorum function can be used to implement more co
 
 **Programmatic configuration**
 
-```
-QuorumConfig quorumConfig = 
-        QuorumConfig.newRecentlyActiveQuorumConfigBuilder("recently-active-quorum", 4, 60000)
-                    .build();
-quorumConfig.setType(QuorumType.READ_WRITE);
-SetConfig setConfig = new SetConfig("split-brain-protected-set");
-setConfig.setQuorumName("recently-active-quorum");
-Config config = new Config();
-config.addQuorumConfig(quorumConfig);
-config.addSetConfig(setConfig);
-```
+[source,java]
+----
+include::{javasource}/networkpartitioning/RecentlyActiveQuorum.java[tag=raq]
+----
 
 
 ===== Quorum Configuration Reference
@@ -256,40 +231,15 @@ Quorum listeners can be configured via declarative or programmatic configuration
 
 **Programmatic:**
 
-```
-QuorumListenerConfig listenerConfig = new QuorumListenerConfig();
-// You can either directly set quorum listener implementation of your own
-listenerConfig.setImplementation(new QuorumListener() {
-            @Override
-            public void onChange(QuorumEvent quorumEvent) {
-                if (quorumEvent.isPresent()) {
-                       // handle quorum presence
-                } else {
-                    // handle quorum absence
-                }
-            }
-        });
-// Or you can give the name of the class that implements QuorumListener interface.
-listenerConfig.setClassName("com.company.quorum.ThreeMemberQuorumListener");
+[source,java]
+----
+include::{javasource}/networkpartitioning/QuorumListenerConfiguration.java[tag=qlc]
+----
 
-QuorumConfig quorumConfig = new QuorumConfig();
-quorumConfig.setName("quorumRuleWithFourMembers")
-quorumConfig.setEnabled(true);
-quorumConfig.setSize(4);
-quorumConfig.addListenerConfig(listenerConfig);
-
-
-MapConfig mapConfig = new MapConfig();
-mapConfig.setQuorumName("quorumRuleWithFourMembers");
-
-Config config = new Config();
-config.addQuorumConfig(quorumConfig);
-config.addMapConfig(mapConfig);
-```
 
 ==== Querying Quorum Results
 
-Split Brain Protection Quorum service gives you the ability to query quorum results over the `Quorum` instances. Quorum instances let you query the result of a particular quorum.
+Split-Brain Protection Quorum service gives you the ability to query quorum results over the `Quorum` instances. Quorum instances let you query the result of a particular quorum.
 
 Here is a Quorum interface that you can interact with.
 
