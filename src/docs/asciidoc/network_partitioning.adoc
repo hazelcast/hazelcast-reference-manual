@@ -258,25 +258,11 @@ public interface Quorum {
 ```
 You can retrieve the quorum instance for a particular quorum over the quorum service, as in the following example.
 
-```
-String quorumName = "at-least-one-storage-member";
-QuorumConfig quorumConfig = new QuorumConfig();
-quorumConfig.setName(quorumName)
-quorumConfig.setEnabled(true);
+[source,java]
+----
+include::{javasource}/networkpartitioning/QuorumQuery.java[tag=qq]
+----
 
-MapConfig mapConfig = new MapConfig();
-mapConfig.setQuorumName(quorumName);
-
-Config config = new Config();
-config.addQuorumConfig(quorumConfig);
-config.addMapConfig(mapConfig);
-
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-QuorumService quorumService = hazelcastInstance.getQuorumService();
-Quorum quorum = quorumService.getQuorum(quorumName);
-
-boolean quorumPresence = quorum.isPresent();
-```
 
 === Split-Brain Recovery
 
@@ -392,21 +378,10 @@ Here is how merge policies are specified for `ICache` (it is the same configurat
 
 Here are examples how merge policies can be specified for various data structures:
 
-```
-MergePolicyConfig mergePolicyConfig = new MergePolicyConfig()
-  .setPolicy("org.example.merge.MyMergePolicy")
-  .setBatchSize(100);
-
-MapConfig mapConfig = new MapConfig("default")
-  .setMergePolicyConfig(mergePolicyConfig);
-
-ListConfig listConfig = new ListConfig("default")
-  .setMergePolicyConfig(mergePolicyConfig);
-
-Config config = new Config()
-  .addMapConfig(mapConfig)
-  .addListConfig(listConfig);
-```
+[source,java]
+----
+include::{javasource}/networkpartitioning/MergePolicy.java[tag=mp]
+----
 
 Here is how merge policies are specified for `ICache` (you can only set the merge policy classname):
 
@@ -496,108 +471,28 @@ If you need the deserialized key or value, you have to call `MergingValue.getDes
 
 This is an example which checks if the (deserialized) value of the `mergingValue` or `existingValue` is an `Integer`. If so it will be merged, otherwise `null` is returned (which will remove the entry):
 
-```
-class MergeIntegerValuesMergePolicy<V, T extends MergingValue<V>>
-    implements SplitBrainMergePolicy<V, T> {
 
-  @Override
-  public V merge(T mergingValue, T existingValue) {
-    if (mergingValue.getDeserializedValue() instanceof Integer) {
-      return mergingValue.getValue();
-    }
-    if (existingValue != null && existingValue.getDeserializedValue() instanceof Integer) {
-      return existingValue.getValue();
-    }
-    return null;
-  }
+[source,java]
+----
+include::{javasource}/networkpartitioning/MergeIntegerValuesMergePolicy.java[tag=mivmp]
+----
 
-  @Override
-  public void writeData(ObjectDataOutput out) {
-  }
-
-  @Override
-  public void readData(ObjectDataInput in) {
-  }
-}
-```
 
 For data structures like `ISet` or `ICollection` you need a merge policy, which supports collections:
 
-```
-class MergeCollectionOfIntegerValuesMergePolicy
-    implements SplitBrainMergePolicy<Collection<Object>, MergingValue<Collection<Object>>> {
+[source,java]
+----
+include::{javasource}/networkpartitioning/MergeCollectionOfIntegerValuesMergePolicy.java[tag=mc]
+----
 
-  @Override
-  public Collection<Object> merge(MergingValue<Collection<Object>> mergingValue,
-                                  MergingValue<Collection<Object>> existingValue) {
-    Collection<Object> result = new ArrayList<Object>();
-    addIntegersToCollection(mergingValue);
-    if (result.isEmpty() && existingValue != null) {
-      addIntegersToCollection(existingValue);
-    }
-    return result;
-  }
-  
-  private void addIntegersToCollection(MergingValue<Collection<Object>> mergingValue,
-                                       Collection<Object> result) {
-    for (Object value : mergingValue.<Collection<Object>>getDeserializedValue()) {
-      if (value instanceof Integer) {
-        result.add(value);
-      }
-    }
-  }
-    
-  @Override
-  public void writeData(ObjectDataOutput out) {
-  }
-    
-  @Override
-  public void readData(ObjectDataInput in) {
-  }
-}
-```
 
 You can also combine both merge policies to support single values and collections. This merge policy is a bit more complex and less type safe, but can be configured on all data structures:
 
-```
-class MergeIntegerValuesMergePolicy<V, T extends MergingValue<V>> implements SplitBrainMergePolicy<V, T> {
+[source,java]
+----
+include::{javasource}/networkpartitioning/MergeIntegerValuesMergePolicy2.java[tag=mivmp2]
+----
 
-  @Override
-  public V merge(T mergingValue, T existingValue) {
-    if (mergingValue.getDeserializedValue() instanceof Integer) {
-      return mergingValue.getValue();
-    }
-    if (existingValue != null && existingValue.getDeserializedValue() instanceof Integer) {
-      return existingValue.getValue();
-    }
-    if (mergingValue.getValue() instanceof Collection) {
-      Collection<Object> result = new ArrayList<Object>();
-      addIntegersToCollection(mergingValue, result);
-      if (result.isEmpty() && existingValue != null) {
-        addIntegersToCollection(existingValue, result);
-      }
-      return (V) result;
-    }
-    return null;
-  }
-
-  private void addIntegersToCollection(T mergingValue, Collection<Object> result) {
-    for (Object value : mergingValue.<Collection<Object>>getDeserializedValue()) {
-      if (value instanceof Integer) {
-        result.add(value);
-      }
-    }
-  }
-
-  @Override
-  public void writeData(ObjectDataOutput out) {
-  }
-
-  @Override
-  public void readData(ObjectDataInput in) {
-  }
-}
-```
 
 NOTE: Please have in mind that `existingValue` can be `null`, so a `null` check is mandatory before calling `existingValue.getValue()` or `existingValue.getDeserializedValue()`.
 
@@ -607,52 +502,12 @@ NOTE: If you return `null` on a collection based data structure, the whole data 
 
 If you need access to external references in your merge policy, you can use the Hazelcast `UserContext` to get them injected. An example would be a database connection to check which value is stored in your database. To achieve this your merge policy needs to implement `HazelcastInstanceAware` and call `HazelcastInstance.getUserContext()`:
 
-```
-class UserContextMergePolicy<V>
-    implements SplitBrainMergePolicy<V, MergingValue<V>>, HazelcastInstanceAware { 
 
-  private transient TruthProvider truthProvider;
+[source,java]
+----
+include::{javasource}/networkpartitioning/UserContextMergePolicy.java[tag=ucmp]
+----
 
-  @Override
-  public V merge(MergingValue<V> mergingValue, MergingValue<V> existingValue) {
-    Object mergingUserValue = mergingValue.getDeserializedValue();
-    Object existingUserValue = existingValue == null ? null : existingValue.getDeserializedValue();
-    if (truthProvider.isMergeable(mergingUserValue, existingUserValue)) {
-        return mergingValue.getValue();
-    }
-    return existingUserValue;
-  }
-  
-  @Override
-  public void writeData(ObjectDataOutput out) {
-  }
-
-  @Override
-  public void readData(ObjectDataInput in) {
-  }
-
-  @Override
-  public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
-    ConcurrentMap<String, Object> userContext = hazelcastInstance.getUserContext();
-    truthProvider = (TruthProvider) userContext.get(TruthProvider.TRUTH_PROVIDER_ID);
-  }
-}
-
-interface TruthProvider {
-
-  String TRUTH_PROVIDER_ID = "truthProvider";
-
-  boolean isMergeable(Object mergingValue, Object existingValue);
-}
-
-class ExampleTruthProvider implements TruthProvider {
-
-  @Override
-  public boolean isMergeable(Object mergingValue, Object existingValue) {
-    return mergingValue instanceof Integer && (Integer) mergingValue == 42;
-  }
-}
-```
 
 The `UserContext` can be setup like this:
 
@@ -685,32 +540,11 @@ Also the `com.hazelcast.core.LifeCycleEvent.MERGED` will be thrown after a timeo
 
 You can also write a merge policy, which requires multiple merge types. This merge policy is supported by all data structures, which provide `MergingHits` and `MergingCreationTime`:
 
-```
-class ComposedHitsAndCreationTimeMergePolicy<V, T extends MergingHits<V> & MergingCreationTime<V>>
-    implements SplitBrainMergePolicy<V, T> {
+[source,java]
+----
+include::{javasource}/networkpartitioning/ComposedHitsAndCreationTimeMergePolicy.java[tag=ch]
+----
 
-  @Override
-  public V merge(T mergingValue, T existingValue) {
-    if (existingValue == null) {
-      return mergingValue.getValue();
-    }
-    // the merging value wins, if it's older and has more hits
-    if (mergingValue.getCreationTime() < existingValue.getCreationTime()
-          && mergingValue.getHits() > existingValue.getHits()) {
-      return mergingValue.getValue();
-    }
-    return existingValue.getValue();
-  }
-
-  @Override
-  public void writeData(ObjectDataOutput out) {
-  }
-
-  @Override
-  public void readData(ObjectDataInput in) {
-  }
-}
-```
 
 If you configure this merge policy on a data structures, which does not provide these merge types, you will get an `InvalidConfigurationException` with a message like:
 
@@ -725,31 +559,11 @@ See SplitBrainMergingTypes for supported merging types.
 
 It's also possible to restrict a merge policy to a specific data structure. This merge policy will only work on `IMap`:
 
-```
-class MapEntryCostsMergePolicy
-    implements SplitBrainMergePolicy<Data, SplitBrainMergeTypes.MapMergeTypes> {
+[source,java]
+----
+include::{javasource}/networkpartitioning/MapEntryCostsMergePolicy.java[tag=me]
+----
 
-  @Override
-  public Data merge(MapMergeTypes mergingValue, MapMergeTypes existingValue) {
-    if (existingValue == null) {
-      return mergingValue.getValue();
-    }
-    // the merging value wins, if it's costs are higher
-    if (mergingValue.getCost() > existingValue.getCost()) {
-      return mergingValue.getValue();
-    }
-    return existingValue.getValue();
-  }
-
-  @Override
-  public void writeData(ObjectDataOutput out) {
-  }
-
-  @Override
-  public void readData(ObjectDataInput in) {
-  }
-}
-```
 
 If you configure it on other data structures, you will get an `InvalidConfigurationException` with a message like:
 
@@ -762,30 +576,11 @@ See SplitBrainMergingTypes for supported merging types.
 
 This is another example for a merge policy, which will only work on the `IAtomicReference` and uses a named type parameter `T`:
 
-```
-class AtomicReferenceMergeIntegerValuesMergePolicy<T extends AtomicReferenceMergeTypes>
-    implements SplitBrainMergePolicy<Object, T> {
+[source,java]
+----
+include::{javasource}/networkpartitioning/AtomicReferenceMergeIntegerValuesMergePolicy.java[tag=ar]
+----
 
-  @Override
-  public Object merge(T mergingValue, T existingValue) {
-    if (mergingValue.getDeserializedValue() instanceof Integer) {
-      return mergingValue.getValue();
-    }
-    if (existingValue != null && existingValue.getDeserializedValue() instanceof Integer) {
-      return existingValue.getValue();
-    }
-    return null;
-  }
-
-  @Override
-  public void writeData(ObjectDataOutput out) {
-  }
-
-  @Override
-  public void readData(ObjectDataInput in) {
-  }
-}
-```
 
 Although every data structure supports `MergingValue`, which is the only merge type of `AtomicReferenceMergeTypes`, this merge policy is restricted to `IAtomicReference` data structures:
 
