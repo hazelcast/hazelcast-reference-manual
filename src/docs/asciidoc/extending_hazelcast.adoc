@@ -45,26 +45,33 @@ To have the counter as a functioning distributed object, we need a class. This c
 - `shutdown`: This is called when `CounterService` is shutdown. It cleans up the resources.
 - `reset`: This is called when cluster members face the Split-Brain issue. This occurs when disconnected members that have created their own cluster are merged back into the main cluster. Services can also implement the `SplitBrainHandleService` to indicate that they can take part in the merge process. For `CounterService` we are going to implement `reset` as a no-op.
 
-```
+[source,java]
+----
 public class CounterService implements ManagedService {
+
     private NodeEngine nodeEngine;
 
     @Override
-    public void init( NodeEngine nodeEngine, Properties properties ) {
-        System.out.println( "CounterService.init" );
+    public void init(NodeEngine nodeEngine, Properties properties) {
+        System.out.println("CounterService.init()");
         this.nodeEngine = nodeEngine;
     }
 
     @Override
-    public void shutdown( boolean terminate ) {
-        System.out.println( "CounterService.shutdown" );
+    public void shutdown(boolean terminate) {
+        System.out.println("CounterService.shutdown()");
     }
 
     @Override
     public void reset() {
     }
+
+    public NodeEngine getNodeEngine() {
+        return nodeEngine;
+    }
 }
-```
+----
+
 
 ==== Enabling the Service Class
 
@@ -111,13 +118,11 @@ If you want to parse a more complex XML, you can use the interface `com.hazelcas
 Now, let's start a `HazelcastInstance` as shown below, which will start the `CounterService`.
 
 
-```
-public class Member {
-    public static void main(String[] args) {
-        Hazelcast.newHazelcastInstance();
-    }
-}
-```
+[source,java]
+----
+include::{javasource}/extendinghazelcast/Member.java[tag=member]
+----
+
 
 Once it starts, the `CounterService init` method prints the following output.
 
@@ -151,37 +156,11 @@ public interface Counter extends DistributedObject {
 
 Now, we need to make the `CounterService` class implement not only the `ManagedService` interface, but also the interface `com.hazelcast.spi.RemoteService`. This way, a client will be able to get a handle of a counter proxy. You can check the source code for RemoteService the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/RemoteService.html[here].
 
+[source,java]
+----
+include::{javasource}/extendinghazelcast/CounterService.java[tag=csr]
+----
 
-```
-public class CounterService implements ManagedService, RemoteService {
-    public static final String NAME = "CounterService";
-
-    private NodeEngine nodeEngine;
-
-    @Override
-    public DistributedObject createDistributedObject(String objectName) {
-        return new CounterProxy(objectName, nodeEngine, this);
-    }
-
-    @Override
-    public void destroyDistributedObject(String objectName) {
-        // for the time being a no-op, but in the later examples this will be implemented
-    }
-
-    @Override
-    public void init(NodeEngine nodeEngine, Properties properties) {
-        this.nodeEngine = nodeEngine;
-    }
-
-    @Override
-    public void shutdown(boolean terminate) {
-    }
-
-    @Override
-    public void reset() {
-    }
-}
-```
 
 The `CounterProxy` returned by the method `createDistributedObject` is a local representation to (potentially) remote managed data and logic.
 
@@ -192,41 +171,11 @@ NOTE: Note that caching and removing the proxy instance are done outside of this
 
 Now, it is time to implement the `CounterProxy` as shown below. `CounterProxy` extends `AbstractDistributedObject`, source code is http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/AbstractDistributedObject.html[here]. 
 
-```
-public class CounterProxy extends AbstractDistributedObject<CounterService> implements Counter {
-    private final String name;
+[source,java]
+----
+include::{javasource}/extendinghazelcast/CounterProxy.java[tag=cp]
+----
 
-    public CounterProxy(String name, NodeEngine nodeEngine, CounterService counterService) {
-        super(nodeEngine, counterService);
-        this.name = name;
-    }
-
-    @Override
-    public String getServiceName() {
-        return CounterService.NAME;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public int inc(int amount) {
-        NodeEngine nodeEngine = getNodeEngine();
-        IncOperation operation = new IncOperation(name, amount);
-        int partitionId = nodeEngine.getPartitionService().getPartitionId(name);
-        InvocationBuilder builder = nodeEngine.getOperationService()
-                .createInvocationBuilder(CounterService.NAME, operation, partitionId);
-        try {
-            final Future<Integer> future = builder.invoke();
-            return future.get();
-        } catch (Exception e) {
-            throw ExceptionUtil.rethrow(e);
-        }
-    }
-}
-```
 
 
 `CounterProxy` is a local representation of remote data/functionality. It does not include the counter state. Therefore, the method `inc` should be invoked on the cluster member hosting the real counter. You can invoke it using Hazelcast SPI; then it will send the operations to the correct member and return the results.
@@ -266,70 +215,40 @@ There are two more methods in this code: `writeInternal` and `readInternal`. Sin
 
 For the deserialization, note that the operation must have a *no-arg* constructor.
 
-```
-class IncOperation extends Operation implements PartitionAwareOperation {
-    private String objectId;
-    private int amount, returnValue;
+[source,java]
+----
+include::{javasource}/extendinghazelcast/IncOperation.java[tag=io]
+----
 
-    // Important to have a no-arg constructor for deserialization
-    public IncOperation() {
-    }
-
-    public IncOperation(String objectId, int amount) {
-        this.amount = amount;
-        this.objectId = objectId;
-    }
-
-    @Override
-    public void run() throws Exception {
-        System.out.println("Executing " + objectId + ".inc() on: " + getNodeEngine().getThisAddress());
-        returnValue = 0;
-    }
-
-    @Override
-    public Object getResponse() {
-        return returnValue;
-    }
-
-    @Override
-    protected void writeInternal(ObjectDataOutput out) throws IOException {
-        super.writeInternal(out);
-        out.writeUTF(objectId);
-        out.writeInt(amount);
-    }
-
-    @Override
-    protected void readInternal(ObjectDataInput in) throws IOException {
-        super.readInternal(in);
-        objectId = in.readUTF();
-        amount = in.readInt();
-    }
-}
-```
 
 ===== Running the Code
 
 Now, let's run our code.
 
-```
+
+[source,java]
+----
 public class Member {
     public static void main(String[] args) {
         HazelcastInstance[] instances = new HazelcastInstance[2];
-        for (int k = 0; k < instances.length; k++)
-            instances[k] = Hazelcast.newHazelcastInstance();
+        for (int i = 0; i < instances.length; i++) {
+            instances[i] = Hazelcast.newHazelcastInstance();
+        }
 
         Counter[] counters = new Counter[4];
-        for (int k = 0; k < counters.length; k++)
-            counters[k] = instances[0].getDistributedObject(CounterService.NAME, k+"counter");
+        for (int i = 0; i < counters.length; i++) {
+            counters[i] = instances[0].getDistributedObject(CounterService.NAME, i + "counter");
+        }
 
-        for (Counter counter : counters)
+        for (Counter counter : counters) {
             System.out.println(counter.inc(1));
+        }
 
         System.out.println("Finished");
-        System.exit(0);
+        Hazelcast.shutdownAll();
     }
 }
-```
+----
 
 Once run, you will see the output as below.
 
