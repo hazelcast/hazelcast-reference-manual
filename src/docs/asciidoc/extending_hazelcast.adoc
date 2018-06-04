@@ -120,7 +120,14 @@ Now, let's start a `HazelcastInstance` as shown below, which will start the `Cou
 
 [source,java]
 ----
-include::{javasource}/extendinghazelcast/Member.java[tag=member]
+public class Member {
+
+    public static void main(String[] args) {
+        Hazelcast.newHazelcastInstance();
+
+        Hazelcast.shutdownAll();
+    }
+}
 ----
 
 
@@ -228,27 +235,9 @@ Now, let's run our code.
 
 [source,java]
 ----
-public class Member {
-    public static void main(String[] args) {
-        HazelcastInstance[] instances = new HazelcastInstance[2];
-        for (int i = 0; i < instances.length; i++) {
-            instances[i] = Hazelcast.newHazelcastInstance();
-        }
-
-        Counter[] counters = new Counter[4];
-        for (int i = 0; i < counters.length; i++) {
-            counters[i] = instances[0].getDistributedObject(CounterService.NAME, i + "counter");
-        }
-
-        for (Counter counter : counters) {
-            System.out.println(counter.inc(1));
-        }
-
-        System.out.println("Finished");
-        Hazelcast.shutdownAll();
-    }
-}
+include::{javasource}/extendinghazelcast/MemberCS.java[tag=mcs]
 ----
+
 
 Once run, you will see the output as below.
 
@@ -279,31 +268,11 @@ Until now, we have performed the basics to get this up and running. In the next 
 
 Let's create a Container for every partition in the system. This container will contain all counters and proxies.
 
-```
-class Container {
-    private final Map<String, Integer> values = new HashMap();
+[source,java]
+----
+include::{javasource}/extendinghazelcast/Container.java[tag=container]
+----
 
-    int inc(String id, int amount) {
-        Integer counter = values.get(id);
-        if (counter == null) {
-            counter = 0;
-        }
-        counter += amount;
-        values.put(id, counter);
-        return counter;
-    }
-    
-    public void init(String objectName) {
-        values.put(objectName,0);
-    }
-
-    public void destroy(String objectName) {
-        values.remove(objectName);
-    }
-    
-    ...
-}
-```
 
 Hazelcast guarantees that a single thread will be active in a single partition. Therefore, when accessing a container, concurrency control will not be an issue. 
 
@@ -933,21 +902,10 @@ As a first step we do some basic configuration setup. We want the user to be abl
      
 It is recommended that you keep all defined properties in a separate configuration class as public constants (public final static) with sufficient documentation. This allows users to easily look up possible configuration values.
 
-```
-public class HostsDiscoveryConfiguration {
-    /**
-     * 'site-domain' configures the basic site domain for the lookup, to
-     * find other sub-domains of the cluster members and retrieve their assigned
-     * IP addresses.
-     */
-    public static final PropertyDefinition DOMAIN = new SimplePropertyDefinition(
-        "site-domain", PropertyTypeConverter.STRING
-    );
-  
-    // Prevent instantiation
-    private HostsDiscoveryConfiguration() {}
-}
-```
+[source,java]
+----
+include::{javasource}/extendinghazelcast/HostsDiscoveryConfiguration.java[tag=hdc]
+----
 
 An additional `ValueValidator` could be passed to the definition to make sure the configured value looks like a domain or has a special format.
 
@@ -955,31 +913,10 @@ An additional `ValueValidator` could be passed to the definition to make sure th
 
 As the second step we create the very simple `DiscoveryStrategyFactory` implementation class. To keep things clear we are going to name the discovery strategy after its purpose: looking into the hosts file.
 
-```
-public class HostsDiscoveryStrategyFactory
-    implements DiscoveryStrategyFactory {
-   
-    private static final Collection<PropertyDefinition> PROPERTIES =
-      Collections.singletonList( HostsDiscoveryConfiguration.SITE_DOMAIN );
-   
-    public Class<? extends DiscoveryStrategy> getDiscoveryStrategyType() {
-        // Returns the actual class type of the DiscoveryStrategy
-        // implementation, to match it against the configuration
-        return HostsDiscoveryStrategy.class;
-    }
-   
-    public Collection<PropertyDefinition> getConfigurationProperties() {
-        return PROPERTIES;
-    }
-   
-    public DiscoveryStrategy newDiscoveryStrategy( DiscoveryNode discoveryNode,
-                                          ILogger logger,
-                                          Map<String, Comparable> properties ) {
-                                          
-        return new HostsDiscoveryStrategy( logger, properties );                                      
-    }   
-}
-``` 
+[source,java]
+----
+include::{javasource}/extendinghazelcast/HostsDiscoveryStrategyFactory.java[tag=hdsf]
+----
 
 This factory now defines properties known to the discovery strategy implementation and provides a clean way to instantiate it. While creating the `HostsDiscoveryStrategy` we ignore the passed `DiscoveryNode` since this strategy will not support automatic registration of new nodes. In cases where the strategy does not support registration, the environment has to handle this in some provided way.
 
@@ -1001,31 +938,10 @@ Now comes the interesting part. We are going to implement the discovery itself. 
 
 For ease of implementation, we will back our implementation by extending the `AbstractDiscoveryStrategy` and only implementing the absolute minimum ourselves.
 
-```
-public class HostsDiscoveryStrategy
-    extends AbstractDiscoveryStrategy {
-    
-    private final String siteDomain;  
-    
-    public HostsDiscoveryStrategy( ILogger logger,
-                                 Map<String, Comparable> properties ) {
-                                   
-        super( logger, properties );
-    
-        // Make it possible to override the value from the configuration on
-        // the system's environment or JVM properties
-        // -Ddiscovery.hosts.site-domain=some.domain
-        this.siteDomain = getOrNull( "discovery.hosts",
-                                 HostsDiscoveryConfiguration.DOMAIN );
-    }                              
-  
-    public Iterable<DiscoveryNode> discoverNodes() {
-        List<String> assignments = filterHosts();
-        return mapToDiscoveryNodes( assignments );
-    }  
-    // ...
-}
-```
+[source,java]
+----
+include::{javasource}/extendinghazelcast/HostsDiscoveryStrategy.java[tag=hds]
+----
 
 ===== Overriding Discovery Configuration
 

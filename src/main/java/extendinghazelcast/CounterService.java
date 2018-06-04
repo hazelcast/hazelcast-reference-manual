@@ -10,6 +10,7 @@ public class CounterService implements ManagedService, RemoteService {
 
     static final String NAME = "CounterService";
 
+    Container[] containers;
     private NodeEngine nodeEngine;
 
     @Override
