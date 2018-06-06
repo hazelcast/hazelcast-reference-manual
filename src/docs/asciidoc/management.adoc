@@ -18,207 +18,48 @@ To get local map statistics, use the `getLocalMapStats()` method from the `IMap`
 
 Below is example code where the `getLocalMapStats()` method and the `getOwnedEntryCount()` method get the number of entries owned by this member.
 
-```java
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-IMap<String, Customer> customers = hazelcastInstance.getMap( "customers" );
-LocalMapStats mapStatistics = customers.getLocalMapStats;
-System.out.println( "number of entries owned on this member = "
-    + mapStatistics.getOwnedEntryCount() );
-```
+[source,java]
+----
+include::{javasource}/management/SampleLocalMapStats.java[tag=lms]
+----
 
 NOTE: Since Hazelcast IMDG 3.8 `getOwnedEntryMemoryCost()` method is now supported for NATIVE in-memory format as well.
 
-Below is the list of metrics that you can access via the `LocalMapStats` object.
+The following are some of the metrics that you can access via the `LocalMapStats` object.
 
-[source,java]
-----
-/**
- * Returns the number of entries owned by this member.
- */
-long getOwnedEntryCount();
+* Number of entries owned by the member (`getOwnedEntryCount()`).
+* Number of backup entries hold by the member (`getBackupEntryCount()`).
+* Number of backups per entry (`getBackupCount()`).
+* Memory cost (number of bytes) of owned entries in the member (`getOwnedEntryMemoryCost()`).
+* Creation time of the map on the member (`getCreationTime()`).
+* Number of hits (reads) of the locally owned entries (`getHits()`).
+* Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
 
-/**
- * Returns the number of backup entries hold by this member.
- */
-long getBackupEntryCount();
+Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc] to see all the metrics. 
 
-/**
- * Returns the number of backups per entry.
- */
-int getBackupCount();
-
-/**
- * Returns memory cost (number of bytes) of owned entries in this member.
- */
-long getOwnedEntryMemoryCost();
-
-/**
- * Returns memory cost (number of bytes) of backup entries in this member.
- */
-long getBackupEntryMemoryCost();
-
-/**
- * Returns the creation time of this map on this member.
- */
-long getCreationTime();
-
-/**
- * Returns the last access (read) time of the locally owned entries.
- */
-long getLastAccessTime();
-
-/**
- * Returns the last update time of the locally owned entries.
- */
-long getLastUpdateTime();
-
-/**
- * Returns the number of hits (reads) of the locally owned entries. This is the metric which shows the number of times when an operation on IMap has been routed to the given member. With Clustered REST API, it shows the total sum of hits among the cluster members.
- */
-long getHits();
-
-/**
- * Returns the number of currently locked locally owned keys.
- */
-long getLockedEntryCount();
-
-/**
- * Returns the number of entries that the member owns and are dirty (updated
- * but not persisted yet).
- * dirty entry count is meaningful when there is a persistence defined.
- */
-long getDirtyEntryCount();
-
-/**
- * Returns the number of put operations.
- */
-long getPutOperationCount();
-
-/**
- * Returns the number of get operations.
- */
-long getGetOperationCount();
-
-/**
- * Returns the number of Remove operations.
- */
-long getRemoveOperationCount();
-
-/**
- * Returns the total latency of put operations. To get the average latency,
- * divide by number of puts
- */
-long getTotalPutLatency();
-
-/**
- * Returns the total latency of get operations. To get the average latency,
- * divide by the number of gets.
- */
-long getTotalGetLatency();
-
-/**
- * Returns the total latency of remove operations. To get the average latency,
- * divide by the number of gets.
- */
-long getTotalRemoveLatency();
-
-/**
- * Returns the maximum latency of put operations. To get the average latency,
- * divide by the number of puts.
- */
-long getMaxPutLatency();
-
-/**
- * Returns the maximum latency of get operations. To get the average latency,
- * divide by the number of gets.
- */
-long getMaxGetLatency();
-
-/**
- * Returns the maximum latency of remove operations. To get the average latency,
- * divide by the number of gets.
- */
-long getMaxRemoveLatency();
-
-/**
- * Returns the number of events received. This metric is about the operations that have been invoked on the IMap entries. List of event types includes the following: insertion, update, removal, eviction, clear all, merge, expiration and invalidation.
- */
-long getEventOperationCount();
-
-/**
- * Returns the total number of Other Operations.
- */
-long getOtherOperationCount();
-
-/**
- * Returns the total number of total operations.
- */
-long total();
-
-/**
- * Cost of map & Near Cache & backup in bytes.
- * todo: in object mode, object size is zero.
- */
-long getHeapCost();
-
-/**
- * Returns statistics related to the Near Cache.
- */
-NearCacheStats getNearCacheStats();
-----
 
 ==== Near Cache Statistics
 
 To get Near Cache statistics, use the `getNearCacheStats()` method from the `LocalMapStats` object.
 This method returns a `NearCacheStats` object that holds Near Cache statistics.
 
-Below is example code where the `getNearCacheStats()` method and the `getRatio` method from `NearCacheStats` get a Near Cache hit/miss ratio. 
-
-```
-HazelcastInstance node = Hazelcast.newHazelcastInstance();
-IMap<String, Customer> customers = node.getMap( "customers" );
-LocalMapStats mapStatistics = customers.getLocalMapStats();
-NearCacheStats nearCacheStatistics = mapStatistics.getNearCacheStats();
-System.out.println( "Near Cache hit/miss ratio = "
-    + nearCacheStatistics.getRatio() );
-```
-
-Below is the list of metrics that you can access via the `NearCacheStats` object.
-This behavior applies to both client and member Near Caches.
-
+Below is an example code where the `getNearCacheStats()` method and the `getRatio` method from `NearCacheStats` get a Near Cache hit/miss ratio. 
 
 [source,java]
 ----
-/**
- * Returns the creation time of this NearCache on this member
- */
-long getCreationTime();
-
-/**
- * Returns the number of entries owned by this member.
- */
-long getOwnedEntryCount();
-
-/**
- * Returns memory cost (number of bytes) of entries in this cache.
- */
-long getOwnedEntryMemoryCost();
-
-/**
- * Returns the number of hits (reads) of the locally owned entries.
- */
-long getHits();
-
-/**
- * Returns the number of misses  of the locally owned entries.
- */
-long getMisses();
-
-/**
- * Returns the hit/miss ratio  of the locally owned entries.
- */
-double getRatio();
+include::{javasource}/management/SampleNearCacheStats.java[tag=ncs]
 ----
+
+The following are some of the metrics that you can access via the `NearCacheStats` object.
+This behavior applies to both client and member Near Caches.
+
+* Creation time of the Near Cache map on the member (`getCreationTime()`).
+* Number of entries owned by the member (`getOwnedEntryCount()`).
+* Memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`).
+* Number of hits (reads) of the locally owned entries (`getHits()`).
+
+Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc] to see all the metrics. 
+
 
 ==== Multimap Statistics
 
@@ -228,148 +69,23 @@ This method returns a `LocalMultiMapStats` object that holds local MultiMap stat
 Below is example code where the `getLocalMultiMapStats()` method and the `getLastUpdateTime` method from `LocalMultiMapStats` get the last update time.
 
 
-```
-HazelcastInstance node = Hazelcast.newHazelcastInstance();
-MultiMap<String, Customer> customers = node.getMultiMap( "customers" );
-LocalMultiMapStats multiMapStatistics = customers.getLocalMultiMapStats();
-System.out.println( "last update time =  "
-    + multiMapStatistics.getLastUpdateTime() );
-```
-
-Below is the list of metrics that you can access via the `LocalMultiMapStats` object.
-
-
 [source,java]
 ----
-/**
- * Returns the number of entries owned by this member.
- */
-long getOwnedEntryCount();
-
-/**
- * Returns the number of backup entries hold by this member.
- */
-long getBackupEntryCount();
-
-/**
- * Returns the number of backups per entry.
- */
-int getBackupCount();
-
-/**
- * Returns memory cost (number of bytes) of owned entries in this member.
- */
-long getOwnedEntryMemoryCost();
-
-/**
- * Returns memory cost (number of bytes) of backup entries in this member.
- */
-long getBackupEntryMemoryCost();
-
-/**
- * Returns the creation time of this map on this member.
- */
-long getCreationTime();
-
-/**
- * Returns the last access (read) time of the locally owned entries.
- */
-long getLastAccessTime();
-
-/**
- * Returns the last update time of the locally owned entries.
- */
-long getLastUpdateTime();
-
-/**
- * Returns the number of hits (reads) of the locally owned entries.
- */
-long getHits();
-
-/**
- * Returns the number of currently locked locally owned keys.
- */
-long getLockedEntryCount();
-
-/**
- * Returns the number of entries that the member owns and are dirty (updated
- * but not persisted yet).
- * Dirty entry count is meaningful when a persistence is defined.
- */
-long getDirtyEntryCount();
-
-/**
- * Returns the number of put operations.
- */
-long getPutOperationCount();
-
-/**
- * Returns the number of get operations.
- */
-long getGetOperationCount();
-
-/**
- * Returns the number of Remove operations.
- */
-long getRemoveOperationCount();
-
-/**
- * Returns the total latency of put operations. To get the average latency,
- * divide by the number of puts.
- */
-long getTotalPutLatency();
-
-/**
- * Returns the total latency of get operations. To get the average latency,
- * divide by the number of gets.
- */
-long getTotalGetLatency();
-
-/**
- * Returns the total latency of remove operations. To get the average latency,
- * divide by the number of gets.
- */
-long getTotalRemoveLatency();
-
-/**
- * Returns the maximum latency of put operations. To get the average latency,
- * divide by the number of puts.
- */
-long getMaxPutLatency();
-
-/**
- * Returns the maximum latency of get operations. To get the average latency,
- * divide by the number of gets.
- */
-long getMaxGetLatency();
-
-/**
- * Returns the maximum latency of remove operations. To get the average latency,
- * divide by the number of gets.
- */
-long getMaxRemoveLatency();
-
-/**
- * Returns the number of Events Received.
- */
-long getEventOperationCount();
-
-/**
- * Returns the total number of Other Operations.
- */
-long getOtherOperationCount();
-
-/**
- * Returns the total number of total operations.
- */
-long total();
-
-/**
- * Cost of map & Near Cache  & backup in bytes.
- * todo: in object mode, object size is zero.
- */
-long getHeapCost();
+include::{javasource}/management/SampleMultiMapStats.java[tag=mms]
 ----
+
+The following are some of the metrics that you can access via the `LocalMultiMapStats` object.
+
+* Number of entries owned by the member (`getOwnedEntryCount()`).
+* Number of backup entries hold by the member (`getBackupEntryCount()`).
+* Number of backups per entry (`getBackupCount()`).
+* Memory cost (number of bytes) of owned entries in the member (`getOwnedEntryMemoryCost()`).
+* Creation time of the multimap on the member (`getCreationTime()`).
+* Number of hits (reads) of the locally owned entries (`getHits()`).
+* Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
+
+Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc] to see all the metrics. 
+
 
 ==== Queue Statistics
 
@@ -378,82 +94,21 @@ This method returns a `LocalQueueStats` object that holds local queue statistics
 
 Below is example code where the `getLocalQueueStats()` method and the `getAvgAge` method from `LocalQueueStats` get the average age of items.
 
-```
-HazelcastInstance node = Hazelcast.newHazelcastInstance();
-IQueue<Order> orders = node.getQueue( "orders" );
-LocalQueueStats queueStatistics = orders.getLocalQueueStats();
-System.out.println( "average age of items = " 
-    + queueStatistics.getAvgAge() );
-```
-
-Below is the list of metrics that you can access via the `LocalQueueStats` object.
-
 [source,java]
 ----
-/**
- * Returns the number of owned items in this member.
- */
-long getOwnedItemCount();
-
-/**
- * Returns the number of backup items in this member.
- */
-long getBackupItemCount();
-
-/**
- * Returns the min age of the items in this member.
- */
-long getMinAge();
-
-/**
- * Returns the max age of the items in this member.
- */
-long getMaxAge();
-
-/**
- * Returns the average age of the items in this member.
- */
-long getAvgAge();
-
-/**
- * Returns the number of offer/put/add operations.
- * Offers returning false will be included.
- * #getRejectedOfferOperationCount can be used
- * to get the rejected offers.
- */
-long getOfferOperationCount();
-
-/**
- * Returns the number of rejected offers. Offer
- * can be rejected because of max-size limit
- * on the queue.
- */
-long getRejectedOfferOperationCount();
-
-/**
- * Returns the number of poll/take/remove operations.
- * Polls returning null (empty) will be included.
- * #getEmptyPollOperationCount can be used to get the
- * number of polls returned null.
- */
-long getPollOperationCount();
-
-/**
- * Returns the number of null returning poll operations.
- * Poll operation might return null if the queue is empty.
- */
-long getEmptyPollOperationCount();
-
-/**
- * Returns the number of other operations.
- */
-long getOtherOperationsCount();
-
-/**
- * Returns the number of event operations.
- */
-long getEventOperationCount();
+include::{javasource}/management/SampleQueueStats.java[tag=qs]
 ----
+
+
+The following are some of the metrics that you can access via the `LocalQueueStats ` object.
+
+* Number of owned items in the member (`getOwnedItemCount()`).
+* Number of backup items in the member (`getBackupItemCount()`).
+* Minimum and maximum ages of the items in the member (`getMinAge()` and `getMaxAge()`).
+* Number of offer, put and add operations (`getOfferOperationCount()`).
+
+Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc] to see all the metrics. 
+
 
 ==== Topic Statistics
 
