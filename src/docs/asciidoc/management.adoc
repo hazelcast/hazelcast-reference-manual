@@ -16,7 +16,7 @@ statistics for the local portion (1/Number of Members in the Cluster) of data on
 To get local map statistics, use the `getLocalMapStats()` method from the `IMap` interface. This method returns a
 `LocalMapStats` object that holds local map statistics.
 
-Below is example code where the `getLocalMapStats()` method and the `getOwnedEntryCount()` method get the number of entries owned by this member.
+Below is an example code where the `getLocalMapStats()` method and the `getOwnedEntryCount()` method get the number of entries owned by this member.
 
 [source,java]
 ----
@@ -66,7 +66,7 @@ Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/moni
 To get MultiMap statistics, use the `getLocalMultiMapStats()` method from the `MultiMap` interface.
 This method returns a `LocalMultiMapStats` object that holds local MultiMap statistics.
 
-Below is example code where the `getLocalMultiMapStats()` method and the `getLastUpdateTime` method from `LocalMultiMapStats` get the last update time.
+Below is an example code where the `getLocalMultiMapStats()` method and the `getLastUpdateTime` method from `LocalMultiMapStats` get the last update time.
 
 
 [source,java]
@@ -92,7 +92,7 @@ Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/moni
 To get local queue statistics, use the `getLocalQueueStats()` method from the `IQueue` interface.
 This method returns a `LocalQueueStats` object that holds local queue statistics.
 
-Below is example code where the `getLocalQueueStats()` method and the `getAvgAge` method from `LocalQueueStats` get the average age of items.
+Below is an example code where the `getLocalQueueStats()` method and the `getAvgAge` method from `LocalQueueStats` get the average age of items.
 
 [source,java]
 ----
@@ -115,91 +115,47 @@ Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/moni
 To get local topic statistics, use the `getLocalTopicStats()` method from the `ITopic` interface.
 This method returns a `LocalTopicStats` object that holds local topic statistics.
 
-Below is example code where the `getLocalTopicStats()` method and the `getPublishOperationCount` method from `LocalTopicStats` get the number of publish operations.
-
-```
-HazelcastInstance node = Hazelcast.newHazelcastInstance();
-ITopic<Object> news = node.getTopic( "news" );
-LocalTopicStats topicStatistics = news.getLocalTopicStats();
-System.out.println( "number of publish operations = " 
-    + topicStatistics.getPublishOperationCount() );
-```
-
-Below is the list of metrics that you can access via the `LocalTopicStats` object.
+Below is an example code where the `getLocalTopicStats()` method and the `getPublishOperationCount` method from `LocalTopicStats` get the number of publish operations.
 
 [source,java]
 ----
-/**
- * Returns the creation time of this topic on this member.
- */
-long getCreationTime();
-
-/**
- * Returns the total number of published messages of this topic on this member.
- */
-long getPublishOperationCount();
-
-/**
- * Returns the total number of received messages of this topic on this member.
- */
-long getReceiveOperationCount();
+include::{javasource}/management/SampleTopicStats.java[tag=ts]
 ----
+
+The following are the metrics that you can access via the `LocalTopicStats ` object.
+
+* Creation time of the topic on the member (`getCreationTime()`).
+* Total number of published messages of the topic on the member (`getPublishOperationCount()`).
+* Total number of received messages of the topic on the member (`getReceiveOperationCount()`).
+
+Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalTopicStats.html[here] for its Javadoc. 
+
 
 ==== Executor Statistics
 
 To get local executor statistics, use the `getLocalExecutorStats()` method from the `IExecutorService` interface.
 This method returns a `LocalExecutorStats` object that holds local executor statistics.
 
-Below is example code where the `getLocalExecutorStats()` method and the `getCompletedTaskCount` method from `LocalExecutorStats` get the number of completed operations of the executor service.
-
-```
-HazelcastInstance node = Hazelcast.newHazelcastInstance();
-IExecutorService orderProcessor = node.getExecutorService( "orderProcessor" );
-LocalExecutorStats executorStatistics = orderProcessor.getLocalExecutorStats();
-System.out.println( "completed task count = " 
-    + executorStatistics.getCompletedTaskCount() );
-```
-
-Below is the list of metrics that you can access via the `LocalExecutorStats` object.
+Below is an example code where the `getLocalExecutorStats()` method and the `getCompletedTaskCount` method from `LocalExecutorStats` get the number of completed operations of the executor service.
 
 [source,java]
 ----
-/**
- * Returns the number of pending operations of the executor service.
- */
-long getPendingTaskCount();
-
-/**
- * Returns the number of started operations of the executor service.
- */
-long getStartedTaskCount();
-
-/**
- * Returns the number of completed operations of the executor service.
- */
-long getCompletedTaskCount();
-
-/**
- * Returns the number of cancelled operations of the executor service.
- */
-long getCancelledTaskCount();
-
-/**
- * Returns the total start latency of operations started.
- */
-long getTotalStartLatency();
-
-/**
- * Returns the total execution time of operations finished.
- */
-long getTotalExecutionLatency();
+include::{javasource}/management/SampleExecutorStats.java[tag=es]
 ----
+
+The following are some of the metrics that you can access via the `LocalExecutorStats ` object.
+
+* Number of pending operations of the executor service (`getPendingTaskCount()`).
+* Number of started operations of the executor service (`getStartedTaskCount()`).
+* Number of completed operations of the executor service (`getCompletedTaskCount()`).
+
+Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc] to see all the metrics. 
 
 === JMX API per Member
 
 Hazelcast members expose various management beans which include statistics about distributed data structures and the states of Hazelcast member internals.
 
-The metrics are local to the members, i.e. they do not reflect cluster wide values.
+The metrics are local to the members, i.e., they do not reflect cluster wide values.
 
 You can find the JMX API definition below with descriptions and the API methods in parenthesis.
 
