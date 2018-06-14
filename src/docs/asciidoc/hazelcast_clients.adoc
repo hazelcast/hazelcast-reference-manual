@@ -20,7 +20,7 @@ Please refer to https://github.com/hazelcast/hazelcast-code-samples/tree/master/
 [[java-client]]
 === Java Client
 
-The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast IMDG and Hazelcast IMDG Enterprise.  The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data, and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
+The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast IMDG and Hazelcast IMDG Enterprise. The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data, and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
 
 Please also check the <<other-client-and-language-implementations, Other Client and Language Implementations>>.
 
@@ -38,6 +38,8 @@ Starting with Hazelcast 3.5, a new Java Native Client Library is introduced in t
 ====
 
 ==== Getting Started with Java Client
+
+NOTE: You do not need to set a license key for your Java clients for which you want to use Hazelcast IMDG Enterprise features. Hazelcast IMDG Enterprise license keys are required only for members.
 
 You should include two dependencies in your classpath to start using the Hazelcast client: `hazelcast.jar` and `hazelcast-client.jar`.
 
@@ -1121,7 +1123,7 @@ You can configure this Near Cache to use Hazelcast's High-Density Memory Store b
 </hazelcast-client>
 ``` 
 
-Please notice that when the in-memory format is NATIVE, i.e. High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's Near Cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a Near Cache without High-Density Memory Store do not have any impact. 
+Please notice that when the in-memory format is NATIVE, i.e., High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's Near Cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a Near Cache without High-Density Memory Store do not have any impact. 
 
 The element `<eviction>` has the following attributes:
 
