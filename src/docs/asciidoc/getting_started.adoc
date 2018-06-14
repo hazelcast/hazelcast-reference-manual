@@ -81,7 +81,9 @@ Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise** and *
 ** Hot Restart Persistence 
 
 
-To use Hazelcast IMDG Enterprise, you need to set the provided license key using one of the configuration methods shown below. 
+To use Hazelcast IMDG Enterprise, you need to set the provided license key using one of the configuration methods shown below.
+
+NOTE: Hazelcast IMDG Enterprise license keys are required only for members. You do not need to set a license key for your Java clients for which you want to use IMDG Enterprise features.
 
 **Declarative Configuration:**
 
@@ -95,21 +97,6 @@ Add the below line to any place you like in the file `hazelcast.xml`. This XML f
   ...
 </hazelcast>
 ----
-
-
-**Client Declarative Configuration:**
-
-Native client distributions (Java, C++, etc.) of Hazelcast are open source. However, there are some Hazelcast Enterprise features which can be used with the Java Client such as SSL, Socket Interceptors, High-Density backed Near Cache, etc. In that case, you also need to have a Hazelcast Enterprise license and you should include this license in the file `hazelcast-client-full.xml` which is located under the directory `src/main/resources` of your `hazelcast-client` package. Set the license key in the `hazelcast-client-full.xml` as shown below.
-
-[source,xml]
-----
-<hazelcast-client>
-  ...
-  <license-key>Your Enterprise License Key</license-key>
-  ...
-</hazelcast-client>
-----
-
 
 **Programmatic Configuration:**
 
