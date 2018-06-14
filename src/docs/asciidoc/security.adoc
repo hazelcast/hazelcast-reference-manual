@@ -500,13 +500,13 @@ using OpenSSL:
         <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
          
         <properties>
-            <property name="keyStore">hazelcast.keystore</property>
-            <property name="keyStorePassword">123456</property>
-            <property name="keyManagerAlgorithm">SunX509</property>
-            <property name="trustManagerAlgorithm">SunX509</property>
+            <property name="protocol">TLSv1.2</property>
             <property name="trustStore">hazelcast.truststore</property>
             <property name="trustStorePassword">123456</property>
-            <property name="protocol">TLSv1.2</property>
+            <!-- If the TLS mutual authentication is not used,
+                 then the keyStore configuration is not needed on client side. -->
+            <property name="keyStore">hazelcast.keystore</property>
+            <property name="keyStorePassword">123456</property>
         </properties>
     </ssl>
 </network>
