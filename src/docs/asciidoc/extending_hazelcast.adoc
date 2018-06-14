@@ -43,7 +43,7 @@ To have the counter as a functioning distributed object, we need a class. This c
 
 - `init`: This is called when `CounterService` is initialized. `NodeEngine` enables access to Hazelcast internals such as `HazelcastInstance` and `PartitionService`. Also, the object `Properties` will provide us with the ability to create our own properties.
 - `shutdown`: This is called when `CounterService` is shutdown. It cleans up the resources.
-- `reset`: This is called when cluster members face the Split-Brain issue. This occurs when disconnected members that have created their own cluster are merged back into the main cluster. Services can also implement the `SplitBrainHandleService` to indicate that they can take part in the merge process. For `CounterService` we are going to implement `reset` as a no-op.
+- `reset`: This is called when cluster members face the split-brain issue. This occurs when disconnected members that have created their own cluster are merged back into the main cluster. Services can also implement the `SplitBrainHandleService` to indicate that they can take part in the merge process. For `CounterService` we are going to implement `reset` as a no-op.
 
 [source,java]
 ----

@@ -25,7 +25,7 @@ NOTE: The term "quorum" used in this section simply refers to the count of membe
 
 How to respond to a split-brain scenario depends on whether consistency of data or availability of your application is of primary concern. In either case, because a split-brain scenario is caused by a network failure, you must initiate an effort to identify and correct the network failure. Your cluster cannot be brought back to steady state operation until the underlying network failure is fixed. If consistency is your primary concern, you can use Hazelcast's  Split-Brain Protection feature.
 
-Hazelcast's Split-Brain Protection enables you to specify the minimum cluster size required for operations to occur. This is achieved by defining and configuring a split-brain protection cluster quorum. If the cluster size is below the defined quorum, the operations are rejected and the rejected operations return a `QuorumException` to their callers. Additionally, it is possible to configure a quorum with a user-defined `QuorumFunction` which will be consulted to determine presence of quorum on each cluster membership change.
+Hazelcast's Split-Brain Protection enables you to specify the minimum cluster size required for operations to occur. This is achieved by defining and configuring a Split-Brain Protection Cluster Quorum. If the cluster size is below the defined quorum, the operations are rejected and the rejected operations return a `QuorumException` to their callers. Additionally, it is possible to configure a quorum with a user-defined `QuorumFunction` which will be consulted to determine presence of quorum on each cluster membership change.
 
 Your application continues its operations on the remaining operating cluster. Any application instances connected to the cluster with sizes below the defined quorum will be receiving exceptions which, depending on the programming and monitoring setup, should generate alerts. The key point is that rather than applications continuing in error with stale data, they are prevented from doing so.
 
@@ -144,7 +144,7 @@ include::{javasource}/networkpartitioning/ProbabilisticQuorum.java[tag=pq]
 
 ===== Recently-Active Quorum Function
 
-A quorum with a recently-active quorum function can be used to implement more conservative split brain protection by requiring that a heartbeat has been received from each member within a configurable time window since now.
+A quorum with a recently-active quorum function can be used to implement more conservative split-brain protection by requiring that a heartbeat has been received from each member within a configurable time window since now.
 
 **Declarative configuration**
 
@@ -176,7 +176,7 @@ Quorum configuration has the following elements:
 
 * `quorum-size`: Minimum number of members required in a cluster for the cluster to remain in an operational state. If the number of members is below the defined minimum at any time, the operations are rejected and the rejected operations return a `QuorumException` to their callers.
 * `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
-* `quorum-function-class-name`: Class name of a `QuorumFunction` implementation, allows to configure split-brain protection with a custom quorum function. It cannot be used in conjunction with `probabilistic-quorum` or `recently-active-quorum`.
+* `quorum-function-class-name`: Class name of a `QuorumFunction` implementation, allows to configure Split-Brain Protection with a custom quorum function. It cannot be used in conjunction with `probabilistic-quorum` or `recently-active-quorum`.
 * `quorum-listeners`: Declaration of quorum listeners which are notified on quorum status changes.
 8 `probabilistic-quorum`: Configures the quorum with a probabilistic quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `recently-active-quorum`. 
 * `recently-active-quorum`: Configures the quorum with a recently-active quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `probabilistic-quorum`.

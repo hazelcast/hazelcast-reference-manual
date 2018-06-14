@@ -2646,7 +2646,7 @@ locks are immediately available for live members.
 * Locks are re-entrant. The same thread can lock multiple times on the same lock. Note that for other threads to be able to require this lock, the owner of the lock must call `unlock` as many times as the owner called `lock`.
 * In the split-brain scenario, the cluster behaves as if it were two different clusters. Since two separate clusters are not aware of each other,
 two members from different clusters can acquire the same lock.
-For more information on places where split brain syndrome can be handled, please see <<split-brain-syndrome, Split-Brain syndrome>>.
+For more information on places where split-brain syndrome can be handled, please see <<split-brain-syndrome, Split-Brain syndrome>>.
 * Locks are not automatically removed. If a lock is not used anymore, Hazelcast will not automatically garbage collect the lock. 
 This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sure they are destroyed.
 * Hazelcast IMap also provides locking support on the entry level with the method `IMap.lock(key)`. Although the same infrastructure 
