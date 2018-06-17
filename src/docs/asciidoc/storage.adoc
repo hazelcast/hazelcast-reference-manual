@@ -1,7 +1,7 @@
 
 == Storage
 
-This chapter describes Hazelcast's High-Density Memory Store and Hot Restart Persistence features along with their configurations, and gives recommendations on the storage sizing.
+This chapter describes Hazelcast's High-Density Memory Store and Hot Restart Persistence features along with their configurations and gives recommendations on the storage sizing.
 
 === High-Density Memory Store
 
@@ -168,7 +168,7 @@ When partial start is enabled, Hazelcast can perform a partial start automatical
 
 The other situation to decide to perform a partial start is failures during the data load phase. When Hazelcast learns data load result of all members which have passed the validation step, it automatically performs a partial start with the ones which have successfully restored their Hot Restart data. Please note that partial start does not expect every member to succeed in the data load step. It completes the process when it learns data load result for every member and there is at least one member which has successfully restored its Hot Restart data. Relatedly, if it cannot learn data load result of all members before `data-load-timeout-seconds` duration, it proceeds with the ones which have already completed the data load process.
 
-Selection of members to perform partial start among live members is done according to the `cluster-data-recovery-policy` configuration. Set of members which are not selected by the `cluster-data-recovery-policy` are called `Excluded members`, and they are instructed to perform <<force-start, force start>>. Excluded members are allowed to join cluster only when they clean their Hot Restart data and make a fresh-new start. This is a completely automatic process. For instance, if you start the missing members after partial start is completed, they clean their Hot Restart data and join to the cluster.
+Selection of members to perform partial start among live members is done according to the `cluster-data-recovery-policy` configuration. Set of members which are not selected by the `cluster-data-recovery-policy` are called `Excluded members` and they are instructed to perform <<force-start, force start>>. Excluded members are allowed to join cluster only when they clean their Hot Restart data and make a fresh-new start. This is a completely automatic process. For instance, if you start the missing members after partial start is completed, they clean their Hot Restart data and join to the cluster.
 
 Please note that partial start is a destructive process. Once it is completed, it cannot be repeated with a new configuration. For this reason, one may need to perform the partial start process manually. Automatic behavior of partial start relies on `validation-timeout-seconds` and `data-load-timeout-seconds` configuration values. If you need to control the process manually, `validation-timeout-seconds` and `data-load-timeout-seconds` properties can be set to very big values so that Hazelcast cannot make progress on timeouts automatically. Then, the overall process can be managed manually via aforementioned methods, i.e. Management Center, REST API and cluster management scripts.
 
@@ -515,6 +515,6 @@ When you have an application that needs to retrieve and store information in a d
 
 Hazelcast Striim Hot Cache solves this by using streaming CDC to synchronize the cache with the database in real time. This ensures that both the cache and your application always have the most current data.
 
-Through CDC, Striim is able to recognize which tables and key values have changed. It immediately captures these changes with their table and key, and, using the Hazelcast Striim writer, pushes those changes into the cache.
+Through CDC, Striim is able to recognize which tables and key values have changed. It immediately captures these changes with their table and key, and pushes the changes into the cache using the Hazelcast Striim writer.
 
 To learn more, please see the http://www.striim.com/blog/newsroom/press/hazelcast-striim-hot-cache/[full press release], visit the Hazelcast Striim Hot Cache https://hazelcast.com/products/solutions/hazelcast-striim-hot-cache/[product page], or download a fully loaded evaluation copy of http://www.striim.com/download-striim-for-hazelcast-hot-cache/[Striim for Hazelcast Hot Cache].

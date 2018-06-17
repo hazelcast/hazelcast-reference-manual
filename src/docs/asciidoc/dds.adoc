@@ -147,7 +147,7 @@ NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelca
 [[getting-a-map-and-putting-an-entry]]
 ==== Getting a Map and Putting an Entry
 
-Hazelcast will partition your map entries and their backups, and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "number of map entries * 2 * 1/n" entries, where **n** is the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster, and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
+Hazelcast will partition your map entries and their backups, and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "number of map entries * 2 * 1/n" entries, where **n** is the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
 
 Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the HazelcastInstance `getMap` method to get the map, then use the map `put` method to put an entry into the map.
 
@@ -574,10 +574,10 @@ IMap (and a few other Hazelcast data structures, such as ICache) has an `in-memo
 To set how the data will be stored in memory, set `in-memory-format` in the configuration. You have the following format options:
 
 * `BINARY` (default): The data (both the key and value) will be stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as `put` and `get`.
-* `OBJECT`: The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing will not contain the deserialization cost. Note that when you use `OBJECT` as the in-memory format, the key will still be stored in binary format, and the value will be stored in object format.
+* `OBJECT`: The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing will not contain the deserialization cost. Note that when you use `OBJECT` as the in-memory format, the key will still be stored in binary format and the value will be stored in object format.
 * `NATIVE`: ([navy]*Hazelcast IMDG Enterprise HD*) This format behaves the same as BINARY, however, instead of heap memory, key and value will be stored in the off-heap memory.
 
-Regular operations like `get` rely on the object instance. When the `OBJECT` format is used and a `get` is performed, the map does not return the stored instance, but creates a clone. Therefore, this whole `get` operation first includes a serialization on the member owning the instance, and then a deserialization on the member calling the instance. When the `BINARY` format is used, only a deserialization is required; `BINARY` is faster.
+Regular operations like `get` rely on the object instance. When the `OBJECT` format is used and a `get` is performed, the map does not return the stored instance, but creates a clone. Therefore, this whole `get` operation first includes a serialization on the member owning the instance and then a deserialization on the member calling the instance. When the `BINARY` format is used, only a deserialization is required; `BINARY` is faster.
 
 Similarly, a `put` operation is faster when the `BINARY` format is used. If the format was `OBJECT`, the map would create a clone of the instance, and there would first be a serialization and then a deserialization. When BINARY is used, only a deserialization is needed.
 
@@ -740,7 +740,7 @@ NOTE: During the initial loading process, MapStore uses a thread different from 
 
 NOTE: For more MapStore/MapLoader code samples, please see https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java[here].
 
-Hazelcast supports read-through, write-through, and write-behind persistence modes, which are explained in the subsections below.
+Hazelcast supports read-through, write-through and write-behind persistence modes, which are explained in the subsections below.
 
 [[using-read-through-persistence]]
 ===== Using Read-Through Persistence
@@ -835,7 +835,7 @@ mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
 });
 ----
 
-To initialize the `MapLoader` implementation with the given map name, configuration properties, and the Hazelcast instance, implement the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface]. This interface has the methods `init()` and `destroy()`.
+To initialize the `MapLoader` implementation with the given map name, configuration properties and the Hazelcast instance, implement the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface]. This interface has the methods `init()` and `destroy()`.
 
 The method `init()` initializes the `MapLoader` implementation. Hazelcast calls this method when the map is first used on the Hazelcast instance. The `MapLoader` implementation can initialize the required resources for implementing `MapLoader` such as reading a configuration file or creating a database connection.
 
@@ -848,7 +848,7 @@ To pre-populate the in-memory map when the map is first touched/used, use the `M
 
 If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the keys which are most important to you that you want to load them while initializing the map. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
 
-The `InitialLoadMode` configuration parameter in the class http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapStoreConfig.html[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created, and everything becomes ready to use. Also, if you add indices to your map with the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapIndexConfig.html[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
+The `InitialLoadMode` configuration parameter in the class http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapStoreConfig.html[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created and everything becomes ready to use. Also, if you add indices to your map with the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapIndexConfig.html[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
 
 Here is the `MapLoader` initialization flow:
 
@@ -1036,9 +1036,9 @@ In Hazelcast, use `IExecutorService` to submit a task to a key owner, or to a me
 [[solving-the-aba-problem]]
 ===== Solving the ABA Problem
 
-The ABA problem occurs in environments when a shared resource is open to change by multiple threads. Even if one thread sees the same value for a particular key in consecutive reads, it does not mean that nothing has changed between the reads. Another thread may change the value, do work, and change the value back, while the first thread thinks that nothing has changed.
+The ABA problem occurs in environments when a shared resource is open to change by multiple threads. Even if one thread sees the same value for a particular key in consecutive reads, it does not mean that nothing has changed between the reads. Another thread may change the value, do work and change the value back, while the first thread thinks that nothing has changed.
 
-To prevent these kind of problems, you can assign a version number and check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields will be equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy, and it is used in environments that do not expect intensive concurrent changes on a specific key.
+To prevent these kind of problems, you can assign a version number and check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields will be equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy; it is used in environments that do not expect intensive concurrent changes on a specific key.
 
 In Hazelcast, you can apply the <<optimistic-locking, optimistic locking>> strategy with the map `replace` method.
 
@@ -1078,7 +1078,7 @@ Here the configured map will use the `map-lock-actions-quorum` quorum for map lo
 [[accessing-entry-statistics]]
 ==== Accessing Entry Statistics
 
-Hazelcast keeps statistics about each map entry, such as creation time, last update time, last access time, number of hits, and version. To access the map entry statistics, use an `IMap.getEntryView(key)` call. Here is an example.
+Hazelcast keeps statistics about each map entry, such as creation time, last update time, last access time, number of hits and version. To access the map entry statistics, use an `IMap.getEntryView(key)` call. Here is an example.
 
 [source,java]
 ----
@@ -1416,7 +1416,7 @@ NOTE: The items are taken from the queue in the same order they were put on the 
 
 Hazelcast gives an `itemId` for each item you offer, which is an incrementing sequence identification for the queue items. You should consider the following to understand the `itemId` assignment behavior:
 
-* When a Hazelcast member has a queue, and that queue is configured to have at least one backup, and that member is restarted, the `itemId` assignment resumes from the last known highest `itemId` before the restart; `itemId` assignment does not start from the beginning for the new items.
+* When a Hazelcast member has a queue and that queue is configured to have at least one backup, and that member is restarted, the `itemId` assignment resumes from the last known highest `itemId` before the restart; `itemId` assignment does not start from the beginning for the new items.
 * When the whole cluster is restarted, the same behavior explained in the above consideration applies if your queue has a persistent data store (`QueueStore`). If the queue has `QueueStore`, the `itemId` for the new items are given, starting from the highest `itemId` found in the IDs returned by the method `loadAllKeys`. If the method `loadAllKeys` does not return anything, the `itemId`s will started from the beginning after a cluster restart.
 * The above two considerations mean there will be no duplicated `itemId`s in the memory or in the persistent data store.
 
@@ -1449,7 +1449,7 @@ In this example code, the producer is five times faster than the consumer. It wi
 
 Hazelcast allows you to load and store the distributed queue items from/to a persistent datastore using the interface `QueueStore`. If queue store is enabled, each item added to the queue will also be stored at the configured queue store. When the number of items in the queue exceeds the memory limit, the subsequent items are persisted in the queue store, they are not stored in the queue memory.
 
-The `QueueStore` interface enables you to store, load, and delete queue items with methods like `store`, `storeAll`, `load` and `delete`. The following example class includes all of the `QueueStore` methods.
+The `QueueStore` interface enables you to store, load and delete queue items with methods like `store`, `storeAll`, `load` and `delete`. The following example class includes all of the `QueueStore` methods.
 
 [source,java]
 ----
@@ -1586,7 +1586,7 @@ The following is the full list of queue configuration elements with their descri
 * `backup-count`: Number of synchronous backups. Queue is a non-partitioned data structure, so all entries of a queue reside in one partition. When this parameter is '1', it means there will be one backup of that queue in another member in the cluster. When it is '2', two members will have the backup.
 * `async-backup-count`: Number of asynchronous backups.
 * `empty-queue-ttl`: Used to purge unused or empty queues. If you define a value (time in seconds) for this element, then your queue will be destroyed if it stays empty or unused for that time.
-* `item-listeners`: Adds listeners (listener classes) for the queue items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values, and you can set `local` to `true` if you want to listen to the items on the local member.
+* `item-listeners`: Adds listeners (listener classes) for the queue items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values. You can set `local` to `true` if you want to listen to the items on the local member.
 * `queue-store`: Includes the queue store factory class name and the properties  *binary*, *memory limit* and *bulk load*. Please refer to <<queueing-with-persistent-datastore, Queueing with Persistent Datastore>>.
 * `statistics-enabled`: If set to `true`, you can retrieve statistics for this queue using the method `getLocalQueueStats()`.
 * `quorum-ref` : Name of quorum configuration that you want this queue to use.
@@ -1663,10 +1663,10 @@ The following are the configuration elements and their descriptions:
 * `backup-count`: Defines the number of synchronous backups. For example, if it is set to 1, backup of a partition will be
 placed on one other member. If it is 2, it will be placed on two other members.
 * `async-backup-count`: The number of asynchronous backups. Behavior is the same as that of the `backup-count` element.
-* `statistics-enabled`: You can retrieve some statistics such as owned entry count, backup entry count, last update time, and locked entry count by setting this parameter's value as "true". The method for retrieving the statistics is `getLocalMultiMapStats()`.
+* `statistics-enabled`: You can retrieve some statistics such as owned entry count, backup entry count, last update time and locked entry count by setting this parameter's value as "true". The method for retrieving the statistics is `getLocalMultiMapStats()`.
 * `value-collection-type`: Type of the value collection. It can be `SET` or `LIST`.
 * `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
-include-value to true if you want the item event to contain the entry values, and you can set
+include-value to true if you want the item event to contain the entry values. You can set
 local to true if you want to listen to the entries on the local member.
 * `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. Please see the <<split-brain-protection-for-multimap-and-transactionalmultimap, Split-Brain Protection for MultiMap and TransactionalMultiMap section>>.
 
@@ -1790,7 +1790,7 @@ Set configuration has the following elements.
 * `backup-count`: Count of synchronous backups. Set is a non-partitioned data structure, so all entries of a Set reside in one partition. When this parameter is '1', it means there will be one backup of that Set in another member in the cluster. When it is '2', two members will have the backup.
 * `async-backup-count`: Count of asynchronous backups.
 * `max-size`: The maximum number of entries for this Set. It can be any number between 0 and Integer.MAX_VALUE. Its default value is 0, meaning there is no capacity constraint.
-* `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attributes `include-value` to `true` if you want the item event to contain the item values, and you can set `local` to `true` if you want to listen to the items on the local member.
+* `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attributes `include-value` to `true` if you want the item event to contain the item values. You can set `local` to `true` if you want to listen to the items on the local member.
 * `quorum-ref`: Name of quorum configuration that you want this Set to use. Please refer to the <<split-brain-protection-for-iset-and-transactionalset, Split-Brain Protection for ISet and TransactionalSet section>>.
 
 [[split-brain-protection-for-iset-and-transactionalset]]
@@ -1852,7 +1852,7 @@ Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allo
 
 
 '''
-NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IList[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job, and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
+NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IList[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
 
 [[getting-a-list-and-putting-items]]
 ==== Getting a List and Putting Items
@@ -1906,7 +1906,7 @@ List configuration has the following elements.
 * `backup-count`: Number of synchronous backups. List is a non-partitioned data structure, so all entries of a List reside in one partition. When this parameter is '1', there will be one backup of that List in another member in the cluster. When it is '2', two members will have the backup.
 * `async-backup-count`: Number of asynchronous backups.
 * `max-size`: The maximum number of entries for this List.
-* `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values, and you can set the attribute `local` to `true` if you want to listen the items on the local member.
+* `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values. You can set the attribute `local` to `true` if you want to listen the items on the local member.
 * `quorum-ref`: Name of quorum configuration that you want this List to use. Please see the <<split-brain-protection-for-ilist-and-transactionallist, Split-Brain Protection for IList and TransactionalList section>>.
 
 [[split-brain-protection-for-ilist-and-transactionallist]]
@@ -1976,7 +1976,7 @@ ID, which is mapped to the elements between the head and tail (inclusive) of the
 ==== Getting a Ringbuffer and Reading Items
 
 Reading from Ringbuffer is simple: get the Ringbuffer with the HazelcastInstance `getRingbuffer` method, get its current head with
-the `headSequence` method, and start reading. Use the method `readOne` to return the item at the 
+the `headSequence` method and start reading. Use the method `readOne` to return the item at the 
 given sequence; `readOne` blocks if no item is available. To read the next item, increment the sequence by one.
 
 [source,java]
@@ -2395,7 +2395,7 @@ If `globalOrderEnabled` is disabled, messages are not ordered and listeners (sub
 
 Here is how it works. Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
 	
-In this example, *member1* publishes two messages, `a1` and `a2`, and *member3* publishes two messages, `c1` and `c2`. When *member1* and *member3* publish a message, they will check their local list for registered members, they will discover that *member1* and *member2* are in their lists, and then they will fire messages to those members. One possible order of the messages received could be the following.
+In this example, *member1* publishes two messages: `a1` and `a2`. *Member3* publishes two messages: `c1` and `c2`. When *member1* and *member3* publish a message, they will check their local list for registered members, they will discover that *member1* and *member2* are in their lists, and then they will fire messages to those members. One possible order of the messages received could be the following.
 
 *member1* -> `c1`, `a1`, `a2`, `c2`
 
@@ -2408,7 +2408,7 @@ If `globalOrderEnabled` is enabled, all members listening to the same topic will
 
 Here is how it works. Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
 
-In this example, *member1* publishes two messages: `a1` and `a2`, and *member3* publishes two messages: `c1` and `c2`. When a member publishes messages over the topic `news`, it first calculates which partition the `news` ID corresponds to. Then it sends an operation to the owner of the partition for that member to publish messages. Let's assume that `news` corresponds to a partition that *member2* owns. *member1* and *member3* first sends all messages to *member2*. Assume that the messages are published in the following order:
+In this example, *member1* publishes two messages: `a1` and `a2`. *Member3* publishes two messages: `c1` and `c2`. When a member publishes messages over the topic `news`, it first calculates which partition the `news` ID corresponds to. Then it sends an operation to the owner of the partition for that member to publish messages. Let's assume that `news` corresponds to a partition that *member2* owns. *member1* and *member3* first sends all messages to *member2*. Assume that the messages are published in the following order:
 
 *member1* -> `a1`, `c1`, `a2`, `c2`
 
@@ -2765,7 +2765,7 @@ NOTE: As mentioned above, a quorum definition for a lock that has the same name 
 Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and thus their performances differ from AtomicLong.
 
 
-The following example code creates an instance, increments it by a million, and prints the count.
+The following example code creates an instance, increments it by a million and prints the count.
 
 [source,java]
 ----
@@ -2881,7 +2881,7 @@ Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.
 
 Semaphores offer **permit**s to control the thread counts when performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.
 
-NOTE: ISemaphore with a single permit may be considered a lock. Unlike the locks, however, when semaphores are used, any thread can release the permit, and semaphores can have multiple permits.
+NOTE: ISemaphore with a single permit may be considered as a lock. Unlike the locks, when semaphores are used, any thread can release the permit, and semaphores can have multiple permits.
 
 NOTE: Hazelcast ISemaphore does not support fairness at all times. There are some edge cases where the fairness is not honored, e.g., when the permit becomes available at the time when an internal timeout occurs.
 
@@ -2893,7 +2893,7 @@ When a permit is acquired on ISemaphore:
 [[example-semaphore-code]]
 ==== Example Semaphore Code
 
-The following example code uses an `IAtomicLong` resource 1000 times, increments the resource when a thread starts to use it, and decrements it when the thread completes.
+The following example code uses an `IAtomicLong` resource 1000 times, increments the resource when a thread starts to use it and decrements it when the thread completes.
 
 [source,java]
 ----
@@ -3014,7 +3014,7 @@ When you execute the above example, you will see the following output.
 
 Just like `IAtomicLong`, `IAtomicReference` has methods that accept a 'function' as an argument, such as `alter`, `alterAndGet`, `getAndAlter` and `apply`. There are two big advantages of using these methods:
 
-* From a performance point of view, it is better to send the function to the data then the data to the function. Often the function is a lot smaller than the data and therefore cheaper to send over the line. Also the function only needs to be transferred once to the target machine, and the data needs to be transferred twice.
+* From a performance point of view, it is better to send the function to the data then the data to the function. Often the function is a lot smaller than the data and therefore cheaper to send over the line. Also the function only needs to be transferred once to the target machine and the data needs to be transferred twice.
 * You do not need to deal with concurrency control. If you would perform a load, transform, store, you could run into a data race since another thread might have updated the value you are about to overwrite. 
 
 [[using-iatomicreference]]
@@ -3026,7 +3026,7 @@ Below are some considerations you need to know when you use IAtomicReference.
 * `IAtomicReference` will always have one synchronous backup.
 * All methods returning an object will return a private copy. You can modify the private copy, but the rest of the world will be shielded from your changes. If you want these changes to be visible to the rest of the world, you need to write the change back to the `IAtomicReference`; but be careful about introducing a data-race. 
 * The 'in-memory format' of an `IAtomicReference` is `binary`. The receiving side does not need to have the class definition available unless it needs to be deserialized on the other side, e.g., because a method like 'alter' is executed. This deserialization is done for every call that needs to have the object instead of the binary content, so be careful with expensive object graphs that need to be deserialized.
-* If you have an object with many fields or an object graph, and you only need to calculate some information or need a subset of fields, you can use the `apply` method. With the `apply` method, the whole object does not need to be sent over the line; only the information that is relevant is sent.
+* If you have an object with many fields or an object graph and you only need to calculate some information or need a subset of fields, you can use the `apply` method. With the `apply` method, the whole object does not need to be sent over the line; only the information that is relevant is sent.
 
 [[split-brain-protection-for-iatomicreference]]
 ==== Split-Brain Protection for IAtomicReference
@@ -3105,7 +3105,7 @@ The follower class above first retrieves `ICountDownLatch` and then calls the `a
 [[recovering-from-failure]]
 ==== Recovering From Failure
 
-In a distributed environment, the counting down cluster member may go down. In this case, all listeners are notified immediately and automatically by Hazelcast. The state of the current process just before the failure should be verified and 'how to continue now' should be decided, e.g., restart all process operations, continue with the first failed process operation, and throw an exception.
+In a distributed environment, the counting down cluster member may go down. In this case, all listeners are notified immediately and automatically by Hazelcast. The state of the current process just before the failure should be verified and 'how to continue now' should be decided, e.g., restart all process operations, continue with the first failed process operation and throw an exception.
 
 [[using-icountdownlatch]]
 ==== Using ICountDownLatch
@@ -3494,7 +3494,7 @@ not explicitly `Map.put()` into the map again.
 ==== Using EntryListener on Replicated Map
 
 A `com.hazelcast.core.EntryListener` used on a Replicated Map serves the same purpose as it would on other
-data structures in Hazelcast. You can use it to react on add, update, and remove operations. Replicated Maps do not yet support eviction.
+data structures in Hazelcast. You can use it to react on add, update and remove operations. Replicated Maps do not yet support eviction.
 
 [[difference-in-entrylistener-on-replicated-map]]
 ===== Difference in EntryListener on Replicated Map
@@ -3573,7 +3573,7 @@ The memory consumption of this data structure is close to 16K despite the size o
 
 There are two phases in using the cardinality estimator.
 
-. Add objects to the instance of the estimator, e.g., for IPs `estimator.add("0.0.0.0.")`. The provided object is first serialized, and then the byte array is used to generate a hash for that object.
+. Add objects to the instance of the estimator, e.g., for IPs `estimator.add("0.0.0.0.")`. The provided object is first serialized and then the byte array is used to generate a hash for that object.
 +
 NOTE: Objects must be serializable in a form that Hazelcast understands.
 +
@@ -3661,7 +3661,7 @@ By default, an event journal is configured with a `capacity` of 10000 items. Thi
 a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item. 
 A single array of the event journal keeps events that are only related to the map entries in that partition. In a lot of cases you may want to change this `capacity` number to something that better fits your needs. As the capacity is shared between partitions, keep in mind not to set it to a value which is too low for you. Setting the capacity to a number lower than the partition count will result in an error when initializing the event journal. 
 
-Below is a declarative configuration example of an event journal with a `capacity` of 5000 items for a map, and 10000 items for a cache:
+Below is a declarative configuration example of an event journal with a `capacity` of 5000 items for a map and 10000 items for a cache:
 
 ```
 <event-journal enabled="true">

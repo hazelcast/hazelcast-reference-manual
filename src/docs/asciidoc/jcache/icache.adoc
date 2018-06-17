@@ -149,7 +149,7 @@ The retrieved `CacheManager` is scoped to use the `HazelcastInstance` that was j
 configuration file.
 
 Available protocols for config file URL include `classpath` to point to a classpath location, `file` to point to a filesystem
-location, and `http` and `https` for remote web locations. In addition, everything that does not specify a protocol is recognized
+location and `http` and `https` for remote web locations. In addition, everything that does not specify a protocol is recognized
 as a placeholder that can be configured using a system property.
 
 ```
@@ -484,7 +484,7 @@ ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
 unwrappedCache.put( 1, "value", new AccessedExpiryPolicy( Duration.ONE_DAY ) );
 ```
 
-The `ExpiryPolicy` instance can be pre-created, cached, and re-used, but only for each cache instance. This is because `ExpiryPolicy`
+The `ExpiryPolicy` instance can be pre-created, cached and re-used, but only for each cache instance. This is because `ExpiryPolicy`
 implementations can be marked as `java.io.Closeable`. The following list shows the provided method overloads over `javax.cache.Cache`
 by `com.hazelcast.cache.ICache` featuring the `ExpiryPolicy` parameter:
 
@@ -539,7 +539,7 @@ of the cache. For detailed information, please see the <<eviction-algorithm, Evi
 ===== Configuring Eviction Policies
 
 Hazelcast JCache provides two commonly known eviction policies, LRU and LFU, but loosens the rules for predictable runtime
-behavior. LRU, normally recognized as `Least Recently Used`, is implemented as `Less Recently Used`, and LFU known as `Least Frequently Used` is implemented as
+behavior. LRU, normally recognized as `Least Recently Used`, is implemented as `Less Recently Used` and LFU known as `Least Frequently Used` is implemented as
 `Less Frequently Used`. The details about this difference are explained in the
 <<eviction-algorithm, Eviction Algorithm section>>.
 
@@ -709,7 +709,7 @@ All of the following calculations have a well known set of fixed variables:
 
 A Reference Cache is typically small and the number of elements to store in the reference caches is normally 
 known prior to creating the cache. Typical examples of reference caches are lookup tables for abbreviations or the states of a
-country. They tend to have a fixed but small element number and the eviction is an unlikely event, and rather undesirable behavior.
+country. They tend to have a fixed but small element number and the eviction is an unlikely event and rather undesirable behavior.
 
 Since an imbalanced partition is a worse problem in small and mid-sized caches than in caches with millions of entries, the normal
 estimation rule (as discussed in a bit) is not applied to these kinds of caches. To prevent unwanted eviction on the small and

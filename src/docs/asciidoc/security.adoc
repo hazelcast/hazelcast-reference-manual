@@ -4,7 +4,7 @@
 
 [blue]*Hazelcast IMDG Enterprise Feature*
 
-This chapter describes the security features of Hazelcast. These features allow you to perform security activities, such as intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level, and using SSL socket communication. All of the Security features explained in this chapter are the features of [blue]#Hazelcast IMDG Enterprise# edition.
+This chapter describes the security features of Hazelcast. These features allow you to perform security activities, such as intercepting socket connections and remote operations executed by the clients, encrypting the communications between the members at socket level and using SSL socket communication. All of the Security features explained in this chapter are the features of [blue]#Hazelcast IMDG Enterprise# edition.
 
 === Enabling JAAS Security
 
@@ -134,7 +134,7 @@ In symmetric encryption, each member uses the same key, so the key is shared. He
 </hazelcast>
 ```
 
-You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key, and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
+You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
 
 
 NOTE: Please see the <<tlsssl, SSL section>>.
@@ -380,7 +380,7 @@ TLS/SSL in Java is normally provided by the JRE. However, the performance overhe
 enabled. If you are using Linux, Hazelcast provides OpenSSL integration for TLS/SSL which can provide significant performance
 improvements.
 
-OpenSSL can be used on clients and/or members. For best performance, it is recommended to install on a client and member, and 
+OpenSSL can be used on clients and/or members. For best performance, it is recommended to install on a client and member and 
 configure the appropriate cipher suite(s).
 
 Integrating OpenSSL into Hazelcast is achieved with the following steps:
@@ -754,7 +754,7 @@ Your implementation of `LoginModule` should create an instance of `com.hazelcast
 include::{javasource}/security/CustomLoginModule.java[tag=clm]
 ----
 
-To use the default Hazelcast permission policy, you must create an instance of `com.hazelcast.security.ClusterPrincipal` that holds the `Credentials` object, and you must add it to `Subject.principals onLoginModule.commit()` as shown below.
+To use the default Hazelcast permission policy, you must create an instance of `com.hazelcast.security.ClusterPrincipal` that holds the `Credentials` object and you must add it to `Subject.principals onLoginModule.commit()` as shown below.
 
 ```
 public class MyCustomLoginModule implements LoginModule {
@@ -769,7 +769,7 @@ public class MyCustomLoginModule implements LoginModule {
 }
 ```
 
-Hazelcast has an abstract implementation of `LoginModule` that does callback and cleanup operations and holds the resulting `Credentials` instance. `LoginModule`s extending `ClusterLoginModule` can access `Credentials`, `Subject`, `LoginModule` instances and options, and `sharedState` maps. Extending the `ClusterLoginModule` is recommended instead of implementing all required stuff.
+Hazelcast has an abstract implementation of `LoginModule` that does callback and cleanup operations and holds the resulting `Credentials` instance. `LoginModule`s extending `ClusterLoginModule` can access `Credentials`, `Subject`, `LoginModule` instances and options and `sharedState` maps. Extending the `ClusterLoginModule` is recommended instead of implementing all required stuff.
 
 ```
 public abstract class ClusterLoginModule implements LoginModule {
@@ -897,7 +897,7 @@ HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 
 ==== Authorization
 
-Hazelcast client authorization is configured by a client permission policy. Hazelcast has a default permission policy implementation that uses permission configurations defined in the Hazelcast security configuration. Default policy permission checks are done against instance types (map, queue, etc.), instance names (map, queue, name, etc.), instance actions (put, read, remove, add, etc.), client endpoint addresses, and client principal defined by the Credentials object. The default permission policy allows to use comma separated names in the principal attribute configuration. Instance and principal names and endpoint addresses can be defined as wildcards(*). Please see the <<other-network-configurations, Network Configuration section>> and <<using-wildcards, Using Wildcards section>>.
+Hazelcast client authorization is configured by a client permission policy. Hazelcast has a default permission policy implementation that uses permission configurations defined in the Hazelcast security configuration. Default policy permission checks are done against instance types (map, queue, etc.), instance names (map, queue, name, etc.), instance actions (put, read, remove, add, etc.), client endpoint addresses and client principal defined by the Credentials object. The default permission policy allows to use comma separated names in the principal attribute configuration. Instance and principal names and endpoint addresses can be defined as wildcards(*). Please see the <<other-network-configurations, Network Configuration section>> and <<using-wildcards, Using Wildcards section>>.
 
 ```
 <security enabled="true">

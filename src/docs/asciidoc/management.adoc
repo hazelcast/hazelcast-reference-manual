@@ -2,7 +2,7 @@
 
 == Management
 
-This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol, and managing the cluster with useful utilities.
+This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol and managing the cluster with useful utilities.
 
 
 === Getting Member Statistics
@@ -475,7 +475,7 @@ Hazelcast set the naming convention for MBeans as follows:
 final ObjectName mapMBeanName = new ObjectName("com.hazelcast:instance=_hzInstance_1_dev,type=IMap,name=trial");
 ```
 
-The MBeans name consists of the Hazelcast instance name, the type of the data structure, and that data structure's name. In the above sample, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`. 
+The MBeans name consists of the Hazelcast instance name, the type of the data structure and that data structure's name. In the above sample, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`. 
 
 
 
@@ -515,13 +515,13 @@ System.out.println("\nTotal entries on map " + mbsc.getAttribute(mapMBeanName, "
 
 === Cluster Utilities
 
-This section provides information on programmatic utilities you can use to listen to the cluster events, to change the state of your cluster, to check whether the cluster and/or members are safe before shutting down a member, and to define the minimum number of cluster members required for the cluster to remain up and running. It also gives information on the Hazelcast Lite Member.
+This section provides information on programmatic utilities you can use to listen to the cluster events, to change the state of your cluster, to check whether the cluster and/or members are safe before shutting down a member and to define the minimum number of cluster members required for the cluster to remain up and running. It also gives information on the Hazelcast Lite Member.
 
 ==== Getting Member Events and Member Sets
 
 Hazelcast allows you to register for membership events so you will be notified when members are added or removed. You can also get the set of cluster members.
 
-The following example code does the above: registers for member events, notified when members are added or removed, and gets the set of cluster members.
+The following example code does the above: registers for member events, notifies when members are added or removed and gets the set of cluster members.
 
 [source,java]
 ----
@@ -567,7 +567,7 @@ Hazelcast clusters have the following states:
 
 * **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 * **`NO_MIGRATION`**:
-** In this state, migrations (partition rebalancing) and backup replications are not allowed. In other words, there will be no data movement between Hazelcast members. However, in case of member failures, backup replicas can be still promoted to the primaries to maintain availability, and migration listeners can be notified for these promotion migrations. Please note that promoting a backup replica to the primary replica is a local operation and does not transfer partition data between Hazelcast members.
+** In this state, migrations (partition rebalancing) and backup replications are not allowed. In other words, there will be no data movement between Hazelcast members. However, in case of member failures, backup replicas can be still promoted to the primaries to maintain availability and migration listeners can be notified for these promotion migrations. Please note that promoting a backup replica to the primary replica is a local operation and does not transfer partition data between Hazelcast members.
 ** The cluster accepts new members.
 ** All other operations are allowed.
 ** You cannot change the state of a cluster to `NO_MIGRATION` when migration/replication tasks are being performed.
@@ -617,7 +617,7 @@ Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/
 Hazelcast cluster members have the following states:
 
 * **`ACTIVE`**: This is the initial member state. The member can execute and process all operations. When the state of the cluster is `ACTIVE` or `FROZEN`, the members are in the `ACTIVE` state. 
-* **`PASSIVE`**: In this state, member rejects all operations EXCEPT the read-only ones, replication and migration operations, heartbeat operations, and the join operations as explained in the <<cluster-states, Cluster States section>> above. A member can go into this state when either of the following happens:
+* **`PASSIVE`**: In this state, member rejects all operations EXCEPT the read-only ones, replication and migration operations, heartbeat operations and the join operations as explained in the <<cluster-states, Cluster States section>> above. A member can go into this state when either of the following happens:
 . Until the member's shutdown process is completed after the method `Node.shutdown(boolean)` is called. Note that, when the shutdown process is completed, member's state changes to `SHUT_DOWN`. 
 . Cluster's state is changed to `PASSIVE` using the method `changeClusterState()`. 
 * **`SHUT_DOWN`**: A member goes into this state when the member's shutdown process is completed. The member in this state rejects all operations and invocations. A member in this state cannot be restarted.
@@ -846,7 +846,7 @@ NOTE: You can also perform the above cluster version operations using Hazelcast 
 
 ==== Enabling Lite Members
 
-Lite members are the Hazelcast cluster members that do not store data. These members are used mainly to execute tasks and register listeners, and they do not have partitions.
+Lite members are the Hazelcast cluster members that do not store data. These members are used mainly to execute tasks and register listeners and they do not have partitions.
 
 You can form your cluster to include the regular Hazelcast members to store data and Hazelcast lite members to run heavy computations. The presence of the lite members do not affect the operations performed on the other members in the cluster. You can directly submit your tasks to the lite members, register listeners on them and invoke operations for the Hazelcast data structures on them such as `map.put()` and `map.get()`.
 
@@ -1067,11 +1067,11 @@ In Hazelcast 3.9 the default file size has been upgraded from 10MB to 50MB.
 
 ==== Diagnostics Plugins
 
-As it is stated in the introduction of this section and shown in the log file content above, diagnostics utility consists of plugins such as BuildInfo, SystemProperties, and HazelcastInstance.
+As it is stated in the introduction of this section and shown in the log file content above, diagnostics utility consists of plugins such as BuildInfo, SystemProperties and HazelcastInstance.
 
 ===== BuildInfo
 
-It shows the detailed Hazelcast build information including the Hazelcast release number, `Git` revision number, and whether you have Hazelcast IMDG Enterprise or not.
+It shows the detailed Hazelcast build information including the Hazelcast release number, `Git` revision number and whether you have Hazelcast IMDG Enterprise or not.
 
 ===== SystemProperties
 
@@ -1113,7 +1113,7 @@ You can configure the frequency at which the cluster information is dumped to th
 
 ===== SystemLog
 
-It shows the activities in your cluster including when a connection/member is added or removed, and if there is a change in the lifecycle of the cluster. It also includes the reasons for connection closings.
+It shows the activities in your cluster including when a connection/member is added or removed and if there is a change in the lifecycle of the cluster. It also includes the reasons for connection closings.
 
 You can enable or disable the system log diagnostics plugin, and configure whether it shows information about partition migrations using the following properties:
 
@@ -1123,7 +1123,7 @@ You can enable or disable the system log diagnostics plugin, and configure wheth
 
 ===== StoreLatency
 
-It shows statistics including the count of methods for each store (`load`, `loadAll`, `loadAllKeys`, etc.), average and maximum latencies for each store method calls, and latency distributions for each store. The following is an example output snippet as part of the diagnostics log file for Hazelcast MapStore:
+It shows statistics including the count of methods for each store (`load`, `loadAll`, `loadAllKeys`, etc.), average and maximum latencies for each store method calls and latency distributions for each store. The following is an example output snippet as part of the diagnostics log file for Hazelcast MapStore:
 
 ```
 17-9-2016 13:12:34 MapStoreLatency[

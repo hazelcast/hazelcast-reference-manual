@@ -6,7 +6,7 @@ This chapter provides information about Hazelcast's client and language implemen
 
 - Java, C++ and .NET clients
 - Memcache and REST clients
-- Other client and language implementations: Python, Node.js, Scala, and Go.
+- Other client and language implementations: Python, Node.js, Scala and Go.
 
 
 **Feature Comparison for Hazelcast Clients:**
@@ -20,7 +20,7 @@ Please refer to https://github.com/hazelcast/hazelcast-code-samples/tree/master/
 [[java-client]]
 === Java Client
 
-The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast IMDG and Hazelcast IMDG Enterprise. The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data, and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
+The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast IMDG and Hazelcast IMDG Enterprise. The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
 
 Please also check the <<other-client-and-language-implementations, Other Client and Language Implementations>>.
 
@@ -33,7 +33,7 @@ Imagine a trading application where all the trading data are stored and managed 
 Starting with Hazelcast 3.5, a new Java Native Client Library is introduced in the release package. This library contains clients which use the new Hazelcast Open Binary Client Protocol.
 
 * For 3.5.x releases: You can use the new client experimentally with the library `hazelcast-client-new`. This library does not exist for the releases before 3.5. Please do not use this library with the Hazelcast clusters from 3.6.x and higher releases since it is not compatible with those releases.
-* For 3.6.x releases: You can use the new client with the library `hazelcast-client`. The old client's library is `hazelcast-client-legacy`, and you can still use it.
+* For 3.6.x releases: You can use the new client with the library `hazelcast-client`. The old client's library is `hazelcast-client-legacy` and you can still use it.
 * For 3.7.x and higher releases: There is no more old client for these releases. The only one is the `hazelcast-client` library, which includes clients implemented with the Hazelcast Open Binary Client Protocol.
 ====
 
@@ -107,7 +107,7 @@ In dummy client mode, the client will only connect to one of the configured addr
 
 ===== Handling Failures
 
-There are two main failure cases you should be aware of, and configurations you can perform to achieve proper behavior.
+There are two main failure cases and configurations you can perform to achieve proper behavior.
 
 **Handling Client Connection Failure:**
 
@@ -135,7 +135,7 @@ When any failure happens between a client and member (such as an exception at th
 * it is certain that it has not run on the member yet, or 
 * if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect. 
 
-If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member, and then the connection is lost. Since there will be no respond for this operation, you will not now whether it has run on the member or not. If you enabled `redoOperation`, it means this operation may run again, which may cause two sane objects in the queue.
+If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member and then the connection is lost. Since there will be no respond for this operation, you will not now whether it has run on the member or not. If you enabled `redoOperation`, it means this operation may run again, which may cause two sane objects in the queue.
 
 
 ===== Using Supported Distributed Data Structures
@@ -262,10 +262,10 @@ Set<Partition> partitions = partitionService.getPartitions();
 
 Lifecycle handling performs the following:
 
-- checks to see if the client is running,
-- shuts down the client gracefully,
-- terminates the client ungracefully (forced shutdown), and
-- adds/removes lifecycle listeners.
+- Check if the client is running.
+- Shut down the client gracefully.
+- Terminate the client ungracefully (forced shutdown).
+- Add/remove lifecycle listeners.
 
 
 ```
@@ -451,7 +451,7 @@ ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703");
 ```
 
-If the port part is omitted, then 5701, 5702, and 5703 will be tried in random order.
+If the port part is omitted, then 5701, 5702 and 5703 will be tried in random order.
 
 You can provide multiple addresses with ports provided or not, as seen above. The provided list is shuffled and tried in random order. Default value is *localhost*.
 
@@ -917,7 +917,7 @@ config.setProperty("hazelcast.client.heartbeat.interval", "5000");
 
 ===== Client Ping Failure Detector
 
-In addition to the Deadline Failure Detector, the Ping Failure Detector may be configured on your client. Please note that this detector is disabled by default. The Ping Failure Detector operates at Layer 3 of the OSI protocol, and provides much quicker and more deterministic detection of hardware and other lower level events. 
+In addition to the Deadline Failure Detector, the Ping Failure Detector may be configured on your client. Please note that this detector is disabled by default. The Ping Failure Detector operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events. 
 When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred. 
 
 If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
@@ -971,7 +971,7 @@ clientIcmpPingConfig.setIntervalMilliseconds(1000)
 [...]
 ```
 
-- `enabled` (default false) - Enables the legacy ICMP detection mode, works cooperatively with the existing failure detector, and only kicks-in after a pre-defined period has passed with no heartbeats from a member.
+- `enabled` (default false) - Enables the legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member.
 - `timeout-milliseconds` (default 1000) - Number of milliseconds until a ping attempt is considered failed if there was no reply.
 - `max-attempts` (default 3) - Maximum number of ping attempts before the member gets suspected by the detector.
 - `interval-milliseconds` (default 1000) - Interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed.
@@ -991,12 +991,12 @@ Below is a summary table of all possible configuration combinations of the Ping 
 
 | true 
 | false  
-| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7
+| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7
 | Supported  TCP Echo on port 7 	| Supported  ICMP Echo if available - Falls back on TCP Echo on port 7 	|
 
 | true  	
 | true      	
-| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available 	
+| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available 	
 | Not Supported                 	
 | Not Supported - Requires root privileges                            	|
 |===
@@ -1155,7 +1155,7 @@ The features of C++ Clients are listed below:
 - Ability to add cluster listeners to a cluster and entry/item listeners to distributed data structures.
 - Distributed synchronization mechanisms with ILock, ISemaphore and ICountDownLatch.
 
-Please refer to C++ client's own GitHub https://github.com/hazelcast/hazelcast-cpp-client[repo] for information on setting the client up, installing and compiling it, its serialization support, and APIs such as raw pointer and query. 
+Please refer to C++ client's own GitHub https://github.com/hazelcast/hazelcast-cpp-client[repo] for information on setting the client up, installing and compiling it, its serialization support and APIs such as raw pointer and query. 
 
 
 	
@@ -1182,7 +1182,7 @@ NOTE:  REST client request listener service is not enabled by default. You shoul
 
 ==== REST Client GET/POST/DELETE Examples
 
-In the following GET, POST, and DELETE examples, assume that your cluster members are as shown below.
+In the following GET, POST and DELETE examples, assume that your cluster members are as shown below.
 
 ```
 Members [5] {
@@ -1256,7 +1256,7 @@ It will return the following response if there is a corresponding value:
 bar
 ```
 
-This GET call returned a value, its length, and also the MIME type (`text/plain`) since the POST call example shown above included the MIME type.
+This GET call returned a value, its length and also the MIME type (`text/plain`) since the POST call example shown above included the MIME type.
 
 It will return the following if there is no mapping for the given key:
 

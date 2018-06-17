@@ -2,11 +2,11 @@
 
 == Transactions
 
-This chapter explains the usage of Hazelcast in a transactional context. It describes the Hazelcast transaction types and how they work, how to provide XA (e**X**tended **A**rchiteture) transactions, and how to integrate Hazelcast with J2EE containers.
+This chapter explains the usage of Hazelcast in a transactional context. It describes the Hazelcast transaction types and how they work, how to provide XA (e**X**tended **A**rchiteture) transactions and how to integrate Hazelcast with J2EE containers.
 
 === Creating a Transaction Interface
 
-You create a `TransactionContext` object to begin, commit, and rollback a transaction. You can obtain transaction-aware instances of queues, maps, sets, lists, multimaps via `TransactionContext`, work with them, and commit/rollback in one shot. You can see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/TransactionContext.html[TransactionContext API here].
+You create a `TransactionContext` object to begin, commit and rollback a transaction. You can obtain transaction-aware instances of queues, maps, sets, lists and multimaps via `TransactionContext`, work with them and commit/rollback in one shot. You can see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/TransactionContext.html[TransactionContext API here].
 
 Hazelcast supports two types of transactions: ONE_PHASE and TWO_PHASE. The type of transaction controls what happens when a member crashes while a transaction is committing. The default behavior is TWO_PHASE.
 
@@ -22,7 +22,7 @@ include::{javasource}/transactions/TransactionalMember.java[tag=trx]
 
 In a transaction, operations will not be executed immediately. Their changes will be local to the `TransactionContext` until committed. However, they will ensure the changes via locks. 
 
-For the above example, when `map.put` is executed, no data will be put in the map but the key will be locked against changes. While committing, operations will be executed, the value will be put to the map, and the key will be unlocked.
+For the above example, when `map.put` is executed, no data will be put in the map but the key will be locked against changes. While committing, operations will be executed, the value will be put to the map and the key will be unlocked.
 
 The isolation level in Hazelcast Transactions is `READ_COMMITTED` on the level of a single partition. If you are in a transaction, you can read the data in your transaction and the data that is already committed. If you are not in a transaction, you can only read the committed data. 
 

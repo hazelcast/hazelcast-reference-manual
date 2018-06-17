@@ -7,7 +7,7 @@ Hazelcast is an open source In-Memory Data Grid (IMDG).
 It provides elastically scalable distributed In-Memory computing, widely recognized as the fastest and most scalable
 approach to application performance. Hazelcast does this in open source.
 More importantly, Hazelcast makes distributed computing simple by offering distributed implementations of many
-developer-friendly interfaces from Java such as Map, Queue, ExecutorService, Lock, and JCache. For example, the Map
+developer-friendly interfaces from Java such as Map, Queue, ExecutorService, Lock and JCache. For example, the Map
 interface provides an In-Memory Key Value store which confers many of the advantages of NoSQL in terms of developer
 friendliness and developer productivity.
 
@@ -21,7 +21,7 @@ Hazelcast is highly scalable and available. Distributed applications can use
 Hazelcast for distributed caching, synchronization, clustering, processing, pub/sub messaging, etc. Hazelcast is
 implemented in Java and has clients for Java, C/C++, .NET, REST, Python, Go and Node.js. Hazelcast also speaks Memcached protocol. It plugs into Hibernate and can easily be used with any existing database system.
 
-If you are looking for In-Memory speed, elastic scalability, and the developer friendliness of NoSQL, Hazelcast is a
+If you are looking for in-memory speed, elastic scalability and the developer friendliness of NoSQL, Hazelcast is a
 great choice.
 
 **Hazelcast is Simple**
@@ -84,7 +84,7 @@ image::ClientServer.png[Client/Server Deployment]
 
 Hazelcast provides native clients (Java, .NET and C++), Memcache and REST clients, Scala, Python and Node.js client implementations.
 
-Client/Server deployment has advantages including more predictable and reliable Hazelcast performance, easier identification of problem causes, and most importantly, better scalability. 
+Client/Server deployment has advantages including more predictable and reliable Hazelcast performance, easier identification of problem causes and, most importantly, better scalability. 
 When you need to scale in this deployment type, just add more Hazelcast server members. You can address client and server scalability concerns separately.
 
 If you want low-latency data access, as in the Embedded deployment, and you also want the scalability advantages of the Client/Server deployment, you can consider defining Near Caches for your clients. This enables the frequently used data to be kept in the client's local memory. Please refer to the <<configuring-client-near-cache, Configuring Client Near Cache section>>.
@@ -96,7 +96,7 @@ If you want low-latency data access, as in the Embedded deployment, and you also
 
 Data is at the core of software systems. In conventional architectures, a relational database persists and provides access to data. Applications are talking directly with a database which has its backup as another machine. To increase performance, tuning or a faster machine is required. This can cost a large amount of money or effort.
 
-There is also the idea of keeping copies of data next to the database, which is performed using technologies like external key-value stores or second level caching that help offload the database. However, when the database is saturated or the applications perform mostly "put" operations (writes), this approach is of no use because it insulates the database only from the "get" loads (reads). Even if the applications are read-intensive there can be consistency problems - when data changes, what happens to the cache, and how are the changes handled? This is when concepts like time-to-live (TTL) or write-through come in.
+There is also the idea of keeping copies of data next to the database, which is performed using technologies like external key-value stores or second level caching that help offload the database. However, when the database is saturated or the applications perform mostly "put" operations (writes), this approach is of no use because it insulates the database only from the "get" loads (reads). Even if the applications are read-intensive there can be consistency problems - when data changes, what happens to the cache and how are the changes handled? This is when concepts like time-to-live (TTL) or write-through come in.
 
 In the case of TTL, if the access is less frequent than the TTL, the result will always be a cache miss. On the other hand, in the case of write-through caches, if there are more than one of these caches in a cluster, we again will have consistency issues. This can be avoided by having the nodes communicate with each other so that entry invalidations can be propagated.
 
@@ -157,7 +157,7 @@ NOTE: Partition distributions in the below illustrations are shown for the sake 
 
 image::BackupPartitions.jpg[Cluster with Two Members - Backups are Created]
 
-In the illustration, the partition replicas with black text are primaries and the partition replicas with blue text are backups. The first member has primary replicas of 135 partitions (black), and each of these partitions are backed up in the second member (i.e., the second member owns the backup replicas) (blue). At the same time, the first member also has the backup replicas of the second member's primary partition replicas.
+In the illustration, the partition replicas with black text are primaries and the partition replicas with blue text are backups. The first member has primary replicas of 135 partitions (black) and each of these partitions are backed up in the second member (i.e., the second member owns the backup replicas) (blue). At the same time, the first member also has the backup replicas of the second member's primary partition replicas.
 
 As you add more members, Hazelcast moves some of the primary and backup partition replicas to the new members one by one, making all members equal and redundant. Thanks to the consistent hashing algorithm, only the minimum amount of partitions will be moved to scale out Hazelcast. The following is an illustration of the partition replica distributions in a Hazelcast cluster with four members.
 
@@ -178,9 +178,9 @@ NOTE: Please refer to the <<enabling-lite-members, Enabling Lite Members section
 
 Hazelcast distributes data entries into the partitions using a hashing algorithm. Given an object key (for example, for a map) or an object name (for example, for a topic or list):
 
-* the key or name is serialized (converted into a byte array),
-* this byte array is hashed, and
-* the result of the hash is mod by the number of partitions.
+* the key or name is serialized (converted into a byte array)
+* this byte array is hashed
+* the result of the hash is mod by the number of partitions
 
 The result of this modulo - *MOD(hash result, partition count)* -  is the partition in which the data will be stored, that is the **partition ID**. For ALL members you have in your cluster, the partition ID for a given key will always be the same.
 
@@ -218,7 +218,7 @@ Hazelcast can be used:
 * to share thousands of keys in a cluster where there is a web service interface on an application server and some validation.
 * as a distributed topic (publish/subscribe server) to build scalable chat servers for smartphones.
 * as a front layer for a Cassandra back-end.
-* to distribute user object states across the cluster, to pass messages between objects, and to share system data structures (static initialization state, mirrored objects, object identity generators).
+* to distribute user object states across the cluster, to pass messages between objects and to share system data structures (static initialization state, mirrored objects, object identity generators).
 * as a multi-tenancy cache where each tenant has its own map.
 * to share datasets, e.g., table-like data structure, to be used by applications.
 * to distribute the load and collect status from Amazon EC2 servers where the front-end is developed using, for example, Spring framework.

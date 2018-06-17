@@ -13,7 +13,7 @@ Hazelcast partitions your data and spreads it across cluster of members. You can
 . Each member looks at its own local entries and filters them according to the predicate. At this stage, key/value pairs of the entries are deserialized and then passed to the predicate.
 . The predicate requester merges all the results coming from each member into a single set.
 
-Distributed query is highly scalable. If you add new members to the cluster, the partition count for each member is reduced and thus the time spent by each member on iterating its entries is reduced. In addition, the pool of partition threads evaluates the entries concurrently in each member, and the network traffic is also reduced since only filtered data is sent to the requester.
+Distributed query is highly scalable. If you add new members to the cluster, the partition count for each member is reduced and thus the time spent by each member on iterating its entries is reduced. In addition, the pool of partition threads evaluates the entries concurrently in each member and the network traffic is also reduced since only filtered data is sent to the requester.
 
 Hazelcast offers the following APIs for distributed query purposes:
 
@@ -114,7 +114,7 @@ NOTE: Please see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast
 
 ===== Combining Predicates with AND, OR, NOT
 
-You can combine predicates using the `and`, `or`, and `not` operators, as shown in the below examples.
+You can combine predicates using the `and`, `or` and `not` operators, as shown in the below examples.
 
 [source,java]
 ----
@@ -278,7 +278,7 @@ Paging Predicate, also known as Order & Limit, is not supported in Transactional
 
 You can run queries on a single partition in your cluster using the partition predicate (`PartitionPredicate`). 
 
-It takes a predicate and partition key as parameters, gets the partition ID using the key, and  runs that predicate only on the partition where that key belongs.
+It takes a predicate and partition key as parameters, gets the partition ID using the key and  runs that predicate only on the partition where that key belongs.
 
 Please see the following code snippet:
 
@@ -314,10 +314,7 @@ member, Hazelcast will iterate through all the owned entries and find the matchi
 the mostly queried fields, just like you would do for your database. Indexing will add overhead for each `write`
 operation but queries will be a lot faster. If you query your map a lot, make sure to add indexes for the most frequently
 queried fields. For example, if you do an `active and age < 30` query, make sure you add an index for the `active` and
-`age` fields. The following example code does that by:
-
-* getting the map from the Hazelcast instance, and
-* adding indexes to the map with the IMap `addIndex` method.
+`age` fields. The following example code does that by getting the map from the Hazelcast instance and adding indexes to the map with the IMap `addIndex` method.
 
 [source,java]
 ----
@@ -375,7 +372,7 @@ The underlying data structures used by the indexes need to copy the query result
 
 On-read copying means that, for each index-read operation, the result of the query is copied before it is sent to the caller. Depending on the query result's size, this type of index copying may be slower since the result is stored in a map, i.e., all entries need to have the hash calculated before being stored. Unlike the index-read operations, each index-write operation is fast, since there will be no copying taking place. So, this option can be preferred in index-write intensive cases.
 
-On-write copying means that each index-write operation completely copies the underlying map to provide the copy-on-write semantics, and this may be a slow operation depending on the index size. Unlike index-write operations, each index-read operation is fast since the operation only includes accessing the map that stores the results and returning them to the caller.
+On-write copying means that each index-write operation completely copies the underlying map to provide the copy-on-write semantics and this may be a slow operation depending on the index size. Unlike index-write operations, each index-read operation is fast since the operation only includes accessing the map that stores the results and returning them to the caller.
 
 Another option is never copying the results of a query to a separate map. This means the results backed by the underlying index-map can change after the query has been executed (such as an entry might have been added or removed from an index, or it might have been remapped). This option can be preferred if you expect "mostly correct" results, i.e., if it is not a problem when some entries returned in the query result set do not match the initial query criteria. This is the fastest option since there is no copying.
 
@@ -874,9 +871,9 @@ A submitted job is always identified using a unique combination of the `JobTrack
 
 To create a Job, a second class `com.hazelcast.mapreduce.KeyValueSource` is necessary. We will have a deeper look at the `KeyValueSource` class in the next section. `KeyValueSource` is used to wrap any kind of data or data structure into a well defined set of key-value pairs.
 
-The example code below is a direct follow up to the example in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>, and it reuses the already created HazelcastInstance and `JobTracker` instances.
+The example code below is a direct follow up to the example in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>. It reuses the already created HazelcastInstance and `JobTracker` instances.
 
-The example starts by retrieving an instance of our data map, and then it creates the Job instance. Implementations used to configure the Job will be discussed while walking further through the API documentation.
+The example starts by retrieving an instance of our data map and then it creates the Job instance. Implementations used to configure the Job will be discussed while walking further through the API documentation.
 
 NOTE: Since the Job class is highly dependent upon generics to support type safety, the generics change over time and may not be assignment compatible to old variable types. To make use of the full potential of the fluent API, we recommend you use fluent method chaining as shown in this example to prevent the need for too many variables.
 
@@ -899,7 +896,7 @@ future.andThen( buildCallback() );
 Map<String, Long> result = future.get();
 ----
 
-As seen above, we create the Job instance and define a mapper, combiner, and reducer. Then we submit the request to the cluster. The `submit` method returns an ICompletableFuture that can be used to attach our callbacks or to wait for the result to be processed in a blocking fashion.
+As seen above, we create the Job instance and define a mapper, combiner and reducer. Then we submit the request to the cluster. The `submit` method returns an ICompletableFuture that can be used to attach our callbacks or to wait for the result to be processed in a blocking fashion.
 
 There are more options available for job configurations, such as defining a general chunk size or on what keys the operation will operate. For more information, please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
 
@@ -943,7 +940,7 @@ multiple times but once per partitionId.
 
 ===== Implementing Mapping Logic with Mapper
 
-Using the `Mapper` interface, you will implement the mapping logic. Mappers can transform, split, calculate, and aggregate data from data sources. In Hazelcast you can also integrate data from more than the KeyValueSource data source by implementing `com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps, list, and/or sets.
+Using the `Mapper` interface, you will implement the mapping logic. Mappers can transform, split, calculate and aggregate data from data sources. In Hazelcast you can also integrate data from more than the KeyValueSource data source by implementing `com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps, list and/or sets.
 
 The mappers `map` function is called once per available entry in the data structure. If you work on distributed data structures that operate in a partition-based fashion, multiple mappers work in parallel on the different cluster members on the members' assigned partitions. Mappers then prepare and maybe transform the input key-value pair and emit zero or more key-value pairs for the reducing phase.
 
@@ -966,7 +963,7 @@ public class TokenizerMapper implements Mapper<String, String, String, Long> {
 }
 ----
 
-This code splits the mapped texts into their tokens, iterates over the tokenizer as long as there are more tokens, and emits a pair per word. Note that we're not yet collecting multiple occurrences of the same word, we just fire every word on its own.
+This code splits the mapped texts into their tokens, iterates over the tokenizer as long as there are more tokens and emits a pair per word. Note that we're not yet collecting multiple occurrences of the same word, we just fire every word on its own.
 
 **LifecycleMapper / LifecycleMapperAdapter**
 
@@ -1181,9 +1178,9 @@ This section explains some of the internals of the MapReduce framework. This is 
 
 To understand the following technical internals, we first have a short look at what happens in terms of an example workflow.
 
-As a simple example, think of an `IMap<String, Integer>` and emitted keys having the same types. Imagine you have a cluster with three members, and you initiate the MapReduce job on the first member. After you requested the JobTracker from your running/connected Hazelcast, we submit the task and retrieve the ICompletableFuture, which gives us a chance to wait for the result to be calculated or to add a callback (and being more reactive).
+As a simple example, think of an `IMap<String, Integer>` and emitted keys having the same types. Imagine you have a cluster with three members and you initiate the MapReduce job on the first member. After you requested the JobTracker from your running/connected Hazelcast, we submit the task and retrieve the ICompletableFuture, which gives us a chance to wait for the result to be calculated or to add a callback (and being more reactive).
 
-The example expects that the chunk size is 0 or 1, so an emitted value is directly sent to the reducers. Internally, the job is prepared, started, and executed on all members as shown below. The first member acts as the job owner (job emitter).
+The example expects that the chunk size is 0 or 1, so an emitted value is directly sent to the reducers. Internally, the job is prepared, started and executed on all members as shown below. The first member acts as the job owner (job emitter).
 
 ```
 Member1 starts MapReduce job
@@ -1237,13 +1234,13 @@ Beginning with the package level, there is one basic package: `com.hazelcast.map
  - The **client** package contains all classes that are needed on the client and member sides when a client offers a MapReduce job.
  - The **notification** package contains all "notification" or event classes that notify other members about progress on operations.
  - The **operation** package contains all operations that are used by the workers or job owner to coordinate work and sync partition or reducer processing.
- - The **task** package contains all classes that execute the actual MapReduce operation. It features the supervisor, mapping phase implementation, and mapping and reducing tasks.
+ - The **task** package contains all classes that execute the actual MapReduce operation. It features the supervisor, mapping phase implementation and mapping/reducing tasks.
 
 ===== MapReduce Job Walk-Through
 
 Now to the technical walk-through: A MapReduce Job is always retrieved from a named `JobTracker`, which is implemented in `NodeJobTracker` (extends `AbstractJobTracker`) and is configured using the configuration DSL. All of the internal implementation is completely ICompletableFuture-driven and mostly non-blocking in design.
 
-On submit, the Job creates a unique UUID which afterwards acts as a jobId and is combined with the JobTracker's name to be uniquely identifiable inside the cluster. Then, the preparation is sent around the cluster and every member prepares its execution by creating a JobSupervisor, MapCombineTask, and ReducerTask. The job-emitting JobSupervisor gains special capabilities to synchronize and control JobSupervisors on other members for the same job.
+On submit, the Job creates a unique UUID which afterwards acts as a jobId and is combined with the JobTracker's name to be uniquely identifiable inside the cluster. Then, the preparation is sent around the cluster and every member prepares its execution by creating a JobSupervisor, MapCombineTask and ReducerTask. The job-emitting JobSupervisor gains special capabilities to synchronize and control JobSupervisors on other members for the same job.
 
 If preparation is finished on all members, the job itself is started by executing a StartProcessingJobOperation on every member. This initiates a MappingPhase implementation (defaults to KeyValueSourceMappingPhase) and starts the actual mapping on the members.
 
@@ -1282,7 +1279,7 @@ MapReduce is a very powerful tool, however it's demanding in terms of space, tim
 - 1st phase: on each member (scatter)
 - 2nd phase: one member aggregates responses from members (gather)
 
-It is not as flexible as a full-blown M/R system due to the 2nd phase being single-member, and the input can be massive in some use cases. The member doing the 2nd step needs enough capacity to hold all intermediate results from all members from the 1st step, but in practice it is sufficient for many aggregation tasks like "find average" or "find highest" and other common examples.
+It is not as flexible as a full-blown M/R system due to the 2nd phase being single-member and the input can be massive in some use cases. The member doing the 2nd step needs enough capacity to hold all intermediate results from all members from the 1st step, but in practice it is sufficient for many aggregation tasks like "find average" or "find highest" and other common examples.
 
 The benefits are:
 
@@ -1327,7 +1324,7 @@ Map<String, Long> counts =
          .get();
 ```
 
-Jet's Core API is strictly lower-level than MapReduce's because it can be used to build the entire infrastructure that can drive MapReduce's mapper, combiner, and reducer, fully preserving the semantics of the MapReduce job. However, this approach to migrating your code to Jet is not a good option because the MapReduce API enforces a quite suboptimal computation model.
+Jet's Core API is strictly lower-level than MapReduce's because it can be used to build the entire infrastructure that can drive MapReduce's mapper, combiner and reducer, fully preserving the semantics of the MapReduce job. However, this approach to migrating your code to Jet is not a good option because the MapReduce API enforces a quite suboptimal computation model.
 The simplest approach is implementing the job in terms of Jet's java.util.stream support (Jet JUS for short):
 
 ```
@@ -1480,7 +1477,7 @@ Hazelcast has native support for aggregation operations on the contents of its d
 
 The main area where native aggregations may not be sufficient are operations that group the data by key and produce results of size O(keyCount). The architecture of Hazelcast aggregations is not well adapted to this use case, although it will still work even for moderately-sized results (up to 100 MB, as a ballpark figure). Beyond these numbers, and whenever something more than a single aggregation step is needed, Jet becomes the preferred choice. In the mentioned use case Jet helps because it doesn't send entire hashtables in serialized form and materialize all the results on the user's machine, but rather streams the key-value pairs directly into a target IMap. Since it is a distributed structure, it doesn't focus its load on a single member.
 
-Jet's DAG paradigm offers much more than the basic map-reduce-combine cascade. Among other setups it can compose several such cascades and also perform co-grouping, joining, and many other operations in complex combinations.
+Jet's DAG paradigm offers much more than the basic map-reduce-combine cascade. Among other setups it can compose several such cascades and also perform co-grouping, joining and many other operations in complex combinations.
 
 
 === Aggregators
@@ -1488,10 +1485,10 @@ Jet's DAG paradigm offers much more than the basic map-reduce-combine cascade. A
 NOTE: This feature has been deprecated. Please use the <<fast-aggregations, Fast-Aggregations>> instead.
 
 Based on the Hazelcast MapReduce framework, Aggregators are ready-to-use data aggregations. These are typical operations like
-sum up values, finding minimum or maximum values, calculating averages, and other operations that you would expect 
+sum up values, finding minimum or maximum values, calculating averages and other operations that you would expect 
 in the relational database world.  
 
-Aggregation operations are implemented, as mentioned above, on top of the MapReduce framework, and all operations can be
+Aggregation operations are implemented, as mentioned above, on top of the MapReduce framework. All operations can be
 achieved using pure MapReduce calls. However, using the Aggregation feature is more convenient for a big set of standard operations.
 
 ==== Aggregations Basics
@@ -1518,7 +1515,7 @@ future Java versions. In addition, the whole Aggregations API has full Java 8 Pr
 https://jcp.org/en/jsr/detail?id=335[JSR 335]) support.
 
 For illustration of the differences in Java 6 and 7 in comparison to Java 8, we will have a quick look at code
-examples for both. After that, we will focus on using Java 8 syntax to keep examples short and easy to understand, and we will see some hints about what the code looks like in Java 6 or 7.
+examples for both. After that, we will focus on using Java 8 syntax to keep examples short and easy to understand. We will see some hints about what the code looks like in Java 6 or 7.
 
 The first example will produce the sum of some `int` values stored in a Hazelcast IMap. This example does not use much of the functionality of the Aggregations framework, but it will show the main difference.
 
@@ -1703,7 +1700,7 @@ int sum = personAgeMapping.aggregate( supplier, Aggregations.count() );
 ===== Defining the Aggregation Operation
 
 The `com.hazelcast.mapreduce.aggregation.Aggregation` interface defines the aggregation operation itself. It contains a set of
-MapReduce API implementations like `Mapper`, `Combiner`, `Reducer`, and `Collator`. These implementations are normally unique to
+MapReduce API implementations like `Mapper`, `Combiner`, `Reducer` and `Collator`. These implementations are normally unique to
 the chosen `Aggregation`. This interface can also be implemented with your aggregation operations based on MapReduce calls. For
 more information, refer to <<implementing-aggregations, Implementing Aggregations section>>.
 
@@ -2110,7 +2107,7 @@ There are also two callbacks:
 
 These callbacks enable releasing the state that might have been initialized and stored in the Aggregator - to reduce the network traffic.
 
-Each phase is described below, and you can also refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc] for the API's details.
+Each phase is described below and you can also refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc] for the API's details.
 
 **Accumulation:**
 
@@ -2336,7 +2333,7 @@ QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
 The following features of continuous query cache are valid for both the member and client.
 
 * The initial query that is run on the existing `IMap` data during the continuous query cache construction can be enabled/disabled according to the supplied predicate via `QueryCacheConfig.setPopulate()`.
-* Continuous query cache allows you to run queries with indexes, and perform event batching and coalescing.
+* Continuous query cache allows you to run queries with indexes and perform event batching and coalescing.
 * A continuous query cache is evictable. Note that a continuous query cache has a default maximum capacity of 10000. If you need a non-evictable cache, you should configure the eviction via `QueryCacheConfig.setEvictionConfig()`.
 * A listener can be added to a continuous query cache using `QueryCache.addEntryListener()`.
 * `IMap` events are reflected in continuous query cache in the same order as they were generated on map entries. Since events are created on entries stored in partitions, ordering of events is maintained based on the ordering within the partition. You can add listeners to capture lost events using `EventLostListener` and you can recover lost events with the method `QueryCache.tryRecover()`.

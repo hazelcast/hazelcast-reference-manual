@@ -10,7 +10,7 @@ addition, it demonstrates the different configuration options and describes the 
 To provide your application with this JCache functionality, your application needs the JCache API inside its classpath. This API is the bridge between the specified JCache standard and the implementation provided by Hazelcast.
 
 The method of integrating the JCache API JAR into the application classpath depends on the build system used. For Maven, Gradle, SBT,
-Ivy, and many other build systems, all using Maven-based dependency repositories, perform the integration by adding
+Ivy and many other build systems, all using Maven-based dependency repositories, perform the integration by adding
 the Maven coordinates to the build descriptor.
 
 As already mentioned, you have to add JCache
@@ -132,7 +132,7 @@ checked on retrieval of the cache.
 To create the cache, we call `javax.cache.CacheManager.createCache()` with a name for the cache and the previously created
 configuration; the call returns the created cache. If you need to retrieve a previously created cache, you can use the corresponding method overload `javax.cache.CacheManager.getCache()`. If the cache was created using type parameters, you must retrieve the cache afterward using the type checking version of `getCache`.
 
-===== get, put, and getAndPut
+===== get, put and getAndPut
 
 The following lines are simple `put` and `get` calls from the `java.util.Map` interface. The
 `javax.cache.Cache.put()` has a `void` return type and does not return the previously assigned value of the key. To imitate the
@@ -140,10 +140,10 @@ The following lines are simple `put` and `get` calls from the `java.util.Map` in
 
 ==== Configuring for JCache
 
-Hazelcast JCache provides for two different methods of cache configuration:
+Hazelcast JCache provides two different methods for cache configuration:
 
-* programmatically: the typical Hazelcast way, using the Config API seen above, and
-* declaratively: using `hazelcast.xml` or `hazelcast-client.xml`.
+* programmatically: the typical Hazelcast way, using the Config API seen above
+* declaratively: using `hazelcast.xml` or `hazelcast-client.xml`
 
 ===== JCache Declarative Configuration
 

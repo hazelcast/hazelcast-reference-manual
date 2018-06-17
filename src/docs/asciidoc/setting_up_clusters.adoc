@@ -65,12 +65,12 @@ Using a clickable Hazelcast Tile for Pivotal Cloud Foundry (PCF), you can deploy
 [[hazelcast-openshift-integration]]
 ==== Hazelcast OpenShift Integration
 
-Hazelcast can run inside OpenShift benefiting from its cluster management software Kubernetes for discovery of members. Using Hazelcast Docker images, templates and default configuration files, you can deploy Hazelcast IMDG, Hazelcast IMDG Enterprise, and Management Center onto OpenShift. Please see the documentation:
+Hazelcast can run inside OpenShift benefiting from its cluster management software Kubernetes for discovery of members. Using Hazelcast Docker images, templates and default configuration files, you can deploy Hazelcast IMDG, Hazelcast IMDG Enterprise and Management Center onto OpenShift. Please see the documentation:
 
 * https://github.com/hazelcast/hazelcast-openshift[Hazelcast IMDG and Hazelcast IMDG Enterprise]
 * https://github.com/hazelcast/management-center-openshift[Management Center]
 
-Please also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift[Hazelcast for OpenShift] guide, which presents how to set up local OpenShift environment, start Hazelcast cluster, configure Management Center, and finally run a sample client application.
+Please also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift[Hazelcast for OpenShift] guide, which presents how to set up local OpenShift environment, start Hazelcast cluster, configure Management Center and finally run a sample client application.
 
 [[eureka-cloud-discovery]]
 ==== Eureka Cloud Discovery
@@ -80,12 +80,12 @@ Eureka is a REST based service that is primarily used in the AWS cloud for locat
 [[heroku-cloud-discovery]]
 ==== Heroku Cloud Discovery
 
-Heroku is a platform as a service (PaaS) with which you can build, run, and operate applications entirely in the cloud. It is a cloud platform based on a managed container system, with integrated data services and a powerful ecosystem. Hazelcast offers a discovery plugin that looks for IP addresses of other members by resolving service names against the Heroku DNS Discovery in Heroku Private Spaces. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/jkutner/hazelcast-heroku-discovery/blob/master/README.md[documentation].
+Heroku is a platform as a service (PaaS) with which you can build, run and operate applications entirely in the cloud. It is a cloud platform based on a managed container system, with integrated data services and a powerful ecosystem. Hazelcast offers a discovery plugin that looks for IP addresses of other members by resolving service names against the Heroku DNS Discovery in Heroku Private Spaces. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/jkutner/hazelcast-heroku-discovery/blob/master/README.md[documentation].
 
 [[kubernetes-cloud-discovery]]
 ==== Kubernetes Cloud Discovery
 
-Kubernetes is an open source system for automating deployment, scaling, and management of containerized applications. Hazelcast provides Kubernetes discovery mechanism that looks for IP addresses of other members by resolving the requests against a Kubernetes Service Discovery system. It supports two different options of resolving against the discovery registry: (i) a request to the REST API, (ii) DNS Lookup against a given DNS service name. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-kubernetes/blob/master/README.adoc[documentation] for information on configuring and using it.
+Kubernetes is an open source system for automating deployment, scaling and management of containerized applications. Hazelcast provides Kubernetes discovery mechanism that looks for IP addresses of other members by resolving the requests against a Kubernetes Service Discovery system. It supports two different options of resolving against the discovery registry: (i) a request to the REST API, (ii) DNS Lookup against a given DNS service name. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-kubernetes/blob/master/README.adoc[documentation] for information on configuring and using it.
 
 [[discovering-members-by-tcp]]
 === Discovering Members by TCP
@@ -131,7 +131,7 @@ Instead of providing members line-by-line as shown above, you also have the opti
 
 `<members>192.168.1.0-7,192.168.1.21</members>`
 
-If you do not provide ports for the members, Hazelcast automatically tries the ports 5701, 5702, and so on.
+If you do not provide ports for the members, Hazelcast automatically tries the ports 5701, 5702 and so on.
 
 By default, Hazelcast binds to all local network interfaces to accept incoming traffic. You can change this behavior using the system property `hazelcast.socket.bind.any`. If you set this property to `false`, Hazelcast uses the interfaces specified in the `interfaces` element (please refer to the <<interfaces, Interfaces Configuration section>>). If no interfaces are provided, then it will try to resolve one interface to bind from the `member` elements.
 
@@ -273,7 +273,7 @@ Starting with 3.8.2, there is no need for a group password.
 Hazelcast can dynamically load your custom classes or domain classes from a remote class repository, which typically includes <<enabling-lite-members, lite members>>. For this purpose Hazelcast offers a distributed  dynamic class loader.
 
 Using this dynamic class loader, you can control the local caching of the classes loaded from other members, 
-control the classes to be served to other members, and create blacklists or whitelists of classes and packages. When you enable this feature, you will not have to deploy your classes to all cluster members.
+control the classes to be served to other members and create blacklists or whitelists of classes and packages. When you enable this feature, you will not have to deploy your classes to all cluster members.
 
 The following is the brief working mechanism of the User Code Deployment feature:
 
@@ -357,7 +357,7 @@ HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
 
 You can use the User Code Deployment at the client side for the following situations:
 
-. You have objects that will run on the cluster via the clients such as `Runnable`, `Callable`, and Entry Processors.
+. You have objects that will run on the cluster via the clients such as `Runnable`, `Callable` and Entry Processors.
 . You have new or amended user domain objects (in-memory format of the IMap set to `Object`) which need to be deployed into the cluster.
 
 When this feature is enabled, the clients will deploy these classes to the members. By this way, when a client adds a new class, the members will not require restarts to include the new classes in classpath. 
@@ -521,7 +521,7 @@ This is the list of supported attributes which is set by Discovery Service plugi
 * `hazelcast.partition.group.rack`: For different racks in the same zone.
 * `hazelcast.partition.group.host`: For a shared physical member if virtualization is used.
 
-NOTE: hazelcast-jclouds offers rack or host information in addition to zone information based on cloud provider. In such cases, Hazelcast looks for zone, rack, and host information in the given order and create partition groups with available information*
+NOTE: hazelcast-jclouds offers rack or host information in addition to zone information based on cloud provider. In such cases, Hazelcast looks for zone, rack and host information in the given order and create partition groups with available information*
 
 Following are declarative and programmatic configuration snippets that show how to enable ZONE_AWARE grouping.
 
@@ -538,7 +538,7 @@ partitionGroupConfig.setEnabled( true )
 
 **5. SPI:**
 
-You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()`, and return the `PartitionGroupStrategy` configuration in that overridden method. 
+You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()` and return the `PartitionGroupStrategy` configuration in that overridden method. 
 
 Following is a sample code covering the implementation steps mentioned in the above paragraph: 
 
@@ -756,7 +756,7 @@ networkConfig.setReuseAddress( true );
 [[join]]
 ==== Join
 
-The `join` configuration element is used to discover Hazelcast members and enable them to form a cluster. Hazelcast provides multicast, TCP/IP, EC2, and jclouds® discovery mechanisms. These mechanisms are explained the <<discovery-mechanisms, Discovery Mechanisms section>>. This section describes all the sub-elements and attributes of `join` element. The following are example configurations.
+The `join` configuration element is used to discover Hazelcast members and enable them to form a cluster. Hazelcast provides multicast, TCP/IP, EC2 and jclouds® discovery mechanisms. These mechanisms are explained the <<discovery-mechanisms, Discovery Mechanisms section>>. This section describes all the sub-elements and attributes of `join` element. The following are example configurations.
 
 **Declarative:**
 
@@ -1080,7 +1080,7 @@ Additional to above two properties, _Phi Accrual Failure Detector_ has three mor
 
 * `hazelcast.heartbeat.phiaccrual.failuredetector.threshold`: This is the phi threshold for suspicion. After calculated phi exceeds this threshold, a member is considered as unreachable and marked as suspected. A low threshold allows to detect member crashes/failures faster but can generate more mistakes and cause wrong member suspicions. A high threshold generates fewer mistakes but is slower to detect actual crashes/failures.
 +
-`phi = 1` means likeliness that we will make a mistake is about `10%`. The likeliness is about `1%` with `phi = 2`, `0.1%` with `phi = 3`, and so on. Default phi threshold is 10.
+`phi = 1` means likeliness that we will make a mistake is about `10%`. The likeliness is about `1%` with `phi = 2`, `0.1%` with `phi = 3` and so on. Default phi threshold is 10.
 +
 * `hazelcast.heartbeat.phiaccrual.failuredetector.sample.size`: Number of samples to keep for history. Default value is 200.
 * `hazelcast.heartbeat.phiaccrual.failuredetector.min.std.dev.millis`: Minimum standard deviation to use for the normal distribution used when calculating phi. Too low standard deviation might result in too much sensitivity.
@@ -1117,7 +1117,7 @@ config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.min.std.dev.m
 [[ping-failure-detector]]
 ==== Ping Failure Detector
 
-The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accual Failure Detectors. It operates at Layer 3 of the OSI protocol, and provides much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.  
+The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accrual Failure Detectors. It operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.  
 
 This failure detector is based on `InetAddress.isReachable()`.
 When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
@@ -1161,7 +1161,7 @@ To be able to use the Ping Failure Detector, please add the following properties
 </hazelcast>
 ```
 
-- `hazelcast.icmp.enabled` (default false) - Enables legacy ICMP detection mode, works cooperatively with the existing failure detector, and only kicks-in after a pre-defined period has passed with no heartbeats from a member.
+- `hazelcast.icmp.enabled` (default false) - Enables legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member.
 - `hazelcast.icmp.parallel.mode` (default true) - Enabling the parallel ping detector, works separately from the other detectors.
 - `hazelcast.icmp.timeout` (default 1000) - Number of milliseconds until a ping attempt is considered failed if there was no reply.
 - `hazelcast.icmp.max.attempts` (default 3) - The maximum number of ping attempts before the member/node gets suspected by the detector.
@@ -1197,7 +1197,7 @@ Below is a summary table of all possible configuration combinations of the ping 
 | true
 | true
 | false
-| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.
+| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.
 | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7
 | Supported  TCP Echo on port 7
 | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7
@@ -1205,7 +1205,7 @@ Below is a summary table of all possible configuration combinations of the ping 
 | true
 | true
 | true
-| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3), and suspects them immediately, regardless of the other detectors.
+| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.
 | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available
 | Not Supported
 | Not Supported - Requires root privileges

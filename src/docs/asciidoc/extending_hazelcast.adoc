@@ -92,7 +92,7 @@ Now, we need to enable the class `CounterService`. The declarative way of doing 
 The `CounterService` is declared within the `services` configuration element. 
 
 - Set the `enabled` attribute to `true` to enable the service.
-- Set the `name` attribute to the name of the service. It should be a unique name (`CounterService` in our case) since it will be looked up when a remote call is made. Note that the value of this attribute will be sent at each request, and that a longer `name` value means more data (de)serialization. A good practice is to give an understandable name with the shortest possible length.
+- Set the `name` attribute to the name of the service. It should be a unique name (`CounterService` in our case) since it will be looked up when a remote call is made. Note that the value of this attribute will be sent at each request and a longer `name` value means more data (de)serialization. A good practice is to give an understandable name with the shortest possible length.
 - Set the `class-name` attribute to the class name of the service (`CounterService` in our case). The class should have a *no-arg* constructor. Otherwise, the object cannot be initialized.
 
 Note that multicast is enabled as the join mechanism. In the later sections for the `CounterService` example, we will see why.
@@ -146,7 +146,7 @@ In the previous sections for the `CounterService` example, we started `CounterSe
 
 Now, let's connect the `Counter` interface to `CounterService` and perform a remote call to the cluster member hosting the counter data. Then, we will return a dummy result. 
 
-Remote calls are performed via a proxy in Hazelcast. Proxies expose the methods at the client side. Once a method is called, proxy creates an operation object, sends this object to the cluster member responsible from executing that operation, and then sends the result. 
+Remote calls are performed via a proxy in Hazelcast. Proxies expose the methods at the client side. Once a method is called, proxy creates an operation object, sends this object to the cluster member responsible from executing that operation and then sends the result. 
 
 ===== Making Counter a Distributed Object
 
@@ -344,7 +344,7 @@ public class CounterService implements ManagedService, RemoteService {
 
 As the last step in creating a Container, we connect the method `IncOperation.run` to the Container, as shown below.
 
-`partitionId` has a range between **0** and **partitionCount** and can be used as an index for the container array. Therefore, you can use `partitionId` to retrieve the container, and once the container has been retrieved, you can access the value. 
+`partitionId` has a range between **0** and **partitionCount** and can be used as an index for the container array. Therefore, you can use `partitionId` to retrieve the container and once the container has been retrieved, you can access the value. 
 
 ```
 class IncOperation extends Operation implements PartitionAwareOperation {
@@ -883,7 +883,7 @@ A `com.hazelcast.spi.discovery.integration.DiscoveryServiceSettings` instance is
 
 ===== DiscoveryMode: Member or Client
 
-The `com.hazelcast.spi.discovery.integration.DiscoveryMode` enum tells if a created `DiscoveryService` is running on a Hazelcast member or client, and to change behavior accordingly.   
+The `com.hazelcast.spi.discovery.integration.DiscoveryMode` enum tells if a created `DiscoveryService` is running on a Hazelcast member or client to change the behavior accordingly.   
 
 
 ==== Discovery Strategy
@@ -1055,7 +1055,7 @@ To find out further details, please have a look at the Discovery SPI Javadoc.
 
 ==== DiscoveryService (Framework integration)
 
-Since the `DiscoveryStrategy` is meant for cloud vendors or implementors of service discovery systems, the `DiscoveryService` is meant for integrators. In this case, integrators means people integrating Hazelcast into their own systems or frameworks. In those situations, there are sometimes special requirements on how to lookup framework services like the discovery strategies or similar services. Integrators can extend or implement their own `DiscoveryService` and `DiscoveryServiceProvider` and inject it using the Hazelcast Config API (`com.hazelcast.config.DiscoveryConfig`) prior to instantiating the `HazelcastInstance`. In any case, integrators might have to remember that a `DiscoveryService` might have to change behavior based on the runtime environment (Hazelcast member or client), and then the `DiscoveryServiceSettings` should provide information about the started `HazelcastInstance`.
+Since the `DiscoveryStrategy` is meant for cloud vendors or implementors of service discovery systems, the `DiscoveryService` is meant for integrators. In this case, integrators means people integrating Hazelcast into their own systems or frameworks. In those situations, there are sometimes special requirements on how to lookup framework services like the discovery strategies or similar services. Integrators can extend or implement their own `DiscoveryService` and `DiscoveryServiceProvider` and inject it using the Hazelcast Config API (`com.hazelcast.config.DiscoveryConfig`) prior to instantiating the `HazelcastInstance`. In any case, integrators might have to remember that a `DiscoveryService` might have to change behavior based on the runtime environment (Hazelcast member or client) and then the `DiscoveryServiceSettings` should provide information about the started `HazelcastInstance`.
 
 Since the implementation heavily depends on one's needs, there is no reason to provide an example of how to implement your own `DiscoveryService`. However, Hazelcast provides a default implementation which can be a good example to get started. This default implementation is `com.hazelcast.spi.discovery.impl.DefaultDiscoveryService`.
 

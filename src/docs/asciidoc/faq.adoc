@@ -22,7 +22,7 @@ Yes. All Hazelcast data structures are thread safe.
 When a member is started in a cluster, it will dynamically and automatically be discovered. The following are the types of discovery:
 
 * Discovery by TCP/IP: the first member created in the cluster (leader) will form a list of IP addresses of other joining members and will send this list to these members so the members will know each other.
-* Discovery at clouds: Hazelcast supports discovery at cloud platforms such as jclouds based environments, Azure, Consul, and PCF. 
+* Discovery at clouds: Hazelcast supports discovery at cloud platforms such as jclouds based environments, Azure, Consul and PCF. 
 * Multicast discovery: members in a cluster discover each other by multicast, by default. It is not recommended for production since UDP is often blocked in production environments and other discovery mechanisms are more definite
 
 
@@ -52,12 +52,12 @@ And you can execute the below command on the other member.
 
 `iperf -c` *`<IP address>`* `-d -p 5701`
 
-The output should include connection information, such as the IP addresses, transfer speed, and bandwidth. Otherwise, if the output says `No route to host`, it means a network connection problem exists.
+The output should include connection information, such as the IP addresses, transfer speed and bandwidth. Otherwise, if the output says `No route to host`, it means a network connection problem exists.
 
 '''
 **How do I choose keys properly?**
 
-When you store a key and value in a distributed Map, Hazelcast serializes the key and value, and stores the byte array version of them in local ConcurrentHashMaps. These ConcurrentHashMaps use `equals` and `hashCode` methods of byte array version of your key. It does not take into account the actual `equals` and `hashCode` implementations of your objects. So it is important that you choose your keys in a proper way. 
+When you store a key and value in a distributed Map, Hazelcast serializes the key and value and stores the byte array version of them in local ConcurrentHashMaps. These ConcurrentHashMaps use `equals` and `hashCode` methods of byte array version of your key. It does not take into account the actual `equals` and `hashCode` implementations of your objects. So it is important that you choose your keys in a proper way. 
 
 Implementing `equals` and `hashCode` is not enough, it is also important that the object is always serialized into the same byte array. All primitive types like String, Long, Integer, etc. are good candidates for keys to be used in Hazelcast. An unsorted Set is an example of a very bad candidate because Java Serialization may serialize the same unsorted set in two different byte arrays.
 
@@ -72,7 +72,7 @@ value.updateSomeProperty();
 map.put( key, value );
 ```
 
-Collections which return values of methods (such as `IMap.keySet`, `IMap.values`, `IMap.entrySet`, `MultiMap.get`, `MultiMap.remove`, `IMap.keySet`, `IMap.values`) contain cloned values. These collections are NOT backed up by related Hazelcast objects. Therefore, changes to them are **NOT** reflected in the originals, and vice-versa.
+Collections which return values of methods (such as `IMap.keySet`, `IMap.values`, `IMap.entrySet`, `MultiMap.get`, `MultiMap.remove`, `IMap.keySet`, `IMap.values`) contain cloned values. These collections are NOT backed up by related Hazelcast objects. Therefore, changes to them are **NOT** reflected in the originals and vice-versa.
 
 '''
 **How do I test my Hazelcast cluster?**
@@ -195,7 +195,7 @@ Yes. But please note that Hazelcast's main design focus is multi-member clusters
 '''
 **How can I monitor Hazelcast?**
 
-http://docs.hazelcast.org/docs/management-center/latest/manual/html-single/index.html[Hazelcast Management Center] is what you use to monitor and manage the members running Hazelcast. In addition to monitoring the overall state of a cluster, you can analyze and browse data structures in detail, you can update map configurations, and you can take thread dumps from members.
+http://docs.hazelcast.org/docs/management-center/latest/manual/html-single/index.html[Hazelcast Management Center] is what you use to monitor and manage the members running Hazelcast. In addition to monitoring the overall state of a cluster, you can analyze and browse data structures in detail, you can update map configurations and you can take thread dumps from members.
 
 You can also use Hazelcast's HTTP based health check implementation and health monitoring utility. Please see the <<health-check-and-monitoring, Health Check and Monitoring section>>. There is also a <<diagnostics, diagnostocs tool>> where you can see detailed logs enhanced with diagnostic plugins.
 
@@ -251,7 +251,7 @@ The line `log4j.logger.com.hazelcast=debug` is used to see debug logs for all Ha
 
 In the embedded topology, members include both the data and application. This type of topology is the most useful if your application focuses on high performance computing and many task executions. Since application is close to data, this topology supports data locality. 
 
-In the client-server topology, you create a cluster of members and scale the cluster independently. Your applications are hosted on the clients, and the clients communicate with the members in the cluster to reach data. 
+In the client-server topology, you create a cluster of members and scale the cluster independently. Your applications are hosted on the clients and the clients communicate with the members in the cluster to reach data. 
 
 Client-server topology fits better if there are multiple applications sharing the same data or if application deployment is significantly greater than the cluster size (for example, 500 application servers vs. 10 member cluster).
 
@@ -269,7 +269,7 @@ Ways of shutting down a Hazelcast member:
 ** You can set the property `hazelcast.shutdownhook.policy` to `GRACEFUL` and then shutdown by using `kill -15 <PID>`. Your member will be gracefully shutdown.
 ** You can use the "Shutdown Member" button in the member view of http://docs.hazelcast.org/docs/management-center/latest/manual/html-single/index.html#monitoring-members[Hazelcast Management Center].
 
-If you use systemd's `systemctl` utility, i.e., `systemctl stop service_name`, a SIGTERM signal is sent. After 90 seconds of waiting it is followed by a SIGKILL signal by default. Thus, it will call terminate at first, and kill the member directly after 90 seconds. We do not recommend to use it with its defaults. But https://www.linux.com/learn/understanding-and-using-systemd[systemd] is very customizable and well-documented, you can see its details using the command  `man systemd.kill`. If you can customize it to shutdown your Hazelcast member gracefully (by using the methods above), then you can use it.
+If you use systemd's `systemctl` utility, i.e., `systemctl stop service_name`, a SIGTERM signal is sent. After 90 seconds of waiting it is followed by a SIGKILL signal by default. Thus, it will call terminate at first and kill the member directly after 90 seconds. We do not recommend to use it with its defaults. But https://www.linux.com/learn/understanding-and-using-systemd[systemd] is very customizable and well-documented, you can see its details using the command  `man systemd.kill`. If you can customize it to shutdown your Hazelcast member gracefully (by using the methods above), then you can use it.
 
 
 '''
@@ -326,13 +326,13 @@ The only disadvantage when using Near Cache is that it may cause stale reads.
 '''
 **Is Hazelcast secure?**
 
-Hazelcast supports symmetric encryption, transport layer security and secure sockets layer (TLS/SSL), and Java Authentication and Authorization Service (JAAS). Please see the <<security, Security chapter>> for more information.
+Hazelcast supports symmetric encryption, transport layer security/secure sockets layer (TLS/SSL) and Java Authentication and Authorization Service (JAAS). Please see the <<security, Security chapter>> for more information.
 
 
 '''
 **How can I set socket options?**
 
-Hazelcast allows you to set some socket options such as `SO_KEEPALIVE`, `SO_SNDBUF`, and `SO_RCVBUF` using Hazelcast configuration properties. Please see `hazelcast.socket.*` properties explained in the <<system-properties, System Properties section>>.
+Hazelcast allows you to set some socket options such as `SO_KEEPALIVE`, `SO_SNDBUF` and `SO_RCVBUF` using Hazelcast configuration properties. Please see `hazelcast.socket.*` properties explained in the <<system-properties, System Properties section>>.
 
 
 '''
