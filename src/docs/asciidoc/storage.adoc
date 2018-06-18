@@ -48,16 +48,10 @@ Also, you can configure its size, memory allocator type, minimum block size, pag
 
 The following is the programmatic configuration example.
 
-```
-MemorySize memorySize = new MemorySize(512, MemoryUnit.MEGABYTES);
-NativeMemoryConfig nativeMemoryConfig =
-       new NativeMemoryConfig()
-          .setAllocatorType(NativeMemoryConfig.MemoryAllocatorType.POOLED)
-          .setSize(memorySize)
-          .setEnabled(true)
-          .setMinBlockSize(16)
-          .setPageSize(1 << 20);
-```
+[source,java]
+----
+include::{javasource}/storage/SampleHDConfiguration.java[tag=hdconf]
+----
 
 The following is the declarative configuration example.
 
@@ -241,24 +235,10 @@ An example configuration is shown below.
 
 The programmatic equivalent of the above declarative configuration is shown below.
 
-```
-HotRestartPersistenceConfig hotRestartPersistenceConfig = new HotRestartPersistenceConfig();
-hotRestartPersistenceConfig.setEnabled(true);
-hotRestartPersistenceConfig.setBaseDir(new File("/mnt/hot-restart"));
-hotRestartPersistenceConfig.setParallelism(1);
-hotRestartPersistenceConfig.setValidationTimeoutSeconds(120);
-hotRestartPersistenceConfig.setDataLoadTimeoutSeconds(900);
-hotRestartPersistenceConfig.setClusterDataRecoveryPolicy(HotRestartClusterDataRecoveryPolicy.FULL_RECOVERY_ONLY);
-config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
-
-...
-MapConfig mapConfig = config.getMapConfig("test-map");
-mapConfig.getHotRestartConfig().setEnabled(true);
-
-...
-CacheSimpleConfig cacheConfig = config.getCacheConfig("test-cache");
-cacheConfig.getHotRestartConfig().setEnabled(true);
-```
+[source,java]
+----
+include::{javasource}/storage/SampleHotRestartConfiguration.java[tag=hrconf]
+----
 
 
 ==== Moving/Copying Hot Restart Data
