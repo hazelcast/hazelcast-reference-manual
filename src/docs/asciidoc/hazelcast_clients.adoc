@@ -226,22 +226,10 @@ NOTE: This service is only supported by the Java client.
 
 If you need to track clients and you want to listen to their connection events, you can use the `clientConnected` and `clientDisconnected` methods of the `ClientService` class. This class must be run on the **member** side. The following is an example code.
 
-```
-final ClientService clientService = hazelcastInstance.getClientService();
-final Collection<Client> connectedClients = clientService.getConnectedClients();
-
-clientService.addClientListener(new ClientListener() {
-    @Override
-    public void clientConnected(Client client) {
-	//Handle client connected event
-    }
-
-    @Override
-    public void clientDisconnected(Client client) {
-      //Handle client disconnected event
-    }
-});
-```
+[source,java]
+----
+include::{javasource}/clients/ListeningClients.java[tag=lc]
+----
 
 ====== Finding the Partition of a Key
 
@@ -398,30 +386,10 @@ Here is an example of configuring network for Java Client declaratively.
 
 Here is an example of configuring network for Java Client programmatically.
 
-```
-ClientConfig clientConfig = new ClientConfig();
-ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
-networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703")
-             .setSmartRouting(true)
-             .addOutboundPortDefinition("34700-34710")
-             .setRedoOperation(true)
-             .setConnectionTimeout(5000)
-             .setConnectionAttemptLimit(5)
-             
-ClientAwsConfig clientAwsConfig = new ClientAwsConfig();
-clientAwsConfig.setInsideAws( false )
-               .setAccessKey( "my-access-key" )
-               .setSecretKey( "my-secret-key" )
-               .setRegion( "us-west-1" )
-               .setHostHeader( "ec2.amazonaws.com" )
-               .setSecurityGroupName( ">hazelcast-sg" )
-               .setTagKey( "type" )
-               .setTagValue( "hz-members" )
-               .setIamRole( "s3access" )
-               .setEnabled( true );
-clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
-HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
-```
+[source,java]
+----
+include::{javasource}/clients/SampleClientConfiguration.java[tag=scc]
+----
 
 ====== Configuring Address List
 
@@ -857,21 +825,10 @@ Normally when a client uses a Hazelcast data structure, that structure is config
 
 Here is an example programmatic configuration snippet:
 
-```
-Config config = new Config();
-RingbufferConfig ringbufferConfig = new RingbufferConfig("default");
-ringbufferConfig.setCapacity(10000000)
-                .setTimeToLiveSeconds(5);
-config.addRingBufferConfig(ringbufferConfig);
-
-ClientConfig clientConfig = new ClientConfig();
-ClientReliableTopicConfig topicConfig = new ClientReliableTopicConfig("default");
-clientConfig.addReliableTopicConfig(topicConfig);
-
-HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
-HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-ITopic topic = client.getReliableTopic(topicConfig.getName());
-```
+[source,java]
+----
+include::{javasource}/clients/SampleRTClient.java[tag=rtclient]
+----
 
 Note that, when you create a Reliable Topic structure at your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created at the member side, with its default configuration. Please see the <<configuring-ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
 
