@@ -87,30 +87,7 @@ And the following is the equivalent programmatic configuration snippet:
 
 [source,java]
 ----
-Config config = new Config();
-
-WanReplicationConfig wrConfig = new WanReplicationConfig();
-wrConfig.setName("my-wan-cluster-batch");
-
-WanPublisherConfig publisherConfig = new WanPublisherConfig();
-publisherConfig.setGroupName("london");
-publisherConfig.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication");
-publisherConfig.setQueueFullBehavior(WANQueueFullBehavior.THROW_EXCEPTION);
-publisherConfig.setQueueCapacity(1000);
-
-Map<String, Comparable> props = publisherConfig.getProperties();
-props.put("batch.size", 500);
-props.put("batch.max.delay.millis", 1000);
-props.put("snapshot.enabled", false);
-props.put("response.timeout.millis", 60000);
-props.put("ack.type", WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE.toString());
-props.put("endpoints", "10.3.5.1:5701,10.3.5.2:5701");
-props.put("group.password", "london-pass");
-props.put("discovery.period", "20");
-props.put("executorThreadCount", "2");
-
-wrConfig.addWanPublisherConfig(publisherConfig);
-config.addWanReplicationConfig(wrConfig);
+include::{javasource}/wan/SampleWANReplicationConfiguration.java[tag=wrc]
 ----
 
 Using this configuration, the cluster running in New York will replicate to Tokyo and London. The Tokyo and London clusters should
@@ -220,44 +197,7 @@ You can also define the WAN publisher with discovery SPI using the programmatic 
 
 [source,java]
 ----
-Config config = new Config();
-
-WanReplicationConfig wrConfig = new WanReplicationConfig();
-wrConfig.setName("my-wan-cluster-batch");
-
-WanPublisherConfig publisherConfig = new WanPublisherConfig();
-publisherConfig.setGroupName("london");
-publisherConfig.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication");
-publisherConfig.setQueueFullBehavior(WANQueueFullBehavior.THROW_EXCEPTION);
-publisherConfig.setQueueCapacity(1000);
-
-Map<String, Comparable> props = publisherConfig.getProperties();
-props.put("batch.size", 500);
-props.put("batch.max.delay.millis", 1000);
-props.put("snapshot.enabled", false);
-props.put("response.timeout.millis", 60000);
-props.put("ack.type", WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE.toString());
-props.put("group.password", "london-pass");
-props.put("discovery.period", "20");
-props.put("executorThreadCount", "2");
-
-DiscoveryConfig discoveryConfig = new DiscoveryConfig();
-
-DiscoveryStrategyConfig discoveryStrategyConfig = new DiscoveryStrategyConfig("com.hazelcast.aws.AwsDiscoveryStrategy");
-discoveryStrategyConfig.addProperty("access-key","test-access-key");
-discoveryStrategyConfig.addProperty("secret-key","test-secret-key");
-discoveryStrategyConfig.addProperty("region","test-region");
-discoveryStrategyConfig.addProperty("iam-role","test-iam-role");
-discoveryStrategyConfig.addProperty("host-header","ec2.test-host-header");
-discoveryStrategyConfig.addProperty("security-group-name","test-security-group-name");
-discoveryStrategyConfig.addProperty("tag-key","test-tag-key");
-discoveryStrategyConfig.addProperty("tag-value","test-tag-value");
-discoveryStrategyConfig.addProperty("hz-port",5702);
-
-discoveryConfig.addDiscoveryStrategyConfig(discoveryStrategyConfig);
-publisherConfig.setDiscoveryConfig(discoveryConfig);
-wrConfig.addWanPublisherConfig(publisherConfig);
-config.addWanReplicationConfig(wrConfig);
+include::{javasource}/wan/SampleWANReplicationDiscoveryConfiguration.java[tag=wrdc]
 ----
 
 
@@ -301,20 +241,10 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
 
 The following is the equivalent programmatic configuration:
 
-```
-Config config = new Config();
-
-WanReplicationConfig wrConfig = new WanReplicationConfig();
-wrConfig.setName("my-wan-cluster");
-...
-config.addWanReplicationConfig(wrConfig);
-
-WanReplicationRef wanRef = new WanReplicationRef();
-wanRef.setName("my-wan-cluster");
-wanRef.setMergePolicy(PassThroughMergePolicy.class.getName());
-wanRef.setRepublishingEnabled(false);
-config.getMapConfig("my-shared-map").setWanReplicationRef(wanRef);
-```
+[source,java]
+----
+include::{javasource}/wan/EnablingWRforMap.java[tag=wrmap]
+----
 
 You see that we have `my-shared-map` configured to replicate itself to the cluster targets defined in the earlier
 `wan-replication` element.
@@ -357,20 +287,11 @@ The following is a declarative configuration example for enabling WAN Replicatio
 The following is the equivalent programmatic configuration:
 
 
-```
-Config config = new Config();
+[source,java]
+----
+include::{javasource}/wan/EnablingWRforCache.java[tag=wrcache]
+----
 
-WanReplicationConfig wrConfig = new WanReplicationConfig();
-wrConfig.setName("my-wan-cluster");
-...
-config.addWanReplicationConfig(wrConfig);
-
-WanReplicationRef cacheWanRef = new WanReplicationRef();
-cacheWanRef.setName("my-wan-cluster");
-cacheWanRef.setMergePolicy("com.hazelcast.cache.merge.PassThroughCacheMergePolicy");
-cacheWanRef.setRepublishingEnabled(true);
-config.getCacheConfig("my-shared-cache").setWanReplicationRef(cacheWanRef);
-```
 
 NOTE: Caches that are created dynamically do not support WAN replication functionality. Cache configurations should be defined either declaratively (by XML) or programmatically on both source and target clusters.
 
@@ -729,7 +650,7 @@ You can register these classes using the configuration elements `<wan-publisher>
   </dependency>
 ```
  
-NOTE: The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the <<hazelcast-imdg-enterprise, Hazelcast IMDG Enterprise section>> for information on how to configure this repository.
+NOTE: The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the <<installing-hazelcast-imdg-enterprise, Installing Hazelcast IMDG Enterprise section>> for information on how to configure this repository.
  
  
 Please see the following sections for configuration details.
@@ -743,14 +664,14 @@ Following is an example declarative configuration for the publisher side:
      <wan-publisher group-name="clusterB">
          <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanPublisher</class-name>
          <properties>
- 			<property name="host">192.168.2.66</property>
- 			<property name="vpn.name">YOUR_VPN_NAME</property>
- 			<property name="username">admin</property>
- 			<property name="password">YOUR_PASSWORD</property>
- 			<property name="topic.base.name">BaseTopic</property>
- 			<property name="queue.name">Q/hz/clusterA</property>
- 			<property name="initial.queue.mapping.enabled">true</property>
- 		</properties>
+ 		<property name="host">192.168.2.66</property>
+ 		<property name="vpn.name">YOUR_VPN_NAME</property>
+ 		<property name="username">admin</property>
+ 		<property name="password">YOUR_PASSWORD</property>
+ 		<property name="topic.base.name">BaseTopic</property>
+ 		<property name="queue.name">Q/hz/clusterA</property>
+ 		<property name="initial.queue.mapping.enabled">true</property>
+ 	</properties>
      </wan-publisher>
  </wan-replication>
 ```
@@ -775,12 +696,12 @@ Following is an example declarative configuration for the consumer side:
      <wan-consumer>
          <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanConsumer</class-name>
          <properties>
- 			<property name="host">192.168.2.66</property>
- 			<property name="vpn.name">YOUR_VPN_NAME</property>
- 			<property name="username">admin</property>
- 			<property name="password">YOUR_PASSWORD</property>
- 			<property name="queue.name">Q/hz/clusterA</property>
- 		</properties>
+ 		<property name="host">192.168.2.66</property>
+ 		<property name="vpn.name">YOUR_VPN_NAME</property>
+ 		<property name="username">admin</property>
+ 		<property name="password">YOUR_PASSWORD</property>
+ 		<property name="queue.name">Q/hz/clusterA</property>
+ 	</properties>
      </wan-consumer>
  </wan-replication>
 ```
