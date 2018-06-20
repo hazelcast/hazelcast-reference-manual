@@ -57,31 +57,7 @@ Below is example code that uses JTA API for transaction management.
 
 [source,java]
 ----
-public class XATransaction {
-
-    public static void main(String[] args) throws Exception {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        HazelcastXAResource xaResource = hazelcastInstance.getXAResource();
-
-        TransactionManager tm = getTransactionManager(); // depends on JTA implementation
-        tm.setTransactionTimeout(60);
-        tm.begin();
-
-
-        Transaction transaction = tm.getTransaction();
-        transaction.enlistResource(xaResource);
-        // other resources (database, app server etc...) can be enlisted
-
-       try {
-           TransactionContext context = xaResource.getTransactionContext();
-           TransactionalMap map = context.getMap("m");
-           map.put("key", "value");
-           // other resource operations
-          tm.commit();
-          } catch (Exception e) {
-              tm.rollback();
-          }
-     }
-}
+include::{javasource}/transactions/XATransaction.java[tag=xa]
 ----
+
 
