@@ -2329,37 +2329,20 @@ remote members; it works as fire and forget.*
 [[getting-a-topic-and-publishing-messages]]
 ==== Getting a Topic and Publishing Messages
 
-Use the HazelcastInstance `getTopic` method to get the Topic, then use the topic `publish` method to publish your messages (`messageObject`).
+Use the HazelcastInstance's `getTopic` method to get the topic, then use the topic's `publish` method to publish your messages. The following is a sample publisher:
 
 [source,java]
 ----
-public class Sample implements MessageListener<MyEvent> {
-
-    public static void main( String[] args ) {
-        Sample sample = new Sample();
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        ITopic topic = hazelcastInstance.getTopic( "default" );
-        topic.addMessageListener( sample );
-        topic.publish( new MyEvent() );
-    }
-
-    public void onMessage( Message<MyEvent> message ) {
-        MyEvent myEvent = message.getMessageObject();
-        System.out.println( "Message received = " + myEvent.toString() );
-        if ( myEvent.isHeavyweight() ) {
-            messageExecutor.execute( new Runnable() {
-                public void run() {
-                    doHeavyweightStuff( myEvent );
-                }
-            } );
-        }
-    }
-
-    // ...
-
-    private final Executor messageExecutor = Executors.newSingleThreadExecutor();
-}
+include::{javasource}/dds/topic/TopicPublisher.java[tag=tp]
 ----
+
+And here is a sample subscriber:
+
+[source,java]
+----
+include::{javasource}/dds/topic/TopicSubscriber.java[tag=tsub]
+----
+
 
 Hazelcast Topic uses the `MessageListener` interface to listen for events that occur when a message is received. Please refer to the <<listening-for-topic-messages, Listening for Topic Messages section>> for information on how to create a message listener class and register it.
 
