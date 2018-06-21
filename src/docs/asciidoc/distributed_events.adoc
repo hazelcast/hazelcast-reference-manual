@@ -58,20 +58,7 @@ The following is an example Membership Listener class.
 
 [source,java]
 ----
-public class ClusterMembershipListener implements MembershipListener {
-
-    public void memberAdded(MembershipEvent membershipEvent) {
-        System.err.println("Added: " + membershipEvent);
-    }
-
-    public void memberRemoved(MembershipEvent membershipEvent) {
-        System.err.println("Removed: " + membershipEvent);
-    }
-
-    public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
-        System.err.println("Member attribute changed: " + memberAttributeEvent);
-    }
-}
+include::{javasource}/distributedevents/ClusterMembershipListener.java[tag=cml]
 ----
 
 When a respective event is fired, the membership listener outputs the addresses of the members that joined and left, and also which attribute changed on which member.
@@ -255,7 +242,7 @@ The following is an example of the equivalent Spring configuration.
 
 Hazelcast provides fault-tolerance by keeping multiple copies of your data. For each partition, one of your cluster members becomes the owner and some of the other members become replica members, based on your configuration. Nevertheless, data loss may occur if a few members crash simultaneously.
 
-Let`s consider the following example with three members: N1, N2, N3 for a given partition-0. N1 is owner of partition-0. N2 and N3 are the first and second replicas respectively. If N1 and N2 crash simultaneously, partition-0 loses its data that is configured with less than two backups.
+Let's consider the following example with three members: N1, N2, N3 for a given partition-0. N1 is owner of partition-0. N2 and N3 are the first and second replicas respectively. If N1 and N2 crash simultaneously, partition-0 loses its data that is configured with less than two backups.
 For instance, if we configure a map with one backup, that map loses its data in partition-0 since both owner and first replica of partition-0 have crashed. However, if we configure our map with two backups, it does not lose any data since a copy of partition-0's data for the given map
 also resides in N3. 
 
@@ -479,7 +466,7 @@ NOTE: Listeners have to offload all blocking operations to another thread (pool)
 You can listen to `MapPartitionLostEvent` instances by registering an implementation 
 of `MapPartitionLostListener`, which is also a sub-interface of `MapListener`.
 
-Let`s consider the following example code:
+Let's consider the following example code:
 
 [source,java]
 ----
