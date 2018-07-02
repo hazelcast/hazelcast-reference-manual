@@ -20,25 +20,20 @@ classes we need for this example.
 The `User` class is the representation of a user table in the database. To keep it simple, it has just two properties:
 `userId` and `username`.
 
-```
-public class User {
-    private int userId;
-    private String username;
-    // Getters and setters
-}
-```
+[source,java]
+----
+include::{javasource}/jcache/User.java[tag=user]
+----
+
 ===== Creating DAO Interface Example
 
 The DAO interface is also kept easy in this example. It provides a simple method to retrieve (find) a user by its `userId`.
 
-```
-public interface UserDao {
-    User findUserById( int userId );
-    boolean storeUser( int userId, User user );
-    boolean removeUser( int userId );
-    Collection<Integer> allUserIds();
-}
-```
+[source,java]
+----
+include::{javasource}/jcache/UserDao.java[tag=userdao]
+----
+
 ===== Configuring JCache Example
 
 To show most of the standard features, the configuration example is a little more complex.
@@ -164,16 +159,9 @@ different features to members in a cluster environment like Hazelcast. Therefore
 
 [source,java]
 ----
-public class UserCacheEntryListenerFactory
-    implements Factory<CacheEntryListener<Integer, User>> {
-
-    @Override
-    public CacheEntryListener<Integer, User> create() {
-        // Just create a new listener instance
-        return new UserCacheEntryListener();
-    }
-}
+include::{javasource}/jcache/UserCacheEntryListenerFactory.java[tag=ucelf]
 ----
+
 
 To simplify the process for the users, JCache API offers a set of helper methods collected in
 `javax.cache.
@@ -208,40 +196,7 @@ any kind of exception has to be wrapped into `javax.cache.integration.CacheLoade
 
 [source,java]
 ----
-public class UserCacheLoader
-    implements CacheLoader<Integer, User>, Serializable {
-
-    private final UserDao userDao;
-
-    public UserCacheLoader( UserDao userDao ) {
-        // Store the dao instance created externally
-        this.userDao = userDao;
-    }
-
-    @Override
-    public User load( Integer key ) throws CacheLoaderException {
-        // Just call through into the dao
-        return userDao.findUserById( key );
-    }
-
-    @Override
-    public Map<Integer, User> loadAll( Iterable<? extends Integer> keys )
-        throws CacheLoaderException {
-
-        // Create the resulting map  
-        Map<Integer, User> loaded = new HashMap<Integer, User>();
-        // For every key in the given set of keys
-        for ( Integer key : keys ) {
-            // Try to retrieve the user
-            User user = userDao.findUserById( key );
-            // If user is not found do not add the key to the result set
-            if ( user != null ) {
-                loaded.put( key, user );
-            }
-        }
-        return loaded;
-    }
-}
+include::{javasource}/jcache/UserCacheLoader.java[tag=ucl]
 ----
 
 
@@ -264,62 +219,7 @@ The following example performs the following tasks:
 
 [source,java]
 ----
-public class UserCacheWriter
-    implements CacheWriter<Integer, User>, Serializable {
-
-    private final UserDao userDao;
-
-    public UserCacheWriter( UserDao userDao ) {
-        // Store the dao instance created externally
-        this.userDao = userDao;
-    }
-
-    @Override
-    public void write( Cache.Entry<? extends Integer, ? extends User> entry )
-        throws CacheWriterException {
-
-        // Store the user using the dao
-        userDao.storeUser( entry.getKey(), entry.getValue() );
-    }
-
-    @Override
-    public void writeAll( Collection<Cache.Entry<...>> entries )
-        throws CacheWriterException {
-
-        // Retrieve the iterator to clean up the collection from
-        // written keys in case of an exception
-        Iterator<Cache.Entry<...>> iterator = entries.iterator();
-        while ( iterator.hasNext() ) {
-            // Write entry using dao
-            write( iterator.next() );
-            // Remove from collection of keys
-            iterator.remove();
-        }
-    }
-
-    @Override
-    public void delete( Object key ) throws CacheWriterException {
-        // Test for key type
-        if ( !( key instanceof Integer ) ) {
-            throw new CacheWriterException( "Illegal key type" );
-        }
-        // Remove user using dao
-        userDao.removeUser( ( Integer ) key );
-    }
-
-    @Override
-    public void deleteAll( Collection<?> keys ) throws CacheWriterException {
-        // Retrieve the iterator to clean up the collection from
-        // written keys in case of an exception
-        Iterator<?> iterator = keys.iterator();
-        while ( iterator.hasNext() ) {
-            // Write entry using dao
-            delete( iterator.next() );
-            // Remove from collection of keys
-            iterator.remove();
-        }
-    }
-}
+include::{javasource}/jcache/UserCacheWriter.java[tag=ucw]
 ----
 
 Again, the implementation is pretty straightforward and also as above all exceptions thrown by the external resource, like
@@ -346,42 +246,9 @@ The following example performs the following tasks.
 
 [source,java]
 ----
-public class UserUpdateEntryProcessor
-    implements EntryProcessor<Integer, User, User> {
-
-    @Override
-    public User process( MutableEntry<Integer, User> entry, Object... arguments )
-        throws EntryProcessorException {
-
-        // Test arguments length
-        if ( arguments.length < 1 ) {
-            throw new EntryProcessorException( "One argument needed: username" );
-        }
-
-        // Get first argument and test for String type
-        Object argument = arguments[0];
-        if ( !( argument instanceof String ) ) {
-            throw new EntryProcessorException(
-            "First argument has wrong type, required java.lang.String" );
-        }
-
-        // Retrieve the value from the MutableEntry
-        User user = entry.getValue();
-
-        // Retrieve the new username from the first argument
-        String newUsername = ( String ) arguments[0];
-
-        // Set the new username
-        user.setUsername( newUsername );
-
-        // Set the changed user to mark the entry as dirty
-        entry.setValue( user );
-
-        // Return the changed user to return it to the caller
-        return user;
-    }
-}
+include::{javasource}/jcache/UserUpdateEntryProcessor.java[tag=uuep]
 ----
+
 
 
 NOTE: By executing the bulk `Cache.invokeAll()` operation, atomicity is only guaranteed for a
@@ -415,51 +282,12 @@ In this example application, the listener is implemented to print event informat
 - It implements the `CacheEntryExpiredListener.onExpired` method to call after an entry expires.
 - It implements `printEvents` to print event information on the console.
 
+
 [source,java]
 ----
-public class UserCacheEntryListener
-    implements CacheEntryCreatedListener<Integer, User>,
-        CacheEntryUpdatedListener<Integer, User>,
-        CacheEntryRemovedListener<Integer, User>,
-        CacheEntryExpiredListener<Integer, User> {
-
-    @Override
-    public void onCreated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-        throws CacheEntryListenerException {
-
-        printEvents( cacheEntryEvents );
-    }
-
-    @Override
-    public void onUpdated( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-        throws CacheEntryListenerException {
-
-      printEvents( cacheEntryEvents );
-    }
-
-    @Override
-    public void onRemoved( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-        throws CacheEntryListenerException {
-
-      printEvents( cacheEntryEvents );
-    }
-
-    @Override
-    public void onExpired( Iterable<CacheEntryEvent<...>> cacheEntryEvents )
-        throws CacheEntryListenerException {
-
-      printEvents( cacheEntryEvents );
-    }
-
-    private void printEvents( Iterable<CacheEntryEvent<...>> cacheEntryEvents ) {
-        Iterator<CacheEntryEvent<...>> iterator = cacheEntryEvents.iterator();
-        while ( iterator.hasNext() ) {
-            CacheEntryEvent<...> event = iterator.next();
-            System.out.println( event.getEventType() );
-        }
-    }
-}
+include::{javasource}/jcache/UserCacheEntryListener.java[tag=ucel]
 ----
+
 
 ==== ExpiryPolicy
 
