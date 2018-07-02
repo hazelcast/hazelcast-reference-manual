@@ -17,25 +17,22 @@ import java.util.concurrent.ConcurrentMap;
 public class LoadAll {
 
     public static void main(String[] args) {
-        int numberOfEntriesToAdd = 1000;
-        String mapName = LoadAll.class.getCanonicalName();
-
-        Config config = createNewConfig(mapName);
-        HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
-
-        IMap<Integer, Integer> map = node.getMap(mapName);
+//tag::loadall[]
+        final int numberOfEntriesToAdd = 1000;
+        final String mapName = LoadAll.class.getCanonicalName();
+        final Config config = createNewConfig(mapName);
+        final HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
+        final IMap<Integer, Integer> map = node.getMap(mapName);
 
         populateMap(map, numberOfEntriesToAdd);
-
         System.out.printf("# Map store has %d elements\n", numberOfEntriesToAdd);
 
         map.evictAll();
-
-        System.out.printf("# After evictAll map size: %d\n", map.size());
+        System.out.printf("# After evictAll map size\t: %d\n", map.size());
 
         map.loadAll(true);
-
-        System.out.printf("# After loadAll map size: %d\n", map.size());
+        System.out.printf("# After loadAll map size\t: %d\n", map.size());
+//end::loadall[]
     }
 
     private static void populateMap(IMap<Integer, Integer> map, int itemCount) {

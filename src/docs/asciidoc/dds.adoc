@@ -192,30 +192,7 @@ on the distributed map, as shown in the example below.
 
 [source,java]
 ----
-public class BasicMapOperations {
-  
-    private HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    
-    public Customer getCustomer(String id) {
-        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
-        Customer customer = customers.get(id);
-        if (customer == null) {
-            customer = new Customer(id);
-            customer = customers.putIfAbsent(id, customer);
-        }
-        return customer;
-    }
-
-    public boolean updateCustomer(Customer customer) {
-        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
-        return (customers.replace(customer.getId(), customer) != null);
-    }
-
-    public boolean removeCustomer(Customer customer) {
-        ConcurrentMap<String, Customer> customers = hazelcastInstance.getMap("customers");
-        return customers.remove(customer.getId(), customer);
-    }
-}
+include::{javasource}/dds/map/BasicMapOperations.java[tag=bmo]
 ----
 
 All `ConcurrentMap` operations such as `put` and `remove` might wait if the key is locked by another thread in the local or remote JVM. But, they will eventually return with success. `ConcurrentMap` operations never throw a `java.util.ConcurrentModificationException`.
@@ -487,64 +464,7 @@ To achieve this, you need to provide an implementation of `MapEvictionPolicy` as
 
 [source,java]
 ----
-public class MapCustomEvictionPolicy {
-
-    public static void main(String[] args) {
-        Config config = new Config();
-        config.getMapConfig("test")
-            .setMapEvictionPolicy(new OddEvictor())
-            .getMaxSizeConfig()
-            .setMaxSizePolicy(PER_NODE).setSize(10000);
-
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
-        IMap<Integer, Integer> map = instance.getMap("test");
-
-        final Queue<Integer> oddKeys = new ConcurrentLinkedQueue<Integer>();
-        final Queue<Integer> evenKeys = new ConcurrentLinkedQueue<Integer>();
-
-        map.addEntryListener(new EntryEvictedListener<Integer, Integer>() {
-            @Override
-            public void entryEvicted(EntryEvent<Integer, Integer> event) {
-                Integer key = event.getKey();
-                if (key % 2 == 0) {
-                    evenKeys.add(key);
-                } else {
-                    oddKeys.add(key);
-                }
-            }
-        }, false);
-
-        // Wait some more time to receive evicted events.
-        parkNanos(SECONDS.toNanos(5));
-
-        for (int i = 0; i < 15000; i++) {
-            map.put(i, i);
-        }
-
-        String msg = "IMap uses sampling based eviction. After eviction is completed, we are expecting " +
-                "number of evicted-odd-keys should be greater than number of evicted-even-keys" +
-                "\nNumber of evicted-odd-keys = %d, number of evicted-even-keys = %d";
-        out.println(format(msg, oddKeys.size(), evenKeys.size()));
-
-        instance.shutdown();
-    }
-
-    /**
-     * Odd evictor tries to evict odd keys first.
-     */
-    private static class OddEvictor extends MapEvictionPolicy {
-
-        @Override
-        public int compare(EntryView o1, EntryView o2) {
-            Integer key = (Integer) o1.getKey();
-            if (key % 2 != 0) {
-                return -1;
-            }
-
-            return 1;
-        }
-    }
-}
+include::{javasource}/dds/map/MapCustomEvictionPolicy.java[tag=mcep]
 ----
 
 Then you can enable your policy by setting it via the method `MapConfig.setMapEvictionPolicy()`
@@ -879,25 +799,7 @@ The method `loadAll` loads some or all keys into a data store in order to optimi
 
 [source,java]
 ----
-public class LoadAll {
-
-    public static void main(String[] args) {
-        final int numberOfEntriesToAdd = 1000;
-        final String mapName = LoadAll.class.getCanonicalName();
-        final Config config = createNewConfig(mapName);
-        final HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
-        final IMap<Integer, Integer> map = node.getMap(mapName);
-       
-        populateMap(map, numberOfEntriesToAdd);
-        System.out.printf("# Map store has %d elements\n", numberOfEntriesToAdd);
-   
-        map.evictAll();
-        System.out.printf("# After evictAll map size\t: %d\n", map.size());
-        
-        map.loadAll(true);
-        System.out.printf("# After loadAll map size\t: %d\n", map.size());
-    }
-}
+include::{javasource}/dds/map/LoadAll.java[tag=loadall]
 ----
 
 [[post-processing-objects-in-map-store]]
@@ -945,25 +847,13 @@ You can define the database properties, such as its URL and name, using the `pro
 
 After you specified the database properties in your configuration, you need to implement the `MapLoaderLifecycleSupport` interface and give those properties in the `init()` method, as shown below:
 
+
+
 [source,java]
 ----
-public class YourMapStoreImplementation implements MapStore<String, Supplement>, MapLoaderLifecycleSupport {
-
-    private MongoClient mongoClient;
-    private MongoCollection collection;
-
-    public YourMapStoreImplementation() {
-    }
-
-    @Override
-    public void init(HazelcastInstance hazelcastInstance, Properties properties, String mapName) {
-        String mongoUrl = (String) properties.get("mongo.url");
-        String dbName = (String) properties.get("mongo.db");
-        String collectionName = (String) properties.get("mongo.collection");
-        this.mongoClient = new MongoClient(new MongoClientURI(mongoUrl));
-        this.collection = mongoClient.getDatabase(dbName).getCollection(collectionName);
-    }
+include::{javasource}/dds/map/YourMapStoreImplementation.java[tag=ymsi]
 ----
+
 
 You can refer to the full example https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/mongodb[here].
 
