@@ -14,7 +14,8 @@ public class SemaphoreMember {
         semaphoreConfig.setName( "semaphore" ).setBackupCount( 1 )
                 .setInitialPermits( 3 )
                 .setQuorumName( "quorumname" );
-//end::sc[]	
+//end::sc[]
+
 //tag::sm[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         ISemaphore semaphore = hazelcastInstance.getSemaphore( "semaphore" );

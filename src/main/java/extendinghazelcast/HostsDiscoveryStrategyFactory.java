@@ -20,8 +20,7 @@ public class HostsDiscoveryStrategyFactory implements DiscoveryStrategyFactory {
     }
 
     @Override
-    public DiscoveryStrategy newDiscoveryStrategy(DiscoveryNode discoveryNode, ILogger logger,
-                                                  Map<String, Comparable> properties) {
+    public DiscoveryStrategy newDiscoveryStrategy(DiscoveryNode discoveryNode, ILogger logger, Map<String, Comparable> properties) {
         return new HostsDiscoveryStrategy(logger, properties);
     }
 
@@ -30,4 +29,4 @@ public class HostsDiscoveryStrategyFactory implements DiscoveryStrategyFactory {
         return PROPERTIES;
     }
 }
-//end::hdsf
+//end::hdsf[]
