@@ -166,16 +166,7 @@ Besides declarative configuration, you can configure your cluster programmatical
 
 [source,java]
 ----
-Config config = new Config();
-config.getNetworkConfig().setPort( 5900 )
-           .setPortAutoIncrement( false );
-                
-MapConfig mapConfig = new MapConfig();
-mapConfig.setName( "testMap" )
-	 .setBackupCount( 2 )
-	 .setTimeToLiveSeconds( 300 );
-        
-config.addMapConfig( mapConfig );
+include::{javasource}/ProgrammaticConfSample.java[tag=pcs]
 ----
 
 To create a Hazelcast member with the above example configuration, pass the configuration object as shown below:
@@ -462,7 +453,7 @@ If you do not want to rely on the system properties, you can use the `XmlConfigB
 ----
 Properties properties = new Properties();
 
-// fill the properties, e.g. from database/LDAP, etc.
+// fill the properties, e.g., from database/LDAP, etc.
 
 XmlConfigBuilder builder = new XmlConfigBuilder();
 builder.setProperties(properties);

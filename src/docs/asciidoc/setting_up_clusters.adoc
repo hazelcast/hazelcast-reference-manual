@@ -395,16 +395,7 @@ In your `hazelcast-client.xml`:
 
 [source,java]
 ----
-ClientConfig clientConfig = new ClientConfig();
-ClientUserCodeDeploymentConfig clientUserCodeDeploymentConfig = new ClientUserCodeDeploymentConfig();
-
-clientUserCodeDeploymentConfig.addJar("/User/sample/sample.jar");
-clientUserCodeDeploymentConfig.addJar("https://com.sample.com/sample.jar");
-clientUserCodeDeploymentConfig.addClass("sample.ClassName");
-clientUserCodeDeploymentConfig.addClass("sample.ClassName2");
-
-clientUserCodeDeploymentConfig.setEnabled(true);
-clientConfig.setUserCodeDeploymentConfig(clientUserCodeDeploymentConfig);
+include::{javasource}/ClientUCD.java[tag=clientucd]
 ----
 
 [[client-user-code-deployment-note]]
