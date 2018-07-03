@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class FibonacciCallable implements Callable<Long>, Serializable {
-//tag::fc[]
+// tag::fc[]
     int input = 0;
 
     public FibonacciCallable( int input ) {
@@ -30,9 +30,9 @@ public class FibonacciCallable implements Callable<Long>, Serializable {
             return calculate( n - 1 ) + calculate( n - 2 );
         }
     }
-//end::fc[]
+// end::fc[]
 
-//tag::fib[]
+// tag::fib[]
     long fib( int n ) throws Exception {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         IExecutorService es = hazelcastInstance.getExecutorService("es");
@@ -45,5 +45,5 @@ public class FibonacciCallable implements Callable<Long>, Serializable {
         }
         return -1;
     }
-//end::fib[]
+// end::fib[]
 }
