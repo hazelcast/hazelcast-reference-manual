@@ -338,7 +338,7 @@ Config hazelcastConfig = new Config();
 DistributedClassloadingConfig distributedClassloadingConfig = hazelcastConfig.getDistributedClassloadingConfig();
 distributedClassloadingConfig.setProviderFilter("HAS_ATTRIBUTE:class-provider");
 
-HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
+HazelcastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
 ----
 
 And the below example configuration sets the attribute `class-provider` for a member. So, the above member will load classes from the members who have the attribute `class-provider`:
