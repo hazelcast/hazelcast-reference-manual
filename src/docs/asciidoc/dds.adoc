@@ -2307,28 +2307,45 @@ as a regular topic. The main difference is that Reliable Topic is backed up by t
 [[sample-reliable-itopic-code]]
 ==== Sample Reliable ITopic Code
 
+The following is a sample code snippet for a publisher:
+
 [source,java]
 ----
-public class Sample implements MessageListener<MyEvent> {
-
-    public static void main( String[] args ) {
-        Sample sample = new Sample();
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        ITopic topic = hazelcastInstance.getReliableTopic( "default" );
-        topic.addMessageListener( sample );
-        topic.publish( new MyEvent() );
-    }
-
-    public void onMessage( Message<MyEvent> message ) {
-        MyEvent myEvent = message.getMessageObject();
-        System.out.println( "Message received = " + myEvent.toString() );
-    }
-}
+include::{javasource}/dds/reliabletopic/PublisherMember.java[tag=pm]
 ----
+
+
+The following is a sample code snippet for a subscriber:
+
+[source,java]
+----
+include::{javasource}/dds/reliabletopic/SubscribedMember.java[tag=sm]
+----
+
+
 
 You can configure the Reliable `ITopic` using its Ringbuffer. If a Reliable Topic has the name `Foo`, then you can configure this topic
 by adding a `ReliableTopicConfig` for a Ringbuffer with the name `Foo`. By default, a Ringbuffer does not have any TTL (time to live) and
-it has a limited capacity; you may want to change that configuration.
+it has a limited capacity; you may want to change that configuration. The following is an example configuration for the "sometopic" given above.
+
+[source,xml]
+----
+<hazelcast>
+
+    <!-- This is the ringbuffer that is used by the 'sometopic' Reliable-topic. As you can see the
+         ringbuffer has the same name as the topic. -->
+    <ringbuffer name="sometopic">
+        <capacity>1000</capacity>
+        <time-to-live-seconds>5</time-to-live-seconds>
+    </ringbuffer>
+
+    <reliable-topic name="sometopic">
+        <topic-overload-policy>BLOCK</topic-overload-policy>
+    </reliable-topic>
+</hazelcast>
+----
+
+Please see the <<configuring-reliable-topic, Configuring Reliable Topic section>> below.
 
 By default, the Reliable `ITopic` uses a shared thread pool. If you need better isolation, you can configure a custom executor on the 
 `ReliableTopicConfig`. 
