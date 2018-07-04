@@ -40,37 +40,9 @@ When the keys are the same, entries are stored on the same member. But we someti
 
 [source,java]
 ----
-public class OrderKey implements Serializable, PartitionAware {
-
-    private final long customerId;
-    private final long orderId;
-
-    public OrderKey( long orderId, long customerId ) {
-        this.customerId = customerId;
-        this.orderId = orderId;
-    }
-
-    public long getCustomerId() {
-        return customerId;
-    }
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public Object getPartitionKey() {
-        return customerId;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderKey{"
-                + "customerId=" + customerId
-                + ", orderId=" + orderId
-                + '}';
-    }
-}
+include::{javasource}/performance/OrderKey.java[tag=orderkey]
 ----
+
 
 Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`. This will make sure that the `Customer` entry and its `Order`s will be stored on the same member.
 
