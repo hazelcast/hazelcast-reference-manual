@@ -683,22 +683,10 @@ The example declarative and programmatic configurations below show how to config
 
 **Programmatic**:
 
-```
-ClientConfig clientConfig = new ClientConfig();
-ClientAwsConfig clientAwsConfig = new ClientAwsConfig();
-clientAwsConfig.setInsideAws( false )
-               .setAccessKey( "my-access-key" )
-               .setSecretKey( "my-secret-key" )
-               .setRegion( "us-west-1" )
-               .setHostHeader( "ec2.amazonaws.com" )
-               .setSecurityGroupName( ">hazelcast-sg" )
-               .setTagKey( "type" )
-               .setTagValue( "hz-members" )
-               .setIamRole( "s3access" )
-               .setEnabled( true );
-clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
-HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
-```
+[source,java]
+----
+include::{javasource}/clients/SampleClientAwsConfig.java[tag=clientaws]
+----
 
 You can refer to the <<aws-element, aws element section>> for the descriptions of above AWS configuration elements except `inside-aws` and `iam-role`, which are explained below.
 
