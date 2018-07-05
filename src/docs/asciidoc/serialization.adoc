@@ -188,30 +188,7 @@ The `DataSerializable` interface of Hazelcast overcomes these issues. Here is an
 
 [source,java]
 ----
-public class Address implements DataSerializable {
-    private String street;
-    private int zipCode;
-    private String city;
-    private String state;
-
-    public Address() {}
-
-    //getters setters..
-
-    public void writeData( ObjectDataOutput out ) throws IOException {
-        out.writeUTF(street);
-        out.writeInt(zipCode);
-        out.writeUTF(city);
-        out.writeUTF(state);
-    }
-
-    public void readData( ObjectDataInput in ) throws IOException {
-        street = in.readUTF();
-        zipCode = in.readInt();
-        city = in.readUTF();
-        state = in.readUTF();
-    }
-}
+include::{javasource}/serialization/Address.java[tag=address]
 ----
 
 ==== Reading and Writing and DataSerializable
@@ -391,39 +368,7 @@ Here is example code for Portable implementation of a Foo class.
 
 [source,java]
 ----
-public class Foo implements Portable{
-    final static int ID = 5;
-
-    private String foo;
-
-    public String getFoo() {
-        return foo;
-    }
-
-    public void setFoo( String foo ) {
-        this.foo = foo;
-    }
-
-    @Override
-    public int getFactoryId() {
-        return 1;
-    }
-
-    @Override
-    public int getClassId() {
-        return ID;
-    }
-
-    @Override
-    public void writePortable( PortableWriter writer ) throws IOException {
-        writer.writeUTF( "foo", foo );
-    }
-
-    @Override
-    public void readPortable( PortableReader reader ) throws IOException {
-        foo = reader.readUTF( "foo" );
-    }
-}        
+include::{javasource}/serialization/Foo.java[tag=fooportable]
 ----
 
 Similar to `IdentifiedDataSerializable`, a Portable Class must provide `classId` and `factoryId`. The Factory object creates the Portable object given the `classId`.
@@ -521,41 +466,7 @@ Let's consider the following `Employee` class:
 
 [source,java]
 ----
-class Employee implements Portable {
-    
-    private String name;
-    private int age;
-
-    public Employee() {
-    }
-
-    public Employee(int age, String name) {
-        this.age = age;
-        this.name = name;
-    }
-
-    public int getFactoryId() {
-        return 666;
-    }
-
-    public int getClassId() {
-        return 2;
-    }
-
-    public void writePortable(PortableWriter writer) throws IOException { 
-        writer.writeUTF("n", name);
-        writer.writeInt("a", age);
-    }
-
-    public void readPortable(PortableReader reader) throws IOException {
-        name = reader.readUTF("n");
-        age = reader.readInt("a");
-    }
-
-    public int getAge() {
-        return age;
-    }
-}
+include::{javasource}/serialization/EmployeePortable.java[tag=empportable]
 ----
 
 As you see in the above example, first the `name` and then the `age` is written. This order should be preserved in other members or clients.
@@ -604,44 +515,15 @@ First, let's create a simple object.
 
 [source,java]
 ----
-public class Employee {
-    private String surname;
-  
-    public Employee( String surname ) {
-        this.surname = surname;
-    }
-}
+include::{javasource}/serialization/EmployeeSS.java[]
 ----
+
 
 Now, let's implement StreamSerializer for `Employee` class.
 
 [source,java]
 ----
-public class EmployeeStreamSerializer
-    implements StreamSerializer<Employee> {
-
-    @Override
-    public int getTypeId () {
-        return 1; 
-    }
-
-    @Override
-    public void write( ObjectDataOutput out, Employee employee )
-        throws IOException { 
-        out.writeUTF(employee.getSurname());
-    }
-
-    @Override
-    public Employee read( ObjectDataInput in ) 
-        throws IOException { 
-        String surname = in.readUTF();
-        return new Employee(surname);
-    }
-
-    @Override
-    public void destroy () { 
-    }
-}
+include::{javasource}/serialization/EmployeeStreamSerializer.java[tag=empss]
 ----
 
 In practice, classes may have many fields. Just make sure the fields are read in the same order as they are written. The type ID must be unique and greater than or equal to **1**. Uniqueness of the type ID enables Hazelcast to determine which serializer will be used during deserialization. 
@@ -683,33 +565,7 @@ Foo into XML. First you need to implement a
 
 [source,java]
 ----
-public static class FooXmlSerializer implements StreamSerializer<Foo> {
-
-    @Override
-    public int getTypeId() {
-        return 10;
-    }
-
-    @Override
-    public void write( ObjectDataOutput out, Foo object ) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        XMLEncoder encoder = new XMLEncoder( bos );
-        encoder.writeObject( object );
-        encoder.close();
-        out.write( bos.toByteArray() );
-    }
-
-    @Override
-    public Foo read( ObjectDataInput in ) throws IOException {
-        InputStream inputStream = (InputStream) in;
-        XMLDecoder decoder = new XMLDecoder( inputStream );
-        return (Foo) decoder.readObject();
-    }
-
-    @Override
-    public void destroy() {
-    }
-}
+include::{javasource}/serialization/FooXmlSerializer.java[tag=fooxml]
 ----
 
 ===== Configuring StreamSerializer
@@ -748,32 +604,9 @@ Let's implement `ByteArraySerializer` for the `Employee` class mentioned in <<im
 
 [source,java]
 ----
-public class EmployeeByteArraySerializer
-    implements ByteArraySerializer<Employee> {
-
-    @Override
-    public void destroy () { 
-    }
-
-    @Override
-    public int getTypeId () {
-        return 1; 
-    }
-
-    @Override
-    public byte[] write( Employee object )
-          throws IOException { 
-        return object.getName().getBytes();
-    }
-
-    @Override
-    public Employee read( byte[] buffer ) 
-          throws IOException { 
-        String surname = new String( buffer );
-        return new Employee( surname );
-    }
-}
+include::{javasource}/serialization/EmployeeByteArraySerializer.java[tag=empbas]
 ----
+
 
 ===== Configuring ByteArraySerializer
 
@@ -866,28 +699,7 @@ Let's implement it for the `Employee` class mentioned in the <<custom-serializat
 
 [source,java]
 ----
-public class Employee
-    implements Serializable, HazelcastInstanceAware { 
-   
-    private static final long serialVersionUID = 1L;
-    private String surname;
-    private transient HazelcastInstance hazelcastInstance;
-
-    public Person( String surname ) { 
-        this.surname = surname;
-    }
-
-    @Override
-    public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
-        this.hazelcastInstance = hazelcastInstance;
-        System.out.println( "HazelcastInstance set" ); 
-    }
-
-    @Override
-    public String toString() {
-        return String.format( "Person(surname=%s)", surname ); 
-    }
-}
+include::{javasource}/serialization/PersonAwr.java[tag=personawr]
 ----
 
 
