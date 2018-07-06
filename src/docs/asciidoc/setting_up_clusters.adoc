@@ -13,7 +13,7 @@ Please note that, after a cluster is formed, communication between cluster membe
 
 Hazelcast uses the following discovery mechanisms.
 
-NOTE: You can refer to the https://hazelcast.com/resources/hazelcast-deployment-operations-guide/[Hazelcast IMDG Deployment and Operations Guide] for advice on the best discovery mechanism to use.*
+NOTE: You can refer to the https://hazelcast.com/resources/hazelcast-deployment-operations-guide/[Hazelcast IMDG Deployment and Operations Guide] for advice on the best discovery mechanism to use.
 
 [[tcp]]
 ==== TCP
@@ -451,7 +451,7 @@ The remaining properties, which are `blacklist-prefixes`, `whitelist-prefixes` a
 [[partition-group-configuration]]
 === Partition Group Configuration
 
-Hazelcast distributes key objects into partitions using the consistent hashing algorithm. Multiple replicas are created for each partition and those partition replicas are distributed among Hazelcast members. An entry is stored in the members that own replicas of the partition to which the entry's key is assigned. The total partition count is 271 by default; you can change it with the configuration property `hazelcast.partition.count`. Please see the <<system-properties, System Properties section>>.
+Hazelcast distributes key objects into partitions using the consistent hashing algorithm. Multiple replicas are created for each partition and those partition replicas are distributed among Hazelcast members. An entry is stored in the members that own replicas of the partition to which the entry's key is assigned. The total partition count is 271 by default; you can change it with the configuration property `hazelcast.partition.count`. Please see the <<system-properties, System Properties appendix>>.
 
 Hazelcast member that owns the primary replica of a partition is called as partition owner. Other replicas are called backups. Based on the configuration, a key object can be kept in multiple replicas of a partition. A member can hold at most one replica of a partition (ownership or backup). 
 
@@ -554,7 +554,7 @@ This is the list of supported attributes which is set by Discovery Service plugi
 * `hazelcast.partition.group.rack`: For different racks in the same zone.
 * `hazelcast.partition.group.host`: For a shared physical member if virtualization is used.
 
-NOTE: hazelcast-jclouds offers rack or host information in addition to zone information based on cloud provider. In such cases, Hazelcast looks for zone, rack, and host information in the given order and create partition groups with available information*
+NOTE: hazelcast-jclouds offers rack or host information in addition to zone information based on cloud provider. In such cases, Hazelcast looks for zone, rack, and host information in the given order and create partition groups with available information.
 
 Following are declarative and programmatic configuration snippets that show how to enable ZONE_AWARE grouping.
 
@@ -861,7 +861,7 @@ The `tcp-ip` element includes parameters to fine tune the TCP/IP join mechanism.
 * `required-member`: IP address of the required member. Cluster will only formed if the member with this IP address is found.
 * `member`: IP address(es) of one or more well known members. Once members are connected to these well known ones, all member addresses will be communicated with each other. You can also give comma separated IP addresses using the `members` element.
 +
-NOTE: `tcp-ip` element also accepts the `interface` parameter. Please refer to the <<interfaces, Interfaces element description>>.*
+NOTE: `tcp-ip` element also accepts the `interface` parameter. Please refer to the <<interfaces, Interfaces element description>>.
 +
 * `connection-timeout-seconds`: Defines the connection timeout. This is the maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. Setting it to a too low value could mean that a member is not able to connect to a cluster. Setting it to a too high value means that member startup could slow down because of longer timeouts, for example when a well known member is not up. Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5.
 
@@ -985,7 +985,7 @@ JVM has two system properties for setting the preferred protocol stack (IPv4 or 
 
 Also see additional http://docs.oracle.com/javase/1.5.0/docs/guide/net/ipv6_guide/[details on IPv6 support in Java].
 
-NOTE: IPv6 support has been switched off by default, since some platforms have issues using the IPv6 stack. Some other platforms such as Amazon AWS have no support at all. To enable IPv6 support, just set configuration property `hazelcast.prefer.ipv4.stack` to *false*. Please refer to the <<system-properties, System Properties section>> for details.
+NOTE: IPv6 support has been switched off by default, since some platforms have issues using the IPv6 stack. Some other platforms such as Amazon AWS have no support at all. To enable IPv6 support, just set configuration property `hazelcast.prefer.ipv4.stack` to *false*. Please refer to the <<system-properties, System Properties appendix>> for details.
 
 [[member-address-provides-spi]]
 ==== Member Address Provider SPI
@@ -1063,7 +1063,7 @@ Hazelcast has two built-in failure detectors; Deadline Failure Detector and Phi 
 Since 3.9.1, Hazelcast provides yet another failure detector, Ping Failure Detector, that, if enabled, works in parallel with the above ones, but identifies
 failures on OSI Layer 3 (Network Layer). This detector is by default disabled.
 
-Note that, Hazelcast also offers failure detectors for its Java client. Please refer to the <<client-failure-detectors, Client Failure Detectors section>> for more information.
+Note that, Hazelcast also offers failure detectors for its Java client. Please refer to the <<java-client-failure-detectors, Client Failure Detectors section>> for more information.
 
 [[deadline-failre-detector]]
 ==== Deadline Failure Detector

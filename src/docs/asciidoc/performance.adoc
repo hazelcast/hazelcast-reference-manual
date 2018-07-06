@@ -331,7 +331,7 @@ This property defines the maximum allowed number of concurrent invocations. When
 Please note that back off timeout and controlling the number of pending async backups (sync window) is not supported at the client side.
 
 
-NOTE: Please refer to the <<system-properties, System Properties section>> to learn how to configure the system properties.
+NOTE: Please refer to the <<system-properties, System Properties appendix>> to learn how to configure the system properties.
 
 === Threading Model
 
@@ -347,7 +347,7 @@ Hazelcast uses a pool of threads for I/O. A single thread does not perform all t
 
 You can configure the number of I/O threads using the `hazelcast.io.thread.count` system property. Its default value is 3 per member. If 3 is used, in total there are 7 I/O threads: 1 accept I/O thread, 3 read I/O threads, and 3 write I/O threads. Each I/O thread has its own Selector instance and waits on the `Selector.select` if there is nothing to do.
 
-NOTE: You can also specify counts for input and output threads separately. There are `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count` properties for this purpose. Please refer to the <<system-properties, System Properties section>> for information on these properties and how to set them.
+NOTE: You can also specify counts for input and output threads separately. There are `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count` properties for this purpose. Please refer to the <<system-properties, System Properties appendix>> for information on these properties and how to set them.
 
 
 Hazelcast periodically scans utilization of each I/O thread and can decide to migrate a connection to a new thread if the existing thread is servicing a disproportionate number of I/O events. You can customize the scanning interval by configuring the `hazelcast.io.balancer.interval.seconds` system property; its default interval is 20 seconds. You can disable the balancing process by setting this property to a negative value.
@@ -503,7 +503,7 @@ the calling thread.
 
 The `SlowOperationDetector` monitors the operation threads and collects information about all slow operations. An `Operation` is a task executed by a generic or partition thread (see <<operation-threading, Operation Threading>>). An operation is considered as slow when it takes more computation time than the configured threshold.
 
-The `SlowOperationDetector` stores the fully qualified classname of the operation and its stacktrace as well as operation details, start time and duration of each slow invocation. All collected data is available in the <<management-center, Management Center>>.
+The `SlowOperationDetector` stores the fully qualified classname of the operation and its stacktrace as well as operation details, start time and duration of each slow invocation. All collected data is available in the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-members[Management Center].
 
 The `SlowOperationDetector` is configured via the following system properties.
 

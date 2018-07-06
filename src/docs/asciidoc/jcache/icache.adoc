@@ -10,7 +10,7 @@ It has two sets of extensions:
 
 
 '''
-NOTE: ICache data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your cache) and Fast Batch Processing. Hazelcast Jet uses ICache as a source (reads data from ICache) and as a sink (writes data to ICache). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see http://docs.hazelcast.org/docs/jet/latest-dev/manual/index.html#imap-and-icache[here] in the Hazelcast Jet Reference Manual to learn how Jet uses ICache, i.e., how it can read from and write to ICache.
+NOTE: ICache data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your cache) and Fast Batch Processing. Hazelcast Jet uses ICache as a source (reads data from ICache) and as a sink (writes data to ICache). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see http://docs.hazelcast.org/docs/jet/latest/manual/index.html#connector-imdg[here] in the Hazelcast Jet Reference Manual to learn how Jet uses ICache, i.e., how it can read from and write to ICache.
 
 ==== Scoping to Join Clusters
 
@@ -512,8 +512,7 @@ Asynchronous method overloads are not listed here. Please see <<icache-async-met
 
 ==== JCache Eviction
 
-Caches are generally not expected to grow to an infinite size. Implementing an <<expirepolicy, expiry policy>> is one way you can
-prevent infinite growth, but sometimes it is hard to define a meaningful expiration timeout. Therefore, Hazelcast JCache provides the eviction feature. Eviction offers the possibility of removing entries based on the cache size or amount of used memory
+Caches are generally not expected to grow to an infinite size. Implementing an <<defining-a-custom-expirypolicy, expiry policy>> is one way you can prevent infinite growth, but sometimes it is hard to define a meaningful expiration timeout. Therefore, Hazelcast JCache provides the eviction feature. Eviction offers the possibility of removing entries based on the cache size or amount of used memory
 (Hazelcast IMDG Enterprise Only) and not based on timeouts.
 
 ===== Eviction and Runtime

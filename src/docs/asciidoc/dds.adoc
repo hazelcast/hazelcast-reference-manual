@@ -178,7 +178,7 @@ public class Sample implements DistributedObjectListener {
 Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap` and hence `java.util.Map`. It is the distributed implementation of Java map. You can perform operations like reading and writing from/to a Hazelcast map with the well known get and put methods.
 
 '''
-NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IMap+and+ICache[here] in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
+NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see http://docs.hazelcast.org/docs/jet/latest/manual/#connector-imdg[here] in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
 
 
 [[getting-a-map-and-putting-an-entry]]
@@ -211,7 +211,7 @@ When you run this code, a cluster member is created with a map whose entries are
 
 image::1Node.png[Map Entries in a Single Member]
 
-NOTE: Please note that some of the partitions will not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the <<system-properties, System Properties section>>.
+NOTE: Please note that some of the partitions will not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the <<system-properties, System Properties appendix>>.
 
 [[creating-a-member-for-map-backup]]
 ==== Creating A Member for Map Backup
@@ -830,7 +830,7 @@ You can configure `MapStore` as write-behind by setting the `write-delay-seconds
 
 NOTE: In write-behind mode, Hazelcast coalesces updates on a specific key by default, which means it applies only the last update on that key. However, you can set `MapStoreConfig.setWriteCoalescing()` to `FALSE` and you can store all updates performed on a key to the data store.
 
-NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception will be thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the <<system-properties, System Properties section>> for information on this property and how to set the system properties.
+NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception will be thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the <<system-properties, System Properties appendix>> for information on this property and how to set the system properties.
 
 
 In write-behind mode, when the `map.put(key,value)` call returns:
@@ -2138,7 +2138,7 @@ Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allo
 
 
 '''
-NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see http://docs.hazelcast.org/docs/jet/0.5/manual/Work_with_Jet/Source_and_Sink_Connectors/Hazelcast_IMDG.html#page_IList[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job, and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
+NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see http://docs.hazelcast.org/docs/jet/latest/manual/#imdg-list[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job, and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
 
 [[getting-a-list-and-putting-items]]
 ==== Getting a List and Putting Items
@@ -2646,7 +2646,7 @@ When a member subscribes to a topic, it is actually registering for messages pub
 including the new members that joined after you add the listener.
 
 NOTE: Publish operation is async. It does not wait for operations to run in
-remote members; it works as fire and forget.*
+remote members; it works as fire and forget.
 
 [[getting-a-topic-and-publishing-messages]]
 ==== Getting a Topic and Publishing Messages
@@ -2978,7 +2978,7 @@ try {
 }
 ----
 
-You can also specify a lease time when trying to acquire a lock: `tryLock(time, unit, leaseTime, leaseUnit)`. In that case, it tries to acquire the lock within the specified lease time. If the lock is not available, the current thread becomes disabled for thread scheduling purposes until either it acquires the lock or the specified waiting time elapses. Note that this lease time cannot be longer than the time you specify with the system property `hazelcast.lock.max.lease.time.seconds`. Please see the <<system-properties, System Properties section>> to see the description of this property and to learn how to set a system property.
+You can also specify a lease time when trying to acquire a lock: `tryLock(time, unit, leaseTime, leaseUnit)`. In that case, it tries to acquire the lock within the specified lease time. If the lock is not available, the current thread becomes disabled for thread scheduling purposes until either it acquires the lock or the specified waiting time elapses. Note that this lease time cannot be longer than the time you specify with the system property `hazelcast.lock.max.lease.time.seconds`. Please see the <<system-properties, System Properties appendix>> to see the description of this property and to learn how to set a system property.
 
 
 [[understanding-lock-behavior]]
@@ -3688,7 +3688,7 @@ Config hazelcastConfig = new Config()
 
 Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
 
-NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs in case of a network split, even with split-brain protection enabled (during short window while split-brain is detected). Please use <<flakeIdgenerator, FlakeIdGenerator>> for an alternative implementation which does not suffer from the issue. Also see the <<migrating-to-flakeIdgenerator, Migration guide>> at the end of this section.
+NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs in case of a network split, even with split-brain protection enabled (during short window while split-brain is detected). Please use <<flakeidgenerator, FlakeIdGenerator>> for an alternative implementation which does not suffer from the issue. Also see the <<migrating-to-flakeidgenerator, Migration guide>> at the end of this section.
 
 [[generating-cluster-wide-ids]]
 ==== Generating Cluster-Wide IDs
@@ -3750,7 +3750,7 @@ NOTE: IdGenerator has one synchronous backup and no asynchronous backups. Its ba
 The Flake ID generator provides similar features with more safety guarantees during network splits. The two generators are completely different implementations, but both types of generator generate roughly ordered IDs. So in order to ensure uniqueness of the generated IDs, we can force the Flake ID generator to start at least where the old generator ended. This is likely the case, because the values from Flake generator are quite large compared to values from the old generator. Anyway, here are the steps you need to take: 
 
 * Make sure the version of your Hazelcast cluster and of all clients is at least 3.10.
-* If the current ID from old `IdGenerator` is higher than the ID from `FlakeIdGenerator`, you need to configure ID offset. See https://github.com/hazelcast/hazelcast-code-samples/blob/v3.10/distributed-primitives/flake-id-generator/src/main/java/FlakeIdMigrationSample.java[FlakeIdMigrationSample] for mor details.
+* If the current ID from old `IdGenerator` is higher than the ID from `FlakeIdGenerator`, you need to configure ID offset. See https://github.com/hazelcast/hazelcast-code-samples/blob/master/distributed-primitives/flake-id-generator/src/main/java/FlakeIdMigrationSample.java[FlakeIdMigrationSample] for mor details.
 * Replace all calls to `HazelcastInstance.getIdGenerator()` with `HazelcastInstance.getFlakeIdGenerator()`. If you use Spring configuration, replace `<id-generator>` with `<flake-id-generator>`
 
 [[flakeidgenerator]]

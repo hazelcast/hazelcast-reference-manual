@@ -165,7 +165,7 @@ In order to upgrade a 3.6.x cluster and clients to 3.7.3 (or later), you will ne
 ** first upgrade your cluster members to 3.7.3, adding property `hazelcast.compatibility.3.6.client=true` to your configuration; when started with this property, cluster members are compatible with 3.6.x and 3.7.3+ clients but not with 3.7-3.7.2 clients. Once your cluster is upgraded, you may upgrade your applications to use client version 3.7.3+.
 ** upgrade your clients from 3.6.x to 3.7.3, adding property `hazelcast.compatibility.3.6.server=true` to your Hazelcast client configuration. A 3.7.3 client started with this compatibility option is compatible with 3.6.x and 3.7.3+ cluster members but incompatible with 3.7-3.7.2 cluster members. Once your clients are upgraded, you may then proceed to upgrade your cluster members to version 3.7.3 or later.
 + 
-You may use any of the supported ways as described in the <<system-properties, System Properties section>> to configure the compatibility option. When done upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration. 
+You may use any of the supported ways as described in the <<system-properties, System Properties appendix>> to configure the compatibility option. When done upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration. 
 * **Upgrading from 3.6.x to 3.8.x EE when using `JCache`:** Due to a compatibility problem CacheConfig serialization may not work if your member is 3.8.x where x < 5. Hence, you will need to use the 3.8.5 or higher version where the problem is being fixed.
 * **Introducing the `spring-aware` element:** Before the release 3.5, Hazelcast uses `SpringManagedContext` to scan `SpringAware` annotations by default. This may cause some performance overhead for the users who do not use `SpringAware`.
 This behavior has been changed with the release of Hazelcast 3.5. `SpringAware` annotations are disabled by default. By introducing the `spring-aware` element, now it is possible to enable it by adding the `<hz:spring-aware />` tag to the configuration. Please see the <<integrating-with-spring, Spring Integration section>>.
@@ -416,7 +416,7 @@ For information on how to automatically deploy your cluster onto Azure, please s
 
 image::Plugin_New.png[CloudFoundry, 84, 22]
 
-Starting with Hazelcast 3.7, you can deploy your Hazelcast cluster onto Pivotal Cloud Foundry. It is available as a Pivotal Cloud Foundry Tile which you can download at https://network.pivotal.io/products/hazelcast/[here]. You can find the installation and usage instructions, and the release notes documents at https://docs.pivotal.io/partners/hazelcast/index.html[https://docs.pivotal.io/partners/hazelcast/index.html].
+Starting with Hazelcast 3.7, you can deploy your Hazelcast cluster onto Pivotal Cloud Foundry. It is available as a Pivotal Cloud Foundry Tile which you can download at https://network.pivotal.io/products/hazelcast-pcf/[here]. You can find the installation and usage instructions, and the release notes documents at https://docs.pivotal.io/partners/hazelcast/index.html[https://docs.pivotal.io/partners/hazelcast/index.html].
 
 [[deploying-using-docker]]
 === Deploying using Docker

@@ -70,7 +70,7 @@ The following is the declarative configuration example.
 </native-memory>
 ```
 
-NOTE: You can check whether there is enough free physical memory for the requested number of bytes using the system property `hazelcast.hidensity.check.freememory`. Please see the <<system-properties, System Properties chapter>> on how to use Hazelcast system properties.
+NOTE: You can check whether there is enough free physical memory for the requested number of bytes using the system property `hazelcast.hidensity.check.freememory`. Please see the <<system-properties, System Properties appendix>> on how to use Hazelcast system properties.
 
 
 === Sizing Practices
@@ -270,7 +270,7 @@ This flexibility provides;
 - ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
 - ability to copy production data to test environment, so that a more functional test cluster can bet setup  
 
-Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores, e.g., `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see <<system-properties, System Properties section>>.
+Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores, e.g., `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see <<system-properties, System Properties appendix>>.
 
 ==== Hot Restart Persistence Design Details
 
