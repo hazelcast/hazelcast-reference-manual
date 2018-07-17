@@ -136,7 +136,7 @@ Following is an example of setting up the WAN replication with the EC2 discovery
                       <property name="tag-key">test-tag-key</property>
                       <property name="tag-value">test-tag-value</property>
                       <property name="connection-timeout-seconds">10</property>
-                      <property name="hz-port">5702</property>
+                      <property name="hz-port">5701-5708</property>
                   </properties>
               </discovery-strategy>
           </discovery-strategies>
@@ -146,7 +146,7 @@ Following is an example of setting up the WAN replication with the EC2 discovery
 </hazelcast>
 ```
 
-The `hz-port` property defines the port on which the target endpoint is running. The default port 5701 is used if this property is not defined. This is needed because the Amazon API which the AWS plugin uses does not provide the port on which Hazelcast is running, only the IP address. For some other discovery SPI implementations, this might not be necessary and it might discover the port as well, e.g., by looking up in a service registry. 
+The `hz-port` property defines the port or the port range on which the target endpoint is running. The default port range 5701-5708 is used if this property is not defined. This is needed because the Amazon API which the AWS plugin uses does not provide the port on which Hazelcast is running, only the IP address. For some other discovery SPI implementations, this might not be necessary and it might discover the port as well, e.g., by looking up in a service registry.
 
 The other properties are the same as when using the `aws` element. In case of EC2 discovery you can configure the WAN replication using the `aws` element. You may use either of these, but not both at the same time.
 
