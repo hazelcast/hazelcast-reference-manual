@@ -452,6 +452,13 @@ And, the following is the equivalent programmatic configuration:
 ...
 ``` 
 
+Note that you can clear a member's WAN replication event queue. It can be initiated through Management Center's http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-wan-replication[Clear Queues action] or Hazelcast’s REST API. Below is the URL for its REST call:
+
+```
+http://member_ip:port/hazelcast/rest/mancenter/wan/clearWanQueues
+```
+
+This may be useful, for instance, to release the consumed heap if you know that the target cluster is being shut down, decommissioned, put out of use and it will never come back. Or, when a failure happens and queues are not replicated anymore, you could clear the queues using this clearing action.
 
 ==== Queue Full Behavior
 
