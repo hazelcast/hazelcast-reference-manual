@@ -68,19 +68,19 @@ Following are the definitions of configuration elements:
 * `name`: Name of your WAN Replication. This name is referenced in IMap or ICache configuration when you add WAN Replication for these data structures (using the element <wan-replication-ref> in the configuration of IMap or ICache).
 * `group-name`: Configures target cluster's group name.
 * `class-name`: Name of the class implementation for the WAN replication.
-* `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full.
-* `queue-capacity`: Size of the queue of events. Its default value is 10000.
-* `batch.size`: Maximum size of events that are sent to the target cluster in a single batch. Its default value is 500.
-* `batch.max.delay.millis`: Maximum amount of time, in milliseconds, to be waited before sending a batch of events in case `batch.size` is not reached. Its default value is 1000.
+* `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full. Please see the <<queue-full-behavior, Queue Full Behavior section>>.
+* `queue-capacity`: Size of the queue of events. Its default value is 10000. Please see the <<queue-capacity, Queue Capacity section>>.
+* `batch.size`: Maximum size of events that are sent to the target cluster in a single batch. Its default value is 500. Please see the <<batch-size, Batch Size section>>.
+* `batch.max.delay.millis`: Maximum amount of time, in milliseconds, to be waited before sending a batch of events in case `batch.size` is not reached. Its default value is 1000 milliseconds. Please see the <<batch-maximum-delay, Batch Maximum Delay section>>.
 * `snapshot.enabled`: When set to `true`, only the latest events (based on key) are selected and sent in a batch. Its default value is `false`.
-* `response.timeout.millis`: Time in milliseconds to be waited for the acknowledgment of a sent WAN event to target cluster. Its default value is 60000.
-* `ack.type`: Acknowledgment type for each target cluster.
+* `response.timeout.millis`: Time, in milliseconds, to be waited for the acknowledgment of a sent WAN event to target cluster. Its default value is 60000 milliseconds. Please see the <<response-timeout, Response Timeout section>>.
+* `ack.type`: Acknowledgment type for each target cluster. Please see the <<acknowledgment-types, Acknowledgment Types section>>.
 * `endpoints`: IP addresses and ports of the cluster members for which the WAN replication is implemented. These endpoints are not necessarily the entire target cluster and WAN does not perform the discovery of other members in the target cluster. It only expects that these IP addresses (or at least some of them) are available.
 * `group.password`: Configures target cluster's group password.
 
 Other relevant properties are:
  
-* `discovery.period`: Period in seconds in which WAN tries to reestablish connections to failed endpoints. Default is 10 (seconds).
+* `discovery.period`: Period in seconds in which WAN tries to reestablish connections to failed endpoints. Default is 10 seconds.
 * `executorThreadCount`: The number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. It is important to determine which number of executor threads is a good value. Failure to do so can lead to performance issues - either contention on a too small number of threads or wasted threads that will not be performing any work. 
 
 And the following is the equivalent programmatic configuration snippet:
@@ -188,7 +188,7 @@ The other properties are the same as when using the `aws` element. In case of EC
 
 You can refer to the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. Following are the definitions of additional configuration properties:
 
-- `discovery.period`: Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 (seconds).
+- `discovery.period`: Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 seconds.
 - `maxEndpoints`: Maximum number of endpoints that WAN will connect to when using a discovery mechanism to define endpoints. Default is `Integer.MAX_VALUE`. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
 - `executorThreadCount`: Number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor will be sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that will not be performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order.
 - `discovery.useEndpointPrivateAddress`: Determines whether the WAN connection manager should connect to the endpoint on the private address returned by the discovery SPI. By default this property is `false` which means the WAN connection manager will always use the public address.
