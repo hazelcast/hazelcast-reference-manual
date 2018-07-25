@@ -279,7 +279,7 @@ gives the system some time to deal with the load. Using the following system pro
 
 `hazelcast.backpressure.backoff.timeout.millis`
 
-This system property's default value is 60000 ms.
+This system property's default value is 60000 milliseconds.
 
 The Health Monitor keeps an eye on the usage of the invocations. If it sees a member has consumed 70% or more of the invocations, it starts to log health messages.
 
@@ -343,7 +343,7 @@ can be set to alter the behavior of the system.
 
 * `hazelcast.event.thread.count`: Number of event-threads in this array. Its default value is 5.
 * `hazelcast.event.queue.capacity`: Capacity of the work queue. Its default value is 1000000.
-* `hazelcast.event.queue.timeout.millis`: Timeout for placing an item on the work queue. Its default value is 250.
+* `hazelcast.event.queue.timeout.millis`: Timeout for placing an item on the work queue in milliseconds. Its default value is 250 milliseconds.
 
 If you process a lot of events and have many cores, changing the value of `hazelcast.event.thread.count` property to
 a higher value is a good practice. This way, more events can be processed in parallel.
@@ -692,8 +692,8 @@ Following are the descriptions of all configuration elements:
 * `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
 ** `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
 ** `directory`: Specifies the parent directory for the preloader of this Near Cache. The filenames for the preloader storage will be generated from the Near Cache name. You can additionally specify the parent directory to have multiple clients on the same machine with the same Near Cache names.
-** `store-initial-delay-seconds`: Specifies the delay in seconds until the keys of this Near Cache are stored for the first time. Its default value is `600`.
-** `store-interval-seconds`: Specifies the interval in seconds in which the keys of this Near Cache are stored. Its default value is `600`. 
+** `store-initial-delay-seconds`: Specifies the delay in seconds until the keys of this Near Cache are stored for the first time. Its default value is `600` seconds.
+** `store-interval-seconds`: Specifies the interval in seconds in which the keys of this Near Cache are stored. Its default value is `600` seconds. 
 
 ==== Near Cache Configuration Examples
 
