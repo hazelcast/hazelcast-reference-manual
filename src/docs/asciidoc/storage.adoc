@@ -28,7 +28,7 @@ High-Density Memory Store is currently provided for the following Hazelcast feat
 To use the High-Density memory storage, the native memory usage must be enabled using the programmatic or declarative configuration.
 Also, you can configure its size, memory allocator type, minimum block size, page size and metadata space percentage.
 
-* **size:** Size of the total native memory to allocate in megabytes. Default value is **512 MB**.
+* **size:** Size of the total native memory to allocate in megabytes. Its default value is **512 MB**.
 * **allocator type**: Type of the memory allocator. Available values are as follows:
 ** **STANDARD**: This option is used internally by Hazelcast's POOLED allocator type or for debugging/testing purposes.
 *** With this option, the memory is allocated or deallocated using your operating system's default memory manager. 
@@ -42,9 +42,9 @@ Also, you can configure its size, memory allocator type, minimum block size, pag
 *** It never frees memory blocks back to the operating system. It marks disposed memory blocks as available to be used later, meaning that these blocks are reusable.
 *** Memory allocation and deallocation operations (except the ones requiring larger sizes than the page size) do not interact with the operating system mostly.
 *** For memory allocation, it tries to find the requested memory size inside the internal memory pools. If it cannot be found, then it interacts with the operating system. 
-* **minimum block size:** Minimum size of the blocks in bytes to split and fragment a page block to assign to an allocation request. It is used only by the **POOLED** memory allocator. Default value is **16 bytes**.
-* **page size:** Size of the page in bytes to allocate memory as a block. It is used only by the **POOLED** memory allocator. Default value is `1 << 22` = **4194304 Bytes**, about **4 MB**.
-* **metadata space percentage:** Defines the percentage of the allocated native memory that is used for internal memory structures by the High-Density Memory for tracking the used and available memory blocks. It is used only by the **POOLED** memory allocator. Default value is **12.5**. Please note that when the memory runs out, you will get a `NativeOutOfMemoryException`;  if your store has a big size of entries, you should consider increasing this percentage.
+* **minimum block size:** Minimum size of the blocks in bytes to split and fragment a page block to assign to an allocation request. It is used only by the **POOLED** memory allocator. Its default value is **16 bytes**.
+* **page size:** Size of the page in bytes to allocate memory as a block. It is used only by the **POOLED** memory allocator. Its default value is `1 << 22` = **4194304 Bytes**, about **4 MB**.
+* **metadata space percentage:** Defines the percentage of the allocated native memory that is used for internal memory structures by the High-Density Memory for tracking the used and available memory blocks. It is used only by the **POOLED** memory allocator. Its default value is **12.5**. Please note that when the memory runs out, you will get a `NativeOutOfMemoryException`;  if your store has a big size of entries, you should consider increasing this percentage.
 
 The following is the programmatic configuration example.
 

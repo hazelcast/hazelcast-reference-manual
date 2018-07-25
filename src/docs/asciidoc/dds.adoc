@@ -332,8 +332,8 @@ The following is an example declarative configuration for map eviction.
 
 Let's describe each element:
 
-* `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
-* `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite.
+* `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
+* `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite.
 * `eviction-policy`: Valid values are described below.
 ** NONE: Default policy. If set, no items will be evicted and the property `max-size` will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
 ** LRU: Least Recently Used.
@@ -341,7 +341,7 @@ Let's describe each element:
 +
 Apart from the above values, you can also develop and use your own eviction policy. Please see the <<custom-eviction-policy, Custom Eviction Policy section>>.
 +
-* `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
+* `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
 ** `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy.		
 +
 `<max-size policy="PER_NODE">5000</max-size>`
@@ -729,10 +729,10 @@ Here is a sample configuration:
 The following are the descriptions of MapStore configuration elements and attributes:
 
 * `class-name`: Name of the class implementing MapLoader and/or MapStore.
-* `write-delay-seconds`: Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through so MapStore.store(key, value) will be called as soon as the entry is updated. Otherwise it is write-behind so updates will be stored after write-delay-seconds value by calling Hazelcast.storeAll(map). Default value is 0.
+* `write-delay-seconds`: Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through so MapStore.store(key, value) will be called as soon as the entry is updated. Otherwise it is write-behind so updates will be stored after write-delay-seconds value by calling Hazelcast.storeAll(map). Its default value is 0.
 * `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries will be tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
 * `write-coalescing`: In write-behind mode, Hazelcast coalesces updates on a specific key by default; it applies only the last update on it. You can set this element to `false` to store all updates performed on a key to the data store.
-* `enabled`: True to enable this map-store, false to disable. Default value is true.
+* `enabled`: True to enable this map-store, false to disable. Its default value is true.
 * `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded. Please see the <<initializing-map-on-startup, Initializing Map on Startup section>> for more details.
 
 [[storing-entries-to-multiple-maps]]
