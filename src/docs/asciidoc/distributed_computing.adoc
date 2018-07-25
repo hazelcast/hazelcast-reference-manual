@@ -171,7 +171,7 @@ public void echoOnMembers( String input, Set<Member> members ) throws Exception 
 
 NOTE: You can obtain the set of cluster members via `HazelcastInstance.getCluster().getMembers()` call.
 
-[[cancelin-an-executing-task]]
+[[canceling-an-executing-task]]
 ==== Canceling an Executing Task
 
 A task in the code that you execute in a cluster might take longer than expected. If you cannot stop/cancel that task, it will keep eating your resources. 
@@ -357,7 +357,7 @@ Following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the executor task.
 * `pool-size`: Number of executor threads per member for the executor.
-* `durability`: Number of backups in the cluster for the submitted task; default is 1.
+* `durability`: Number of backups in the cluster for the submitted task. Its default value is 1.
 * `capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
 * `quorum-ref`: Name of quorum configuration that you want this Durable Executor Service to use. Please see the <<split-brain-protection-for-durable-executor-service, Split-Brain Protection for Durable Executor Service section>>.
 
