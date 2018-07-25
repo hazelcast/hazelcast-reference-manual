@@ -826,14 +826,14 @@ serializerConfig.setTypeClass( "Employee" )
 Serialization configuration has the following elements.
 
 - `portable-version`: Defines versioning of the portable serialization. Portable version differentiates two of the same classes that have changes, such as adding/removing field or changing a type of a field.
-- `use-native-byte-order`: Set to `true` to use native byte order for the underlying platform. 
+- `use-native-byte-order`: Set to `true` to use native byte order for the underlying platform. Its default value is `false`.
 - `byte-order`: Defines the byte order that the serialization will use: `BIG_ENDIAN` or `LITTLE_ENDIAN`. Its default value is `BIG_ENDIAN`.
-- `enable-compression`: Enables compression if default Java serialization is used. 
-- `enable-shared-object`: Enables shared object if default Java serialization is used. 
-- `allow-unsafe`: Set to `true` to allow `unsafe` to be used. 
-- `data-serializable-factory`: The DataSerializableFactory class to be registered.
-- `portable-factory`: The PortableFactory class to be registered.
-- `global-serializer`: The global serializer class to be registered if no other serializer is applicable.
+- `enable-compression`: Enables compression if default Java serialization is used. Its default value is `false`.
+- `enable-shared-object`: Enables shared object if default Java serialization is used. Its default value is `false`.
+- `allow-unsafe`: Set to `true` to allow `unsafe` to be used. Its default value is `false`.
+- `data-serializable-factory`: Custom classes implementing `com.hazelcast.nio.serialization.DataSerializableFactory` to be registered. These can be used to speed up serialization/deserialization of objects.
+- `portable-factory`: The `PortableFactory` class to be registered.
+- `global-serializer`: The global serializer class to be registered if no other serializer is applicable. This element has the optional boolean attribute `override-java-serialization`. If set to `true`, the Java serialization step is assumed to be handled by the global serializer. Java Serializable and Externalizable is prior to global serializer by default (`false`).
 - `serializer`: The class name of the serializer implementation.
 - `check-class-def-errors`: When set to `true`, the serialization system will check for class definitions error at start and will throw a Serialization Exception with an error definition.
 
