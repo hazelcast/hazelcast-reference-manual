@@ -2398,10 +2398,10 @@ rtConfig.setTopicOverloadPolicy( TopicOverloadPolicy.BLOCK )
 
 Reliable Topic configuration has the following elements.
 
-* `statistics-enabled`: Enables or disables the statistics collection for the Reliable Topic. The default value is `true`.
+* `statistics-enabled`: Enables or disables the statistics collection for the Reliable Topic. Its default value is `true`.
 * `message-listener`: Message listener class that listens to the messages when they are added or removed.
-* `read-batch-size`: Minimum number of messages that Reliable Topic will try to read in batches. The default value is 10.
-* `topic-overload-policy`: Policy to handle an overloaded topic. Available values are `DISCARD_OLDEST`, `DISCARD_NEWEST`, `BLOCK` and `ERROR`. The default value is `BLOCK. See <<slow-consumers, Slow Consumers>> for definitions of these policies.
+* `read-batch-size`: Minimum number of messages that Reliable Topic will try to read in batches. Its default value is 10.
+* `topic-overload-policy`: Policy to handle an overloaded topic. Available values are `DISCARD_OLDEST`, `DISCARD_NEWEST`, `BLOCK` and `ERROR`. Its default value is `BLOCK`. See <<slow-consumers, Slow Consumers>> for definitions of these policies.
 
 
 [[lock]]
@@ -3053,8 +3053,8 @@ Hazelcast implements the state-based replication mechanism - the CRDT state for 
 </hazelcast>
 ```
 
-* `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count will lead to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT will lead to a sudden burst in the number of replication messages in a short time interval. The default value is 1 which means that each replica will replicate state to only one other replica in each replication round. 
-* `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates will be batched together in one replication message and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. The default value is 1000 ms which means that the changed CRDT state is replicated every 1 second. 
+* `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count will lead to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT will lead to a sudden burst in the number of replication messages in a short time interval. Its default value is 1 which means that each replica will replicate state to only one other replica in each replication round. 
+* `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates will be batched together in one replication message and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. Its default value is 1000 milliseconds which means that the changed CRDT state is replicated every 1 second. 
      
 Following is an equivalent snippet of Java configuration:
 
@@ -3285,11 +3285,11 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 </replicatedmap>
 ```
 
-* `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. The default value is `OBJECT`.
-* `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. The default value is `true`. If set to `false` (i.e., synchronous initial fill up), no exception will be thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
-* `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. The default value is `true`.
+* `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. Its default value is `OBJECT`.
+* `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. Its default value is `true`. If set to `false` (i.e., synchronous initial fill up), no exception will be thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
+* `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. Its default value is `true`.
 * `entry-listener`: Full canonical classname of the `EntryListener` implementation.
-** `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. The default value is `true`.
+** `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. Its default value is `true`.
 ** `entry-listener#local`: Not used for Replicated Map since listeners are always local.
 * `quorum-ref`: Name of quorum configuration that you want this Replicated Map to use. Please see the <<split-brain-protection-for-replicated-map, Split-Brain Protection for Replicated Map section>>.
 
