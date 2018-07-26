@@ -2143,43 +2143,7 @@ Here's a sample implementation of the Aggregator:
 
 [source,java]
 ----
-public class DoubleAverageAggregator<I> extends AbstractAggregator<I, Double> {
-
-    private double sum;
-
-    private long count;
-
-    public DoubleAverageAggregator() {
-        super();
-    }
-
-    public DoubleAverageAggregator(String attributePath) {
-        super(attributePath);
-    }
-
-    @Override
-    public void accumulate(I entry) {
-        count++;
-        Double extractedValue = (Double) extract(entry);
-        sum += extractedValue;
-    }
-
-    @Override
-    public void combine(Aggregator aggregator) {
-        DoubleAverageAggregator doubleAverageAggregator = (DoubleAverageAggregator) aggregator;
-        this.sum += doubleAverageAggregator.sum;
-        this.count += doubleAverageAggregator.count;
-    }
-
-    @Override
-    public Double aggregate() {
-        if (count == 0) {
-            return null;
-        }
-        return (sum / (double) count);
-    }
-
-}
+include::{javasource}/distributedquery/SimpleFastAggregationsDemo.java[tag=fademo]
 ----
 
 As you can see:
@@ -2292,21 +2256,10 @@ A continuous query cache is beneficial when you need to query the distributed `I
 
 The following code snippet shows how you can access a continuous query cache from a member.
      
-```
-QueryCacheConfig queryCacheConfig = new QueryCacheConfig("cache-name");
-queryCacheConfig.getPredicateConfig().setImplementation(new OddKeysPredicate());
-       
-MapConfig mapConfig = new MapConfig("map-name");
-mapConfig.addQueryCacheConfig(queryCacheConfig);
-       
-Config config = new Config();
-config.addMapConfig(mapConfig);
-      
-HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
-IEnterpriseMap<Integer, String> map = (IEnterpriseMap) node.getMap("map-name");
-       
-QueryCache<Integer, String> cache = map.getQueryCache("cache-name");
-```     
+[source,java]
+----
+include::{javasource}/distributedquery/CQC.java[tag=cqc]
+----     
 
 ==== Accessing Continuous Query Cache from Client Side
 
@@ -2315,18 +2268,10 @@ The difference in this code from the member side code above is that you configur
 a client instance instead of a member instance.
 
      
-```
-QueryCacheConfig queryCacheConfig = new QueryCacheConfig("cache-name");
-queryCacheConfig.getPredicateConfig().setImplementation(new OddKeysPredicate());
-       
-ClientConfig clientConfig = new ClientConfig();
-clientConfig.addQueryCacheConfig("map-name", queryCacheConfig);
-      
-HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-IEnterpriseMap<Integer, Integer> clientMap = (IEnterpriseMap) client.getMap("map-name");
-       
-QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
-```
+[source,java]
+----
+include::{javasource}/distributedquery/CQCClient.java[tag=cqcclient]
+----
 
 ==== Features of Continuous Query Cache
 
