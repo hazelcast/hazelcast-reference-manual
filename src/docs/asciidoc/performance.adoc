@@ -631,32 +631,10 @@ The element `<near-cache>` has an optional attribute `name` whose default value 
 
 **Programmatic**:
 
-```
-EvictionConfig evictionConfig = new EvictionConfig()
-  .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT
-    |USED_NATIVE_MEMORY_SIZE|USED_NATIVE_MEMORY_PERCENTAGE
-    |FREE_NATIVE_MEMORY_SIZE|FREE_NATIVE_MEMORY_PERCENTAGE);
-  .setEvictionPolicy(EvictionPolicy.LRU|LFU|RANDOM|NONE);
-  .setSize(0..INT_MAX);
-
-NearCachePreloaderConfig preloaderConfig = new NearCachePreloaderConfig()
-  .setEnabled(true|false)
-  .setDirectory("nearcache-example")
-  .setStoreInitialDelaySeconds(0..INT_MAX)
-  .setStoreIntervalSeconds(0..INT_MAX);
-
-NearCacheConfig nearCacheConfig = new NearCacheConfig()
-  .setName("myDataStructure")
-  .setInMemoryFormat(InMemoryFormat.BINARY|OBJECT|NATIVE)
-  .setSerializeKeys(true|false)
-  .setInvalidateOnChange(true|false)
-  .setTimeToLiveSeconds(0..INT_MAX)
-  .setMaxIdleSeconds(0..INT_MAX)
-  .setEvictionConfig(evictionConfig)
-  .setCacheLocalEntries(true|false)
-  .setLocalUpdatePolicy(LocalUpdatePolicy.INVALIDATE|CACHE_ON_UPDATE)
-  .setPreloaderConfig(preloaderConfig);
-```
+[source,java]
+----
+include::{javasource}/performance/NearCacheConfigurationSample.java[tag=nearcacheconfig]
+----
 
 The class http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/NearCacheConfig.html[NearCacheConfig] is used for all supported Hazelcast data structures on members and clients.
 
