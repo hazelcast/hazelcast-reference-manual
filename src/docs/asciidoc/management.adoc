@@ -34,7 +34,7 @@ The following are some of the metrics that you can access via the `LocalMapStats
 * Creation time of the map on the member (`getCreationTime()`).
 * Number of hits (reads) of the locally owned entries (`getHits()`).
 * Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
-* Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`). May be imprecise for queries involving partition predicates (`PartitionPredicate`).
+* Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`). May be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storge.
 
 Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc] to see all the metrics. 
 
@@ -51,7 +51,7 @@ include::{javasource}/management/SampleLocalIndexStats.java[tag=lis]
 
 The following are some of the metrics that you can obtain via the `LocalIndexStats` interface:
 
-* Number of queries and hits into an index (`getQueryCount()` and `getHitCount`). Number of hits and queries may differ since a single query may hit the same index more than once.
+* Number of queries and hits into an index (`getQueryCount()` and `getHitCount()`). Number of hits and queries may differ since a single query may hit the same index more than once.
 
 * Average index hit latency measured in nanoseconds (`getAverageHitLatency()`).
 
@@ -68,6 +68,7 @@ Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/moni
 Accuracy and reliability notes:
 
 * Values returned by `getAverageHitSelectivity()` have an accuracy of around 1% for on-heap storages.
+* Values returned by `getQueryCount()` and `getHitCount()` may be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storge.
 * Index statistics may be imprecise after a new cluster member addition or the existing member removal until enough fresh statistics is accumulated on a new owner of an index or its partition.
 
 ==== Near Cache Statistics
