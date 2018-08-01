@@ -6,6 +6,20 @@ This chapter describes the plugins using which you can extend Hazelcast IMDG's f
 
 === Cloud Discovery Plugins
 
-Hazelcast provides the following plugins that allow Hazelcast cluster members to discover each other on the cloud platforms.
+Hazelcast provides the following plugins that allow Hazelcast cluster members to discover each other on the cloud platforms. Cloud discovery plugins are useful when you do not want to provide or you cannot provide the list of possible IP addresses on various cloud providers.
 
-==== Apache jclouds 
+==== Hazelcast jclouds®
+
+Hazelcast members and native clients support jclouds® for discovery. 
+
+You can easily configure your cluster to use jclouds® discovery by adding `hazelcast-jclouds.jar` dependency to your project and enabling Hazelcast's Discovery SPI. Since jclouds® depends on various libraries, you also need to configure its dependencies using build automation tools like Maven. Note that you can also define multiple regions in your jclouds® configuration; members can find each other over a different region.
+
+Please see Hazelcast jclouds® Plugin's https://github.com/hazelcast/hazelcast-jclouds/blob/master/README.md[documentation] for more information.
+
+==== Hazelcast AWS
+
+Hazelcast supports discovering members within EC2 cloud using Hazelcast AWS cloud discovery plugin.
+
+You can easily configure your cluster to use EC2 discovery by adding `hazelcast-aws.jar` dependency to your project and enabling Hazelcast's Discovery SPI. This plugin does not depend on any other third party modules. Note that this plugin puts the zone information into the Hazelcast's member attributes map during the discovery process; you can use its `ZONE_AWARE` configuration to create backups in other availability zones. Each zone will be accepted as one partition group.
+
+Please see Hazelcast AWS Plugin's https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for more information.
