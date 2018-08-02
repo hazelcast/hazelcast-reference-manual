@@ -10,7 +10,7 @@ Hazelcast provides the following plugins that allow Hazelcast cluster members to
 
 ==== Hazelcast jclouds®
 
-Hazelcast members and native clients support jclouds® for discovery. 
+https://jclouds.apache.org/[Apache jclouds®] is an open source multi-cloud library for the Java platform which lets you create applications that are portable across clouds and gives you the full control to use cloud-specific features. Hazelcast members and native clients support Apache jclouds® for discovery. 
 
 You can easily configure your cluster to use jclouds® discovery by adding `hazelcast-jclouds.jar` dependency to your project and enabling Hazelcast's Discovery SPI. Since jclouds® depends on various libraries, you also need to configure its dependencies using build automation tools like Maven. Note that you can also define multiple regions in your jclouds® configuration; members can find each other over a different region.
 
@@ -18,8 +18,17 @@ Please see Hazelcast jclouds® Plugin's https://github.com/hazelcast/hazelcast-j
 
 ==== Hazelcast AWS
 
-Hazelcast supports discovering members within EC2 cloud using Hazelcast AWS cloud discovery plugin.
+https://aws.amazon.com/[AWS] a comprehensive cloud computing platform provided by Amazon. Hazelcast supports discovering members within Amazon EC2 cloud using Hazelcast AWS cloud discovery plugin.
 
 You can easily configure your cluster to use EC2 discovery by adding `hazelcast-aws.jar` dependency to your project and enabling Hazelcast's Discovery SPI. This plugin does not depend on any other third party modules. Note that this plugin puts the zone information into the Hazelcast's member attributes map during the discovery process; you can use its `ZONE_AWARE` configuration to create backups in other availability zones. Each zone will be accepted as one partition group.
 
 Please see Hazelcast AWS Plugin's https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for more information.
+
+==== Hazelcast Azure
+
+https://azure.microsoft.com/en-us/[Microsoft Azure] is a cloud computing service provided by Microsoft for managing applications through a global network of Microsoft-managed data centers. Hazelcast Azure plugin provides a discovery strategy for Hazelcast enabled applications running on Microsoft Azure. It provides all Hazelcast instances by returning VMs within your Azure resource group that are tagged with a specified value.
+
+To add this plugin to your Java project, simply add the Azure dependency to either your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Then you will need to configure a couple of properties at both Hazelcast and Azure sides. Please see Hazelcast Azure Plugin's https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation] for more information.
+
+
+
