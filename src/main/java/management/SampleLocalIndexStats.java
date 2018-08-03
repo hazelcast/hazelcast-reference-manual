@@ -11,7 +11,8 @@ public class SampleLocalIndexStats {
     public static void main(String[] args) {
 //tag::lis[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        IMap<String, String> customers = hazelcastInstance.getMap("customers");
+        IMap<String, String> customers = hazelcastInstance.getMap("customers");        
+        customers.addIndex("name", true); // or add the index using the map config
         LocalMapStats mapStatistics = customers.getLocalMapStats();
         Map<String, LocalIndexStats> indexStats = mapStatistics.getIndexStats();
         LocalIndexStats nameIndexStats = indexStats.get("name");
