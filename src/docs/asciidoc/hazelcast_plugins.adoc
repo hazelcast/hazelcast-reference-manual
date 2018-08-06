@@ -28,7 +28,7 @@ See Hazelcast AWS plugin's https://github.com/hazelcast/hazelcast-aws/blob/maste
 
 https://azure.microsoft.com/en-us/[Microsoft Azure] is a cloud computing service provided by Microsoft for managing applications through a global network of Microsoft-managed data centers. Hazelcast Azure plugin provides a discovery strategy for Hazelcast enabled applications running on Microsoft Azure. It provides all Hazelcast instances by returning VMs within your Azure resource group that are tagged with a specified value.
 
-To use this plugin in your Java project, simply add the Azure dependency to either your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Then you will need to configure a couple of properties at both Hazelcast and Azure sides.
+To use this plugin in your Java project, simply add the Azure dependency to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Then you will need to configure a couple of properties at both Hazelcast and Azure sides.
 
 See Hazelcast Azure plugin's https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation] for more information.
 
@@ -37,7 +37,7 @@ See Hazelcast Azure plugin's https://github.com/hazelcast/hazelcast-azure/blob/m
 
 https://www.consul.io/[Consul] is a distributed service mesh to connect, secure and configure services across any public or private cloud platforms. This plugin provides a Consul based discovery strategy for Hazelcast clusters.
 
-You can add the Consul dependency to either your Maven or Gradle configurations and enable Hazelcast's Discovery SPI to use this plugin. You can then start Consul in your network and set the Consul related properties in your Hazelcast configuration.
+You can add the Consul dependency to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI to use this plugin. You can then start Consul in your network and set the Consul related properties in your Hazelcast configuration.
 
 See Hazelcast Consul plugin's https://github.com/bitsofinfo/hazelcast-consul-discovery-spi/blob/master/README.md[documentation] for more information.
 
@@ -77,6 +77,104 @@ See Hazelcast IMDG for OpenShift https://github.com/hazelcast/hazelcast-openshif
 ==== Hazelcast Heroku
 
 https://www.heroku.com/[Heroku] is a cloud platform as a service supporting several programming languages so that you can build, run and operate applications entirely in the cloud. This plugin offers a discovery strategy that looks for IP addresses of members by resolving service names against the Heroku DNS Discovery in Heroku Private Spaces.
+
+You can use this plugin by adding the `hazelcast-heroku-dependency` to your Maven or Gradle configurations and enabling Hazelcast's Discovery SPI. By default there is no configuration needed, but you can configure the service names or initial run delay for the merge after a Split-Brain.
+
+See Hazelcast Heroku plugin's https://github.com/jkutner/hazelcast-heroku-discovery[documentation] for more information.
+
+==== Hazelcast Kubernetes
+
+https://github.com/kubernetes/kubernetes[Kubernetes] is an open source container orchestration system to automate deployment, scaling and management of containerized applications. This plugin looks up the IP addresses of Hazelcast members by resolving the requests against a Kubernetes Service Discovery system. It supports two different options of resolving against the discovery registry: a request to the REST API and DNS lookup against a given DNS service name.
+
+To use this plugin, add the `hazelcast-kubernetes` dependency to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. You will need to configure Hazelcast according to the option you want the plugin to use, i.e., REST API or DNS lookup.
+
+See Hazelcast Kubernetes plugin's https://github.com/hazelcast/hazelcast-kubernetes/blob/master/README.adoc[documentation] for more information.
+
+==== Hazelcast Zookeeper
+
+https://zookeeper.apache.org/[Zookeeper] by Apache is a centralized service to maintain configuration information, naming, and to provide distributed synchronization and group services. This plugin provides a service based discovery strategy for your Hazelcast applications by using Apache Curator to communicate with your Zookeeper server.
+
+To use this plugin, add the Curator dependencies to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Thereafter, you will need to configure properties such as the URL of Zookeeper server and cluster ID.
+
+See Hazelcast Zookeeper plugin's https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md[documentation] for more information.
+
+=== Integration Plugins
+
+Hazelcast provides the following integration plugins that allow Hazelcast to integrate with other frameworks and applications smoothly.
+
+==== Spring Data Hazelcast
+
+http://projects.spring.io/spring-data/[Spring Data] provides a consistent, Spring-based programming model for data access while preserving the features of the underlying data store. This plugin provides Spring Data repository support for Hazelcast IMDG. This integration enables the Spring Data paradigm to gain the power of a distributed data repository.
+
+To use this plugin, add the Spring Data dependency to your Maven or Gradle configurations and specify the base packages and repositories. 
+
+See Spring Data Hazelcast plugin's https://github.com/hazelcast/spring-data-hazelcast[documentation] for more information.
+
+==== Spring Integration Extension for Hazelcast
+
+This plugin provides https://github.com/spring-projects/spring-integration[Spring Integration] extensions for Hazelcast. These extensions are included but limited to the following:
+
+* Event-driven inbound channel adapter: Listens related Hazelcast data structure events and sends event messages to the defined channel.
+* Continuous query inbound channel adapter: Listens the modifications performed on specific map entries.
+* Cluster monitor inbound channel adapter:  Listen the modifications performed on the cluster.
+* Distributed SQL inbound channel adapter: Runs the defined distributed SQL and returns the results in the light of iteration type.
+* Outbound channel adapter: Listens the defined channel and writes the incoming messages to the related distributed data structure.
+* Leader election: Elects a cluster member, for example, for highly available message consumer where only one member should receive messages.
+
+See Spring Integration Extension for Hazelcast https://github.com/spring-projects/spring-integration-extensions/tree/master/spring-integration-hazelcast[documentation] for more information.
+
+==== Hazelcast JCA Resource Adapter
+
+Hazelcast JCA Resource Adapter is a system-level software driver which can be used by a Java application to connect to an Hazelcast cluster. Using this adapter, you can integrate Hazelcast into Java EE containers. After a proper configuration, Hazelcast can participate in standard Java EE transactions.
+
+Deploying and configuring the Hazelcast JCA Resource Adapter is not different than configuring any other resource adapters since it is a standard JCA one. However, resource adapter installation and configuration is container-specific, so you will need to consult with your Java EE vendor documentation for details.
+
+See Hazelcast JCA Resource Adapter https://github.com/hazelcast/hazelcast-ra[documentation] for more information.
+
+==== Hazelcast Grails
+
+https://grails.org/[Grails] is an open source web application framework that uses the Apache Groovy programming language. This plugin integrates Hazelcast data distribution framework into your Grails application. You can reach the distributed data structures by injecting the https://github.com/hazelcast/hazelcast-grails/blob/master/grails-app/services/hazelgrails/HazelService.groovy[HazelService]. Also you can cache your domain class into Hazelcast distributed cache.
+
+See Hazelcast Grails plugin's https://github.com/hazelcast/hazelcast-grails[documentation] and https://blog.hazelcast.com/distribute-grails-with-hazelcast/[this blogpost] for more information.
+
+==== Hazelcast Hibernate 2LC
+
+http://hibernate.org/[Hibernate] is an object-relational mapping tool for the Java programming language. It provides a framework for mapping an object-oriented domain model to a relational database and enables developers to more easily write applications whose data outlives the application process. This plugin provides Hazelcast's own distributed second level cache implementation for your Hibernate (versions 3, 4 and 5) entities, collections and queries.
+
+To use this plugin, add the Hazelcast Hibernate dependency into your classpath depending on your Hibernate version. Then you will need to specify various properties in your Hibernate configuration such as the `RegionFactory` and query cache properties.
+
+See the documentation of this plugin for https://github.com/hazelcast/hazelcast-hibernate/blob/master/README.md[Hibernate 3, 4] and for https://github.com/hazelcast/hazelcast-hibernate5/blob/master/README.md[Hibernate 5].
+
+==== Hazelcast DynaCache
+
+https://www.ibm.com/support/knowledgecenter/en/linuxonibm/liaag/cache/pubwasdynacachoverview.htm[DynaCache] by IBM is used to store objects, and later, based on some data matching rules, to retrieve those objects and serve them from its cache.  This plugin is for Liberty Profile which is a lightweight profile of IBM WebSphere Application Server.
+
+In the Liberty Profile, you can use a dynamic cache engine in order to cache your data. With this plugin, you can use Hazelcast as a cache provider.
+
+See Hazelcast DynaCache plugin's https://github.com/hazelcast/hazelcast-dynacache/blob/master/README.md[documentation] for more information.
+
+==== Hazelcast Connector for Kafka
+
+This plugin allows you to write events from https://kafka.apache.org/[Kafka] to HazelCast. It takes the value from the Kafka Connect SinkRecords and inserts/updates an entry in Hazelcast. It supports writing to Hazelcast distributed data structures including Reliable Topic, Ringbuffer, Queue, Set, List, Map, MultiMap and ICache (Hazelcast's JCache extension).
+
+See the plugin's https://lenses.stream/connectors/sink/hazelcast.html[documentation] for more information.
+
+==== Openfire
+
+https://www.igniterealtime.org/projects/openfire/[Openfire] is an open source real time collaboration server. It uses XMPP which is an open protocol for instant messaging.  This plugin adds support for running multiple redundant Openfire servers together in a cluster. 
+
+By running Openfire as a cluster, you can distribute the connection load among several servers, while also providing failover in the event of failures. 
+
+See the plugin's https://www.igniterealtime.org/projects/openfire/plugins/hazelcast/readme.html[documentation] for more information.
+
+=== SubZero
+
+https://github.com/EsotericSoftware/kryo[Kryo] is a popular serialization library. It is fast, easy to use, and it does not pollute your domain model. It can even serialize classes which are not marked as Serializable.
+
+Hazelcast has no out-of-the box support for Kryo. Although it is rather easy to integrate it, everyone has to write the same code and face the same bugs. This plugin, SubZero, simplifies the integration of Hazelcast and Kryo. Simply add SubZero dependency to your Maven or Gradle configurations, and add the SubZero plugin as a global serializer (if you want to use it for all classes in your project) or as a serializer (to have the option of selecting the classes in your project).
+
+See the plugin's https://github.com/jerrinot/subzero/blob/master/README.md[documentation] for more information.
+
 
 
 
