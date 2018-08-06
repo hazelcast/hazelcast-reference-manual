@@ -14,7 +14,7 @@ https://jclouds.apache.org/[Apache jclouds®] is an open source multi-cloud libr
 
 You can configure your cluster to use jclouds® discovery by adding `hazelcast-jclouds.jar` dependency to your project and enabling Hazelcast's Discovery SPI. Since jclouds® depends on various libraries, you also need to configure its dependencies using build automation tools like Maven. Note that you can also define multiple regions in your jclouds® configuration; the members can find each other over a different region.
 
-See Hazelcast jclouds® Plugin's https://github.com/hazelcast/hazelcast-jclouds/blob/master/README.md[documentation] for more information.
+See Hazelcast jclouds® plugin's https://github.com/hazelcast/hazelcast-jclouds/blob/master/README.md[documentation] for more information.
 
 ==== Hazelcast AWS
 
@@ -22,7 +22,7 @@ https://aws.amazon.com/[AWS] is a comprehensive cloud computing platform provide
 
 You can easily configure your cluster to use EC2 discovery by adding `hazelcast-aws.jar` dependency to your project and enabling Hazelcast's Discovery SPI. This plugin does not depend on any other third party modules. Note that this plugin puts the zone information into the Hazelcast's member attributes map during the discovery process; you can use its `ZONE_AWARE` configuration to create backups in other availability zones. Each zone will be accepted as one partition group.
 
-See Hazelcast AWS Plugin's https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for more information.
+See Hazelcast AWS plugin's https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for more information.
 
 ==== Hazelcast Azure
 
@@ -30,7 +30,7 @@ https://azure.microsoft.com/en-us/[Microsoft Azure] is a cloud computing service
 
 To use this plugin in your Java project, simply add the Azure dependency to either your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Then you will need to configure a couple of properties at both Hazelcast and Azure sides.
 
-See Hazelcast Azure Plugin's https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation] for more information.
+See Hazelcast Azure plugin's https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation] for more information.
 
 
 ==== Hazelcast Consul
@@ -39,7 +39,7 @@ https://www.consul.io/[Consul] is a distributed service mesh to connect, secure 
 
 You can add the Consul dependency to either your Maven or Gradle configurations and enable Hazelcast's Discovery SPI to use this plugin. You can then start Consul in your network and set the Consul related properties in your Hazelcast configuration.
 
-See Hazelcast Consul Plugin's https://github.com/bitsofinfo/hazelcast-consul-discovery-spi/blob/master/README.md[documentation] for more information.
+See Hazelcast Consul plugin's https://github.com/bitsofinfo/hazelcast-consul-discovery-spi/blob/master/README.md[documentation] for more information.
 
 
 ==== Hazelcast etcd
@@ -48,5 +48,37 @@ https://coreos.com/etcd/[etcd] is an open-source distributed key value store tha
 
 Add the etcd dependency to either your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Then start etcd in your network and set the etcd related properties (such username, password and registrator) in your Hazelcast configuration. 
 
-See Hazelcast etcd Plugin's https://github.com/bitsofinfo/hazelcast-etcd-discovery-spi/blob/master/README.md[documentation] for more information.
+See Hazelcast etcd plugin's https://github.com/bitsofinfo/hazelcast-etcd-discovery-spi/blob/master/README.md[documentation] for more information.
+
+==== Hazelcast Eureka
+
+https://github.com/Netflix/eureka/wiki[Eureka] is a REST based service that is primarily used in the AWS cloud to for load balancing and failover of middle-tier servers, and Hazelcast supports Eureka V1 discovery.
+
+To use this plugin, add the `hazelcast-eureka-one.jar` dependency to your project and enable Hazelcast's Discovery SPI. You will also need to specify the Eureka properties file. 
+
+See Hazelcast Eureka plugin's https://github.com/hazelcast/hazelcast-eureka/blob/master/README.md[documentation] for more information.
+
+==== Hazelcast IMDG and Jet for PCF
+
+https://pivotal.io/platform[Pivotal Cloud Foundry](PCF) is an open source cloud platform on which you can build, deploy, run and scale applications. You can deploy your Hazelcast IMDG Enterprise or Hazelcast Jet clusters on PCF using clickable tiles.
+
+After you install and configure Hazelcast IMDG Enterprise or Hazelcast Jet for PCF, you can create services, and configure WAN replications, user code deployments and TLS.
+
+See Hazelcast IMDG Enterprise for PCF https://docs.pivotal.io/partners/hazelcast/index.html[documentation] and Hazelcast Jet for PCF https://docs.pivotal.io/partners/hazelcast-jet/[documentation] for more information.
+
+==== Hazelcast OpenShift
+
+https://www.openshift.com/[OpenShift] is an open source container application platform by Red Hat based on top of Docker containers and the Kubernetes container cluster manager for application development and deployment. Hazelcast can run inside OpenShift. 
+
+You can use Kubernetes for discovery of Hazelcast members. By using Hazelcast Docker images, templates and default configuration files, you can deploy Hazelcast IMDG, Hazelcast IMDG Enterprise and Management Center onto OpenShift.
+
+See Hazelcast IMDG for OpenShift https://github.com/hazelcast/hazelcast-openshift[documentation] and Hazelcast Management Center for OpenShift https://github.com/hazelcast/management-center-openshift[documentation] for more information.
+
+==== Hazelcast Heroku
+
+https://www.heroku.com/[Heroku] is a cloud platform as a service supporting several programming languages so that you can build, run and operate applications entirely in the cloud. This plugin offers a discovery strategy that looks for IP addresses of members by resolving service names against the Heroku DNS Discovery in Heroku Private Spaces.
+
+
+
+
 
