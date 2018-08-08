@@ -2,60 +2,33 @@
 
 == Integrated Clustering
 
-In this chapter, we show you how Hazelcast is integrated with Hibernate 2nd level cache and Spring and how Hazelcast helps with your Filter, Tomcat and Jetty based web session replications.
-
-The <<hibernate-second-level-cache, Hibernate Second Level Cache section>> tells how you should configure both Hazelcast and Hibernate to integrate them. It explains the modes of Hazelcast that can be used by Hibernate and also provides how to perform advanced settings like accessing the underlying Hazelcast instance used by Hibernate.
-
-The <<web-session-replication, Web Session Replication section>> tells how to cluster user HTTP sessions automatically. You will learn how to enable session replication using filter based solution. In addition, Tomcat and Jetty specific modules will be explained.
-
-The <<spring-integration, Spring Integration section>> tells how you can integrate Hazelcast into a Spring project by explaining the Hazelcast instance and client configurations with the *hazelcast* namespace. It also lists the supported Spring bean attributes. 
+In this chapter, we mention how Hazelcast is integrated with Hibernate 2nd level cache and Spring and how it helps with your Filter, Tomcat and Jetty based web session replications.
 
 
 
-=== Hibernate Second Level Cache
+=== Integration with Hibernate Second Level Cache
 
-image::Plugin_New.png[Hibernate Plugin, 84, 22]
+Hazelcast provides its own distributed second level cache for your Hibernate entities, collections and queries. This feature is offered as a Hazelcast plugin. See <<hazelcast-hibernate-2lc, Hazelcast Hibernate 2LC>> for details.
 
-Hazelcast provides distributed second level cache for your Hibernate entities, collections and queries. This feature is offered as Hazelcast plugins. We have two plugin repositories for Hibernate 2nd Level Cache. Please see their own GitHub repositories at https://github.com/hazelcast/hazelcast-hibernate[Hazelcast Hibernate] (for Hibernate 3.x and 4.x) and https://github.com/hazelcast/hazelcast-hibernate5[Hazelcast Hibernate 5] (for Hibernate 5.x) for information on configuring and using them.
-
-
-=== Web Session Replication
+=== Web Session Replications
 
 
-This section explains how you can cluster your web sessions using Servlet Filter, Tomcat and Jetty based solutions. Each web session clustering is explained in the following subsections.
+Hazelcast can cluster your web sessions using Servlet Filter, Tomcat and Jetty based solutions. 
 
-<<filter-based-web-session-replication, Filter>> based web session replication has the option to use a map with High-Density Memory Store to keep your session objects. Note that High-Density Memory Store is available in [navy]*Hazelcast IMDG Enterprise HD*. Please refer to the <<high-density-memory-store, High-Density Memory Store section>> for details on this feature.
+Follow the below links for more information on them:
 
-==== Filter Based Web Session Replication
-
-image::Plugin_New.png[Filter Plugin, 84, 22]
-
-**Sample Code**: Please see our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/filter-based-session-replication[sample application] for Filter Based Web Session Replication.
-
-Assume that you have more than one web server (A, B, C) with a load balancer in front of it. If server A goes down, your users on that server will be directed to one of the live servers (B or C), but their sessions will be lost.
-
-We need to have all these sessions backed up somewhere if we do not want to lose the sessions upon server crashes. Hazelcast Web Manager (WM) allows you to cluster user HTTP sessions automatically. 
-
-Filter Based Web Session Replication is provided as a Hazelcast plugin. Please see its own GitHub repo at https://github.com/hazelcast/hazelcast-wm[Hazelcast Filter Based Web Session Replication] for information on configuring and using it.
+* <<filter-based-web-session-replication, Filter Based Web Session Replication>>
+* <<tomcat-based-web-session-replication, Tomcat Based Web Session Replication>>
+* <<jetty-based-web-session-replication, Jetty Based Web Session Replication>>
 
 
-==== Tomcat Based Web Session Replication
+=== Integration with Java EE
 
-image::Plugin_New.png[Tomcat Plugin, 84, 22]
+You can integrate Hazelcast into Java EE containers. This integration is offered as a Hazelcast plugin. See <<hazelcast-jca-resource-adapter, Hazelcast JCA Resource Adapter section>> and its own GitHub repository https://github.com/hazelcast/hazelcast-ra[here] for information on configuring the resource adapter, glassfish applications and JBoss web applications.
 
-Tomcat based web session replication is offered through Hazelcast Tomcat Session Manager. It is a container specific module that enables session replication for JEE Web Applications without requiring changes to the application. Tomcat Session Manager is provided as a Hazelcast plugin. Please see its own GitHub repo at https://github.com/hazelcast/hazelcast-tomcat-sessionmanager[Hazelcast Tomcat Session Manager] for information on configuring and using it.
+=== Integration with Spring
 
-
-==== Jetty Based Web Session Replication
-
-image::Plugin_New.png[Jetty Plugin, 84, 22]
-
-Jetty based web session replication is offered through Hazelcast Jetty Session Manager. It is a container specific module that enables session replication for JEE Web Applications without requiring changes to the application. Jetty Session Manager is provided as a Hazelcast plugin. Please see its own GitHub repo at https://github.com/hazelcast/hazelcast-jetty-sessionmanager[Hazelcast Jetty Session Manager] for information on configuring and using it.
-
-
-=== Spring Integration
-
-You can integrate Hazelcast with Spring and this chapter explains the configuration of Hazelcast within Spring context. 
+You can integrate Hazelcast with Spring and this section explains the configuration of Hazelcast within Spring context. 
 
 Supported Versions are Spring 2.5 and higher releases and the latest tested Spring version is 4.3.
 
@@ -64,7 +37,7 @@ IMPORTANT: Some old versions of Spring may require minor changes in the Hazelcas
 
 ==== Configuring Spring
 
-*Sample Code*: Please see our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-configuration[sample application] for Spring Configuration.
+*Sample Code*: See our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-configuration[sample application] for Spring Configuration.
 
 ===== Enabling Spring Integration
 
@@ -708,22 +681,4 @@ public class SomeBean {
 
 
 NOTE: For more information please see https://jira.springsource.org/browse/SPR-3407[Spring issue-3407].
-
-
-
-=== Integrating into Java EE
-
-image::Plugin_New.png[J2EE Plugin, 84, 22]
-
-
-You can integrate Hazelcast into Java EE containers. This integration is offered as a Hazelcast plugin. Please see its own GitHub repository at https://github.com/hazelcast/hazelcast-ra[Hazelcast Resource Adapter] for information on configuring the resource adapter, glassfish applications and JBoss web applications.
-
-
-==== Integrating with MuleSoft
-
-Hazelcast is embedded within a MuleSoft container as an out-of-the-box offering. For a proper integration you should edit the `mule-deploy.properties` file to have the following entry:
-
-```
-loader.override=com.hazelcast
-```
 

@@ -98,6 +98,10 @@ To use this plugin, add the Curator dependencies to your Maven or Gradle configu
 
 See Hazelcast Zookeeper plugin's https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md[documentation] for more information.
 
+=== Big Data Plugins
+
+
+
 === Integration Plugins
 
 Hazelcast provides the following integration plugins that allow Hazelcast to integrate with other frameworks and applications smoothly.
@@ -129,7 +133,15 @@ Hazelcast JCA Resource Adapter is a system-level software driver which can be us
 
 Deploying and configuring the Hazelcast JCA Resource Adapter is not different than configuring any other resource adapters since it is a standard JCA one. However, resource adapter installation and configuration is container-specific, so you will need to consult with your Java EE vendor documentation for details.
 
-See Hazelcast JCA Resource Adapter https://github.com/hazelcast/hazelcast-ra[documentation] for more information.
+See Hazelcast JCA Resource Adapter https://github.com/hazelcast/hazelcast-ra[documentation] for information on configuring the resource adapter, glassfish applications and JBoss web applications.
+
+===== Integrating with MuleSoft
+
+Hazelcast is embedded within a MuleSoft container as an out-of-the-box offering. For a proper integration you should edit the `mule-deploy.properties` file to have the following entry:
+
+```
+loader.override=com.hazelcast
+```
 
 ==== Hazelcast Grails
 
@@ -143,7 +155,7 @@ http://hibernate.org/[Hibernate] is an object-relational mapping tool for the Ja
 
 To use this plugin, add the Hazelcast Hibernate dependency into your classpath depending on your Hibernate version. Then you will need to specify various properties in your Hibernate configuration such as the `RegionFactory` and query cache properties.
 
-See the documentation of this plugin for https://github.com/hazelcast/hazelcast-hibernate/blob/master/README.md[Hibernate 3, 4] and for https://github.com/hazelcast/hazelcast-hibernate5/blob/master/README.md[Hibernate 5].
+See the documentation of this plugin for https://github.com/hazelcast/hazelcast-hibernate/blob/master/README.md[Hibernate 3.x, 4.x] and for https://github.com/hazelcast/hazelcast-hibernate5/blob/master/README.md[Hibernate 5.x].
 
 ==== Hazelcast DynaCache
 
@@ -179,15 +191,30 @@ See the plugin's https://github.com/jerrinot/subzero/blob/master/README.md[docum
 
 Hazelcast offers the following plugins to allow you cluster your web sessions using Servlet Filter, Tomcat and Jetty based solutions.
 
-==== Generic Web Sessions
+==== Filter Based Web Session Replication
+
+This plugin (a.k.a. Generic Web Session Replication) provides HTTP session replication capabilities across a Hazelcast cluster in order to handle failover cases. Assuming you have multiple web servers with load balancers; if one server goes down, your users on that server will be directed to one of the other live servers, but their sessions will be lost. Using this plugin backs up these HTTP sessions; it clusters them automatically. To use it, put the `hazelcast-wm` JAR file into your `WEB-INF/lib` folder and configure your `web.xml` file according to your needs.
+
+See the plugin's https://github.com/hazelcast/hazelcast-wm/blob/master/README.md[documentation] for information on configuring and using it.
+
+You can also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/filter-based-session-replication[sample application] which uses filter based web session replication.
+
+Note that filter based web session replication has the option to use a map with High-Density Memory Store, is available in [navy]*Hazelcast IMDG Enterprise HD*, to keep your session objects. Please refer to the <<high-density-memory-store, High-Density Memory Store section>> for details on this feature.
+
+==== Tomcat Based Web Session Replication
+
+Tomcat based web session replication is offered through Hazelcast Tomcat Session Manager. It is a container specific module that enables session replication for JEE Web Applications without requiring changes to the application.
+
+See the plugin's https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/blob/master/README.md[documentation] for information on configuring and using it.
+
+You can also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/manager-based-session-replication[sample application] which uses Tomcat based web session replication.
 
 
+==== Jetty Based Web Session Replication
 
+Jetty based web session replication is offered through Hazelcast Jetty Session Manager. It is a container specific module that enables session replication for JEE Web Applications without requiring changes to the application.
 
-==== Jetty Web Sessions
+See the plugin's https://github.com/hazelcast/hazelcast-jetty-sessionmanager[documentation] for information on configuring and using it.
 
-==== Tomcat Web Sessions
-
-
-
+You can also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/manager-based-session-replication[sample application] which uses Jetty based web session replication.
 
