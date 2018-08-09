@@ -332,10 +332,13 @@ The following is an example declarative configuration for map eviction.
 
 Let's describe each element:
 
-* `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map. If it is not 0, entries that are older than this time and not updated for this time are evicted automatically. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite. If it is not 0, entries are evicted regardless of the set `eviction-policy`.
-* `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. Entries that are idle for more than this time are evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite.
-* `eviction-policy`: Valid values are described below.
-** NONE: Default policy. If set, no items will be evicted and the property `max-size` will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
+* `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map (TTL). It limits the lifetime of the entries relative to the time of the last write access performed on them. If it is not 0, the entries whose lifetime exceeds this period (without any write access performed on them during this period) are expired and evicted automatically. An individual entry may have its own lifetime limit by using one of the methods accepting a TTL; see <<evicting-specific-entries, Evicting Specific Entries section>>. If there is no TTL value provided for the individual entry, it inherits the value set for this element. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite (no expiration and eviction). If it is not 0, entries are evicted regardless of the set `eviction-policy` described below.
+* `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. It limits the lifetime of the entries relative to the time of the last read or write access performed on them. The entries whose idle period exceeds this limit are expired and evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite.
++
+NOTE: Both `time-to-live-seconds` and `max-idle-seconds` may be used simultaneously on the map entries. In that case, the entry is considered expired if at least one of the policies marks it as expired.
++
+* `eviction-policy`: Eviction policy to be applied when the size of map grows larger than the value specified by the `max-size` element described below.  Valid values are:
+** NONE: Default policy. If set, no items will be evicted and the property `max-size` described below will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
 ** LRU: Least Recently Used.
 ** LFU: Least Frequently Used.
 +
@@ -350,7 +353,7 @@ Apart from the above values, you can also develop and use your own eviction poli
 +
 `<max-size policy="PER_PARTITION">27100</max-size>`
 +
-* `USED_HEAP_SIZE`: Maximum used heap size in megabytes per map for each Hazelcast instance. Please note that this policy does not work when <<setting-in-memory-format, in-memory format>> is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
+** `USED_HEAP_SIZE`: Maximum used heap size in megabytes per map for each Hazelcast instance. Please note that this policy does not work when <<setting-in-memory-format, in-memory format>> is set to `OBJECT`, since the memory footprint cannot be determined when data is put as `OBJECT`.
 +
 `<max-size policy="USED_HEAP_SIZE">4096</max-size>`
 +
@@ -384,6 +387,14 @@ Apart from the above values, you can also develop and use your own eviction poli
 
 
 NOTE: As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-check-millis` are deprecated. They will be ignored if configured since map eviction is based on the sampling of entries. Please see the <<eviction-algorithm, Eviction Algorithm section>> for details.
+
+To put it briefly, Hazelcast maps have no restrictions on the size and may grow arbitrarily large, by default. When it comes to reducing the size of a map, there are two concepts: expiration and eviction.
+
+Expiration puts a limit on the maximum lifetime of an entry stored inside the map. When the entry expires it cannot be retrieved from the map any longer and at some point in time it will be cleaned out from the map to free up the memory. Expiration, and hence the eviction based on the expiration, can be configured using the element `time-to-live-seconds- and `max-idle-seconds` as described above.
+
+Eviction puts a limit on the maximum size of the map. If the size of the map grows larger than the maximum allowed size, an eviction policy decides which item to evict from the map to reduce its size. The maximum allowed size can be configured using the element `max-size` and the eviction policy can be configured using the element `eviction-policy` as described above.
+
+Eviction and expiration can be used together. In this case, the expiration configurations (`time-to-live-seconds- and `max-idle-seconds`) continue to work as usual cleaning out the expired entries regardless of the map size. Note that locked map entries are not the subjects for eviction and expiration.
 
 [[example-eviction-configurations]]
 ===== Example Eviction Configurations

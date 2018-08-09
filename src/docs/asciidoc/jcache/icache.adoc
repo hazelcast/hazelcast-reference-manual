@@ -676,7 +676,7 @@ image::EvictionFlowchart.png[Hazelcast JCache Eviction Algorithm]
 elements and an LRU (Less Recently Used) policy is set up.
 . The user puts in a new entry, e.g., a key-value pair.
 . For every put, the eviction strategy evaluates the current cache size and decides if an eviction is necessary or not. If not, the entry is stored in step 10.
-. If eviction is required, a new sampling is started. The built-in sampler is implemented as an lazy iterator.
+. If eviction is required, a new sampling is started. The built-in sampler is implemented as a lazy iterator.
 . The sampling algorithm selects a random sample from the underlying data storage.
 . The eviction strategy tests whether the sampled entry is already expired (lazy expiration). If expired, the sampling stops and the entry is removed in step 9.
 . If not yet expired, the entry (eviction candidate) is compared to the last best matching candidate (based on the eviction policy) and the new best matching candidate is remembered.
@@ -684,6 +684,8 @@ elements and an LRU (Less Recently Used) policy is set up.
 . The expired or best matching eviction candidate is removed from the underlying data storage.
 . The new put entry is stored.
 . The put operation returns to the user.
+
+NOTE: Note that expiration based eviction does not only occur for the above scenario (Step 6). It is mentioned for the sake of explaining the eviction algorithm. 
 
 As seen in the flowchart, the general eviction operation is easy. As long as the cache does not reach its maximum capacity,
 or you execute updates (put/replace), no eviction is executed.
