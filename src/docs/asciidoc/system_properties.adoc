@@ -700,6 +700,11 @@ CAUTION: Setting this value to a lower number might prevent some instances from 
 | bool 
 | Bind both server-socket and client-sockets to any local interface.
 
+|`hazelcast.socket.buffer.direct`
+| false
+| bool
+| Specifies whether the byte buffers used in the socket should be a direct byte buffer (`true`) or a regular one (`false`). When it is set to `true`, Hazelcast internally uses the method `ByteBuffer.allocateDirect` (instead of `ByteBuffer.allocate`) which makes use of the off-heap and may skip the memory copying when performing socket I/O operations. See https://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html[here] for more information.
+
 |`hazelcast.socket.client.bind`
 |true
 |bool
@@ -708,7 +713,7 @@ CAUTION: Setting this value to a lower number might prevent some instances from 
 |`hazelcast.socket.client.bind.any` 
 | true 
 | bool 
-|   Bind client-sockets to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
+| Bind client-sockets to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
 
 |`hazelcast.socket.client.receive.buffer.size`
 |-1
