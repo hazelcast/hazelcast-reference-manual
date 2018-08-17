@@ -582,7 +582,7 @@ NOTE: Please refer to the <<high-density-memory-store, High-Density Memory Store
 
 Hazelcast allows you to load and store the distributed map entries from/to a persistent data store such as a relational database. To do this, you can use Hazelcast's `MapStore` and `MapLoader` interfaces.
 
-When you provide a `MapLoader` implementation and request an entry (`IMap.get()`) that does not exist in memory, `MapLoader`'s `load` or `loadAll` methods will load that entry from the data store. This loaded entry is placed into the map and will stay there until it is removed or evicted.
+When you provide a `MapLoader` implementation and request an entry (`IMap.get()`) that does not exist in memory, `MapLoader`'s `load` method will load that entry from the data store. This loaded entry is placed into the map and will stay there until it is removed or evicted.
 
 When a `MapStore` implementation is provided, an entry is also put into a user defined data store. 
 
@@ -590,6 +590,8 @@ NOTE: Data store needs to be a centralized system that is
 accessible from all Hazelcast members. Persistence to a local file system is not supported.
 
 NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface as you can see in the interface http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapStore.html[code].
+
+NOTE: By starting version 3.11, all loads can be listened via `EntryLoadedListener`.
 
 
 Following is a `MapStore` example.
