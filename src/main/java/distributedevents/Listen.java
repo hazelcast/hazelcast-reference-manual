@@ -11,10 +11,12 @@ public class Listen {
         System.out.println( "EntryListener registered" );
     }
 
-    static class MyEntryListener implements EntryAddedListener<String, String>,
+    static class MyEntryListener implements
+            EntryAddedListener<String, String>,
             EntryRemovedListener<String, String>,
             EntryUpdatedListener<String, String>,
             EntryEvictedListener<String, String>,
+            EntryLoadedListener<String,String>,
             MapEvictedListener,
             MapClearedListener   {
         @Override
@@ -38,6 +40,11 @@ public class Listen {
         }
 
         @Override
+        public void entryLoaded(EntryEvent<String, String> event) {
+            System.out.println( "Entry Loaded:" + event );
+        }
+
+        @Override
         public void mapEvicted( MapEvent event ) {
             System.out.println( "Map Evicted:" + event );
         }
@@ -46,7 +53,6 @@ public class Listen {
         public void mapCleared( MapEvent event ) {
             System.out.println( "Map Cleared:" + event );
         }
-
     }
 }
 //end::listen[]
