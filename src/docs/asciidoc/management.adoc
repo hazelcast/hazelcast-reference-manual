@@ -34,9 +34,44 @@ The following are some of the metrics that you can access via the `LocalMapStats
 * Creation time of the map on the member (`getCreationTime()`).
 * Number of hits (reads) of the locally owned entries (`getHits()`).
 * Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
+* Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`). May be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storage.
 
 Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc] to see all the metrics. 
 
+==== Map Index Statistics
+
+To access map index statistics, if you are using indexes to speed up map queries, use the `getIndexStats()` method of the `LocalMapStats` interface returned by `IMap.getLocalMapStats()`. 
+
+Below is an example where the `getIndexStats()` method is used to examine an average selectivity of index hits:
+
+[source,java]
+----
+include::{javasource}/management/SampleLocalIndexStats.java[tag=lis]
+----
+
+The following are some of the metrics that you can obtain via the `LocalIndexStats` interface:
+
+* Number of queries and hits into an index (`getQueryCount()` and `getHitCount()`). Number of hits and queries may differ since a single query may hit the same index more than once.
+
+* Average index hit latency measured in nanoseconds (`getAverageHitLatency()`).
+
+* Average index hit selectivity (`getAverageHitSelectivity`). Returned values are in the range from 0.0 to 1.0. Values close to 1.0 indicate a high selectivity meaning the index is efficient; values close to 0.0 indicate a low selectivity meaning the index efficiency is approaching an efficiency of a simple full scan.
+
+* Number of index insert, update and remove operations (`getInsertCount()`, `getUpdateCount()` and `getRemoveCount()`).
+
+* Total latencies of insert, update and remove operations (`getTotalInsertLatency()`, `getTotalUpdateLatency()`, `getTotalRemoveLatency()`). To compute an average latency divide the returned value by the number of operations of a corresponding type.
+
+* On-heap and off-heap memory cost of an index (`getOnHeapMemoryCost()` and `getOffHeapMemoryCost()`). The on-heap memory cost metric value is a best-effort approximation and doesn't indicate a precise on-heap memory usage of an index.
+
+Please refer to http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc] to see all the metrics.
+
+To compute an aggregated value of `getAverageHitSelectivity()` for all cluster members one may use a simple averaging computation: `(s(1) + s(2) + ... + s(n)) / n` where `s(i)` is an average hit selectivity on the member `i` and `n` is the total number of cluster members. A more advanced solution is to compute a weighted average: `(s(1) * h(1) + s(2) * h(2) + ... + s(n) * h(n)) / (h(1) + h(2) + ... + h(n))` where `s(i)` is an average hit selectivity on the member `i`, `h(i)` is a hit count (`getHitCount()`) on the member `i` and `n` is the total number of cluster members. The later method may produce more precise results in unstable dynamic clusters where new members don't have enough statistics accumulated. The same technique may be applied to the `getAverageHitLatency()` metric.
+
+Accuracy and reliability notes:
+
+* Values returned by `getAverageHitSelectivity()` have an accuracy of around 1% for on-heap storages.
+* Values returned by `getQueryCount()` and `getHitCount()` may be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storage.
+* Index statistics may be imprecise after a new cluster member addition or the existing member removal until enough fresh statistics is accumulated on a new owner of an index or its partition.
 
 ==== Near Cache Statistics
 
