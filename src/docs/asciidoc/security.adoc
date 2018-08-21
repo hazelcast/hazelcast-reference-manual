@@ -203,13 +203,14 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
           com.hazelcast.nio.ssl.BasicSSLContextFactory
       </factory-class-name>
       <properties>
-        <property name="keyStore">keyStore</property>
-        <property name="keyStorePassword">keyStorePassword</property>
-        <property name="trustStore">trustStore</property>
-        <property name="trustStorePassword">trustStorePassword</property>
-        <property name="keyManagerAlgorithm">SunX509</property>
-        <property name="trustManagerAlgorithm">SunX509</property>
-        <property name="protocol">TLS</property>
+        <property name="keyStore">/opt/hazelcast-keystore.p12</property>
+        <property name="keyStorePassword">secret.123</property>
+        <property name="keyStoreType">PKCS12</property>
+        <property name="trustStore">/opt/hazelcast-truststore.p12</property>
+        <property name="trustStorePassword">changeit</property>
+        <property name="trustStoreType">PKCS12</property>
+        <property name="protocol">TLSv1.2</property>
+        <property name="mutualAuthentication">REQUIRED</property>
       </properties>
     </ssl>
   </network>
@@ -219,30 +220,36 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
 
 Here are the descriptions for the properties:
 
-* `keystore`: Path of your keystore file. Note that your keystore's type must be `JKS`.
+* `keystore`: Path of your keystore file.
 * `keyStorePassword`: Password to access the key from your keystore file.
 * `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
 * `keyStoreType`: The type of the keystore. Its default value is `JKS`.
-* `truststore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application. Its type should be `JKS`.
+* `truststore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application.
 * `trustStorePassword`: Password to unlock the truststore file.
 * `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
 * `trustStoreType`: The type of the truststore. Its default value is `JKS`.
+* `mutualAuthentication`: Mutual authentication configuration. It's empty by default which means the client side of connection is not authenticated. Available values are:
+** `REQUIRED` - server forces usage of a trusted client certificate
+** `OPTIONAL` - server asks for a client certificate, but it doesn't require it
++
+Please see the <<mutual-authentication, Mutual Authentication section>>.
+* `ciphersuites`: Comma-separated list of cipher suite names allowed to be used. Its default value are all supported suites in your Java runtime.
 * `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLS`. Available values are:
-** SSL
-** SSLv2
-** SSLv3
 ** TLS
 ** TLSv1
 ** TLSv1.1
 ** TLSv1.2
+** SSL
+** SSLv2
+** SSLv3
 +
-All of the above algorithms support Java 6 and higher versions, except the TLSv1.2 supports Java 7 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you write only `SSL` or `TLS`, your application will choose the SSL or TLS version according to your Java version.
+All of the above algorithms support Java 6 and higher versions, except the TLSv1.2 supports Java 7 and higher versions. For the `protocol` property, we recommend you to provide TLS with its version information, e.g., `TLSv1.2`. Note that if you write only `SSL` or `TLS`, your application will choose the SSL or TLS version according to your Java version. It is recommended to avoid using SSL protocols as they are insecure.
 
 ===== Other Property Configuration Options
 
-You can set all the properties presented in this section using the `javax.net.ssl` prefix, e.g., `javax.net.ssl.keyStore` and `javax.net.ssl.keyStorePassword`.
+You can set all the properties presented in this section as system properties using the `javax.net.ssl` prefix, e.g., `javax.net.ssl.keyStore` and `javax.net.ssl.keyStorePassword`.
 
-Also note that these properties can be specified using the related Java system properties and also Java's `-D` command line option. See below equivalent examples:
+See below equivalent examples:
 
 ```
 System.setProperty("javax.net.ssl.trustStore", "/user/home/hazelcast.ts");
@@ -254,58 +261,82 @@ Or,
 -Djavax.net.ssl.trustStore=/user/home/hazelcast.ts
 ```
 
+This way of TLS/SSL configuration is then system wide in your Java runtime.
 
 ==== TLS/SSL for Hazelcast Clients
 
-Hazelcast clients which support TLS/SSL should have the following properties to configure the TLS/SSL:
+The TLS configuration in Hazelcast clients is very similar to member configuration.
 
+```xml
+<hazelcast-client>
+  ...
+  <network>
+    ...
+    <ssl enabled="true">
+      <factory-class-name>
+          com.hazelcast.nio.ssl.BasicSSLContextFactory
+      </factory-class-name>
+      <properties>
+        <property name="keyStore">/opt/hazelcast-client.keystore</property>
+        <property name="keyStorePassword">clientsSecret</property>
+        <property name="trustStore">/opt/hazelcast-client.truststore</property>
+        <property name="trustStorePassword">changeit</property>
+        <property name="protocol">TLSv1.2</property>
+      </properties>
+    </ssl>
+  </network>
+  ...
+</hazelcast-client>
 ```
-Properties clientSslProps = TestKeyStoreUtil.createSslProperties();
-clientSslProps.setProperty("javax.net.ssl.trustStore", getTrustStoreFilePath());
-clientSslProps.setProperty("javax.net.ssl.trustStorePassword", "123456");
-ClientConfig config = new ClientConfig();
-config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(clientSslProps));
-```
+
+The same `BasicSSLContextFactory` properties used for members are available on clients.
+Clients don't need to set `mutualAuthentication` property as it's property configuring server side of TLS connections.
 
 ==== Mutual Authentication
 
-As explained above, Hazelcast members have keyStore used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust.
+TLS connections have two sides - one which opens the connection (i.e. TLS client)
+and other one which accepts the connection (TLS server).
+By default only the TLS server proves its identity by presenting a certificate to the TLS client.
+The Mutual authentication means that also TLS clients prove their identity to TLS servers.
 
-Starting with Hazelcast 3.8.1, mutual authentication is introduced. This allows the clients also to have their keyStores and members to have their trustStores so that the members can know which clients they can trust.
+Hazelcast members can be on both sides of TLS connection - TLS servers and TLS clients.
+Hazelcast clients are always on client side of a TLS connection.
 
-To enable mutual authentication, you need to set the following property at the member side:
+By default Hazelcast members have keyStore used to identify themselves to clients and other members.
+Both Hazelcast members and Hazelcast clients have trustStore used to define which members they can trust.
 
-```
-props.setProperty("javax.net.ssl.mutualAuthentication", "REQUIRED");
-```
+When the Mutual authentication feature is enabled, Hazelcast clients need to have keyStore provided.
+A client proves its idenity by providing its certificate to Hazelcast member it's connecting to.
+The member only accepts the connection if the client's certificate is present in the member's trustStore.
 
-And at the client side, you need to set the following properties:
-
-```
-clientSslProps.setProperty("javax.net.ssl.keyStore", getKeyStoreFilePath());
-clientSslProps.setProperty("javax.net.ssl.keyStorePassword", "123456");
-```
-
-Please see the below example snippet to see the full configuration at the member side:
+To enable mutual authentication, set `mutualAuthentication` property value to `REQUIRED` on member side:
 
 ```
 Config cfg = new Config();
 Properties props = new Properties();
 
-props.setProperty("javax.net.ssl.keyStore", getKeyStoreFilePath());
-props.setProperty("javax.net.ssl.trustStore", getTrustStoreFilePath());
-props.setProperty("javax.net.ssl.keyStorePassword", "123456");
-props.setProperty("javax.net.ssl.trustStorePassword", "123456");
-props.setProperty("javax.net.ssl.mutualAuthentication", "REQUIRED");
+props.setProperty("mutualAuthentication", "REQUIRED");
+props.setProperty("keyStore", "/opt/hazelcast.keystore");
+props.setProperty("keyStorePassword", "123456");
+props.setProperty("trustStore", "/opt/hazelcast.truststore");
+props.setProperty("trustStorePassword", "123456");
 
 cfg.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(props));
 Hazelcast.newHazelcastInstance(cfg);
 ```
 
-The property `javax.net.ssl.mutualAuthentication` has two options:
+And at the client side, you need to set client identity by providing the keystore:
 
-* REQUIRED: If the client does not provide a keystore or the provided keys are not included in the member's truststore, the client will not be authenticated.
-* OPTIONAL: If the client does not provide a keystore, it will be authenticated. But if the client provides keys that are not included in the member's truststore, the client will not be authenticated.
+```
+clientSslProps.setProperty("keyStore", "/opt/client.keystore");
+clientSslProps.setProperty("keyStorePassword", "123456");
+```
+
+
+The property `mutualAuthentication` has two options:
+
+* `REQUIRED`: Server asks for client certificate. If the client does not provide a keystore or the provided keys is not verified against member's truststore, the client will not be authenticated.
+* `OPTIONAL`: Server asks for client certificate, but client is not required to provide any valid certificate.
 
 
 NOTE: When a new client is introduced with a new keystore, the truststore at the member side should be updated accordingly to include new clients' information to be able to accept it.
@@ -314,17 +345,19 @@ NOTE: When a new client is introduced with a new keystore, the truststore at the
 Please see the below example snippet to see the full configuration at the client side:
 
 ```
-Properties clientSslProps = new Properties();
-clientSslProps.setProperty("javax.net.ssl.keyStore", getKeyStoreFilePath());
-clientSslProps.setProperty("javax.net.ssl.trustStore", getTrustStoreFilePath());
-clientSslProps.setProperty("javax.net.ssl.keyStorePassword", "123456");
-clientSslProps.setProperty("javax.net.ssl.trustStorePassword", "123456");
 ClientConfig config = new ClientConfig();
-config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(clientSslProps));
+Properties clientSslProps = new Properties();
+clientSslProps.setProperty("keyStore", "/opt/client.keystore");
+clientSslProps.setProperty("keyStorePassword", "123456");
+clientSslProps.setProperty("trustStore", "/opt/client.truststore");
+clientSslProps.setProperty("trustStorePassword", "123456");
 
+config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(clientSslProps));
 HazelcastClient.newHazelcastClient(config);
 ```
 
+If the mutual authentication is not required, the Hazelcast members will accept all incoming TLS connections without verifying if the connecting side is trusted.
+Therefor it's recommended to require the mutual authentication in Hazelcast members configuration.
 
 ==== TLS/SSL Performance Improvements for Java
 
