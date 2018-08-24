@@ -772,6 +772,71 @@ clientConfig.getConnectionStrategyConfig()
             .setAsyncStart(true)
             .setReconnectMode(ClientConnectionStrategyConfig.ReconnectMode.ASYNC);
 ```
+===== Configuring Client Connection Retry
+
+When client trying to connect to cluster, it uses following methods
+Please see <<setting-connection-attempt-limit, Setting Connection Attempt Limit>>.
+Please see <<setting-connection-attempt-period, Setting Connection Attempt Period>>.
+
+When failed to connect to any member in memberlist, it waits for `connection-attempt-period` then tries this
+`connection-attempt-limit` and fails to connect. 
+
+With Connection Retry Config, you can fine tune this connection behaviour. When Connection Retry Config is enabled, 
+`connection-attempt-period` and `connection-attempt-limit` are not used anymore. 
+This configuration is used when trying to establish the initial connection and  any time when connection to cluster is broken.
+
+initial-backoff-millis (int) :  how long to wait after the first failure before retrying
+max-backoff-millis (int): upper bound on backoff
+multiplier (double): factor with which to multiply backoff after a failed retry
+fail-on-max-backoff (boolean): whether to fail when the max-backoff has reached or continue waiting max-backoff-millis at each iteration
+jitter (double): by how much to randomize backoffs
+
+A pseudo-code is as follows:
+```
+ current_backoff_millis = INITIAL_BACKOFF_MILLIS
+ while (TryConnect(connectionTimeout)) != SUCCESS)
+    if (fail-on-max-backoff && current_backoff_millis >= MAX_BACKOFF_MILLIS) {
+        FAIL WITH EXCEPTION
+    }
+    randomizedSleepMillis = UniformRandom(-JITTER * current_backoff_millis, JITTER * current_backoff_millis)
+    Sleep(randomizedSleepMillis)
+    current_backoff = Min(current_backoff_millis * MULTIPLIER, MAX_BACKOFF_MILLIS)
+```
+Note that, TryConnect tries to connect any member that client knows of, and for each connection we have a connection timeout. 
+see <<setting-connection-timeout, Setting Connection Timeout>>.
+
+**Declarative**:
+
+```
+<hazelcast-client>
+  ...
+   <connection-strategy async-start="false" reconnect-mode="ON">
+        <connection-retry enabled="true">
+            <initial-backoff-millis>1000</initial-backoff-millis>
+            <max-backoff-millis>60000</max-backoff-millis>
+            <multiplier>2</multiplier>
+            <fail-on-max-backoff>true</fail-on-max-backoff>
+            <jitter>0.5</jitter>
+        </connection-retry>
+   </connection-strategy>
+  ...
+</hazelcast-client>
+```
+
+**Programmatic**:
+
+```
+ClientConfig config = new ClientConfig();
+ClientConnectionStrategyConfig connectionStrategyConfig = config.getConnectionStrategyConfig();
+ConnectionRetryConfig connectionRetryConfig = connectionStrategyConfig.getConnectionRetryConfig();
+connectionRetryConfig.setInitialBackoffMillis(1000)
+             		 .setMaxBackoffMillis(60000)
+                     .setMultiplier(2)
+                     .setFailOnMaxBackoff(true)
+                     .setJitter(0.2)
+                     .setEnabled(true);
+
+```
 
 ===== Other Configurations
 
