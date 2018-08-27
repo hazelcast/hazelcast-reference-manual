@@ -2167,10 +2167,7 @@ as a regular topic. The main difference is that Reliable Topic is backed up by t
 * Since the event system behind a regular `ITopic` is shared with other data structures, e.g., collection listeners, 
   you can run into isolation problems. This does not happen with the Reliable `ITopic`.
 
-[[sample-reliable-itopic-code]]
-==== Sample Reliable ITopic Code
-
-The following is a sample code snippet for a publisher:
+Here is a sample code snippet for a publisher using Reliable Topic:
 
 [source,java]
 ----
@@ -2178,18 +2175,14 @@ include::{javasource}/dds/reliabletopic/PublisherMember.java[tag=publisher]
 ----
 
 
-The following is a sample code snippet for a subscriber:
+And the following is a sample code snippet for the subscriber:
 
 [source,java]
 ----
 include::{javasource}/dds/reliabletopic/SubscribedMember.java[tag=sm]
 ----
 
-
-
-You can configure the Reliable `ITopic` using its Ringbuffer. If a Reliable Topic has the name `Foo`, then you can configure this topic
-by adding a `ReliableTopicConfig` for a Ringbuffer with the name `Foo`. By default, a Ringbuffer does not have any TTL (time to live) and
-it has a limited capacity; you may want to change that configuration. The following is an example configuration for the "sometopic" given above.
+When you create a Reliable Topic, Hazelcast automatically creates a Ringbuffer for it. The name for this Ringbuffer will be the name of Reliable Topic prefixed with `_hz_rb_`. For example, if you have a Reliable Topic with the name "sometopic", the Ringbuffer backing it will have the name `_hz_rb_sometopic`. So, when you configure this Ringbuffer for the Reliable Topic, you will use this prefixed name. By default, a Ringbuffer does not have any TTL (time to live) and it has a limited capacity; you may want to change that configuration. The following is an example configuration for the "sometopic" given above.
 
 [source,xml]
 ----
@@ -2197,7 +2190,7 @@ it has a limited capacity; you may want to change that configuration. The follow
 
     <!-- This is the ringbuffer that is used by the 'sometopic' Reliable-topic. As you can see the
          ringbuffer has the same name as the topic. -->
-    <ringbuffer name="sometopic">
+    <ringbuffer name="_hz_rb_sometopic">
         <capacity>1000</capacity>
         <time-to-live-seconds>5</time-to-live-seconds>
     </ringbuffer>
@@ -2208,13 +2201,13 @@ it has a limited capacity; you may want to change that configuration. The follow
 </hazelcast>
 ----
 
-Please see the <<configuring-reliable-topic, Configuring Reliable Topic section>> below.
+Please see the <<configuring-reliable-topic, Configuring Reliable Topic section>> below for the descriptions of all Reliable Topic configuration elements.
 
-By default, the Reliable `ITopic` uses a shared thread pool. If you need better isolation, you can configure a custom executor on the 
+By default, the Reliable `ITopic` uses a shared thread pool. If you need a better isolation, you can configure a custom executor on the 
 `ReliableTopicConfig`. 
 
 Because the reads on a Ringbuffer are not destructive, batching is easy to apply. `ITopic` uses read batching and reads
-ten items at a time (if available) by default.
+ten items at a time (if available) by default. See <<reading-batched-items, Reading Batched Items>> for more information.
 
 [[slow-consumers]]
 ==== Slow Consumers
