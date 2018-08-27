@@ -2159,9 +2159,8 @@ For a description of these parameters, please see the <<global-event-configurati
 [[reliable-topic]]
 === Reliable Topic
 
-The Reliable Topic data structure was introduced in Hazelcast 3.5. The Reliable Topic uses the same `ITopic` interface
-as a regular topic. The main difference is that Reliable Topic is backed up by the Ringbuffer (also introduced with Hazelcast 
-3.5) data structure. The following are the advantages of this approach:
+Reliable Topic uses the same `ITopic` interface
+as a regular topic. The main difference is that Reliable Topic is backed up by the Ringbuffer data structure. The following are the advantages of this approach:
 
 * Events are not lost since the Ringbuffer is configured with one synchronous backup by default.
 * Each Reliable `ITopic` gets its own Ringbuffer; if a topic has a very fast producer, it will not lead to problems at topics that run at a slower pace.
