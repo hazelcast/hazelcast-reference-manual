@@ -268,7 +268,7 @@ The `javax.cache.event.CacheEntryListener` implementation is straight forward. `
 - `CacheEntryCreatedListener`: Fires after a cache entry is added (even on read-through by a `CacheLoader`) to the cache.
 - `CacheEntryUpdatedListener`: Fires after an already existing cache entry updates.
 - `CacheEntryRemovedListener`: Fires after a cache entry was removed (not expired) from the cache.
-- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be a parallel process-- it is only required to be executed on the keys that are requested by `Cache.get()` and some other operations. For a full table of expiry please see https://www.jcp.org/en/jsr/detail?id=107[https://www.jcp.org/en/jsr/detail?id=107] point 6.  
+- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be a parallel process-- Hazelcast JCache implementation detects and removes expired entries periodically. Therefore, the expiration event may not be fired as soon as the entry expires. See <<ExpiryPolicy>> for details.
 
 To configure `CacheEntryListener`, add a `javax.cache.configuration.CacheEntryListenerConfiguration` instance to
 the JCache configuration class, as seen in the above example configuration. In addition, listeners can be configured to be
@@ -292,6 +292,14 @@ include::{javasource}/jcache/UserCacheEntryListener.java[tag=ucel]
 ==== ExpiryPolicy
 
 In JCache, `javax.cache.expiry.ExpiryPolicy` implementations are used to automatically expire cache entries based on different rules.
+
+JCache does not require expired entries to be removed from the cache immediately. It only enforces that expired entries are not returned from cache.
+Therefore, exact time of removal is implementation specific. Hazelcast complies JCache by checking the entries for expiration at the time of
+get operations (lazy expiration). In addition to that, Hazelcast uses a periodic task to detect and remove expired entries as soon as possible (eager expiration).
+Thanks to eager expiry, all expired entries are removed from the memory eventually even when they are not touched again. So the space
+used by such entries are released as well.
+
+For a detailed explanation of interaction between expiry policies and JCache API, please refer to the table in `Expiry Policies` section of https://www.jcp.org/en/jsr/detail?id=107[JCache documentation].
 
 Expiry timeouts are defined using `javax.cache.expiry.Duration`, which is a pair of `java.util.concurrent.TimeUnit`, that
 describes a time unit and a long, defining the timeout value. The minimum allowed `TimeUnit` is `TimeUnit.MILLISECONDS`.
