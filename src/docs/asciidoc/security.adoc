@@ -103,17 +103,30 @@ The `before` method will be called before processing the request on the remote s
 
 [blue]*Hazelcast IMDG Enterprise Feature*
 
-Hazelcast allows you to encrypt the entire socket level communication among all Hazelcast members and clients. Encryption is based on http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture].
+Hazelcast offers features which allow to reach a required privacy on communication level by enabling encryption. Encryption is based on http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture].
 
-Hazelcast provides symmetric and asymmetric encryption. For asymmetric encryption, SSL/TLS cryptographic protocols are used. For symmetric encryption, the following algorithms are used.
+There are two different encryption features:
 
-* DES/ECB/PKCS5Padding
-* PBEWithMD5AndDES
-* Blowfish
-* DESede
+* TLS protocol
+** transport level encryption
+** supported by members and clients
+** TCP-only (i.e. Multicast join messages are not encrypted)
+** Please see the <<tlsssl, TLS/SSL section>> for details.
+* Symmetric encryption for Hazelcast member protocol
+** only supported by members; communication with clients is not encrypted
+** Multicast join messages are encrypted too
 
-Hazelcast uses MD5 message-digest algorithm as the cryptographic hash function. You can also use the salting process by giving a salt and password which are then concatenated and processed with MD5, and the resulting output is stored with the salt.
+The preferred and recommended feature is the TLS protocol as it's a
+standard way how to protect communication on transport level.
 
+Symmetric encryption for Hazelcast member protocol can be configured with following cipher algorithms:
+
+* `DES/ECB/PKCS5Padding`
+* `PBEWithMD5AndDES`
+* `Blowfish`
+* `DESede`
+
+Hazelcast uses `MD5` message-digest algorithm as the cryptographic hash function. You can also use the salting process by giving a salt and password which are then concatenated and processed with `MD5`, and the resulting output is stored with the salt.
 
 In symmetric encryption, each member uses the same key, so the key is shared. Here is an example configuration for symmetric encryption.
 
@@ -136,8 +149,6 @@ In symmetric encryption, each member uses the same key, so the key is shared. He
 
 You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
 
-
-NOTE: Please see the <<tlsssl, TLS/SSL section>>.
 
 [[tlsssl]]
 === TLS/SSL
