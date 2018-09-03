@@ -1263,7 +1263,39 @@ file if the max-deviation (explained below) is exceeded.
 You can control the MemberHeartbeats plugin using the following properties:
 
 - `hazelcast.diagnostics.member-heartbeat.seconds`: The frequency this plugin is writing the collected information to the disk. It is configured to be 10 seconds by default. 0 disables the plugin.
-- `hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage. Its default value is 100.  For example, if the interval of member/member heartbeats is 5 seconds, a 100% deviation will be fine with heartbeats arriving up to 5 seconds after they are expected. So a heartbeat arriving after 9 seconds will not be rendered, but a heartbeat received after 11 seconds will be rendered.
+- `hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`: The maximum allowed deviation percentage. Its default value is 100. For example, if the interval of member/member heartbeats is 5 seconds, a 100% deviation will be fine with heartbeats arriving up to 5 seconds after they are expected. So a heartbeat arriving after 9 seconds will not be rendered, but a heartbeat received after 11 seconds will be rendered.
+
+
+===== OperationThreadSamples
+
+This plugin samples the operation threads and checks the running operations/tasks. Hazelcast has the <<slowoperationdetector, slow operation detector>> which is useful for very slow operations. But it may not be efficient for high volumes of not too slow operations. Using the OperationThreadSamples plugin it more clear that to see which operations are actually running.
+
+You can control the OperationThreadSamples plugin using the following properties:
+
+* `hazelcast.diagnostics.operationthreadsamples.period.seconds`: The frequency this plugin is writing the collected information to the disk. An efficient value for production would be 30, 60 or more seconds. 0, which is the default value, disables the plugin.
+* `hazelcast.diagnostics.operationthreadsamples.sampler.period.millis`: The period in milliseconds between taking samples. The lower the value, the higher the overhead but also the higher the precision. Its default value is 100 ms.  
+* `hazelcast.diagnostics.operationthreadsamples.includeName`: Specifies whether the data structures' name pointed to by the operation (if available) should be included in the name of the samples. Its default value is false.
+
+The following shows an example of the output when the property `hazelcast.diagnostics.operationthreadsamples.includeName` is false:
+
+```28-08-2018 07:40:07 1535442007330 OperationThreadSamples[
+              Partition[
+                        com.hazelcast.map.impl.operation.MapSizeOperation=304623 85.6927%
+                        com.hazelcast.map.impl.operation.PutOperation=33061 9.300304%
+                        com.hazelcast.map.impl.operation.GetOperation=17799 5.0069904%]
+              Generic[
+                        com.hazelcast.client.impl.ClientEngineImpl$PriorityPartitionSpecificRunnable=2308 35.738617%
+                        com.hazelcast.nio.Packet=1767 27.361412%
+                        com.hazelcast.internal.cluster.impl.operations.JoinRequestOp=821 12.712914%
+                        com.hazelcast.spi.impl.operationservice.impl.operations.PartitionIteratingOperation=278 4.3047385%
+                        com.hazelcast.internal.cluster.impl.operations.HeartbeatOp=93 1.4400743%
+                        com.hazelcast.internal.cluster.impl.operations.OnJoinOp=89 1.3781357%
+                        com.hazelcast.internal.cluster.impl.operations.WhoisMasterOp=75 1.1613503%
+                        com.hazelcast.client.impl.operations.ClientReAuthOperation=33 0.51099414%]]
+```
+
+As can be seen above, the `MapSizeOperations` run on the operation threads most of the time.
+
                                                                                                                                    
 ===== WanDiagnostics
 
