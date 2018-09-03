@@ -903,6 +903,8 @@ _Deadline Failure Detector_ has two configuration properties:
 - `hazelcast.client.heartbeat.interval`: This is the interval at which client sends heartbeat messages to members. 
 - `hazelcast.client.heartbeat.timeout`: This is the timeout which defines when a cluster member is suspected, because it has not sent any response back to client requests.
 
+NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than that of `hazelcast.client.heartbeat.timeout`. In addition, the value of system property <<client-max-no, hazelcast.client.max.no.heartbeat.seconds>>, which is set at the member side, should be larger than that of `hazelcast.client.heartbeat.interval`. 
+
 The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
 
 
