@@ -8,7 +8,7 @@ import com.hazelcast.crdt.pncounter.PNCounter;
 public class PNCounterSample {
     public static void main(String[] args) throws Exception {
 //tag::pncc[]
-        PNCounterConfig pnCounterConfig = new PNCounterConfig()
+        PNCounterConfig pnCounterConfig = new PNCounterConfig("default")
                 .setReplicaCount(10)
                 .setStatisticsEnabled(true);
         Config hazelcastConfig = new Config()
