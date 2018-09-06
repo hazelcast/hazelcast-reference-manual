@@ -388,6 +388,25 @@ NOTE: Usage of this system property is supported for BINARY and OBJECT in-memory
 
 You can also define custom attributes that may be referenced in predicates, queries and indexes. Custom attributes can be defined by implementing a `ValueExtractor`. Please see the <<custom-attributes, Custom Attributes section>> for details.
 
+===== Using "this" as an Attribute
+
+You can use the keyword `this` as an attribute name while adding an index or creating a predicate. A basic usage is shown below.
+
+```
+map.addIndex("this", true);
+Predicate<Integer, Integer> lessEqual = Predicates.between("this", 12, 20);
+```
+
+Another basic sample using `SqlPredicate` is shown below.
+
+```
+new SqlPredicate("this = 'jones'")
+new SqlPredicate("this.age > 33")
+```
+
+The special attribute `this` acts on the value of a map entry. Typically, you do not need to specify it while accessing a property of an entry's value, since its presence is implicitly assumed if the special attribute <<querying-entry-keys-with-predicates, __key>> is not specified. See the 
+
+
 
 ==== Configuring Query Thread Pool
 
