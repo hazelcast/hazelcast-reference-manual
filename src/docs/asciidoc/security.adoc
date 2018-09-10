@@ -119,12 +119,14 @@ There are two different encryption features:
 The preferred and recommended feature is the TLS protocol as it's a
 standard way how to protect communication on transport level.
 
-Symmetric encryption for Hazelcast member protocol can be configured with following cipher algorithms:
+Symmetric encryption for Hazelcast member protocol can be configured with cipher algorithms implemented by security providers and accessed through Java Cryptography Architecture.
+Check documentation of your Java version to learn about supported algorithm
+names. Some examples:
 
-* `DES/ECB/PKCS5Padding`
+* `AES`
 * `PBEWithMD5AndDES`
+* `DES/ECB/PKCS5Padding`
 * `Blowfish`
-* `DESede`
 
 Hazelcast uses `MD5` message-digest algorithm as the cryptographic hash function. You can also use the salting process by giving a salt and password which are then concatenated and processed with `MD5`, and the resulting output is stored with the salt.
 
@@ -137,10 +139,10 @@ In symmetric encryption, each member uses the same key, so the key is shared. He
   <network>
     ...
     <symmetric-encryption enabled="true">
-      <algorithm>PBEWithMD5AndDES</algorithm>
+      <algorithm>AES</algorithm>
       <salt>thesalt</salt>
       <password>thepass</password>
-      <iteration-count>19</iteration-count>
+      <iteration-count>175</iteration-count>
     </symmetric-encryption>
   </network>
   ...
