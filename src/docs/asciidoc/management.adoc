@@ -1169,6 +1169,39 @@ You can enable or disable the system log diagnostics plugin, and configure wheth
 * `hazelcast.diagnostics.systemlog.enabled`: Its default value is `true`.
 * `hazelcast.diagnostics.systemlog.partitions`: Its default value is `false`. Please note that if you enable this, you may get a lot of log entries if you have many partitions.
 
+===== OperationThreadSamples
+
+It samples the operation threads to see what they are doing. This is a pretty low overhead plugin.
+
+You can configure OperationThreadSamples diagnostics using:
+
+* `hazelcast.diagnostics.operationthreadsamples.period.seconds`: It default value is `0` meaning that the plugin is disabled.
+* `hazelcast.diagnostics.operationthreadsamples.sampler.period.millis`: The period between taking samples. Defaults to 100. The lower the value, the higher the precision but also the higher the overhead.
+* `hazelcast.diagnostics.operationthreadsamples.includeName`: If the name of the data structure should be included. Defaults to false. This feature should not be used in production because it can lead to memory leaks when data-structures get destroyed. Their samples will always remain.
+
+```
+28-08-2018 07:40:07 1535442007330 OperationThreadSamples[
+                          Partition[
+                                  com.hazelcast.map.impl.operation.HDPutOperation=16150734 85.56849%
+                                  com.hazelcast.spi.impl.operationservice.impl.operations.Backup=1146500 6.0742917%
+                                  com.hazelcast.map.impl.operation.HDGetOperation=494884 2.6219537%
+                                  com.hazelcast.nio.Packet=361629 1.915953%
+                                  com.hazelcast.client.impl.protocol.task.map.MapPutMessageTask=321317 1.7023753%
+                                  com.hazelcast.client.impl.protocol.task.map.MapGetMessageTask=222022 1.1762987%
+                                  com.hazelcast.map.impl.operation.AddIndexOperation=174180 0.9228261%
+                                  com.hazelcast.internal.partition.operation.PartitionBackupReplicaAntiEntropyOperation=2269 0.012021429%
+                                  com.hazelcast.map.impl.operation.HDMapSizeOperation=1096 0.005806737%]
+                          Generic[
+                                  com.hazelcast.client.impl.ClientEngineImpl$PriorityPartitionSpecificRunnable=2308 35.738617%
+                                  com.hazelcast.nio.Packet=1767 27.361412%
+                                  com.hazelcast.map.impl.query.HDQueryOperation=994 15.391762%
+                                  com.hazelcast.internal.cluster.impl.operations.JoinRequestOp=821 12.712914%
+                                  com.hazelcast.spi.impl.operationservice.impl.operations.PartitionIteratingOperation=278 4.3047385%
+                                  com.hazelcast.internal.cluster.impl.operations.HeartbeatOp=93 1.4400743%
+                                  com.hazelcast.internal.cluster.impl.operations.OnJoinOp=89 1.3781357%
+                                  com.hazelcast.internal.cluster.impl.operations.WhoisMasterOp=75 1.1613503%
+                                  com.hazelcast.client.impl.operations.ClientReAuthOperation=33 0.51099414%]]
+```
 
 ===== StoreLatency
 
