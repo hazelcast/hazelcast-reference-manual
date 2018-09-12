@@ -236,11 +236,11 @@ Here are the descriptions for the properties:
 * `keyStore`: Path of your keystore file.
 * `keyStorePassword`: Password to access the key from your keystore file.
 * `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
-* `keyStoreType`: The type of the keystore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
+* `keyStoreType`: Type of the keystore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
 * `trustStore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application.
 * `trustStorePassword`: Password to unlock the truststore file.
 * `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
-* `trustStoreType`: The type of the truststore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
+* `trustStoreType`: Type of the truststore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
 * `mutualAuthentication`: Mutual authentication configuration. It's empty by default which means the client side of connection is not authenticated. Available values are:
 ** `REQUIRED` - server forces usage of a trusted client certificate
 ** `OPTIONAL` - server asks for a client certificate, but it doesn't require it
@@ -539,7 +539,7 @@ The configuration is similar to a regular TLS/SSL integration. The main differen
 * `keyCertChainFile`: Path to an X.509 certificate chain file in PEM format.
 * `trustCertCollectionFile`: Path to an X.509 certificate collection file in PEM format.
 
-These new properties takes precedence over keyStore and trustStore configuration.
+These new properties take precedence over keyStore and trustStore configurations.
 Using keyStores and trustStores together with OpenSSL causes problems on some Java versions, therefor we recommend to use the OpenSSL native way.
 
 Other supported properties are:
@@ -547,14 +547,14 @@ Other supported properties are:
 * `keyStore`: Path of your keystore file.
 ** _Using the `keyStore` property is not recommended, use `keyFile` and `keyCertChainFile` instead_
 * `keyStorePassword`: Password to access the key from your keystore file.
-* `keyStoreType`: The type of the keystore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
+* `keyStoreType`: Type of the keystore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
 * `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
 * `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
 * `trustStore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates
  trusted by your application. Its type should be `JKS`.
  ** _Using the `trustStore` property is not recommended, use `trustCertCollectionFile` instead_
 * `trustStorePassword`: Password to unlock the truststore file.
-* `trustStoreType`: The type of the keystore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
+* `trustStoreType`: Type of the truststore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
 * `ciphersuites`: Comma-separated list of cipher suite names allowed to be used.
 * `protocol`: Name of the algorithm which is used in your TLS/SSL. Its default value is `TLSv1.2`. Available values are:
 ** `TLS`
