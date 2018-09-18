@@ -238,6 +238,9 @@ Here are the descriptions for the properties:
 * `keyManagerAlgorithm`: Name of the algorithm based on which the authentication keys are provided.
 * `keyStoreType`: Type of the keystore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
 * `trustStore`: Path of your truststore file. The file truststore is a keystore file that contains a collection of certificates trusted by your application.
++
+NOTE: If you configure TLS/SSL and do not specify the `trustStore` property, no default trusted certificates will be used; neither the keystore, nor the Java provided list of trusted CA certificates. Therefore, you ALWAYS need to configure the `trustStore` property.
++
 * `trustStorePassword`: Password to unlock the truststore file.
 * `trustManagerAlgorithm`: Name of the algorithm based on which the trust managers are provided.
 * `trustStoreType`: Type of the truststore. Its default value is `JKS`. Another commonly used type is the `PKCS12`. Available keystore/truststore types depend on your Operating system and the Java runtime.
