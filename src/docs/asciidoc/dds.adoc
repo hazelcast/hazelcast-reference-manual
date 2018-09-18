@@ -424,7 +424,7 @@ And the following is an example eviction configuration for a map having `NATIVE`
 
 The eviction policies and configurations explained above apply to all the entries of a map. The entries that meet the specified eviction conditions are evicted.
 
-You may also want to evict some specific map entries.  To do this, you can use the `ttl` and `timeunit` parameters of the method `map.put()`. An example code line is given below.
+If you want to evict some specific map entries, you can use the `ttl` and `ttlUnit` parameters of the method `map.put()`. An example code line is given below.
 
 `myMap.put( "1", "John", 50, TimeUnit.SECONDS )`
 
@@ -433,6 +433,13 @@ The map entry with the key "1" will be evicted 50 seconds after it is put into `
 You may also use `map.setTTL` method to alter the time-to-live value of an existing entry. It is done as follows:
 
 `myMap.setTTL( "1", 50, TimeUnit.SECONDS )`
+
+In addition to the `ttl`, you may also specify a maximum idle timeout for specific map entries using the `maxIdle` and `maxIdleUnit` parameters:
+
+`myMap.put( "1", "John", 50, TimeUnit.SECONDS, 40, TimeUnit.SECONDS )`
+
+Here `ttl` is set as 50 seconds and `maxIdle` is set as 40 seconds. The entry is considered to be evicted if at least one of these policies marks it as expired. If you want to specify only the `maxIdle` parameter, you need to set `ttl` as 0 seconds.
+
 
 [[evicting-all-entries]]
 ===== Evicting All Entries
