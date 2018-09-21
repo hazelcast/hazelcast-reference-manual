@@ -153,6 +153,60 @@ HazelcastEnterpriseHD#2Nodes#1q2w3e4r5t
 ```
 
 
+[[running-in-modular-java]]
+=== Running in Modular Java
+
+Java http://openjdk.java.net/projects/jigsaw/[project Jigsaw] brought a new Module System into Java 9 and newer. Hazelcast supports running in the modular environment. If you want to run your application with Hazelcast libraries on the modulepath, use following module names:
+
+* `com.hazelcast.core` for `hazelcast-<version>.jar` and `hazelcast-enterprise-<version>.jar`
+* `com.hazelcast.client` for `hazelcast-client-<version>.jar` and `hazelcast-enterprise-client-<version>.jar`
+
+Don't use `hazelcast-all-<version>.jar` or `hazelcast-enterprise-all-<version>.jar` on the modulepath as it could lead to problems in module dependencies for your application. You can still use them on the classpath.
+
+The Java Module System comes with stricter visibility rules. It affects Hazelcast which uses internal Java API to reach the best performance results.
+
+Hazelcast needs `java.se` module and access to the following Java packages for a proper work:
+
+* `java.base/jdk.internal.ref`
+* `java.base/java.nio` _(reflective access)_
+* `java.base/sun.nio.ch` _(reflective access)_
+* `java.base/java.lang` _(reflective access)_
+* `jdk.management/com.sun.management.internal` _(reflective access)_
+* `java.management/sun.management` _(reflective access)_
+
+You can provide the access to the above mentioned packages by using `--add-exports` and `--add-opens` (for the reflective access) Java arguments.
+
+**Example: Running a member on the classpath**
+
+[source,bash]
+----
+java --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  --add-opens java.base/java.nio=ALL-UNNAMED \
+  --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+  --add-opens java.management/sun.management=ALL-UNNAMED \
+  --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED \
+  -jar hazelcast-<version>.jar
+----
+
+**Example: Running a member on the modulepath**
+
+[source,bash]
+----
+java --add-exports java.base/jdk.internal.ref=com.hazelcast.core \
+  --add-opens java.base/java.lang=com.hazelcast.core \
+  --add-opens java.base/java.nio=com.hazelcast.core \
+  --add-opens java.base/sun.nio.ch=com.hazelcast.core \
+  --add-opens java.management/sun.management=com.hazelcast.core \
+  --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
+  --module-path lib \
+  --add-modules java.se \
+  --module com.hazelcast.core/com.hazelcast.core.server.StartServer
+----
+
+_This example expects `hazelcast-<version>.jar` placed in the `lib` directory._
+
+
 [[upgrading-from-3x]]
 === Upgrading from 3.x
 
