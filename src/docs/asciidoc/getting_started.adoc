@@ -12,8 +12,8 @@ The following sections explain the installation of Hazelcast IMDG and Hazelcast 
 [[installing-hazelcast-imdg]]
 ==== Installing Hazelcast IMDG
 
-You can find Hazelcast in standard Maven repositories. If your project uses Maven, you do not need to add 
-additional repositories to your `pom.xml` or add `hazelcast-<version>.jar` file into your 
+You can find Hazelcast in standard Maven repositories. If your project uses Maven, you do not need to add
+additional repositories to your `pom.xml` or add `hazelcast-<version>.jar` file into your
 classpath (Maven does that for you). Just add the following lines to your `pom.xml`:
 
 [source,xml]
@@ -73,12 +73,12 @@ Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise** and *
 ** Security
 ** WAN Replication
 ** Clustered REST
-** Clustered JMX 
+** Clustered JMX
 ** Striim Hot Cache
 ** Rolling Upgrades
 * **Enterprise HD license**: In addition to the Enterprise features, Enterprise HD features are the following:
 ** High-Density Memory Store
-** Hot Restart Persistence 
+** Hot Restart Persistence
 
 
 To use Hazelcast IMDG Enterprise, you need to set the provided license key using one of the configuration methods shown below.
@@ -164,8 +164,8 @@ In order to upgrade a 3.6.x cluster and clients to 3.7.3 (or later), you will ne
 +
 ** first upgrade your cluster members to 3.7.3, adding property `hazelcast.compatibility.3.6.client=true` to your configuration; when started with this property, cluster members are compatible with 3.6.x and 3.7.3+ clients but not with 3.7-3.7.2 clients. Once your cluster is upgraded, you may upgrade your applications to use client version 3.7.3+.
 ** upgrade your clients from 3.6.x to 3.7.3, adding property `hazelcast.compatibility.3.6.server=true` to your Hazelcast client configuration. A 3.7.3 client started with this compatibility option is compatible with 3.6.x and 3.7.3+ cluster members but incompatible with 3.7-3.7.2 cluster members. Once your clients are upgraded, you may then proceed to upgrade your cluster members to version 3.7.3 or later.
-+ 
-You may use any of the supported ways as described in the <<system-properties, System Properties section>> to configure the compatibility option. When done upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration. 
++
+You may use any of the supported ways as described in the <<system-properties, System Properties section>> to configure the compatibility option. When done upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration.
 * **Upgrading from 3.6.x to 3.8.x EE when using `JCache`:** Due to a compatibility problem CacheConfig serialization may not work if your member is 3.8.x where x < 5. Hence, you will need to use the 3.8.5 or higher version where the problem is being fixed.
 * **Introducing the `spring-aware` element:** Before the release 3.5, Hazelcast uses `SpringManagedContext` to scan `SpringAware` annotations by default. This may cause some performance overhead for the users who do not use `SpringAware`.
 This behavior has been changed with the release of Hazelcast 3.5. `SpringAware` annotations are disabled by default. By introducing the `spring-aware` element, now it is possible to enable it by adding the `<hz:spring-aware />` tag to the configuration. Please see the <<spring-integration, Spring Integration section>>.
@@ -176,12 +176,12 @@ This behavior has been changed with the release of Hazelcast 3.5. `SpringAware` 
 ** `hazelcast.enterprise.wanrep.queue.capacity`, please see the <<queue-capacity, WAN Replication Queue Capacity>>.
 * **Removal of deprecated getId() method**: The method `getId()` in the interface `DistributedObject` has been removed. Please use the method `getName()` instead.
 * **Change in the Custom Serialization in the C++ Client Distribution**: Before, the method `getTypeId()` was used to retrieve the ID of the object to be serialized. Now, the method `getHazelcastTypeId()` is used and you give your object as a parameter to this new method. Also, `getTypeId()` was used in your custom serializer class, now it has been renamed to `getHazelcastTypeId()` too. Note that, these changes also apply when you want to switch from Hazelcast 3.6.1 to 3.6.2 too.
-* **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from System Properties, there has been a change to inform to the users who have been using this class. Starting with Hazelcast 3.7, the class `GroupProperties.java` has been replaced by `GroupProperty.java`. 
+* **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from System Properties, there has been a change to inform to the users who have been using this class. Starting with Hazelcast 3.7, the class `GroupProperties.java` has been replaced by `GroupProperty.java`.
 In this new class, system properties are instances of the newly introduced `HazelcastProperty` object. You can access the names of these properties by calling `getName()` method of `HazelcastProperty`.
 * **Removal of WanNoDelayReplication**: `WanNoDelayReplication` implementation of Hazelcast's WAN Replication has been removed starting with Hazelcast 3.7. You can still achieve this behavior by setting the batch size to `1` while configuring the WanBatchReplication. Please refer to the <<defining-wan-replication, Defining WAN Replication section>> for more information.
 * **Introducing <wan-publisher> element**: Starting with Hazelcast 3.8, the configuration element `<target-cluster>` is replaced with the element `<wan-publisher>` in WAN replication configuration.
 * **WaitNotifyService** interface has been renamed as **OperationParker**.
-* **Synchronizing WAN Target Cluster**: Starting with Hazelcast 3.8 release, the URL for the REST call has been changed from 
+* **Synchronizing WAN Target Cluster**: Starting with Hazelcast 3.8 release, the URL for the REST call has been changed from
 `http://member_ip:port/hazelcast/rest/wan/sync/map` to `http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map`.
 
 
@@ -245,11 +245,11 @@ PartitionService has been moved to package `com.hazelcast.core` from `com.hazelc
 IMap map = hazelcastInstance.getMap( "map" );
 map.addEntryListener( listener, true );
 map.removeEntryListener( listener );
----- 
+----
 +
 with
 +
-[source,java]	
+[source,java]
 ----
 IMap map = hazelcastInstance.getMap( "map" );
 String listenerId = map.addEntryListener( listener, true );
@@ -282,12 +282,12 @@ Also MergePolicy interface has been renamed to MapMergePolicy and also returning
 [[starting-the-member-and-client]]
 === Starting the Member and Client
 
-Having installed Hazelcast, you can get started. 
+Having installed Hazelcast, you can get started.
 
 In this short tutorial, you perform the following activities.
 
-. Create a simple Java application using the Hazelcast distributed map and queue. 
-. Run our application twice to have a cluster with two members (JVMs). 
+. Create a simple Java application using the Hazelcast distributed map and queue.
+. Run our application twice to have a cluster with two members (JVMs).
 . Connect to our cluster from another Java application by using the Hazelcast Native Java Client API.
 
 Let's begin.
@@ -300,14 +300,14 @@ Let's begin.
 include::{javasource}/GettingStartedMember.java[tag=startmember]
 ----
 +
-* Run this `GettingStarted` class a second time to get the second member 
+* Run this `GettingStarted` class a second time to get the second member
 started. The members form a cluster and the output is similar to the following.
 +
 ```
 Members {size:2, ver:2} [
     Member [127.0.0.1]:5701 - e40081de-056a-4ae5-8ffe-632caf8a6cf1 this
     Member [127.0.0.1]:5702 - 93e82109-16bf-4b16-9c87-f4a6d0873080
-]                              
+]
 ```
 +
 Here, you can see the size of your cluster (`size`) and member list version (`ver`). The member list version will be incremented when changes happen to the cluster, e.g., a member leaving from or joining to the cluster.
@@ -321,15 +321,15 @@ Members [2] {
 }
 ```
 +
-* Now, add the `hazelcast-client-`*`<version>`*`.jar` library to your classpath. 
+* Now, add the `hazelcast-client-`*`<version>`*`.jar` library to your classpath.
 This is required to use a Hazelcast client.
-* The following code starts a Hazelcast Client, connects to our cluster, 
+* The following code starts a Hazelcast Client, connects to our cluster,
 and prints the size of the `customers` map.
 +
 [source,java]
 ----
 public class GettingStartedClient {
-    
+
     public static void main( String[] args ) {
         ClientConfig clientConfig = new ClientConfig();
         HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
@@ -339,21 +339,21 @@ public class GettingStartedClient {
 }
 ----
 +
-* When you run it, you see the client properly connecting to the cluster 
+* When you run it, you see the client properly connecting to the cluster
 and printing the map size as **3**.
 
-Hazelcast also offers a tool, **Management Center**, that enables you to monitor your cluster. 
+Hazelcast also offers a tool, **Management Center**, that enables you to monitor your cluster.
 You can download it from Hazelcast website's https://hazelcast.org/download/#management-center[download page].
-You can use it to monitor your maps, queues and other distributed data structures and members. Please 
+You can use it to monitor your maps, queues and other distributed data structures and members. Please
 see the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[Hazelcast Management Center Reference Manual] for usage explanations.
 
 
-By default, Hazelcast uses multicast to discover other members that can form a cluster.  If you are 
-working with other Hazelcast developers on the same network, you may find yourself joining their 
-clusters under the default settings.  Hazelcast provides a way to segregate clusters within the same 
-network when using multicast. Please see the <<creating-cluster-groups, Creating Cluster Groups>> 
-for more information.  Alternatively, if you do not wish to use the default multicast mechanism, 
-you can provide a fixed list of IP addresses that are allowed to join. Please see 
+By default, Hazelcast uses multicast to discover other members that can form a cluster.  If you are
+working with other Hazelcast developers on the same network, you may find yourself joining their
+clusters under the default settings.  Hazelcast provides a way to segregate clusters within the same
+network when using multicast. Please see the <<creating-cluster-groups, Creating Cluster Groups>>
+for more information.  Alternatively, if you do not wish to use the default multicast mechanism,
+you can provide a fixed list of IP addresses that are allowed to join. Please see
 the <<join, Join configuration section>> for more information.
 
 NOTE: Multicast mechanism is not recommended for production since UDP is often blocked in production environments and other discovery mechanisms are more definite. Please see the <<discovery-mechanisms, Discovery Mechanisms section>>.
@@ -414,11 +414,3 @@ After you pull an image from the Docker registry, you can run your image to star
 If you want to start a customized Hazelcast instance, you can extend the Hazelcast image by providing your own configuration file.
 
 This feature is provided as a Hazelcast plugin. Please see its own GitHub repo at https://github.com/hazelcast/hazelcast-docker[Hazelcast Docker] for details on configurations and usages.
-
-
-
-
-
-
-
-
