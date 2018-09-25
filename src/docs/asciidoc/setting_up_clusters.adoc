@@ -434,7 +434,7 @@ To deal with such scenarios, you can group members in the same JVM (or physical 
 
 When you enable partition grouping, Hazelcast presents the following choices for you to configure partition groups.
 
-**1. HOST_AWARE:** 
+===== HOST_AWARE
 
 You can group members automatically using the IP addresses of members, so members sharing the same network interface will be grouped together. All members on the same host (IP address or domain name) will be a single partition group. This helps to avoid data loss when a physical server crashes, because multiple replicas of the same partition are not stored on the same host. But if there are multiple network interfaces or domain names per physical machine, that will make this assumption invalid.
 
@@ -452,7 +452,7 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.HOST_AWARE );
 ```
 
-**2. CUSTOM:**
+===== CUSTOM
 
 You can do custom grouping using Hazelcast's interface matching configuration. This way, you can add different and multiple interfaces to a group. You can also use wildcards in the interface addresses. For example, the users can create rack-aware or data warehouse partition groups using custom partition grouping.
 
@@ -482,7 +482,7 @@ include::{javasource}/PartitionGrouping.java[tag=partitiongrouping]
 NOTE: While your cluster was forming, if you configured your members to discover each other by their IP addresses, you should use the IP addresses for the `<interface>` element. If your members discovered each other by their hostnames, you should use the hostnames.
 
 
-**3. PER_MEMBER:**
+===== PER_MEMBER
 
 You can give every member its own group. Each member is a group of its own and primary and backup partitions are distributed randomly (not on the same physical member). This gives the least amount of protection and is the default configuration for a Hazelcast cluster. This grouping type provides good redundancy when Hazelcast members are on separate hosts. However, if multiple instances run on the same host, this type is not a good option. 
 
@@ -500,11 +500,13 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.PER_MEMBER );
 ```
 
-**4. ZONE_AWARE:**
+===== ZONE_AWARE
 
 You can use ZONE_AWARE configuration with https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS], https://github.com/hazelcast/hazelcast-jclouds[Hazelcast jclouds] or https://github.com/hazelcast/hazelcast-azure[Hazelcast Azure] Discovery Service plugins.
 
-As discovery services, these plugins put zone information to the Hazelcast <<defining-member-attributes, member attributes>> map during the discovery process. When ZONE_AWARE is configured as partition group type, Hazelcast creates the partition groups with respect to member attributes map entries that include zone information.That means backups are created in the other zones and each zone will be accepted as one partition group.
+As discovery services, these plugins put zone information to the Hazelcast <<defining-member-attributes, member attributes>> map during the discovery process. When ZONE_AWARE is configured as partition group type, Hazelcast creates the partition groups with respect to member attributes map entries that include zone information. That means backups are created in the other zones and each zone will be accepted as one partition group.
+
+NOTE: When using the ZONE_AWARE partition grouping, a Hazelcast cluster spanning multiple AZs should have an equal number of members in each AZ. Otherwise, it will result in uneven partition distribution among the members.
 
 This is the list of supported attributes which is set by Discovery Service plugins during a Hazelcast member start-up:
 
@@ -527,10 +529,7 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.ZONE_AWARE );
 ```
 
-NOTE: When using the ZONE_AWARE partition grouping, a Hazelcast cluster spanning multiple AZs should have an equal number of members in each AZ. Otherwise, it will result in uneven partition distribution among the members.
-
-
-**5. SPI:**
+===== SPI
 
 You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()` and return the `PartitionGroupStrategy` configuration in that overridden method. 
 
