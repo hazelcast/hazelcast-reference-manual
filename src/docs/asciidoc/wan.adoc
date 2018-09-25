@@ -631,6 +631,31 @@ That means, as far as you set a backup count for your IMap or ICache instances, 
  
 There is no additional configuration to enable/disable WAN replication event backups.
 
+=== WAN Synchronization Using Merkle Trees
+
+Hazelcast clusters connected over WAN can go out-of-sync because of various reasons such as member failures and concurrent updates. To overcome the out-of-sync issue, Hazelcast has the default <<synchronizing-wan-target-cluster, WAN synchronization>> feature, through which the maps in different clusters are synced by transferring all entries from the source to the target cluster. This may be not efficient since some entries can be the same on both clusters and do not require to be transferred. Also, for the entries to be transferred, they need to be copied to on-heap on the source cluster. This may cause spikes in the heap usage, especially if using large off-heap stores.
+
+Besides the default WAN synchronization, Hazelcast can use https://en.wikipedia.org/wiki/Merkle_tree[Merkle trees] for the same purpose. Merkle tree hash exchanges can detect inconsistencies in map data and synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
+
+NOTE: Currently, Merkle tree structure is implemented only for Hazelcast maps. It will also be implemented for caches in the future releases.
+
+==== Requirements
+
+To be able to use Merkle trees for WAN synchronization, the following must be met:
+
+* Source and target cluster versions must be at least Hazelcast 3.11.
+* Both cluster must have the same number of partitions.
+* Both clusters must use the same partitioning strategy.
+* Both clusters must have the Merkle tree structure enabled.
+
+
+==== Configuring a Merkle Tree
+
+You can configure a Merkle tree declaratively using the `merkle-tree` element or programmatically using the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/MerkleTreeConfig.html[`MerkleTreeConfig`] object.
+
+???
+
+
 === Hazelcast WAN Replication with Solace
 
 image::Plugin_New.png[Solace Plugin, 84, 22]
