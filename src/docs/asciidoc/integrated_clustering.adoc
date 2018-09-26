@@ -647,23 +647,37 @@ As mentioned in the <<scheduled-executor-service, Scheduled Executor Service sec
 ...
 <hz:hazelcast id="instance">
     <hz:config>
-        <hz:network port="5701">
-            <hz:join>
-                <hz:multicast enabled="false" />
-            </hz:join>
-        </hz:network>
+        [...]
+        <hz:scheduled-executor-service name="my-scheduler" pool-size="10" />
     </hz:config>
 </hz:hazelcast>
 
-<task:annotation-driven scheduler="scheduler" />
-
-<hz:scheduledExecutorService id="scheduler" instance-ref="instance" name="test-scheduler" />
+<task:annotation-driven scheduler="my-task-scheduler" />
+<hz:scheduledExecutorService id="my-task-scheduler" instance-ref="instance" name="my-scheduler" />
 ...
 ----
 
-Here, the tag `<hz:hazelcast>` configures your Hazelcast member with the ID "instance". In the Spring tag `<task:annotation-driven>`, you specify a name for the Java annotated scheduler. Finally, the tag `<hz:scheduledExecutorService>` creates a scheduler for your Hazelcast "instance" with the name "test-scheduler".
+Here, the tag `<hz:hazelcast>` configures your Hazelcast member with the ID "instance". In the Spring tag `<task:annotation-driven>`, you specify a name for the Java annotated scheduler. Finally, the tag `<hz:scheduledExecutorService>` creates a scheduler for your Hazelcast "instance" with the name "my-scheduler".
 
-You can refer to Spring's https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/scheduling.html[documentation] to learn about it's task scheduling feature.
+After you create and configure a scheduler as exemplified above, you can run the `scheduledMethod()` with that newly created scheduler as shown below:
+
+[source,java]
+----
+@Component
+public class ScheduledTasksBean {
+
+    @Resource(name = "my-task-scheduler")
+    TaskScheduler scheduler;
+
+    @Scheduled(initialDelay = 1000, fixedDelay = 5000)
+    public void scheduledMethod() {
+        // do something...
+    }
+}
+----
+
+
+You can refer to Spring's https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#scheduling-task-scheduler[documentation] to learn about it's task scheduling feature.
 
 
 
