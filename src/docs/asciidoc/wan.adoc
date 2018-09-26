@@ -563,9 +563,9 @@ http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
 
 You need to add parameters to the request in the following order separated by "&";
 
-  - Name of the WAN replication configuration
-  - Target group name
-  - Map name to be synchronized
+* Name of the WAN replication configuration
+* Target group name
+* Map name to be synchronized
 
 Assume that you have configured an IMap with a WAN replication configuration as follows:
 
@@ -633,9 +633,9 @@ There is no additional configuration to enable/disable WAN replication event bac
 
 === Synchronizing WAN Clusters Using Merkle Trees
 
-Hazelcast clusters connected over WAN can go out-of-sync because of various reasons such as member failures and concurrent updates. To overcome the out-of-sync issue, Hazelcast has the default <<synchronizing-wan-target-cluster, WAN synchronization>> feature, through which the maps in different clusters are synced by transferring all entries from the source to the target cluster. This may be not efficient since some entries can be the same on both clusters and do not require to be transferred. Also, for the entries to be transferred, they need to be copied to on-heap on the source cluster. This may cause spikes in the heap usage, especially if using large off-heap stores.
+Hazelcast clusters connected over WAN can go out-of-sync because of various reasons such as member failures and concurrent updates. To overcome the out-of-sync issue, Hazelcast has the default <<synchronizing-wan-target-cluster, WAN synchronization>> feature, through which the maps in different clusters are synced by transferring all entries from the source to the target cluster. This may be not efficient since some of the entries have remained unchanged on both clusters and do not require to be transferred. Also, for the entries to be transferred, they need to be copied to on-heap on the source cluster. This may cause spikes in the heap usage, especially if using large off-heap stores.
 
-Besides the default WAN synchronization, Hazelcast can use https://en.wikipedia.org/wiki/Merkle_tree[Merkle trees] for the same purpose. Merkle tree hash exchanges can detect inconsistencies in map data and synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
+Besides the default WAN synchronization, Hazelcast can use https://en.wikipedia.org/wiki/Merkle_tree[Merkle tree] for the same purpose. It is a data structure used for efficient comparison of the difference in the contents of large data structures. The precision of this comparison is defined by Merkle tree's depth. Merkle tree hash exchanges can detect inconsistencies in the map data and synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
 
 NOTE: Currently, Merkle tree structure is implemented only for Hazelcast IMap. It will also be implemented for ICache in the future releases.
 
@@ -649,11 +649,92 @@ To be able to use Merkle trees for WAN synchronization, the following must be me
 * Both clusters must have the Merkle tree structure enabled.
 
 
-==== Configuring a Merkle Tree
+==== Using Merkle Tree
+
+To be able to use the Merkle tree as a WAN synchronization strategy for a Hazelcast data structure: 
+
+. Configure the WAN synchronization mechanism for your WAN publisher so that it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of the `wan-sync` element. If configuring programmatically, you can use the setter of the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/WanSyncConfig.html[`WanSyncConfig`] object.
+. Bind that WAN synchronization configuration to the data structure (currently IMap): Simply set the WAN replication reference of your map to the name of the WAN replication configuration which uses the Merkle tree.
+
+Following is a declarative configuration example of the above:
+
+[source,xml]
+----
+<map name="myMap">
+    <wan-replication-ref name="wanReplicationScheme">
+        ...
+    </wan-replication-ref>
+    ...
+</map>
+...
+...
+<wan-replication name="wanReplicationScheme">
+    <wan-publisher group-name="groupName">
+        <class-name>...</class-name>
+        <wan-sync>
+            <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
+        </wan-sync>
+        ...
+    </wan-publisher>
+</wan-replication>
+----
+
+Here, the element `consistency-check-strategy` sets the strategy for checking the consistency of data between the source and target clusters. You must initiate the WAN synchronization (via Management Center or REST API as explained in <<synchronizing-wan-target-cluster, Synchronizing WAN clusters>>) to let this strategy reconcile the inconsistencies. The element `consistency-check-strategy` has currently two values:
+
+* `NONE`: Means that there will be no consistency checks. This is the default value.
+* `MERKLE_TREES`: Means that WAN synchronization will use Merkle tree structure.
+
+==== Configuring Merkle Tree
 
 You can configure a Merkle tree declaratively using the `merkle-tree` element or programmatically using the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/MerkleTreeConfig.html[`MerkleTreeConfig`] object.
 
-???
+Following is a declarative configuration example showing how to enable the Merkle tree structure, bind it to a Hazelcast data structure (an IMap in the below case) and specify its depth.
+
+[source,xml]
+----
+<merkle-tree enabled="true">
+    <mapName>someMap</mapName>
+    <depth>5</depth>
+</merkle-tree>
+----
+
+Here are the descriptions of Merkle tree configuration sub-elements and attributes:
+
+* `enabled`: Specifies whether the Merkle tree structure is enabled. Its default value is `true`.
+* `mapName`: Specifies the name of the map for which the Merkle tree structure is used.
+* `depth`: Specifies the depth of Merkle tree. Valid values are between 2 and 27 (exclusive). Its default value is `10`.
+** A larger depth means that a data synchronization mechanism is able to pinpoint a smaller subset of the data structure (e.g., IMap) contents in which a change has occurred. This causes the synchronization mechanism to be more efficient. However, keep in mind that a large depth means that the Merkle tree will consume more memory. As the comparison mechanism is iterative, a larger depth also prolongs the comparison duration. Therefore, it is recommended not to have large tree depths if the latency of the comparison operation is high. 
+** A smaller depth means that the Merkle tree is shallower and the data synchronization mechanism transfers larger chunks of the data structure (e.g., IMap) in which a possible change has happened. As you can imagine, a shallower Merkle tree will consume less memory.
+
+Following is a declarative example including the Merkle tree configuration.
+
+[source,xml]
+----
+<map name="myMap">
+    <wan-replication-ref name="wanReplicationScheme">
+        ...
+    </wan-replication-ref>
+    ...
+</map>
+...
+<merkle-tree enabled="true">
+    <mapName>myMap</mapName>
+    <depth>10</depth>
+</merkle-tree>
+...
+<wan-replication name="wanReplicationScheme">
+    <wan-publisher group-name="groupName">
+        <class-name>...</class-name>
+        <wan-sync>
+            <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
+        </wan-sync>
+        ...
+    </wan-publisher>
+</wan-replication>
+----
+
+
+NOTE: If you do not specifically configure the `merkle-tree` in your Hazelcast configuration, Hazelcast uses the default Merkle tree structure values (i.e., it is enabled by default and its default depth is 10) when there is a WAN publisher using the Merkle tree (i.e., `consistency-check-strategy` for a WAN replication configuration is set as `MERKLE_TREES` and there is a data structure using that WAN replication configuration).
 
 
 === Hazelcast WAN Replication with Solace
