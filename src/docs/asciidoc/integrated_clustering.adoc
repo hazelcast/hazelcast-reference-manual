@@ -637,6 +637,36 @@ public class ServiceWithTransactionalMethod {
 After marking your method as `Transactional` either declaratively or by annotation and accessing the data structure
 through the `TransactionalTaskContext`, `HazelcastTransactionManager` will begin, commit or rollback the transaction for you.
 
+[[using-task-scheduling]]
+==== Using Task Scheduling with IScheduledExecutorService
+
+As mentioned in the <<scheduled-executor-service, Scheduled Executor Service section>>, you can use Hazelcast's IScheduledExecutorService within Spring context for your task scheduling needs. For this, you simply configure your Hazelcast instance, specify a name for the scheduler and create it in Hazelcast. Following is an example configuration depicting this:
+
+[source,xml]
+----
+...
+<hz:hazelcast id="instance">
+    <hz:config>
+        <hz:network port="5701">
+            <hz:join>
+                <hz:multicast enabled="false" />
+            </hz:join>
+        </hz:network>
+    </hz:config>
+</hz:hazelcast>
+
+<task:annotation-driven scheduler="scheduler" />
+
+<hz:scheduledExecutorService id="scheduler" instance-ref="instance" name="test-scheduler" />
+...
+----
+
+Here, the tag `<hz:hazelcast>` configures your Hazelcast member with the ID "instance". In the Spring tag `<task:annotation-driven>`, you specify a name for the Java annotated scheduler. Finally, the tag `<hz:scheduledExecutorService>` creates a scheduler for your Hazelcast "instance" with the name "test-scheduler".
+
+You can refer to Spring's https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/scheduling.html[documentation] to learn about it's task scheduling feature.
+
+
+
 ==== Best Practices
 
 Spring tries to create a new `Map`/`Collection` instance and fill the new instance by iterating and converting values of the original `Map`/`Collection` (`IMap`, `IQueue`, etc.) to required types when generic type parameters of the original `Map`/`Collection` and the target property/attribute do not match.

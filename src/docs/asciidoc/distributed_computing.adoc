@@ -399,7 +399,7 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 Hazelcast's scheduled executor service (IScheduledExecutorService) is a data structure which implements the `java.util.concurrent.ScheduledExecutorService`, partially.
 Here, partially means that it allows the scheduling of a single future execution and/or at a fixed rate execution but not at a fixed delay.
 
-On top of the Vanilla Scheduling APIs, the scheduled executor service allows additional ones such as the following:
+On top of the Vanilla Scheduling API, IScheduledExecutorService allows additional methods such as the following:
 
 * `scheduleOnMember`: On a specific cluster member.
 * `scheduleOnKeyOwner`: On the partition owning that key.
@@ -431,6 +431,8 @@ Last but not least, similar to <<executor-service, executor service>>, the sched
 Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask` interface, providing implementation details for saving the state and loading it back. If a partition is lost, then the re-scheduled task will load the previously saved state before its execution.
 
 NOTE: As with the tasks, Objects stored in the state Map need to be Hazelcast serializable.
+
+NOTE: Hazelcast integrates the https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/scheduling.html[task scheduling] feature of Spring with IScheduledExecutorService. You can use Hazelcast's IScheduledExecutorService within Spring context for your task scheduling needs.  See <<using-task-scheduling, Using Task Scheduling with IScheduledExecutorService section>> for more information.
 
 ==== Configuring Scheduled Executor Service
 
