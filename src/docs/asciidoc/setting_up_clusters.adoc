@@ -32,6 +32,11 @@ With this mechanism, Hazelcast allows cluster members to find each other using m
 
 Hazelcast supports EC2 auto-discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for information on configuring and using it.
 
+[[gcp-cloud-discovery]]
+==== GCP Cloud Discovery
+
+Hazelcast supports discovering members in the https://cloud.google.com/compute/[GCP Compute Engine] environment. You can easily configure Hazelcast members discovery, WAN replication, and Hazelcast Client to work seamlessly on the native GCP VM Instances. Please see its https://github.com/hazelcast/hazelcast-gcp/blob/master/README.md[documentation] for more information.
+
 [[apache-jclous-cloud-discovery]]
 ==== Apache jclouds® Cloud Discovery
 
@@ -502,7 +507,7 @@ partitionGroupConfig.setEnabled( true )
 
 ===== ZONE_AWARE
 
-You can use ZONE_AWARE configuration with https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS], https://github.com/hazelcast/hazelcast-jclouds[Hazelcast jclouds] or https://github.com/hazelcast/hazelcast-azure[Hazelcast Azure] Discovery Service plugins.
+You can use ZONE_AWARE configuration with https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS], https://github.com/hazelcast/hazelcast-gcp[Hazelcast GCP], https://github.com/hazelcast/hazelcast-jclouds[Hazelcast jclouds] or https://github.com/hazelcast/hazelcast-azure[Hazelcast Azure] Discovery Service plugins.
 
 As discovery services, these plugins put zone information to the Hazelcast <<defining-member-attributes, member attributes>> map during the discovery process. When ZONE_AWARE is configured as partition group type, Hazelcast creates the partition groups with respect to member attributes map entries that include zone information. That means backups are created in the other zones and each zone will be accepted as one partition group.
 
