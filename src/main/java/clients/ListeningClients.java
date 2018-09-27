@@ -1,9 +1,6 @@
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.core.Client;
-import com.hazelcast.core.ClientListener;
-import com.hazelcast.core.ClientService;
-import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.*;
 
 import java.util.Collection;
 
@@ -16,10 +13,9 @@ public class ListeningClients {
         clientConfig.getGroupConfig().setName("dev");
         clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
 
-        HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient(clientConfig);
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 
-        final ClientService clientService = hazelcastInstance.getClientService();
-        final Collection<Client> connectedClients = clientService.getConnectedClients();
+        final ClientService clientService = instance.getClientService();
 
         clientService.addClientListener(new ClientListener() {
             @Override
@@ -32,6 +28,14 @@ public class ListeningClients {
                 //Handle client disconnected event
             }
         });
+
+        //this will trigger `clientConnected` event
+        HazelcastInstance client = HazelcastClient.newHazelcastClient();
+        
+        final Collection<Client> connectedClients = clientService.getConnectedClients();
+
+        //this will trigger `clientDisconnected` event
+        client.shutdown();
 //end::lc[]
     }
 }
