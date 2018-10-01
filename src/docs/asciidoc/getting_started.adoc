@@ -155,22 +155,21 @@ HazelcastEnterpriseHD#2Nodes#1q2w3e4r5t
 [[license-info]]
 ==== License Information
 
-License information is available through the following Hazelcast APIs
+License information is available through the following Hazelcast APIs.
 
 ===== JMX
 
-The MBean `HazelcastInstance.LicenceInfo` holds all the relative license info and can be accessed through Hazelcast's JMX port (if enabled).
+The MBean `HazelcastInstance.LicenseInfo` holds all the relative license details and can be accessed through Hazelcast's JMX port (if enabled).
 
-- `maxNodeCountAllowed`: Maximum nodes allowed to form a cluster under the current licence
-- `expiryDate`: The expiry date of the current licence
-- `typeCode`: The type code of the current licence
-- `type`: The type of the current licence
-- `ownerEmail`: The email of the owner on the current licence
-- `companyName`: The name of the company on the current licence
+- `maxNodeCountAllowed`: Maximum members allowed to form a cluster under the current license.
+- `expiryDate`: Expiration date of the current license.
+- `typeCode`: Type code of the current license.
+- `type`: Type of the current license.
+- `ownerEmail`: Email of the current licence's owner.
+- `companyName`: Company name on the current license.
 
-*Appendix:*
+Following is the list of license `type`s and `typeCode`s:
 
-License types and their codes.
 ```
 MANAGEMENT_CENTER(1, "Management Center"),
 ENTERPRISE(0, "Enterprise"),
@@ -181,10 +180,17 @@ CUSTOM(4, "Custom");
 
 ===== REST
 
-Through the REST API (if enabled) on the following resource `/license` on can access the info by issuing a `GET` request.
+
+You can access the license details by issuing a `GET` request through the REST API (if enabled) on the `/license` resource, as shown below.
+
 
 ```
 curl -v -X GET -H "Content-Type: text/plain" http://localhost:5701/hazelcast/licence
+```
+
+Its output is similar to the following:
+
+```
 Note: Unnecessary use of -X or --request, GET is already inferred.
 *   Trying 127.0.0.1...
 * TCP_NODELAY set
@@ -200,22 +206,21 @@ Note: Unnecessary use of -X or --request, GET is already inferred.
 < Content-Length: 105
 <
 
-licenceInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,"companyName":"ExampleCompany","ownerEmail":"ExampleOwner"}
+licenseInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,"companyName":"ExampleCompany","ownerEmail":"ExampleOwner"}
 
 ```
 
 ===== Logs
 
-Except from the above approaches to access the license info, when the license expiration is approaching, we will start logging a license info banner on the logfiles.
+Besides the above approaches (JMX and REST) to access the license details, Hazelcast also starts to log a license information banner into the log files when the license expiration is approaching.
 
-In the last 2 months prior to the expiration, the bannger will be logged daily, as a reminder to renew your license to avoid any interruptions. Once the expiration is due to a month, the frequency will again increase, and the banner will be logged hourly. Last, when the expiration is due in a week, the banner will be printed every 30 minutes.
+During the last two months prior to the expiration, this license information banner is logged daily, as a reminder to renew your license to avoid any interruptions. Once the expiration is due to a month, the frequency of logging this banner becomes hourly (instead of daily). Lastly, when the expiration is due in a week, this banner will be printed every 30 minutes.
 
-IMPORTANT: Similar alerts will also be present on the Management Center.
+IMPORTANT: Similar alerts are also present on the Hazelcast Management Center.
 
 The banner has the following format:
 
 ```
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ WARNING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 HAZELCAST LICENSE WILL EXPIRE IN 29 DAYS.
 Your Hazelcast cluster will stop working after this time.
