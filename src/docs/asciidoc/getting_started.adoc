@@ -152,6 +152,82 @@ HazelcastEnterpriseHD#2Nodes#1q2w3e4r5t
 1q2w3e4r5t
 ```
 
+[[license-info]]
+==== License Information
+
+License information is available through the following Hazelcast APIs
+
+===== JMX
+
+The MBean `HazelcastInstance.LicenceInfo` holds all the relative license info and can be accessed through Hazelcast's JMX port (if enabled).
+
+- `maxNodeCountAllowed`: Maximum nodes allowed to form a cluster under the current licence
+- `expiryDate`: The expiry date of the current licence
+- `typeCode`: The type code of the current licence
+- `type`: The type of the current licence
+- `ownerEmail`: The email of the owner on the current licence
+- `companyName`: The name of the company on the current licence
+
+*Appendix:*
+
+License types and their codes.
+```
+MANAGEMENT_CENTER(1, "Management Center"),
+ENTERPRISE(0, "Enterprise"),
+ENTERPRISE_SECURITY_ONLY(2, "Enterprise only with security"),
+ENTERPRISE_HD(3, "Enterprise HD"),
+CUSTOM(4, "Custom");
+```
+
+===== REST
+
+Through the REST API (if enabled) on the following resource `/license` on can access the info by issuing a `GET` request.
+
+```
+curl -v -X GET -H "Content-Type: text/plain" http://localhost:5701/hazelcast/licence
+Note: Unnecessary use of -X or --request, GET is already inferred.
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 5701 (#0)
+> GET /hazelcast/licence HTTP/1.1
+> Host: localhost:5701
+> User-Agent: curl/7.58.0
+> Accept: */*
+> Content-Type: text/plain
+>
+< HTTP/1.1 200 OK
+< Content-Type: text/plain
+< Content-Length: 105
+<
+
+licenceInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,"companyName":"ExampleCompany","ownerEmail":"ExampleOwner"}
+
+```
+
+===== Logs
+
+Except from the above approaches to access the license info, when the license expiration is approaching, we will start logging a license info banner on the logfiles.
+
+In the last 2 months prior to the expiration, the bannger will be logged daily, as a reminder to renew your license to avoid any interruptions. Once the expiration is due to a month, the frequency will again increase, and the banner will be logged hourly. Last, when the expiration is due in a week, the banner will be printed every 30 minutes.
+
+IMPORTANT: Similar alerts will also be present on the Management Center.
+
+The banner has the following format:
+
+```
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ WARNING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+HAZELCAST LICENSE WILL EXPIRE IN 29 DAYS.
+Your Hazelcast cluster will stop working after this time.
+
+Your license holder is customer@example-company.com, you should have them contact
+our license renewal department, urgently on info@hazelcast.com
+or call us on +1 (650) 521-5453
+
+Please quote license id CUSTOM_TEST_KEY
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+```
 
 [[running-in-modular-java]]
 === Running in Modular Java
