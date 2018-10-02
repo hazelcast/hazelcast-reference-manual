@@ -65,7 +65,7 @@ Hazelcast IMDG Enterprise customers may also define dependencies, a sample of wh
 ```
 
 [[setting-the-license-key]]
-=== Setting the License Key
+==== Setting the License Key
 
 Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise** and **Enterprise HD**. The supported features differ in your Hazelcast setup according to the license type you own.
 
@@ -133,7 +133,7 @@ As another option, you can set your license key using the below command (the "-D
 ```
 
 [[license-key-format]]
-==== License Key Format
+===== License Key Format
 
 License keys have the following format:
 
@@ -216,7 +216,7 @@ Besides the above approaches (JMX and REST) to access the license details, Hazel
 
 During the last two months prior to the expiration, this license information banner is logged daily, as a reminder to renew your license to avoid any interruptions. Once the expiration is due to a month, the frequency of logging this banner becomes hourly (instead of daily). Lastly, when the expiration is due in a week, this banner will be printed every 30 minutes.
 
-IMPORTANT: Similar alerts are also present on the Hazelcast Management Center.
+NOTE: Similar alerts are also present on the Hazelcast Management Center.
 
 The banner has the following format:
 
@@ -233,6 +233,92 @@ Please quote license id CUSTOM_TEST_KEY
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ```
+
+[[supported-jvms]]
+=== Supported Java Virtual Machines
+
+Following table summarizes the compatibility between Hazelcast IMDG and various vendors' Java Virtual Machines (JVMs).
+
+
+[cols="35,10,15,15,15,10",options="header"]
+.Supported JVMs
+|===
+
+|Hazelcast IMDG Version | JDK Version | Oracle JDK | IBM SDK, Java Technology Edition | Azul Zing JDK | Azul Zulu OpenJDK
+
+| Up to 4.0
+
+(_JDK 6 support will be dropped with the release of Hazelcast IMDG 4.0_)
+| 6
+| icon:check[]
+| icon:times[] 
+| icon:check[]
+| icon:check[]
+
+| Up to current
+| 7
+| icon:check[]
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+| Up to current
+| 8
+| icon:check[]
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported. 
+| 9
+| icon:check[]
+| icon:times[] 
+
+(JDK not available yet)
+| icon:times[] 
+
+(JDK not available yet)
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported. 
+| 10
+| icon:check[]
+| icon:times[] 
+
+(JDK not available yet)
+| icon:times[] 
+
+(JDK not available yet)
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported. 
+| 11
+| icon:times[] 
+
+(JDK not available yet)
+| icon:times[] 
+
+(JDK not available yet)
+| icon:times[] 
+
+(JDK not available yet)
+| icon:check[]
+
+|===
+
+
+NOTE: Hazelcast IMDG 3.10 and older releases are not fully tested on JDK 9 and newer, so there may be some features that are not working properly.
+
+[IMPORTANT]
+====
+See the following sections for the details of Hazelcast IMDG supporting JDK 9 and newer:
+
+* <<running-in-modular-java, Running in Modular Java>>: Talks about the new module system present in Java 9 and newer and how you can run a Hazelcast application on it.
+* <<tls-ssl-for-hazelcast-members, TLS/SSL for Hazelcast Members>>: Lists `TLSv1.3`, which comes with Java 11, as a supported TLS version.
+====
 
 [[running-in-modular-java]]
 === Running in Modular Java
