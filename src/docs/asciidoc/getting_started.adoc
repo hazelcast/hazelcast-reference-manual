@@ -253,7 +253,7 @@ Following table summarizes the version compatibility between Hazelcast IMDG and 
 (_JDK 6 support will be dropped with the release of Hazelcast IMDG 4.0_)
 | 6
 | icon:check[]
-| icon:times[] 
+| icon:times[]
 | icon:check[]
 | icon:check[]
 
@@ -272,39 +272,39 @@ Following table summarizes the version compatibility between Hazelcast IMDG and 
 | icon:check[]
 
 a| * 3.11 and newer:  Fully supported.
-* 3.10 and older: Partially supported. 
+* 3.10 and older: Partially supported.
 | 9
 | icon:check[]
-| icon:times[] 
+| icon:times[]
 
 (JDK not available yet)
-| icon:times[] 
+| icon:times[]
 
 (JDK not available yet)
 | icon:check[]
 
 a| * 3.11 and newer:  Fully supported.
-* 3.10 and older: Partially supported. 
+* 3.10 and older: Partially supported.
 | 10
 | icon:check[]
-| icon:times[] 
+| icon:times[]
 
 (JDK not available yet)
-| icon:times[] 
+| icon:times[]
 
 (JDK not available yet)
 | icon:check[]
 
 a| * 3.11 and newer:  Fully supported.
-* 3.10 and older: Partially supported. 
+* 3.10 and older: Partially supported.
 | 11
-| icon:times[] 
+| icon:times[]
 
 (JDK not available yet)
-| icon:times[] 
+| icon:times[]
 
 (JDK not available yet)
-| icon:times[] 
+| icon:times[]
 
 (JDK not available yet)
 | icon:check[]
@@ -349,7 +349,8 @@ You can provide the access to the above mentioned packages by using `--add-expor
 
 [source,bash]
 ----
-java --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
   --add-opens java.base/java.lang=ALL-UNNAMED \
   --add-opens java.base/java.nio=ALL-UNNAMED \
   --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
@@ -362,14 +363,14 @@ java --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
 
 [source,bash]
 ----
-java --add-exports java.base/jdk.internal.ref=com.hazelcast.core \
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=com.hazelcast.core \
   --add-opens java.base/java.lang=com.hazelcast.core \
   --add-opens java.base/java.nio=com.hazelcast.core \
   --add-opens java.base/sun.nio.ch=com.hazelcast.core \
   --add-opens java.management/sun.management=com.hazelcast.core \
   --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
   --module-path lib \
-  --add-modules java.se \
   --module com.hazelcast.core/com.hazelcast.core.server.StartServer
 ----
 
