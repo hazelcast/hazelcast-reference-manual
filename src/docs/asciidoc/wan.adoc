@@ -136,7 +136,7 @@ Following is an example of setting up the WAN replication with the EC2 discovery
                       <property name="tag-key">test-tag-key</property>
                       <property name="tag-value">test-tag-value</property>
                       <property name="connection-timeout-seconds">10</property>
-                      <property name="hz-port">5701-5708</property>
+                      <property name="hz-port">5701</property>
                   </properties>
               </discovery-strategy>
           </discovery-strategies>
@@ -173,12 +173,11 @@ The other properties are the same as when using the `aws` element. In case of EC
           <aws enabled="true">
               <access-key>my-access-key</access-key>
               <secret-key>my-secret-key</secret-key>
-              <iam-role>dummy</iam-role>
               <region>us-west-1</region>
-              <host-header>ec2.amazonaws.com</host-header>
               <security-group-name>hazelcast-sg</security-group-name>
               <tag-key>type</tag-key>
               <tag-value>hz-members</tag-value>
+              <hz-port>5701</hz-port>
           </aws>
       </wan-publisher>
   </wan-replication>
