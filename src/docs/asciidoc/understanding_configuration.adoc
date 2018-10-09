@@ -372,9 +372,9 @@ include::{javasource}/ExampleConfigPatternMatcher.java[tag=patternmatcher]
 [[using-wildcards]]
 === Using Wildcards
 
-Hazelcast supports wildcard configuration for all distributed data structures that can be configured using `Config`, that is, for all except `IAtomicLong`, `IAtomicReference`. Using an asterisk (\*) character in the name, different instances of maps, queues, topics, semaphores, etc. can be configured by a single configuration.
+Hazelcast supports wildcard configuration for all distributed data structures that can be configured using `Config`, that is, for all except `IAtomicLong`, `IAtomicReference`. Using an asterisk (*) character in the name, different instances of maps, queues, topics, semaphores, etc. can be configured by a single configuration.
 
-A single asterisk (\*) can be placed anywhere inside the configuration name.
+A single asterisk (*) can be placed anywhere inside the configuration name.
 
 For instance, a map named `com.hazelcast.test.mymap` can be configured using one of the following configurations.
 
@@ -415,6 +415,13 @@ Or a queue `com.hazelcast.test.myqueue`:
 ...
 </queue>
 ```
+
+[NOTE]
+====
+
+* You can use only a single asterisk as a wildcard for each data structure configuration.
+* If you have matching wildcard configurations for a data structure, the more specific (longest) one is used when configuring it. Let's say you have a map named `mymap.customer.name` and you have map configurations `mymap.\*` and `mymap.customer.*`. Hazelcast uses `mymap.customer.*` to configure this map.
+====
 
 [[using-variables]]
 === Using Variables
