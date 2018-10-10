@@ -773,22 +773,23 @@ Please see the following sections for configuration details.
  
 Following is an example declarative configuration for the publisher side:
  
-```
- <wan-replication name="AtoB">
-     <wan-publisher group-name="clusterB">
-         <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanPublisher</class-name>
-         <properties>
- 		<property name="host">192.168.2.66</property>
- 		<property name="vpn.name">YOUR_VPN_NAME</property>
- 		<property name="username">admin</property>
- 		<property name="password">YOUR_PASSWORD</property>
- 		<property name="topic.base.name">BaseTopic</property>
- 		<property name="queue.name">Q/hz/clusterA</property>
- 		<property name="initial.queue.mapping.enabled">true</property>
- 	</properties>
-     </wan-publisher>
- </wan-replication>
-```
+[source,xml]
+----
+<wan-replication name="AtoB">
+    <wan-publisher group-name="clusterB">
+        <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanPublisher</class-name>
+        <properties>
+            <property name="host">192.168.2.66</property>
+            <property name="vpn.name">YOUR_VPN_NAME</property>
+            <property name="username">admin</property>
+            <property name="password">YOUR_PASSWORD</property>
+            <property name="topic.base.name">BaseTopic</property>
+            <property name="queue.name">Q/hz/clusterA</property>
+            <property name="initial.queue.mapping.enabled">true</property>
+        </properties>
+    </wan-publisher>
+</wan-replication>
+----
  
 Descriptions of the properties are as follows:
  
@@ -805,21 +806,22 @@ Descriptions of the properties are as follows:
  
 Following is an example declarative configuration for the consumer side:
  
-```
- <wan-replication name="AtoB">
-     <wan-consumer>
-         <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanConsumer</class-name>
-         <persist-wan-replicated-data>false</persist-wan-replicated-data>
-         <properties>
- 		    <property name="host">192.168.2.66</property>
- 		    <property name="vpn.name">YOUR_VPN_NAME</property>
- 		    <property name="username">admin</property>
- 		    <property name="password">YOUR_PASSWORD</property>
- 		    <property name="queue.name">Q/hz/clusterA</property>
- 	    </properties>
-     </wan-consumer>
- </wan-replication>
-```
+[source,xml]
+----
+<wan-replication name="AtoB">
+    <wan-consumer>
+        <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanConsumer</class-name>
+        <persist-wan-replicated-data>false</persist-wan-replicated-data>
+        <properties>
+            <property name="host">192.168.2.66</property>
+            <property name="vpn.name">YOUR_VPN_NAME</property>
+            <property name="username">admin</property>
+            <property name="password">YOUR_PASSWORD</property>
+            <property name="queue.name">Q/hz/clusterA</property>
+        </properties>
+    </wan-consumer>
+</wan-replication>
+----
  
 Descriptions of the properties are as follows:
  

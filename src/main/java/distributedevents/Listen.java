@@ -40,10 +40,10 @@ public class Listen {
         }
 
         @Override
-        public void entryLoaded(EntryEvent<String, String> event) {
+        public void entryLoaded( EntryEvent<String, String> event ) {
             System.out.println( "Entry Loaded:" + event );
         }
-
+        
         @Override
         public void mapEvicted( MapEvent event ) {
             System.out.println( "Map Evicted:" + event );
