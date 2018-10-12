@@ -598,6 +598,98 @@ The following are the names and descriptions of each script:
 
 NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance per folder. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ package in a new folder.
 
+[[user-code-deployment]]
+=== User Code Deployment
+
+If you want to deploy your own code to the server, you can use `/user-code` folder.
+
+Let's say you use Hazelcast Node.js Client and you want to use an `EntryProcessor`. The processor should be `IdentifiedDataSerializable` or `Portable` in the Node.js client. You need to implement the Java equivalents of the processor and its factory on the server side and add them to the `CLASSPATH`. To make it easily, you can put your Java files to `/user-code` folder.
+
+**IdentifiedEntryProcessor.java**
+```
+import com.hazelcast.map.AbstractEntryProcessor;
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
+
+import java.io.IOException;
+import java.util.Map;
+
+public class IdentifiedEntryProcessor extends AbstractEntryProcessor<String, String> implements IdentifiedDataSerializable {
+
+    static final int CLASS_ID = 1;
+
+    private String value;
+
+    public IdentifiedEntryProcessor() {
+    }
+
+    @Override
+    public int getFactoryId() {
+        return IdentifiedFactory.FACTORY_ID;
+    }
+
+    @Override
+    public int getId() {
+        return CLASS_ID;
+    }
+
+    @Override
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeUTF(value);
+    }
+
+    @Override
+    public void readData(ObjectDataInput in) throws IOException {
+        value = in.readUTF();
+    }
+
+    @Override
+    public Object process(Map.Entry<String, String> entry) {
+        entry.setValue(value);
+        return value;
+    }
+}
+```
+
+**IdentifiedFactory.java**
+```
+import com.hazelcast.nio.serialization.DataSerializableFactory;
+import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
+
+public class IdentifiedFactory implements DataSerializableFactory {
+    public static final int FACTORY_ID = 5;
+
+    @Override
+    public IdentifiedDataSerializable create(int typeId) {
+        if (typeId == IdentifiedEntryProcessor.CLASS_ID) {
+            return new IdentifiedEntryProcessor();
+        }
+        return null;
+    }
+}
+
+```
+
+You need to configure `hazelcast.xml` file in the `/bin` folder. In the serialization tag, add your `IdentifiedFactory` like the following:
+
+**hazelcast.xml**
+```
+<hazelcast>
+     ...
+     <serialization>
+        <data-serializable-factories>
+            <data-serializable-factory factory-id="5">
+                IdentifiedFactory
+            </data-serializable-factory>
+        </data-serializable-factories>
+    </serialization>
+    ...
+</hazelcast>
+```
+
+Then, you can start your Hazelcast member by using the start scripts in the `/bin` folder. The start scripts will automatically add your compiled classes to the `CLASSPATH`.
+
 [[deploying-on-amazon-ec2]]
 === Deploying On Amazon EC2
 
