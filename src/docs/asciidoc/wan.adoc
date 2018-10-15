@@ -599,6 +599,10 @@ You can also use the following URL in your REST call if you want to synchronize 
 `http://member_ip:port/hazelcast/rest/mancenter/wan/sync/allmaps`
 ====
 
+NOTE: Synchronization for a target cluster operates only with the data residing in the memory. Therefore, evicted entries will not be
+synchronized, not even if `MapLoader` is configured.
+
+
 ==== WAN Replication Failure Detection and Recovery
 
 The failure detection and recovery mechanisms in WAN handle failures during WAN replication and they closely interact with the list of endpoints that WAN is replicating to. There might be some small differences when using static endpoints or the discovery SPI but here we will outline the general mechanism of failure detection and recovery.
@@ -736,6 +740,9 @@ Following is a declarative example including the Merkle tree configuration.
 
 NOTE: If you do not specifically configure the `merkle-tree` in your Hazelcast configuration, Hazelcast uses the default Merkle tree structure values (i.e., it is enabled by default and its default depth is 10) when there is a WAN publisher using the Merkle tree (i.e., `consistency-check-strategy` for a WAN replication configuration is set as `MERKLE_TREES` and there is a data structure using that WAN replication configuration).
 
+
+NOTE: Merkle trees are created for each partition holding IMap data. Therefore, increasing the partition count also
+increases the efficiency of the Merkle tree based synchronization.
 
 === Hazelcast WAN Replication with Solace
 
