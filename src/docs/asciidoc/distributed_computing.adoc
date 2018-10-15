@@ -237,13 +237,14 @@ The `select(Member)` method is called for every available member in the cluster.
 
 In a simple example shown below, we select the cluster members based on the presence of an attribute.
 
-```
+[source,java]
+----
 public class MyMemberSelector implements MemberSelector {
     public boolean select(Member member) {
         return Boolean.TRUE.equals(member.getBooleanAttribute("my.special.executor"));
     }
 }
-```
+----
 
 You can use `MemberSelector` instances provided by the `com.hazelcast.cluster.memberselector.MemberSelectors` class. For example, you can select a lite member for running a task using `com.hazelcast.cluster.memberselector.MemberSelectors#LITE_MEMBER_SELECTOR`.
 
@@ -254,14 +255,15 @@ The following are example configurations for executor service.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <executor-service name="exec">
    <pool-size>1</pool-size>
    <queue-capacity>10</queue-capacity>
    <statistics-enabled>true</statistics-enabled>
    <quorum-ref>quorumname</quorum-ref>
 </executor-service>
-```
+----
 
 **Programmatic:**
 
@@ -303,13 +305,14 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for Executor Service can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <executor-service name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </executor-service>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -337,14 +340,15 @@ This section presents example configurations for durable executor service along 
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <durable-executor-service name="myDurableExecSvc">
 	<pool-size>8</pool-size>
 	<durability>1</durability>
 	<capacity>1</capacity>
 	<quorum-ref>quorumname</quorum-ref>
 </durable-executor-service>
-```
+----
 
 **Programmatic:**
 
@@ -383,13 +387,14 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for Durable Executor Service can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/DurableExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <durable-executor-service name="myDurableExecSvc">
     ...
 	<quorum-ref>quorumname</quorum-ref>
 	...
 </durable-executor-service>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -438,14 +443,15 @@ This section presents example configurations for scheduled executor service alon
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <scheduled-executor-service name="myScheduledExecSvc">
 	<pool-size>16</pool-size>
 	<durability>1</durability>
 	<capacity>100</capacity>
 	<quorum-ref>quorumname</quorum-ref>
 </scheduled-executor-service>
-```
+----
 
 **Programmatic:**
 
@@ -521,13 +527,14 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for Scheduled Executor Service can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <scheduled-executor-service name="myScheduledExecSvc">
     ...
 	<quorum-ref>quorumname</quorum-ref>
 	...
 </scheduled-executor-service>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -583,10 +590,11 @@ NOTE: Entry processors run via Operation Threads that are dedicated to specific 
 
 The entry processor respects locks ONLY when its executions are performed on a single key. As explained in the above section, the entry processor has the following methods to process a single key:
 
-```
+[source,java]
+----
 Object executeOnKey(K key, EntryProcessor entryProcessor);
 ICompletableFuture submitToKey(K key, EntryProcessor entryProcessor);
-```
+----
 
 Therefore, if you want to to perform an entry processor execution on a single key using one of these methods and that key has a lock on it, the execution will wait until the lock on that key is removed.
 
@@ -686,21 +694,23 @@ The method `getExecutorName()` method may also return two constants defined in t
 
 Note that if the method `getExecutorName()` cannot find an executor whose name matches the one called by this method, then the default executor service is used. Here is the configuration for the "default" executor:
 
-```
+[source,xml]
+----
 <executor-service name="default">
     <pool-size>16</pool-size>
     <queue-capacity>0</queue-capacity>
 </executor-service>
-```
+----
 
 An example of an Offloadable called "OffloadedInventoryEntryProcessor" would be as follows:
 
-```
+[source,xml]
+----
 <executor-service name="OffloadedInventoryEntryProcessor”>
     <pool-size>30</pool-size>
     <queue-capacity>0</queue-capacity>
 </executor-service>
-```
+----
 
 Remember to set the `pool-size` (count of executor threads per member) according to your execution needs. Please refer to the <<configuring-executor-service, Configuring Executor Service section>> for the configuration details.
 

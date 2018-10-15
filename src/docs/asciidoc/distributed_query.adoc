@@ -126,22 +126,24 @@ public Collection<Employee> getWithNameAndAge( String name, int age ) {
 }
 ----
 
-```
+[source,java]
+----
 public Collection<Employee> getWithNameOrAge( String name, int age ) {
     Predicate namePredicate = Predicates.equal( "name", name );
     Predicate agePredicate = Predicates.equal( "age", age );
     Predicate predicate = Predicates.or( namePredicate, agePredicate );
     return employeeMap.values( predicate );
 }
-```
+----
 
-```
+[source,java]
+----
 public Collection<Employee> getNotWithName( String name ) {
     Predicate namePredicate = Predicates.equal( "name", name );
     Predicate predicate = Predicates.not( namePredicate );
     return employeeMap.values( predicate );
 }
-```
+----
 
 
 ===== Simplifying with PredicateBuilder
@@ -165,10 +167,11 @@ public Collection<Employee> getWithNameAndAgeSimplified( String name, int age ) 
 
 `com.hazelcast.query.SqlPredicate` takes the regular SQL `where` clause. Here is an example:
 
-```
+[source,java]
+----
 IMap<Employee> map = hazelcastInstance.getMap( "employee" );
 Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) );
-```
+----
 
 ===== Supported SQL Syntax
 
@@ -282,14 +285,15 @@ It takes a predicate and partition key as parameters, gets the partition ID usin
 
 Please see the following code snippet:
 
-```
+[source,java]
+----
 ...
 Predicate predicate = new PartitionPredicate<String, Integer>(partitionKey, TruePredicate.INSTANCE);
 
 Collection<Integer> values = map.values(predicate);
 Collection<String> keys = map.keySet(predicate);
 ...
-```
+----
 
 By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. However, if the 
 partition predicate will only access a single partition, this can lead to a big performance gain.
@@ -334,7 +338,8 @@ map.addIndex( "active", false );
 
 Also, you can define `IMap` indexes in configuration. An example is shown below.
 
-```
+[source,xml]
+----
 <map name="default">
   ...
   <indexes>
@@ -342,25 +347,27 @@ Also, you can define `IMap` indexes in configuration. An example is shown below.
     <index ordered="true">age</index>
   </indexes>
 </map>
-```
+----
 
 You can also define `IMap` indexes using programmatic configuration, as in the example below.
 
-```
+[source,java]
+----
 mapConfig.addMapIndexConfig( new MapIndexConfig( "name", false ) );
 mapConfig.addMapIndexConfig( new MapIndexConfig( "age", true ) );
-```
+----
 
 The following is the Spring declarative configuration for the same sample.
 
-```
+[source,xml]
+----
 <hz:map name="default">
   <hz:indexes>
     <hz:index attribute="name"/>
     <hz:index attribute="age" ordered="true"/>
   </hz:indexes>
 </hz:map>
-```
+----
 
 NOTE: Non-primitive types to be indexed should implement *`Comparable`*.
 

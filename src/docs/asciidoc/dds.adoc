@@ -1,4 +1,4 @@
-x
+
 [[distributed-data-structures]]
 == Distributed Data Structures
 
@@ -113,10 +113,11 @@ ISemaphore s2 = hazelcastInstance.getSemaphore("s2@foo");
 
 Now, these two semaphores will be put into the same partition whose partition key is `foo`. Note that you can use the method `getPartitionKey` to learn the partition key of a distributed object. It may be useful when you want to create an object in the same partition of an existing object. Please see its usage as shown below:
 
-```
+[source,java]
+----
 String partitionKey = s1.getPartitionKey();
 ISemaphore s3 = hazelcastInstance.getSemaphore("s3@"+partitionKey);
-```
+----
 
 [[common-features-of-all-hazelcast-data-structures]]
 ==== Common Features of all Hazelcast Data Structures
@@ -218,13 +219,14 @@ To provide data safety, Hazelcast allows you to specify the number of backup cop
 
 To create synchronous backups, select the number of backup copies using the `backup-count` property.
 
-```
+[source,xml]
+----
 <hazelcast>
   <map name="default">
     <backup-count>1</backup-count>
   </map>
 </hazelcast>
-```
+----
 
 When this count is 1, a map entry will have its backup on one other member in the cluster. If you set it to 2, then a map entry will have its backup on two other members. You can set it to 0 if you do not want your entries to be backed up, e.g., if performance is more important than backing up. The maximum value for the backup count is 6.
 
@@ -237,15 +239,15 @@ Asynchronous backups, on the other hand, do not block operations. They are fire 
 
 To create asynchronous backups, select the number of async backups with the `async-backup-count` property. An example is shown below.
 
-
-```
+[source,xml]
+----
 <hazelcast>
   <map name="default">
     <backup-count>0</backup-count>
     <async-backup-count>1</async-backup-count>
   </map>
 </hazelcast>
-```
+----
 
 See <<consistency-and-replication-model, Consistency and Replication Model>> for more detail.
 
@@ -262,7 +264,8 @@ By default, Hazelcast has one sync backup copy. If `backup-count` is set to more
 
 To enable backup reads (read local backup entries), set the value of the `read-backup-data` property to **true**. Its default value is **false** for consistency. Enabling backup reads can improve performance but on the other hand it can cause stale reads while still preserving monotonic-reads property.
 
-```
+[source,xml]
+----
 <hazelcast>
   <map name="default">
     <backup-count>0</backup-count>
@@ -270,7 +273,7 @@ To enable backup reads (read local backup entries), set the value of the `read-b
     <read-backup-data>true</read-backup-data>
   </map>
 </hazelcast>
-```
+----
 
 This feature is available when there is at least one sync or async backup.
 
@@ -317,7 +320,8 @@ NOTE: The above scenario is simply an example that describes how the eviction pr
 
 The following is an example declarative configuration for map eviction.
 
-```
+[source,xml]
+----
 <hazelcast>
   <map name="default">
     ...
@@ -328,7 +332,7 @@ The following is an example declarative configuration for map eviction.
     ...
   </map>
 </hazelcast>
-```
+----
 
 Let's describe each element:
 
@@ -399,25 +403,27 @@ Eviction and expiration can be used together. In this case, the expiration confi
 [[example-eviction-configurations]]
 ===== Example Eviction Configurations
 
-```
+[source,xml]
+----
 <map name="documents">
   <max-size policy="PER_NODE">10000</max-size>
   <eviction-policy>LRU</eviction-policy>
   <max-idle-seconds>60</max-idle-seconds>
 </map>
-```
+----
 
 In the above example, `documents` map starts to evict its entries from a member when the map size exceeds 10000 in that member. Then the entries least recently used will be evicted. The entries not used for more than 60 seconds will be evicted as well.
 
 And the following is an example eviction configuration for a map having `NATIVE` as the in-memory format:
 
-```
+[source,xml]
+----
 <map name="nativeMap*">
     <in-memory-format>NATIVE</in-memory-format>
     <eviction-policy>LFU</eviction-policy>
     <max-size policy="USED_NATIVE_MEMORY_PERCENTAGE">99</max-size>
 </map>
-```
+----
 
 [[evicting-specific-entries]]
 ===== Evicting Specific Entries
@@ -492,21 +498,23 @@ include::{javasource}/dds/map/MapCustomEvictionPolicy.java[tag=mcep]
 Then you can enable your policy by setting it via the method `MapConfig.setMapEvictionPolicy()`
 programmatically or via XML declaratively. Following is the example declarative configuration for the eviction policy `OddEvictor` implemented above:
 
-```
+[source,xml]
+----
 <map name="test">
    ...
    <map-eviction-policy-class-name>com.package.OddEvictor</map-eviction-policy-class-name>
    ....
 </map>
-```
+----
 
 If you Hazelcast with Spring, you can enable your policy as shown below.
 
-```
+[source,xml]
+----
 <hz:map name="test">
     <hz:map-eviction-policy class-name="com.package.OddEvictor"/>
 </hz:map>
-```
+----
 
 [[setting-in-memory-format]]
 ==== Setting In-Memory Format
@@ -536,11 +544,12 @@ As the data gets bigger, you either run the application with larger heap, which 
 
 To overcome this challenge, Hazelcast offers High-Density Memory Store for your maps. You can configure your map to use High-Density Memory Store by setting the in-memory format to `NATIVE`. The following snippet is the declarative configuration example.
 
-```
+[source,xml]
+----
 <map name="nativeMap*">
    <in-memory-format>NATIVE</in-memory-format>
 </map>
-```
+----
 
 Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>>.
 
@@ -552,17 +561,19 @@ The new eviction algorithm for map with High-Density Memory Store is similar to 
 
 * Eviction percentage has no effect.
 +
-```
+[source,xml]
+----
 <map name="nativeMap*">
     <in-memory-format>NATIVE</in-memory-format>
     <eviction-percentage>25</eviction-percentage> <--! NO IMPACT with NATIVE -->
 </map>
-```
+----
 +
 * These IMap eviction policies for `max-size` cannot be used: `FREE_HEAP_PERCENTAGE`, `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
 * Near Cache eviction configuration is also different for `NATIVE` in-memory format. For a Near Cache configuration with in-memory format set to `BINARY`:
 +    
-```
+[source,xml]
+----
 <map name="nativeMap*">
    <near-cache>
       <in-memory-format>BINARY</in-memory-format>
@@ -570,18 +581,19 @@ The new eviction algorithm for map with High-Density Memory Store is similar to 
       <eviction-policy>LFU</eviction-policy> <--! NO IMPACT with NATIVE -->
    </near-cache>
 </map>
-```
+----
 +
 the equivalent configuration for `NATIVE` in-memory format would be similar to the following:
 +
-```
+[source,xml]
+----
 <map name="nativeMap*">
    <near-cache>
       <in-memory-format>NATIVE</in-memory-format>
       <eviction size="10000" eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_SIZE"/>   <--! Correct configuration with NATIVE -->
    </near-cache>
 </map>
-```
+----
 +
 * Near Cache eviction policy `ENTRY_COUNT` cannot be used for `max-size-policy`.
 
@@ -669,7 +681,8 @@ NOTE: `MapStore` or `MapLoader` implementations should not use Hazelcast Map/Que
 
 Here is a sample configuration:
 
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <map name="default">
@@ -682,7 +695,7 @@ Here is a sample configuration:
     </map-store>
   </map>
 </hazelcast>
-```
+----
 
 The following are the descriptions of MapStore configuration elements and attributes:
 
@@ -790,7 +803,8 @@ You can prepare your own `MapLoader` to access a database such as Cassandra and 
 
 You can define the database properties, such as its URL and name, using the `properties` configuration element. The following is a configuration example for MongoDB:
 
-```
+[source,xml]
+----
     <map name="supplements">
         <map-store enabled="true" initial-mode="LAZY">
             <class-name>com.hazelcast.loader.YourMapStoreImplementation</class-name>
@@ -801,7 +815,7 @@ You can define the database properties, such as its URL and name, using the `pro
             </properties>
         </map-store>
     </map>
-```
+----
 
 After you specified the database properties in your configuration, you need to implement the `MapLoaderLifecycleSupport` interface and give those properties in the `init()` method, as shown below:
 
@@ -910,7 +924,8 @@ The following actions will then check for lock quorum before being applied:
 
 An example of declarative configuration:
  
-```
+[source,xml]
+----
 <map name="myMap">
   <quorum-ref>map-actions-quorum</quorum-ref>
 </map>
@@ -918,7 +933,7 @@ An example of declarative configuration:
 <lock name="myMap">
     <quorum-ref>map-lock-actions-quorum</quorum-ref>
 </lock>
-```
+----
 
 Here the configured map will use the `map-lock-actions-quorum` quorum for map lock actions and the `map-actions-quorum` quorum for other map actions.
 
@@ -1024,9 +1039,10 @@ NOTE: Please refer to <<continuous-query-cache, Continuous Query Cache>> for mor
 
 You can remove all map entries that match your predicate. For this, Hazelcast offers the method `removeAll()`. Its syntax is as follows:
 
-```
+[source,java]
+----
 void removeAll(Predicate<K, V> predicate);
-```
+----
 
 Normally the map entries matching the predicate are found with a full scan of the map. If the entries are indexed, Hazelcast uses the index search to find them. With index, you can expect that finding the entries is faster.
 
@@ -1194,8 +1210,8 @@ To turn a Hazelcast distributed queue into a bounded queue, set the capacity lim
 
 Let's set **10** as the maximum size of our example queue in <<creating-an-example-queue, Creating an Example Queue>>.
 
-
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <queue name="queue">
@@ -1203,7 +1219,7 @@ Let's set **10** as the maximum size of our example queue in <<creating-an-examp
   </queue>
   ...
 </hazelcast>
-```
+----
 
 When the producer is started, ten items are put into the queue and then the queue will not allow more `put` operations. When the consumer is started, it will remove items from the queue. This means that the producer can `put` more items into the queue until there are ten items in the queue again, at which point the `put` operation again becomes blocked.
 
@@ -1222,11 +1238,10 @@ include::{javasource}/dds/queue/TheQueueStore.java[tag=qs]
 ----
 
 
-
 `Item` must be serializable. The following is an example queue store configuration.
 
-
-```
+[source,xml]
+----
 <queue-store>
   <class-name>com.hazelcast.QueueStoreImpl</class-name>
   <properties>
@@ -1235,7 +1250,7 @@ include::{javasource}/dds/queue/TheQueueStore.java[tag=qs]
     <property name="bulk-load">500</property>
   </properties>
 </queue-store>
-```
+----
 
 Let's explain the queue store properties.
 
@@ -1273,7 +1288,8 @@ The following are examples of queue configurations. It includes the `QueueStore`
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <queue name="default">
     <max-size>0</max-size>
     <backup-count>1</backup-count>
@@ -1293,7 +1309,7 @@ The following are examples of queue configurations. It includes the `QueueStore`
     </queue-store>
     <quorum-ref>quorumname</quorum-ref>
 </queue>
-```
+----
 
 **Programmatic:**
 
@@ -1366,7 +1382,8 @@ The following are the example MultiMap configurations.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <multimap name="default">
     <backup-count>0</backup-count>
     <async-backup-count>1</async-backup-count>
@@ -1376,7 +1393,7 @@ The following are the example MultiMap configurations.
     </entry-listeners>
     <quorum-ref>quorumname</quorum-ref>
 </multimap>
-```
+----
 
 **Programmatic:**
 
@@ -1444,17 +1461,16 @@ TransactionalMultiMap:
 
 Split-Brain protection for MultiMap can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/MultiMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <multimap name="default">
     ...
     <quorum-ref>quorumname</quorum-ref>
     ...
 </multimap>
-```
-
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
-
 
 [[set]]
 === Set
@@ -1490,7 +1506,8 @@ The following are the example set configurations.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <set name="default">
     <backup-count>1</backup-count>
     <async-backup-count>0</async-backup-count>
@@ -1500,7 +1517,7 @@ The following are the example set configurations.
     </item-listeners>
     <quorum-ref>quorumname</quorum-ref>    
 </set>
-```
+----
 
 **Programmatic:**
 
@@ -1558,13 +1575,14 @@ TransactionalSet:
 
 Split-Brain protection for ISet can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SetConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <set name="default">
     ...
     <quorum-ref>quorumname</quorum-ref>
     ...
 </set>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -1604,7 +1622,8 @@ The following are example list configurations.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <list name="default">
    <backup-count>1</backup-count>
    <async-backup-count>0</async-backup-count>
@@ -1616,7 +1635,7 @@ The following are example list configurations.
    </item-listeners>
    <quorum-ref>quorumname</quorum-ref>
 </list>
-```
+----
 
 **Programmatic:**
 
@@ -1681,13 +1700,14 @@ TransactionalList:
 
 Split-Brain protection for IList can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ListConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <list name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </list>
-```
+----
 
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
@@ -1753,11 +1773,12 @@ In a lot of cases you may want to change this `capacity` number to something tha
 
 Below is a declarative configuration example of a Ringbuffer with a `capacity` of 2000 items.
 
-```
+[source,xml]
+----
 <ringbuffer name="rb">
     <capacity>2000</capacity>
 </ringbuffer>
-```
+----
 
 Currently, Hazelcast Ringbuffer is not a partitioned data structure; its data is stored in a single partition and the replicas
  are stored in another partition. Therefore, create a Ringbuffer that can safely fit in a single cluster member. 
@@ -1769,12 +1790,13 @@ Hazelcast Ringbuffer has a single synchronous backup by default. You can control
 distributed data structures by setting the synchronous and asynchronous backups: `backup-count` and `async-backup-count`. In the example below, a Ringbuffer is configured with no
 synchronous backups and one asynchronous backup:
 
-```
+[source,xml]
+----
 <ringbuffer name="rb">
     <backup-count>0</backup-count>
     <async-backup-count>1</async-backup-count>
 </ringbuffer>
-```
+----
 
 An asynchronous backup will probably give you better performance. However, there is a chance that the item added will be lost 
 when the member owning the primary crashes before the backup could complete. You may want to consider batching
@@ -1790,11 +1812,12 @@ either the oldest item is overwritten, or the call is rejected.
 
 In the example below, a Ringbuffer is configured with a time-to-live of 180 seconds.
 
-```
+[source,xml]
+----
 <ringbuffer name="rb">
     <time-to-live-seconds>180</time-to-live-seconds>
 </ringbuffer>
-```
+----
 
 [[setting-ringbuffer-overflow-policy]]
 ==== Setting Ringbuffer Overflow Policy
@@ -1838,8 +1861,8 @@ include::{javasource}/dds/ringbuffer/TheRingbufferObjectStore.java[tag=rbstore]
 
 `Item` must be serializable. The following is an example of a Ringbuffer with the Ringbuffer store configured and enabled.
 
-
-```
+[source,xml]
+----
     <ringbuffer name="default">
         <capacity>10000</capacity>
         <time-to-live-seconds>30</time-to-live-seconds>
@@ -1850,7 +1873,7 @@ include::{javasource}/dds/ringbuffer/TheRingbufferObjectStore.java[tag=rbstore]
             <class-name>com.hazelcast.RingbufferStoreImpl</class-name>
         </ringbuffer-store>
     </ringbuffer>
-```
+----
 
 Below are the explanations for the Ringbuffer store configuration elements: 
 
@@ -1868,22 +1891,24 @@ applied or when the `OBJECT` in-memory format has a smaller memory footprint tha
 
 In the declarative configuration example below, a Ringbuffer is configured with the `OBJECT` in-memory format:
 
-```
+[source,xml]
+----
 <ringbuffer name="rb">
     <in-memory-format>OBJECT</in-memory-format>
 </ringbuffer>
-```
+----
 
 [[configuring-split-brain-protection-for-ringbuffer]]
 ==== Configuring Split-Brain Protection for Ringbuffer
 
 Ringbuffer can be configured to check for a minimum number of available members before applying Ringbuffer operations. This is a check to avoid performing successful Ringbuffer operations on all parts of a cluster during a network partition and can be configured using the element `quorum-ref`. You should set this element's value as the quorum's name, which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>. Following is an example snippet:
 
-```
+[source,xml]
+----
 <ringbuffer name="rb">
     <quorum-ref>quorumname</quorum-ref>
 </ringbuffer>
-```
+----
 
 Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
 
@@ -1909,11 +1934,12 @@ impact on the performance. You can use the method `addAllAsync` to support batch
 
 Please see the following example code.
 
-```
+[source,java]
+----
 List<String> items = Arrays.asList("1","2","3");
 ICompletableFuture<Long> f = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
 f.get();
-```  
+---- 
       
 In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the <<setting-ringbuffer-overflow-policy, Overflow Policy section>> for more information.
 
@@ -1929,13 +1955,14 @@ The method `readManyAsync` can read a batch of items and can filter items at the
 
 Please see the following example code.
 
-```
+[source,java]
+----
 ICompletableFuture<ReadResultSet<E>> readManyAsync(
    long startSequence, 
    int minCount,                                              
    int maxCount, 
    IFunction<E, Boolean> filter);
-```
+----
 
 The meanings of the `readManyAsync` arguments are given below.
 
@@ -1947,7 +1974,8 @@ set it to 1.
 
 A full example is given below.
 
-```
+[source,java]
+----
 long sequence = rb.headSequence();
 for(;;) {
     ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, 1, 10, null);
@@ -1957,7 +1985,7 @@ for(;;) {
     }
     sequence+=rs.readCount();
 }
-``` 
+---- 
        
 Please take a careful look at how your sequence is being incremented. You cannot always rely on the number of items being returned
 if the items are filtered out.
@@ -1970,17 +1998,19 @@ To make these methods synchronous, just call the method `get()` on the returned 
 
 Please see the following example code.
 
-```
+[source,,java]
+----
 ICompletableFuture f = ringbuffer.addAsync(item, OverflowPolicy.FAIL);
 f.get();
-```
+----
 
 However, you can also use `ICompletableFuture` to get notified when the operation has completed. The advantage of `ICompletableFuture` is that the thread used for the call is not blocked till the response is returned.
 
 Please see the below code as an example of when you want to 
 get notified when a batch of reads has completed.
 
-```
+[source,java]
+----
 ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, min, max, someFilter);
 f.andThen(new ExecutionCallback<ReadResultSet<String>>() {
    @Override
@@ -1995,14 +2025,15 @@ f.andThen(new ExecutionCallback<ReadResultSet<String>>() {
         t.printStackTrace();
    }
 });
-```
+----
 
 [[ringbuffer-configuration-examples]]
 ==== Ringbuffer Configuration Examples
 
 The following shows the declarative configuration of a Ringbuffer called `rb`. The configuration is modeled after the Ringbuffer defaults.
 
-```
+[source,xml]
+----
 <ringbuffer name="rb">
     <capacity>10000</capacity>
     <backup-count>1</backup-count>
@@ -2011,7 +2042,7 @@ The following shows the declarative configuration of a Ringbuffer called `rb`. T
     <in-memory-format>BINARY</in-memory-format>
     <quorum-ref>quorumname</quorum-ref>    
 </ringbuffer>
-```
+----
 
 You can also configure a Ringbuffer programmatically. The following is a programmatic version of the above declarative configuration.
 
@@ -2130,7 +2161,8 @@ You can see the example configuration snippets below.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <topic name="yourTopicName">
@@ -2142,7 +2174,7 @@ You can see the example configuration snippets below.
   </topic>
   ...
 </hazelcast>
-```
+----
 
 **Programmatic:**
 
@@ -2240,7 +2272,8 @@ The following are example Reliable Topic configurations.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <reliable-topic name="default">
     <statistics-enabled>true</statistics-enabled>
     <message-listeners>
@@ -2251,7 +2284,7 @@ The following are example Reliable Topic configurations.
     <read-batch-size>10</read-batch-size>
     <topic-overload-policy>BLOCK</topic-overload-policy>
 </reliable-topic>
-```
+----
 
 **Programmatic:**
 
@@ -2440,11 +2473,12 @@ As mentioned in the <<split-brain-protection-for-lock, Split-brain Protection fo
 
 An example of declarative configuration is as follows:
 
-```
+[source,xml]
+----
 <lock name="myLock">
     <quorum-ref>quorum-name</quorum-ref>
 </lock>
-```
+----
 
 * `quorum-ref` : Name of quorum configuration that you want this lock to use.
 
@@ -2558,13 +2592,14 @@ IAtomicLong can be configured to check for a minimum number of available members
 
 Split-Brain protection for IAtomicLong can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicLongConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <atomic-long name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </atomic-long>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -2601,11 +2636,12 @@ include::{javasource}/dds/semaphore/SemaphoreMember.java[tag=sm]
 
 Let's limit the concurrent access to this resource by allowing at most three threads. You can configure it declaratively by setting the `initial-permits` property, as shown below.
 
-```
+[source,xml]
+----
 <semaphore name="semaphore"> 
   <initial-permits>3</initial-permits>
 </semaphore>
-```
+----
 
 NOTE: If there is a shortage of permits while the semaphore is being created, value of this property can be set to a negative number.
 
@@ -2632,14 +2668,15 @@ The following are example semaphore configurations.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <semaphore name="semaphore">
    <backup-count>1</backup-count>
    <async-backup-count>0</async-backup-count>
    <initial-permits>3</initial-permits>
    <quorum-ref>quorumname</quorum-ref>
 </semaphore>
-```
+----
 
 **Programmatic:**
 
@@ -2680,13 +2717,14 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for ISemaphore can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SemaphoreConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <semaphore name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </semaphore>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -2763,13 +2801,14 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for IAtomicReference can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicReferenceConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <atomic-reference name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </atomic-reference>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -2831,13 +2870,14 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for ICountDownLatch can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CountDownLatchConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <count-down-latch name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </count-down-latch>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -2884,14 +2924,15 @@ This code snippet creates an instance of a PN counter, increments it by 5 and re
 
 Following is an example declarative configuration snippet:
 
-```
+[source,xml]
+----
 <hazelcast>
   <pn-counter name="default">
     <replica-count>10</replica-count>
     <statistics-enabled>true</statistics-enabled>
   </pn-counter>
 </hazelcast>
-```
+----
 
 * `name`: Name of your PN Counter.
 * `replica-count`: Number of replicas on which state for this PN counter will be kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE. Generally, keeping the state on more replicas means that more Hazelcast members will be able to perform updates locally but it also means that the PN counter state will be kept on more replicas, increasing the network traffic, decreasing the speed at which replica states converge and increasing the size of the PN counter state kept on each replica.
@@ -2912,14 +2953,15 @@ NOTE: Configuring the replication mechanism is for advanced use cases only - usu
 In some cases, you may want to configure the replication mechanism for all CRDT implementations. The CRDT states are replicated in rounds (the period is configurable) and in each round the state is replicated up to the configured number of members. Generally speaking, you may increase the speed at which replicas converge at the expense of more network traffic or decrease the network traffic at the expense of slower convergence of replicas. 
 Hazelcast implements the state-based replication mechanism - the CRDT state for changed CRDTs is replicated in its entirety to other replicas on each replication round.  
 
-```
+[source,xml]
+----
 <hazelcast>
   <crdt-replication>
       <max-concurrent-replication-targets>1</max-concurrent-replication-targets>
       <replication-period-millis>1000</replication-period-millis>
   </crdt-replication>
 </hazelcast>
-```
+----
 
 * `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count will lead to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT will lead to a sudden burst in the number of replication messages in a short time interval. Its default value is 1 which means that each replica will replicate state to only one other replica in each replication round. 
 * `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates will be batched together in one replication message and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. Its default value is 1000 milliseconds which means that the changed CRDT state is replicated every 1 second. 
@@ -3139,7 +3181,8 @@ Replicated Map can be configured programmatically or declaratively.
 
 You can declare your Replicated Map configuration in the Hazelcast configuration file `hazelcast.xml`. Please see the following example.
 
-```
+[source,xml]
+----
 <replicatedmap name="default">
   <in-memory-format>BINARY</in-memory-format>
   <async-fillup>true</async-fillup>
@@ -3151,7 +3194,7 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
   </entry-listeners>
   <quorum-ref>quorumname</quorum-ref>
 </replicatedmap>
-```
+----
 
 * `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. Its default value is `OBJECT`.
 * `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. Its default value is `true`. If set to `false` (i.e., synchronous initial fill up), no exception will be thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
@@ -3242,13 +3285,14 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for Replicated Map can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ReplicatedMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <replicatedmap name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </replicatedmap>
-```
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -3305,13 +3349,15 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 Split-Brain protection for Cardinality Estimator can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <cardinality-estimator name="default">
    ...
    <quorum-ref>quorumname</quorum-ref>
    ...
 </cardinality-estimator>
-```
+[source,xml]
+----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
@@ -3321,13 +3367,14 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 While recovering from a Split-Brain syndrome, Cardinality Estimator in the small cluster merges into the bigger cluster based on a configured merge policy. When an estimator merges into the cluster, an estimator with the same name might already exist in the cluster.
 So the merge policy resolves these kinds of conflicts with different out-of-the-box strategies. It can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setMergePolicyConfig()`], or declaratively using the element `merge-policy`. Following is an example declarative configuration:
 
-```
+[source,xml]
+----
 <cardinality-estimator name="default">
    ...
    <merge-policy>HyperLogLogMergePolicy</merge-policy>
    ...
 </cardinality-estimator>
-```
+----
 
 Following out-of-the-box merge policies are available:
 
@@ -3361,7 +3408,8 @@ A single array of the event journal keeps events that are only related to the ma
 
 Below is a declarative configuration example of an event journal with a `capacity` of 5000 items for a map and 10000 items for a cache:
 
-```
+[source,xml]
+----
 <event-journal enabled="true">
     <mapName>myMap</mapName>
     <capacity>5000</capacity>
@@ -3373,7 +3421,7 @@ Below is a declarative configuration example of an event journal with a `capacit
     <capacity>10000</capacity>
     <time-to-live-seconds>0</time-to-live-seconds>
 </event-journal>
-``` 
+---- 
 
 You can also configure an event journal programmatically. The following is a programmatic version of the above declarative configuration:
 
@@ -3400,12 +3448,13 @@ it will remain in the journal indefinitely. The expiration time of the existing 
 
 In the example below, an event journal is configured with a `time-to-live` of 180 seconds:
 
-```
+[source,xml]
+----
 <event-journal enabled="true">
     <cacheName>myCache</cacheName>
     <capacity>10000</capacity>
     <time-to-live-seconds>180</time-to-live-seconds>
 </event-journal>
-```
+----
 
 

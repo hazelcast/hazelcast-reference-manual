@@ -68,25 +68,28 @@ When a respective event is fired, the membership listener outputs the addresses 
 
 After you create your class, you can configure your cluster to include the membership listener. Below is an example using the method `addMembershipListener`.
 
-```
+[source,java]
+----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getCluster().addMembershipListener( new ClusterMembershipListener() );
-```
+----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,java]
+----
 Config config = new Config();
 config.addListenerConfig(
 new ListenerConfig( "com.yourpackage.ClusterMembershipListener" ) );
-```
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <listeners>
@@ -96,16 +99,17 @@ The following is an example of the equivalent declarative configuration.
    </listeners>
    ...
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:listeners>
  <hz:listener class-name="com.yourpackage.ClusterMembershipListener"/>
  <hz:listener implementation="MembershipListener"/>
 </hz:listeners>
-```
+----
 
 [[listening-for-distributed-object-events]]
 ==== Listening for Distributed Object Events
@@ -127,26 +131,29 @@ When a respective event is fired, the distributed object listener outputs the ev
 
 After you create your class, you can configure your cluster to include distributed object listeners. Below is an example using the method `addDistributedObjectListener`. You can also see this portion in the above class creation.
 
-```
+[source,java]
+----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 SampleDistObjListener sample = new SampleDistObjListener();
 
 hazelcastInstance.addDistributedObjectListener( sample );
-```
+----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,java]
+----
 config.addListenerConfig(
 new ListenerConfig( "com.yourpackage.SampleDistObjListener" ) );
-```
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <listeners>
@@ -156,16 +163,17 @@ The following is an example of the equivalent declarative configuration.
    </listeners>
    ...
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:listeners>
    <hz:listener class-name="com.yourpackage.SampleDistObjListener"/>
    <hz:listener implementation="DistributedObjectListener"/>
 </hz:listeners>
-```
+----
 
 [[listening-for-migration-events]]
 ==== Listening for Migration Events
@@ -197,26 +205,29 @@ newOwner=Member [127.0.0.1]:5702 this}
 
 After you create your class, you can configure your cluster to include migration listeners. Below is an example using the method `addMigrationListener`.
 
-```
+[source,java]
+----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 PartitionService partitionService = hazelcastInstance.getPartitionService();
 partitionService.addMigrationListener( new ClusterMigrationListener() );
-```
+----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,java]
+----
 config.addListenerConfig( 
 new ListenerConfig( "com.yourpackage.ClusterMigrationListener" ) );
-```
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <listeners>
@@ -226,16 +237,17 @@ The following is an example of the equivalent declarative configuration.
    </listeners>
    ...
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:listeners>
    <hz:listener class-name="com.yourpackage.ClusterMigrationListener"/>
    <hz:listener implementation="MigrationListener"/>
 </hz:listeners>
-```
+----
 
 [[listening-for-partition-lost-events]]
 ==== Listening for Partition Lost Events
@@ -277,14 +289,16 @@ eventSource=Address[192.168.2.49]:5701}
 
 After you create your class, you can configure your cluster programmatically or declaratively to include the partition lost listener. Below is an example of its programmatic configuration.
 
-```
+[source,java]
+----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getPartitionService().addPartitionLostListener( new ConsoleLoggingPartitionLostListener() );
-```
+----
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <listeners>
@@ -294,7 +308,7 @@ The following is an example of the equivalent declarative configuration.
    </listeners>
    ...
 </hazelcast>
-```
+----
 
 
 [[listening-for-lifecycle-events]]
@@ -329,24 +343,27 @@ This listener is local to an individual member. It notifies the application that
 
 After you create your class, you can configure your cluster to include lifecycle listeners. Below is an example using the method `addLifecycleListener`.
 
-```
+[source,java]
+----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getLifecycleService().addLifecycleListener( new NodeLifecycleListener() );
-```
+----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,java]
+----
 config.addListenerConfig(
     new ListenerConfig( "com.yourpackage.NodeLifecycleListener" ) );
-```
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <listeners>
@@ -356,16 +373,17 @@ The following is an example of the equivalent declarative configuration.
    </listeners>
    ...
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:listeners>
    <hz:listener class-name="com.yourpackage.NodeLifecycleListener"/>
    <hz:listener implementation="LifecycleListener"/>
 </hz:listeners>
-```
+----
 
 [[listening-for-clients]]
 ==== Listening for Clients
@@ -375,28 +393,31 @@ The Client Listener is used by the Hazelcast cluster members. It notifies the cl
 To write a client listener class, you implement the `ClientListener` interface and its methods `clientConnected` and `clientDisconnected`,
 which are invoked when a client is connected to or disconnected from the cluster. You can add your client listener as shown below.
 
-```
+[source,java]
+----
 hazelcastInstance.getClientService().addClientListener(new SampleClientListener());
-```
+----
 
 The following is the equivalent declarative configuration.
 
-```
+[source,xml]
+----
 <listeners>
    <listener>
       com.yourpackage.SampleClientListener
    </listener>
 </listeners>
-```
+----
 
 The following is the equivalent configuration in the Spring context.
 
-```
+[source,xml]
+----
 <hz:listeners>
    <hz:listener class-name="com.yourpackage.SampleClientListener"/>
    <hz:listener implementation="com.yourpackage.SampleClientListener"/>
 </hz:listeners>
-```
+----
 
 NOTE: You can also add event listeners to a Hazelcast client. Please refer to <<configuring-client-listeners, Client Listenerconfig>> for the related information.
 
@@ -489,26 +510,29 @@ information about partition lost detection and partition lost events.
 
 After you create your listener class, you can configure your cluster to include map listeners using the method `addEntryListener` (as you can see in the example `Listen` class above). Below is the related portion from this code, showing how to register a map listener.
 
-```
+[source,java]
+----
 HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 IMap<String, String> map = hz.getMap( "somemap" );
 map.addEntryListener( new MyEntryListener(), true );
-```
+----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,java]
+----
 mapConfig.addEntryListenerConfig(
 new EntryListenerConfig( "com.yourpackage.MyEntryListener", 
                                  false, false ) );
-```
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <map name="somemap">
@@ -521,11 +545,12 @@ The following is an example of the equivalent declarative configuration.
    </map>
    ...
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:map name="somemap">
    <hz:entry-listeners>
       <hz:entry-listener include-value="true"
@@ -533,7 +558,7 @@ The following is an example of the equivalent Spring configuration.
       <hz:entry-listener implementation="dummyEntryListener" local="true"/>
    </hz:entry-listeners>
 </hz:map>
-```
+----
 
 ===== Map Listener Attributes
 
@@ -556,26 +581,30 @@ include::{javasource}/distributedevents/SampleEntryListener.java[tag=mm]
 
 After you create your listener class, you can configure your cluster to include MultiMap listeners using the method `addEntryListener`. Below is the related portion from a code, showing how to register a map listener.
 
-```
+[source,java]
+----
 HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 MultiMap<String, String> map = hz.getMultiMap( "somemap" );
 map.addEntryListener( new SampleEntryListener(), true );
-```
+----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,xml]
+----
 multiMapConfig.addEntryListenerConfig(
   new EntryListenerConfig( "com.yourpackage.SampleEntryListener",
     false, false ) );
-```
+[source,xml]
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <multimap name="somemap">
@@ -588,11 +617,12 @@ The following is an example of the equivalent declarative configuration.
    </multimap>
    ...
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:multimap name="somemap" value-collection-type="SET">
    <hz:entry-listeners>
       <hz:entry-listener include-value="false"
@@ -600,7 +630,7 @@ The following is an example of the equivalent Spring configuration.
       <hz:entry-listener implementation="EntryListener" local="false"/>
    </hz:entry-listeners>
 </hz:multimap>
-```
+----
 
 ===== MultiMap Listener Attributes
 
@@ -640,27 +670,30 @@ NOTE: You can use `ICollection` when creating any of the collection (queue, set 
 
 After you create your class, you can configure your cluster to include item listeners. Below is an example using the method `addItemListener` for `ISet` (it applies also to `IQueue` and `IList`). You can also see this portion in the above class creation.
 
-```
+[source,java]
+----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 ICollection<Price> set = hazelcastInstance.getSet( "default" );
 // or ISet<Prices> set = hazelcastInstance.getSet( "default" );
 set.addItemListener( new SampleItemListener(), true );
-```
+----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,java]
+----
 setConfig.addItemListenerConfig(
 new ItemListenerConfig( "com.yourpackage.SampleItemListener", true ) );
-```
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
   <set>
     <item-listeners>
@@ -670,18 +703,19 @@ The following is an example of the equivalent declarative configuration.
     </item-listeners>
   </set>
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:set name="default" >
   <hz:item-listeners>
     <hz:item-listener include-value="true"
       class-name="com.yourpackage.SampleItemListener"/>
   </hz:item-listeners>
 </hz:set>
-```
+----
 
 ===== Item Listener Attributes
 
@@ -714,26 +748,29 @@ public class SampleMessageListener implements MessageListener<MyEvent> {
 
 After you create your class, you can configure your cluster to include message listeners. Below is an example using the method `addMessageListener`.
 
-```
+[source,java]
+----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 ITopic topic = hazelcastInstance.getTopic( "default" );
 topic.addMessageListener( new SampleMessageListener() );
-```
+----
 
 With the above approach, there is the possibility of missing messaging events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register this listener in the configuration. You can register it using declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-```
+[source,java]
+----
 topicConfig.addMessageListenerConfig(
   new ListenerConfig( "com.yourpackage.SampleMessageListener" ) );
-```
+----
 
 
 The following is an example of the equivalent declarative configuration. 
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <topic name="default">
@@ -745,18 +782,19 @@ The following is an example of the equivalent declarative configuration.
    </topic>   
    ...
 </hazelcast>
-```
+----
 
 The following is an example of the equivalent Spring configuration.
 
-```
+[source,xml]
+----
 <hz:topic name="default">
   <hz:message-listeners>
     <hz:message-listener 
       class-name="com.yourpackage.SampleMessageListener"/>
   </hz:message-listeners>
 </hz:topic>
-```
+----
 
 === Event Listeners for Hazelcast Clients
 
