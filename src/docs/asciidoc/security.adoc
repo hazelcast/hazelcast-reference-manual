@@ -894,7 +894,7 @@ Hazelcast's Client security includes both authentication and authorization.
 
 ==== Authentication
 
-The authentication mechanism works the same as cluster member authentication. To implement client authentication, you configure a Credential and one or more LoginModules. The client side does not have and does not need a factory object to create Credentials objects like `ICredentialsFactory`. You must create the credentials at the client side and send them to the connected member during the connection process.
+The authentication mechanism works the same as cluster member authentication. To implement client authentication, you configure a Credential and one or more LoginModules. The client side also needs a factory object as in member side, e.g., the `ICredentialsFactory` given in the <<cluster-member-security, Cluster Member Security section>> above.
 
 ```
 <security enabled="true">
@@ -922,13 +922,16 @@ The authentication mechanism works the same as cluster member authentication. To
 </security>
 ```
 
-You can define as many as `LoginModules` as you want in configuration. Those are executed in the order given in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
+You can define as many as `LoginModules` as you want in the configuration. Those are executed in the order given in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
 
 ```
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.setCredentials( new UsernamePasswordCredentials( "dev", "dev-pass" ) );
 HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 ```
+
+NOTE: See an implementation and configuration example https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/client-custom-credentials[here].
+
 
 ==== Authorization
 
