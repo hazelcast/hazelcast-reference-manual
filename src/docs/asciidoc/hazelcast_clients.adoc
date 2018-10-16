@@ -47,7 +47,8 @@ After adding these dependencies, you can start using the Hazelcast client as if 
 
 If you prefer to use maven, add the following lines to your `pom.xml`.
 
-```
+[source,xml]
+----
 <dependency>
     <groupId>com.hazelcast</groupId>
     <artifactId>hazelcast-client</artifactId>
@@ -58,17 +59,18 @@ If you prefer to use maven, add the following lines to your `pom.xml`.
     <artifactId>hazelcast</artifactId>
     <version>$LATEST_VERSION$</version>
 </dependency>
-```
+----
 
 ===== Client API
 
 The first step is configuration. You can configure the Java client declaratively or programmatically. We will use the programmatic approach throughout this tutorial. Please refer to the <<configuring-java-client, Java Client Declarative Configuration section>> for details.
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.getGroupConfig().setName("dev");
 clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
-```
+----
 
 The second step is to initialize the HazelcastInstance to be connected to the cluster.
 
@@ -80,13 +82,14 @@ HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
 
 Let's create a map and populate it with some data.
 
-```
+[source,java]
+----
 IMap<String, Customer> mapCustomers = client.getMap("customers"); //creates the map proxy
 
 mapCustomers.put("1", new Customer("Joe", "Smith"));
 mapCustomers.put("2", new Customer("Ali", "Selam"));
 mapCustomers.put("3", new Customer("Avi", "Noyan"));
-```
+----
 
 As a final step, if you are done with your client, you can shut it down as shown below. This will release all the used resources and will close connections to the cluster.
 
@@ -148,13 +151,14 @@ As a general rule, you configure these data structures on the server side and ac
 
 You can use any <<map, Distributed Map>> object with the client, as shown below.
 
-```
+[source,java]
+----
 Imap<Integer, String> map = client.getMap(“myMap”);
 
 map.put(1, “Ali”);
 String value= map.get(1);
 map.remove(1);
-```
+----
 
 Locality is ambiguous for the client, so `addLocalEntryListener` and `localKeySet` are not supported. Please see the <<map, Distributed Map section>> for more information.
 
@@ -162,14 +166,15 @@ Locality is ambiguous for the client, so `addLocalEntryListener` and `localKeySe
 
 A MultiMap usage example is shown below.
 
-```
+[source,java]
+----
 MultiMap<Integer, String> multiMap = client.getMultiMap("myMultiMap");
 
 multiMap.put(1,”ali”);
 multiMap.put(1,”veli”);
 
 Collection<String> values = multiMap.get(1);
-```
+----
 
 `addLocalEntryListener`, `localKeySet` and  `getLocalMultiMapStats` are not supported because locality is ambiguous for the client. Please see the <<multimap , Distributed MultiMap section>> for more information.
 
@@ -177,10 +182,11 @@ Collection<String> values = multiMap.get(1);
 
 A sample usage is shown below.
 
-```
+[source,java]
+----
 IQueue<String> myQueue = client.getQueue(“theQueue”);
 myQueue.offer(“ali”)
-```
+----
 
 `getLocalQueueStats` is not supported because locality is ambiguous for the client. Please see the <<queue, Distributed Queue section>> for more information.
 
@@ -235,7 +241,8 @@ include::{javasource}/clients/ListeningClients.java[tag=lc]
 
 You use partition service to find the partition of a key. It will return all partitions. See the example code below.
 
-```
+[source,java]
+----
 PartitionService partitionService = client.getPartitionService();
 
 //partition of a key
@@ -243,8 +250,7 @@ Partition partition = partitionService.getPartition(key);
 
 //all partitions
 Set<Partition> partitions = partitionService.getPartitions();
-```
-
+----
 
 ====== Handling Lifecycle
 
@@ -256,7 +262,8 @@ Lifecycle handling performs the following:
 - Add/remove lifecycle listeners.
 
 
-```
+[source,java]
+----
 LifecycleService lifecycleService = client.getLifecycleService();
 
 if(lifecycleService.isRunning()){
@@ -265,7 +272,7 @@ if(lifecycleService.isRunning()){
 
 //shutdown client gracefully
 lifecycleService.shutdown();
-```
+----
 
 ===== Client Listeners
 
@@ -283,7 +290,8 @@ Async client start is configured by setting the configuration element `async-sta
 Until the client connects to cluster, it will throw `HazelcastClientOfflineException` on any network dependent operations hence they won't block. If you want to check or wait the client to complete its cluster connection, you can use the built-in lifecycle listener:
 
 
-```
+[source,java]
+----
 ClientStateListener clientStateListener = new ClientStateListener(clientConfig);
 HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
  
@@ -298,7 +306,7 @@ if (clientStateListener.awaitConnected()) {
 } else {
 	//client failed to connect to cluster
 }
-```
+----
 
 Java client can also be configured to specify how it reconnects after a cluster disconnection. There are three options:
 
@@ -327,13 +335,14 @@ If you want to specify your own configuration file to create a `Config` object, 
 
 For programmatic configuration of the Hazelcast Java Client, just instantiate a `ClientConfig` object and configure the desired aspects. An example is shown below.
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.setGroupConfig(new GroupConfig("dev","dev-pass”);
 clientConfig.setLoadBalancer(yourLoadBalancer);
 ...
 ...
-```
+----
 
 
 ===== Client Network
@@ -344,7 +353,8 @@ All network related configuration of Hazelcast Java Client is performed via the 
 
 Here is an example of configuring network for Java Client declaratively.
 
-```
+[source,xml]
+----
 <hazelcast-client xsi:schemaLocation=
     "http://www.hazelcast.com/schema/client-config hazelcast-client-config-<version>.xsd"
                   xmlns="http://www.hazelcast.com/schema/client-config"
@@ -380,7 +390,7 @@ Here is an example of configuring network for Java Client declaratively.
     <tag-value>hz-members</tag-value>
   </aws>
 </network>
-```
+----
 
 ====== Programmatic Client Network Configuration
 
@@ -397,7 +407,8 @@ Address List is the initial list of cluster addresses to which the client will c
 
 **Declarative**:
 
-```
+[source,xml]
+----
 <hazelcast-client>
   ...
   <network>
@@ -409,15 +420,16 @@ Address List is the initial list of cluster addresses to which the client will c
   </network>
 ...
 </hazelcast-client>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703");
-```
+----
 
 If the port part is omitted, then 5701, 5702 and 5703 will be tried in random order.
 
@@ -430,7 +442,8 @@ You may want to restrict outbound ports to be used by Hazelcast-enabled applicat
 
 **Declarative:**
 
-```
+[source,xml]
+----
   <network>
     <outbound-ports>
       <!-- ports between 34700 and 34710 -->
@@ -440,11 +453,12 @@ You may want to restrict outbound ports to be used by Hazelcast-enabled applicat
       <ports>34700,34705-34710</ports>
     </outbound-ports>
   </network>
-```
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 ...
 NetworkConfig networkConfig = config.getNetworkConfig();
 // ports between 34700 and 34710
@@ -453,7 +467,7 @@ networkConfig.addOutboundPortDefinition("34700-34710");
 networkConfig.addOutboundPortDefinition("34700,34701,34702,34703");
 networkConfig.addOutboundPort(34705);
 ...
-```
+----
 
 NOTE: You can use port ranges and/or comma separated ports.
 
@@ -469,7 +483,8 @@ The following are example configurations.
 
 **Declarative**:
 
-```
+[source,xml]
+----
 ...
 <network>
 ...
@@ -477,15 +492,16 @@ The following are example configurations.
 ...
 </network>
 ...
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 networkConfig().setSmartRouting(true);
-```
+----
 
 Its default value is `true` (smart client mode).
 
@@ -495,22 +511,24 @@ It enables/disables redo-able operations as described in <<handling-failures, Ha
 
 **Declarative**:
 
-```
+[source,xml]
+----
 ...
 <network>
 ...  
   <redo-operation>true</redo-operation>
 ...
 </network>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 networkConfig().setRedoOperation(true);
-```
+----
 
 Its default value is `false` (disabled).
 
@@ -520,21 +538,23 @@ Connection timeout is the timeout value in milliseconds for members to accept cl
 
 **Declarative**:
 
-```
+[source,xml]
+----
 ...
 <network>
 ...
   <connection-timeout>5000</connection-timeout>
 ...
 </network>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.getNetworkConfig().setConnectionTimeout(5000);
-```
+----
 
 Its default value is *5000* milliseconds.
 
@@ -544,21 +564,23 @@ While the client is trying to connect initially to one of the members in the `Cl
 
 **Declarative**:
 
-```
+[source,xml]
+----
 ...
 <network>
 ...
   <connection-attempt-limit>5</connection-attempt-limit>
 ...
 </network>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.getNetworkConfig().setConnectionAttemptLimit(5);
-```
+----
 
 Its default value is *2*.
 
@@ -568,21 +590,23 @@ Connection timeout period is the duration in milliseconds between the connection
 
 **Declarative**:
 
-```
+[source,xml]
+----
 ...
 <network>
 ...
   <connection-attempt-period>5000</connection-attempt-period>
 ...
 </network>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.getNetworkConfig().setConnectionAttemptPeriod(5000);
-```
+----
 
 Its default value is *3000* milliseconds.
 
@@ -593,17 +617,19 @@ Its default value is *3000* milliseconds.
 Following is a client configuration to set a socket intercepter. Any class implementing `com.hazelcast.nio.SocketInterceptor` is a socket interceptor.
 
 
-```
+[source,java]
+----
 public interface SocketInterceptor {
     void init(Properties properties);
     void onConnect(Socket connectedSocket) throws IOException;
 }
-```
+----
 
 `SocketInterceptor` has two steps. First, it will be initialized by the configured properties. Second, it will be informed just after the socket is connected using `onConnect`.
 
 
-```
+[source,java]
+----
 SocketInterceptorConfig socketInterceptorConfig = clientConfig
                .getNetworkConfig().getSocketInterceptorConfig();
 
@@ -611,11 +637,12 @@ MyClientSocketInterceptor myClientSocketInterceptor = new MyClientSocketIntercep
 
 socketInterceptorConfig.setEnabled(true);
 socketInterceptorConfig.setImplementation(myClientSocketInterceptor);
-```
+----
 
 If you want to configure the socket connector with a class name instead of an instance, see the example below.
 
-```
+[source,java]
+----
 SocketInterceptorConfig socketInterceptorConfig = clientConfig
             .getNetworkConfig().getSocketInterceptorConfig();
 
@@ -628,7 +655,7 @@ socketInterceptorConfig.setProperty("kerberos-host","kerb-host-name");
 socketInterceptorConfig.setProperty("kerberos-config-file","kerb.conf");
 
 socketInterceptorConfig.setClassName(myClientSocketInterceptor);
-```
+----
 
 NOTE: Please see the <<socket-interceptor, Socket Interceptor section>> for more information.
 
@@ -666,7 +693,8 @@ The example declarative and programmatic configurations below show how to config
 
 **Declarative**:
 
-```
+[source,xml]
+----
 ...
 <network>
   <aws enabled="true">
@@ -682,7 +710,7 @@ The example declarative and programmatic configurations below show how to config
   </aws>
 ...
 </network>
-```
+----
 
 **Programmatic**:
 
@@ -707,7 +735,8 @@ The following are example configurations.
 
 **Declarative**:
 
-```
+[source,xml]
+----
 <hazelcast-client>
   ...
   <load-balancer type=“random”>
@@ -715,30 +744,33 @@ The following are example configurations.
   </load-balancer>
   ...
 </hazelcast-client>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.setLoadBalancer(yourLoadBalancer);
-```
+----
 
 ===== Configuring Client Listeners
 You can configure global event listeners using `ListenerConfig` as shown below.
 
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 ListenerConfig listenerConfig = new ListenerConfig(LifecycleListenerImpl);
 clientConfig.addListenerConfig(listenerConfig);
-```
+----
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 ListenerConfig listenerConfig = new ListenerConfig("com.hazelcast.example.MembershipListenerImpl");
 clientConfig.addListenerConfig(listenerConfig);
-```
+----
 
 You can add three types of event listeners.
 
@@ -758,22 +790,25 @@ The example declarative and programmatic configurations below show how to config
 
 **Declarative**:
 
-```
+[source,xml]
+----
 <hazelcast-client>
   ...
   <connection-strategy async-start="true" reconnect-mode="ASYNC" />
   ...
 </hazelcast-client>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.getConnectionStrategyConfig()
             .setAsyncStart(true)
             .setReconnectMode(ClientConnectionStrategyConfig.ReconnectMode.ASYNC);
-```
+----
+
 ===== Configuring Client Connection Retry
 
 When the client tries to connect to a cluster, it considers the <<setting-connection-attempt-limit, connection attempt limit>> and 
@@ -787,7 +822,8 @@ Connection retry configuration is done using the `connection-retry` element when
 
 **Declarative**:
 
-```
+[source,xml]
+----
 <hazelcast-client>
   ...
    <connection-strategy async-start="false" reconnect-mode="ON">
@@ -801,11 +837,12 @@ Connection retry configuration is done using the `connection-retry` element when
    </connection-strategy>
   ...
 </hazelcast-client>
-```
+----
 
 **Programmatic**:
 
-```
+[source,java]
+----
 ClientConfig config = new ClientConfig();
 ClientConnectionStrategyConfig connectionStrategyConfig = config.getConnectionStrategyConfig();
 ConnectionRetryConfig connectionRetryConfig = connectionStrategyConfig.getConnectionRetryConfig();
@@ -816,7 +853,7 @@ connectionRetryConfig.setInitialBackoffMillis(1000)
                      .setJitter(0.2)
                      .setEnabled(true);
 
-```
+----
 
 The following are configuration element descriptions:
 
@@ -828,7 +865,8 @@ The following are configuration element descriptions:
 
 A pseudo-code is as follows:
 
-```
+[source,plain]
+----
  current_backoff_millis = INITIAL_BACKOFF_MILLIS
  while (TryConnect(connectionTimeout)) != SUCCESS)
     if (fail-on-max-backoff && current_backoff_millis >= MAX_BACKOFF_MILLIS) {
@@ -837,7 +875,7 @@ A pseudo-code is as follows:
     randomizedSleepMillis = UniformRandom(-JITTER * current_backoff_millis, JITTER * current_backoff_millis)
     Sleep(randomizedSleepMillis)
     current_backoff = Min(current_backoff_millis * MULTIPLIER, MAX_BACKOFF_MILLIS)
-```
+----
 
 Note that, `TryConnect` above tries to connect any member that the client knows of, and for each connection we have a connection timeout, see the <<setting-connection-timeout, Setting Connection Timeout section>>.
 
@@ -910,7 +948,8 @@ NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than 
 The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
 
 
-```
+[source,xml]
+----
 <hazelcast-client>
     [...]
 	<properties>
@@ -920,16 +959,17 @@ The following is a declarative example showing how you can configure the Deadlin
     </properties>
     [...]
 </hazelcast-client>
-```
+----
 
 And, the following is the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ClientConfig config = ...;
 config.setProperty("hazelcast.client.heartbeat.timeout", "60000");
 config.setProperty("hazelcast.client.heartbeat.interval", "5000");
 [...]
-```
+----
 
 
 ===== Client Ping Failure Detector
@@ -953,7 +993,8 @@ If any of the above criteria isn't met, then the `isReachable` will always fallb
 
 An example declarative configuration to use the Ping Failure Detector is as follows (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
 
-```
+[source,xml]
+----
 <hazelcast-client>
     [...]
     <network>
@@ -969,12 +1010,12 @@ An example declarative configuration to use the Ping Failure Detector is as foll
     </network>
     [...] 
 </hazelcast-client>  
-
-```
+----
 
 And, the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ClientConfig config = ...;
  
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
@@ -986,7 +1027,7 @@ clientIcmpPingConfig.setIntervalMilliseconds(1000)
         .setEchoFailFastOnStartup(false)
         .setEnabled(true);
 [...]
-```
+----
 
 - `enabled`: Enables the legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member. Its default value is `false`.
 - `timeout-milliseconds`: Number of milliseconds until a ping attempt is considered failed if there was no reply. Its default value is *1000* milliseconds.
@@ -1106,7 +1147,8 @@ If you have [navy]*Hazelcast IMDG Enterprise HD*, your Hazelcast Java client's N
 
 Let's recall the Java client's Near Cache configuration (please see the <<configuring-client-near-cache, Configuring Client Near Cache section>>) **without** High-Density Memory Store:
 
-```
+[source,xml]
+----
 </hazelcast-client>
     ...
     ...
@@ -1120,11 +1162,12 @@ Let's recall the Java client's Near Cache configuration (please see the <<config
     </near-cache>
     ...
 </hazelcast-client>
-```
+----
 
 You can configure this Near Cache to use Hazelcast's High-Density Memory Store by setting the in-memory format to NATIVE. Please see the following configuration example:
 
-```
+[source,xml]
+----
 </hazelcast-client>
     ...
     ...
@@ -1138,7 +1181,7 @@ You can configure this Near Cache to use Hazelcast's High-Density Memory Store b
        ...
     </near-cache>
 </hazelcast-client>
-``` 
+----
 
 Please notice that when the in-memory format is NATIVE, i.e., High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's Near Cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a Near Cache without High-Density Memory Store do not have any impact. 
 
@@ -1239,18 +1282,20 @@ rest/maps/mapName/key1` URL. This call's content body should contain the value o
 
 A sample POST call is shown below.
 
-```plain
+[source,plain]
+----
 $ curl -v -X POST -H "Content-Type: text/plain" -d "bar" 
     http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
-```
+----
 
 It will return the following response if successful:
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Content-Length: 0
-```
+----
 
 ===== Retrieving Entries from a Map for REST Client
 
@@ -1435,7 +1480,8 @@ Members [5] {
 ```
 Assume that you have a PHP application that uses PHP Memcache client to cache things in Hazelcast. All you need to do is have your PHP Memcache client connect to one of these members. It does not matter which member the client connects to because the Hazelcast cluster looks like one giant machine (Single System Image). Here is a PHP client code example.
 
-```
+[source,php]
+----
 <?php
   $memcache = new Memcache;
   $memcache->connect( '10.20.17.1', 5701 ) or die ( "Could not connect" );
@@ -1443,7 +1489,7 @@ Assume that you have a PHP application that uses PHP Memcache client to cache th
   $get_result = $memcache->get( 'key1' ); // retrieve your data
   var_dump( $get_result ); // show it
 ?>
-```
+----
 
 Notice that Memcache client connects to `10.20.17.1` and uses port `5701`. Here is a Java client code example with SpyMemcached client:
 

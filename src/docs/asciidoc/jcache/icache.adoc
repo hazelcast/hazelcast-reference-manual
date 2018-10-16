@@ -29,10 +29,11 @@ The following examples illustrate how ``HazelcastInstance``s are created or reus
 
 Assuming no other `HazelcastInstance` exists in the same JVM, the `cacheManager` below will start a new `HazelcastInstance`, configured according to the configuration lookup rules as defined for `Hazelcast.newHazelcastInstance()` in case of an embedded member or `HazelcastClient.newHazelcastClient()` for a client-side `CacheManager`.
 
-```
+[source,java]
+----
 CachingProvider caching = Caching.getCachingProvider();
 CacheManager cacheManager = caching.getCacheManager();
-```
+----
 
 ====== Reusing Existing `HazelcastInstance` with the Default `CacheManager`
 
@@ -40,23 +41,25 @@ When using both Hazelcast-specific features and JCache, a `HazelcastInstance` mi
 
 * `hazelcast.xml`:
 +  
-```
+[source,xml]
+----
   <?xml version="1.0" encoding="UTF-8"?>
   <hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.9.xsd" xmlns="http://www.hazelcast.com/schema/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <instance-name>hz-member-1</instance-name>
   </hazelcast>
-```
+----
 +  
 * `HazelcastInstance` & `CacheManager` startup:
 +
-```
+[source,java]
+----
   // start hazelcast, configured with default hazelcast.xml 
   HazelcastInstance hz = Hazelcast.newHazelcastInstance();
   // start the default CacheManager -- it will locate the default hazelcast.xml configuration
   // and identify the existing HazelcastInstance by its name
   CachingProvider caching = Caching.getCachingProvider();
   CacheManager cacheManager = caching.getCacheManager();
-```
+----
  
 ====== Starting a `CacheManager` with a New `HazelcastInstance` Configured with a Non-default Configuration File
 
@@ -64,18 +67,20 @@ Given a configuration file named `hazelcast-jcache.xml` in the package `com.doma
 
 * By passing the `URI` to the configuration file as the `CacheManager`'s `URI`:
 +
-```
+[source,java]
+----
   CachingProvider caching = Caching.getCachingProvider();
   CacheManager cacheManager = caching.getCacheManager(new URI("classpath:com/domain/hazelcast-jcache.xml"), null);
-```
+----
 +
 * By specifying the configuration file location as a property:
 +
-```
+[source,java]
+----
   Properties properties = HazelcastCachingProvider.propertiesByLocation("classpath:com/domain/aaa-hazelcast.xml");
   CachingProvider caching = Caching.getCachingProvider();
   CacheManager cacheManager = caching.getCacheManager(new URI("any-uri-will-do"), null, properties);
-```
+----
 
 Note that if the Hazelcast configuration file does specify an instance name, then any ``CacheManager``s referencing the same configuration file will locate by name and reuse the same `HazelcastInstance`.
 
@@ -85,18 +90,20 @@ Assuming a `HazelcastInstance` named `hc-instance` is already started, it can be
  
 * By using the instance's name as the `CacheManager`'s `URI`:
 +
-```
+[source,java]
+----
   CachingProvider caching = Caching.getCachingProvider();
   CacheManager cacheManager = caching.getCacheManager(new URI("hc-instance"), null);
-```
+----
 +
 * By specifying the instance name as a property:
 +
-```
+[source,java]
+----
   Properties properties = HazelcastCachingProvider.propertiesByInstanceName("hc-instance");
   CachingProvider caching = Caching.getCachingProvider();
   CacheManager cacheManager = caching.getCacheManager(new URI("any-uri-will-do"), null, properties);
-```
+----
 
 ===== Applying Configuration Scope
 
@@ -152,11 +159,12 @@ Available protocols for config file URL include `classpath` to point to a classp
 location and `http` and `https` for remote web locations. In addition, everything that does not specify a protocol is recognized
 as a placeholder that can be configured using a system property.
 
-```
+[source,java]
+----
 String configFile = "my-placeholder";
 Properties properties = HazelcastCachingProvider
     .propertiesByLocation( configFile );
-```
+----
 
 You can set this on the command line:
 
@@ -322,7 +330,8 @@ retrieving the `CacheManager`.
 
 Here is an example of using namespacing.
 
-```
+[source,java]
+----
 CachingProvider cachingProvider = Caching.getCachingProvider();
 
 URI nsApp1 = new URI( "application-1" );
@@ -330,7 +339,7 @@ CacheManager cacheManagerApp1 = cachingProvider.getCacheManager( nsApp1, null );
 
 URI nsApp2 = new URI( "application-2" );
 CacheManager cacheManagerApp2 = cachingProvider.getCacheManager( nsApp2, null );
-```
+----
 
 That way both applications share the same `HazelcastInstance` instance but not the same caches.
 
@@ -343,13 +352,14 @@ is recommended that you stay with the specification method to retrieve the `ICac
 
 To retrieve or unwrap the `ICache` instance, you can execute the following code example:
 
-```
+[source,java]
+----
 CachingProvider cachingProvider = Caching.getCachingProvider();
 CacheManager cacheManager = cachingProvider.getCacheManager();
 Cache<Object, Object> cache = cacheManager.getCache( ... );
 
 ICache<Object, Object> unwrappedCache = cache.unwrap( ICache.class );
-```
+----
 
 After unwrapping the `Cache` instance into an `ICache` instance, you have access to all of the following operations, e.g.,
 <<icache-async-methods, ICache Async Methods>> and <<icache-convenience-methods, ICache Convenience Methods>>.
@@ -362,7 +372,8 @@ additional configuration properties over the default JCache configuration. These
 
 The declarative configuration for ICache is a superset of the previously discussed JCache configuration:
 
-```
+[source,xml]
+----
 <cache>
   <!-- ... default cache configuration goes here ... -->
   <backup-count>1</backup-count>
@@ -375,7 +386,7 @@ The declarative configuration for ICache is a superset of the previously discuss
  <quorum-ref>quorum-name</quorum-ref>
  <disable-per-entry-invalidation-events>true</disable-per-entry-invalidation-events>
 </cache>
-```
+----
 
 * `backup-count`: Number of synchronous backups. Those backups are executed before the mutating cache operation is finished. The mutating operation is blocked. Its default value is 1.
 * `async-backup-count`: Number of asynchronous backups. Those backups are executed asynchronously so the mutating operation is not blocked and it will be done immediately. Its default value is 0.  
@@ -469,20 +480,22 @@ parameter, as in the list of asynchronous methods in the <<icache-async-methods,
 
 Here is how an `ExpiryPolicy` is set on JCache configuration:
 
-```
+[source,java]
+----
 CompleteConfiguration<String, String> config =
     new MutableConfiguration<String, String>()
         .setExpiryPolicyFactory(
             AccessedExpiryPolicy.factoryOf( Duration.ONE_MINUTE )
         );
-```
+----
 
 To pass a custom `ExpiryPolicy`, a set of overloads is provided. You can use them as shown in the following code example.
 
-```
+[source,java]
+----
 ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
 unwrappedCache.put( 1, "value", new AccessedExpiryPolicy( Duration.ONE_DAY ) );
-```
+----
 
 The `ExpiryPolicy` instance can be pre-created, cached and re-used, but only for each cache instance. This is because `ExpiryPolicy`
 implementations can be marked as `java.io.Closeable`. The following list shows the provided method overloads over `javax.cache.Cache`
@@ -601,7 +614,8 @@ You can specify the full class name of custom `EvictionPolicyComparator` (`Cache
 through `EvictionConfig`. This approach is useful when eviction configuration is specified at the client side 
 and custom `EvictionPolicyComparator` implementation class itself does not exist at the client but at server side.
 
-```
+[source,java]
+----
 CacheConfig cacheConfig = new CacheConfig();
 ...
 EvictionConfig evictionConfig = 
@@ -609,11 +623,12 @@ EvictionConfig evictionConfig =
                        MaxSizePolicy.ENTRY_COUNT, 
                        "com.mycompany.MyEvictionPolicyComparator");
 cacheConfig.setEvictionConfig(evictionConfig);
-```
+----
 
 You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) instance itself directly through `EvictionConfig`. 
 
-```
+[source,java]
+----
 CacheConfig cacheConfig = new CacheConfig();
 ...
 EvictionConfig evictionConfig = 
@@ -621,38 +636,41 @@ EvictionConfig evictionConfig =
                        MaxSizePolicy.ENTRY_COUNT, 
                        new MyEvictionPolicyComparator());
 cacheConfig.setEvictionConfig(evictionConfig);
-```
+----
 
 **Declarative:**
 
 You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
 in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast configuration XML file.
 
-```
+[source,xml]
+----
 <cache name="cacheWithCustomEvictionPolicyComparator"> 
     <eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/> 
 </cache>
-```
+----
 
 **Declarative for Spring:**
 
 You can specify the full class name of custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
 in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast *Spring* configuration XML file.
 
-```
+[source,xml]
+----
 <hz:cache name="cacheWithCustomEvictionPolicyComparator">
     <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/>
 </hz:cache>
-```
+----
 
 You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator` for JCache and its Near Cache) bean in the `<eviction>` tag 
 by referencing through `comparator-bean` attribute in Hazelcast *Spring* configuration XML file
 
-```
+[source,xml]
+----
 <hz:cache name="cacheWithCustomEvictionPolicyComparator">
     <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-bean="myEvictionPolicyComparatorBean"/>
 </hz:cache>
-```
+----
 
 ===== Eviction Strategy
 

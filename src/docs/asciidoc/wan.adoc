@@ -38,7 +38,8 @@ You can use at most one of these when defining a single WAN publisher.
 
 Below is an example of declarative configuration of WAN Replication from New York cluster to target the London cluster:
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
   <wan-replication name="my-wan-cluster-batch">
@@ -61,7 +62,7 @@ Below is an example of declarative configuration of WAN Replication from New Yor
   </wan-replication>
 ...
 </hazelcast>
-```
+----
 
 Following are the definitions of configuration elements:
 
@@ -105,7 +106,8 @@ NOTE: When using the discovery SPI, WAN will always connect to the public addres
  
 Following is an example of setting up the WAN replication with the EC2 discovery plugin. You must have the https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS EC2 discovery plugin] on the classpath.
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
   <wan-replication name="my-wan-cluster-batch">
@@ -144,13 +146,14 @@ Following is an example of setting up the WAN replication with the EC2 discovery
   </wan-replication>
 ...
 </hazelcast>
-```
+----
 
 The `hz-port` property defines the port or the port range on which the target endpoint is running. The default port range 5701-5708 is used if this property is not defined. This is needed because the Amazon API which the AWS plugin uses does not provide the port on which Hazelcast is running, only the IP address. For some other discovery SPI implementations, this might not be necessary and it might discover the port as well, e.g., by looking up in a service registry.
 
 The other properties are the same as when using the `aws` element. In case of EC2 discovery you can configure the WAN replication using the `aws` element. You may use either of these, but not both at the same time.
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
   <wan-replication name="my-wan-cluster-batch">
@@ -184,7 +187,7 @@ The other properties are the same as when using the `aws` element. In case of EC
   </wan-replication>
 ...
 </hazelcast>
-```
+----
 
 You can refer to the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. Following are the definitions of additional configuration properties:
 
@@ -224,7 +227,8 @@ Yon can configure the WAN replication for Hazelcast's IMap and ICache data struc
 Imagine you have different distributed maps, however only one of those maps should be replicated to a target cluster. To achieve this, configure the map that you want
 replicated by adding the `wan-replication-ref` element in the map configuration as shown below.
 
-```
+[source,xml]
+----
 <hazelcast>
   <wan-replication name="my-wan-cluster">
     ...
@@ -237,7 +241,7 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
   </map>
   ...
 </hazelcast>
-```
+----
 
 The following is the equivalent programmatic configuration:
 
@@ -272,7 +276,8 @@ NOTE When using WAN replication, please note that only key based events are repl
 
 The following is a declarative configuration example for enabling WAN Replication for ICache:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
    ...
 </wan-replication>
@@ -282,7 +287,7 @@ The following is a declarative configuration example for enabling WAN Replicatio
       <republishing-enabled>true</republishing-enabled>
    </wan-replication-ref>
 </cache>
-```
+----
 
 The following is the equivalent programmatic configuration:
 
@@ -311,7 +316,8 @@ Batch size can be set for each target cluster by modifying related `WanPublisher
 
 Below is the declarative configuration for changing the value of the property:
 
-```
+[source,xml]
+----
 ...
  <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -325,11 +331,12 @@ Below is the declarative configuration for changing the value of the property:
     </wan-publisher>
  </wan-replication>
 ...
-```
+----
 
 And, following is the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -338,7 +345,7 @@ And, following is the equivalent programmatic configuration:
  props.put("batch.size", 1000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
 NOTE: `WanNoDelayReplication` implementation has been removed. You can still achieve this behavior by setting the batch size to `1` while configuring your WAN replication.
 
@@ -352,7 +359,8 @@ Maximum delay can be set for each target cluster by modifying related `WanPublis
 
 You can change this property using the declarative configuration as shown below.
 
-```
+[source,xml]
+----
 ...
  <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -366,11 +374,12 @@ You can change this property using the declarative configuration as shown below.
     </wan-publisher>
  </wan-replication>
 ...
-```
+----
 
 And, the following is the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -379,7 +388,7 @@ And, the following is the equivalent programmatic configuration:
  props.put("batch.max.delay.millis", 2000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
 
 ==== Response Timeout
@@ -391,7 +400,8 @@ You can change this duration depending on your network latency for each target c
 
 Below is an example of declarative configuration:
 
-```
+[source,xml]
+----
 ...
   <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -401,12 +411,13 @@ Below is an example of declarative configuration:
     </wan-publisher>
   </wan-replication>
 ...
-```
+----
 
 And, the following is the equivalent programmatic configuration:
 
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -415,7 +426,7 @@ And, the following is the equivalent programmatic configuration:
  props.put("response.timeout.millis", 5000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
 
 ==== Queue Capacity
@@ -428,7 +439,8 @@ Queue capacity can be set for each target cluster by modifying related `WanPubli
 
 You can change this property using the declarative configuration as shown below.
 
-```
+[source,xml]
+----
 ...
  <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -438,11 +450,12 @@ You can change this property using the declarative configuration as shown below.
     </target-cluster>
  </wan-replication>
 ...
-```
+----
 
 And, the following is the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -450,7 +463,7 @@ And, the following is the equivalent programmatic configuration:
  publisherConfig.setQueueCapacity(15000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
 Note that you can clear a member's WAN replication event queue. It can be initiated through Management Center's http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-wan-replication[Clear Queues action] or Hazelcast’s REST API. Below is the URL for its REST call:
 
@@ -474,17 +487,17 @@ If one the queues of target cluster is full, `WANReplicationQueueFullException` 
 - `THROW_EXCEPTION_ONLY_IF_REPLICATION_ACTIVE`: Its effect is similar to that of `THROW_EXCEPTION`. But, it  throws exception only when WAN replication is active. It discards the new events if WAN replication is stopped.
 
 
-
 The following is an example configuration:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
   <wan-publisher group-name="test-cluster-1">
     ...
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
   </wan-publisher>
 </wan-replication>
-```
+----
 
 NOTE: `queue-full-behavior` configuration is optional. Its default value is `DISCARD_AFTER_MUTATION`.
 
@@ -497,7 +510,8 @@ separately.
 
 You can attach filters to your data structures using  `filter` property of `wan-replication-ref` configuration inside `hazelcast.xml` as shown in the following example configuration. You can also configure it using the programmatic configuration.
 
-```
+[source,xml]
+----
 <hazelcast>
   <map name="testMap">
     <wan-replication-ref name="test">
@@ -508,7 +522,7 @@ You can attach filters to your data structures using  `filter` property of `wan-
     </wan-replication-ref>
   </map>
 </hazelcast>
-```
+----
 
 As shown in the above configuration, you can define more than one filter. Filters are called in the order that they are introduced.
 A WAN replication event is only eligible to publish if it passes all the filters.
@@ -533,7 +547,8 @@ You can choose from 2 different ACK type depending on your consistency requireme
 
 Following is an example configuration:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
   <wan-publisher group-name="test-cluster-1">
     ...
@@ -542,7 +557,7 @@ Following is an example configuration:
     </properties>
   </wan-publisher>
 </wan-replication>
-```
+----
 
 NOTE: `ack.type` configuration is optional. Its default value is `ACK_ON_RECEIPT`.
 
@@ -569,7 +584,8 @@ You need to add parameters to the request in the following order separated by "&
 
 Assume that you have configured an IMap with a WAN replication configuration as follows:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
       <wan-publisher group-name="istanbul">
           <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
@@ -582,7 +598,7 @@ Assume that you have configured an IMap with a WAN replication configuration as 
        <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
     </wan-replication-ref>
 </map>
-```
+----
 
 Then, a sample CURL command to initiate the synchronization for "my-map" would be as follows:
 
@@ -763,13 +779,14 @@ To publish and consume WAN replication events on Solace appliances, Hazelcast WA
 You can register these classes using the configuration elements `<wan-publisher>` and `<wan-consumer>` while configuring your WAN replication.
 `SolaceWanPublisher` and `SolaceWanConsumer` are included in the `hazelcast-solace` library which can be found in following Maven coordinates:
 
-```
+[source,xml]
+----
   <dependency>
     <groupId>com.hazelcast</groupId>
     <artifactId>hazelcast-solace</artifactId>
     <version>1.0.0</version>
   </dependency>
-```
+----
  
 NOTE: The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the <<installing-hazelcast-imdg-enterprise, Installing Hazelcast IMDG Enterprise section>> for information on how to configure this repository.
  

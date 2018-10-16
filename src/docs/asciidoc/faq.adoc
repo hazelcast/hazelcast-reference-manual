@@ -66,11 +66,12 @@ Implementing `equals` and `hashCode` is not enough, it is also important that th
 
 Hazelcast always return a clone copy of a value. Modifying the returned value does not change the actual value in the map (or multimap, list, set). You should put the modified value back to make changes visible to all members.
 
-```
+[source,java]
+----
 V value = map.get( key );
 value.updateSomeProperty();
 map.put( key, value );
-```
+----
 
 Collections which return values of methods (such as `IMap.keySet`, `IMap.values`, `IMap.entrySet`, `MultiMap.get`, `MultiMap.remove`, `IMap.keySet`, `IMap.values`) contain cloned values. These collections are NOT backed up by related Hazelcast objects. Therefore, changes to them are **NOT** reflected in the originals and vice-versa.
 
@@ -83,7 +84,8 @@ This enables you to write and to run cluster unit tests on a single JVM. Because
 
 Let's say you want to test if two members have the same size of a map.
 
-```
+[source,java]
+----
 @Test
 public void testTwoMemberMapSizes() {
   // start the first member
@@ -104,11 +106,12 @@ public void testTwoMemberMapSizes() {
   // check the size of map1 again
   assertEquals( 1000, map1.size() );
 }
-```
+----
 
 In the test above, everything happens in the same thread. When developing a multi-threaded test, you need to carefully handle coordination of the thread executions. it is highly recommended that you use `CountDownLatch` for thread coordination (you can certainly use other ways). Here is an example where we need to listen for messages and make sure that we got these messages.
 
-```
+[source,java]
+----
 @Test
 public void testTopic() {
   // start two member cluster
@@ -147,15 +150,17 @@ public void testTopic() {
   } catch ( InterruptedException ignored ) {
   }
 }
-```
+----
+
 You can start Hazelcast members with different configurations. Remember to call `Hazelcast.shutdownAll()` after each test case to make sure that there is no other running member left from the previous tests.
 
-```
+[source,java]
+----
 @After
 public void cleanup() throws Exception {
   Hazelcast.shutdownAll();
 }
-```
+----
 
 For more information please https://github.com/hazelcast/hazelcast/tree/master/hazelcast/src/test/java/com/hazelcast/cluster[check our existing tests].
 
@@ -208,13 +213,14 @@ By changing the log level to "Debug". Below are sample lines for **log4j** loggi
 
 First, set the logging type as follows.
 
-```
+[source,java]
+----
 String location = "log4j.configuration";
 String logging = "hazelcast.logging.type";
 System.setProperty( logging, "log4j" );
 /**if you want to give a new location. **/
 System.setProperty( location, "file:/path/mylog4j.properties" );
-```
+----
 
 Then set the log level to "Debug" in the properties file. Below is example content.
 
@@ -287,21 +293,23 @@ However, there is no such guarantee for termination.
 
 Below code snippet terminates a member if the cluster is safe, which means that there are no partitions being migrated and all backups are in sync when this method is called.
 
-```
+[source,java]
+----
 PartitionService partitionService = hazelcastInstance.getPartitionService();
 if (partitionService.isClusterSafe()) {
   hazelcastInstance.getLifecycleService().terminate(); 
 }
-```
+----
 
 Below code snippet terminates the local member if the member is safe to terminate, which means that all backups of partitions currently owned by local member are in sync when this method is called.
 
-```
+[source,java]
+----
 PartitionService partitionService = hazelcastInstance.getPartitionService();
 if (partitionService.isLocalMemberSafe()) {
   hazelcastInstance.getLifecycleService().terminate();
 }
-```
+----
 
 Please keep in mind that two code snippets shown above are inherently racy. If member failures occur in the cluster after the safety condition check passes, termination of the local member can lead to data loss. For safety of the data, graceful shutdown API is highly recommended.  
 
@@ -391,7 +399,8 @@ Repartitioning is the process of redistributing the partition ownerships. Hazelc
 
 Assume you have two instances on two different machines and you develop a configuration as shown below.
 
-```
+[source,java]
+----
 Config config = new Config();
 NetworkConfig network = config.getNetworkConfig();
 
@@ -401,7 +410,8 @@ join.getTcpIpConfig().addMember("IP1")
     .addMember("IP2").setEnabled(true);
 network.getInterfaces().setEnabled(true)
     .addInterface("IP1").addInterface("IP2");
-```    
+----
+
 When you create the Hazelcast instance, you have to pass the configuration to the instance. If you create the instances without passing the configuration, each instance starts but cannot see each other. Therefore, a correct way to create the instance is the following:
 
 ```

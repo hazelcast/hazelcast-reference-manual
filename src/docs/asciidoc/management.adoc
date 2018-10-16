@@ -495,11 +495,12 @@ Then enable the Hazelcast property `hazelcast.jmx` (please refer to the <<system
 
 * By declarative configuration:
 +
-```
+[source,xml]
+----
 <properties>
    <property name="hazelcast.jmx">true</property>
 </properties>
-```
+----
 +
 * By programmatic configuration:
 +
@@ -507,11 +508,12 @@ Then enable the Hazelcast property `hazelcast.jmx` (please refer to the <<system
 +
 * By Spring XML configuration:
 +
-```
+[source,xml]
+----
 <hz:properties>
   <hz: property name="hazelcast.jmx">true</hz:property>
 </hz:properties>
-```
+----
 +
 * By setting the system property `-Dhazelcast.jmx=true`
 
@@ -520,9 +522,10 @@ Then enable the Hazelcast property `hazelcast.jmx` (please refer to the <<system
 
 Hazelcast set the naming convention for MBeans as follows:
 
-```
+[source,java]
+----
 final ObjectName mapMBeanName = new ObjectName("com.hazelcast:instance=_hzInstance_1_dev,type=IMap,name=trial");
-```
+----
 
 The MBeans name consists of the Hazelcast instance name, the type of the data structure and that data structure's name. In the above sample, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`.
 
@@ -557,10 +560,11 @@ MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
 
 Once you get the `MBeanServerConnection` object, you can call the getter methods of MBeans as follows:
 
-```
+[source,java]
+----
 System.out.println("\nTotal entries on map " + mbsc.getAttribute(mapMBeanName, "name") + " : "
                 + mbsc.getAttribute(mapMBeanName, "localOwnedEntryCount"));
-```
+----
 
 === Cluster Utilities
 
@@ -648,7 +652,8 @@ NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the clu
 The following snippet is from the `Cluster` interface showing the methods used to manage your cluster's states.
 
 
-```
+[source,java]
+----
 public interface Cluster {
 ...
 ...
@@ -657,7 +662,7 @@ public interface Cluster {
     void changeClusterState(ClusterState newState, TransactionOptions transactionOptions);
     void shutdown();
     void shutdown(TransactionOptions transactionOptions);
-```
+----
 
 Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface] for information on these methods.
 
@@ -905,18 +910,20 @@ You can enable a cluster member to be a lite member using declarative or program
 
 **Declarative Configuration:**
 
-```
+[source,xml]
+----
 <hazelcast>
     <lite-member enabled="true">
 </hazelcast>
-```
+----
 
 **Programmatic Configuration:**
 
-```
+[source,java]
+----
 Config config = new Config();
 config.setLiteMember(true);
-```
+----
 
 ===== Promoting Lite Members to Data Member
 
@@ -994,11 +1001,12 @@ For another example, you can tag some members with a filter so that a member in 
 
 You can also configure your member attributes through declarative configuration and start your member afterwards. Here is how you can use the declarative approach:
 
-```
+[source,xml]
+----
 <member-attributes>
   <attribute name="CPU_CORE_COUNT">4</attribute-name>
 </member-attributes>
-```
+----
 
 ==== Safety Checking Cluster Members
 
@@ -1013,7 +1021,8 @@ Please note that the process of shutting down members waits for a predefined amo
 With the improvements in graceful shutdown procedure in Hazelcast 3.7, the following methods are not needed to perform graceful shutdown. Nevertheless, you can use them to check the current safety status of the partitions in your cluster.
 
 
-```
+[source,java]
+----
 public interface PartitionService {
    ...
    ...
@@ -1022,7 +1031,7 @@ public interface PartitionService {
     boolean isLocalMemberSafe();
     boolean forceLocalMemberToBeSafe(long timeout, TimeUnit unit);
 }
-```
+----
 
 The method `isClusterSafe` checks whether the cluster is in a safe state. It returns `true` if there are no active partition migrations and all backups are in sync for each partition.
 

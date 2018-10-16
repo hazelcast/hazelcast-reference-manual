@@ -331,7 +331,8 @@ The only method you should implement is `create`, as seen in the above example. 
 
 As the last step, you need to register `EmployeeDataSerializableFactory` declaratively (declare in the configuration file `hazelcast.xml`) as shown below. Note that `factory-id` has the same value of `FACTORY_ID` in the above code. This is crucial to enable Hazelcast to find the correct factory.
 
-```
+[source,xml]
+----
 <hazelcast> 
   ...
   <serialization>
@@ -343,8 +344,7 @@ As the last step, you need to register `EmployeeDataSerializableFactory` declara
   </serialization>
   ...
 </hazelcast>
-```
-
+----
 
 NOTE: Please refer to the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>> for a full description of Hazelcast Serialization configuration.
 
@@ -398,10 +398,11 @@ The last step is to register the `Factory` to the `SerializationConfig`. Below a
 ----
 Config config = new Config();
 config.getSerializationConfig().addPortableFactory( 1, new MyPortableFactory() );
-```
+----
 
 
-```xml
+[source,xml]
+----
 <hazelcast>
   <serialization>
     <portable-version>0</portable-version>
@@ -425,7 +426,8 @@ Portable serialization supports versioning. It is a global versioning, meaning t
 
 You can declare Version in the configuration file `hazelcast.xml` using the `portable-version` element, as shown below.
 
-```
+[source,xml]
+----
 <serialization>
   <portable-version>1</portable-version>
   <portable-factories>
@@ -434,7 +436,7 @@ You can declare Version in the configuration file `hazelcast.xml` using the `por
     </portable-factory>
   </portable-factories>
 </serialization>
-```
+----
 
 You can also use the interface http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/nio/serialization/VersionedPortable.html[VersionedPortable] which enables to upgrade the version per class, instead of global versioning. If you need to update only one class, you can use this interface. In this case, your class should implement `VersionedPortable` instead of `Portable`, and you can give the desired version using the method `VersionedPortable.getClassVersion()`.
 
@@ -483,14 +485,14 @@ without explicitly registering class definition!`.
 There are two solutions to get rid of this exception. Either put
 a non-null portable class of the same type before any other operation, or manually register a class definition in serialization configuration as shown below.
 
-```
+[source,java]
+----
 Config config = new Config();
 final ClassDefinition classDefinition = new ClassDefinitionBuilder(Foo.factoryId, Foo.getClassId)
                        .addUTFField("foo").build();
 config.getSerializationConfig().addClassDefinition(classDefinition);
 Hazelcast.newHazelcastInstance(config);
-```
-
+----
 
 ==== DistributedObject Serialization
 
@@ -530,13 +532,14 @@ In practice, classes may have many fields. Just make sure the fields are read in
 
 As the last step, let's register the `EmployeeStreamSerializer` in the configuration file `hazelcast.xml`, as shown below.
 
-```
+[source,xml]
+----
 <serialization>
   <serializers>
     <serializer type-class="Employee" class-name="EmployeeStreamSerializer" />
   </serializers>
 </serialization>
-```
+----
  
 NOTE: `StreamSerializer` cannot be created for well-known types, such as Long and String and primitive arrays. Hazelcast already registers these types.
 
@@ -572,16 +575,17 @@ include::{javasource}/serialization/FooXmlSerializer.java[tag=fooxml]
 
 Note that `typeId` must be unique because Hazelcast will use it to look up the `StreamSerializer` while it deserializes the object. The last required step is to register the `StreamSerializer` in your Hazelcast configuration. Below are the programmatic and declarative configurations for this step.
 
-```
+[source,xml]
+----
 SerializerConfig sc = new SerializerConfig()
     .setImplementation(new FooXmlSerializer())
     .setTypeClass(Foo.class);
 Config config = new Config();
 config.getSerializationConfig().addSerializerConfig(sc);
-```
+----
 
-
-```
+[source,xml]
+----
 <hazelcast>
   <serialization>
     <serializers>
@@ -589,7 +593,7 @@ config.getSerializationConfig().addSerializerConfig(sc);
     </serializers>
   </serialization>
 </hazelcast>
-```
+----
 
 From now on, this Hazelcast example will use `FooXmlSerializer`
 to serialize Foo objects. In this way, you can write an adapter (StreamSerializer) for any Serialization framework and plug it into Hazelcast.
@@ -612,13 +616,14 @@ include::{javasource}/serialization/EmployeeByteArraySerializer.java[tag=empbas]
 
 As usual, let's register the `EmployeeByteArraySerializer` in the configuration file `hazelcast.xml`, as shown below.
 
-```
+[source,xml]
+----
 <serialization>
   <serializers>
     <serializer type-class="Employee">EmployeeByteArraySerializer</serializer>
   </serializers>
 </serialization>
-```
+----
 
 NOTE: Please refer to the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>> for a full description of Hazelcast Serialization configuration.
 
@@ -683,13 +688,14 @@ public class GlobalStreamSerializer
 
 Now, we can register the global serializer in the configuration file `hazelcast.xml`, as shown below.
 
-```
+[source,xml]
+----
 <serialization>
   <serializers>
     <global-serializer override-java-serialization="true">GlobalStreamSerializer</global-serializer>
   </serializers>
 </serialization>
-```
+----
 
 === Implementing HazelcastInstanceAware
 
@@ -778,7 +784,8 @@ This section summarizes the configuration of serialization options, explained in
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <serialization>
    <portable-version>2</portable-version>
    <use-native-byte-order>true</use-native-byte-order>
@@ -803,7 +810,7 @@ This section summarizes the configuration of serialization options, explained in
    </serializers>
    <check-class-def-errors>true</check-class-def-errors>
 </serialization>
-```
+----
 
 **Programmatic:**
 

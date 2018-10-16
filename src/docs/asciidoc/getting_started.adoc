@@ -38,7 +38,8 @@ As an alternative, you can download and install Hazelcast IMDG yourself. You onl
 
 There are two Maven repositories defined for Hazelcast IMDG Enterprise:
 
-```
+[source,xml]
+----
 <repository>
    <id>Hazelcast Private Snapshot Repository</id>
    <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
@@ -47,11 +48,12 @@ There are two Maven repositories defined for Hazelcast IMDG Enterprise:
    <id>Hazelcast Private Release Repository</id>
    <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
 </repository>
-```
+----
 
 Hazelcast IMDG Enterprise customers may also define dependencies, a sample of which is shown below.
 
-```
+[source,xml]
+----
 <dependency>
    <groupId>com.hazelcast</groupId>
    <artifactId>hazelcast-enterprise</artifactId>
@@ -62,7 +64,7 @@ Hazelcast IMDG Enterprise customers may also define dependencies, a sample of wh
    <artifactId>hazelcast-enterprise-all</artifactId>
    <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
-```
+----
 
 [[setting-the-license-key]]
 ==== Setting the License Key
@@ -414,9 +416,10 @@ In this new class, system properties are instances of the newly introduced `Haze
 
 * **Removal of deprecated static methods:** The static methods of Hazelcast class reaching Hazelcast data components have been removed. The functionality of these methods can be reached from the HazelcastInstance interface. You should replace the following:
 +
-```
+[source,java]
+----
 Map<Integer, String> customers = Hazelcast.getMap( "customers" );
-```
+----
 +
 with
 +
