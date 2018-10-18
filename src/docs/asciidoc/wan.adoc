@@ -651,17 +651,17 @@ That means, as far as you set a backup count for your IMap or ICache instances, 
  
 There is no additional configuration to enable/disable WAN replication event backups.
 
-=== Synchronizing WAN Clusters Using Merkle Trees
+=== Delta WAN Synchronization
 
 Hazelcast clusters connected over WAN can go out-of-sync because of various reasons such as member failures and concurrent updates. To overcome the out-of-sync issue, Hazelcast has the default <<synchronizing-wan-target-cluster, WAN synchronization>> feature, through which the maps in different clusters are synced by transferring all entries from the source to the target cluster. This may be not efficient since some of the entries have remained unchanged on both clusters and do not require to be transferred. Also, for the entries to be transferred, they need to be copied to on-heap on the source cluster. This may cause spikes in the heap usage, especially if using large off-heap stores.
 
-Besides the default WAN synchronization, Hazelcast can use https://en.wikipedia.org/wiki/Merkle_tree[Merkle tree] for the same purpose. It is a data structure used for efficient comparison of the difference in the contents of large data structures. The precision of this comparison is defined by Merkle tree's depth. Merkle tree hash exchanges can detect inconsistencies in the map data and synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
+Besides the default WAN synchronization, Hazelcast provides Delta WAN Synchronization which uses https://en.wikipedia.org/wiki/Merkle_tree[Merkle tree] for the same purpose. It is a data structure used for efficient comparison of the difference in the contents of large data structures. The precision of this comparison is defined by Merkle tree's depth. Merkle tree hash exchanges can detect inconsistencies in the map data and synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
 
-NOTE: Currently, Merkle tree structure is implemented only for Hazelcast IMap. It will also be implemented for ICache in the future releases.
+NOTE: Currently, Delta WAN Synchronization is implemented only for Hazelcast IMap. It will also be implemented for ICache in the future releases.
 
 ==== Requirements
 
-To be able to use Merkle trees for WAN synchronization, the following must be met:
+To be able to use Delta WAN synchronization, the following must be met:
 
 * Source and target cluster versions must be at least Hazelcast 3.11.
 * Both clusters must have the same number of partitions.
@@ -669,9 +669,9 @@ To be able to use Merkle trees for WAN synchronization, the following must be me
 * Both clusters must have the Merkle tree structure enabled.
 
 
-==== Using Merkle Tree
+==== Using Delta WAN Synchronization
 
-To be able to use the Merkle tree as a WAN synchronization strategy for a Hazelcast data structure: 
+To be able to use Delta WAN synchronization for a Hazelcast data structure: 
 
 . Configure the WAN synchronization mechanism for your WAN publisher so that it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of the `wan-sync` element. If configuring programmatically, you can use the setter of the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/WanSyncConfig.html[`WanSyncConfig`] object.
 . Bind that WAN synchronization configuration to the data structure (currently IMap): Simply set the WAN replication reference of your map to the name of the WAN replication configuration which uses the Merkle tree.
@@ -704,11 +704,11 @@ Here, the element `consistency-check-strategy` sets the strategy for checking th
 * `NONE`: Means that there will be no consistency checks. This is the default value.
 * `MERKLE_TREES`: Means that WAN synchronization will use Merkle tree structure.
 
-==== Configuring Merkle Tree
+==== Configuring Delta WAN Synchronization
 
-You can configure a Merkle tree declaratively using the `merkle-tree` element or programmatically using the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/MerkleTreeConfig.html[`MerkleTreeConfig`] object.
+You can configure Delta WAN Synchronization declaratively using the `merkle-tree` element or programmatically using the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/MerkleTreeConfig.html[`MerkleTreeConfig`] object.
 
-Following is a declarative configuration example showing how to enable the Merkle tree structure, bind it to a Hazelcast data structure (an IMap in the below case) and specify its depth.
+Following is a declarative configuration example showing how to enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap in the below case) and specify its depth.
 
 [source,xml]
 ----
@@ -718,7 +718,7 @@ Following is a declarative configuration example showing how to enable the Merkl
 </merkle-tree>
 ----
 
-Here are the descriptions of Merkle tree configuration sub-elements and attributes:
+Here are the descriptions of sub-elements and attributes:
 
 * `enabled`: Specifies whether the Merkle tree structure is enabled. Its default value is `true`.
 * `mapName`: Specifies the name of the map for which the Merkle tree structure is used.
@@ -758,7 +758,7 @@ NOTE: If you do not specifically configure the `merkle-tree` in your Hazelcast c
 
 
 NOTE: Merkle trees are created for each partition holding IMap data. Therefore, increasing the partition count also
-increases the efficiency of the Merkle tree based synchronization.
+increases the efficiency of the Delta WAN Synchronization.
 
 === Hazelcast WAN Replication with Solace
 
