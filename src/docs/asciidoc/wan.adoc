@@ -764,21 +764,21 @@ increases the efficiency of the Delta WAN Synchronization.
 
 Synchronizing the maps based on Merkle trees consists of two phases:
 
-1. _Consistency check_: this is the process of exchanging and comparing the hashes stored in the Merkle tree structures in the
-source and the target clusters. The check starts with the root node and continues recursively with the children with different
-hash codes. Both sides sends the children of the nodes that the other side sent, hence the comparison is done by `depth/2`
-steps. After this check the tree leaves holding different entries are identified.
-2. _Synchronization_: this is the process of transferring the entries belong to the leaves identified by the _consistency
-check_ from the source to the target cluster. On the target cluster the configured merge policy is applied for each entry that
-is in both the source and the target clusters.
+1. _Consistency check_: Process of exchanging and comparing the hashes stored in the Merkle tree structures in the
+source and target clusters. The check starts with the root node and continues recursively with the children with different
+hash codes. Both sides send the children of the nodes that the other side sent, hence the comparison is done by `depth/2`
+steps. After this check, the tree leaves holding different entries are identified.
+2. _Synchronization_: Process of transferring the entries belong to the leaves identified by the _consistency
+check_ from the source to target cluster. On the target cluster the configured merge policy is applied for each entry that
+is in both the source and target clusters.
 
-NOTE: If only the difference between the clusters needs to be known, the consistency check can be triggered without performing
+NOTE: If you only need the differences between the clusters, you can trigger the consistency check without performing
 synchronization.
 
 ==== Memory Consumption
 
 Since Merkle trees are built for each partition and each map, the memory overhead of the trees with high entry count and deep
-trees can be significant. The trees are maintained on-heap, therefore - besides the memory consumption - GC could be another
+trees can be significant. The trees are maintained on-heap, therefore - besides the memory consumption - garbage collection could be another
 concern. Make sure the configuration is tested with realistic data size before deployed in production.
 
 The table below shows a few examples for what the memory overhead could be.
@@ -839,18 +839,17 @@ The table below shows a few examples for what the memory overhead could be.
 
 ==== Defining the Depth
 
-The efficiency of the Merkle tree based synchronization is determined by the average number of the entries per the tree
-leaves that is proportionate to the number of the entries in the map. The bigger this average the more entries are getting
-synchronized for the same difference. Raising the depth decreases this average at the cost of increasing the memory
- overhead.
+The efficiency of the Delta WAN Synchronization (WAN synchronization based on Merkle trees) is determined by the average number of entries per the tree
+leaves that is proportionate to the number of entries in the map. The bigger this average the more entries are getting
+synchronized for the same difference. Raising the depth decreases this average at the cost of increasing the memory overhead.
 
 This average can be calculated for a map as `avgEntriesPerLeaf = mapEntryCount / totalLeafCount`, where `totalLeafCount =
 partitionCount * 2^depth-1^`. The ideal value is 1, however this may come at significant memory overhead as shown in the
 table above.
 
-In order to specify the tree depth, a trade-off between memory consumption and effectiveness may need to be made.
+In order to specify the tree depth, a trade-off between memory consumption and effectiveness might be needed.
 
-Even if the map is huge and the Merkle trees configured to be relatively shallow, the Merkle tree based synchronization
+Even if the map is huge and the Merkle trees are configured to be relatively shallow, the Merkle tree based synchronization
 may be leveraged if only a small subset of the whole map is expected to be synchronized. The table below illustrates the
 efficiency of the Merkle tree based synchronization compared to the default synchronization mechanism.
 
@@ -940,7 +939,7 @@ NOTE: Consistency check can be triggered only for one map.
 
 ==== Statistics
 
-The consistency check and the synchronization both writes statistics into the diagnostics subsystem and sends it
+The consistency check and the synchronization both write statistics into the diagnostics subsystem and send it
  to the Management Center. The following reported fields can be used to reason about the efficiency of the configuration.
 
 Consistency check reports the number of the
