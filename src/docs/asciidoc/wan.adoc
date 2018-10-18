@@ -760,6 +760,201 @@ NOTE: If you do not specifically configure the `merkle-tree` in your Hazelcast c
 NOTE: Merkle trees are created for each partition holding IMap data. Therefore, increasing the partition count also
 increases the efficiency of the Delta WAN Synchronization.
 
+==== The Process
+
+Synchronizing the maps based on Merkle trees consists of two phases:
+
+1. _Consistency check_: this is the process of exchanging and comparing the hashes stored in the Merkle tree structures in the
+source and the target clusters. The check starts with the root node and continues recursively with the children with different
+hash codes. Both sides sends the children of the nodes that the other side sent, hence the comparison is done by `depth/2`
+steps. After this check the tree leaves holding different entries are identified.
+2. _Synchronization_: this is the process of transferring the entries belong to the leaves identified by the _consistency
+check_ from the source to the target cluster. On the target cluster the configured merge policy is applied for each entry that
+is in both the source and the target clusters.
+
+NOTE: If only the difference between the clusters needs to be known, the consistency check can be triggered without performing
+synchronization.
+
+==== Memory Consumption
+
+Since Merkle trees are built for each partition and each map, the memory overhead of the trees with high entry count and deep
+trees can be significant. The trees are maintained on-heap, therefore - besides the memory consumption - GC could be another
+concern. Make sure the configuration is tested with realistic data size before deployed in production.
+
+The table below shows a few examples for what the memory overhead could be.
+
+.Merkle trees memory overhead for a member
+|===
+|Entries Stored |Partitions Owned |Entries per Leaf |Depth |Memory Overhead
+
+|1M
+|271
+|7
+|10
+|57 MB
+
+|1M
+|271
+|1
+|13
+|97 MB
+
+|10M
+|271
+|72
+|10
+|412 MB
+
+|10M
+|271
+|9
+|13
+|453 MB
+
+|10M
+|5001
+|4
+|10
+|577 MB
+
+|10M
+|5001
+|1
+|12
+|899 MB
+
+|25M
+|5001
+|10
+|10
+|1983 MB
+
+|25M
+|5001
+|1
+|13
+|2735 MB
+
+|===
+
+==== Defining the Depth
+
+The efficiency of the Merkle tree based synchronization is determined by the average number of the entries per the tree
+leaves that is proportionate to the number of the entries in the map. The bigger this average the more entries are getting
+synchronized for the same difference. Raising the depth decreases this average at the cost of increasing the memory
+ overhead.
+
+This average can be calculated for a map as `avgEntriesPerLeaf = mapEntryCount / totalLeafCount`, where `totalLeafCount =
+partitionCount * 2^depth-1^`. The ideal value is 1, however this may come at significant memory overhead as shown in the
+table above.
+
+In order to specify the tree depth, a trade-off between memory consumption and effectiveness may need to be made.
+
+Even if the map is huge and the Merkle trees configured to be relatively shallow, the Merkle tree based synchronization
+may be leveraged if only a small subset of the whole map is expected to be synchronized. The table below illustrates the
+efficiency of the Merkle tree based synchronization compared to the default synchronization mechanism.
+
+
+.Efficiency examples
+|===
+|Map entry count |Difference count |Depth |Memory consumption |Avg entries / leaf |Entries synced |Efficiency
+
+|10M
+|5M
+|11
+|684 MB
+|2
+|10M
+|0%
+
+|10M
+|5M
+|12
+|899 MB
+|1
+|5M
+|100%
+
+|10M
+|1M
+|10
+|577 MB
+|4
+|4M
+|150%
+
+|10M
+|10K
+|8
+|496 MB
+|16
+|160K
+|6150%
+
+|10M
+|10K
+|12
+|899 MB
+|1
+|1K
+|99900%
+
+|===
+
+As shown in the last two rows, the Merkle tree based synchronization transfers significantly less entries than what the
+default mechanism does even with 8 deep trees. The efficiency with depth 12 is even better but consumes much more memory.
+
+NOTE: The averages in the table are calculated with 5001 partitions.
+
+NOTE: The average entries per leaf number above assumes perfect distribution of the entries amongst the leaves. Since this is
+typically not true in real-life scenarios the efficiency can be slightly worse. The statistics section below describes how to
+get the actual average for the leaves involved in the synchronization.
+
+==== REST API
+
+The two phases of the Merkle tree based synchronization can be triggered by a REST call, as it can be done with the
+default synchronization.
+
+The URL for the consistency check REST call:
+
+```
+http://member_ip:port/hazelcast/rest/mancenter/wan/consistencyCheck/map
+```
+
+The URL for the synchronization REST call - the same as it is for the default synchronization:
+
+```
+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
+```
+
+You need to add parameters to the request in both cases in the following order separated by "&";
+
+* Name of the WAN replication configuration
+* Target group name
+* Map name to be synchronized
+
+NOTE: You can also use the following URL in your REST call if you want to synchronize all the maps in source and target cluster:
+`http://member_ip:port/hazelcast/rest/mancenter/wan/sync/allmaps`
+
+NOTE: Consistency check can be triggered only for one map.
+
+==== Statistics
+
+The consistency check and the synchronization both writes statistics into the diagnostics subsystem and sends it
+ to the Management Center. The following reported fields can be used to reason about the efficiency of the configuration.
+
+Consistency check reports the number of the
+
+* Merkle tree nodes checked,
+* Merkle tree nodes found to be different,
+* entries needed to be synchronized to make the clusters consistent.
+
+Synchronization reports the
+
+* duration of the synchronization,
+* number of the entries synchronized,
+* average number of the entries per tree leaves in the synchronized leaves.
+
 === Hazelcast WAN Replication with Solace
 
 image::Plugin_New.png[Solace Plugin, 84, 22]
