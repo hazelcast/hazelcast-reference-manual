@@ -933,7 +933,7 @@ As the second step we create the very simple `DiscoveryStrategyFactory` implemen
 include::{javasource}/extendinghazelcast/HostsDiscoveryStrategyFactory.java[tag=hdsf]
 ----
 
-This factory now defines properties known to the discovery strategy implementation and provides a clean way to instantiate it. While creating the `HostsDiscoveryStrategy` we ignore the passed `DiscoveryNode` since this strategy will not support automatic registration of new nodes. In cases where the strategy does not support registration, the environment has to handle this in some provided way.
+This factory now defines properties known to the discovery strategy implementation and provides a clean way to instantiate it. While creating the `HostsDiscoveryStrategy` we ignore the passed `DiscoveryNode` since this strategy will not support automatic registration of new members. In cases where the strategy does not support registration, the environment has to handle this in some provided way.
 
 NOTE: Remember that, when created on a Hazelcast client, the provided `DiscoveryNode` will be null, as there is no local member in existence.
 
