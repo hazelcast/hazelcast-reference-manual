@@ -6,7 +6,7 @@ This chapter explains the usage of Hazelcast in a transactional context. It desc
 
 === Creating a Transaction Interface
 
-You create a `TransactionContext` object to begin, commit and rollback a transaction. You can obtain transaction-aware instances of queues, maps, sets, lists and multimaps via `TransactionContext`, work with them and commit/rollback in one shot. You can see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/TransactionContext.html[TransactionContext API here].
+You create a `TransactionContext` object to begin, commit and rollback a transaction. You can obtain transaction-aware instances of queues, maps, sets, lists and multimaps via `TransactionContext`, work with them and commit/rollback in one shot. You can see the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/TransactionContext.html[TransactionContext API here].
 
 Hazelcast supports two types of transactions: ONE_PHASE and TWO_PHASE. The type of transaction controls what happens when a member crashes while a transaction is committing. The default behavior is TWO_PHASE.
 
@@ -51,7 +51,7 @@ NOTE: It should be noted that in split-brain situations or during a member failu
 
 XA describes the interface between the global transaction manager and the local resource manager. XA allows multiple resources (such as databases, application servers, message queues, transactional caches, etc.) to be accessed within the same transaction, thereby preserving the ACID properties across applications. XA uses a two-phase commit to ensure that all resources either commit or rollback any particular transaction consistently (all do the same).
 
-When you implement the `XAResource` interface, Hazelcast provides XA transactions. You can obtain the `HazelcastXAResource` instance via the `HazelcastInstance getXAResource` method. You can see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/HazelcastXAResource.html[HazelcastXAResource API here].
+When you implement the `XAResource` interface, Hazelcast provides XA transactions. You can obtain the `HazelcastXAResource` instance via the `HazelcastInstance getXAResource` method. You can see the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/transaction/HazelcastXAResource.html[HazelcastXAResource API here].
 
 Below is example code that uses JTA API for transaction management.
 

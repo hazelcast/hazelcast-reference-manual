@@ -142,7 +142,7 @@ include::{javasource}/SampleDOL.java[tag=sampledol]
 Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap` and hence `java.util.Map`. It is the distributed implementation of Java map. You can perform operations like reading and writing from/to a Hazelcast map with the well known get and put methods.
 
 '''
-NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see http://docs.hazelcast.org/docs/jet/latest/manual/#connector-imdg[here] in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
+NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see https://docs.hazelcast.org/docs/jet/latest/manual/#connector-imdg[here] in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
 
 
 [[getting-a-map-and-putting-an-entry]]
@@ -612,7 +612,7 @@ When a `MapStore` implementation is provided, an entry is also put into a user d
 NOTE: Data store needs to be a centralized system that is
 accessible from all Hazelcast members. Persistence to a local file system is not supported.
 
-NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface as you can see in the interface http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapStore.html[code].
+NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface as you can see in the interface https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapStore.html[code].
 
 NOTE: Starting with Hazelcast IMDG 3.11, all loads can be listened via `EntryLoadedListener`.
 
@@ -726,7 +726,7 @@ mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
 });
 ----
 
-To initialize the `MapLoader` implementation with the given map name, configuration properties and the Hazelcast instance, implement the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface]. This interface has the methods `init()` and `destroy()`.
+To initialize the `MapLoader` implementation with the given map name, configuration properties and the Hazelcast instance, implement the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface]. This interface has the methods `init()` and `destroy()`.
 
 The method `init()` initializes the `MapLoader` implementation. Hazelcast calls this method when the map is first used on the Hazelcast instance. The `MapLoader` implementation can initialize the required resources for implementing `MapLoader` such as reading a configuration file or creating a database connection.
 
@@ -739,7 +739,7 @@ To pre-populate the in-memory map when the map is first touched/used, use the `M
 
 If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the keys which are most important to you that you want to load them while initializing the map. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
 
-The `InitialLoadMode` configuration parameter in the class http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapStoreConfig.html[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created and everything becomes ready to use. Also, if you add indices to your map with the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapIndexConfig.html[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
+The `InitialLoadMode` configuration parameter in the class https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapStoreConfig.html[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created and everything becomes ready to use. Also, if you add indices to your map with the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapIndexConfig.html[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
 
 Here is the `MapLoader` initialization flow:
 
@@ -1058,7 +1058,7 @@ Interceptors are different from listeners. With listeners, you take an action af
 
 Map interceptors are chained, so adding the same interceptor multiple times to the same map can result in duplicate effects. This can easily happen when the interceptor is added to the map at member initialization, so that each member adds the same interceptor. When you add the interceptor in this way, be sure to implement the `hashCode()` method to return the same value for every instance of the interceptor. It is not strictly necessary, but it is a good idea to also implement `equals()` as this will ensure that the map interceptor can be removed reliably.
 
-The IMap API has two methods for adding and removing an interceptor to the map: `addInterceptor` and `removeInterceptor`. Please also refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/MapInterceptor.html[`MapInterceptor` interface] to see the methods used to intercept the changes in a map.
+The IMap API has two methods for adding and removing an interceptor to the map: `addInterceptor` and `removeInterceptor`. Please also refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/MapInterceptor.html[`MapInterceptor` interface] to see the methods used to intercept the changes in a map.
 
 The following is an example usage.
 
@@ -1459,7 +1459,7 @@ TransactionalMultiMap:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for MultiMap can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/MultiMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for MultiMap can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/MultiMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -1573,7 +1573,7 @@ TransactionalSet:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for ISet can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SetConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for ISet can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SetConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -1598,7 +1598,7 @@ Hazelcast List (IList) is similar to Hazelcast Set, but Hazelcast List also allo
 
 
 '''
-NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see http://docs.hazelcast.org/docs/jet/latest/manual/#imdg-list[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
+NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see https://docs.hazelcast.org/docs/jet/latest/manual/#imdg-list[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
 
 [[getting-a-list-and-putting-items]]
 ==== Getting a List and Putting Items
@@ -1698,7 +1698,7 @@ TransactionalList:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for IList can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ListConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for IList can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ListConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -2098,7 +2098,7 @@ include::{javasource}/dds/topic/TopicStats.java[tag=ts]
 
 You can disable this feature with topic configuration. Please see the <<configuring-topic, Configuring Topic section>>.
 
-NOTE: These statistics values can be also viewed in Management Center. Please see the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Monitoring Topics section] in Hazelcast Management Center Reference Manual.
+NOTE: These statistics values can be also viewed in Management Center. Please see the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Monitoring Topics section] in Hazelcast Management Center Reference Manual.
 
 [[understanding-topic-behavior]]
 ==== Understanding Topic Behavior
@@ -2590,7 +2590,7 @@ IAtomicLong can be configured to check for a minimum number of available members
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for IAtomicLong can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicLongConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for IAtomicLong can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicLongConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -2715,7 +2715,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for ISemaphore can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SemaphoreConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for ISemaphore can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SemaphoreConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -2799,7 +2799,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for IAtomicReference can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicReferenceConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for IAtomicReference can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicReferenceConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -2868,7 +2868,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for ICountDownLatch can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CountDownLatchConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for ICountDownLatch can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CountDownLatchConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -3283,7 +3283,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Replicated Map can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ReplicatedMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Replicated Map can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ReplicatedMapConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -3321,7 +3321,7 @@ NOTE: Objects must be serializable in a form that Hazelcast understands.
 +
 . Compute the estimate of the set so far `estimator.estimate()`.
 
-Please see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cardinality/CardinalityEstimator.html[cardinality estimator Javadoc] for more information on its API.
+Please see the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cardinality/CardinalityEstimator.html[cardinality estimator Javadoc] for more information on its API.
 
 The following is an example code.
 
@@ -3347,7 +3347,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Cardinality Estimator can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Cardinality Estimator can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -3365,7 +3365,7 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 **Configuring Merge Policy**
 
 While recovering from a Split-Brain syndrome, Cardinality Estimator in the small cluster merges into the bigger cluster based on a configured merge policy. When an estimator merges into the cluster, an estimator with the same name might already exist in the cluster.
-So the merge policy resolves these kinds of conflicts with different out-of-the-box strategies. It can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setMergePolicyConfig()`], or declaratively using the element `merge-policy`. Following is an example declarative configuration:
+So the merge policy resolves these kinds of conflicts with different out-of-the-box strategies. It can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[`setMergePolicyConfig()`], or declaratively using the element `merge-policy`. Following is an example declarative configuration:
 
 [source,xml]
 ----
