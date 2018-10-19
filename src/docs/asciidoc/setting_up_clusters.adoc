@@ -423,10 +423,10 @@ For the property, `provider-mode`, Client User Code Deployment supports only the
 
 The remaining properties, which are `blacklist-prefixes`, `whitelist-prefixes` and `provider-filter` configured at the member side, will effect the client user code deployment's behavior too. For example, assuming that you provide `com.foo` as a blacklist prefix at the member side, the member will discard the classes with the prefix `com.foo` loaded by the client.
 
-==== Using Code Deployment for Non-Java Clients
+==== Adding User Library to CLASSPATH
 
-When you want to use a Hazelcast feature in a non-Java client, you need to make sure that the Hazelcast member recognizes it. For this, you can use the `/user-code` directory that comes with the Hazelcast package and deploy your own code to the member.
-Let's say you use Hazelcast Node.js client and want to use an entry processor. This processor should be `IdentifiedDataSerializable` or `Portable` in the Node.js client. You need to implement the Java equivalents of the processor and its factory on the member side, and put these codes into the `/user-code` directory. Then you can run the `start.sh` script which compiles these codes and adds them to the classpath.
+When you want to use a Hazelcast feature in a non-Java client, you need to make sure that the Hazelcast member recognizes it. For this, you can use the `/user-lib` directory that comes with the Hazelcast package and deploy your own library to the member.
+Let's say you use Hazelcast Node.js client and want to use an entry processor. This processor should be `IdentifiedDataSerializable` or `Portable` in the Node.js client. You need to implement the Java equivalents of the processor and its factory on the member side, and put these compiled class or JAR files into the `/user-lib` directory. Then you can run the `start.sh` script which compiles these codes and adds them to the classpath.
 
 The following is an example code which can be the Java equivalent of entry processor in Node.js client:
  
@@ -498,7 +498,7 @@ And the following is the configuration for the above factory:
 </hazelcast>
 ----
 
-Then, you can start your Hazelcast member by using the start scripts (`start.sh` or `start.bat`) in the `/bin` directory. The start scripts automatically compile your codes and adds them to the classpath.
+Then, you can start your Hazelcast member by using the start scripts (`start.sh` or `start.bat`) in the `/bin` directory. The start scripts automatically adds your class and JAR files to the classpath.
 
 [[partition-group-configuration]]
 === Partition Group Configuration
