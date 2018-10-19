@@ -149,7 +149,7 @@ You can trigger the force start process using the Management Center, REST API an
 
 Please note that force start is a destructive process, which results in deletion of persisted Hot Restart data.
 
-Please refer to the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart functionality] of the Management Center section to learn how you can perform a force start using the Management Center.
+Please refer to the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart functionality] of the Management Center section to learn how you can perform a force start using the Management Center.
 
 ==== Partial Start
 
@@ -159,7 +159,7 @@ Partial start means that the cluster will start with an incomplete member set. D
 
 Partial start is controlled by `cluster-data-recovery-policy` configuration parameter and is not allowed by default. To enable partial start, one of the configuration values `PARTIAL_RECOVERY_MOST_RECENT` or `PARTIAL_RECOVERY_MOST_COMPLETE` should be set. Please see <<configuring-hot-restart, Configuring Hot Restart section>> for details.
 
-When partial start is enabled, Hazelcast can perform a partial start automatically or manually, in case of some members are unable to restart successfully. Partial start proceeds automatically when some members fail to start and join to the cluster in `validation-timeout-seconds`. After the `validation-timeout-seconds` duration is passed, Hot Restart chooses to perform partial start with the members present in the cluster. Moreover, partial start can be requested manually using the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Management Center], <<using-rest-api-for-cluster-management, REST API>> and <<example-usages-for-cluster-sh, cluster management scripts>> before the `validation-timeout-seconds` duration passes.
+When partial start is enabled, Hazelcast can perform a partial start automatically or manually, in case of some members are unable to restart successfully. Partial start proceeds automatically when some members fail to start and join to the cluster in `validation-timeout-seconds`. After the `validation-timeout-seconds` duration is passed, Hot Restart chooses to perform partial start with the members present in the cluster. Moreover, partial start can be requested manually using the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Management Center], <<using-rest-api-for-cluster-management, REST API>> and <<example-usages-for-cluster-sh, cluster management scripts>> before the `validation-timeout-seconds` duration passes.
 
 The other situation to decide to perform a partial start is failures during the data load phase. When Hazelcast learns data load result of all members which have passed the validation step, it automatically performs a partial start with the ones which have successfully restored their Hot Restart data. Please note that partial start does not expect every member to succeed in the data load step. It completes the process when it learns data load result for every member and there is at least one member which has successfully restored its Hot Restart data. Relatedly, if it cannot learn data load result of all members before `data-load-timeout-seconds` duration, it proceeds with the ones which have already completed the data load process.
 

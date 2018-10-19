@@ -109,7 +109,7 @@ characters,  (underscore) is placeholder for only one character.
 * `regex`: Checks if the result of an expression matches some regular expression.
 
 
-NOTE: Please see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc] for all predicates provided.
+NOTE: Please see the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc] for all predicates provided.
 
 
 ===== Combining Predicates with AND, OR, NOT
@@ -272,7 +272,7 @@ values = map.values( pagingPredicate );
 
 If a comparator is not specified for `PagingPredicate`, but you want to get a collection of keys or values page by page, this collection must be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`). Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
-Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the method `setPage()`. This way, if you make a query for the hundredth page, for example, it will get all 100 pages at once instead of reaching the hundredth page one by one using the method `nextPage()`. Please note that this feature tires the memory and refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
+Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the method `setPage()`. This way, if you make a query for the hundredth page, for example, it will get all 100 pages at once instead of reaching the hundredth page one by one using the method `nextPage()`. Please note that this feature tires the memory and refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
 
 Paging Predicate, also known as Order & Limit, is not supported in Transactional Context.
 
@@ -637,7 +637,7 @@ and implement the `extract()` method. This method does not return any values sin
 In order to return multiple results from a single extraction, invoke the `ValueCollector.collect()` method
 multiple times, so that the collector collects all results.
 
-Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html[`ValueCollector`] Javadocs.
+Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html[`ValueCollector`] Javadocs.
 
 ===== ValueExtractor with Portable Serialization
 
@@ -650,7 +650,7 @@ It contains two methods:
  * `read(String path, ValueCollector<T> collector)` - enables passing all results directly to the `ValueCollector`.
  * `read(String path, ValueCallback<T> callback)` - enables filtering, transforming and grouping the result of the read operation and manually passing it to the `ValueCollector`.
 
-Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html[`ValueReader`] Javadoc.
+Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html[`ValueReader`] Javadoc.
 
 ===== Returning Multiple Values from a Single Extraction
 
@@ -940,7 +940,7 @@ Map<String, Long> result = future.get();
 
 As seen above, we create the Job instance and define a mapper, combiner and reducer. Then we submit the request to the cluster. The `submit` method returns an ICompletableFuture that can be used to attach our callbacks or to wait for the result to be processed in a blocking fashion.
 
-There are more options available for job configurations, such as defining a general chunk size or on what keys the operation will operate. For more information, please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
+There are more options available for job configurations, such as defining a general chunk size or on what keys the operation will operate. For more information, please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
 
 ===== Creating Key-Value Input Sources with KeyValueSource
 
@@ -2193,7 +2193,7 @@ There are also two callbacks:
 
 These callbacks enable releasing the state that might have been initialized and stored in the Aggregator - to reduce the network traffic.
 
-Each phase is described below and you can also refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc] for the API's details.
+Each phase is described below and you can also refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc] for the API's details.
 
 **Accumulation:**
 
@@ -2220,7 +2220,7 @@ In case of the `DoubleAverage` aggregation, the Aggregator would just divide the
 
 ==== Fast-Aggregations and Map Interfaces
 
-Fast-Aggregations are available on `com.hazelcast.core.IMap` only. IMap offers the method `aggregate` to apply the aggregation logic on the map entries. This method can be called with or without a predicate. You can refer to its http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-[Javadoc] to see the method details.
+Fast-Aggregations are available on `com.hazelcast.core.IMap` only. IMap offers the method `aggregate` to apply the aggregation logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-[Javadoc] to see the method details.
 
 
 ==== Sample Implementation
@@ -2275,11 +2275,11 @@ For example, you select all employees based on some criteria, but you just want 
 
 ==== Projection API
 
-The Projection API provides the method `transform()` which is called on each result object. Its result is then gathered as the final query result entity. You can refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/projection/Projection.html[Projection Javadoc] for the API's details.
+The Projection API provides the method `transform()` which is called on each result object. Its result is then gathered as the final query result entity. You can refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/projection/Projection.html[Projection Javadoc] for the API's details.
 
 ===== Projections and Map Interfaces
 
-Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method `project` to apply the projection logic on the map entries. This method can be called with or without a predicate. You can refer to its http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc] to see the method details.
+Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method `project` to apply the projection logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc] to see the method details.
 
 
 ==== Sample implementation
