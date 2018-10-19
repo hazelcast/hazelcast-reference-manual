@@ -38,8 +38,7 @@ As an alternative, you can download and install Hazelcast IMDG yourself. You onl
 
 There are two Maven repositories defined for Hazelcast IMDG Enterprise:
 
-[source,xml]
-----
+```
 <repository>
    <id>Hazelcast Private Snapshot Repository</id>
    <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
@@ -48,12 +47,11 @@ There are two Maven repositories defined for Hazelcast IMDG Enterprise:
    <id>Hazelcast Private Release Repository</id>
    <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
 </repository>
-----
+```
 
 Hazelcast IMDG Enterprise customers may also define dependencies, a sample of which is shown below.
 
-[source,xml]
-----
+```
 <dependency>
    <groupId>com.hazelcast</groupId>
    <artifactId>hazelcast-enterprise</artifactId>
@@ -64,7 +62,7 @@ Hazelcast IMDG Enterprise customers may also define dependencies, a sample of wh
    <artifactId>hazelcast-enterprise-all</artifactId>
    <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
-----
+```
 
 [[setting-the-license-key]]
 ==== Setting the License Key
@@ -416,10 +414,9 @@ In this new class, system properties are instances of the newly introduced `Haze
 
 * **Removal of deprecated static methods:** The static methods of Hazelcast class reaching Hazelcast data components have been removed. The functionality of these methods can be reached from the HazelcastInstance interface. You should replace the following:
 +
-[source,java]
-----
+```
 Map<Integer, String> customers = Hazelcast.getMap( "customers" );
-----
+```
 +
 with
 +
@@ -600,6 +597,8 @@ The following are the names and descriptions of each script:
 
 
 NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance per folder. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ package in a new folder.
+
+NOTE: You can also use the start scripts to deploy your own code to a Hazelcast member from a non-Java client. See the <<using-code-deployment-for-non-java-clients, Using Code Deployment for Non-Java Clients section>>.
 
 [[deploying-on-amazon-ec2]]
 === Deploying On Amazon EC2
