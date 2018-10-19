@@ -2,7 +2,7 @@
 [[understanding-configuration]]
 == Understanding Configuration
 
-This chapter describes the options to configure your Hazelcast applications and explains the utilities which you can make use of while configuring. You can configure Hazelcast using one or mix of the following options: 
+This chapter describes the options to configure your Hazelcast applications and explains the utilities which you can make use of while configuring. You can configure Hazelcast using one or mix of the following options:
 
 * Declarative way
 * Programmatic way
@@ -187,7 +187,7 @@ Hazelcast.newHazelcastInstance( config );
 ----
 
 To retrieve an existing Hazelcast member by its name, use the following:
-    
+
 ```
 Hazelcast.getHazelcastInstanceByName( "my-instance" );
 ```
@@ -267,15 +267,15 @@ If you use Hazelcast with https://spring.io/[Spring] you can declare beans using
 </hz:hazelcast>
 ----
 
-Please see the <<spring-integration, Spring Integration section>> for more information on Hazelcast-Spring integration.
+Please see the <<integration-with-spring, Integration with Spring section>> for more information on Hazelcast-Spring integration.
 
 [[dynamically-adding-data-structure-configuration-on-a-cluster]]
 === Dynamically Adding Data Structure Configuration on a Cluster
 
-As described above, Hazelcast can be configured in a declarative or programmatic way; configuration must be completed before starting a Hazelcast member and this configuration cannot be altered at runtime, thus we refer to this as _static_ configuration. 
+As described above, Hazelcast can be configured in a declarative or programmatic way; configuration must be completed before starting a Hazelcast member and this configuration cannot be altered at runtime, thus we refer to this as _static_ configuration.
 
 Starting with Hazelcast 3.9, it is possible to dynamically add configuration for certain data structures at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
- 
+
 [source,java]
 ----
 include::{javasource}/DynamicConfiguration.java[tag=dynconf]
@@ -294,7 +294,7 @@ Adding new dynamic configuration is supported for all `add*Config` methods excep
 
 [[handling-configuration-conflicts]]
 ==== Handling Configuration Conflicts
- 
+
 Attempting to add a dynamic configuration, when a static configuration for the same element already exists, will throw `ConfigurationException`. For example, assuming we start a member with the following fragment in `hazelcast.xml` configuration:
 
 ```
@@ -343,7 +343,7 @@ When you start a Hazelcast member without passing a `Config` object, as explaine
 ```
 -Dhazelcast.config=`*`<path to the hazelcast.xml>
 ```
-+	
++
 The path can be a regular one or a classpath reference with the prefix `classpath:`.
 * If the above system property is not set, Hazelcast then checks whether there is a `hazelcast.xml` file in the working directory.
 * If not, it then checks whether `hazelcast.xml` exists on the classpath.
