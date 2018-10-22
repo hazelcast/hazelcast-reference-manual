@@ -37,7 +37,7 @@ All these features are done with the steps below. Each step adds a new functiona
 
 To have the counter as a functioning distributed object, we need a class. This class (named CounterService in the following example code) is the gateway between Hazelcast internals and the counter, allowing us to add features to the counter. The following example code creates the class `CounterService`. Its lifecycle is managed by Hazelcast. 
 
-`CounterService` should implement the interface `com.hazelcast.spi.ManagedService` as shown below. The `com.hazelcast.spi.ManagedService` http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/ManagedService.html[source code is here].
+`CounterService` should implement the interface `com.hazelcast.spi.ManagedService` as shown below. The `com.hazelcast.spi.ManagedService` https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/ManagedService.html[source code is here].
 
 `CounterService` implements the following methods. 
 
@@ -161,7 +161,7 @@ public interface Counter extends DistributedObject {
 
 ===== Implementing ManagedService and RemoteService
 
-Now, we need to make the `CounterService` class implement not only the `ManagedService` interface, but also the interface `com.hazelcast.spi.RemoteService`. This way, a client will be able to get a handle of a counter proxy. You can check the source code for RemoteService the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/RemoteService.html[here].
+Now, we need to make the `CounterService` class implement not only the `ManagedService` interface, but also the interface `com.hazelcast.spi.RemoteService`. This way, a client will be able to get a handle of a counter proxy. You can check the source code for RemoteService the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/RemoteService.html[here].
 
 [source,java]
 ----
@@ -176,7 +176,7 @@ NOTE: Note that caching and removing the proxy instance are done outside of this
 
 ===== Implementing CounterProxy
 
-Now, it is time to implement the `CounterProxy` as shown below. `CounterProxy` extends `AbstractDistributedObject`, source code is http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/AbstractDistributedObject.html[here]. 
+Now, it is time to implement the `CounterProxy` as shown below. `CounterProxy` extends `AbstractDistributedObject`, source code is https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/AbstractDistributedObject.html[here]. 
 
 [source,java]
 ----
@@ -214,7 +214,7 @@ If it is an `InterruptedException`, we have two options: either propagate the ex
 
 ===== Implementing the PartitionAwareOperation Interface
 
-Now, let's write the `IncOperation`. It implements the `PartitionAwareOperation` interface, meaning that it will be executed on the partition that hosts the counter. See the `PartitionAwareOperation` source code http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/PartitionAwareOperation.html[here].
+Now, let's write the `IncOperation`. It implements the `PartitionAwareOperation` interface, meaning that it will be executed on the partition that hosts the counter. See the `PartitionAwareOperation` source code https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/PartitionAwareOperation.html[here].
 
 The method `run` does the actual execution. Since `IncOperation` will return a response, the method `returnsResponse` returns `true`. If your method is asynchronous and does not need to return a response, it is better to return `false` since it will be faster. The actual response is stored in the field `returnValue`; retrieve it with the method `getResponse`.
 
@@ -541,7 +541,7 @@ NOTE: During a partition migration, no other operations are executed on the rela
 
 We need to make our `CounterService` class implement the `MigrationAwareService` interface. This will let Hazelcast know that the `CounterService` can perform partition migration.
 
-With the `MigrationAwareService` interface, some additional methods are exposed. For example, the method `prepareMigrationOperation` returns all the data of the partition that is going to be moved. You can check the `MigrationAwareService` source code http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/MigrationAwareService.html[here].
+With the `MigrationAwareService` interface, some additional methods are exposed. For example, the method `prepareMigrationOperation` returns all the data of the partition that is going to be moved. You can check the `MigrationAwareService` source code https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/MigrationAwareService.html[here].
 
 The method `commitMigration` commits the data, meaning that in this case, it clears the partition container of the old owner. 
 
@@ -735,7 +735,7 @@ If a backup should be made and `getSyncBackupCount` returns **3**, then three `I
 ===== Performing the Backup with IncBackupOperation
 
 Now, let's have a look at the `IncBackupOperation`. It implements `BackupOperation`, you can see the source code for `BackupOperation` 
-http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/BackupOperation.html[here].
+https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/BackupOperation.html[here].
 
 ```
 public class IncBackupOperation
@@ -811,7 +811,7 @@ As it can be seen, both `IncOperation` and `IncBackupOperation` are executed. No
 
 === OperationParker
 
-`OperationParker` is an interface offered by SPI for the objects, such as Lock and Semaphore, to be used when a thread needs to wait for a lock to be released. You can see the `OperationParker` source code http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/impl/operationparker/OperationParker.html[here].
+`OperationParker` is an interface offered by SPI for the objects, such as Lock and Semaphore, to be used when a thread needs to wait for a lock to be released. You can see the `OperationParker` source code https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/impl/operationparker/OperationParker.html[here].
 
 `OperationParker` keeps a list of waiters. For each notify operation:
 

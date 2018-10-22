@@ -303,7 +303,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Executor Service can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Executor Service can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -385,7 +385,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Durable Executor Service can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/DurableExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Durable Executor Service can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/DurableExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -411,7 +411,7 @@ On top of the Vanilla Scheduling API, IScheduledExecutorService allows additiona
 * `scheduleOnAllMembers`: On all cluster members.
 * `scheduleOnAllMembers`: On all given members.
 
-Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledExecutorService.html[IScheduledExecutorService Javadoc] for its API details.
+Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledExecutorService.html[IScheduledExecutorService Javadoc] for its API details.
 
 There are two different modes of durability for the service:
 
@@ -425,7 +425,7 @@ The name of the task can be user-defined if it needs to be, by implementing the 
 
 Upon scheduling, the service returns an `IScheduledFuture`, which on top of the `java.util.concurrent.ScheduledFuture` functionality, provides an API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
 
-Futures associated with a scheduled task, in order to be aware of lost partitions and/or members, act as listeners on the local member/client. Therefore, they are always strongly referenced, on the member/client side. In order to clean up their resources, once completed, you can use the method `dispose()`. This method will also cancel further executions of the task if scheduled at fixed rate. You can refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledFuture.html[IScheduledFuture Javadoc] for its API details.
+Futures associated with a scheduled task, in order to be aware of lost partitions and/or members, act as listeners on the local member/client. Therefore, they are always strongly referenced, on the member/client side. In order to clean up their resources, once completed, you can use the method `dispose()`. This method will also cancel further executions of the task if scheduled at fixed rate. You can refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledFuture.html[IScheduledFuture Javadoc] for its API details.
 
 The task handler is a descriptor class holding information for the scheduled future, which is used to pinpoint the actual task in the cluster. It contains the name of the task, the owner (member or partition) and the scheduler name.
 
@@ -525,7 +525,7 @@ Following is a list of methods that now support Split-Brain Protection checks. T
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Scheduled Executor Service can be configured programmatically using the method http://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Scheduled Executor Service can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -549,7 +549,7 @@ If you are doing the process described above, you should consider using entry pr
 
 NOTE: Entry processor is meant to process a single entry per call. Processing multiple entries and data structures in an entry processor is not supported as it may result in deadlocks.
 
-NOTE: Note that Hazelcast Jet is a good fit when you want to perform processing that involves multiple entries (aggregations, joins, etc.), or involves multiple computing steps to be made parallel. Hazelcast Jet contains an Entry Processor Sink to allow you to update Hazelcast IMDG data as a result of your Hazelcast Jet computation. Please refer to http://docs.hazelcast.org/docs/jet/latest/manual/index.html#connector-imdg[Hazelcast Jet's Reference Manual].
+NOTE: Note that Hazelcast Jet is a good fit when you want to perform processing that involves multiple entries (aggregations, joins, etc.), or involves multiple computing steps to be made parallel. Hazelcast Jet contains an Entry Processor Sink to allow you to update Hazelcast IMDG data as a result of your Hazelcast Jet computation. Please refer to https://docs.hazelcast.org/docs/jet/latest/manual/index.html#connector-imdg[Hazelcast Jet's Reference Manual].
 
 
 ==== Performing Fast In-Memory Map Operations
@@ -571,7 +571,7 @@ NOTE: When `in-memory-format` is `OBJECT`, the old value of the updated entry wi
 
 ===== Processing Entries
 
-The methods below are in the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html[IMap interface] for entry processing.
+The methods below are in the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html[IMap interface] for entry processing.
 
 * `executeOnKey` processes an entry mapped by a key.
 * `executeOnKeys` processes entries mapped by a collection of keys.
@@ -580,9 +580,9 @@ The methods below are in the http://docs.hazelcast.org/docs/latest/javadoc/com/h
 * `executeOnEntries` can also process all entries in a map with a defined predicate.
 
 
-When using the `executeOnEntries` method, if the number of entries is high and you need the results, then returning null with the `process()` method is a good practice. This method is offered by the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface]. By returning null, results of the processing is not stored in the map and thus out of memory errors are eliminated.
+When using the `executeOnEntries` method, if the number of entries is high and you need the results, then returning null with the `process()` method is a good practice. This method is offered by the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface]. By returning null, results of the processing is not stored in the map and thus out of memory errors are eliminated.
 
-If you want to execute a task on a single key, you can also use `executeOnKeyOwner` provided by http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IExecutorService.html#executeOnKeyOwner-java.lang.Runnable-java.lang.Object-[IExecutorService]. However, in this case you need to perform a lock and serialization.
+If you want to execute a task on a single key, you can also use `executeOnKeyOwner` provided by https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IExecutorService.html#executeOnKeyOwner-java.lang.Runnable-java.lang.Object-[IExecutorService]. However, in this case you need to perform a lock and serialization.
 
 NOTE: Entry processors run via Operation Threads that are dedicated to specific partitions.  Therefore, with long running entry processor executions, other partition operations such as `map.put(key)` cannot be processed. With this in mind, it is a good practice to make your entry processor executions as quick as possible.
 
@@ -601,7 +601,7 @@ Therefore, if you want to to perform an entry processor execution on a single ke
 
 ===== Processing Backup Entries
 
-If your code modifies the data, then you should also provide a processor for backup entries. This is required to prevent the primary map entries from having different values than the backups because it causes the entry processor to be applied both on the primary and backup entries. The interface http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryBackupProcessor.html[EntryBackupProcessor] offers the method `processBackup` for this purpose.
+If your code modifies the data, then you should also provide a processor for backup entries. This is required to prevent the primary map entries from having different values than the backups because it causes the entry processor to be applied both on the primary and backup entries. The interface https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryBackupProcessor.html[EntryBackupProcessor] offers the method `processBackup` for this purpose.
 
 NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it at the run time due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually will synchronize those owner and backup partitions so you will not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
 
@@ -641,7 +641,7 @@ NOTE: An entry processor instance is not thread safe. If you are storing a parti
 
 You can use the `AbstractEntryProcessor` class when the same processing will be performed both on the primary and backup map entries, i.e., the same logic applies to them. If you use entry processor, you need to apply the same logic to the backup entries separately. The `AbstractEntryProcessor` class makes this primary/backup processing easier.
 
-You can use the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[`AbstractEntryProcessor` class] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing will be applied to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null. 
+You can use the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[`AbstractEntryProcessor` class] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing will be applied to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null. 
 
 NOTE: Beware of the null issue described above. Due to a yet unsent backup from a previous operation, an `EntryBackupProcessor` may temporarily receive `null` from `Map.Entry.getValue()` even though the value actually exists in the map. If you decide to use `AbstractEntryProcessor`, make sure your code logic is not sensitive to null values, or you may encounter `NullPointerException` during runtime.
 
@@ -687,7 +687,7 @@ In this case the threading looks as follows:
 . partition thread (set new value & unlock key, or just unlock key if the entry has not been modified)
 
 
-The method `getExecutorName()` method may also return two constants defined in the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Offloadable.html[`Offloadable` interface]:
+The method `getExecutorName()` method may also return two constants defined in the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Offloadable.html[`Offloadable` interface]:
 
 * NO_OFFLOADING: Processing will not be offloaded if the method `getExecutorName()` returns this constant; it will be executed as if it does not implement the `Offloadable` interface.
 * OFFLOADABLE_EXECUTOR: Processing will be offloaded to the default `ExecutionService.OFFLOADABLE_EXECUTOR`.
