@@ -46,7 +46,7 @@ Cluster Membership is established and maintained by heartbeats. A network partit
 
 For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection, a time window to detect quorum is not satisfied anymore. Length of this window depends on the failure detector. Given guarantee is, every member will eventually detect the failed members and will reject the operation on the data structure which requires the quorum.
 
-Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box `QuorumFunction`s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.  
+Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box `QuorumFunction`s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
 
@@ -181,7 +181,7 @@ Quorum configuration has the following elements:
 * `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
 * `quorum-function-class-name`: Class name of a `QuorumFunction` implementation, allows to configure Split-Brain Protection with a custom quorum function. It cannot be used in conjunction with `probabilistic-quorum` or `recently-active-quorum`.
 * `quorum-listeners`: Declaration of quorum listeners which are notified on quorum status changes.
-8 `probabilistic-quorum`: Configures the quorum with a probabilistic quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `recently-active-quorum`. 
+8 `probabilistic-quorum`: Configures the quorum with a probabilistic quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `recently-active-quorum`.
 * `recently-active-quorum`: Configures the quorum with a recently-active quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `probabilistic-quorum`.
 
 **Sample configuration with custom QuorumFunction implementation**
@@ -343,7 +343,7 @@ Here are examples how merge policies can be specified for various data structure
   ...
   <map name="default">
      ...
-     <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>     
+     <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>
   </map>
 
   <replicatedmap name="default">
@@ -360,7 +360,7 @@ Here are examples how merge policies can be specified for various data structure
     ...
     <merge-policy batch-size="500">org.example.merge.MyMergePolicy</merge-policy>
   </list>
-  
+
   <atomic-long name="default">
     ...
     <merge-policy>PutIfAbsentMergePolicy</merge-policy>
@@ -377,9 +377,9 @@ Here is how merge policies are specified for `ICache` (it is the same configurat
    ...
    <cache name="default">
       ...
-      <merge-policy>org.example.merge.MyMergePolicy</merge-policy>        
+      <merge-policy>org.example.merge.MyMergePolicy</merge-policy>
    </cache>
-</hazelcast>    
+</hazelcast>
 ----
 
 ===== Programmatic Configuration
@@ -539,7 +539,7 @@ userContext.put(TruthProvider.TRUTH_PROVIDER_ID, new ExampleTruthProvider());
 Config config = new Config()
   .addMapConfig(mapConfig)
   .setUserContext(userContext);
-  
+
 Hazelcast.newHazelcastInstance(config);
 ----
 

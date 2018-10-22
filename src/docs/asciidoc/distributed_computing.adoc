@@ -38,7 +38,7 @@ include::{javasource}/distributedcomputing/SumTask.java[tag=st]
 ----
 
 
-Another example is the Echo callable below. In its call() method, it returns the local member and the input passed in. Remember that `instance.getCluster().getLocalMember()` returns the local member and `toString()` returns the member's address (IP + port) in String form, just to see which member actually executed the code for our example. Of course, the `call()` method can do and return anything you like. 
+Another example is the Echo callable below. In its call() method, it returns the local member and the input passed in. Remember that `instance.getCluster().getLocalMember()` returns the local member and `toString()` returns the member's address (IP + port) in String form, just to see which member actually executed the code for our example. Of course, the `call()` method can do and return anything you like.
 
 [source,java]
 ----
@@ -51,8 +51,8 @@ include::{javasource}/distributedcomputing/Echo.java[tag=echo]
 To execute a callable task:
 
 * Retrieve the Executor from `HazelcastInstance`.
-* Submit a task which returns a `Future`. 
-* After executing the task, you do not have to wait for the execution to complete, you can process other things. 
+* Submit a task which returns a `Future`.
+* After executing the task, you do not have to wait for the execution to complete, you can process other things.
 * When ready, use the `Future` object to retrieve the result as shown in the code example below.
 
 Below, the Echo task is executed.
@@ -117,9 +117,9 @@ The distributed executor service is a distributed implementation of `java.util.c
 public void echoOnTheMember( String input, Member member ) throws Exception {
     Callable<String> task = new Echo( input );
     HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    IExecutorService executorService = 
+    IExecutorService executorService =
       hazelcastInstance.getExecutorService( "default" );
-      
+
     Future<String> future = executorService.submitToMember( task, member );
     String echoResult = future.get();
 }
@@ -133,7 +133,7 @@ public void echoOnTheMemberOwningTheKey( String input, Object key ) throws Excep
     HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
     IExecutorService executorService =
       hazelcastInstance.getExecutorService( "default" );
-      
+
     Future<String> future = executorService.submitToKeyOwner( task, key );
     String echoResult = future.get();
 }
@@ -141,11 +141,11 @@ public void echoOnTheMemberOwningTheKey( String input, Object key ) throws Excep
 
 [source,java]
 ----
-public void echoOnSomewhere( String input ) throws Exception { 
+public void echoOnSomewhere( String input ) throws Exception {
     HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
     IExecutorService executorService =
       hazelcastInstance.getExecutorService( "default" );
-      
+
     Future<String> future = executorService.submit( new Echo( input ) );
     String echoResult = future.get();
 }
@@ -155,12 +155,12 @@ public void echoOnSomewhere( String input ) throws Exception {
 ----
 public void echoOnMembers( String input, Set<Member> members ) throws Exception {
     HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-    IExecutorService executorService = 
+    IExecutorService executorService =
       hazelcastInstance.getExecutorService( "default" );
-      
+
     Map<Member, Future<String>> futures = executorService
       .submitToMembers( new Echo( input ), members );
-      
+
     for ( Future<String> future : futures.values() ) {
         String echoResult = future.get();
         // ...
@@ -174,13 +174,13 @@ NOTE: You can obtain the set of cluster members via `HazelcastInstance.getCluste
 [[canceling-an-executing-task]]
 ==== Canceling an Executing Task
 
-A task in the code that you execute in a cluster might take longer than expected. If you cannot stop/cancel that task, it will keep eating your resources. 
+A task in the code that you execute in a cluster might take longer than expected. If you cannot stop/cancel that task, it will keep eating your resources.
 
 To cancel a task, you can use the standard Java executor framework's `cancel()` API. This framework encourages us to code and design for cancellations, a highly ignored part of software development.
 
 ===== Example Task to Cancel
 
-The Fibonacci callable class below calculates the Fibonacci number for a given number. In the `calculate` method, we check if the current thread is interrupted so that the code can respond to cancellations once the execution is started. 
+The Fibonacci callable class below calculates the Fibonacci number for a given number. In the `calculate` method, we check if the current thread is interrupted so that the code can respond to cancellations once the execution is started.
 
 [source,java]
 ----
@@ -326,7 +326,7 @@ Processing of the tasks when using durable executor service involves two invocat
 . Sending the task to primary Hazelcast member (primary partition) and to its backups, if configured, and executing the task.
 . Retrieving the result of the task.
 
-As you may already know, Hazelcast's executor service returns a `future` representing the task to the user. With the above two-invocations approach, it is guaranteed that the task is executed before the `future` returns and you can track the response of a submitted task with a unique ID. Hazelcast stores the task on both primary and backup members, and starts the execution also. 
+As you may already know, Hazelcast's executor service returns a `future` representing the task to the user. With the above two-invocations approach, it is guaranteed that the task is executed before the `future` returns and you can track the response of a submitted task with a unique ID. Hazelcast stores the task on both primary and backup members, and starts the execution also.
 
 With the first invocation, a <<ringbuffer, Ringbuffer>> stores the task and a generated sequence for the task is returned to the caller as a result. In addition to the storing, the task is executed on the local execution service for the primary member. By this way, the task is now resilient to member failures and you are able to track the task with its ID.
 
@@ -356,7 +356,7 @@ This section presents example configurations for durable executor service along 
 ----
 include::{javasource}/distributedcomputing/DurableExecutorConfiguration.java[tag=dec]
 ----
- 
+
 Following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the executor task.
@@ -416,7 +416,7 @@ Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast
 There are two different modes of durability for the service:
 
 1. Upon partition specific scheduling, the future task is stored both in the primary partition and also in its N backups, N being the `<durability>` property in the configuration. More specifically, there are always one or more backups to take ownership of the task in the event of a lost member. If a member is lost, the task will be re-scheduled on the backup (new primary) member, which might induce further delays on the subsequent executions of the task.
-For example, if we schedule a task to run in 10 seconds from now, `schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds the owner member goes down (before the execution takes place), then the backup owner will re-schedule the task in 10 seconds from now. Therefore, from the user's perspective waiting on the result, this will be available in `10 + 5 = 15` seconds rather than 10 seconds as it is anticipated originally. If `atFixedRate` was used, then only the initial delay is affected in the above scenario, all subsequent executions should adhere to the given period parameter.    
+For example, if we schedule a task to run in 10 seconds from now, `schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds the owner member goes down (before the execution takes place), then the backup owner will re-schedule the task in 10 seconds from now. Therefore, from the user's perspective waiting on the result, this will be available in `10 + 5 = 15` seconds rather than 10 seconds as it is anticipated originally. If `atFixedRate` was used, then only the initial delay is affected in the above scenario, all subsequent executions should adhere to the given period parameter.
 
 2. Upon member specific scheduling, the future task is *only* stored in the member itself, which means that in the event of a lost member, the task will be lost as well.
 
@@ -431,7 +431,7 @@ The task handler is a descriptor class holding information for the scheduled fut
 
 The handler is always available after scheduling and can be stored in a plain string format `com.hazelcast.scheduledexecutor.ScheduledTaskHandler.toUrn()` and re-constructed back from that String `com.hazelcast.scheduledexecutor.ScheduledTaskHandler.of()`. If the handler is lost, you can still find a task under a given scheduler by using the Scheduler's `com.hazelcast.scheduledexecutor.IScheduledExecutorService.getAllScheduledFutures()`.
 
-Last but not least, similar to <<executor-service, executor service>>, the scheduled executor service allows Stateful tasks to be scheduled. Stateful tasks, are tasks that require any kind of state during their runtime, which must also be durable along with the task in the event of a lost partition. 
+Last but not least, similar to <<executor-service, executor service>>, the scheduled executor service allows Stateful tasks to be scheduled. Stateful tasks, are tasks that require any kind of state during their runtime, which must also be durable along with the task in the event of a lost partition.
 
 Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask` interface, providing implementation details for saving the state and loading it back. If a partition is lost, then the re-scheduled task will load the previously saved state before its execution.
 
@@ -541,7 +541,7 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 
 === Entry Processor
 
-Hazelcast supports entry processing. An entry processor is a function that executes your code on a map entry in an atomic way. 
+Hazelcast supports entry processing. An entry processor is a function that executes your code on a map entry in an atomic way.
 
 An entry processor is a good option if you perform bulk processing on an `IMap`. Usually you perform a loop of keys - executing `IMap.get(key)`, mutating the value and finally putting the entry back in the map using `IMap.put(key,value)`.  If you perform this process from a client or from a member where the keys do not exist, you effectively perform two network hops for each update: the first to retrieve the data and the second to update the mutated value.
 
@@ -608,7 +608,7 @@ NOTE: It is possible that an entry processor could see that a key exists though 
 
 ==== Creating an Entry Processor
 
-The class `IncrementingEntryProcessor` creates an entry processor to process the map 
+The class `IncrementingEntryProcessor` creates an entry processor to process the map
 entries. It implements:
 
 * the map interfaces `EntryProcessor` and `EntryBackupProcessor`.
@@ -641,7 +641,7 @@ NOTE: An entry processor instance is not thread safe. If you are storing a parti
 
 You can use the `AbstractEntryProcessor` class when the same processing will be performed both on the primary and backup map entries, i.e., the same logic applies to them. If you use entry processor, you need to apply the same logic to the backup entries separately. The `AbstractEntryProcessor` class makes this primary/backup processing easier.
 
-You can use the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[`AbstractEntryProcessor` class] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing will be applied to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null. 
+You can use the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[`AbstractEntryProcessor` class] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing will be applied to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null.
 
 NOTE: Beware of the null issue described above. Due to a yet unsent backup from a previous operation, an `EntryBackupProcessor` may temporarily receive `null` from `Map.Entry.getValue()` even though the value actually exists in the map. If you decide to use `AbstractEntryProcessor`, make sure your code logic is not sensitive to null values, or you may encounter `NullPointerException` during runtime.
 
@@ -752,5 +752,3 @@ Putting it all together:
 ----
 include::{javasource}/distributedcomputing/OffloadableReadOnlyEntryProcessor.java[tag=oroep]
 ----
-
-

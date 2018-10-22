@@ -26,7 +26,7 @@ Hazelcast supports two different operation modes of WAN Replication:
   or more passive clusters, for the purpose of maintaining a backup.
 * **Active-Active:** Every cluster is equal, each cluster replicates to all other clusters. This is normally used to connect
   different clients to different clusters for the sake of the shortest path between client and server.
-  
+
 There are two different ways of defining the WAN replication endpoints:
 
 - Static endpoints
@@ -80,9 +80,9 @@ Following are the definitions of configuration elements:
 * `group.password`: Configures target cluster's group password.
 
 Other relevant properties are:
- 
+
 * `discovery.period`: Period in seconds in which WAN tries to reestablish connections to failed endpoints. Default is 10 seconds.
-* `executorThreadCount`: The number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. It is important to determine which number of executor threads is a good value. Failure to do so can lead to performance issues - either contention on a too small number of threads or wasted threads that will not be performing any work. 
+* `executorThreadCount`: The number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. It is important to determine which number of executor threads is a good value. Failure to do so can lead to performance issues - either contention on a too small number of threads or wasted threads that will not be performing any work.
 
 And the following is the equivalent programmatic configuration snippet:
 
@@ -103,7 +103,7 @@ In addition to defining target cluster endpoints with static IP addresses, you c
 
 NOTE: When using the discovery SPI, WAN will always connect to the public address of the members returned by the discovery SPI implementation. This is opposite to the cluster membership mechanism using the discovery SPI where a member connects to a different member in the same cluster through its private address. Should you prefer for WAN to use the private address of the discovered member as well, please use the `discovery.useEndpointPrivateAddress` publisher property (see below).
 
- 
+
 Following is an example of setting up the WAN replication with the EC2 discovery plugin. You must have the https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS EC2 discovery plugin] on the classpath.
 
 [source,xml]
@@ -196,7 +196,7 @@ You can refer to the <<aws-element, aws element>> and the <<configuring-client-f
 - `executorThreadCount`: Number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor will be sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that will not be performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order.
 - `discovery.useEndpointPrivateAddress`: Determines whether the WAN connection manager should connect to the endpoint on the private address returned by the discovery SPI. By default this property is `false` which means the WAN connection manager will always use the public address.
 
-You can also define the WAN publisher with discovery SPI using the programmatic configuration: 
+You can also define the WAN publisher with discovery SPI using the programmatic configuration:
 
 [source,java]
 ----
@@ -255,9 +255,9 @@ You see that we have `my-shared-map` configured to replicate itself to the clust
 
 `wan-replication-ref` has the following elements;
 
-- `name`: Name of `wan-replication` configuration. IMap or ICache instance uses this `wan-replication` configuration. 
+- `name`: Name of `wan-replication` configuration. IMap or ICache instance uses this `wan-replication` configuration.
 - `merge-policy`: Resolve conflicts that are occurred when target cluster already has the replicated entry key.
-- `republishing-enabled`: When enabled, an incoming event to a member is forwarded to target cluster of that member. Enabling the event republishing is useful in a scenario where cluster A replicates to cluster B and cluster B replicates to cluster C. You do not need to enable republishing when all your clusters replicate to each other. 
+- `republishing-enabled`: When enabled, an incoming event to a member is forwarded to target cluster of that member. Enabling the event republishing is useful in a scenario where cluster A replicates to cluster B and cluster B replicates to cluster C. You do not need to enable republishing when all your clusters replicate to each other.
 
 When using Active-Active Replication, multiple clusters can simultaneously update the same entry in a distributed data structure.
 You can configure a merge policy to resolve these potential conflicts, as shown in the above example configuration (using the `merge-policy` sub-element under the `wan-replication-ref` element).
@@ -309,7 +309,7 @@ Hazelcast provides the following merge policies for ICache:
 
 ==== Batch Size
 
-The maximum size of events that are sent in a single batch can be changed 
+The maximum size of events that are sent in a single batch can be changed
 depending on your needs. Default value for batch size is `500`.
 
 Batch size can be set for each target cluster by modifying related `WanPublisherConfig`.
@@ -368,7 +368,7 @@ You can change this property using the declarative configuration as shown below.
         <properties>
             ...
             <property name="batch.max.delay.millis">2000</property>
-            ... 
+            ...
         </properties>
         ...
     </wan-publisher>
@@ -434,7 +434,7 @@ And, the following is the equivalent programmatic configuration:
 For huge clusters or high data mutation rates, you might need to increase the replication queue size. The default queue
 size for replication queues is `10000`. This means, if you have heavy put/update/remove rates, you might exceed the queue size
 so that the oldest, not yet replicated, updates might get lost. Note that a separate queue is used for each WAN Replication configured for IMap and ICache.
- 
+
 Queue capacity can be set for each target cluster by modifying related `WanPublisherConfig`.
 
 You can change this property using the declarative configuration as shown below.
@@ -476,12 +476,12 @@ This may be useful, for instance, to release the consumed heap if you know that 
 ==== Queue Full Behavior
 
 In the previous Hazelcast releases, WAN replication was dropping the new events if WAN replication event queues are full.
-This behavior is configurable starting with Hazelcast 3.6. 
+This behavior is configurable starting with Hazelcast 3.6.
 
 There are following supported behaviors:
- 
+
 - `DISCARD_AFTER_MUTATION`: If you select this option, the new WAN events generated by the member are dropped and not replicated to the target cluster
-when the WAN event queues are full.   
+when the WAN event queues are full.
 - `THROW_EXCEPTION`: If you select this option, the WAN queue size is checked before each supported mutating operation (like `IMap.put()`, `ICache.put()`).
 If one the queues of target cluster is full, `WANReplicationQueueFullException` is thrown and the operation is not allowed.
 - `THROW_EXCEPTION_ONLY_IF_REPLICATION_ACTIVE`: Its effect is similar to that of `THROW_EXCEPTION`. But, it  throws exception only when WAN replication is active. It discards the new events if WAN replication is stopped.
@@ -541,7 +541,7 @@ NOTE: `LOADED` events are filtered out and not replicated to target cluster.
 
 Starting with Hazelcast 3.6, WAN replication supports different acknowledgment (ACK) types for each target cluster group.
 You can choose from 2 different ACK type depending on your consistency requirements. The following ACK types are supported:
- 
+
 - `ACK_ON_RECEIPT`: A batch of replication events is considered successful as soon as it is received by the target cluster. This option does not guarantee that the received event is actually applied but it is faster.
 - `ACK_ON_OPERATION_COMPLETE`: This option guarantees that the event is received by the target cluster and it is applied. It is more time consuming. But it is the best way if you have strong consistency requirements.
 
@@ -564,11 +564,11 @@ NOTE: `ack.type` configuration is optional. Its default value is `ACK_ON_RECEIPT
 
 ==== Synchronizing WAN Target Cluster
 
-Starting with Hazelcast 3.7 you can initiate a synchronization operation on an IMap for a specific target cluster. 
+Starting with Hazelcast 3.7 you can initiate a synchronization operation on an IMap for a specific target cluster.
 Synchronization operation sends all the data of an IMap to a target cluster to align the state of target IMap with source IMap.
 Synchronization is useful if two remote clusters lost their synchronization due to WAN queue overflow or in restart scenarios.
 
-Synchronization can be initiated through https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center] and Hazelcast’s REST API. 
+Synchronization can be initiated through https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center] and Hazelcast’s REST API.
 
 Below is the URL for the REST call;
 
@@ -624,13 +624,13 @@ synchronized, not even if `MapLoader` is configured.
 The failure detection and recovery mechanisms in WAN handle failures during WAN replication and they closely interact with the list of endpoints that WAN is replicating to. There might be some small differences when using static endpoints or the discovery SPI but here we will outline the general mechanism of failure detection and recovery.
 
 ===== WAN Target Endpoint List
- 
+
 The WAN connection manager maintains a list of public addresses that it can replicate to at any moment. This list may change over time as failures are detected or as new addresses are discovered when using the discovery SPI. The connection manager does not eagerly create connections to these addresses as they are added to the list to avoid overloading the endpoint with connections from all members using the same configuration. It will try and connect to the endpoint just before WAN events are about to be transmitted. This means that if there are no updates on the map or cache using WAN replication, there will be no WAN events and the connection will not be established to the endpoint.
 
 When more than one endpoint is configured, traffic will be load balanced between them using the partition, so that the same partitions are always sent to the same target member, ensuring ordering by partition.
- 
+
 ===== WAN Failure Detection
- 
+
 If using the Hazelcast IMDG Enterprise edition class `WanBatchReplication` (see the <<defining-wan-replication, Defining WAN replication section>>), the WAN replication will catch any exceptions when sending the WAN events to the endpoint. In the case of an exception, the endpoint will be removed from the endpoint list to which WAN replicates and the WAN events will be resent to a different address. The replication will be retried until it is successful.
 
 ===== WAN Endpoint Recovery
@@ -644,11 +644,11 @@ When the discovery returns a list of endpoints (addresses), the WAN target endpo
 ==== WAN Replication Additional Information
 
 Each cluster in WAN topology has to have a unique `group-name` property for a proper handling of forwarded events.
- 
+
 Starting with Hazelcast 3.6, WAN replication backs up its event queues to other members to prevent event loss in case of member failures.
 WAN replication's backup mechanism depends on the related data structures' backup operations. Note that, WAN replication is supported for IMap and ICache.
 That means, as far as you set a backup count for your IMap or ICache instances, WAN replication events generated by these instances are also replicated.
- 
+
 There is no additional configuration to enable/disable WAN replication event backups.
 
 === Delta WAN Synchronization
@@ -671,7 +671,7 @@ To be able to use Delta WAN synchronization, the following must be met:
 
 ==== Using Delta WAN Synchronization
 
-To be able to use Delta WAN synchronization for a Hazelcast data structure: 
+To be able to use Delta WAN synchronization for a Hazelcast data structure:
 
 . Configure the WAN synchronization mechanism for your WAN publisher so that it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of the `wan-sync` element. If configuring programmatically, you can use the setter of the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/WanSyncConfig.html[`WanSyncConfig`] object.
 . Bind that WAN synchronization configuration to the data structure (currently IMap): Simply set the WAN replication reference of your map to the name of the WAN replication configuration which uses the Merkle tree.
@@ -723,7 +723,7 @@ Here are the descriptions of sub-elements and attributes:
 * `enabled`: Specifies whether the Merkle tree structure is enabled. Its default value is `true`.
 * `mapName`: Specifies the name of the map for which the Merkle tree structure is used.
 * `depth`: Specifies the depth of Merkle tree. Valid values are between 2 and 27 (exclusive). Its default value is `10`.
-** A larger depth means that a data synchronization mechanism is able to pinpoint a smaller subset of the data structure (e.g., IMap) contents in which a change has occurred. This causes the synchronization mechanism to be more efficient. However, keep in mind that a large depth means that the Merkle tree will consume more memory. As the comparison mechanism is iterative, a larger depth also prolongs the comparison duration. Therefore, it is recommended not to have large tree depths if the latency of the comparison operation is high. 
+** A larger depth means that a data synchronization mechanism is able to pinpoint a smaller subset of the data structure (e.g., IMap) contents in which a change has occurred. This causes the synchronization mechanism to be more efficient. However, keep in mind that a large depth means that the Merkle tree will consume more memory. As the comparison mechanism is iterative, a larger depth also prolongs the comparison duration. Therefore, it is recommended not to have large tree depths if the latency of the comparison operation is high.
 ** A smaller depth means that the Merkle tree is shallower and the data synchronization mechanism transfers larger chunks of the data structure (e.g., IMap) in which a possible change has happened. As you can imagine, a shallower Merkle tree will consume less memory.
 
 Following is a declarative example including the Merkle tree configuration.
@@ -959,17 +959,17 @@ Synchronization reports the
 image::Plugin_New.png[Solace Plugin, 84, 22]
 
 
-This section explains how you can integrate Hazelcast's WAN replication with http://www.solacesystems.com/[Solace] messaging platform. With this integration, you can publish and consume WAN replication events to/from Solace appliances. 
+This section explains how you can integrate Hazelcast's WAN replication with http://www.solacesystems.com/[Solace] messaging platform. With this integration, you can publish and consume WAN replication events to/from Solace appliances.
 
 Solace combines with Hazelcast to drive efficiencies in the processing of global data workloads. This joint solution enables multi-cloud and hybrid-cloud replication of Hazelcast clusters. Please see https://hazelcast.com/partner/solace/[Hazelcast-Solace partnership] for more information.
- 
+
 ==== Enabling Integration
- 
+
 To publish and consume WAN replication events on Solace appliances, Hazelcast WAN replication has the following classes:
- 
+
 * `SolaceWanPublisher`
 * `SolaceWanConsumer`
- 
+
 You can register these classes using the configuration elements `<wan-publisher>` and `<wan-consumer>` while configuring your WAN replication.
 `SolaceWanPublisher` and `SolaceWanConsumer` are included in the `hazelcast-solace` library which can be found in following Maven coordinates:
 
@@ -981,16 +981,16 @@ You can register these classes using the configuration elements `<wan-publisher>
     <version>1.0.0</version>
   </dependency>
 ----
- 
+
 NOTE: The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the <<installing-hazelcast-imdg-enterprise, Installing Hazelcast IMDG Enterprise section>> for information on how to configure this repository.
- 
- 
+
+
 Please see the following sections for configuration details.
- 
+
 ==== Configuring Publisher
- 
+
 Following is an example declarative configuration for the publisher side:
- 
+
 [source,xml]
 ----
 <wan-replication name="AtoB">
@@ -1008,9 +1008,9 @@ Following is an example declarative configuration for the publisher side:
     </wan-publisher>
 </wan-replication>
 ----
- 
+
 Descriptions of the properties are as follows:
- 
+
 * `class-name`: Full class name of Solace WAN publisher, i.e., `com.hazelcast.enterprise.wan.solace.SolaceWanPublisher`
 * `host`: IP address of the Solace host machine. It can be in the format "IP address:Port number". It is a mandatory property.
 * `vpn.name`: Name of the Solace VPN. It is an optional property.
@@ -1019,11 +1019,11 @@ Descriptions of the properties are as follows:
 * `topic.base.name`: Base topic name to use while publishing events to Solace appliance. If not defined, the members will publish to topics using the format "T/hz/[cluster-group-name]/partitionId". If defined, the format "[topic.base.name]/partitionId" will be used. It is an optional property.
 * `queue.name`: Name of the queue to be used in topic-to-queue mapping. This property is only valid if the property `initial.queue.mapping.enabled` is set to "true". Default queue name is "Q/hz/[cluster-group-name].
 * `initial.queue.mapping.enabled`: Decides if a default topic-to-queue mapping should be performed on the publisher side. When enabled, it tries to provide a queue, whose name is defined by the property `queue.name`, and all topics that are generated by this instance is mapped to this queue. When disabled, you should perform this mapping manually. It is enabled by default.
- 
+
 ==== Configuring Consumer
- 
+
 Following is an example declarative configuration for the consumer side:
- 
+
 [source,xml]
 ----
 <wan-replication name="AtoB">
@@ -1040,9 +1040,9 @@ Following is an example declarative configuration for the consumer side:
     </wan-consumer>
 </wan-replication>
 ----
- 
+
 Descriptions of the properties are as follows:
- 
+
 * `class-name`: Full class name of Solace WAN consumer, i.e., `com.hazelcast.enterprise.wan.solace.SolaceWanConsumer`
 * `persist-wan-replicated-data`:  When true, an incoming event over WAN replication can be persisted to a data store, otherwise it will not be persisted. Default value is false.
 * `host`: IP address of the Solace host machine. It can be in the format "IP address:Port number". It is a mandatory property.
@@ -1050,20 +1050,10 @@ Descriptions of the properties are as follows:
 * `username`: Username for the Solace host. It is a mandatory property.
 * `password`: Password for the Solace host. It is an optional property.
 * `queue.name`: Name of the queue to be polled by the consumer. It is a mandatory property.
- 
- 
+
+
 ==== Additional Information
- 
+
 You can find code samples at https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/wan-replication/src/main/java/com/hazelcast/wan/solace[hazelcast-code-samples] repository.
- 
+
 NOTE: You can download the white paper **Hazelcast WAN Replication with Solace** from https://hazelcast.com/resources/hazelcast-wan-replication-solace/[Hazelcast.com].
-
-
-
-
-
-
-
-
-
-

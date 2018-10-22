@@ -11,7 +11,7 @@ As a rule of thumb, your event listener should not implement heavy processes in 
 NOTE: In a failover scenario, events are not highly available and may get lost. Eventing mechanism is being improved for failover scenarios.
 
 
-Hazelcast offers the following event listeners. 
+Hazelcast offers the following event listeners.
 
 For cluster events:
 
@@ -86,7 +86,7 @@ new ListenerConfig( "com.yourpackage.ClusterMembershipListener" ) );
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -150,7 +150,7 @@ new ListenerConfig( "com.yourpackage.SampleDistObjListener" ) );
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -198,7 +198,7 @@ When a respective event is fired, the migration listener outputs the partition I
 
 ```
 Started: MigrationEvent{partitionId=98, oldOwner=Member [127.0.0.1]:5701,
-newOwner=Member [127.0.0.1]:5702 this} 
+newOwner=Member [127.0.0.1]:5702 this}
 ```
 
 ===== Registering Migration Listeners
@@ -219,12 +219,12 @@ The following is an example programmatic configuration.
 
 [source,java]
 ----
-config.addListenerConfig( 
+config.addListenerConfig(
 new ListenerConfig( "com.yourpackage.ClusterMigrationListener" ) );
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -256,17 +256,17 @@ Hazelcast provides fault-tolerance by keeping multiple copies of your data. For 
 
 Let's consider the following example with three members: N1, N2, N3 for a given partition-0. N1 is owner of partition-0. N2 and N3 are the first and second replicas respectively. If N1 and N2 crash simultaneously, partition-0 loses its data that is configured with less than two backups.
 For instance, if we configure a map with one backup, that map loses its data in partition-0 since both owner and first replica of partition-0 have crashed. However, if we configure our map with two backups, it does not lose any data since a copy of partition-0's data for the given map
-also resides in N3. 
+also resides in N3.
 
-The Partition Lost Listener notifies for possible data loss occurrences with the information of how many replicas are lost for a partition. It listens to `PartitionLostEvent` instances. Partition lost events are dispatched per partition. 
+The Partition Lost Listener notifies for possible data loss occurrences with the information of how many replicas are lost for a partition. It listens to `PartitionLostEvent` instances. Partition lost events are dispatched per partition.
 
-Partition loss detection is done after a member crash is detected by the other members and the crashed member is removed from the cluster. Please note that false-positive `PartitionLostEvent` instances may be fired on the network split errors. 
+Partition loss detection is done after a member crash is detected by the other members and the crashed member is removed from the cluster. Please note that false-positive `PartitionLostEvent` instances may be fired on the network split errors.
 
 ===== Writing a Partition Lost Listener Class
 
 To write a Partition Lost Listener, you implement the PartitionLostListener interface and its `partitionLost` method, which is invoked when a partition loses its owner and all backups.
 
-The following is an example Partition Lost Listener class. 
+The following is an example Partition Lost Listener class.
 
 [source,java]
 ----
@@ -275,13 +275,13 @@ public class ConsoleLoggingPartitionLostListener implements PartitionLostListene
     public void partitionLost(PartitionLostEvent event) {
         System.out.println(event);
     }
-} 
+}
 ----
 
 When a `PartitionLostEvent` is fired, the partition lost listener given above outputs the partition ID, the replica index that is lost and the member that has detected the partition loss. The following is an example output.
 
 ```
-com.hazelcast.partition.PartitionLostEvent{partitionId=242, lostBackupCount=0, 
+com.hazelcast.partition.PartitionLostEvent{partitionId=242, lostBackupCount=0,
 eventSource=Address[192.168.2.49]:5701}
 ```
 
@@ -295,7 +295,7 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getPartitionService().addPartitionLostListener( new ConsoleLoggingPartitionLostListener() );
 ----
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -337,7 +337,7 @@ public class NodeLifecycleListener implements LifecycleListener {
 }
 ----
 
-This listener is local to an individual member. It notifies the application that uses Hazelcast about the events mentioned above for a particular member. 
+This listener is local to an individual member. It notifies the application that uses Hazelcast about the events mentioned above for a particular member.
 
 ===== Registering Lifecycle Listeners
 
@@ -360,7 +360,7 @@ config.addListenerConfig(
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -428,20 +428,20 @@ NOTE: You can also add event listeners to a Hazelcast client. Please refer to <<
 
 You can listen to map-wide or entry-based events using the listeners provided by the Hazelcast's eventing framework. To listen to these events, implement a `MapListener` sub-interface.
 
-A map-wide event is fired as a result of a map-wide operation. For 
+A map-wide event is fired as a result of a map-wide operation. For
 example, `IMap.clear()` or `IMap.evictAll()`.
-An entry-based event is fired after the operations that affect a 
+An entry-based event is fired after the operations that affect a
 specific entry. For example, `IMap.remove()` or `IMap.evict()`.
 
 ===== Catching a Map Event
 
-To catch an event, you should explicitly 
-implement a corresponding sub-interface of a `MapListener`, 
-such as `EntryAddedListener` or `MapClearedListener`. 
+To catch an event, you should explicitly
+implement a corresponding sub-interface of a `MapListener`,
+such as `EntryAddedListener` or `MapClearedListener`.
 
 NOTE: The `EntryListener` interface still can be implemented (we kept
-it for backward compatibility reasons). However, if you need to listen to a 
-different event, one that is not available in the `EntryListener` interface, you should also 
+it for backward compatibility reasons). However, if you need to listen to a
+different event, one that is not available in the `EntryListener` interface, you should also
 implement a relevant `MapListener` sub-interface.
 
 Let's take a look at the following class example.
@@ -460,8 +460,8 @@ include::{javasource}/distributedevents/ModifyMap.java[tag=modify]
 ----
 
 
-If you execute the `Listen` class and then the `Modify` class, you get the following output 
-produced by the `Listen` class. 
+If you execute the `Listen` class and then the `Modify` class, you get the following output
+produced by the `Listen` class.
 
 ```
 Entry Added:EntryEvent{entryEventType=ADDED, member=Member [192.168.1.100]]:5702
@@ -484,7 +484,7 @@ NOTE: Listeners have to offload all blocking operations to another thread (pool)
 
 ==== Listening for Lost Map Partitions
 
-You can listen to `MapPartitionLostEvent` instances by registering an implementation 
+You can listen to `MapPartitionLostEvent` instances by registering an implementation
 of `MapPartitionLostListener`, which is also a sub-interface of `MapListener`.
 
 Let's consider the following example code:
@@ -495,15 +495,15 @@ include::{javasource}/distributedevents/ListenMapPartitionLostEvents.java[tag=lm
 ----
 
 
-Within this example code, a `MapPartitionLostListener` implementation is registered to a map 
-that is configured with one backup. For this particular map and any of the partitions in the 
-system, if the partition owner member and its first backup member crash simultaneously, the 
-given `MapPartitionLostListener` receives a 
-corresponding `MapPartitionLostEvent`. If only a single member crashes in the cluster, 
-there will be no `MapPartitionLostEvent` fired for this map since backups for the partitions 
-owned by the crashed member are kept on other members. 
+Within this example code, a `MapPartitionLostListener` implementation is registered to a map
+that is configured with one backup. For this particular map and any of the partitions in the
+system, if the partition owner member and its first backup member crash simultaneously, the
+given `MapPartitionLostListener` receives a
+corresponding `MapPartitionLostEvent`. If only a single member crashes in the cluster,
+there will be no `MapPartitionLostEvent` fired for this map since backups for the partitions
+owned by the crashed member are kept on other members.
 
-Please refer to <<listening-for-partition-lost-events, Listening for Partition Lost Events>> for more 
+Please refer to <<listening-for-partition-lost-events, Listening for Partition Lost Events>> for more
 information about partition lost detection and partition lost events.
 
 ===== Registering Map Listeners
@@ -524,12 +524,12 @@ The following is an example programmatic configuration.
 [source,java]
 ----
 mapConfig.addEntryListenerConfig(
-new EntryListenerConfig( "com.yourpackage.MyEntryListener", 
+new EntryListenerConfig( "com.yourpackage.MyEntryListener",
                                  false, false ) );
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -601,7 +601,7 @@ multiMapConfig.addEntryListenerConfig(
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -690,7 +690,7 @@ new ItemListenerConfig( "com.yourpackage.SampleItemListener", true ) );
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -767,7 +767,7 @@ topicConfig.addMessageListenerConfig(
 ----
 
 
-The following is an example of the equivalent declarative configuration. 
+The following is an example of the equivalent declarative configuration.
 
 [source,xml]
 ----
@@ -779,7 +779,7 @@ The following is an example of the equivalent declarative configuration.
             com.yourpackage.SampleMessageListener
          </message-listener>
       </message-listeners>
-   </topic>   
+   </topic>
    ...
 </hazelcast>
 ----
@@ -790,7 +790,7 @@ The following is an example of the equivalent Spring configuration.
 ----
 <hz:topic name="default">
   <hz:message-listeners>
-    <hz:message-listener 
+    <hz:message-listener
       class-name="com.yourpackage.SampleMessageListener"/>
   </hz:message-listeners>
 </hz:topic>
@@ -819,12 +819,3 @@ To achieve the order guarantee, you make only one thread responsible for a parti
 If the event queue reaches its capacity (`hazelcast.event.queue.capacity`) and the last item cannot be put into the event queue for the period specified in `hazelcast.event.queue.timeout.millis`, these events will be dropped with a warning message, such as "EventQueue overloaded".
 
 If event listeners perform a computation that takes a long time, the event queue can reach its maximum capacity and lose events. For map and multimap, you can configure `hazelcast.event.thread.count` to a higher value so that fewer collisions occur for keys, and therefore worker threads will not block each other in `StripedExecutor`. For list, set, topic and queue, you should offload heavy work to another thread. To preserve order guarantee, you should implement similar logic with `StripedExecutor` in the offloaded thread pool.
-
-
-
-
-
-
-
-
-

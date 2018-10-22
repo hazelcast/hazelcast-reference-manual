@@ -31,17 +31,17 @@ Also, you can configure its size, memory allocator type, minimum block size, pag
 * **size:** Size of the total native memory to allocate in megabytes. Its default value is **512 MB**.
 * **allocator type**: Type of the memory allocator. Available values are as follows:
 ** **STANDARD**: This option is used internally by Hazelcast's POOLED allocator type or for debugging/testing purposes.
-*** With this option, the memory is allocated or deallocated using your operating system's default memory manager. 
+*** With this option, the memory is allocated or deallocated using your operating system's default memory manager.
 *** It uses GNU C Library's standard `malloc()` and `free()` methods which are subject to contention on multithreaded/multicore systems.
-*** Memory operations may become slower when you perform a lot of small allocations and deallocations. 
-*** It may cause large memory fragmentations, unless you use a method in the background that emphasizes fragmentation avoidance, such as `jemalloc()`. Note that a large memory fragmentation can trigger the Linux Out of Memory Killer if there is no swap space enabled in your system. Even if the swap space is enabled, the killer can be again triggered if there is not enough swap space left. 
+*** Memory operations may become slower when you perform a lot of small allocations and deallocations.
+*** It may cause large memory fragmentations, unless you use a method in the background that emphasizes fragmentation avoidance, such as `jemalloc()`. Note that a large memory fragmentation can trigger the Linux Out of Memory Killer if there is no swap space enabled in your system. Even if the swap space is enabled, the killer can be again triggered if there is not enough swap space left.
 *** If you still want to use the operating system's default memory management, you can set the allocator type to STANDARD in your native memory configuration.
 ** **POOLED**: This is the default option, Hazelcast's own pooling memory allocator.
-*** With this option, memory blocks are managed using internal memory pools. 
+*** With this option, memory blocks are managed using internal memory pools.
 *** It allocates memory blocks, each of which has a 4MB page size by default, and splits them into chunks or merges them to create larger chunks when required. Sizing of these chunks follows the https://en.wikipedia.org/wiki/Buddy_memory_allocation[buddy memory allocation] algorithm, i.e. power-of-two sizing.
 *** It never frees memory blocks back to the operating system. It marks disposed memory blocks as available to be used later, meaning that these blocks are reusable.
 *** Memory allocation and deallocation operations (except the ones requiring larger sizes than the page size) do not interact with the operating system mostly.
-*** For memory allocation, it tries to find the requested memory size inside the internal memory pools. If it cannot be found, then it interacts with the operating system. 
+*** For memory allocation, it tries to find the requested memory size inside the internal memory pools. If it cannot be found, then it interacts with the operating system.
 * **minimum block size:** Minimum size of the blocks in bytes to split and fragment a page block to assign to an allocation request. It is used only by the **POOLED** memory allocator. Its default value is **16 bytes**.
 * **page size:** Size of the page in bytes to allocate memory as a block. It is used only by the **POOLED** memory allocator. Its default value is `1 << 22` = **4194304 Bytes**, about **4 MB**.
 * **metadata space percentage:** Defines the percentage of the allocated native memory that is used for internal memory structures by the High-Density Memory for tracking the used and available memory blocks. It is used only by the **POOLED** memory allocator. Its default value is **12.5**. Please note that when the memory runs out, you will get a `NativeOutOfMemoryException`;  if your store has a big size of entries, you should consider increasing this percentage.
@@ -127,7 +127,7 @@ As another scenario, assume the following:
 - Member B's Hot Restart <<configuring-hot-restart, base directory (`base-dir`)>> must be deleted.
 - Member B restarts.
 
-Now member B joins the cluster as a fresh, empty member. The cluster will assign some partitions to it, unrelated to the partitions it owned before going down. 
+Now member B joins the cluster as a fresh, empty member. The cluster will assign some partitions to it, unrelated to the partitions it owned before going down.
 
 ==== Force Start
 
@@ -250,7 +250,7 @@ After Hazelcast member owning the Hot Restart data is shutdown, Hot Restart `bas
 This flexibility provides;
 - ability to replace one or more faulty servers with new ones easily without touching remaining cluster
 - ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
-- ability to copy production data to test environment, so that a more functional test cluster can bet setup  
+- ability to copy production data to test environment, so that a more functional test cluster can bet setup
 
 Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores, e.g., `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see <<system-properties, System Properties appendix>>.
 
@@ -304,16 +304,16 @@ Sorting records by age will group young records together in a single chunk and w
 
 ==== Hot Restart Performance Considerations
 
-In this section you can find performance test summaries which are results of benchmark tests performed with a single Hazelcast member running on a physical server and on AWS R3. 
+In this section you can find performance test summaries which are results of benchmark tests performed with a single Hazelcast member running on a physical server and on AWS R3.
 
 ===== Performance on a Physical Server
 
 The member has the following:
 
-- An IMap data structure with High-Density Memory Store. 
-- Its data size is changed for each test, started from 10 GB to 500 GB (each map entry has a value of 1 KB). 
+- An IMap data structure with High-Density Memory Store.
+- Its data size is changed for each test, started from 10 GB to 500 GB (each map entry has a value of 1 KB).
 
-The tests investigate the write and read performance of Hot Restart Persistence and are performed on HP ProLiant servers with RHEL 7 operating system using Hazelcast Simulator. 
+The tests investigate the write and read performance of Hot Restart Persistence and are performed on HP ProLiant servers with RHEL 7 operating system using Hazelcast Simulator.
 
 The following are the specifications of the server hardware used for the test:
 
@@ -334,10 +334,10 @@ image::HotRestartPerf.png[Hot Restart Perf]
 
 The member has the following:
 
-- An IMap data structure with High-Density Memory Store. 
-- IMap has 40 million distinct keys, each map entry is 1 KB. 
-- High-Density Memory Store is 59 GiB whose 19% is metadata. 
-- Hot Restart is configured with `fsync` turned off. 
+- An IMap data structure with High-Density Memory Store.
+- IMap has 40 million distinct keys, each map entry is 1 KB.
+- High-Density Memory Store is 59 GiB whose 19% is metadata.
+- Hot Restart is configured with `fsync` turned off.
 - Data size reloaded on restart is 38 GB.
 
 The tests investigate the write and read performance of Hot Restart Persistence and are performed on R3.2xlarge and R3.4xlarge EC2 instances using Hazelcast Simulator.
@@ -354,7 +354,7 @@ image::HotRestartPerf2.png[Hot Restart Perf2]
 
 ==== Hot Backup
 
-During Hot Restart operations you can take a snapshot of the Hot Restart Store at a certain point in time. This is useful when you wish to bring up a new cluster with the same data or parts of the data. The new cluster can then be used to share load with the original cluster, to perform testing, QA or reproduce an issue on production data. 
+During Hot Restart operations you can take a snapshot of the Hot Restart Store at a certain point in time. This is useful when you wish to bring up a new cluster with the same data or parts of the data. The new cluster can then be used to share load with the original cluster, to perform testing, QA or reproduce an issue on production data.
 
 Simple file copying of a currently running cluster does not suffice and can produce inconsistent snapshots with problems such as resurrection of deleted values or missing values.
 
@@ -404,7 +404,7 @@ The backup process is initiated nearly instantaneously on all members. Note that
 
 The duration of the backup process and the disk data usage drastically depends on what is supported by the system and the configuration. Please check the <<achieving-high-performance-of-backup-process, Achieving high performance of backup process section>> for more information on achieving better resource usage of the backup process.
 
-Following is an example of how to trigger the Hot Backup via API: 
+Following is an example of how to trigger the Hot Backup via API:
 
 [source,java]
 ----
@@ -425,7 +425,7 @@ Keep in mind that the backup will fail if any member contains a backup directory
 
 ===== Starting the Cluster From a Hot Backup
 
-As mentioned in the previous section, hot backup process creates subdirectories named `backup-<backupSeq>` under the configured <<configuring-hot-backup, hot backup directory>> (i.e., `backup-dir`). When starting your cluster with data from a hot backup, you need to set the <<global-hot-restart-configuration, base directory>> (i.e., `base-dir`) to the desired backup subdirectory. 
+As mentioned in the previous section, hot backup process creates subdirectories named `backup-<backupSeq>` under the configured <<configuring-hot-backup, hot backup directory>> (i.e., `backup-dir`). When starting your cluster with data from a hot backup, you need to set the <<global-hot-restart-configuration, base directory>> (i.e., `base-dir`) to the desired backup subdirectory.
 
 Let's say you have configured your hot backup directory as follows:
 
@@ -468,17 +468,17 @@ And let's say you have a subdirectory named `backup-2018Oct24` under the backup 
 
 ===== Achieving High Consistency of Backup Data
 
-The backup is initiated nearly simultaneously on all members but you can encounter some inconsistencies in the data. This is because some members might have and some might not have received updated values yet from executed operations, because the system could be undergoing partition and membership changes or because there are some transactions which have not yet been committed. 
+The backup is initiated nearly simultaneously on all members but you can encounter some inconsistencies in the data. This is because some members might have and some might not have received updated values yet from executed operations, because the system could be undergoing partition and membership changes or because there are some transactions which have not yet been committed.
 
 To achieve a high consistency of data on all members, the cluster should be put to `PASSIVE` state for the duration of the call to the backup method. See the <<cluster-member-states, Cluster Member States section>> on information on how to do this. The cluster does not need to be in `PASSIVE` state for the entire duration of the backup process, though. Because of the design, only partition metadata is copied synchronously during the invocation of the backup method. Once the backup method has returned all cluster metadata has been copied and the exact partition data which needs to be copied will have been marked. After that, the backup process continues asynchronously and you can return the cluster to the `ACTIVE` state and resume operations.
 
 ===== Achieving High Performance of Backup Process
 
-Because of the design of Hot Restart Store, we can use hard links to achieve backups/snapshots of the store. The hot backup process will use hard links whenever possible because they provide big performance benefits and because the backups share disk usage. 
+Because of the design of Hot Restart Store, we can use hard links to achieve backups/snapshots of the store. The hot backup process will use hard links whenever possible because they provide big performance benefits and because the backups share disk usage.
 
-The performance benefit comes from the fact that Hot Restart file contents are not being duplicated (thus using disk and IO resources) but rather a new file name is created for the same contents on disk (another pointer to the same inode). Since all backups and stores share the same inode, disk usage drops. 
+The performance benefit comes from the fact that Hot Restart file contents are not being duplicated (thus using disk and IO resources) but rather a new file name is created for the same contents on disk (another pointer to the same inode). Since all backups and stores share the same inode, disk usage drops.
 
-The bigger the percentage of stable data in the Hot Restart Store (data not undergoing changes), the more files will each backup share with the operational Hot Restart Store and the less disk space it will be using. For the hot backup to use hard links, you must be running Hazelcast members on JDK 7 or higher and must satisfy all requirements for the https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#createLink(java.nio.file.Path,%20java.nio.file.Path)[`Files.createLink()` method] to be supported. 
+The bigger the percentage of stable data in the Hot Restart Store (data not undergoing changes), the more files will each backup share with the operational Hot Restart Store and the less disk space it will be using. For the hot backup to use hard links, you must be running Hazelcast members on JDK 7 or higher and must satisfy all requirements for the https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#createLink(java.nio.file.Path,%20java.nio.file.Path)[`Files.createLink()` method] to be supported.
 
 The backup process will initially attempt to create a new hard link and if that fails for any reason it will continue by copying the data. Subsequent backups will also attempt to use hard links.
 

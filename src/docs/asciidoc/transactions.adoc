@@ -20,11 +20,11 @@ NOTE: Starting with Hazelcast 3.6, the transaction type `LOCAL` has been depreca
 include::{javasource}/transactions/TransactionalMember.java[tag=trx]
 ----
 
-In a transaction, operations will not be executed immediately. Their changes will be local to the `TransactionContext` until committed. However, they will ensure the changes via locks. 
+In a transaction, operations will not be executed immediately. Their changes will be local to the `TransactionContext` until committed. However, they will ensure the changes via locks.
 
 For the above example, when `map.put` is executed, no data will be put in the map but the key will be locked against changes. While committing, operations will be executed, the value will be put to the map and the key will be unlocked.
 
-The isolation level in Hazelcast Transactions is `READ_COMMITTED` on the level of a single partition. If you are in a transaction, you can read the data in your transaction and the data that is already committed. If you are not in a transaction, you can only read the committed data. 
+The isolation level in Hazelcast Transactions is `READ_COMMITTED` on the level of a single partition. If you are in a transaction, you can read the data in your transaction and the data that is already committed. If you are not in a transaction, you can only read the committed data.
 
 NOTE: The REPEATABLE_READ isolation level can also be exercised using the method `getForUpdate()` of `TransactionalMap`.
 
@@ -38,12 +38,12 @@ Hazelcast implements queue/set/list operations differently than map/multimap ope
 
 ==== ONE_PHASE vs. TWO_PHASE
 
-As discussed in <<creating-a-transaction-interface, Creating a Transaction Interface>>, when you choose ONE_PHASE as the transaction type, Hazelcast tracks all changes you make locally in a commit log, i.e., a list of changes. In this case, all the other members are asked to agree that the commit can succeed and once they agree, Hazelcast starts to write the changes. 
+As discussed in <<creating-a-transaction-interface, Creating a Transaction Interface>>, when you choose ONE_PHASE as the transaction type, Hazelcast tracks all changes you make locally in a commit log, i.e., a list of changes. In this case, all the other members are asked to agree that the commit can succeed and once they agree, Hazelcast starts to write the changes.
 However, if the member that initiates the commit crashes after it has written to at least one member (but has not completed writing to all other members), your system may be left in an inconsistent state.
 
 On the other hand, if you choose TWO_PHASE as the transaction type, the commit log is again tracked locally but it is copied to another cluster member. Therefore, when a failure happens, e.g., the member initiating the commit crashes, you still have the commit log in another member and that member can complete the commit. However, copying the commit log to another member makes the TWO_PHASE approach slow.
 
-Consequently, it is recommended that you choose ONE_PHASE as the transaction type if you want better performance, and that you choose TWO_PHASE if reliability of your system is more important than the performance. 
+Consequently, it is recommended that you choose ONE_PHASE as the transaction type if you want better performance, and that you choose TWO_PHASE if reliability of your system is more important than the performance.
 
 NOTE: It should be noted that in split-brain situations or during a member failure, Hazelcast might not be able to always hold ACID guarantees.
 
@@ -59,5 +59,3 @@ Below is example code that uses JTA API for transaction management.
 ----
 include::{javasource}/transactions/XATransaction.java[tag=xa]
 ----
-
-

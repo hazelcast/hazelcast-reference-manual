@@ -5,7 +5,7 @@
 
 Hazelcast needs to serialize the Java objects that you put into Hazelcast because Hazelcast is a distributed system. The data and its replicas are stored in different partitions on multiple cluster members. The data you need may not be present on the local member, and in that case, Hazelcast retrieves that data from another member. This requires serialization.
 
-Hazelcast serializes all your objects into an instance of `com.hazelcast.nio.serialization.Data`. `Data` is the binary representation of an object. 
+Hazelcast serializes all your objects into an instance of `com.hazelcast.nio.serialization.Data`. `Data` is the binary representation of an object.
 
 Serialization is used in the following cases:
 
@@ -19,7 +19,7 @@ Serialization is used in the following cases:
 
 Hazelcast optimizes the serialization for the basic types and their array types. You cannot override this behavior.
 
-**Default Types**; 
+**Default Types**;
 
 * Byte, Boolean, Character, Short, Integer, Long, Float, Double, String
 * byte[], boolean[], char[], short[], int[], long[], float[], double[], String[]
@@ -47,7 +47,7 @@ When Hazelcast serializes an object into `Data`:
 . If the above check fails, then Hazelcast checks if it is an instance of `com.hazelcast.nio.serialization.DataSerializable` or `com.hazelcast.nio.serialization.IdentifiedDataSerializable`.
 . If the above check fails, then Hazelcast checks if it is an instance of `com.hazelcast.nio.serialization.Portable`.
 . If the above check fails, then Hazelcast checks if it is an instance of one of the default types (see the <<serialization, Serialization chapter introduction>> for default types).
-. If the above check fails, then Hazelcast looks for a user-specified <<custom-serialization, Custom Serializer>>, i.e. an implementation of `ByteArraySerializer` or `StreamSerializer`. Custom serializer is searched using the input Object's Class and its parent class up to Object. If parent class search fails, all interfaces implemented by the class are also checked (excluding `java.io.Serializable` and `java.io.Externalizable`). 
+. If the above check fails, then Hazelcast looks for a user-specified <<custom-serialization, Custom Serializer>>, i.e. an implementation of `ByteArraySerializer` or `StreamSerializer`. Custom serializer is searched using the input Object's Class and its parent class up to Object. If parent class search fails, all interfaces implemented by the class are also checked (excluding `java.io.Serializable` and `java.io.Externalizable`).
 . If the above check fails, then Hazelcast checks if it is an instance of `java.io.Serializable` or `java.io.Externalizable` and a Global Serializer is not registered with Java Serialization Override feature.
 . If the above check fails, Hazelcast will use the registered Global Serializer if one exists.
 
@@ -62,20 +62,20 @@ The table below provides a comparison between the interfaces listed in the previ
 | Serialization Interface| Advantages| Drawbacks
 
 | Serializable
-| * A standard and basic Java interface 
+| * A standard and basic Java interface
 
 * Requires no implementation
-| * More time and CPU usage 
+| * More time and CPU usage
 
 * More space occupancy
 
 * Not supported by Native clients
 
 | Externalizable
-| * A standard Java interface 
+| * A standard Java interface
 
 * More CPU and memory usage efficient than Serializable
-| * Serialization interface must be implemented 
+| * Serialization interface must be implemented
 
 * Not supported by Native clients
 
@@ -86,42 +86,42 @@ The table below provides a comparison between the interfaces listed in the previ
 *  Not supported by Native clients
 
 | IdentifiedDataSerializable
-| * More CPU and memory usage efficient than Serializable 
+| * More CPU and memory usage efficient than Serializable
 
-* Reflection is not used during deserialization 
+* Reflection is not used during deserialization
 
 * Supported by all Native Clients
-| * Specific to Hazelcast 
+| * Specific to Hazelcast
 
-* Serialization interface must be implemented 
+* Serialization interface must be implemented
 
 * A Factory and configuration must be implemented
 
 | Portable
-| * More CPU and memory usage efficient than Serializable 
+| * More CPU and memory usage efficient than Serializable
 
-* Reflection is not used during deserialization 
+* Reflection is not used during deserialization
 
-* Versioning is supported 
+* Versioning is supported
 
-* Partial deserialization is supported during Queries 
+* Partial deserialization is supported during Queries
 
 * Supported by all Native Clients
-| * Specific to Hazelcast 
+| * Specific to Hazelcast
 
-* Serialization interface must be implemented 
+* Serialization interface must be implemented
 
-* A Factory and configuration must be implemented 
+* A Factory and configuration must be implemented
 
 * Class definition is also sent with data but stored only once per class
 
 | Custom Serialization
-| * Does not require class to implement an interface 
+| * Does not require class to implement an interface
 
-* Convenient and flexible 
+* Convenient and flexible
 
 * Can be based on StreamSerializer ByteArraySerializer
-|* Serialization interface must be implemented 
+|* Serialization interface must be implemented
 
 * Plug in and configuration is required
 |===
@@ -138,13 +138,13 @@ Let's take a look at the example code below for Java Serializable.
 
 [source,java]
 ----
-public class Employee implements Serializable { 
+public class Employee implements Serializable {
     private static final long serialVersionUID = 1L;
     private String surname;
-  
-    public Employee( String surname ) { 
+
+    public Employee( String surname ) {
         this.surname = surname;
-    } 
+    }
 }
 ----
 
@@ -158,22 +158,22 @@ Let's take a look at the example code below.
 
 [source,java]
 ----
-public class Employee implements Externalizable { 
+public class Employee implements Externalizable {
     private String surname;
-    public Employee(String surname) { 
+    public Employee(String surname) {
         this.surname = surname;
     }
-  
+
     @Override
     public void readExternal( ObjectInput in )
       throws IOException, ClassNotFoundException {
         this.surname = in.readUTF();
     }
-    
+
     @Override
     public void writeExternal( ObjectOutput out )
       throws IOException {
-        out.writeUTF(surname); 
+        out.writeUTF(surname);
     }
 }
 ----
@@ -193,9 +193,9 @@ include::{javasource}/serialization/Address.java[tag=address]
 
 ==== Reading and Writing and DataSerializable
 
-Let's take a look at another example which encapsulates a `DataSerializable` field. 
+Let's take a look at another example which encapsulates a `DataSerializable` field.
 
-Since the `address` field itself is `DataSerializable`, it calls `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur 
+Since the `address` field itself is `DataSerializable`, it calls `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur
 in the same order. When Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast deserializes it, `className` is used to instantiate the object using reflection.
 
 
@@ -265,61 +265,61 @@ Let's take a look at the following example code and configuration to see `Identi
 ----
 public class Employee
     implements IdentifiedDataSerializable {
-     
+
     private String surname;
-  
+
     public Employee() {}
-  
-    public Employee( String surname ) { 
+
+    public Employee( String surname ) {
         this.surname = surname;
     }
-  
+
     @Override
-    public void readData( ObjectDataInput in ) 
+    public void readData( ObjectDataInput in )
       throws IOException {
         this.surname = in.readUTF();
     }
-  
+
     @Override
     public void writeData( ObjectDataOutput out )
-      throws IOException { 
+      throws IOException {
         out.writeUTF( surname );
     }
-  
+
     @Override
-    public int getFactoryId() { 
+    public int getFactoryId() {
         return EmployeeDataSerializableFactory.FACTORY_ID;
     }
-  
+
     @Override
-    public int getId() { 
+    public int getId() {
         return EmployeeDataSerializableFactory.EMPLOYEE_TYPE;
     }
-   
+
     @Override
     public String toString() {
-        return String.format( "Employee(surname=%s)", surname ); 
+        return String.format( "Employee(surname=%s)", surname );
     }
 }
 ----
- 
+
 The methods `getId` and `getFactoryId` return a unique positive number within the `EmployeeDataSerializableFactory`. Now, let's create an instance of this `EmployeeDataSerializableFactory`.
 
 [source,java]
 ----
-public class EmployeeDataSerializableFactory 
+public class EmployeeDataSerializableFactory
     implements DataSerializableFactory{
-   
+
     public static final int FACTORY_ID = 1;
-   
+
     public static final int EMPLOYEE_TYPE = 1;
 
     @Override
     public IdentifiedDataSerializable create(int typeId) {
-        if ( typeId == EMPLOYEE_TYPE ) { 
+        if ( typeId == EMPLOYEE_TYPE ) {
             return new Employee();
         } else {
-            return null; 
+            return null;
         }
     }
 }
@@ -333,7 +333,7 @@ As the last step, you need to register `EmployeeDataSerializableFactory` declara
 
 [source,xml]
 ----
-<hazelcast> 
+<hazelcast>
   ...
   <serialization>
     <data-serializable-factories>
@@ -386,7 +386,7 @@ public class MyPortableFactory implements PortableFactory {
         else
         return null;
     }
-}            
+}
 ----
 
 ==== Registering the Portable Factory
@@ -420,7 +420,7 @@ Note that the `id` that is passed to the `SerializationConfig` is the same as th
 
 ==== Versioning for Portable Serialization
 
-More than one version of the same class may need to be serialized and deserialized. For example, a client may have an older version of a class and the member to which it is connected may have a newer version of the same class. 
+More than one version of the same class may need to be serialized and deserialized. For example, a client may have an older version of a class and the member to which it is connected may have a newer version of the same class.
 
 Portable serialization supports versioning. It is a global versioning, meaning that all portable classes that are serialized through a member get the globally configured portable version.
 
@@ -456,7 +456,7 @@ Assume that a new member joins to the cluster with a class that has been modifie
 * If you modified the class by removing a field, the old members get `null` for the objects that are put by the new member.
 * If you modified the class by changing the type of a field, the error `IncompatibleClassChangeError` is generated unless the change was made on a built-in type or the byte size of the new type is less than or equal to the old one. The following are example allowed type conversions:
 ** `long` -> `int`, `byte`, `char`, `short`
-** `int`-> `byte`, `char`, `short` 
+** `int`-> `byte`, `char`, `short`
 
 If you have not modify a class at all, it will work as usual.
 
@@ -480,7 +480,7 @@ Be careful with serializing null portables. Hazelcast lazily creates a class def
 when the user first serializes. This class definition is stored and used later for deserializing that portable class. When
 the user tries to serialize a null portable when there is no class definition at the moment, Hazelcast throws an
 exception saying that `com.hazelcast.nio.serialization.HazelcastSerializationException: Cannot write null portable
-without explicitly registering class definition!`. 
+without explicitly registering class definition!`.
 
 There are two solutions to get rid of this exception. Either put
 a non-null portable class of the same type before any other operation, or manually register a class definition in serialization configuration as shown below.
@@ -498,7 +498,7 @@ Hazelcast.newHazelcastInstance(config);
 
 Putting a `DistributedObject` (Hazelcast Semaphore, Queue, etc.) in a cluster member and getting it from another one is not a straightforward operation. Passing the ID and type of the `DistributedObject` can be a solution. For deserialization, you can get the object from HazelcastInstance. For instance, if your object is an instance of `IQueue`, you can either use `HazelcastInstance.getQueue(id)` or `Hazelcast.getDistributedObject`.
 
-You can use the `HazelcastInstanceAware` interface in the case of a deserialization of a Portable `DistributedObject` if it gets an ID to be looked up. HazelcastInstance is set after deserialization, so you first need to store the ID and then retrieve the `DistributedObject` using the `setHazelcastInstance` method. 
+You can use the `HazelcastInstanceAware` interface in the case of a deserialization of a Portable `DistributedObject` if it gets an ID to be looked up. HazelcastInstance is set after deserialization, so you first need to store the ID and then retrieve the `DistributedObject` using the `setHazelcastInstance` method.
 
 NOTE: Please refer to the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>> for a full description of Hazelcast Serialization configuration.
 
@@ -528,7 +528,7 @@ Now, let's implement StreamSerializer for `Employee` class.
 include::{javasource}/serialization/EmployeeStreamSerializer.java[tag=empss]
 ----
 
-In practice, classes may have many fields. Just make sure the fields are read in the same order as they are written. The type ID must be unique and greater than or equal to **1**. Uniqueness of the type ID enables Hazelcast to determine which serializer will be used during deserialization. 
+In practice, classes may have many fields. Just make sure the fields are read in the same order as they are written. The type ID must be unique and greater than or equal to **1**. Uniqueness of the type ID enables Hazelcast to determine which serializer will be used during deserialization.
 
 As the last step, let's register the `EmployeeStreamSerializer` in the configuration file `hazelcast.xml`, as shown below.
 
@@ -540,7 +540,7 @@ As the last step, let's register the `EmployeeStreamSerializer` in the configura
   </serializers>
 </serialization>
 ----
- 
+
 NOTE: `StreamSerializer` cannot be created for well-known types, such as Long and String and primitive arrays. Hazelcast already registers these types.
 
 ===== StreamSerializer Example Code 2
@@ -551,11 +551,11 @@ Let's take a look at another example implementing `StreamSerializer`.
 ----
 public class Foo {
     private String foo;
-  
+
     public String getFoo() {
         return foo;
     }
-  
+
     public void setFoo( String foo ) {
         this.foo = foo;
     }
@@ -639,7 +639,7 @@ A custom serializer should be registered for a specific class type. The global s
 **Use cases**
 
 * Third party serialization frameworks can be integrated using the global serializer.
-* For your custom objects, you can implement a single serializer to handle all of them. 
+* For your custom objects, you can implement a single serializer to handle all of them.
 * You can replace the internal Java serialization by enabling the `overrideJavaSerialization` option of the global serializer configuration.
 
 Any custom serializer can be used as the global serializer. Please refer to the <<custom-serialization, Custom Serialization section>> for implementation details.
@@ -657,24 +657,24 @@ public class GlobalStreamSerializer
     implements StreamSerializer<Object> {
 
     private SomeThirdPartySerializer someThirdPartySerializer;
-  
+
     private init() {
-        //someThirdPartySerializer  = ... 
-    }
-  
-    @Override
-    public int getTypeId () {
-        return 123; 
+        //someThirdPartySerializer  = ...
     }
 
     @Override
-    public void write( ObjectDataOutput out, Object object ) throws IOException { 
+    public int getTypeId () {
+        return 123;
+    }
+
+    @Override
+    public void write( ObjectDataOutput out, Object object ) throws IOException {
         byte[] bytes = someThirdPartySerializer.encode(object);
         out.writeByteArray(bytes);
     }
 
     @Override
-    public Object read( ObjectDataInput in ) throws IOException { 
+    public Object read( ObjectDataInput in ) throws IOException {
         byte[] bytes = in.readByteArray();
         return someThirdPartySerializer.decode(bytes);
     }
@@ -773,7 +773,7 @@ Once the protection is enabled, the following filtering rules are used when obje
 ** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is whitelisted, then deserialization is allowed;
 ** deserialization fails otherwise.
 
-When deserialization fails, a `SecurityException` is thrown. 
+When deserialization fails, a `SecurityException` is thrown.
 
 NOTE: Note that the safest way to provide a protection against untrusted deserialization is using whitelisting (also keep in mind that maintaining such a whitelist can be difficult).
 
@@ -843,6 +843,3 @@ Serialization configuration has the following elements.
 - `global-serializer`: The global serializer class to be registered if no other serializer is applicable. This element has the optional boolean attribute `override-java-serialization`. If set to `true`, the Java serialization step is assumed to be handled by the global serializer. Java Serializable and Externalizable is prior to global serializer by default (`false`).
 - `serializer`: The class name of the serializer implementation.
 - `check-class-def-errors`: When set to `true`, the serialization system will check for class definitions error at start and will throw a Serialization Exception with an error definition.
-
-
-
