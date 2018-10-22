@@ -3,7 +3,7 @@
 == Hazelcast Overview
 
 
-Hazelcast is an open source In-Memory Data Grid (IMDG). 
+Hazelcast is an open source In-Memory Data Grid (IMDG).
 It provides elastically scalable distributed In-Memory computing, widely recognized as the fastest and most scalable
 approach to application performance. Hazelcast does this in open source.
 More importantly, Hazelcast makes distributed computing simple by offering distributed implementations of many
@@ -74,9 +74,9 @@ See the below illustration.
 
 image::Embedded.png[Embedded Deployment]
 
-In the Client/Server deployment, Hazelcast data and services are centralized in one or more server members and they are accessed by the application through clients. 
+In the Client/Server deployment, Hazelcast data and services are centralized in one or more server members and they are accessed by the application through clients.
 You can have a cluster of server members that can be independently created and scaled. Your clients communicate with
-these members to reach to Hazelcast data and services on them. 
+these members to reach to Hazelcast data and services on them.
 
 See the below illustration.
 
@@ -84,7 +84,7 @@ image::ClientServer.png[Client/Server Deployment]
 
 Hazelcast provides native clients (Java, .NET and C++), Memcache and REST clients, Scala, Python and Node.js client implementations.
 
-Client/Server deployment has advantages including more predictable and reliable Hazelcast performance, easier identification of problem causes and, most importantly, better scalability. 
+Client/Server deployment has advantages including more predictable and reliable Hazelcast performance, easier identification of problem causes and, most importantly, better scalability.
 When you need to scale in this deployment type, just add more Hazelcast server members. You can address client and server scalability concerns separately.
 
 If you want low-latency data access, as in the Embedded deployment, and you also want the scalability advantages of the Client/Server deployment, you can consider defining Near Caches for your clients. This enables the frequently used data to be kept in the client's local memory. Please refer to the <<configuring-client-near-cache, Configuring Client Near Cache section>>.
@@ -112,7 +112,7 @@ NOTE: You can come across with the term "master" or "master member" in some sect
 
 Another main feature of Hazelcast is that the data is held entirely in-memory. This is fast. In the case of a failure, such as a member crash, no data will be lost since Hazelcast distributes copies of the data across all the cluster members.
 
-As shown in the feature list in the <<distributed-data-structures, Distributed Data Structures chapter>>, Hazelcast supports a number of distributed data structures and distributed computing utilities. These provide powerful ways of accessing distributed clustered memory and accessing CPUs for true distributed computing. 
+As shown in the feature list in the <<distributed-data-structures, Distributed Data Structures chapter>>, Hazelcast supports a number of distributed data structures and distributed computing utilities. These provide powerful ways of accessing distributed clustered memory and accessing CPUs for true distributed computing.
 
 **Hazelcast's Distinctive Strengths**
 
@@ -144,8 +144,8 @@ Hazelcast is a fit when you need:
 [[data-partitioning]]
 === Data Partitioning
 
-As you read in the <<sharding-in-hazelcast, Sharding in Hazelcast section>>, Hazelcast shards are called Partitions. Partitions are memory segments that can contain hundreds or thousands of data entries each, depending on the memory capacity of your system. Each Hazelcast partition can have multiple replicas, which are distributed among the cluster members. One of the replicas becomes the `primary` and other replicas are called `backups`. Cluster member which owns `primary` replica of a partition is called `partition owner`. When you read or write a particular data entry, you transparently talk to the owner of the partition that contains the data entry.  
- 
+As you read in the <<sharding-in-hazelcast, Sharding in Hazelcast section>>, Hazelcast shards are called Partitions. Partitions are memory segments that can contain hundreds or thousands of data entries each, depending on the memory capacity of your system. Each Hazelcast partition can have multiple replicas, which are distributed among the cluster members. One of the replicas becomes the `primary` and other replicas are called `backups`. Cluster member which owns `primary` replica of a partition is called `partition owner`. When you read or write a particular data entry, you transparently talk to the owner of the partition that contains the data entry.
+
 By default, Hazelcast offers 271 partitions. When you start a cluster with a single member, it owns all of 271 partitions (i.e., it keeps primary replicas for 271 partitions). The following illustration shows the partitions in a Hazelcast cluster with single member.
 
 image::NodePartition.jpg[Single Member with Partitions]
@@ -192,7 +192,7 @@ The oldest member in the cluster (the one that started first) periodically sends
 
 NOTE: If the oldest member of the cluster goes down, the next oldest member sends the partition table information to the other ones.
 
-You can configure the frequency (how often) that the member sends the partition table the information by using the `hazelcast.partition.table.send.interval` system property. The property is set to every 15 seconds by default. 
+You can configure the frequency (how often) that the member sends the partition table the information by using the `hazelcast.partition.table.send.interval` system property. The property is set to every 15 seconds by default.
 
 [[repartitioning]]
 ==== Repartitioning
@@ -232,11 +232,3 @@ Hazelcast can be used:
 * Code samples can be downloaded from https://hazelcast.org/download/[Hazelcast.org/download].
 * More use cases and resources can be found at http://www.hazelcast.com[Hazelcast.com].
 * Questions and discussions can be posted at the https://groups.google.com/forum/#!forum/hazelcast[Hazelcast mail group].
-
-
-
-
-
-
-
-

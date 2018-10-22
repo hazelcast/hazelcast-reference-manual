@@ -114,7 +114,7 @@ There are two main failure cases and configurations you can perform to achieve p
 
 **Handling Client Connection Failure:**
 
-While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, all the members might be not available. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `connectionAttemptLimit` times. 
+While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, all the members might be not available. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `connectionAttemptLimit` times.
 
 You can configure `connectionAttemptLimit` for the number of times you want the client to retry connecting. Please see <<setting-connection-attempt-limit, Setting Connection Attempt Limit>>.
 
@@ -125,7 +125,7 @@ The client executes each operation through the already established connection to
 
 While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, you can set the `redoOperation` to `true`. Please see <<enabling-redo-operation, Enabling Redo Operation>>.
 
-You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client will retry an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes: 
+You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client will retry an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes:
 
 - Member throws an exception.
 - Connection between the client and member is closed.
@@ -135,8 +135,8 @@ Please see the <<client-system-properties, Client System Properties section>> fo
 
 When any failure happens between a client and member (such as an exception at the member side, connection issues, etc.), an operation is retried if:
 
-* it is certain that it has not run on the member yet, or 
-* if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect. 
+* it is certain that it has not run on the member yet, or
+* if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect.
 
 If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member and then the connection is lost. Since there will be no respond for this operation, you will not know whether it has run on the member or not. If you enabled `redoOperation`, it means this operation may run again, which may cause two sane objects in the queue.
 
@@ -284,7 +284,7 @@ Transactional distributed objects are supported on the client side. Please see t
 
 ===== Async Start and Reconnect Modes
 
-Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.   
+Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.
 
 Async client start is configured by setting the configuration element `async-start` to `true`. This configuration will change the behavior of `HazelcastClient.newHazelcastClient()` call. It'll return a client instance without waiting to establish a cluster connection.
 Until the client connects to cluster, it will throw `HazelcastClientOfflineException` on any network dependent operations hence they won't block. If you want to check or wait the client to complete its cluster connection, you can use the built-in lifecycle listener:
@@ -294,13 +294,13 @@ Until the client connects to cluster, it will throw `HazelcastClientOfflineExcep
 ----
 ClientStateListener clientStateListener = new ClientStateListener(clientConfig);
 HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
- 
+
 //Client started but may not be connected to cluster yet.
- 
+
 //check connection status
-clientStateListener.isConnected(); 
- 
-//blocks until client completes connect to cluster 
+clientStateListener.isConnected();
+
+//blocks until client completes connect to cluster
 if (clientStateListener.awaitConnected()) {
 	//connected successfully
 } else {
@@ -449,7 +449,7 @@ You may want to restrict outbound ports to be used by Hazelcast-enabled applicat
       <!-- ports between 34700 and 34710 -->
       <ports>34700-34710</ports>
       <!-- comma separated ports -->
-      <ports>34700,34701,34702,34703</ports> 
+      <ports>34700,34701,34702,34703</ports>
       <ports>34700,34705-34710</ports>
     </outbound-ports>
   </network>
@@ -471,7 +471,7 @@ networkConfig.addOutboundPort(34705);
 
 NOTE: You can use port ranges and/or comma separated ports.
 
-As shown in the programmatic configuration, you use the method `addOutboundPort` to add only one port. If you need to add a group of ports, then use the method `addOutboundPortDefinition`. 
+As shown in the programmatic configuration, you use the method `addOutboundPort` to add only one port. If you need to add a group of ports, then use the method `addOutboundPortDefinition`.
 
 In the declarative configuration, the element `ports` can be used for both single and multiple port definitions.
 
@@ -515,7 +515,7 @@ It enables/disables redo-able operations as described in <<handling-failures, Ha
 ----
 ...
 <network>
-...  
+...
   <redo-operation>true</redo-operation>
 ...
 </network>
@@ -811,11 +811,11 @@ clientConfig.getConnectionStrategyConfig()
 
 ===== Configuring Client Connection Retry
 
-When the client tries to connect to a cluster, it considers the <<setting-connection-attempt-limit, connection attempt limit>> and 
-<<setting-connection-attempt-period, connection attempt period>>. When the client cannot connect to any member in the member list, it waits for `connection-attempt-period` between each attempt until the count of attempts reach `connection-attempt-limit`. 
+When the client tries to connect to a cluster, it considers the <<setting-connection-attempt-limit, connection attempt limit>> and
+<<setting-connection-attempt-period, connection attempt period>>. When the client cannot connect to any member in the member list, it waits for `connection-attempt-period` between each attempt until the count of attempts reach `connection-attempt-limit`.
 
-With the connection retry configuration, you can fine tune this connection behavior. When this configuration is enabled, 
-`connection-attempt-period` and `connection-attempt-limit` are ignored. 
+With the connection retry configuration, you can fine tune this connection behavior. When this configuration is enabled,
+`connection-attempt-period` and `connection-attempt-limit` are ignored.
 This configuration is used when trying to establish the initial connection and any time when the connection to cluster is broken.
 
 Connection retry configuration is done using the `connection-retry` element when configuring declaratively or the object `ConnectionRetryConfig` when configuring programmatically. Below are the example configurations for each.
@@ -857,7 +857,7 @@ connectionRetryConfig.setInitialBackoffMillis(1000)
 
 The following are configuration element descriptions:
 
-* `initial-backoff-millis`:  Specifies how long to wait (backoff) after the first failure before retrying in milliseconds. Its default value is 1000 ms. 
+* `initial-backoff-millis`:  Specifies how long to wait (backoff) after the first failure before retrying in milliseconds. Its default value is 1000 ms.
 * `max-backoff-millis`: Specifies the upper limit for the backoff in milliseconds. Its default value is 30000 ms.
 * `multiplier`: Factor to multiply the backoff after a failed retry. Its default value is 2.
 * `fail-on-max-backoff`: Specifies whether to fail when the `max-backoff-millis` has reached or continue waiting `max-backoff-millis` at each iteration. Its default value is false.
@@ -940,10 +940,10 @@ _Deadline Failure Detector_ uses an absolute timeout for missing/lost heartbeats
 
 _Deadline Failure Detector_ has two configuration properties:
 
-- `hazelcast.client.heartbeat.interval`: This is the interval at which client sends heartbeat messages to members. 
+- `hazelcast.client.heartbeat.interval`: This is the interval at which client sends heartbeat messages to members.
 - `hazelcast.client.heartbeat.timeout`: This is the timeout which defines when a cluster member is suspected, because it has not sent any response back to client requests.
 
-NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than that of `hazelcast.client.heartbeat.timeout`. In addition, the value of system property <<client-max-no, hazelcast.client.max.no.heartbeat.seconds>>, which is set at the member side, should be larger than that of `hazelcast.client.heartbeat.interval`. 
+NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than that of `hazelcast.client.heartbeat.timeout`. In addition, the value of system property <<client-max-no, hazelcast.client.max.no.heartbeat.seconds>>, which is set at the member side, should be larger than that of `hazelcast.client.heartbeat.interval`.
 
 The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
 
@@ -974,10 +974,10 @@ config.setProperty("hazelcast.client.heartbeat.interval", "5000");
 
 ===== Client Ping Failure Detector
 
-In addition to the Deadline Failure Detector, the Ping Failure Detector may be configured on your client. Please note that this detector is disabled by default. The Ping Failure Detector operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events. 
-When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred. 
+In addition to the Deadline Failure Detector, the Ping Failure Detector may be configured on your client. Please note that this detector is disabled by default. The Ping Failure Detector operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events.
+When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
 
-If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
+If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled.
 
 For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met:
 
@@ -1008,8 +1008,8 @@ An example declarative configuration to use the Ping Failure Detector is as foll
         </icmp-ping>
         [...]
     </network>
-    [...] 
-</hazelcast-client>  
+    [...]
+</hazelcast-client>
 ----
 
 And, the equivalent programmatic configuration:
@@ -1017,7 +1017,7 @@ And, the equivalent programmatic configuration:
 [source,java]
 ----
 ClientConfig config = ...;
- 
+
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 ClientIcmpPingConfig clientIcmpPingConfig = networkConfig.getClientIcmpPingConfig();
 clientIcmpPingConfig.setIntervalMilliseconds(1000)
@@ -1047,15 +1047,15 @@ Below is a summary table of all possible configuration combinations of the Ping 
 |===
 | ICMP| Fail-Fast| Description| Linux| Windows | macOS                                                                	|
 
-| true 
-| false  
+| true
+| false
 | Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7
 | Supported  TCP Echo on port 7 	| Supported  ICMP Echo if available - Falls back on TCP Echo on port 7 	|
 
-| true  	
-| true      	
-| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available 	
-| Not Supported                 	
+| true
+| true
+| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available
+| Not Supported
 | Not Supported - Requires root privileges                            	|
 |===
 
@@ -1143,7 +1143,7 @@ The table below lists the client configuration properties with their description
 
 [navy]*Hazelcast IMDG Enterprise HD*
 
-If you have [navy]*Hazelcast IMDG Enterprise HD*, your Hazelcast Java client's Near Cache can benefit from the High-Density Memory Store. 
+If you have [navy]*Hazelcast IMDG Enterprise HD*, your Hazelcast Java client's Near Cache can benefit from the High-Density Memory Store.
 
 Let's recall the Java client's Near Cache configuration (please see the <<configuring-client-near-cache, Configuring Client Near Cache section>>) **without** High-Density Memory Store:
 
@@ -1183,7 +1183,7 @@ You can configure this Near Cache to use Hazelcast's High-Density Memory Store b
 </hazelcast-client>
 ----
 
-Please notice that when the in-memory format is NATIVE, i.e., High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's Near Cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a Near Cache without High-Density Memory Store do not have any impact. 
+Please notice that when the in-memory format is NATIVE, i.e., High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's Near Cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a Near Cache without High-Density Memory Store do not have any impact.
 
 The element `<eviction>` has the following attributes:
 
@@ -1215,14 +1215,14 @@ The features of {cpp} clients are listed below:
 - Ability to add cluster listeners to a cluster and entry/item listeners to distributed data structures.
 - Distributed synchronization mechanisms with ILock, ISemaphore and ICountDownLatch.
 
-Please refer to C++ client's own GitHub https://github.com/hazelcast/hazelcast-cpp-client[repo] for information on setting the client up, installing and compiling it, its serialization support and APIs such as raw pointer and query. 
+Please refer to C++ client's own GitHub https://github.com/hazelcast/hazelcast-cpp-client[repo] for information on setting the client up, installing and compiling it, its serialization support and APIs such as raw pointer and query.
 
 
-	
+
 [[net-client]]
 === .NET Client
 
-You can use the native .NET client to connect to Hazelcast client members. You need to add `HazelcastClient3x.dll` into your .NET project references. The API is very similar to the Java native client. 
+You can use the native .NET client to connect to Hazelcast client members. You need to add `HazelcastClient3x.dll` into your .NET project references. The API is very similar to the Java native client.
 
 Please refer to .NET client's own GitHub repo at https://github.com/hazelcast/hazelcast-csharp-client[Hazelcast .NET Client] for information on configuring and starting the client.
 
@@ -1276,15 +1276,15 @@ Content-Length: 0
 
 ===== Creating/Updating Entries in a Map for REST Client
 
-You can put a new `key1/value1` entry into a map by using POST call to 
+You can put a new `key1/value1` entry into a map by using POST call to
 `http://10.20.17.1:5701/hazelcast/
-rest/maps/mapName/key1` URL. This call's content body should contain the value of the key. Also, if the call contains the MIME type, Hazelcast stores this information, too. 
+rest/maps/mapName/key1` URL. This call's content body should contain the value of the key. Also, if the call contains the MIME type, Hazelcast stores this information, too.
 
 A sample POST call is shown below.
 
 [source,plain]
 ----
-$ curl -v -X POST -H "Content-Type: text/plain" -d "bar" 
+$ curl -v -X POST -H "Content-Type: text/plain" -d "bar"
     http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
 ----
 
@@ -1299,7 +1299,7 @@ It will return the following response if successful:
 
 ===== Retrieving Entries from a Map for REST Client
 
-If you want to retrieve an entry, you can use a GET call to `http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1`. You can also retrieve this entry from another member of your cluster, such as 
+If you want to retrieve an entry, you can use a GET call to `http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1`. You can also retrieve this entry from another member of your cluster, such as
 `http://10.20.17.3:5701/hazelcast/rest/
 maps/mapName/key1`.
 
@@ -1357,7 +1357,7 @@ $ curl -v -X DELETE http://10.20.17.1:5701/hazelcast/rest/maps/mapName
 You can use a POST call to create an item on the queue. A sample is shown below.
 
 ```plain
-$ curl -v -X POST -H "Content-Type: text/plain" -d "foo" 
+$ curl -v -X POST -H "Content-Type: text/plain" -d "foo"
     http://10.20.17.1:5701/hazelcast/rest/queues/myEvents
 ```
 
@@ -1380,7 +1380,7 @@ It will return the following if the queue is full and the item is not able to be
 
 ===== Retrieving Items from a Queue for REST Client
 
-You can use a DELETE call for retrieving items from a queue. Note that you should state the poll timeout while polling for queue events by an extra path parameter. 
+You can use a DELETE call for retrieving items from a queue. Note that you should state the poll timeout while polling for queue events by an extra path parameter.
 
 An example is shown below (**10** being the timeout value).
 
@@ -1538,35 +1538,25 @@ Please refer to https://hazelcast.org/clients-languages/[Feature Comparison Matr
 ==== Python Client
 
 
-Python Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol. 
+Python Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol.
 
-Please refer to http://hazelcast.github.io/hazelcast-python-client[Hazelcast Python Client] for its documentation. 
+Please refer to http://hazelcast.github.io/hazelcast-python-client[Hazelcast Python Client] for its documentation.
 
 ==== Node.js Client
 
-Node.js Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol. 
+Node.js Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol.
 
-Please refer to https://github.com/hazelcast/hazelcast-nodejs-client[Hazelcast Node.js Client] for its documentation. 
+Please refer to https://github.com/hazelcast/hazelcast-nodejs-client[Hazelcast Node.js Client] for its documentation.
 
 ==== Go Client
 
-Go Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol. 
+Go Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol.
 
-Please refer to https://github.com/hazelcast/hazelcast-go-client[Go Client] for its documentation. 
+Please refer to https://github.com/hazelcast/hazelcast-go-client[Go Client] for its documentation.
 
 
-==== Scala 
+==== Scala
 
 The API for Hazelcast Scala is based on Scala 2.11 and Hazelcast 3.6/3.7/3.8 releases. However, these are not hard dependencies provided that you include the relevant Hazelcast dependencies.
 
-Please refer to https://github.com/hazelcast/hazelcast-scala[Hazelcast Scala] for its documentation. 
-
-
-
-
-
-
-
-
-
-
+Please refer to https://github.com/hazelcast/hazelcast-scala[Hazelcast Scala] for its documentation.

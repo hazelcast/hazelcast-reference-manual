@@ -22,7 +22,7 @@ Yes. All Hazelcast data structures are thread safe.
 When a member is started in a cluster, it will dynamically and automatically be discovered. The following are the types of discovery:
 
 * Discovery by TCP/IP: the first member created in the cluster (leader) will form a list of IP addresses of other joining members and will send this list to these members so the members will know each other.
-* Discovery at clouds: Hazelcast supports discovery at cloud platforms such as jclouds based environments, Azure, Consul and PCF. 
+* Discovery at clouds: Hazelcast supports discovery at cloud platforms such as jclouds based environments, Azure, Consul and PCF.
 * Multicast discovery: members in a cluster discover each other by multicast, by default. It is not recommended for production since UDP is often blocked in production environments and other discovery mechanisms are more definite
 
 
@@ -39,7 +39,7 @@ Once a member is gone (crashes), the following happens since data in each member
 * Then, data from these restored backups are recovered.
 * And finally, new backups for these recovered data are formed.
 
-So eventually, availability of the data is maintained. 
+So eventually, availability of the data is maintained.
 
 '''
 **How do I test the connectivity?**
@@ -57,7 +57,7 @@ The output should include connection information, such as the IP addresses, tran
 '''
 **How do I choose keys properly?**
 
-When you store a key and value in a distributed Map, Hazelcast serializes the key and value and stores the byte array version of them in local ConcurrentHashMaps. These ConcurrentHashMaps use `equals` and `hashCode` methods of byte array version of your key. It does not take into account the actual `equals` and `hashCode` implementations of your objects. So it is important that you choose your keys in a proper way. 
+When you store a key and value in a distributed Map, Hazelcast serializes the key and value and stores the byte array version of them in local ConcurrentHashMaps. These ConcurrentHashMaps use `equals` and `hashCode` methods of byte array version of your key. It does not take into account the actual `equals` and `hashCode` implementations of your objects. So it is important that you choose your keys in a proper way.
 
 Implementing `equals` and `hashCode` is not enough, it is also important that the object is always serialized into the same byte array. All primitive types like String, Long, Integer, etc. are good candidates for keys to be used in Hazelcast. An unsorted Set is an example of a very bad candidate because Java Serialization may serialize the same unsorted set in two different byte arrays.
 
@@ -78,7 +78,7 @@ Collections which return values of methods (such as `IMap.keySet`, `IMap.values`
 '''
 **How do I test my Hazelcast cluster?**
 
-Hazelcast allows you to create more than one instance on the same JVM. Each member is called `HazelcastInstance` and each will have its own configuration, socket and threads, so you can treat them as totally separate instances. 
+Hazelcast allows you to create more than one instance on the same JVM. Each member is called `HazelcastInstance` and each will have its own configuration, socket and threads, so you can treat them as totally separate instances.
 
 This enables you to write and to run cluster unit tests on a single JVM. Because you can use this feature for creating separate members different applications running on the same JVM (imagine running multiple web applications on the same JVM), you can also use this feature for testing your Hazelcast cluster.
 
@@ -180,7 +180,7 @@ Also, you should configure the clients attentively. Please refer to the <<hazelc
 **Difference between Lite Member and Smart Client?**
 
 Lite member supports task execution (distributed executor service), smart client does not. Also, Lite Member is highly coupled with cluster, smart client is not.
-Starting with Hazelcast 3.9, you can also promote lite members to data members. Please refer to the <<enabling-lite-members, Lite Members section>> for more information. 
+Starting with Hazelcast 3.9, you can also promote lite members to data members. Please refer to the <<enabling-lite-members, Lite Members section>> for more information.
 
 '''
 **How do you give support?**
@@ -195,7 +195,7 @@ No. However, Hazelcast provides `MapStore` and `MapLoader` interfaces. For examp
 '''
 **Can I use Hazelcast in a single server?**
 
-Yes. But please note that Hazelcast's main design focus is multi-member clusters to be used as a distribution platform. 
+Yes. But please note that Hazelcast's main design focus is multi-member clusters to be used as a distribution platform.
 
 '''
 **How can I monitor Hazelcast?**
@@ -255,9 +255,9 @@ The line `log4j.logger.com.hazelcast=debug` is used to see debug logs for all Ha
 '''
 **Client-server vs. embedded topologies?**
 
-In the embedded topology, members include both the data and application. This type of topology is the most useful if your application focuses on high performance computing and many task executions. Since application is close to data, this topology supports data locality. 
+In the embedded topology, members include both the data and application. This type of topology is the most useful if your application focuses on high performance computing and many task executions. Since application is close to data, this topology supports data locality.
 
-In the client-server topology, you create a cluster of members and scale the cluster independently. Your applications are hosted on the clients and the clients communicate with the members in the cluster to reach data. 
+In the client-server topology, you create a cluster of members and scale the cluster independently. Your applications are hosted on the clients and the clients communicate with the members in the cluster to reach data.
 
 Client-server topology fits better if there are multiple applications sharing the same data or if application deployment is significantly greater than the cluster size (for example, 500 application servers vs. 10 member cluster).
 
@@ -268,7 +268,7 @@ Client-server topology fits better if there are multiple applications sharing th
 Ways of shutting down a Hazelcast member:
 
 * You can call `kill -9 <PID>` in the terminal (which sends a SIGKILL signal). This will result in the immediate shutdown which is not recommended for production systems. If you set the property `hazelcast.shutdownhook.enabled` to `false` and then kill the process using `kill -15 <PID>`, its result is the same (immediate shutdown).
-* You can call `kill -15 <PID>` in the terminal (which sends a SIGTERM signal), or you can call the method `HazelcastInstance.getLifecycleService().terminate()` programmatically, or you can use the script `stop.sh` located in your Hazelcast's `/bin` directory. All three of them will terminate your member ungracefully. They do not wait for migration operations, they force the shutdown. But this is much better than `kill -9 <PID>` since it releases most of the used resources. 
+* You can call `kill -15 <PID>` in the terminal (which sends a SIGTERM signal), or you can call the method `HazelcastInstance.getLifecycleService().terminate()` programmatically, or you can use the script `stop.sh` located in your Hazelcast's `/bin` directory. All three of them will terminate your member ungracefully. They do not wait for migration operations, they force the shutdown. But this is much better than `kill -9 <PID>` since it releases most of the used resources.
 * In order to gracefully shutdown a Hazelcast member (so that it waits the migration operations to be completed), you have four options:
 ** You can call the method `HazelcastInstance.shutdown()` programatically.
 ** You can use JMX API's shutdown method. You can do this by implementing a JMX client application or using a JMX monitoring tool (like JConsole).
@@ -281,10 +281,10 @@ If you use systemd's `systemctl` utility, i.e., `systemctl stop service_name`, a
 '''
 **How do I know it is safe to kill the second member?**
 
-Starting with Hazelcast 3.7, graceful shutdown of a Hazelcast member can be initiated any time as follows:  
+Starting with Hazelcast 3.7, graceful shutdown of a Hazelcast member can be initiated any time as follows:
 
 ```
-hazelcastInstance.shutdown(); 
+hazelcastInstance.shutdown();
 ```
 
 Once a Hazelcast member initiates a graceful shutdown, data of the shutting down member is migrated to the other members automatically.
@@ -297,7 +297,7 @@ Below code snippet terminates a member if the cluster is safe, which means that 
 ----
 PartitionService partitionService = hazelcastInstance.getPartitionService();
 if (partitionService.isClusterSafe()) {
-  hazelcastInstance.getLifecycleService().terminate(); 
+  hazelcastInstance.getLifecycleService().terminate();
 }
 ----
 
@@ -311,7 +311,7 @@ if (partitionService.isLocalMemberSafe()) {
 }
 ----
 
-Please keep in mind that two code snippets shown above are inherently racy. If member failures occur in the cluster after the safety condition check passes, termination of the local member can lead to data loss. For safety of the data, graceful shutdown API is highly recommended.  
+Please keep in mind that two code snippets shown above are inherently racy. If member failures occur in the cluster after the safety condition check passes, termination of the local member can lead to data loss. For safety of the data, graceful shutdown API is highly recommended.
 
 NOTE: Please refer to <<safety-checking-cluster-members, Safety Checking Cluster Members>> for more information.
 
@@ -352,7 +352,7 @@ For additional information please see:
 
  - http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html[Using TCP keepalive under Linux]
  - http://technet.microsoft.com/en-us/library/cc957549.aspx[Microsoft TechNet]
- 
+
 
 '''
 **OOME: Unable to create new native thread?**
@@ -369,7 +369,7 @@ At the operating system level, Linux users can control the amount of resources (
 
 1 - Editing the `limits.conf` file:
 
-`# vi /etc/security/limits.conf` 
+`# vi /etc/security/limits.conf`
 
 ```
 testuser soft nofile 4096<br>
@@ -428,9 +428,3 @@ HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 **What Does "Replica: 1 has no owner" Mean?**
 
 When you start more members after the first one is started, you will see `replica: 1 has no owner` entry in the newly started member's log. There is no need to worry about it since it refers to a transitory state. It only means the replica partition is not ready/assigned yet and eventually it will be.
-
-
-
-
-
-

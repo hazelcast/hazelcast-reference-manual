@@ -184,7 +184,7 @@ Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) 
 **Equality:** `=, !=, <, <=, >, >=`
 
 * `<expression> = value`
-* `age <= 30` 
+* `age <= 30`
 * `name = 'Joe'`
 * `salary != 50000`
 
@@ -219,7 +219,7 @@ Similar to LIKE predicate but in a case-insensitive manner.
 * `name ILIKE 'Jo_'` (true for 'Joe' or 'jOE'; false for 'Josh')
 
 **REGEX**: `<attribute> [NOT] REGEX 'expression'`
- 
+
 * `name REGEX 'abc-.*'` (true for 'abc-123'; false for 'abx-123')
 
 
@@ -249,9 +249,9 @@ can sort the entries by specifying comparators.
 In the example code below:
 
 * The `greaterEqual` predicate gets values from the "students" map. This predicate has a filter
-to retrieve the objects with an "age" greater than or equal to 18. 
-* Then a `PagingPredicate` is constructed in which the page size is 5, so there will be five objects in each page. 
-The first time the values are called creates the first page. 
+to retrieve the objects with an "age" greater than or equal to 18.
+* Then a `PagingPredicate` is constructed in which the page size is 5, so there will be five objects in each page.
+The first time the values are called creates the first page.
 * It gets subsequent pages with the `nextPage()`
 method of `PagingPredicate` and querying the map again with the updated `PagingPredicate`.
 
@@ -279,7 +279,7 @@ Paging Predicate, also known as Order & Limit, is not supported in Transactional
 
 ==== Filtering with Partition Predicate
 
-You can run queries on a single partition in your cluster using the partition predicate (`PartitionPredicate`). 
+You can run queries on a single partition in your cluster using the partition predicate (`PartitionPredicate`).
 
 It takes a predicate and partition key as parameters, gets the partition ID using the key and  runs that predicate only on the partition where that key belongs.
 
@@ -295,17 +295,17 @@ Collection<String> keys = map.keySet(predicate);
 ...
 ----
 
-By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. However, if the 
+By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. However, if the
 partition predicate will only access a single partition, this can lead to a big performance gain.
 
 For the partition predicate to work correctly, you need to know which partition your data belongs to so that you can send the
-request to the correct partition. One of the ways of doing it is to make use of the `PartitionAware` interface when data is 
+request to the correct partition. One of the ways of doing it is to make use of the `PartitionAware` interface when data is
 inserted, thereby controlling the owning partition. Please see the <<partitionaware , PartitionAware section>> for more information and examples.
 
-A concrete example may be a webshop that sells phones and accessories. To find all the accessories of a phone, 
+A concrete example may be a webshop that sells phones and accessories. To find all the accessories of a phone,
 a query could be executed that selects all accessories for that phone. This query is executed on all members in the cluster and
-therefore could generate quite a lot of load. However, if we would store the accessories in the same partition as the phone, the 
-partition predicate could use the `partitionKey` of the phone to select the right partition and then it queries for 
+therefore could generate quite a lot of load. However, if we would store the accessories in the same partition as the phone, the
+partition predicate could use the `partitionKey` of the phone to select the right partition and then it queries for
 the accessories for that phone; and this reduces the load on the system and get faster query results.
 
 ==== Indexing Queries
@@ -388,7 +388,7 @@ You can set one these options using the system property `hazelcast.index.copy.be
 * `COPY_ON_READ` (the default value)
 * `COPY_ON_WRITE`
 * `NEVER`
- 
+
 NOTE: Usage of this system property is supported for BINARY and OBJECT in-memory formats. Only in Hazelcast 3.8.7, it is also supported for NATIVE in-memory format.
 
 ===== Indexing Attributes with ValueExtractor
@@ -564,44 +564,44 @@ To make the analysis simpler, let's assume that there is only one `Motorbike` ob
 
 | 2
 | `Predicates.equal("wheels[7].name", null)`
-| `wheels.size() == 1`                  
-| `null`              
-| Yes  
+| `wheels.size() == 1`
+| `null`
+| Yes
 
-| 3  
-| `Predicates.equal("wheels[0].name", "front-wheel")`    
-| `wheels[0].name == null`              
-| `null`              
+| 3
+| `Predicates.equal("wheels[0].name", "front-wheel")`
+| `wheels[0].name == null`
+| `null`
 | No
 
-| 4  
-| `Predicates.equal("wheels[0].name", null)`             
-| `wheels[0].name == null`              
-| `null`              
-| Yes   
+| 4
+| `Predicates.equal("wheels[0].name", null)`
+| `wheels[0].name == null`
+| `null`
+| Yes
 
-| 5  
-| `Predicates.equal("wheels[0].name", "front-wheel")`    
-| `wheels[0] == null`                   
-| `null`              
-| No    
-| 6  
-| `Predicates.equal("wheels[0].name", null)`             
-| `wheels[0] == null`                   
-| `null`              
-| Yes   
+| 5
+| `Predicates.equal("wheels[0].name", "front-wheel")`
+| `wheels[0] == null`
+| `null`
+| No
+| 6
+| `Predicates.equal("wheels[0].name", null)`
+| `wheels[0] == null`
+| `null`
+| Yes
 
-| 7  
-| `Predicates.equal("wheels[0].name", "front-wheel")`    
-| `wheels == null`                      
-| `null`              
-| No    
+| 7
+| `Predicates.equal("wheels[0].name", "front-wheel")`
+| `wheels == null`
+| `null`
+| No
 
-| 8  
-| `Predicates.equal("wheels[0].name", null)`             
-| `wheels == null`                      
-| `null`              
-| Yes   
+| 8
+| `Predicates.equal("wheels[0].name", null)`
+| `wheels == null`
+| `null`
+| Yes
 |===
 
 As you can see, **no** `NullPointerException`s or `IndexOutOfBoundException`s are thrown in the extraction process, even
@@ -1051,7 +1051,7 @@ public class WordCountCombinerFactory
         public Long finalizeChunk() {
             return sum;
         }
-        
+
         @Override
         public void reset() {
             sum = 0;
@@ -1335,7 +1335,7 @@ It is not as flexible as a full-blown M/R system due to the 2nd phase being sing
 The benefits are:
 
 - Improved performance
-- Simplified API 
+- Simplified API
 - Utilization of existing indexes
 
 
@@ -1343,14 +1343,14 @@ You can refer to <<fast-aggregations, Fast Aggregations>> for examples. If you n
 
 ===== Distributed Computation with Jet
 
-Hazelcast Jet is the new distributed computing framework build on top of Hazelcast IMDG. It uses directed acyclic graphs (DAG) to model relationships between individual steps in the data processing pipeline. 
+Hazelcast Jet is the new distributed computing framework build on top of Hazelcast IMDG. It uses directed acyclic graphs (DAG) to model relationships between individual steps in the data processing pipeline.
 Conceptually speaking, the MapReduce model simply states that distributed computation on a large dataset can be boiled down to two kinds of computation steps - a map step and a reduce step. One pair of map and reduce does one level of aggregation over data. Complex computations typically require multiple such steps. Multiple M/R-steps essentially form a DAG of operations, so that a DAG execution model boils down to a generalization of the MapReduce model.
 Therefore it is always possible to rewrite a MapReduce application to Hazelcast Jet DAG or "pipeline of tasks" without conceptual changes.
 
 Benefits:
 
 - M/R steps are completely isolated (by definition). With the whole computation modeled as a DAG, the Jet scheduler can optimize the operation pipeline
-- Hazelcast Jet provides a convenient high-level API (distributed j.u.stream). The code stays compact but also offers a more concrete API to leverage the full power of DAGs. 
+- Hazelcast Jet provides a convenient high-level API (distributed j.u.stream). The code stays compact but also offers a more concrete API to leverage the full power of DAGs.
 
 ====== Moving MapReduce Tasks to Hazelcast Jet
 
@@ -1393,7 +1393,7 @@ This can be taken as a general template to express a MapReduce job in terms of J
 
 Keep in mind that MapReduce and java.util.stream use the same terminology, but with quite different meaning: in JUS the final step is called "combine" (MapReduce calls it "reduce") and the middle step is called "reduce" (MapReduce calls this one "combine"). MapReduce's "combine" collapses the stream in fixed-size batches, whereas in Jet JUS "reduce" collapses the complete local dataset and sends just a single item per distinct key to the final step. In Jet JUS, the final "combine" step combines just one partial result per member into the total result, whereas in MR the final step "reduces" all the one-per-batch items to the final result. Therefore, in Jet there are only O(distinct-key-count) items sent over the network whereas in MapReduce it is still O(total-item-count) with just a linear scaling factor equal to the configured batch size.
 
-A complete example of the word count done with the Streams API can be found in the hazelcast-jet-code-samples 
+A complete example of the word count done with the Streams API can be found in the hazelcast-jet-code-samples
 repository, located in the "java.util.stream/wordcount-j.u.s" module in the file WordCount.java. A minor difference is that the code on GitHub stores the documents line by line, with the effect of a finer-grained distribution across the cluster.
 
 To better understand how the JUS pipeline is executed by Jet, take a look at the file WordCount.java in the "core/wordcount" module, which builds the same DAG as the Jet JUS implementation, but using the Jet Core API. Here is a somewhat simplified DAG from this sample:
@@ -1414,7 +1414,7 @@ Vertex combine = dag.newVertex("combine", Processors.groupAndAccumulate(
                      count + wordAndCount.getValue())
 );
 Vertex sink = dag.newVertex("sink", writeMap("counts"));
- 
+
 dag.edge(between(source, map))
    .edge(between(map, reduce).partitioned(wholeItem(), HASH_CODE))
    .edge(between(reduce, combine).partitioned(entryKey()).distributed())
@@ -1439,7 +1439,7 @@ For even more flexibility we'll now show how you can implement a processor on yo
 [source,java]
 ----
 public class MapReduce {
- 
+
     public static void main(String[] args) throws Exception {
         Jet.newJetInstance();
         JetInstance jet = Jet.newJetInstance();
@@ -1459,54 +1459,54 @@ public class MapReduce {
             Jet.shutdownAll();
         }
     }
- 
+
     private static class MapP extends AbstractProcessor {
         private final FlatMapper<Entry<Long, String>, String> flatMapper = flatMapper(
                 (Entry<Long, String> e) -> new WordTraverser(e.getValue())
         );
- 
+
         @Override
         protected boolean tryProcess0(@Nonnull Object item) {
             return flatMapper.tryProcess((Entry<Long, String>) item);
         }
     }
- 
+
     private static class WordTraverser implements Traverser<String> {
- 
+
         private final StringTokenizer tokenizer;
- 
+
         WordTraverser(String document) {
             this.tokenizer = new StringTokenizer(document.toLowerCase());
         }
- 
+
         @Override
         public String next() {
             return tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
         }
     }
- 
+
     private static class ReduceP extends AbstractProcessor {
         private final Map<String, Long> wordToCount = new HashMap<>();
         private final Traverser<Entry<String, Long>> resultTraverser =
                 lazy(() -> traverseIterable(wordToCount.entrySet()));
- 
+
         @Override
         protected boolean tryProcess0(@Nonnull Object item) {
             wordToCount.compute((String) item, (x, count) -> 1 + (count != null ? count : 0L));
             return true;
         }
- 
+
         @Override
         public boolean complete() {
             return emitCooperatively(resultTraverser);
         }
     }
- 
+
     private static class CombineP extends AbstractProcessor {
         private final Map<String, Long> wordToCount = new HashMap<>();
         private final Traverser<Entry<String, Long>> resultTraverser =
                 lazy(() -> traverseIterable(wordToCount.entrySet()));
- 
+
         @Override
         protected boolean tryProcess0(@Nonnull Object item) {
             final Entry<String, Long> e = (Entry<String, Long>) item;
@@ -1514,7 +1514,7 @@ public class MapReduce {
                     (x, count) -> e.getValue() + (count != null ? count : 0L));
             return true;
         }
- 
+
         @Override
         public boolean complete() {
             return emitCooperatively(resultTraverser);
@@ -1539,8 +1539,8 @@ Jet's DAG paradigm offers much more than the basic map-reduce-combine cascade. A
 NOTE: This feature has been deprecated. Please use the <<fast-aggregations, Fast-Aggregations>> instead.
 
 Based on the Hazelcast MapReduce framework, Aggregators are ready-to-use data aggregations. These are typical operations like
-sum up values, finding minimum or maximum values, calculating averages and other operations that you would expect 
-in the relational database world.  
+sum up values, finding minimum or maximum values, calculating averages and other operations that you would expect
+in the relational database world.
 
 Aggregation operations are implemented, as mentioned above, on top of the MapReduce framework. All operations can be
 achieved using pure MapReduce calls. However, using the Aggregation feature is more convenient for a big set of standard operations.
@@ -1555,7 +1555,7 @@ We also will implement a first base example.
 Aggregations are available on both types of map interfaces, `com.hazelcast.core.IMap` and `com.hazelcast
 .core.MultiMap`, using
 the `aggregate` methods. Two overloaded methods are available that customize resource management of the
-underlying MapReduce framework by supplying a custom configured 
+underlying MapReduce framework by supplying a custom configured
 `com.hazelcast.mapreduce.JobTracker` instance. To find out how to
 configure the MapReduce framework, please see <<configuring-jobtracker, Configuring JobTracker>>. We will
 later see another way to configure the automatically used MapReduce framework if no special `JobTracker` is supplied.
@@ -1565,7 +1565,7 @@ later see another way to configure the automatically used MapReduce framework if
 To make Aggregations more convenient to use and future proof, the API is heavily optimized for Java 8 and future versions.
 The API is still fully compatible with any Java version Hazelcast supports (Java 6 and Java 7). The biggest difference is how you
 work with the Java generics: on Java 6 and 7, the process to resolve generics is not as strong as on Java 8 and
-future Java versions. In addition, the whole Aggregations API has full Java 8 Project Lambda (or Closure, 
+future Java versions. In addition, the whole Aggregations API has full Java 8 Project Lambda (or Closure,
 https://jcp.org/en/jsr/detail?id=335[JSR 335]) support.
 
 For illustration of the differences in Java 6 and 7 in comparison to Java 8, we will have a quick look at code
@@ -1591,7 +1591,7 @@ Since Java 6 and 7 are not as strong on resolving generics as Java 8, you need t
 with the code you write. You might also consider using raw types but breaking the type safety to ease this process.
 
 For a short introduction on what the following code example means, look at the source code comments. We will later dig deeper into
-the different options. 
+the different options.
 
 [source,java]
 ----
@@ -1669,7 +1669,7 @@ class JonesKeyPredicate implements KeyPredicate<String> {
 ====== Filtering on Values with Predicate
 
 Using the standard Hazelcast `Predicate` interface, we can also filter based on the value of a data entry. In the following example, you can
-only select values that are divisible by 4 without a remainder. 
+only select values that are divisible by 4 without a remainder.
 
 [source,java]
 ----
@@ -1691,7 +1691,7 @@ class DivisiblePredicate implements Predicate<String, Integer> {
 
 As well as filtering, `Supplier` can also extract or transform data before providing it
 to the aggregation operation itself. The following example shows how to transform an input value to a string.
- 
+
 [source,java]
 ----
 Supplier<String, Integer, String> supplier = Supplier.all(
@@ -1715,7 +1715,7 @@ Supplier<String, Integer, String> supplier =
     Supplier.fromKeyPredicate(
         lastName -> "Jones".equalsIgnoreCase( lastName ),
         Supplier.fromPredicate(
-            entry -> entry.getValue() % 4 == 0,  
+            entry -> entry.getValue() % 4 == 0,
             Supplier.all( value -> Integer.toString(value) )
         )
     );
@@ -1728,7 +1728,7 @@ requirements. This is a very basic task. The `Supplier` abstract class has just 
 
 NOTE: Due to a limitation of the Java Lambda API, you cannot implement abstract classes using Lambdas. Instead it is
 recommended that you create a standard named class.
- 
+
 [source,java]
 ----
 class MyCustomSupplier extends Supplier<String, Integer, String> {
@@ -1782,7 +1782,7 @@ contains type safe aggregations of the following types:
 
 Those aggregations are similar to their counterparts on relational databases and can be equated to SQL statements as set out
 below.
- 
+
 **Average:**
 
 Calculates an average value based on all selected values.
@@ -1839,7 +1839,7 @@ map.aggregate( Supplier.all( person -> person.getAge() ),
 SELECT MAX(person.age) FROM person;
 ```
 
-**Distinct Values:** 
+**Distinct Values:**
 
 Returns a collection of distinct values over the selected values
 
@@ -1853,9 +1853,9 @@ map.aggregate( Supplier.all( person -> person.getAge() ),
 SELECT DISTINCT person.age FROM person;
 ```
 
-**Count:**  
+**Count:**
 
-Returns the element count over all selected values 
+Returns the element count over all selected values
 
 [source,java]
 ----
@@ -1878,7 +1878,7 @@ class Person {
   private String firstName;
   private String lastName;
   private int age;
-  
+
   // getters and setters
 }
 
@@ -1915,9 +1915,9 @@ For `MultiMap` it is very similar:
 
 - `hz::aggregation-multimap-` and the concatenated name of the MultiMap.
 
-Knowing the specification of the name, we can configure the `JobTracker` as expected 
-(as described in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>) using the naming spec we just learned. For more information on configuration of the 
-`JobTracker`, please see <<configuring-jobtracker, Configuring Jobtracker>>. 
+Knowing the specification of the name, we can configure the `JobTracker` as expected
+(as described in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>) using the naming spec we just learned. For more information on configuration of the
+`JobTracker`, please see <<configuring-jobtracker, Configuring Jobtracker>>.
 
 To finish this section, let's have a quick example for the above naming specs:
 
@@ -1925,7 +1925,7 @@ To finish this section, let's have a quick example for the above naming specs:
 ----
 IMap<String, Integer> map = hazelcastInstance.getMap( "mymap" );
 
-// The internal JobTracker name resolves to 'hz::aggregation-map-mymap' 
+// The internal JobTracker name resolves to 'hz::aggregation-map-mymap'
 map.aggregate( ... );
 ----
 
@@ -1933,7 +1933,7 @@ map.aggregate( ... );
 ----
 MultiMap<String, Integer> multimap = hazelcastInstance.getMultiMap( "mymultimap" );
 
-// The internal JobTracker name resolves to 'hz::aggregation-multimap-mymultimap' 
+// The internal JobTracker name resolves to 'hz::aggregation-multimap-mymultimap'
 multimap.aggregate( ... );
 ----
 
@@ -1969,7 +1969,7 @@ class Employee implements Serializable {
 class SalaryMonth implements Serializable {
   private Month month;
   private int salary;
-  
+
   // getters and setters
 }
 
@@ -1977,9 +1977,9 @@ class SalaryYear implements Serializable {
   private String email;
   private int year;
   private List<SalaryMonth> months;
-  
+
   // getters and setters
-  
+
   public int getAnnualSalary() {
     int sum = 0;
     for ( SalaryMonth salaryMonth : getMonths() ) {
@@ -2029,11 +2029,11 @@ salary calculation, so we need to execute a join operation between the employees
 ----
 class USEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAware {
   private transient HazelcastInstance hazelcastInstance;
-  
+
   public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
     this.hazelcastInstance = hazelcastInstance;
   }
-  
+
   public boolean evaluate( String email ) {
     IMap<String, Employee> employees = hazelcastInstance.getMap( "employees" );
     Employee employee = employees.get( email );
@@ -2058,12 +2058,12 @@ int avgSalary = salaries.aggregate( Supplier.fromKeyPredicate(
 
 ===== Grouping Example
 
-For our next example, we will do some grouping based on the different worldwide offices. Currently, a group aggregator is not yet 
-available, so we need a small workaround to achieve this goal. (In later versions of the Aggregations API this will not be 
+For our next example, we will do some grouping based on the different worldwide offices. Currently, a group aggregator is not yet
+available, so we need a small workaround to achieve this goal. (In later versions of the Aggregations API this will not be
 required because it will be available out-of-the-box in a much more convenient way.)
 
 Again, let's start with our filter. This time, we want to filter based on an office name and we need to do some data joins
-to achieve this kind of filtering. 
+to achieve this kind of filtering.
 
 **A short tip:** to minimize the data transmission on the aggregation we can use
 <<data-affinity, Data Affinity>> rules to influence the partitioning of data. Be aware that this is an expert feature of Hazelcast.
@@ -2073,24 +2073,24 @@ to achieve this kind of filtering.
 class OfficeEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAware {
   private transient HazelcastInstance hazelcastInstance;
   private String office;
-  
+
   // Deserialization Constructor
   public OfficeEmployeeFilter() {
-  } 
-  
+  }
+
   public OfficeEmployeeFilter( String office ) {
     this.office = office;
   }
-  
+
   public void setHazelcastInstance( HazelcastInstance hazelcastInstance ) {
     this.hazelcastInstance = hazelcastInstance;
   }
-  
+
   public boolean evaluate( String email ) {
     MultiMap<String, String> officeAssignment = hazelcastInstance
         .getMultiMap( "office-employee" );
 
-    return officeAssignment.containsEntry( office, email );    
+    return officeAssignment.containsEntry( office, email );
   }
 }
 ----
@@ -2113,7 +2113,7 @@ for ( String office : officeAssignment.keySet() ) {
   OfficeEmployeeFilter filter = new OfficeEmployeeFilter( office );
   int avgSalary = salaries.aggregate( Supplier.fromKeyPredicate( filter, extractor ),
                                       Aggregations.integerAvg() );
-                                      
+
   avgSalariesPerOffice.put( office, avgSalary );
 }
 ----
@@ -2156,7 +2156,7 @@ is always expected to work on a `Supplier` that filters and/or transforms the ma
 
 The main interface for making your own aggregation is `com.hazelcast.mapreduce.aggregation.Aggregation`. It consists of four
 methods.
- 
+
 [source,java]
 ----
 interface Aggregation<Key, Supplied, Result> {
@@ -2341,11 +2341,11 @@ A continuous query cache is beneficial when you need to query the distributed `I
 ==== Accessing Continuous Query Cache from Member
 
 The following code snippet shows how you can access a continuous query cache from a member.
-     
+
 [source,java]
 ----
 include::{javasource}/distributedquery/CQC.java[tag=cqc]
-----     
+----
 
 ==== Accessing Continuous Query Cache from Client Side
 
@@ -2353,7 +2353,7 @@ The following code snippet shows how you can access a continuous query cache fro
 The difference in this code from the member side code above is that you configure and instantiate
 a client instance instead of a member instance.
 
-     
+
 [source,java]
 ----
 include::{javasource}/distributedquery/CQCClient.java[tag=cqcclient]
@@ -2440,12 +2440,3 @@ If `delay-seconds` is bigger than **0**, the following logic applies:
 * If `coalesce` is set to **true**, the buffer is checked for an event with the same key; if so, it is overridden by the current event. Then:
 ** The current size of the buffer is checked: if the current size of the buffer is equal to or larger than `batch-size`, then the events counted as much as the `batch-size` are pushed to the subscriber. Otherwise, no events are sent.
 ** After finishing with checking `batch-size`, the `delay-seconds` is checked. The buffer is scanned from the oldest to youngest entries; all the entries that are older than `delay-seconds` are pushed to the subscriber.
-
-
-
-
-
-
-
-
-

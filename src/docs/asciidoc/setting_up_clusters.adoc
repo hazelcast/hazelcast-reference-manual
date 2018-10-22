@@ -2,7 +2,7 @@
 [[setting-up-clusters]]
 == Setting Up Clusters
 
-This chapter describes Hazelcast clusters and the methods cluster members and native clients use to form a Hazelcast cluster. 
+This chapter describes Hazelcast clusters and the methods cluster members and native clients use to form a Hazelcast cluster.
 
 [[discovery-mechanisms]]
 === Discovery Mechanisms
@@ -167,14 +167,14 @@ The following is an example declarative configuration.
                 <multicast-timeout-seconds>2</multicast-timeout-seconds>
                 <trusted-interfaces>
                    <interface>192.168.1.102</interface>
-                </trusted-interfaces>   
+                </trusted-interfaces>
             </multicast>
             <tcp-ip enabled="false">
             </tcp-ip>
             <aws enabled="false">
             </aws>
         </join>
-  </network>     
+  </network>
 ----
 
 Pay attention to the `multicast-timeout-seconds` element. `multicast-timeout-seconds` specifies the time in seconds that a member should wait for a valid multicast response from another member running in the network before declaring itself the leader member (the first member joined to the cluster) and creating its own cluster. This only applies to the startup of members where no leader has been assigned yet. If you specify a high value to `multicast-timeout-seconds`, such as 60 seconds, it means that until a leader is selected, each member will wait 60 seconds before moving on. Be careful when providing a high value. Also, be careful not to set the value too low, or the members might give up too early and create their own cluster.
@@ -227,7 +227,7 @@ The following are the multicast discovery plugin configuration properties with t
 [[creating-cluster-groups]]
 === Creating Cluster Groups
 
-You can create cluster groups. To do this, use the `group` configuration element. 
+You can create cluster groups. To do this, use the `group` configuration element.
 
 You can separate your clusters in a simple way by specifying group names. Example groupings can be by *development*, *production*, *test*, *app*, etc. The following is an example declarative configuration.
 
@@ -270,14 +270,14 @@ If you have a Hazelcast release older than 3.8.2, you need to provide also a gro
 include::{javasource}/GroupingClusters2.java[tag=groupingclusters]
 ----
 
-Starting with 3.8.2, there is no need for a group password, both on member and client sides. 
+Starting with 3.8.2, there is no need for a group password, both on member and client sides.
 
 [[member-user-code-deployment-beta]]
 === Member User Code Deployment - BETA
 
 Hazelcast can dynamically load your custom classes or domain classes from a remote class repository, which typically includes <<enabling-lite-members, lite members>>. For this purpose Hazelcast offers a distributed  dynamic class loader.
 
-Using this dynamic class loader, you can control the local caching of the classes loaded from other members, 
+Using this dynamic class loader, you can control the local caching of the classes loaded from other members,
 control the classes to be served to other members and create blacklists or whitelists of classes and packages. When you enable this feature, you will not have to deploy your classes to all cluster members.
 
 The following is the brief working mechanism of the User Code Deployment feature:
@@ -365,7 +365,7 @@ You can use the User Code Deployment at the client side for the following situat
 . You have objects that will run on the cluster via the clients such as `Runnable`, `Callable` and Entry Processors.
 . You have new or amended user domain objects (in-memory format of the IMap set to `Object`) which need to be deployed into the cluster.
 
-When this feature is enabled, the clients will deploy these classes to the members. By this way, when a client adds a new class, the members will not require restarts to include the new classes in classpath. 
+When this feature is enabled, the clients will deploy these classes to the members. By this way, when a client adds a new class, the members will not require restarts to include the new classes in classpath.
 
 
 You can also use the client permission policy to specify which clients are permitted to use User Code Deployment. Please see the <<permissions, Permissions>>.
@@ -406,7 +406,7 @@ include::{javasource}/ClientUCD.java[tag=clientucd]
 [[client-user-code-deployment-note]]
 ===== Important to Know
 
-Note that User Code Deployment should also be enabled on the members to use this feature. 
+Note that User Code Deployment should also be enabled on the members to use this feature.
 
 [source,java]
 ----
@@ -415,7 +415,7 @@ UserCodeDeploymentConfig userCodeDeploymentConfig = config.getUserCodeDeployment
 userCodeDeploymentConfig.setEnabled( true );
 ----
 
-Please refer to the <<member-user-code-deployment-beta, Member User Code Deployment section>> for more information on enabling it on the member side and its configuration properties. 
+Please refer to the <<member-user-code-deployment-beta, Member User Code Deployment section>> for more information on enabling it on the member side and its configuration properties.
 
 For the property `class-cache-mode`, Client User Code Deployment supports only the `ETERNAL` mode, regardless of the configuration set at the member side (which can be `ETERNAL` and `OFF`).
 
@@ -505,7 +505,7 @@ Then, you can start your Hazelcast member by using the start scripts (`start.sh`
 
 Hazelcast distributes key objects into partitions using the consistent hashing algorithm. Multiple replicas are created for each partition and those partition replicas are distributed among Hazelcast members. An entry is stored in the members that own replicas of the partition to which the entry's key is assigned. The total partition count is 271 by default; you can change it with the configuration property `hazelcast.partition.count`. Please see the <<system-properties, System Properties appendix>>.
 
-Hazelcast member that owns the primary replica of a partition is called as partition owner. Other replicas are called backups. Based on the configuration, a key object can be kept in multiple replicas of a partition. A member can hold at most one replica of a partition (ownership or backup). 
+Hazelcast member that owns the primary replica of a partition is called as partition owner. Other replicas are called backups. Based on the configuration, a key object can be kept in multiple replicas of a partition. A member can hold at most one replica of a partition (ownership or backup).
 
 By default, Hazelcast distributes partition replicas randomly and equally among the cluster members, assuming all members in the cluster are identical. But what if some members share the same JVM or physical machine or chassis and you want backups of these members to be assigned to members in another machine or chassis? What if processing or memory capacities of some members are different and you do not want an equal number of partitions to be assigned to all members?
 
@@ -566,7 +566,7 @@ NOTE: While your cluster was forming, if you configured your members to discover
 
 ===== PER_MEMBER
 
-You can give every member its own group. Each member is a group of its own and primary and backup partitions are distributed randomly (not on the same physical member). This gives the least amount of protection and is the default configuration for a Hazelcast cluster. This grouping type provides good redundancy when Hazelcast members are on separate hosts. However, if multiple instances run on the same host, this type is not a good option. 
+You can give every member its own group. Each member is a group of its own and primary and backup partitions are distributed randomly (not on the same physical member). This gives the least amount of protection and is the default configuration for a Hazelcast cluster. This grouping type provides good redundancy when Hazelcast members are on separate hosts. However, if multiple instances run on the same host, this type is not a good option.
 
 Following are declarative and programmatic configuration snippets that show how to enable PER_MEMBER grouping.
 
@@ -613,9 +613,9 @@ partitionGroupConfig.setEnabled( true )
 
 ===== SPI
 
-You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()` and return the `PartitionGroupStrategy` configuration in that overridden method. 
+You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()` and return the `PartitionGroupStrategy` configuration in that overridden method.
 
-Following is a sample code covering the implementation steps mentioned in the above paragraph: 
+Following is a sample code covering the implementation steps mentioned in the above paragraph:
 
 ```
 public class CustomDiscovery extends AbstractDiscoveryStrategy {
@@ -626,7 +626,7 @@ public class CustomDiscovery extends AbstractDiscoveryStrategy {
 
     @Override
     public Iterable<DiscoveryNode> discoverNodes() {
-        Iterable<DiscoveryNode> iterable = //your implementation 
+        Iterable<DiscoveryNode> iterable = //your implementation
         return iterable;
     }
 
@@ -638,7 +638,7 @@ public class CustomDiscovery extends AbstractDiscoveryStrategy {
     private class CustomPartitionGroupStrategy implements PartitionGroupStrategy {
         @Override
         public Iterable<MemberGroup> getMemberGroups() {
-            Iterable<MemberGroup> iterable = //your implementation 
+            Iterable<MemberGroup> iterable = //your implementation
             return iterable;
         }
     }
@@ -721,7 +721,7 @@ Using JVM arguments:
 -Dlog4j.configurationFile=/path/to/properties/log4j2.properties
 ```
 
-Using declarative configuration (`hazelcast.xml`): 
+Using declarative configuration (`hazelcast.xml`):
 
 ```
 <hazelcast>
@@ -882,7 +882,7 @@ By default, Hazelcast lets the system pick up an ephemeral port during socket bi
       <!-- ports between 33000 and 35000 -->
       <ports>33000-35000</ports>
       <!-- comma separated ports -->
-      <ports>37000,37001,37002,37003</ports> 
+      <ports>37000,37001,37002,37003</ports>
       <ports>38000,38500-38600</ports>
     </outbound-ports>
   </network>
@@ -904,7 +904,7 @@ networkConfig.addOutboundPort(37001);
 
 NOTE: You can use port ranges and/or comma separated ports.
 
-As shown in the programmatic configuration, you use the method `addOutboundPort` to add only one port. If you need to add a group of ports, then use the method `addOutboundPortDefinition`. 
+As shown in the programmatic configuration, you use the method `addOutboundPort` to add only one port. If you need to add a group of ports, then use the method `addOutboundPortDefinition`.
 
 In the declarative configuration, the element `ports` can be used for both single and multiple port definitions. When you set this element to  `0` or  `*`, your operating system (not Hazelcast) will select a free port from the ephemeral range.
 
@@ -951,7 +951,7 @@ The `join` configuration element is used to discover Hazelcast members and enabl
                 <multicast-timeout-seconds>2</multicast-timeout-seconds>
                 <trusted-interfaces>
                    <interface>192.168.1.102</interface>
-                </trusted-interfaces>   
+                </trusted-interfaces>
             </multicast>
             <tcp-ip enabled="false">
                 <required-member>192.168.1.104</required-member>
@@ -989,7 +989,7 @@ join.getTcpIpConfig().addMember( "10.45.67.32" ).addMember( "10.45.67.100" )
 The `join` element has the following sub-elements and attributes.
 
 [[multicast-element]]
-===== multicast element 
+===== multicast element
 
 The `multicast` element includes parameters to fine tune the multicast join mechanism.
 
@@ -997,11 +997,11 @@ The `multicast` element includes parameters to fine tune the multicast join mech
 - `multicast-group`: The multicast group IP address. Specify it when you want to create clusters within the same network. Values can be between 224.0.0.0 and 239.255.255.255. Its default value is 224.2.2.3.
 - `multicast-port`: The multicast socket port that the Hazelcast member listens to and sends discovery messages through. Its default value is 54327.
 - `multicast-time-to-live`: Time-to-live value for multicast packets sent out to control the scope of multicasts. See more information http://www.tldp.org/HOWTO/Multicast-HOWTO-2.html[here].
-- `multicast-timeout-seconds`: Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another member. For example, if you set it as 60 seconds, each member will wait for 60 seconds until a leader member is selected. Its default value is 2 seconds. 
+- `multicast-timeout-seconds`: Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another member. For example, if you set it as 60 seconds, each member will wait for 60 seconds until a leader member is selected. Its default value is 2 seconds.
 - `trusted-interfaces`: Includes IP addresses of trusted members. When a member wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (\*) on the last digit of IP address, e.g., 192.168.1.\* or 192.168.1.100-110.
-	
+
 [[tcp-ip-element]]
-===== tcp-ip element 
+===== tcp-ip element
 
 The `tcp-ip` element includes parameters to fine tune the TCP/IP join mechanism.
 
@@ -1014,7 +1014,7 @@ NOTE: `tcp-ip` element also accepts the `interface` parameter. Please refer to t
 * `connection-timeout-seconds`: Defines the connection timeout in seconds. This is the maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. Setting it to a too low value could mean that a member is not able to connect to a cluster. Setting it to a too high value means that member startup could slow down because of longer timeouts, for example when a well known member is not up. Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5 seconds.
 
 [[aws-element]]
-===== aws element 
+===== aws element
 
 The `aws` element includes parameters to allow the members to form a cluster on the Amazon EC2 environment.
 
@@ -1040,8 +1040,8 @@ The `discovery-strategies` element configures internal or external discovery str
 To make sure EC2 instances are found correctly, you can use the `AWSClient` class. It determines the private IP addresses of EC2 instances to be connected. Give the `AWSClient` class the values for the parameters that you specified in the `aws` element, as shown below. You will see whether your EC2 instances are found.
 
 ```
-public static void main( String[] args )throws Exception{ 
-  AwsConfig config = new AwsConfig(); 
+public static void main( String[] args )throws Exception{
+  AwsConfig config = new AwsConfig();
   config.setSecretKey( ... ) ;
   config.setSecretKey( ... );
   config.setRegion( ... );
@@ -1051,9 +1051,9 @@ public static void main( String[] args )throws Exception{
   config.setEnabled( true );
   AWSClient client = new AWSClient( config );
   Collection<String> ipAddresses = client.getPrivateIpAddresses();
-  System.out.println( "addresses found:" + ipAddresses ); 
+  System.out.println( "addresses found:" + ipAddresses );
   for ( String ip: ipAddresses ) {
-    System.out.println( ip ); 
+    System.out.println( ip );
   }
 }
 ```
@@ -1073,13 +1073,13 @@ The following are example configurations.
   <network>
     ...
     <interfaces enabled="true">
-      <interface>10.3.16.*</interface> 
-      <interface>10.3.10.4-18</interface> 
-      <interface>192.168.1.3</interface>         
-    </interfaces>    
+      <interface>10.3.16.*</interface>
+      <interface>10.3.10.4-18</interface>
+      <interface>192.168.1.3</interface>
+    </interfaces>
   </network>
   ...
-</hazelcast> 
+</hazelcast>
 ```
 
 **Programmatic:**
@@ -1142,7 +1142,7 @@ NOTE: This SPI is not intended to provide addresses of other cluster members wit
 
 By default, Hazelcast chooses the public and bind address. You can influence on the choice by defining a `public-address` in the configuration or by using other properties mentioned above. In some cases, though, these properties are not enough and the default address picking strategy will choose wrong addresses. This may be the case when deploying Hazelcast in some cloud environments, such as AWS, when using Docker or when the instance is deployed behind a NAT and the `public-address` property is not enough (please see the <<public-address, Public Address section>>).
 
-In these cases, it is possible to configure the bind and public address in a more advanced way. You can provide an implementation of the `com.hazelcast.spi.MemberAddressProvider` interface which will provide the bind and public address. The implementation may then choose these addresses in any way - it may read from a system property or file or even invoke a web service to retrieve the public and private address. 
+In these cases, it is possible to configure the bind and public address in a more advanced way. You can provide an implementation of the `com.hazelcast.spi.MemberAddressProvider` interface which will provide the bind and public address. The implementation may then choose these addresses in any way - it may read from a system property or file or even invoke a web service to retrieve the public and private address.
 
 The details of the implementation depend heavily on the environment in which Hazelcast is deployed. As such, we will demonstrate how to configure Hazelcast to use a simplified custom member address provider SPI implementation. An example of an implementation is shown below:
 
@@ -1297,12 +1297,12 @@ config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.min.std.dev.m
 [[ping-failure-detector]]
 ==== Ping Failure Detector
 
-The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accrual Failure Detectors. It operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.  
+The Ping Failure Detector may be configured in addition to one of Deadline and Phi Accrual Failure Detectors. It operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events. This detector may be configured to perform an extra check after a member is suspected by one of the other detectors, or it can work in parallel, which is the default. This way hardware and network level issues will be detected more quickly.
 
 This failure detector is based on `InetAddress.isReachable()`.
 When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
 
-If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled. 
+If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled.
 
 For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met.
 
@@ -1318,7 +1318,7 @@ instead of requiring root access. Therefore, this detector is supported only on 
 * **When running with custom capabilities, the dynamic linker on Linux will reject loading libs from untrusted paths.** Since you have now `cap_net_raw` as a custom capability for a process, it becomes suspicious to the dynamic linker and it will throw an error: `java: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory`
 ** To overcome this rejection, the `<JDK_HOME>/jre/lib/amd64/jli/` path needs to be added in the `ld.conf`. Run the following command to do this: `echo "<JDK_HOME>/jre/lib/amd64/jli/" >> /etc/ld.so.conf.d/java.conf && sudo ldconfig`
 * **ICMP Echo Requests must not be blocked by the receiving hosts.** `/proc/sys/net/ipv4/icmp_echo_ignore_all` set to `0`. Run the following command:
-+  
++
 `echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_all`
 
 If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
@@ -1390,4 +1390,3 @@ Below is a summary table of all possible configuration combinations of the ping 
 | Not Supported
 | Not Supported - Requires root privileges
 |===
-
