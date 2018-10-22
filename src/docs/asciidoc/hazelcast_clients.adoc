@@ -1231,9 +1231,9 @@ Please refer to .NET client's own GitHub repo at https://github.com/hazelcast/ha
 
 Hazelcast provides a REST interface, i.e. it provides an HTTP service in each cluster member so that you can access your `map` and `queue` using HTTP protocol. Assuming `mapName` and `queueName` are already configured in your Hazelcast, its structure is shown below.
 
-`http://member IP address:port/hazelcast/rest/maps/mapName/key`
+`+http://member IP address:port/hazelcast/rest/maps/mapName/key+`
 
-`http://member IP address:port/hazelcast/rest/queues/queueName`
+`+http://member IP address:port/hazelcast/rest/queues/queueName+`
 
 For the operations to be performed, standard REST conventions for HTTP calls are used.
 
@@ -1277,8 +1277,7 @@ Content-Length: 0
 ===== Creating/Updating Entries in a Map for REST Client
 
 You can put a new `key1/value1` entry into a map by using POST call to
-`http://10.20.17.1:5701/hazelcast/
-rest/maps/mapName/key1` URL. This call's content body should contain the value of the key. Also, if the call contains the MIME type, Hazelcast stores this information, too.
+`+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+` URL. This call's content body should contain the value of the key. Also, if the call contains the MIME type, Hazelcast stores this information, too.
 
 A sample POST call is shown below.
 
@@ -1299,9 +1298,8 @@ It will return the following response if successful:
 
 ===== Retrieving Entries from a Map for REST Client
 
-If you want to retrieve an entry, you can use a GET call to `http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1`. You can also retrieve this entry from another member of your cluster, such as
-`http://10.20.17.3:5701/hazelcast/rest/
-maps/mapName/key1`.
+If you want to retrieve an entry, you can use a GET call to `+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+`. You can also retrieve this entry from another member of your cluster, such as
+`+http://10.20.17.3:5701/hazelcast/rest/maps/mapName/key1+`.
 
 An example of a GET call is shown below.
 
