@@ -109,7 +109,7 @@ characters,  (underscore) is placeholder for only one character.
 * `regex`: Checks if the result of an expression matches some regular expression.
 
 
-NOTE: Please see the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc] for all predicates provided.
+NOTE: Please see the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc] for all predicates provided.
 
 
 ===== Combining Predicates with AND, OR, NOT
@@ -272,7 +272,7 @@ values = map.values( pagingPredicate );
 
 If a comparator is not specified for `PagingPredicate`, but you want to get a collection of keys or values page by page, this collection must be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`). Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
-Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the method `setPage()`. This way, if you make a query for the hundredth page, for example, it will get all 100 pages at once instead of reaching the hundredth page one by one using the method `nextPage()`. Please note that this feature tires the memory and refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
+Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the method `setPage()`. This way, if you make a query for the hundredth page, for example, it will get all 100 pages at once instead of reaching the hundredth page one by one using the method `nextPage()`. Please note that this feature tires the memory and refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
 
 Paging Predicate, also known as Order & Limit, is not supported in Transactional Context.
 
@@ -399,17 +399,19 @@ You can also define custom attributes that may be referenced in predicates, quer
 
 You can use the keyword `this` as an attribute name while adding an index or creating a predicate. A basic usage is shown below.
 
-```
+[source,java]
+----
 map.addIndex("this", true);
 Predicate<Integer, Integer> lessEqual = Predicates.between("this", 12, 20);
-```
+----
 
 Another basic sample using `SqlPredicate` is shown below.
 
-```
+[source,java]
+----
 new SqlPredicate("this = 'jones'")
 new SqlPredicate("this.age > 33")
-```
+----
 
 The special attribute `this` acts on the value of a map entry. Typically, you do not need to specify it while accessing a property of an entry's value, since its presence is implicitly assumed if the special attribute <<querying-entry-keys-with-predicates, __key>> is not specified.
 
@@ -429,18 +431,20 @@ Please see <<filtering-with-paging-predicates, Filtering with Paging Predicates>
 
 Below is an example of that declarative configuration.
 
-```
+[source,xml]
+----
 <executor-service name="hz:query">
   <pool-size>100</pool-size>
 </executor-service>
-```
+----
 
 Below is the equivalent programmatic configuration.
 
-```
+[source,java]
+----
 Config cfg = new Config();
 cfg.getExecutorConfig("hz:query").setPoolSize(100);
-```
+----
 
 
 ===== Query Requests from Clients
@@ -484,18 +488,20 @@ Collection<Motorbike> result = map.values(p);
 
 It is also possible to query a collection/array using the `any` semantic as shown below:
 
-```
+[source,java]
+----
 // it matches all motorbikes where any wheel's name is 'front-wheel'
 Predicate p = Predicates.equal("wheels[any].name", "front-wheel");
 Collection<Motorbike> result = map.values(p);
-```
+----
 
 The exact same query may be executed using the `SQLPredicate` as shown below:
 
-```
+[source,java]
+----
 Predicate p = new SqlPredicate("wheels[any].name = 'front-wheel'");
 Collection<Motorbike> result = map.values(p);
-```
+----
 
 `[]` notation applies to both collections and arrays.
 
@@ -508,33 +514,37 @@ in the index definition.
 
 Let's assume you have the following index definition:
 
-```
+[source,xml]
+----
 <indexes>
   <index ordered="false">wheels[any].name</index>
 </indexes>
-```
+----
 
 The following query will use the index:
 
-```
+[source,java]
+----
 Predicate p = Predicates.equal("wheels[any].name", "front-wheel");
-```
+----
 
 
 The following query, however, will NOT leverage the index, since it does not use exactly the same attribute name that
 was used in the index:
 
-```
+[source,java]
+----
 Predicates.equal("wheels[0].name", "front-wheel")
-```
+----
 
 In order to use the index in the case mentioned above, you have to create another index, as shown below:
 
-```
+[source,xml]
+----
 <indexes>
   <index ordered="false">wheels[0].name</index>
 </indexes>
-```
+----
 
 ==== Corner cases
 
@@ -627,7 +637,7 @@ and implement the `extract()` method. This method does not return any values sin
 In order to return multiple results from a single extraction, invoke the `ValueCollector.collect()` method
 multiple times, so that the collector collects all results.
 
-Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html[`ValueCollector`] Javadocs.
+Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html[`ValueCollector`] Javadocs.
 
 ===== ValueExtractor with Portable Serialization
 
@@ -640,7 +650,7 @@ It contains two methods:
  * `read(String path, ValueCollector<T> collector)` - enables passing all results directly to the `ValueCollector`.
  * `read(String path, ValueCallback<T> callback)` - enables filtering, transforming and grouping the result of the read operation and manually passing it to the `ValueCollector`.
 
-Please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html[`ValueReader`] Javadoc.
+Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html[`ValueReader`] Javadoc.
 
 ===== Returning Multiple Values from a Single Extraction
 
@@ -696,14 +706,15 @@ Please note that using square brackets within the argument string is not allowed
 
 The following snippet demonstrates how to define a custom attribute using a `ValueExtractor`.
 
-```
+[source,java]
+----
 MapAttributeConfig attributeConfig = new MapAttributeConfig();
 attributeConfig.setName("currency");
 attributeConfig.setExtractor("com.bank.CurrencyExtractor");
 
 MapConfig mapConfig = new MapConfig();
 mapConfig.addMapAttributeConfig(attributeConfig);
-```
+----
 
 `currency` is the name of the custom attribute that will be extracted using the `CurrencyExtractor` class.
 
@@ -714,13 +725,14 @@ All extractors have to be defined upfront in the map's initial configuration.
 
 The following snippet demonstrates how to define a custom attribute in the Hazelcast XML Configuration.
 
-```
+[source,xml]
+----
 <map name="trades">
    <attributes>
        <attribute extractor="com.bank.CurrencyExtractor">currency</attribute>
    </attributes>
 </map>
-```
+----
 
 Analogous to the example above, `currency` is the name of the custom attribute that will be extracted using the
 `CurrencyExtractor` class.
@@ -736,7 +748,8 @@ The name of the attribute used in the index definition has to match the one used
 
 Defining indexes with extraction arguments is allowed, as shown in the example below:
 
-```
+[source,xml]
+----
 <indexes>
     <!-- custom attribute without an extraction argument -->
     <index ordered="true">currency</index>
@@ -744,7 +757,7 @@ Defining indexes with extraction arguments is allowed, as shown in the example b
     <!-- custom attribute using an extraction argument -->
     <index ordered="true">currency[incoming]</index>
 </indexes>
-```
+----
 
 
 
@@ -792,14 +805,15 @@ image::MapReduceWorkflow.png[MapReduce Workflow Example]
 
 In pseudo code, the corresponding map and reduce function would look like the following. A Hazelcast code example will be shown in the next section.
 
-```
+[source,plain]
+----
 map( key:String, document:String ):Void ->
   for each w:word in document:
     emit( w, 1 )
 
 reduce( word:String, counts:List[Int] ):Int ->
   return sum( counts )
-```
+----
 
 ===== MapReduce Phases
 
@@ -826,10 +840,11 @@ pairs sent through the wire, there is now only one for the key "planet".
 
 The pseudo code for a combiner is similar to the reducer.
 
-```
+[source,plain]
+----
 combine( word:String, counts:List[Int] ):Void ->
   emit( word, sum( counts ) )
-```
+----
 
 **Grouping / Shuffling Phase**
 
@@ -881,9 +896,10 @@ NOTE: After retrieving the `JobTracker`, be aware that it should only be used wi
 
 To retrieve a `JobTracker` from Hazelcast, we will start by using the "default" configuration for convenience reasons to show the basic way.
 
-```
+[source,java]
+----
 JobTracker jobTracker = hazelcastInstance.getJobTracker( "default" );
-```
+----
 
 `JobTracker` is retrieved using the same kind of entry point as most other Hazelcast features. After building the cluster connection, you use the created HazelcastInstance to request the configured (or default) `JobTracker` from Hazelcast.
 
@@ -924,7 +940,7 @@ Map<String, Long> result = future.get();
 
 As seen above, we create the Job instance and define a mapper, combiner and reducer. Then we submit the request to the cluster. The `submit` method returns an ICompletableFuture that can be used to attach our callbacks or to wait for the result to be processed in a blocking fashion.
 
-There are more options available for job configurations, such as defining a general chunk size or on what keys the operation will operate. For more information, please refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
+There are more options available for job configurations, such as defining a general chunk size or on what keys the operation will operate. For more information, please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
 
 ===== Creating Key-Value Input Sources with KeyValueSource
 
@@ -935,29 +951,33 @@ You can imagine a `KeyValueSource` as a bigger `java.util.Iterator` implementati
 As shown in the example above, the abstract `KeyValueSource` class provides a number of static methods to easily wrap Hazelcast data structures into `KeyValueSource` implementations already provided by Hazelcast. The data structures' generics are inherited by the resulting `KeyValueSource` instance. For data structures like IList or ISet, the key type is always String. While mapping, the key is the data structure's name, whereas
 the value type and value itself are inherited from the IList or ISet itself.
 
-```
+[source,java]
+----
 // KeyValueSource from com.hazelcast.core.IMap
 IMap<String, String> map = hazelcastInstance.getMap( "my-map" );
 KeyValueSource<String, String> source = KeyValueSource.fromMap( map );
-```
+----
 
-```
+[source,java]
+----
 // KeyValueSource from com.hazelcast.core.MultiMap
 MultiMap<String, String> multiMap = hazelcastInstance.getMultiMap( "my-multimap" );
 KeyValueSource<String, String> source = KeyValueSource.fromMultiMap( multiMap );
-```
+----
 
-```
+[source,java]
+----
 // KeyValueSource from com.hazelcast.core.IList
 IList<String> list = hazelcastInstance.getList( "my-list" );
 KeyValueSource<String, String> source = KeyValueSource.fromList( list );
-```
+----
 
-```
+[source,java]
+----
 // KeyValueSource from com.hazelcast.core.ISet
 ISet<String> set = hazelcastInstance.getSet( "my-set" );
 KeyValueSource<String, String> source = KeyValueSource.fromSet( set );
-```
+----
 
 **PartitionIdAware**
 
@@ -1054,7 +1074,8 @@ Reducers can override `beginReduce` to perform preparation work.
 
 For our word count example, the implementation will look similar to the following code example.
 
-```
+[source,java]
+----
 public class WordCountReducerFactory implements ReducerFactory<String, Long, Long> {
 
     @Override
@@ -1076,7 +1097,7 @@ public class WordCountReducerFactory implements ReducerFactory<String, Long, Lon
         }
     }
 }
-```
+----
 
 ====== Reducers Switching Threads
 
@@ -1090,7 +1111,8 @@ For an imaginary use case, we might want to know how many words were all over in
 
 A collator would look like the following snippet:
 
-```
+[source,java]
+----
 public class WordCountCollator implements Collator<Map.Entry<String, Long>, Long> {
 
     @Override
@@ -1103,7 +1125,7 @@ public class WordCountCollator implements Collator<Map.Entry<String, Long>, Long
         return sum;
     }
 }
-```
+----
 
 The definition of the input type is a bit strange, but because Combiner and Reducer implementations are optional, the input type heavily depends on the state of the data. As stated above, collators are non-typical use cases and the generics of the framework always help in finding the correct signature.
 
@@ -1115,7 +1137,8 @@ A `KeyPredicate` can also be used to select only a special range of data, e.g., 
 
 A basic `KeyPredicate` implementation that only maps keys containing the word "hazelcast" might look like the following code example:
 
-```
+[source,java]
+----
 public class WordCountKeyPredicate implements KeyPredicate<String> {
 
     @Override
@@ -1123,7 +1146,7 @@ public class WordCountKeyPredicate implements KeyPredicate<String> {
         return s != null && s.toLowerCase().contains( "hazelcast" );
     }
 }
-```
+----
 
 ===== Job Monitoring with TrackableJob
 
@@ -1139,7 +1162,8 @@ The example performs the following steps to get the job instance.
 - From the map, it gets the source with the KeyValueSource `fromMap` method.
 - From the source, it gets a job with the JobTracker `newJob` method.
 
-```
+[source,java]
+----
 IMap<String, String> map = hazelcastInstance.getMap( "articles" );
 KeyValueSource<String, String> source = KeyValueSource.fromMap( map );
 Job<String, String> job = jobTracker.newJob( source );
@@ -1162,7 +1186,7 @@ for ( JobPartitionState partitionState : partitionStates ) {
     log( "PartitionOwner: " + partitionState.getOwner()
           + ", Processing state: " + partitionState.getState().name() );
 }
-```
+----
 
 
 NOTE: Caching of the JobProcessInformation does not work on Java native clients since current values are retrieved while retrieving the instance to minimize traffic between executing member and client.
@@ -1176,7 +1200,8 @@ Every `JobTracker` is capable of running multiple MapReduce jobs at once; one co
 
 The following snippet shows a typical `JobTracker` configuration. The configuration properties are discussed below the example.
 
-```
+[source,xml]
+----
 <jobtracker name="default">
   <max-thread-size>0</max-thread-size>
   <!-- Queue size 0 means number of partitions * 2 -->
@@ -1186,7 +1211,7 @@ The following snippet shows a typical `JobTracker` configuration. The configurat
   <communicate-stats>true</communicate-stats>
   <topology-changed-strategy>CANCEL_RUNNING_OPERATION</topology-changed-strategy>
 </jobtracker>
-```
+----
 
 - `max-thread-size`: Maximum thread pool size of the JobTracker.
 - `queue-size`: Maximum number of tasks that are able to wait to be processed. A value of 0 means an unbounded queue. Very low numbers can prevent successful execution since the job might not be correctly scheduled or intermediate chunks might be lost.
@@ -1334,7 +1359,8 @@ We'll use the example of the "word count" application which summarizes a set of 
 
 This is the word count code in MapReduce (also available on https://github.com/hazelcast/hazelcast-jet-code-samples/blob/v0.4/batch/mapreduce-migration/src/main/java/WordCountCoreApi.java[hazelcast-jet-code-samples]):
 
-```
+[source,java]
+----
 JobTracker t = hz.getJobTracker("word-count");
 IMap<Long, String> documents = hz.getMap("documents");
 LongSumAggregation<String, String> aggr = new LongSumAggregation<>();
@@ -1348,19 +1374,20 @@ Map<String, Long> counts =
          .reducer(aggr.getReducerFactory())
          .submit()
          .get();
-```
+----
 
 Jet's Core API is strictly lower-level than MapReduce's because it can be used to build the entire infrastructure that can drive MapReduce's mapper, combiner and reducer, fully preserving the semantics of the MapReduce job. However, this approach to migrating your code to Jet is not a good option because the MapReduce API enforces a quite suboptimal computation model.
 The simplest approach is implementing the job in terms of Jet's java.util.stream support (Jet JUS for short):
 
-```
+[source,java]
+----
 IStreamMap<String, String> documents = jet.getMap("documents");
 IMap<String, Long> counts = documents
         .stream()
         .flatMap(m -> Stream.of(m.getValue().toLowerCase().split("\\W+"))
                             .filter(w -> !w.isEmpty()))
         .collect(DistributedCollectors.toIMap(w -> w, w -> 1L, (left, right) -> left + right));
-```
+----
 
 This can be taken as a general template to express a MapReduce job in terms of Jet JUS: the logic of the mapper is inside flatMap and the logic of both the combiner and the reducer is inside collect. Jet will automatically apply the optimization where the data stream is first "combined" locally on each member, then the partial results "reduced" in the final step, after sending across the network.
 
@@ -1371,7 +1398,8 @@ repository, located in the "java.util.stream/wordcount-j.u.s" module in the file
 
 To better understand how the JUS pipeline is executed by Jet, take a look at the file WordCount.java in the "core/wordcount" module, which builds the same DAG as the Jet JUS implementation, but using the Jet Core API. Here is a somewhat simplified DAG from this sample:
 
-```
+[source,java]
+----
 DAG dag = new DAG();
 Vertex source = dag.newVertex("source", Processors.readMap("documents"))
                    .localParallelism(1);
@@ -1391,7 +1419,7 @@ dag.edge(between(source, map))
    .edge(between(map, reduce).partitioned(wholeItem(), HASH_CODE))
    .edge(between(reduce, combine).partitioned(entryKey()).distributed())
    .edge(between(combine, sink));
-```
+----
 
 It is a simple cascade of vertices: source -> map -> reduce -> combine -> sink and matches quite closely the workflow of a MapReduce job. On each member, a distinct slice of data (IMap partitions stored locally) is ingested by the source vertex and sent to map on the local member. The output of map are words and they travel over a partitioned edge to reduce. Note that, as opposed to MapReduce, a single instance of a processor doesn't count occurrences of just one word, but is responsible for entire partitions. There are only as many processors as configured by the localParallelism property. This is one of several examples where Jet's DAG exposes performance-critical attributes of the computation to the user.
 
@@ -1545,14 +1573,15 @@ examples for both. After that, we will focus on using Java 8 syntax to keep exam
 
 The first example will produce the sum of some `int` values stored in a Hazelcast IMap. This example does not use much of the functionality of the Aggregations framework, but it will show the main difference.
 
-```
+[source,java]
+----
 IMap<String, Integer> personAgeMapping = hazelcastInstance.getMap( "person-age" );
 for ( int i = 0; i < 1000; i++ ) {
     String lastName = RandomUtil.randomLastName();
     int age = RandomUtil.randomAgeBetween( 20, 80 );
     personAgeMapping.put( lastName, Integer.valueOf( age ) );
 }
-```
+----
 
 With our demo data prepared, we can see how to produce the sums in different Java versions.
 
@@ -1564,23 +1593,25 @@ with the code you write. You might also consider using raw types but breaking th
 For a short introduction on what the following code example means, look at the source code comments. We will later dig deeper into
 the different options. 
 
-```
+[source,java]
+----
 // No filter applied, select all entries
 Supplier<String, Integer, Integer> supplier = Supplier.all();
 // Choose the sum aggregation
 Aggregation<String, Integer, Integer> aggregation = Aggregations.integerSum();
 // Execute the aggregation
 int sum = personAgeMapping.aggregate( supplier, aggregation );
-```
+----
 
 ===== Aggregations and Java 8
 
 With Java 8, the Aggregations API looks simpler because Java 8 can resolve the generic parameters for us. That means
 the above lines of Java 6/7 example code will end up in just one easy line on Java 8.
 
-```
+[source,java]
+----
 int sum = personAgeMapping.aggregate( Supplier.all(), Aggregations.integerSum() );
-```
+----
 
 
 ===== Aggregations and the MapReduce Framework
@@ -1619,49 +1650,54 @@ those two options.
 
 First, we have a look at a `KeyPredicate` and we only accept people whose last name is "Jones".
 
-```
+[source,java]
+----
 Supplier<...> supplier = Supplier.fromKeyPredicate(
     lastName -> "Jones".equalsIgnoreCase( lastName )
 );
-```
+----
 
-```
+[source,java]
+----
 class JonesKeyPredicate implements KeyPredicate<String> {
   public boolean evaluate( String key ) {
     return "Jones".equalsIgnoreCase( key );
   }
 }
-```
+----
 
 ====== Filtering on Values with Predicate
 
 Using the standard Hazelcast `Predicate` interface, we can also filter based on the value of a data entry. In the following example, you can
 only select values that are divisible by 4 without a remainder. 
 
-```
+[source,java]
+----
 Supplier<...> supplier = Supplier.fromPredicate(
     entry -> entry.getValue() % 4 == 0
 );
-```
+----
 
-```
+[source,java]
+----
 class DivisiblePredicate implements Predicate<String, Integer> {
   public boolean apply( Map.Entry<String, Integer> entry ) {
     return entry.getValue() % 4 == 0;
   }
 }
-```
+----
 
 ====== Extracting and Transforming Data
 
 As well as filtering, `Supplier` can also extract or transform data before providing it
 to the aggregation operation itself. The following example shows how to transform an input value to a string.
  
-```
+[source,java]
+----
 Supplier<String, Integer, String> supplier = Supplier.all(
     value -> Integer.toString(value)
 );
-```
+----
 
 You can see a Java 6/7 example in the <<aggregations-examples, Aggregations Examples section>>.
 
@@ -1673,7 +1709,8 @@ of the resulting `Supplier` has changed as well. This indicates that we now have
 Another feature of `Supplier` is its ability to chain multiple filtering rules. Let's combine all of the
 above examples into one rule set:
 
-```
+[source,java]
+----
 Supplier<String, Integer, String> supplier =
     Supplier.fromKeyPredicate(
         lastName -> "Jones".equalsIgnoreCase( lastName ),
@@ -1682,7 +1719,7 @@ Supplier<String, Integer, String> supplier =
             Supplier.all( value -> Integer.toString(value) )
         )
     );
-```
+----
 
 ====== Implementing Supplier with Special Requirements
 
@@ -1692,7 +1729,8 @@ requirements. This is a very basic task. The `Supplier` abstract class has just 
 NOTE: Due to a limitation of the Java Lambda API, you cannot implement abstract classes using Lambdas. Instead it is
 recommended that you create a standard named class.
  
-```
+[source,java]
+----
 class MyCustomSupplier extends Supplier<String, Integer, String> {
   public String apply( Map.Entry<String, Integer> entry ) {
     Integer value = entry.getValue();
@@ -1702,7 +1740,7 @@ class MyCustomSupplier extends Supplier<String, Integer, String> {
     return value % 4 == 0 ? String.valueOf( value ) : null;
   }
 }
-```
+----
 
 The `Supplier` `apply` methods are expected to return null whenever the input value should not be mapped to the aggregation
 process. This can be used, as in the example above, to implement filter rules directly. Implementing filters using the
@@ -1710,18 +1748,20 @@ process. This can be used, as in the example above, to implement filter rules di
 
 To use your own `Supplier`, just pass it to the aggregate method or use it in combination with other `Supplier`s.
 
-```
+[source,java]
+----
 int sum = personAgeMapping.aggregate( new MyCustomSupplier(), Aggregations.count() );
-```
+----
 
-```
+[source,java]
+----
 Supplier<String, Integer, String> supplier =
     Supplier.fromKeyPredicate(
         lastName -> "Jones".equalsIgnoreCase( lastName ),
         new MyCustomSupplier()
      );
 int sum = personAgeMapping.aggregate( supplier, Aggregations.count() );
-```
+----
 
 ===== Defining the Aggregation Operation
 
@@ -1747,10 +1787,11 @@ below.
 
 Calculates an average value based on all selected values.
 
-```
+[source,java]
+----
 map.aggregate( Supplier.all( person -> person.getAge() ),
                Aggregations.integerAvg() );
-```
+----
 
 ```
 SELECT AVG(person.age) FROM person;
@@ -1760,10 +1801,11 @@ SELECT AVG(person.age) FROM person;
 
 Calculates a sum based on all selected values.
 
-```
+[source,java]
+----
 map.aggregate( Supplier.all( person -> person.getAge() ),
                Aggregations.integerSum() );
-```
+----
 
 ```
 SELECT SUM(person.age) FROM person;
@@ -1773,10 +1815,11 @@ SELECT SUM(person.age) FROM person;
 
 Finds the minimal value over all selected values.
 
-```
+[source,java]
+----
 map.aggregate( Supplier.all( person -> person.getAge() ),
                Aggregations.integerMin() );
-```
+----
 
 ```
 SELECT MIN(person.age) FROM person;
@@ -1786,10 +1829,11 @@ SELECT MIN(person.age) FROM person;
 
 Finds the maximal value over all selected values.
 
-```
+[source,java]
+----
 map.aggregate( Supplier.all( person -> person.getAge() ),
                Aggregations.integerMax() );
-```
+----
 
 ```
 SELECT MAX(person.age) FROM person;
@@ -1799,10 +1843,11 @@ SELECT MAX(person.age) FROM person;
 
 Returns a collection of distinct values over the selected values
 
-```
+[source,java]
+----
 map.aggregate( Supplier.all( person -> person.getAge() ),
                Aggregations.distinctValues() );
-```
+----
 
 ```
 SELECT DISTINCT person.age FROM person;
@@ -1812,9 +1857,10 @@ SELECT DISTINCT person.age FROM person;
 
 Returns the element count over all selected values 
 
-```
+[source,java]
+----
 map.aggregate( Supplier.all(), Aggregations.count() );
-```
+----
 
 ```
 SELECT COUNT(*) FROM person;
@@ -1826,7 +1872,8 @@ SELECT COUNT(*) FROM person;
 We used the `com.hazelcast.mapreduce.aggregation.PropertyExtractor` interface before when we had a look at the example
 on how to use a `Supplier` to <<extracting-and-transforming-data, transform a value to another type>>. It can also be used to extract attributes from values.
 
-```
+[source,java]
+----
 class Person {
   private String firstName;
   private String lastName;
@@ -1836,15 +1883,16 @@ class Person {
 }
 
 PropertyExtractor<Person, Integer> propertyExtractor = (person) -> person.getAge();
-```
+----
 
-```
+[source,java]
+----
 class AgeExtractor implements PropertyExtractor<Person, Integer> {
   public Integer extract( Person value ) {
     return value.getAge();
   }
 }
-```
+----
 
 In this example, we extract the value from the person's age attribute. The value type changes from Person to `Integer` which is reflected in the generics information to stay type safe.
 
@@ -1873,19 +1921,21 @@ Knowing the specification of the name, we can configure the `JobTracker` as expe
 
 To finish this section, let's have a quick example for the above naming specs:
 
-```
+[source,java]
+----
 IMap<String, Integer> map = hazelcastInstance.getMap( "mymap" );
 
 // The internal JobTracker name resolves to 'hz::aggregation-map-mymap' 
 map.aggregate( ... );
-```
+----
 
-```
+[source,java]
+----
 MultiMap<String, Integer> multimap = hazelcastInstance.getMultiMap( "mymultimap" );
 
 // The internal JobTracker name resolves to 'hz::aggregation-multimap-mymultimap' 
 multimap.aggregate( ... );
-```
+----
 
 ==== Aggregations Examples
 
@@ -1897,7 +1947,8 @@ there is another `IMap` that holds the salary per employee.
 
 Let's have a look at our data model.
 
-```
+[source,java]
+----
 class Employee implements Serializable {
   private String firstName;
   private String lastName;
@@ -1937,15 +1988,16 @@ class SalaryYear implements Serializable {
     return sum;
   }
 }
-```
+----
 
 The two `IMap`s and the `MultiMap` are keyed by the string of email. They are defined as follows:
 
-```
+[source,java]
+----
 IMap<String, Employee> employees = hz.getMap( "employees" );
 IMap<String, SalaryYear> salaries = hz.getMap( "salaries" );
 MultiMap<String, String> officeAssignment = hz.getMultiMap( "office-employee" );
-```
+----
 
 So far, we know all the important information to work out some example aggregations. We will look into some deeper implementation
 details and how we can work around some current limitations that will be eliminated in future versions of the API.
@@ -1955,13 +2007,14 @@ details and how we can work around some current limitations that will be elimina
 Let's start with a very basic example. We want to know the average salary of all of our employees. To do this,
 we need a `PropertyExtractor` and the average aggregation for type `Integer`.
 
-```
+[source,java]
+----
 IMap<String, SalaryYear> salaries = hazelcastInstance.getMap( "salaries" );
 PropertyExtractor<SalaryYear, Integer> extractor =
     (salaryYear) -> salaryYear.getAnnualSalary();
 int avgSalary = salaries.aggregate( Supplier.all( extractor ),
                                     Aggregations.integerAvg() );
-```
+----
 
 That's it. Internally, we created a MapReduce task based on the predefined aggregation and fired it up immediately. Currently all
 aggregation calls are blocking operations, so it is not yet possible to execute the aggregation in a reactive way (using
@@ -1972,7 +2025,8 @@ aggregation calls are blocking operations, so it is not yet possible to execute 
 The following example is a little more complex. We only want to have our US-based employees selected into the average
 salary calculation, so we need to execute a join operation between the employees and salaries maps.
 
-```
+[source,java]
+----
 class USEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAware {
   private transient HazelcastInstance hazelcastInstance;
   
@@ -1986,20 +2040,21 @@ class USEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAware {
     return "US".equals( employee.getCountry() );
   }
 }
-```
+----
 
 Using the `HazelcastInstanceAware` interface, we get the current instance of Hazelcast injected into our filter and we can perform data
 joins on other data structures of the cluster. We now only select employees that work as part of our US offices into the
 aggregation.
 
-```
+[source,java]
+----
 IMap<String, SalaryYear> salaries = hazelcastInstance.getMap( "salaries" );
 PropertyExtractor<SalaryYear, Integer> extractor =
     (salaryYear) -> salaryYear.getAnnualSalary();
 int avgSalary = salaries.aggregate( Supplier.fromKeyPredicate(
                                         new USEmployeeFilter(), extractor
                                     ), Aggregations.integerAvg() );
-```
+----
 
 ===== Grouping Example
 
@@ -2013,7 +2068,8 @@ to achieve this kind of filtering.
 **A short tip:** to minimize the data transmission on the aggregation we can use
 <<data-affinity, Data Affinity>> rules to influence the partitioning of data. Be aware that this is an expert feature of Hazelcast.
 
-```
+[source,java]
+----
 class OfficeEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAware {
   private transient HazelcastInstance hazelcastInstance;
   private String office;
@@ -2037,12 +2093,13 @@ class OfficeEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAwa
     return officeAssignment.containsEntry( office, email );    
   }
 }
-```
+----
 
 Now we can execute our aggregations. As mentioned before, we currently need to do the grouping on our own by executing multiple
 aggregations in a row.
 
-```
+[source,java]
+----
 Map<String, Integer> avgSalariesPerOffice = new HashMap<String, Integer>();
 
 IMap<String, SalaryYear> salaries = hazelcastInstance.getMap( "salaries" );
@@ -2059,7 +2116,7 @@ for ( String office : officeAssignment.keySet() ) {
                                       
   avgSalariesPerOffice.put( office, avgSalary );
 }
-```
+----
 
 ===== Simple Count Example
 
@@ -2067,17 +2124,19 @@ We want to end this section by executing one final and easy aggregation. We
 want to know how many employees we currently have on a worldwide basis. Before reading the next lines of example code, you
 can try to do it on your own to see if you understood how to execute aggregations.
 
-```
+[source,java]
+----
 IMap<String, Employee> employees = hazelcastInstance.getMap( "employees" );
 int count = employees.size();
-```
+----
 
 Ok, after the quick joke of the previous two code lines, we look at the real two code lines:
 
-```
+[source,java]
+----
 IMap<String, Employee> employees = hazelcastInstance.getMap( "employees" );
 int count = employees.aggregate( Supplier.all(), Aggregations.count() );
-```
+----
 
 We now have an overview of how to use aggregations in real life situations. If you want to do your colleagues a favor, you
 might want to write your own additional set of aggregations. If so, then read the next section, <<implementing-aggregations, Implementing Aggregations>>.
@@ -2098,14 +2157,15 @@ is always expected to work on a `Supplier` that filters and/or transforms the ma
 The main interface for making your own aggregation is `com.hazelcast.mapreduce.aggregation.Aggregation`. It consists of four
 methods.
  
-```
+[source,java]
+----
 interface Aggregation<Key, Supplied, Result> {
   Mapper getMapper(Supplier<Key, ?, Supplied> supplier);
   CombinerFactory getCombinerFactory();
   ReducerFactory getReducerFactory();
   Collator<Map.Entry, Result> getCollator();
 }
-```
+----
 
 The `getMapper` and `getReducerFactory` methods should return non-null values. `getCombinerFactory` and `getCollator` are
 optional operations and you do not need to implement them. You can decide to implement them depending on the use case you want
@@ -2133,7 +2193,7 @@ There are also two callbacks:
 
 These callbacks enable releasing the state that might have been initialized and stored in the Aggregator - to reduce the network traffic.
 
-Each phase is described below and you can also refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc] for the API's details.
+Each phase is described below and you can also refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc] for the API's details.
 
 **Accumulation:**
 
@@ -2160,7 +2220,7 @@ In case of the `DoubleAverage` aggregation, the Aggregator would just divide the
 
 ==== Fast-Aggregations and Map Interfaces
 
-Fast-Aggregations are available on `com.hazelcast.core.IMap` only. IMap offers the method `aggregate` to apply the aggregation logic on the map entries. This method can be called with or without a predicate. You can refer to its http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-[Javadoc] to see the method details.
+Fast-Aggregations are available on `com.hazelcast.core.IMap` only. IMap offers the method `aggregate` to apply the aggregation logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-[Javadoc] to see the method details.
 
 
 ==== Sample Implementation
@@ -2215,11 +2275,11 @@ For example, you select all employees based on some criteria, but you just want 
 
 ==== Projection API
 
-The Projection API provides the method `transform()` which is called on each result object. Its result is then gathered as the final query result entity. You can refer to the http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/projection/Projection.html[Projection Javadoc] for the API's details.
+The Projection API provides the method `transform()` which is called on each result object. Its result is then gathered as the final query result entity. You can refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/projection/Projection.html[Projection Javadoc] for the API's details.
 
 ===== Projections and Map Interfaces
 
-Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method `project` to apply the projection logic on the map entries. This method can be called with or without a predicate. You can refer to its http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc] to see the method details.
+Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method `project` to apply the projection logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc] to see the method details.
 
 
 ==== Sample implementation
@@ -2310,7 +2370,8 @@ The following features of continuous query cache are valid for both the member a
 * `IMap` events are reflected in continuous query cache in the same order as they were generated on map entries. Since events are created on entries stored in partitions, ordering of events is maintained based on the ordering within the partition. You can add listeners to capture lost events using `EventLostListener` and you can recover lost events with the method `QueryCache.tryRecover()`.
 Recovery of lost events largely depends on the size of the buffer on Hazelcast members. Default buffer size is 16 per partition; i.e. 16 events per partition can be maintained in the buffer. If the event generation is high, setting the buffer size to a higher number will provide better chances of recovering lost events. You can set buffer size with `QueryCacheConfig.setBufferSize()`. You can use the following example code for a recovery case.
 +
-```
+[source,java]
+----
 QueryCache queryCache = map.getQueryCache("cache-name", new SqlPredicate("this > 20"), true);
 queryCache.addEntryListener(new EventLostListener() {
 @Override
@@ -2318,7 +2379,7 @@ public void eventLost(EventLostEvent event) {
        queryCache.tryRecover();
       }
 }, false);
-```
+----
 +
 * You can populate a continuous query cache with only the keys of its entries and retrieve the subsequent values directly via `QueryCache.get()` from the underlying `IMap`. This helps to decrease the initial population time when the values are very large.
 
@@ -2330,7 +2391,8 @@ You can configure continuous query cache declaratively or programmatically; the 
 The following is an example declarative configuration.
 
 
-```
+[source,xml]
+----
 <map>
    <query-caches>
       <query-cache name="myContQueryCache">
@@ -2352,7 +2414,7 @@ The following is an example declarative configuration.
 	   </query-cache>
     </query-caches>
 </map>
-```
+----
 
 Here are the descriptions of configuration elements and attributes:
 

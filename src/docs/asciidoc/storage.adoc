@@ -55,14 +55,15 @@ include::{javasource}/storage/SampleHDConfiguration.java[tag=hdconf]
 
 The following is the declarative configuration example.
 
-```
+[source,xml]
+----
 <native-memory allocator-type="POOLED" enabled="true">
      <size unit="MEGABYTES" value="512"/>
      <min-block-size>16</min-block-size>
      <page-size>4194304</page-size>
      <metadata-space-percentage>12.5</metadata-space-percentage>
 </native-memory>
-```
+----
 
 NOTE: You can check whether there is enough free physical memory for the requested number of bytes using the system property `hazelcast.hidensity.check.freememory`. Please see the <<system-properties, System Properties appendix>> on how to use Hazelcast system properties.
 
@@ -148,7 +149,7 @@ You can trigger the force start process using the Management Center, REST API an
 
 Please note that force start is a destructive process, which results in deletion of persisted Hot Restart data.
 
-Please refer to the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart functionality] of the Management Center section to learn how you can perform a force start using the Management Center.
+Please refer to the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart functionality] of the Management Center section to learn how you can perform a force start using the Management Center.
 
 ==== Partial Start
 
@@ -158,7 +159,7 @@ Partial start means that the cluster will start with an incomplete member set. D
 
 Partial start is controlled by `cluster-data-recovery-policy` configuration parameter and is not allowed by default. To enable partial start, one of the configuration values `PARTIAL_RECOVERY_MOST_RECENT` or `PARTIAL_RECOVERY_MOST_COMPLETE` should be set. Please see <<configuring-hot-restart, Configuring Hot Restart section>> for details.
 
-When partial start is enabled, Hazelcast can perform a partial start automatically or manually, in case of some members are unable to restart successfully. Partial start proceeds automatically when some members fail to start and join to the cluster in `validation-timeout-seconds`. After the `validation-timeout-seconds` duration is passed, Hot Restart chooses to perform partial start with the members present in the cluster. Moreover, partial start can be requested manually using the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Management Center], <<using-rest-api-for-cluster-management, REST API>> and <<example-usages-for-cluster-sh, cluster management scripts>> before the `validation-timeout-seconds` duration passes.
+When partial start is enabled, Hazelcast can perform a partial start automatically or manually, in case of some members are unable to restart successfully. Partial start proceeds automatically when some members fail to start and join to the cluster in `validation-timeout-seconds`. After the `validation-timeout-seconds` duration is passed, Hot Restart chooses to perform partial start with the members present in the cluster. Moreover, partial start can be requested manually using the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Management Center], <<using-rest-api-for-cluster-management, REST API>> and <<example-usages-for-cluster-sh, cluster management scripts>> before the `validation-timeout-seconds` duration passes.
 
 The other situation to decide to perform a partial start is failures during the data load phase. When Hazelcast learns data load result of all members which have passed the validation step, it automatically performs a partial start with the ones which have successfully restored their Hot Restart data. Please note that partial start does not expect every member to succeed in the data load step. It completes the process when it learns data load result for every member and there is at least one member which has successfully restored its Hot Restart data. Relatedly, if it cannot learn data load result of all members before `data-load-timeout-seconds` duration, it proceeds with the ones which have already completed the data load process.
 
@@ -204,7 +205,8 @@ The following are example configurations for a Hazelcast map and JCache implemen
 
 An example configuration is shown below.
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <hot-restart-persistence enabled="true">
@@ -228,7 +230,7 @@ An example configuration is shown below.
    </cache>
    ...
 </hazelcast>
-```
+----
 
 
 **Programmatic Configuration**:
@@ -368,7 +370,8 @@ The following are examples configurations for Hot backup.
 
 An example configuration is shown below.
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <hot-restart-persistence enabled="true">
@@ -378,19 +381,20 @@ An example configuration is shown below.
    </hot-restart-persistence>
    ...
 </hazelcast>
-```
+----
 
 
 **Programmatic Configuration**:
 
 The programmatic equivalent of the above declarative configuration is shown below.
 
-```
+[source,java]
+----
 HotRestartPersistenceConfig hotRestartPersistenceConfig = new HotRestartPersistenceConfig();
 hotRestartPersistenceConfig.setBackupDir(new File("/mnt/hot-backup"));
 ...
 config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
-```
+----
 
 ===== Using Hot Backup
 
@@ -402,18 +406,20 @@ The duration of the backup process and the disk data usage drastically depends o
 
 Following is an example of how to trigger the Hot Backup via API: 
 
-```
+[source,java]
+----
 HotRestartService service = instance.getCluster().getHotRestartService();
 service.backup();
-```
+----
 
 The `backupSeq` is generated by the hot backup process, but you can define your own backup sequences as shown below:
 
-```
+[source,java]
+----
 HotRestartService service = instance.getCluster().getHotRestartService();
 long backupSeq = ...
 service.backup(backupSeq);
-```
+----
 
 Keep in mind that the backup will fail if any member contains a backup directory with the name `backup-<backupSeq>`, where `backupSeq` is the given sequence.
 
@@ -423,7 +429,8 @@ As mentioned in the previous section, hot backup process creates subdirectories 
 
 Let's say you have configured your hot backup directory as follows:
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <hot-restart-persistence enabled="true">
@@ -433,11 +440,12 @@ Let's say you have configured your hot backup directory as follows:
    </hot-restart-persistence>
    ...
 </hazelcast>
-```
+----
 
 And let's say you have a subdirectory named `backup-2018Oct24` under the backup directory `/mnt/hot-backup`. When you want to start your cluster with data from this backup (`backup-2018Oct24`), here is the configuration you should have for the `base-dir` while starting the cluster:
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <hot-restart-persistence enabled="true">
@@ -455,7 +463,7 @@ And let's say you have a subdirectory named `backup-2018Oct24` under the backup 
    </map>
    ...
 </hazelcast>
-```
+----
 
 
 ===== Achieving High Consistency of Backup Data
@@ -480,11 +488,12 @@ Only cluster and distributed object metadata is copied synchronously during the 
 
 An example of how to track the progress via API is shown below:
 
-```
+[source,java]
+----
 HotRestartService service = instance.getCluster().getHotRestartService();
 BackupTaskStatus status = service.getBackupTaskStatus();
 ...
-```
+----
 
 The returned object contains local member backup status:
 
@@ -505,21 +514,23 @@ The backup task mainly uses disk IO, consumes little CPU and it generally does n
 
 An example of programmatic interruption is shown below:
 
-```
+[source,java]
+----
 HotRestartService service = instance.getCluster().getHotRestartService();
 service.interruptBackupTask();
 ...
-```
+----
 
 This method will send an interrupt to all members. The interrupt is ignored if the backup task is currently not in progress so you can safely call this method even though it has previously been called or when some members have already completed their local backup tasks.
 
 You can also interrupt the local member backup task as shown below:
 
-```
+[source,java]
+----
 HotRestartService service = instance.getCluster().getHotRestartService();
 service.interruptLocalBackupTask();
 ...
-```
+----
 
 The backup task will stop as soon as possible and it will not remove the disk contents of the backup directory meaning that you must remove it manually.
 

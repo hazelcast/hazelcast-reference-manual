@@ -11,7 +11,8 @@ You can test Hazelcast JCache for compliance by executing the TCK. Just perform 
 - Change the properties in https://github.com/jsr107/jsr107tck/blob/master/pom.xml[`pom.xml`] as shown below. Alternatively, you can set the values of these properties directly on the maven command line without editing any files as shown in the command line example below. 
 - Run the TCK using the command `mvn clean install`. This will run the tests using an embedded Hazelcast member.
 
-```
+[source,xml]
+----
 <properties>
   <jcache.version>1.1.0</jcache.version>
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,11 +44,12 @@ You can test Hazelcast JCache for compliance by executing the TCK. Just perform 
   </CacheEntryImpl>
   <!-- ################################################################# -->
 </properties>
-```
+----
 
 Complete command line example:
 
-```
+[source,sh]
+----
 $ git clone https://github.com/jsr107/jsr107tck
 (clones JSR107 TCK repository to local directory jsr107tck)
 
@@ -61,7 +63,7 @@ $ mvn -Dimplementation-groupId=com.hazelcast -Dimplementation-artifactId=hazelca
      -DCacheManagerImpl=com.hazelcast.cache.impl.HazelcastServerCacheManager \
      -DCacheImpl=com.hazelcast.cache.ICache -DCacheEntryImpl=com.hazelcast.cache.impl.CacheEntry \
      clean install
-```
+----
 
 Please also see https://docs.google.com/document/d/1m8d1Z44IFGAd20bXEvT2G\--vWXbxaJctk16M2rmbM24/edit?ts=59fdff73[TCK 1.1.0 User Guide] or https://docs.google.com/document/d/1w3Ugj_oEqjMlhpCkGQOZkd9iPf955ZWHAVdZzEwYYdU/edit[TCK 1.0.0 User Guide] for more information on the testing instructions.
 

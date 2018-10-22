@@ -16,7 +16,8 @@ With Hazelcast's extensible, JAAS based security feature, you can:
 
 You can enable security declaratively or programmatically, as shown below.
 
-```
+[source,xml]
+----
 <hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config
     http://www.hazelcast.com/schema/config/hazelcast-config-3.9.xsd"
     xmlns="http://www.hazelcast.com/schema/config"
@@ -28,7 +29,7 @@ You can enable security declaratively or programmatically, as shown below.
     ...
   </security>
 </hazelcast>
-```
+----
 
 
 [source,java]
@@ -133,7 +134,8 @@ Hazelcast uses `MD5` message-digest algorithm as the cryptographic hash function
 In symmetric encryption, each member uses the same key, so the key is shared. Here is an example configuration for symmetric encryption.
 
 
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <network>
@@ -147,7 +149,7 @@ In symmetric encryption, each member uses the same key, so the key is shared. He
   </network>
   ...
 </hazelcast>
-```
+----
 
 You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
 
@@ -186,7 +188,8 @@ public class MySSLContextFactory implements SSLContextFactory {
 
 The following is the base declarative configuration for the implemented `SSLContextFactory`:
 
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <network>
@@ -202,11 +205,12 @@ The following is the base declarative configuration for the implemented `SSLCont
   </network>
   ...
 </hazelcast>
-```
+----
 
 Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLContextFactory`, which uses the configured keystore to initialize `SSLContext`; see the following example configuration for TLS/SSL.
 
-```xml
+[source,xml]
+----
 <hazelcast>
   ...
   <network>
@@ -229,7 +233,7 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
   </network>
   ...
 </hazelcast>
-```
+----
 
 Here are the descriptions for the properties:
 
@@ -281,7 +285,8 @@ This way of TLS/SSL configuration is then system wide in your Java runtime.
 
 The TLS configuration in Hazelcast clients is very similar to member configuration.
 
-```xml
+[source,xml]
+----
 <hazelcast-client>
   ...
   <network>
@@ -301,7 +306,7 @@ The TLS configuration in Hazelcast clients is very similar to member configurati
   </network>
   ...
 </hazelcast-client>
-```
+----
 
 The same `BasicSSLContextFactory` properties used for members are available on clients.
 Clients don't need to set `mutualAuthentication` property as it's used in configuring the server side of TLS connections.
@@ -325,7 +330,8 @@ The member only accepts the connection if the client's certificate is present in
 
 To enable mutual authentication, set `mutualAuthentication` property value to `REQUIRED` on member side:
 
-```
+[source,java]
+----
 Config cfg = new Config();
 Properties props = new Properties();
 
@@ -337,14 +343,15 @@ props.setProperty("trustStorePassword", "123456");
 
 cfg.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(props));
 Hazelcast.newHazelcastInstance(cfg);
-```
+----
 
 And at the client side, you need to set client identity by providing the keystore:
 
-```
+[source,java]
+----
 clientSslProps.setProperty("keyStore", "/opt/client.keystore");
 clientSslProps.setProperty("keyStorePassword", "123456");
-```
+----
 
 
 The property `mutualAuthentication` has two options:
@@ -358,7 +365,8 @@ NOTE: When a new client is introduced with a new keystore, the truststore at the
 
 Please see the below example snippet to see the full configuration at the client side:
 
-```
+[source,java]
+----
 ClientConfig config = new ClientConfig();
 Properties clientSslProps = new Properties();
 clientSslProps.setProperty("keyStore", "/opt/client.keystore");
@@ -368,7 +376,7 @@ clientSslProps.setProperty("trustStorePassword", "123456");
 
 config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperties(clientSslProps));
 HazelcastClient.newHazelcastClient(config);
-```
+----
 
 If the mutual authentication is not required, the Hazelcast members will accept all incoming TLS connections without verifying if the connecting side is trusted.
 Therefore it's recommended to require the mutual authentication in Hazelcast members configuration.
@@ -411,7 +419,7 @@ The property will provide a lot of logging output including the TLS/SSL handshak
 
 ==== TLS/SSL for Hazelcast Management Center
 
-In order to use secured communication between cluster and Management Center, you have to configure the cluster, see http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center].
+In order to use secured communication between cluster and Management Center, you have to configure the cluster, see https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center].
 
 
 === Integrating OpenSSL / BoringSSL
@@ -460,7 +468,8 @@ The statically linked BoringSSL binaries are included within the `netty-tcnative
 
 Example Maven dependencies:
 
-```
+[source,xml]
+----
 <dependencies>
     <dependency>
         <groupId>io.netty</groupId>
@@ -473,7 +482,7 @@ Example Maven dependencies:
         <version>4.1.27.Final</version>
     </dependency>
 </dependencies>
-```
+----
 
 ==== Using OpenSSL
 
@@ -496,7 +505,8 @@ For Alpine Linux:
 
 Example Maven dependencies (for Linux):
 
-```
+[source,xml]
+----
 <dependencies>
     <dependency>
         <groupId>io.netty</groupId>
@@ -510,14 +520,15 @@ Example Maven dependencies (for Linux):
         <version>4.1.27.Final</version>
     </dependency>
 </dependencies>
-```
+----
 
 ==== Configuring Hazelcast for OpenSSL
 
 Configuring OpenSSL in Hazelcast is straight forward. On the client and/or member side, the following snippet enables TLS/SSL
 using OpenSSL:
 
-```
+[source,xml]
+----
 <network>
     ...
     <ssl enabled="true">
@@ -533,7 +544,7 @@ using OpenSSL:
         </properties>
     </ssl>
 </network>
-```
+----
 
 The configuration is similar to a regular TLS/SSL integration. The main difference is the `OpenSSLEngineFactory` factory class and following new properties:
 
@@ -579,7 +590,8 @@ Each cipher suite has different performance and security characteristics and dep
 
 The cipher suites are configured using the `ciphersuites` property as shown below:
 
-```
+[source,xml]
+----
 <ssl enabled="true">
     <factory-class-name>...</factory-class-name>
 
@@ -590,7 +602,7 @@ The cipher suites are configured using the `ciphersuites` property as shown belo
                                       TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA</property>
     </properties>
 </ssl>
-```
+----
 
 The `ciphersuites` property accepts a comma separated list (spaces, enters, tabs are filtered out) of cipher suites in the order
 of preference.
@@ -650,32 +662,35 @@ One of the key elements in Hazelcast security is the `Credentials` object, which
 
 Hazelcast calls the `Credentials.setEndpoint()` method when an authentication request arrives at the member before authentication takes place. Here are the methods of `Credentials` interface (see its https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/security/Credentials.html[Javadoc]):
 
-```
+[source,java]
+----
 public interface Credentials extends Serializable {
     String getEndpoint();
     void setEndpoint( String endpoint ) ;
     String getPrincipal() ;
 }
-```
+----
 
 Here is the snippet from the abstract implementation of `Credentials` (see its https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/security/AbstractCredentials.html[Javadoc]):
 
-```
+[source,java]
+----
 public abstract class AbstractCredentials implements Credentials, DataSerializable {
     private transient String endpoint;
     private String principal;
     ...
 }
-```
+----
 
 `UsernamePasswordCredentials`, a custom implementation of Credentials, is in the Hazelcast `com.hazelcast.security` package. `UsernamePasswordCredentials` is used for default configuration during the authentication process of both members and clients.
 
-```java
+[source,java]
+----
 public class UsernamePasswordCredentials extends Credentials {
     private byte[] password;
     ...
 }
-```
+----
 
 === Validating Secrets Using Strength Policy
 
@@ -791,7 +806,8 @@ include::{javasource}/security/CustomLoginModule.java[tag=clm]
 
 To use the default Hazelcast permission policy, you must create an instance of `com.hazelcast.security.ClusterPrincipal` that holds the `Credentials` object and you must add it to `Subject.principals onLoginModule.commit()` as shown below.
 
-```
+[source,java]
+----
 public class MyCustomLoginModule implements LoginModule {
     ...
     public boolean commit() throws LoginException {
@@ -802,18 +818,19 @@ public class MyCustomLoginModule implements LoginModule {
     }
     ...
 }
-```
+----
 
 Hazelcast has an abstract implementation of `LoginModule` that does callback and cleanup operations and holds the resulting `Credentials` instance. `LoginModule`s extending `ClusterLoginModule` can access `Credentials`, `Subject`, `LoginModule` instances and options and `sharedState` maps. Extending the `ClusterLoginModule` is recommended instead of implementing all required stuff.
 
-```
+[source,java]
+----
 public abstract class ClusterLoginModule implements LoginModule {
     protected abstract boolean onLogin() throws LoginException;
     protected abstract boolean onCommit() throws LoginException;
     protected abstract boolean onAbort() throws LoginException;
     protected abstract boolean onLogout() throws LoginException;
 }
-```
+----
 
 
 ==== Enterprise Integration
@@ -831,7 +848,8 @@ NOTE: Please refer to http://docs.oracle.com/javase/7/docs/technotes/guides/secu
 
 Hazelcast supports standard Java Security (JAAS) based authentication between cluster members. To implement it, you configure one or more LoginModules and an instance of `com.hazelcast.security.ICredentialsFactory`. Although Hazelcast has default implementations using cluster groups and UsernamePasswordCredentials on authentication, it is recommended that you implement the LoginModules and an instance of `com.hazelcast.security.ICredentialsFactory` according to your specific needs and environment.
 
-```
+[source,xml]
+----
 <security enabled="true">
   <member-credentials-factory
       class-name="com.hazelcast.examples.MyCredentialsFactory">
@@ -862,11 +880,12 @@ Hazelcast supports standard Java Security (JAAS) based authentication between cl
   </member-login-modules>
   ...
 </security>
-```
+----
 
 You can define as many as LoginModules as you want in configuration. They are executed in the order listed in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
 
-```
+[source,java]
+----
 package com.hazelcast.security;
 /**
  * ICredentialsFactory is used to create Credentials objects to be used
@@ -880,7 +899,7 @@ public interface ICredentialsFactory {
 
   void destroy();
 }
-```
+----
 
 Properties defined in the configuration are passed to the `ICredentialsFactory.configure()` method as `java.util.Properties` and to the `LoginModule.initialize()` method as `java.util.Map`.
 
@@ -896,7 +915,8 @@ Hazelcast's Client security includes both authentication and authorization.
 
 The authentication mechanism works the same as cluster member authentication. To implement client authentication, you configure a Credential and one or more LoginModules. The client side also needs a factory object as in member side, e.g., the `ICredentialsFactory` given in the <<cluster-member-security, Cluster Member Security section>> above.
 
-```
+[source,xml]
+----
 <security enabled="true">
   <client-login-modules>
     <login-module usage="REQUIRED"
@@ -920,15 +940,16 @@ The authentication mechanism works the same as cluster member authentication. To
   </client-login-modules>
   ...
 </security>
-```
+----
 
 You can define as many as `LoginModules` as you want in the configuration. Those are executed in the order given in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
 
-```
+[source,java]
+----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.setCredentials( new UsernamePasswordCredentials( "dev", "dev-pass" ) );
 HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
-```
+----
 
 NOTE: See an implementation and configuration example https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/client-custom-credentials[here].
 
@@ -937,7 +958,8 @@ NOTE: See an implementation and configuration example https://github.com/hazelca
 
 Hazelcast client authorization is configured by a client permission policy. Hazelcast has a default permission policy implementation that uses permission configurations defined in the Hazelcast security configuration. Default policy permission checks are done against instance types (map, queue, etc.), instance names (map, queue, name, etc.), instance actions (put, read, remove, add, etc.), client endpoint addresses and client principal defined by the Credentials object. The default permission policy allows to use comma separated names in the principal attribute configuration. Instance and principal names and endpoint addresses can be defined as wildcards(*). Please see the <<other-network-configurations, Network Configuration section>> and <<using-wildcards, Using Wildcards section>>.
 
-```
+[source,xml]
+----
 <security enabled="true">
   <client-permissions>
     <!-- Principals 'admin' and 'root' from endpoint '127.0.0.1' have all permissions. -->
@@ -992,11 +1014,12 @@ Hazelcast client authorization is configured by a client permission policy. Haze
     <transaction-permission />
   </client-permissions>
 </security>
-```
+----
 
 You can also define your own policy by implementing `com.hazelcast.security.IPermissionPolicy`.
 
-```
+[source,java]
+----
 package com.hazelcast.security;
 /**
  * IPermissionPolicy is used to determine any Subject's
@@ -1011,7 +1034,7 @@ public interface IPermissionPolicy {
 
   void destroy();
 }
-```
+----
 
 Permission policy implementations can access client-permissions that are in configuration by using
 `SecurityConfig.
@@ -1025,17 +1048,19 @@ Permission policy should return a `PermissionCollection` containing permissions 
 
 * All Permission
 +
-```
+[source,xml]
+----
 <all-permissions principal="principal">
   <endpoints>
     ...
   </endpoints>
 </all-permissions>
-```
+----
 +
 * Map Permission
 +
-```
+[source,xml]
+----
 <map-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1044,13 +1069,14 @@ Permission policy should return a `PermissionCollection` containing permissions 
     ...
   </actions>
 </map-permission>
-```
+----
 +
 Actions: all, create, destroy, put, read, remove, lock, intercept, index, listen
 +
 * Queue Permission
 +
-```
+[source,xml]
+----
 <queue-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1059,13 +1085,14 @@ Actions: all, create, destroy, put, read, remove, lock, intercept, index, listen
     ...
   </actions>
 </queue-permission>
-```
+----
 +
 Actions: all, create, destroy, add, remove, read, listen
 +
 * Multimap Permission
 +
-```
+[source,xml]
+----
 <multimap-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1074,13 +1101,14 @@ Actions: all, create, destroy, add, remove, read, listen
     ...
   </actions>
 </multimap-permission>
-```
+----
 +
 Actions: all, create, destroy, put, read, remove, listen, lock
 +
 * Topic Permission
 +
-```
+[source,xml]
+----
 <topic-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1089,13 +1117,14 @@ Actions: all, create, destroy, put, read, remove, listen, lock
     ...
   </actions>
 </topic-permission>
-```
+----
 +
 Actions: create, destroy, publish, listen
 +
 * List Permission
 +
-```
+[source,xml]
+----
 <list-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1104,13 +1133,14 @@ Actions: create, destroy, publish, listen
     ...
   </actions>
 </list-permission>
-```
+----
 +
 Actions: all, create, destroy, add, read, remove, listen
 +
 * Set Permission
 +
-```
+[source,xml]
+----
 <set-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1119,13 +1149,14 @@ Actions: all, create, destroy, add, read, remove, listen
     ...
   </actions>
 </set-permission>
-```
+----
 +
 Actions: all, create, destroy, add, read, remove, listen
 +
 * Lock Permission
 +
-```
+[source,xml]
+----
 <lock-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1134,13 +1165,14 @@ Actions: all, create, destroy, add, read, remove, listen
     ...
   </actions>
 </lock-permission>
-```
+----
 +
 Actions: all, create, destroy, lock, read
 +
 * AtomicLong Permission
 +
-```
+[source,xml]
+----
 <atomic-long-permission name="name" principal="principal">
   <endpoints>
         ...
@@ -1149,13 +1181,14 @@ Actions: all, create, destroy, lock, read
     ...
   </actions>
 </atomic-long-permission>
-```
+----
 +
 Actions: all, create, destroy, read, modify
 +
 * CountDownLatch Permission
 +
-```
+[source,xml]
+----
 <countdown-latch-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1164,13 +1197,14 @@ Actions: all, create, destroy, read, modify
     ...
   </actions>
 </countdown-latch-permission>
-```
+----
 +
 Actions: all, create, destroy, modify, read
 +
 * IdGenerator Permission
 +
-```
+[source,xml]
+----
 <id-generator-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1179,13 +1213,14 @@ Actions: all, create, destroy, modify, read
     ...
   </actions>
 </id-generator-permission>
-```
+----
 +
 Actions: all, create, destroy, modify, read
 +
 * FlakeIdGenerator Permission
 +
-```
+[source,xml]
+----
 <flake-id-generator-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1194,13 +1229,14 @@ Actions: all, create, destroy, modify, read
     ...
   </actions>
 </flake-id-generator-permission>
-```
+----
 +
 Actions: all, create, destroy, modify
 +
 * Semaphore Permission
 +
-```
+[source,xml]
+----
 <semaphore-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1209,13 +1245,14 @@ Actions: all, create, destroy, modify
     ...
   </actions>
 </semaphore-permission>
-```
+----
 +
 Actions: all, create, destroy, acquire, release, read
 +
 * Executor Service Permission
 +
-```
+[source,xml]
+----
 <executor-service-permission name="name" principal="principal">
   <endpoints>
     ...
@@ -1224,23 +1261,25 @@ Actions: all, create, destroy, acquire, release, read
     ...
   </actions>
 </executor-service-permission>
-```
+----
 +
 Actions: all, create, destroy
 +
 * Transaction Permission
 +
-```
+[source,xml]
+----
 <transaction-permission principal="principal">
   <endpoints>
     ...
   </endpoints>
 </transaction-permission>
-```
+----
 +
 * Cache Permission
 +
-```
+[source,xml]
+----
 <cache-permission name="/hz/cache-name" principal="principal">
   <endpoints>
     ...
@@ -1249,13 +1288,14 @@ Actions: all, create, destroy
     ...
   </actions>
 </cache-permission>
-```
+----
 +
 Actions: all, create, destroy, put, read, remove, listen
 +
 * User Code Deployment Permission
 +
-```
+[source,xml]
+----
 <user-code-deployment-permission principal="principal">
   <endpoints>
     ...
@@ -1264,7 +1304,7 @@ Actions: all, create, destroy, put, read, remove, listen
     ...
   </actions>
 </user-code-deployment-permission>
-```
+----
 +
 Actions: all, deploy
 

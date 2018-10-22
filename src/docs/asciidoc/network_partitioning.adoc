@@ -66,7 +66,8 @@ This type of quorum function determines the presence of quorum based on the coun
 
 **Declarative configuration:**
 
-```
+[source,xml]
+----
 <hazelcast>
 ....
 <quorum name="quorumRuleWithFourMembers" enabled="true">
@@ -78,7 +79,7 @@ This type of quorum function determines the presence of quorum based on the coun
 </map>
 ....
 </hazelcast>
-```
+----
 
 **Programmatic configuration:**
 
@@ -119,7 +120,8 @@ The probabilistic quorum function can be configured with the following parameter
 
 **Declarative configuration**
 
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <quorum enabled="true" name="probabilistic-quorum">
@@ -132,7 +134,7 @@ The probabilistic quorum function can be configured with the following parameter
     <quorum-ref>probabilistic-quorum</quorum-ref>
   </set>
 </hazelcast>
-```
+----
 
 **Programmatic configuration**
 
@@ -148,7 +150,8 @@ A quorum with a recently-active quorum function can be used to implement more co
 
 **Declarative configuration**
 
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <quorum enabled="true" name="recently-active-quorum">
@@ -160,7 +163,7 @@ A quorum with a recently-active quorum function can be used to implement more co
     <quorum-ref>recently-active-quorum</quorum-ref>
   </set>
 </hazelcast>
-```
+----
 
 **Programmatic configuration**
 
@@ -183,7 +186,8 @@ Quorum configuration has the following elements:
 
 **Sample configuration with custom QuorumFunction implementation**
 
-```
+[source,java]
+----
 package my.domain;
 
 public class CustomQuorumFunction implements QuorumFunction {
@@ -192,17 +196,16 @@ public class CustomQuorumFunction implements QuorumFunction {
             // implement quorum detection logic here
         }
     }
-```
+----
 
-```xml
+[source,xml]
+----
 <quorum enabled="true" name="member-count-quorum">
    <quorum-type>READ_WRITE</quorum-type>
    <quorum-size>3</quorum-size>
    <quorum-function-class-name>my.domain.CustomQuorumFunction</quorum-function-class-name>
 </quorum>
-```
-
-
+----
 
 ==== Configuring Quorum Listeners
 
@@ -212,7 +215,8 @@ Quorum listeners can be configured via declarative or programmatic configuration
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <hazelcast>
 ....
 <quorum name="quorumRuleWithFourMembers" enabled="true">
@@ -227,7 +231,7 @@ Quorum listeners can be configured via declarative or programmatic configuration
 </map>
 ....
 </hazelcast>
-```
+----
 
 **Programmatic:**
 
@@ -243,7 +247,8 @@ Split-Brain Protection Quorum service gives you the ability to query quorum resu
 
 Here is a Quorum interface that you can interact with.
 
-```
+[source,java]
+----
 /**
  * {@link Quorum} provides access to the current status of a quorum.
  */
@@ -255,7 +260,8 @@ public interface Quorum {
      */
     boolean isPresent();
 }
-```
+----
+
 You can retrieve the quorum instance for a particular quorum over the quorum service, as in the following example.
 
 [source,java]
@@ -331,7 +337,8 @@ For your custom merge policy you should set the full class name of your implemen
 
 Here are examples how merge policies can be specified for various data structures:
 
-```
+[source,xml]
+----
 <hazelcast>
   ...
   <map name="default">
@@ -360,11 +367,12 @@ Here are examples how merge policies can be specified for various data structure
   </atomic-long>
   ...
 </hazelcast>
-```
+----
 
 Here is how merge policies are specified for `ICache` (it is the same configuration tag, but lacks the support for additional attributes like `batch-size`):
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <cache name="default">
@@ -372,7 +380,7 @@ Here is how merge policies are specified for `ICache` (it is the same configurat
       <merge-policy>org.example.merge.MyMergePolicy</merge-policy>        
    </cache>
 </hazelcast>    
-```
+----
 
 ===== Programmatic Configuration
 
@@ -385,26 +393,28 @@ include::{javasource}/networkpartitioning/MergePolicy.java[tag=mp]
 
 Here is how merge policies are specified for `ICache` (you can only set the merge policy classname):
 
-```
+[source,java]
+----
 CacheConfig mapConfig = new CacheConfig()
   .setName("default")
   .setMergePolicy("org.example.merge.MyMergePolicy");
 
 Config config = new Config()
   .addMapConfig(mapConfig);
-```
+----
 
 ==== Custom Merge Policies
 
 To implement a custom merge policy you have to implement `com.hazelcast.spi.SplitBrainMergePolicy`:
 
-```
+[source,java]
+----
 public interface SplitBrainMergePolicy<V, T extends MergingValue<V>>
     extends DataSerializable {
 
   V merge(T mergingValue, T existingValue);
 }
-```
+----
 
 `MergingValue` is an interface which describes a merge type.
 
@@ -416,38 +426,42 @@ A merge type defines an attribute which is required by a merge policy and provid
 
 `MergingValue` is the base type, which is required by all merge policies and provided by all data structures. It contains the value of the merged data in raw and deserialized format:
 
-```
+[source,java]
+----
 public interface MergingValue<V> {
 
   V getValue();
 
   <DV> DV getDeserializedValue();
 }
-```
+----
 
 The most common extension is `MergingEntry`, which additionally provides the key in raw and deserialized format (used by all key-based data structures like `IMap` or `ICache`):
 
-```
+[source,java]
+----
 public interface MergingEntry<K, V> extends MergingValue<V> {
 
   K getKey();
 
   <DK> DK getDeserializedKey();
 }
-```
+----
 
 In addition we have a bunch of specialized merge types, e.g. for provided statistics. An example is `MergingHits`, which provides the hit counter of the merge data:
 
-```
+[source,java]
+----
 public interface MergingHits<V> extends MergingValue<V> {
 
   long getHits();
 }
-```
+----
 
 The class `com.hazelcast.spi.merge.SplitBrainMergeTypes` contains composed interfaces, which show the provided merge types and required merge policy return type for each data structure:
 
-```
+[source,java]
+----
 public interface ReplicatedMapMergeTypes extends MergingEntry<Object, Object>,
     MergingCreationTime<Object>, MergingHits<Object>, MergingLastAccessTime<Object>,
     MergingLastUpdateTime<Object>, MergingTTL<Object> {
@@ -455,7 +469,7 @@ public interface ReplicatedMapMergeTypes extends MergingEntry<Object, Object>,
 
 public interface QueueMergeTypes extends MergingValue<Collection<Object>> {
 }
-```
+----
 
 The `ReplicatedMap` provides key/value merge data, with the creation time, access hits, last access time, last update time and TTL. The return type of the merge policy is `Object`.
 
@@ -511,7 +525,8 @@ include::{javasource}/networkpartitioning/UserContextMergePolicy.java[tag=ucmp]
 
 The `UserContext` can be setup like this:
 
-```
+[source,java]
+----
 MergePolicyConfig mergePolicyConfig = new MergePolicyConfig()
   .setPolicy(UserContextMergePolicy.class.getName());
 
@@ -526,7 +541,7 @@ Config config = new Config()
   .setUserContext(userContext);
   
 Hazelcast.newHazelcastInstance(config);
-```
+----
 
 [IMPORTANT]
 ====

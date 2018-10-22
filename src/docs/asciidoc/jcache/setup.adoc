@@ -18,13 +18,15 @@ coordinates next to the default Hazelcast coordinates that might be already part
 
 For Maven users, the coordinates look like the following code:
 
-```
+[source,xml]
+----
 <dependency>
   <groupId>javax.cache</groupId>
   <artifactId>cache-api</artifactId>
   <version>1.1.0</version>
 </dependency>
-```
+----
+
 With other build systems, you might need to describe the coordinates in a different way.
 
 ===== Activating Hazelcast as JCache Provider
@@ -34,23 +36,26 @@ To activate Hazelcast as the JCache provider implementation, add either `hazelca
 
 If you use `hazelcast-all.jar`:
 
-```
+[source,xml]
+----
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast-all</artifactId>
   <version>"your Hazelcast version, e.g. 3.10"</version>
 </dependency>
-```
+----
 
 If you use `hazelcast.jar`:
 
-```
+[source,xml]
+----
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast</artifactId>
   <version>"your Hazelcast version, e.g. 3.10"</version>
 </dependency>
-```
+----
+
 The users of other build systems have to adjust the definition of the dependency to their needs.
 
 ===== Connecting Clients to Remote Member
@@ -59,13 +64,14 @@ When the users want to use Hazelcast clients to connect to a remote cluster, the
 on the client side applications. This JAR is already included in `hazelcast-all.jar`. Or, you can add it to the classpath using the following
 Maven snippet:
 
-```
+[source,xml]
+----
 <dependency>
   <groupId>com.hazelcast</groupId>
   <artifactId>hazelcast-client</artifactId>
   <version>"your Hazelcast version, e.g. 3.10"</version>
 </dependency>
-```
+----
 
 For other build systems, for instance, ANT, the users have to download these dependencies from either the JSR-107 specification and
 Hazelcast community website (https://hazelcast.org/[http://www.hazelcast.org]) or from the Maven repository search page
@@ -127,16 +133,18 @@ You can declare your JCache cache configuration using the `hazelcast.xml` or `ha
 
 To retrieve the cache that you defined in the declaration files, you need only perform a simple call (example below) because the cache is created automatically by the implementation.
 
-```
+[source,java]
+----
 CachingProvider cachingProvider = Caching.getCachingProvider();
 CacheManager cacheManager = cachingProvider.getCacheManager();
 Cache<Object, Object> cache = cacheManager
     .getCache( "default", Object.class, Object.class );
-```
+----
 
 Note that this section only describes the JCache provided standard properties. For the Hazelcast specific properties, please see the <<icache-configuration, ICache Configuration section>>.
 
-```
+[source,xml]
+----
 <cache name="default">
   <key-type class-name="java.lang.Object" />
   <value-type class-name="java.lang.Object" />
@@ -162,7 +170,7 @@ Note that this section only describes the JCache provided standard properties. F
     ...
   </cache-entry-listeners>
 </cache>
-```
+----
 
 * `key-type#class-name`: Fully qualified class name of the cache key type. Its default value is `java.lang.Object`.
 * `value-type#class-name`: Fully qualified class name of the cache value type. Its default value is `java.lang.Object`.

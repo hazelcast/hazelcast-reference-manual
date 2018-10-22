@@ -38,7 +38,8 @@ You can use at most one of these when defining a single WAN publisher.
 
 Below is an example of declarative configuration of WAN Replication from New York cluster to target the London cluster:
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
   <wan-replication name="my-wan-cluster-batch">
@@ -61,7 +62,7 @@ Below is an example of declarative configuration of WAN Replication from New Yor
   </wan-replication>
 ...
 </hazelcast>
-```
+----
 
 Following are the definitions of configuration elements:
 
@@ -105,7 +106,8 @@ NOTE: When using the discovery SPI, WAN will always connect to the public addres
  
 Following is an example of setting up the WAN replication with the EC2 discovery plugin. You must have the https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS EC2 discovery plugin] on the classpath.
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
   <wan-replication name="my-wan-cluster-batch">
@@ -144,13 +146,14 @@ Following is an example of setting up the WAN replication with the EC2 discovery
   </wan-replication>
 ...
 </hazelcast>
-```
+----
 
 The `hz-port` property defines the port or the port range on which the target endpoint is running. The default port range 5701-5708 is used if this property is not defined. This is needed because the Amazon API which the AWS plugin uses does not provide the port on which Hazelcast is running, only the IP address. For some other discovery SPI implementations, this might not be necessary and it might discover the port as well, e.g., by looking up in a service registry.
 
 The other properties are the same as when using the `aws` element. In case of EC2 discovery you can configure the WAN replication using the `aws` element. You may use either of these, but not both at the same time.
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
   <wan-replication name="my-wan-cluster-batch">
@@ -184,7 +187,7 @@ The other properties are the same as when using the `aws` element. In case of EC
   </wan-replication>
 ...
 </hazelcast>
-```
+----
 
 You can refer to the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. Following are the definitions of additional configuration properties:
 
@@ -224,7 +227,8 @@ Yon can configure the WAN replication for Hazelcast's IMap and ICache data struc
 Imagine you have different distributed maps, however only one of those maps should be replicated to a target cluster. To achieve this, configure the map that you want
 replicated by adding the `wan-replication-ref` element in the map configuration as shown below.
 
-```
+[source,xml]
+----
 <hazelcast>
   <wan-replication name="my-wan-cluster">
     ...
@@ -237,7 +241,7 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
   </map>
   ...
 </hazelcast>
-```
+----
 
 The following is the equivalent programmatic configuration:
 
@@ -272,7 +276,8 @@ NOTE When using WAN replication, please note that only key based events are repl
 
 The following is a declarative configuration example for enabling WAN Replication for ICache:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
    ...
 </wan-replication>
@@ -282,7 +287,7 @@ The following is a declarative configuration example for enabling WAN Replicatio
       <republishing-enabled>true</republishing-enabled>
    </wan-replication-ref>
 </cache>
-```
+----
 
 The following is the equivalent programmatic configuration:
 
@@ -311,7 +316,8 @@ Batch size can be set for each target cluster by modifying related `WanPublisher
 
 Below is the declarative configuration for changing the value of the property:
 
-```
+[source,xml]
+----
 ...
  <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -325,11 +331,12 @@ Below is the declarative configuration for changing the value of the property:
     </wan-publisher>
  </wan-replication>
 ...
-```
+----
 
 And, following is the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -338,7 +345,7 @@ And, following is the equivalent programmatic configuration:
  props.put("batch.size", 1000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
 NOTE: `WanNoDelayReplication` implementation has been removed. You can still achieve this behavior by setting the batch size to `1` while configuring your WAN replication.
 
@@ -352,7 +359,8 @@ Maximum delay can be set for each target cluster by modifying related `WanPublis
 
 You can change this property using the declarative configuration as shown below.
 
-```
+[source,xml]
+----
 ...
  <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -366,11 +374,12 @@ You can change this property using the declarative configuration as shown below.
     </wan-publisher>
  </wan-replication>
 ...
-```
+----
 
 And, the following is the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -379,7 +388,7 @@ And, the following is the equivalent programmatic configuration:
  props.put("batch.max.delay.millis", 2000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
 
 ==== Response Timeout
@@ -391,7 +400,8 @@ You can change this duration depending on your network latency for each target c
 
 Below is an example of declarative configuration:
 
-```
+[source,xml]
+----
 ...
   <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -401,12 +411,13 @@ Below is an example of declarative configuration:
     </wan-publisher>
   </wan-replication>
 ...
-```
+----
 
 And, the following is the equivalent programmatic configuration:
 
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -415,7 +426,7 @@ And, the following is the equivalent programmatic configuration:
  props.put("response.timeout.millis", 5000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
 
 ==== Queue Capacity
@@ -428,7 +439,8 @@ Queue capacity can be set for each target cluster by modifying related `WanPubli
 
 You can change this property using the declarative configuration as shown below.
 
-```
+[source,xml]
+----
 ...
  <wan-replication name="my-wan-cluster">
     <wan-publisher group-name="london">
@@ -438,11 +450,12 @@ You can change this property using the declarative configuration as shown below.
     </target-cluster>
  </wan-replication>
 ...
-```
+----
 
 And, the following is the equivalent programmatic configuration:
 
-```
+[source,java]
+----
 ...
  WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
  WanPublisherConfig publisherConfig = new WanPublisherConfig();
@@ -450,9 +463,9 @@ And, the following is the equivalent programmatic configuration:
  publisherConfig.setQueueCapacity(15000);
  wanConfig.addWanPublisherConfig(publisherConfig);
 ...
-``` 
+----
 
-Note that you can clear a member's WAN replication event queue. It can be initiated through Management Center's http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-wan-replication[Clear Queues action] or Hazelcast’s REST API. Below is the URL for its REST call:
+Note that you can clear a member's WAN replication event queue. It can be initiated through Management Center's https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-wan-replication[Clear Queues action] or Hazelcast’s REST API. Below is the URL for its REST call:
 
 ```
 http://member_ip:port/hazelcast/rest/mancenter/wan/clearWanQueues
@@ -474,17 +487,17 @@ If one the queues of target cluster is full, `WANReplicationQueueFullException` 
 - `THROW_EXCEPTION_ONLY_IF_REPLICATION_ACTIVE`: Its effect is similar to that of `THROW_EXCEPTION`. But, it  throws exception only when WAN replication is active. It discards the new events if WAN replication is stopped.
 
 
-
 The following is an example configuration:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
   <wan-publisher group-name="test-cluster-1">
     ...
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
   </wan-publisher>
 </wan-replication>
-```
+----
 
 NOTE: `queue-full-behavior` configuration is optional. Its default value is `DISCARD_AFTER_MUTATION`.
 
@@ -497,7 +510,8 @@ separately.
 
 You can attach filters to your data structures using  `filter` property of `wan-replication-ref` configuration inside `hazelcast.xml` as shown in the following example configuration. You can also configure it using the programmatic configuration.
 
-```
+[source,xml]
+----
 <hazelcast>
   <map name="testMap">
     <wan-replication-ref name="test">
@@ -508,7 +522,7 @@ You can attach filters to your data structures using  `filter` property of `wan-
     </wan-replication-ref>
   </map>
 </hazelcast>
-```
+----
 
 As shown in the above configuration, you can define more than one filter. Filters are called in the order that they are introduced.
 A WAN replication event is only eligible to publish if it passes all the filters.
@@ -516,8 +530,8 @@ A WAN replication event is only eligible to publish if it passes all the filters
 Map and Cache have different filter interfaces: `MapWanEventFilter` and `CacheWanEventFilter`. Both of these interfaces have the method `filter` which takes the following parameters:
 
 - `mapName`/`cacheName`: Name of the related data structure.
-- `entryView`: http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/EntryView.html[EntryView]
-or http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cache/CacheEntryView.html[CacheEntryView] depending on the data structure.
+- `entryView`: https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/EntryView.html[EntryView]
+or https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cache/CacheEntryView.html[CacheEntryView] depending on the data structure.
 - `eventType`: Enum type - `UPDATED(1)`, `REMOVED(2)` or `LOADED(3)` - depending on the event.
 
 NOTE: `LOADED` events are filtered out and not replicated to target cluster.
@@ -533,7 +547,8 @@ You can choose from 2 different ACK type depending on your consistency requireme
 
 Following is an example configuration:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
   <wan-publisher group-name="test-cluster-1">
     ...
@@ -542,7 +557,7 @@ Following is an example configuration:
     </properties>
   </wan-publisher>
 </wan-replication>
-```
+----
 
 NOTE: `ack.type` configuration is optional. Its default value is `ACK_ON_RECEIPT`.
 
@@ -553,7 +568,7 @@ Starting with Hazelcast 3.7 you can initiate a synchronization operation on an I
 Synchronization operation sends all the data of an IMap to a target cluster to align the state of target IMap with source IMap.
 Synchronization is useful if two remote clusters lost their synchronization due to WAN queue overflow or in restart scenarios.
 
-Synchronization can be initiated through http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center] and Hazelcast’s REST API. 
+Synchronization can be initiated through https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center] and Hazelcast’s REST API. 
 
 Below is the URL for the REST call;
 
@@ -569,7 +584,8 @@ You need to add parameters to the request in the following order separated by "&
 
 Assume that you have configured an IMap with a WAN replication configuration as follows:
 
-```
+[source,xml]
+----
 <wan-replication name="my-wan-cluster">
       <wan-publisher group-name="istanbul">
           <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
@@ -582,7 +598,7 @@ Assume that you have configured an IMap with a WAN replication configuration as 
        <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
     </wan-replication-ref>
 </map>
-```
+----
 
 Then, a sample CURL command to initiate the synchronization for "my-map" would be as follows:
 
@@ -635,17 +651,17 @@ That means, as far as you set a backup count for your IMap or ICache instances, 
  
 There is no additional configuration to enable/disable WAN replication event backups.
 
-=== Synchronizing WAN Clusters Using Merkle Trees
+=== Delta WAN Synchronization
 
 Hazelcast clusters connected over WAN can go out-of-sync because of various reasons such as member failures and concurrent updates. To overcome the out-of-sync issue, Hazelcast has the default <<synchronizing-wan-target-cluster, WAN synchronization>> feature, through which the maps in different clusters are synced by transferring all entries from the source to the target cluster. This may be not efficient since some of the entries have remained unchanged on both clusters and do not require to be transferred. Also, for the entries to be transferred, they need to be copied to on-heap on the source cluster. This may cause spikes in the heap usage, especially if using large off-heap stores.
 
-Besides the default WAN synchronization, Hazelcast can use https://en.wikipedia.org/wiki/Merkle_tree[Merkle tree] for the same purpose. It is a data structure used for efficient comparison of the difference in the contents of large data structures. The precision of this comparison is defined by Merkle tree's depth. Merkle tree hash exchanges can detect inconsistencies in the map data and synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
+Besides the default WAN synchronization, Hazelcast provides Delta WAN Synchronization which uses https://en.wikipedia.org/wiki/Merkle_tree[Merkle tree] for the same purpose. It is a data structure used for efficient comparison of the difference in the contents of large data structures. The precision of this comparison is defined by Merkle tree's depth. Merkle tree hash exchanges can detect inconsistencies in the map data and synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
 
-NOTE: Currently, Merkle tree structure is implemented only for Hazelcast IMap. It will also be implemented for ICache in the future releases.
+NOTE: Currently, Delta WAN Synchronization is implemented only for Hazelcast IMap. It will also be implemented for ICache in the future releases.
 
 ==== Requirements
 
-To be able to use Merkle trees for WAN synchronization, the following must be met:
+To be able to use Delta WAN synchronization, the following must be met:
 
 * Source and target cluster versions must be at least Hazelcast 3.11.
 * Both clusters must have the same number of partitions.
@@ -653,9 +669,9 @@ To be able to use Merkle trees for WAN synchronization, the following must be me
 * Both clusters must have the Merkle tree structure enabled.
 
 
-==== Using Merkle Tree
+==== Using Delta WAN Synchronization
 
-To be able to use the Merkle tree as a WAN synchronization strategy for a Hazelcast data structure: 
+To be able to use Delta WAN synchronization for a Hazelcast data structure: 
 
 . Configure the WAN synchronization mechanism for your WAN publisher so that it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of the `wan-sync` element. If configuring programmatically, you can use the setter of the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/WanSyncConfig.html[`WanSyncConfig`] object.
 . Bind that WAN synchronization configuration to the data structure (currently IMap): Simply set the WAN replication reference of your map to the name of the WAN replication configuration which uses the Merkle tree.
@@ -688,11 +704,11 @@ Here, the element `consistency-check-strategy` sets the strategy for checking th
 * `NONE`: Means that there will be no consistency checks. This is the default value.
 * `MERKLE_TREES`: Means that WAN synchronization will use Merkle tree structure.
 
-==== Configuring Merkle Tree
+==== Configuring Delta WAN Synchronization
 
-You can configure a Merkle tree declaratively using the `merkle-tree` element or programmatically using the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/MerkleTreeConfig.html[`MerkleTreeConfig`] object.
+You can configure Delta WAN Synchronization declaratively using the `merkle-tree` element or programmatically using the https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/config/MerkleTreeConfig.html[`MerkleTreeConfig`] object.
 
-Following is a declarative configuration example showing how to enable the Merkle tree structure, bind it to a Hazelcast data structure (an IMap in the below case) and specify its depth.
+Following is a declarative configuration example showing how to enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap in the below case) and specify its depth.
 
 [source,xml]
 ----
@@ -702,7 +718,7 @@ Following is a declarative configuration example showing how to enable the Merkl
 </merkle-tree>
 ----
 
-Here are the descriptions of Merkle tree configuration sub-elements and attributes:
+Here are the descriptions of sub-elements and attributes:
 
 * `enabled`: Specifies whether the Merkle tree structure is enabled. Its default value is `true`.
 * `mapName`: Specifies the name of the map for which the Merkle tree structure is used.
@@ -742,7 +758,201 @@ NOTE: If you do not specifically configure the `merkle-tree` in your Hazelcast c
 
 
 NOTE: Merkle trees are created for each partition holding IMap data. Therefore, increasing the partition count also
-increases the efficiency of the Merkle tree based synchronization.
+increases the efficiency of the Delta WAN Synchronization.
+
+==== The Process
+
+Synchronizing the maps based on Merkle trees consists of two phases:
+
+1. _Consistency check_: Process of exchanging and comparing the hashes stored in the Merkle tree structures in the
+source and target clusters. The check starts with the root node and continues recursively with the children with different
+hash codes. Both sides send the children of the nodes that the other side sent, hence the comparison is done by `depth/2`
+steps. After this check, the tree leaves holding different entries are identified.
+2. _Synchronization_: Process of transferring the entries belong to the leaves identified by the _consistency
+check_ from the source to target cluster. On the target cluster the configured merge policy is applied for each entry that
+is in both the source and target clusters.
+
+NOTE: If you only need the differences between the clusters, you can trigger the consistency check without performing
+synchronization.
+
+==== Memory Consumption
+
+Since Merkle trees are built for each partition and each map, the memory overhead of the trees with high entry count and deep
+trees can be significant. The trees are maintained on-heap, therefore - besides the memory consumption - garbage collection could be another
+concern. Make sure the configuration is tested with realistic data size before deployed in production.
+
+The table below shows a few examples for what the memory overhead could be.
+
+.Merkle trees memory overhead for a member
+|===
+|Entries Stored |Partitions Owned |Entries per Leaf |Depth |Memory Overhead
+
+|1M
+|271
+|7
+|10
+|57 MB
+
+|1M
+|271
+|1
+|13
+|97 MB
+
+|10M
+|271
+|72
+|10
+|412 MB
+
+|10M
+|271
+|9
+|13
+|453 MB
+
+|10M
+|5001
+|4
+|10
+|577 MB
+
+|10M
+|5001
+|1
+|12
+|899 MB
+
+|25M
+|5001
+|10
+|10
+|1983 MB
+
+|25M
+|5001
+|1
+|13
+|2735 MB
+
+|===
+
+==== Defining the Depth
+
+The efficiency of the Delta WAN Synchronization (WAN synchronization based on Merkle trees) is determined by the average number of entries per the tree
+leaves that is proportionate to the number of entries in the map. The bigger this average the more entries are getting
+synchronized for the same difference. Raising the depth decreases this average at the cost of increasing the memory overhead.
+
+This average can be calculated for a map as `avgEntriesPerLeaf = mapEntryCount / totalLeafCount`, where `totalLeafCount =
+partitionCount * 2^depth-1^`. The ideal value is 1, however this may come at significant memory overhead as shown in the
+table above.
+
+In order to specify the tree depth, a trade-off between memory consumption and effectiveness might be needed.
+
+Even if the map is huge and the Merkle trees are configured to be relatively shallow, the Merkle tree based synchronization
+may be leveraged if only a small subset of the whole map is expected to be synchronized. The table below illustrates the
+efficiency of the Merkle tree based synchronization compared to the default synchronization mechanism.
+
+
+.Efficiency examples
+|===
+|Map entry count |Difference count |Depth |Memory consumption |Avg entries / leaf |Entries synced |Efficiency
+
+|10M
+|5M
+|11
+|684 MB
+|2
+|10M
+|0%
+
+|10M
+|5M
+|12
+|899 MB
+|1
+|5M
+|100%
+
+|10M
+|1M
+|10
+|577 MB
+|4
+|4M
+|150%
+
+|10M
+|10K
+|8
+|496 MB
+|16
+|160K
+|6150%
+
+|10M
+|10K
+|12
+|899 MB
+|1
+|1K
+|99900%
+
+|===
+
+As shown in the last two rows, the Merkle tree based synchronization transfers significantly less entries than what the
+default mechanism does even with 8 deep trees. The efficiency with depth 12 is even better but consumes much more memory.
+
+NOTE: The averages in the table are calculated with 5001 partitions.
+
+NOTE: The average entries per leaf number above assumes perfect distribution of the entries amongst the leaves. Since this is
+typically not true in real-life scenarios the efficiency can be slightly worse. The statistics section below describes how to
+get the actual average for the leaves involved in the synchronization.
+
+==== REST API
+
+The two phases of the Merkle tree based synchronization can be triggered by a REST call, as it can be done with the
+default synchronization.
+
+The URL for the consistency check REST call:
+
+```
+http://member_ip:port/hazelcast/rest/mancenter/wan/consistencyCheck/map
+```
+
+The URL for the synchronization REST call - the same as it is for the default synchronization:
+
+```
+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
+```
+
+You need to add parameters to the request in both cases in the following order separated by "&";
+
+* Name of the WAN replication configuration
+* Target group name
+* Map name to be synchronized
+
+NOTE: You can also use the following URL in your REST call if you want to synchronize all the maps in source and target cluster:
+`http://member_ip:port/hazelcast/rest/mancenter/wan/sync/allmaps`
+
+NOTE: Consistency check can be triggered only for one map.
+
+==== Statistics
+
+The consistency check and the synchronization both write statistics into the diagnostics subsystem and send it
+ to the Management Center. The following reported fields can be used to reason about the efficiency of the configuration.
+
+Consistency check reports the number of the
+
+* Merkle tree nodes checked,
+* Merkle tree nodes found to be different,
+* entries needed to be synchronized to make the clusters consistent.
+
+Synchronization reports the
+
+* duration of the synchronization,
+* number of the entries synchronized,
+* average number of the entries per tree leaves in the synchronized leaves.
 
 === Hazelcast WAN Replication with Solace
 
@@ -763,13 +973,14 @@ To publish and consume WAN replication events on Solace appliances, Hazelcast WA
 You can register these classes using the configuration elements `<wan-publisher>` and `<wan-consumer>` while configuring your WAN replication.
 `SolaceWanPublisher` and `SolaceWanConsumer` are included in the `hazelcast-solace` library which can be found in following Maven coordinates:
 
-```
+[source,xml]
+----
   <dependency>
     <groupId>com.hazelcast</groupId>
     <artifactId>hazelcast-solace</artifactId>
     <version>1.0.0</version>
   </dependency>
-```
+----
  
 NOTE: The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the <<installing-hazelcast-imdg-enterprise, Installing Hazelcast IMDG Enterprise section>> for information on how to configure this repository.
  

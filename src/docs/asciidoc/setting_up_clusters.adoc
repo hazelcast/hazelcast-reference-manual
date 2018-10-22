@@ -7,7 +7,7 @@ This chapter describes Hazelcast clusters and the methods cluster members and na
 [[discovery-mechanisms]]
 === Discovery Mechanisms
 
-A Hazelcast cluster is a network of cluster members that run Hazelcast. Cluster members (also called nodes) automatically join together to form a cluster. This automatic joining takes place with various discovery mechanisms that the cluster members use to find each other.
+A Hazelcast cluster is a network of cluster members that run Hazelcast. Cluster members  automatically join together to form a cluster. This automatic joining takes place with various discovery mechanisms that the cluster members use to find each other.
 
 Please note that, after a cluster is formed, communication between cluster members is always via TCP/IP, regardless of the discovery mechanism used.
 
@@ -422,6 +422,83 @@ For the property `class-cache-mode`, Client User Code Deployment supports only t
 For the property, `provider-mode`, Client User Code Deployment supports only the `LOCAL_AND_CACHED_CLASSES` mode, regardless of the configuration set at the member side (which can be `LOCAL_AND_CACHED_CLASSES`, `LOCAL_CLASSES_ONLY` and `OFF`).
 
 The remaining properties, which are `blacklist-prefixes`, `whitelist-prefixes` and `provider-filter` configured at the member side, will effect the client user code deployment's behavior too. For example, assuming that you provide `com.foo` as a blacklist prefix at the member side, the member will discard the classes with the prefix `com.foo` loaded by the client.
+
+==== Adding User Library to CLASSPATH
+
+When you want to use a Hazelcast feature in a non-Java client, you need to make sure that the Hazelcast member recognizes it. For this, you can use the `/user-lib` directory that comes with the Hazelcast package and deploy your own library to the member.
+Let's say you use Hazelcast Node.js client and want to use an entry processor. This processor should be `IdentifiedDataSerializable` or `Portable` in the Node.js client. You need to implement the Java equivalents of the processor and its factory on the member side, and put these compiled class or JAR files into the `/user-lib` directory. Then you can run the `start.sh` script which adds them to the classpath.
+
+The following is an example code which can be the Java equivalent of entry processor in Node.js client:
+
+[source,java]
+----
+import com.hazelcast.map.AbstractEntryProcessor;
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
+ import java.io.IOException;
+import java.util.Map;
+ public class IdentifiedEntryProcessor extends AbstractEntryProcessor<String, String> implements IdentifiedDataSerializable {
+     static final int CLASS_ID = 1;
+     private String value;
+     public IdentifiedEntryProcessor() {
+    }
+     @Override
+    public int getFactoryId() {
+        return IdentifiedFactory.FACTORY_ID;
+    }
+     @Override
+    public int getId() {
+        return CLASS_ID;
+    }
+     @Override
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeUTF(value);
+    }
+     @Override
+    public void readData(ObjectDataInput in) throws IOException {
+        value = in.readUTF();
+    }
+     @Override
+    public Object process(Map.Entry<String, String> entry) {
+        entry.setValue(value);
+        return value;
+    }
+}
+----
+
+You can implement the above processor's factory as follows:
+[source,java]
+----
+import com.hazelcast.nio.serialization.DataSerializableFactory;
+import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
+ public class IdentifiedFactory implements DataSerializableFactory {
+    public static final int FACTORY_ID = 5;
+     @Override
+    public IdentifiedDataSerializable create(int typeId) {
+        if (typeId == IdentifiedEntryProcessor.CLASS_ID) {
+            return new IdentifiedEntryProcessor();
+        }
+        return null;
+    }
+}
+----
+
+And the following is the configuration for the above factory:
+[source,xml]
+----
+<hazelcast>
+    <serialization>
+        <data-serializable-factories>
+            <data-serializable-factory factory-id="5">
+                IdentifiedFactory
+            </data-serializable-factory>
+        </data-serializable-factories>
+    </serialization>
+</hazelcast>
+----
+
+Then, you can start your Hazelcast member by using the start scripts (`start.sh` or `start.bat`) in the `/bin` directory. The start scripts automatically adds your class and JAR files to the classpath.
 
 [[partition-group-configuration]]
 === Partition Group Configuration

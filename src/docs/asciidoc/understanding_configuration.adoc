@@ -2,7 +2,7 @@
 [[understanding-configuration]]
 == Understanding Configuration
 
-This chapter describes the options to configure your Hazelcast applications and explains the utilities which you can make use of while configuring. You can configure Hazelcast using one or mix of the following options: 
+This chapter describes the options to configure your Hazelcast applications and explains the utilities which you can make use of while configuring. You can configure Hazelcast using one or mix of the following options:
 
 * Declarative way
 * Programmatic way
@@ -187,7 +187,7 @@ Hazelcast.newHazelcastInstance( config );
 ----
 
 To retrieve an existing Hazelcast member by its name, use the following:
-    
+
 ```
 Hazelcast.getHazelcastInstanceByName( "my-instance" );
 ```
@@ -250,7 +250,8 @@ You will see Hazelcast system properties mentioned throughout this Reference Man
 
 If you use Hazelcast with https://spring.io/[Spring] you can declare beans using the namespace `hazelcast`. When you add the namespace declaration to the element `beans` in the Spring context file, you can start to use the namespace shortcut `hz` to be used as a bean declaration. Following is an example Hazelcast configuration when integrated with Spring:
 
-```
+[source,xml]
+----
 <hz:hazelcast id="instance">
   <hz:config>
     <hz:group name="dev"/>
@@ -264,17 +265,17 @@ If you use Hazelcast with https://spring.io/[Spring] you can declare beans using
     </hz:network>
   </hz:config>
 </hz:hazelcast>
-```
+----
 
-Please see the <<spring-integration, Spring Integration section>> for more information on Hazelcast-Spring integration.
+Please see the <<integration-with-spring, Integration with Spring section>> for more information on Hazelcast-Spring integration.
 
 [[dynamically-adding-data-structure-configuration-on-a-cluster]]
 === Dynamically Adding Data Structure Configuration on a Cluster
 
-As described above, Hazelcast can be configured in a declarative or programmatic way; configuration must be completed before starting a Hazelcast member and this configuration cannot be altered at runtime, thus we refer to this as _static_ configuration. 
+As described above, Hazelcast can be configured in a declarative or programmatic way; configuration must be completed before starting a Hazelcast member and this configuration cannot be altered at runtime, thus we refer to this as _static_ configuration.
 
 Starting with Hazelcast 3.9, it is possible to dynamically add configuration for certain data structures at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
- 
+
 [source,java]
 ----
 include::{javasource}/DynamicConfiguration.java[tag=dynconf]
@@ -293,7 +294,7 @@ Adding new dynamic configuration is supported for all `add*Config` methods excep
 
 [[handling-configuration-conflicts]]
 ==== Handling Configuration Conflicts
- 
+
 Attempting to add a dynamic configuration, when a static configuration for the same element already exists, will throw `ConfigurationException`. For example, assuming we start a member with the following fragment in `hazelcast.xml` configuration:
 
 ```
@@ -304,18 +305,20 @@ Attempting to add a dynamic configuration, when a static configuration for the s
 
 Then adding a dynamic configuration for a map with the name `sessions` will throw a `ConfigurationException`:
 
-```
+[source,java]
+----
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 
 MapConfig sessionsMapConfig = new MapConfig("sessions");
 
 // this will throw ConfigurationException:
 instance.getConfig().addMapConfig(sessionsMapConfig);
-```
+----
 
 When attempting to add dynamic configuration for an element for which dynamic configuration has already been added, then if a configuration conflict is detected a `ConfigurationException` will be thrown. For example:
 
-```
+[source,java]
+----
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 
 MapConfig sessionsMapConfig = new MapConfig("sessions").setBackupCount(0);
@@ -328,7 +331,7 @@ instance.getConfig().addMapConfig(sessionsWithBackup);
 MapConfig sessionsWithoutBackup = new MapConfig("sessions").setBackupCount(0);
 // does not throw exception: new dynamic config is equal to existing dynamic config of same name
 instance.getConfig().addMapConfig(sessionsWithoutBackup);
-```
+----
 
 [[checking-configuration]]
 === Checking Configuration
@@ -340,7 +343,7 @@ When you start a Hazelcast member without passing a `Config` object, as explaine
 ```
 -Dhazelcast.config=`*`<path to the hazelcast.xml>
 ```
-+	
++
 The path can be a regular one or a classpath reference with the prefix `classpath:`.
 * If the above system property is not set, Hazelcast then checks whether there is a `hazelcast.xml` file in the working directory.
 * If not, it then checks whether `hazelcast.xml` exists on the classpath.
@@ -474,11 +477,12 @@ HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 
 Variable replacers are used to replace custom strings during loading the configuration, e.g., they can be used to mask sensitive information such as usernames and passwords. Of course their usage is not limited to security related information.
 
-Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured only declaratively: in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml` and `hazelcast-client.xml`. You can refer to `ConfigReplacer` s http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html[Javadoc] for basic information on how a replacer works.
+Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured only declaratively: in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml` and `hazelcast-client.xml`. You can refer to `ConfigReplacer` s https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html[Javadoc] for basic information on how a replacer works.
 
 Variable replacers are configured within the element `<config-replacers>` under `<hazelcast>`, as shown below.
 
-```
+[source,xml]
+----
 <hazelcast>
     ...
     <config-replacers fail-if-value-missing="false">
@@ -492,7 +496,7 @@ Variable replacers are configured within the element `<config-replacers>` under 
     </config-replacers>
     ...
 </hazelcast>
-```
+----
 
 As you can see, `<config-replacers>` is the parent element for your replacers, which are declared using the `<replacer>` sub-elements. You can define multiple replacers under the `<config-replacers>.` Here are the descriptions of elements and attributes used for the replacer configuration:
 
@@ -553,7 +557,8 @@ $ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
 
 3 - Configure the replacer and put the encrypted variables into the configuration:
 
-```
+[source,xml]
+----
 <hazelcast>
     <config-replacers>
         <replacer class-name="com.hazelcast.config.replacer.EncryptionReplacer">
@@ -568,7 +573,7 @@ $ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
         <password>$ENC{wJxe1vfHTgg=:531:WkAEdSi/YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}</password>
     </group>
 </hazelcast>
-```
+----
 
 4 - Check if the decryption works:
 
@@ -593,10 +598,11 @@ Its full class name is `com.hazelcast.config.replacer.PropertyReplacer` and the 
 
 You can also provide your own replacer implementations. All replacers have to implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer`. A simple snippet is shown below.
 
-```
+[source,java]
+----
 public interface ConfigReplacer {
     void init(Properties properties);
     String getPrefix();
     String getReplacement(String maskedValue);
 }
-```
+----

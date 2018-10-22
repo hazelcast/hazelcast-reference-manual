@@ -182,7 +182,8 @@ Following are the example configuration snippets. Note that these strategy confi
 **Declarative Configuration**
 
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
    <map name="name-of-the-map">
@@ -194,11 +195,12 @@ Following are the example configuration snippets. Note that these strategy confi
    </map>
 ...
 </hazelcast>
-```
+----
 
 **Programmatic Configuration**
 
-```
+[source,java]
+----
 Config config = new Config();
 MapConfig mapConfig = config.getMapConfig("name-of-the-map");
 PartitioningStrategyConfig psConfig = mapConfig.getPartitioningStrategyConfig();
@@ -207,15 +209,14 @@ psConfig.setPartitioningStrategyClass( "StringAndPartitionAwarePartitioningStrat
 // OR
 psConfig.setPartitioningStrategy(YourCustomPartitioningStrategy);
 ...
-```
-
-
+----
 
 You can also define your own partition strategy by implementing the class `PartitioningStrategy`. To enable your implementation, add the full class name to your Hazelcast configuration using either the declarative or programmatic approach, as sampled above.
 
 As stated previously, above strategies are defined **per map** in your Hazelcast member. You can also define a strategy **per member** in your Hazelcast cluster. This can be done by defining the `hazelcast.partitioning.strategy.class` system property. An example declarative way of configuring this property is shown below:
 
-```
+[source,xml]
+----
 <hazelcast>
 ...
   <properties>
@@ -226,7 +227,7 @@ As stated previously, above strategies are defined **per map** in your Hazelcast
   </properties>
   ...
 </hazelcast>
-```
+----
 
 You can also use other system property configuring options as explained in the <<configuring-with-system-properties, Configuring with System Properties section>>.
 
@@ -449,11 +450,12 @@ only triggers the worker to wake up and check the priority queue.
 
 When an Operation is invoked, a `Future` is returned. Please see the example code below.
 
-```
+[source,java]
+----
 GetOperation operation = new GetOperation( mapName, key );
 Future future = operationService.invoke( operation );
 future.get();
-```
+----
 
 The calling side blocks for a reply. In this case, `GetOperation` is set in the work queue for the partition of `key`, where
 it eventually is executed. Upon execution, a response is returned and placed on the `genericWorkQueue` where it is executed by a 
@@ -475,7 +477,7 @@ the calling thread.
 
 The `SlowOperationDetector` monitors the operation threads and collects information about all slow operations. An `Operation` is a task executed by a generic or partition thread (see <<operation-threading, Operation Threading>>). An operation is considered as slow when it takes more computation time than the configured threshold.
 
-The `SlowOperationDetector` stores the fully qualified classname of the operation and its stacktrace as well as operation details, start time and duration of each slow invocation. All collected data is available in the http://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-members[Management Center].
+The `SlowOperationDetector` stores the fully qualified classname of the operation and its stacktrace as well as operation details, start time and duration of each slow invocation. All collected data is available in the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-members[Management Center].
 
 The `SlowOperationDetector` is configured via the following system properties.
 
@@ -606,7 +608,8 @@ NOTE: Please keep in mind that, if you want to use near cache on a Hazelcast mem
 
 **Declarative**:
 
-```
+[source,xml]
+----
 <near-cache name="myDataStructure">
   <in-memory-format>(OBJECT|BINARY|NATIVE)</in-memory-format>
   <serialize-keys>(true|false)</serialize-keys>
@@ -625,7 +628,7 @@ NOTE: Please keep in mind that, if you want to use near cache on a Hazelcast mem
              store-initial-delay-seconds="(0..INT_MAX)"
              store-interval-seconds="(0..INT_MAX)"/>
 </near-cache>
-```
+----
 
 The element `<near-cache>` has an optional attribute `name` whose default value is `default`.
 
@@ -636,7 +639,7 @@ The element `<near-cache>` has an optional attribute `name` whose default value 
 include::{javasource}/performance/NearCacheConfigurationSample.java[tag=nearcacheconfig]
 ----
 
-The class http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/NearCacheConfig.html[NearCacheConfig] is used for all supported Hazelcast data structures on members and clients.
+The class https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/NearCacheConfig.html[NearCacheConfig] is used for all supported Hazelcast data structures on members and clients.
 
 Following are the descriptions of all configuration elements:
 
@@ -681,7 +684,8 @@ This section shows some configuration examples for different Hazelcast data stru
 
 The following are configuration examples for IMap Near Caches for Hazelcast members and clients.
 
-```
+[source,xml]
+----
 <hazelcast>
   <map name="mostlyReadMap">
     <in-memory-format>BINARY</in-memory-format>
@@ -694,9 +698,10 @@ The following are configuration examples for IMap Near Caches for Hazelcast memb
     </near-cache>
   </map>
 </hazelcast>
-```
+----
 
-```
+[source,java]
+----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.NONE)
   .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT)
@@ -712,11 +717,12 @@ Config config = new Config();
 config.getMapConfig("mostlyReadMap")
   .setInMemoryFormat(InMemoryFormat.BINARY)
   .setNearCacheConfig(nearCacheConfig);
-```
+----
 
 The Near Cache configuration for maps on members is a child of the map configuration, so you do not have to define the map name in the Near Cache configuration.
 
-```
+[source,xml]
+----
 <hazelcast-client>
   <near-cache name="mostlyReadMap">
     <in-memory-format>OBJECT</in-memory-format>
@@ -724,9 +730,10 @@ The Near Cache configuration for maps on members is a child of the map configura
     <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="50000"/>
   </near-cache>
 </hazelcast-client>
-```
+----
 
-```
+[source,java]
+----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.LRU)
   .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT)
@@ -740,7 +747,7 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
 
 ClientConfig clientConfig = new ClientConfig()
   .addNearCacheConfig(nearCacheConfig);
-```
+----
 
 The Near Cache on the client side must have the same name as the data structure on the member for which this Near Cache is being created. You can use wildcards, so in this example `mostlyRead*` would also match the map `mostlyReadMap`.
 
@@ -750,7 +757,8 @@ A Near Cache can have its own `in-memory-format` which is independent of the `in
 
 The following is a configuration example for a JCache Near Cache for a Hazelcast client.
  
-```
+[source,xml]
+----
 <hazelcast-client>
   <near-cache name="mostlyReadCache">
     <in-memory-format>OBJECT</in-memory-format>
@@ -759,9 +767,10 @@ The following is a configuration example for a JCache Near Cache for a Hazelcast
     <local-update-policy>CACHE_ON_UPDATE</local-update-policy>
   </near-cache>
 </hazelcast-client>
-```
+----
 
-```
+[source,java]
+----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.LRU)
   .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT)
@@ -776,7 +785,7 @@ NearCacheConfig nearCacheConfig = new NearCacheConfig()
 
 ClientConfig clientConfig = new ClientConfig()
   .addNearCacheConfig(nearCacheConfig);
-```
+----
 
 ===== Example for Near Cache with High-Density Memory Store
 
@@ -785,7 +794,8 @@ ClientConfig clientConfig = new ClientConfig()
 
 The following is a configuration example for an IMap High-Density Near Cache for a Hazelcast member.
 
-```
+[source,xml]
+----
 <hazelcast>
   <map name="mostlyReadMapWithHighDensityNearCache">
     <in-memory-format>OBJECT</in-memory-format>
@@ -795,9 +805,10 @@ The following is a configuration example for an IMap High-Density Near Cache for
     </near-cache>
   </map>
 </hazelcast>
-```
+----
 
-```
+[source,java]
+----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.LFU)
   .setMaximumSizePolicy(MaxSizePolicy.USED_NATIVE_MEMORY_PERCENTAGE)
@@ -811,7 +822,7 @@ Config config = new Config();
 config.getMapConfig("mostlyReadMapWithHighDensityNearCache")
   .setInMemoryFormat(InMemoryFormat.OBJECT)
   .setNearCacheConfig(nearCacheConfig);
-```
+----
 
 Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>>.
 
@@ -874,7 +885,7 @@ For local invalidations, when a record is updated/removed, future reads will see
 
 If you choose `INVALIDATE`, the entry is removed from the Near Cache after the update/remove occurs in the underlying data structure and before the operation (get) returns to the caller. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache.
 
-If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove occurs in the underlying data structure and before the operation (put/get) returns to the caller. If it is an update operation, it will remove the entry and the new value will be placed. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the the Near Cache and the original copy in the member. 
+If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove occurs in the underlying data structure and before the operation (put/get) returns to the caller. If it is an update operation, it will remove the entry and the new value will be placed. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the Near Cache and the original copy in the member. 
 
 ==== Near Cache Preloader
 
@@ -893,7 +904,8 @@ NOTE: If you run multiple Hazelcast clients with enabled Near Cache preloader on
 
 There may be cases where you do not want to deserialize some values in your Hazelcast map again which were already deserialized previously. This way your query operations get faster. This is possible by using the `cache-deserialized-values` element in your declarative Hazelcast configuration, as shown below.
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    ...
@@ -907,7 +919,7 @@ There may be cases where you do not want to deserialize some values in your Haze
    ...
    ...
 </hazelcast>
-```
+----
 
 The element `cache-deserialized-values` controls the caching of deserialized values. Note that caching makes the query evaluation faster, but it will consume more memory. This element has the following values:
 
