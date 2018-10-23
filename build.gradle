@@ -11,49 +11,49 @@ buildscript {
 }
 
 apply plugin: 'org.asciidoctor.convert'
-apply plugin: 'idea'
-apply plugin: 'java'
+/*apply plugin: 'idea'*/
+/*apply plugin: 'java'*/
 
 
 ext {
     imdgVersion = '3.11'
 }
 
-repositories {
+/*repositories {
     mavenCentral()
     mavenLocal()
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
-}
+}*/
 
- compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-}
+/* compileJava {
+//    sourceCompatibility = 1.8
+//    targetCompatibility = 1.8
+} */
 
- dependencies {
-     compile "com.hazelcast:hazelcast:$imdgVersion"
-     compile "com.hazelcast:hazelcast-client:$imdgVersion"
-     compile "com.atomikos:transactions-jta:4.0.6"
-     compile "javax.transaction:javax.transaction-api:1.3"
-     compile "javax.cache:cache-api:1.1.0"
-     compile "org.mongodb:mongo-java-driver:3.0.4"
-}
+/* dependencies {
+//     compile "com.hazelcast:hazelcast:$imdgVersion"
+//     compile "com.hazelcast:hazelcast-client:$imdgVersion"
+//     compile "com.atomikos:transactions-jta:4.0.6"
+//     compile "javax.transaction:javax.transaction-api:1.3"
+//     compile "javax.cache:cache-api:1.1.0"
+//     compile "org.mongodb:mongo-java-driver:3.0.4"
+} */
 
 asciidoctor {
-    dependsOn compileJava
-    inputs.files compileJava.outputs
+/*    dependsOn compileJava */
+/*    inputs.files compileJava.outputs */
     /* requires file('./multipage-html5-converter.rb') */
 
     sources {
       include 'index.adoc'
     }
 
-    backends = [ 'html5', 'pdf' /*, 'multipage_html5', 'epub3'*/ ]
+    backends = [ 'html5', /*'pdf' /*, 'multipage_html5', 'epub3'*/ ]
     attributes \
-        'imdg-version': project.imdgVersion,
-        'javasource' : project.sourceSets.main.java.srcDirs[0].absolutePath
+        'imdg-version': project.imdgVersion
+//        'javasource' : project.sourceSets.main.java.srcDirs[0].absolutePath
 }
 
 build {
