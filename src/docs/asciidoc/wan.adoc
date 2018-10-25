@@ -856,49 +856,55 @@ efficiency of the Merkle tree based synchronization compared to the default sync
 
 .Efficiency examples
 |===
-|Map entry count |Difference count |Depth |Memory consumption |Avg entries / leaf |Entries synced |Efficiency
+|Map entry count |Depth |Memory consumption |Avg. entries / leaf |Difference count |Entries synced |Efficiency
 
 |10M
-|5M
 |11
 |685 MB
 |2
+|5M
 |10M
 |0%
 
 |10M
-|5M
 |12
 |900 MB
 |1
+|5M
 |5M
 |100%
 
 |10M
-|1M
 |10
 |577 MB
 |4
+|1M
 |4M
 |150%
 
 |10M
-|10K
 |8
 |497 MB
 |16
+|10K
 |160K
 |6150%
 
 |10M
-|10K
 |12
 |900 MB
 |1
-|1K
+|10K
+|10K
 |99900%
 
 |===
+
+
+The "Difference count" column shows the number of the entries different in the source and target clusters.
+This is the minimum number of entries that need to be synchronized to make the clusters consistent. The "Entries synced"
+column shows how many entries are synchronized in the given case, calculated as "Entries synced" = "Difference count"
+* "Avg. entries / leaf".
 
 As shown in the last two rows, the Merkle tree based synchronization transfers significantly less entries than what the
 default mechanism does even with 8 deep trees. The efficiency with depth 12 is even better but consumes much more memory.
