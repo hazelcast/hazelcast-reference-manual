@@ -38,7 +38,6 @@ Partitioned Hazelcast data structures are:
 * Map
 * MultiMap
 * Cache (Hazelcast JCache implementation)
-* PN Counter
 * Event Journal
 
 Non-partitioned Hazelcast data structures are:
@@ -54,6 +53,7 @@ Non-partitioned Hazelcast data structures are:
 * FlakeIdGenerator
 * ICountdownLatch
 * Cardinality Estimator
+* PN Counter
 
 Besides these, Hazelcast also offers the Replicated Map structure as explained in the above *Standard utility collections* list.
 
@@ -3109,7 +3109,7 @@ A Replicated Map is a distributed key-value data structure where the data is rep
 ==== Replicating Instead of Partitioning
 
 A Replicated Map does not partition data
-(it does not spread data to different cluster members); instead, it replicates the data to all members. All other data structures are partitioned in design.
+(it does not spread data to different cluster members); instead, it replicates the data to all members.
 
 Replication leads to higher memory consumption. However, a Replicated Map has faster read and write access since the data is available on all members.
 
