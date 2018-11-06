@@ -3062,23 +3062,9 @@ Let's write a sample identifier generator.
 
 [source,java]
 ----
-public class FlakeIdGeneratorSample {
-    public static void main(String[] args) {
-        HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
-
-        ClientConfig clientConfig = new ClientConfig()
-                .addFlakeIdGeneratorConfig(new FlakeIdGeneratorConfig("idGenerator")
-                        .setPrefetchCount(10));
-        HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-
-        FlakeIdGenerator idGenerator = client.getFlakeIdGenerator("idGenerator");
-        for (int i = 0; i < 10000; i++) {
-            sleepSeconds(1);
-            System.out.printf("Id: %s\n", idGenerator.newId());
-        }
-    }
-}
+include::{javasource}/dds/FlakeIdGeneratorSample.java[tag=fid]
 ----
+
 
 [[node-id-assignment]]
 ==== Node ID Assignment
