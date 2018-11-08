@@ -169,7 +169,7 @@ public Collection<Employee> getWithNameAndAgeSimplified( String name, int age ) 
 
 [source,java]
 ----
-IMap<Employee> map = hazelcastInstance.getMap( "employee" );
+IMap<String, Employee> map = hazelcastInstance.getMap( "employee" );
 Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) );
 ----
 
