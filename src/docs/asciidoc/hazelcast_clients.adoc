@@ -2,11 +2,17 @@
 
 == Hazelcast Clients
 
-This chapter provides information about Hazelcast's client and language implementations; the following are covered:
+This chapter provides information about Hazelcast's client and language implementations, which are listed below:
 
-- Java, C++ and .NET clients
-- Memcache and REST clients
-- Other client and language implementations: Python, Node.js, Scala and Go.
+* Java
+* C++
+* .NET
+* Memcache
+* REST
+* Node.js
+* Go
+* Python
+* Scala
 
 
 **Feature Comparison for Hazelcast Clients:**
@@ -22,8 +28,6 @@ Please refer to https://github.com/hazelcast/hazelcast-code-samples/tree/master/
 
 The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast IMDG and Hazelcast IMDG Enterprise. The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
 
-Please also check the <<other-client-and-language-implementations, Other Client and Language Implementations>>.
-
 Hundreds or even thousands of clients can be connected to the cluster. By default, there are `core count * 20` threads on the server side that will handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
 
 Imagine a trading application where all the trading data are stored and managed in a Hazelcast cluster with tens of members. Swing/Web applications at the traders' desktops can use clients to access and modify the data in the Hazelcast cluster.
@@ -34,7 +38,7 @@ Starting with Hazelcast 3.5, a new Java Native Client Library is introduced in t
 
 * For 3.5.x releases: You can use the new client experimentally with the library `hazelcast-client-new`. This library does not exist for the releases before 3.5. Please do not use this library with the Hazelcast clusters from 3.6.x and higher releases since it is not compatible with those releases.
 * For 3.6.x releases: You can use the new client with the library `hazelcast-client`. The old client's library is `hazelcast-client-legacy` and you can still use it.
-* For 3.7.x and higher releases: There is no more old client for these releases. The only one is the `hazelcast-client` library, which includes clients implemented with the Hazelcast Open Binary Client Protocol.
+* For 3.7.x and newer releases: There is no more old client for these releases. The only one is the `hazelcast-client` library, which includes clients implemented with the Hazelcast Open Binary Client Protocol.
 ====
 
 ==== Getting Started with Java Client
@@ -176,7 +180,7 @@ multiMap.put(1,”veli”);
 Collection<String> values = multiMap.get(1);
 ----
 
-`addLocalEntryListener`, `localKeySet` and  `getLocalMultiMapStats` are not supported because locality is ambiguous for the client. Please see the <<multimap , Distributed MultiMap section>> for more information.
+`addLocalEntryListener`, `localKeySet` and `getLocalMultiMapStats` are not supported because locality is ambiguous for the client. Please see the <<multimap , Distributed MultiMap section>> for more information.
 
 ====== Using Queue with Java Client
 
@@ -284,7 +288,7 @@ Transactional distributed objects are supported on the client side. Please see t
 
 ===== Async Start and Reconnect Modes
 
-Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.   
+Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.
 
 Async client start is configured by setting the configuration element `async-start` to `true`. This configuration will change the behavior of `HazelcastClient.newHazelcastClient()` call. It'll return a client instance without waiting to establish a cluster connection.
 Until the client connects to cluster, it will throw `HazelcastClientOfflineException` on any network dependent operations hence they won't block. If you want to check or wait the client to complete its cluster connection, you can use the built-in lifecycle listener:
@@ -727,7 +731,7 @@ IAM roles are used to make secure requests from your clients. You can provide th
 
 ===== Configuring Client Load Balancer
 
-`LoadBalancer` allows you to send operations to one of a number of endpoints (Members). Its main purpose is to determine the next `Member` if queried.  It is up to your implementation to use different load balancing policies. You should implement the interface `com.hazelcast.client.LoadBalancer` for that purpose.
+`LoadBalancer` allows you to send operations to one of a number of endpoints (Members). Its main purpose is to determine the next `Member` if queried. It is up to your implementation to use different load balancing policies. You should implement the interface `com.hazelcast.client.LoadBalancer` for that purpose.
 
 If the client is configured in smart mode, only the operations that are not key-based will be routed to the endpoint that is returned by the `LoadBalancer`. If the client is not a smart client, `LoadBalancer` will be ignored.
 
@@ -857,7 +861,7 @@ connectionRetryConfig.setInitialBackoffMillis(1000)
 
 The following are configuration element descriptions:
 
-* `initial-backoff-millis`:  Specifies how long to wait (backoff) after the first failure before retrying in milliseconds. Its default value is 1000 ms. 
+* `initial-backoff-millis`: Specifies how long to wait (backoff) after the first failure before retrying in milliseconds. Its default value is 1000 ms. 
 * `max-backoff-millis`: Specifies the upper limit for the backoff in milliseconds. Its default value is 30000 ms.
 * `multiplier`: Factor to multiply the backoff after a failed retry. Its default value is 2.
 * `fail-on-max-backoff`: Specifies whether to fail when the `max-backoff-millis` has reached or continue waiting `max-backoff-millis` at each iteration. Its default value is false.
@@ -945,7 +949,7 @@ _Deadline Failure Detector_ has two configuration properties:
 
 NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than that of `hazelcast.client.heartbeat.timeout`. In addition, the value of system property <<client-max-no, hazelcast.client.max.no.heartbeat.seconds>>, which is set at the member side, should be larger than that of `hazelcast.client.heartbeat.interval`. 
 
-The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
+The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's configuration XML file, e.g., `hazelcast-client.xml`):
 
 
 [source,xml]
@@ -991,7 +995,7 @@ The details of these requirements are explained in the <<requirements-and-linuxu
 
 If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
 
-An example declarative configuration to use the Ping Failure Detector is as follows (in the client's  configuration XML file, e.g., `hazelcast-client.xml`):
+An example declarative configuration to use the Ping Failure Detector is as follows (in the client's configuration XML file, e.g., `hazelcast-client.xml`):
 
 [source,xml]
 ----
@@ -1009,7 +1013,7 @@ An example declarative configuration to use the Ping Failure Detector is as foll
         [...]
     </network>
     [...] 
-</hazelcast-client>  
+</hazelcast-client>
 ----
 
 And, the equivalent programmatic configuration:
@@ -1045,18 +1049,20 @@ Unlike the Hazelcast members, Ping Failure Detector works always in parallel wit
 Below is a summary table of all possible configuration combinations of the Ping Failure Detector.
 
 |===
-| ICMP| Fail-Fast| Description| Linux| Windows | macOS                                                                	|
+| ICMP| Fail-Fast| Description| Linux| Windows | macOS |
 
 | true 
-| false  
-| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7
-| Supported  TCP Echo on port 7 	| Supported  ICMP Echo if available - Falls back on TCP Echo on port 7 	|
+| false
+| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.
+| Supported ICMP Echo if available - Falls back on TCP Echo on port 7
+| Supported TCP Echo on port 7 	| Supported ICMP Echo if available - Falls back on TCP Echo on port 7 	|
 
-| true  	
-| true      	
-| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.                      	                                                                                                            | Supported - Requires OS Configuration  Enforcing ICMP Echo if available - No start up if not available 	
-| Not Supported                 	
-| Not Supported - Requires root privileges                            	|
+| true	
+| true
+| Parallel ping detector, works in parallel with the configured failure detector. Checks periodically if members are live (OSI Layer 3) and suspects them immediately, regardless of the other detectors.
+| Supported - Requires OS Configuration Enforcing ICMP Echo if available - No start up if not available 	
+| Not Supported
+| Not Supported - Requires root privileges |
 |===
 
 
@@ -1237,7 +1243,7 @@ Hazelcast provides a REST interface, i.e. it provides an HTTP service in each cl
 
 For the operations to be performed, standard REST conventions for HTTP calls are used.
 
-NOTE:  REST client request listener service is not enabled by default. You should enable it on your cluster members to use REST client. It can be enabled using the system property `hazelcast.rest.enabled`. Please refer to the <<system-properties, System Properties appendix>> for the definition of this property and how to set a system property.
+NOTE: REST client request listener service is not enabled by default. You should enable it on your cluster members to use REST client. It can be enabled using the system property `hazelcast.rest.enabled`. Please refer to the <<system-properties, System Properties appendix>> for the definition of this property and how to set a system property.
 
 
 ==== REST Client GET/POST/DELETE Examples
@@ -1528,45 +1534,27 @@ An entry written with a Memcache client can be read by another Memcache client w
 ** decr_hits
 ** decr_misses
 
-
-
-=== Other Client and Language Implementations
-
-Please refer to https://hazelcast.org/clients-languages/[Feature Comparison Matrix] to see the features implemented across the clients and language APIs.
-
-
-==== Python Client
+=== Python Client
 
 
 Python Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol. 
 
-Please refer to http://hazelcast.github.io/hazelcast-python-client[Hazelcast Python Client] for its documentation. 
+See http://hazelcast.github.io/hazelcast-python-client[Hazelcast Python Client] for its documentation. 
 
-==== Node.js Client
+=== Node.js Client
 
 Node.js Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol. 
 
-Please refer to https://github.com/hazelcast/hazelcast-nodejs-client[Hazelcast Node.js Client] for its documentation. 
+See https://github.com/hazelcast/hazelcast-nodejs-client[Hazelcast Node.js Client] for its documentation. 
 
-==== Go Client
+=== Go Client
 
 Go Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol. 
 
-Please refer to https://github.com/hazelcast/hazelcast-go-client[Go Client] for its documentation. 
+See https://github.com/hazelcast/hazelcast-go-client[Go Client] for its documentation.
 
-
-==== Scala 
+=== Scala 
 
 The API for Hazelcast Scala is based on Scala 2.11 and Hazelcast 3.6/3.7/3.8 releases. However, these are not hard dependencies provided that you include the relevant Hazelcast dependencies.
 
-Please refer to https://github.com/hazelcast/hazelcast-scala[Hazelcast Scala] for its documentation. 
-
-
-
-
-
-
-
-
-
-
+See https://github.com/hazelcast/hazelcast-scala[Hazelcast Scala] for its documentation.
