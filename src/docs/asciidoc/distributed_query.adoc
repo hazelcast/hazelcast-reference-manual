@@ -2178,6 +2178,8 @@ Fast-Aggregations functionality is the successor of the <<aggregators, Aggregato
 They are equivalent to the MapReduce Aggregators in most of the use cases, but instead of running on the MapReduce engine they run on the Query infrastructure.
 Their performance is tens to hundreds times better since they run in parallel for each partition and are highly optimized for speed and low memory consumption.
 
+NOTE: If the <<setting-in-memory-format in-memory format>> of your data is `NATIVE`, Fast-Aggregations always run on the partition threads. If the data is of type `BINARY` or `OBJECT`, they also mostly run on the partition threads, however, they may run on the separate query threads to avoid blocking partition threads (if there are no ongoing migrations).
+
 ==== Aggregator API
 
 The Fast-Aggregation consists of three phases represented by three methods:
