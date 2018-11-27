@@ -272,14 +272,13 @@ include::{javasource}/networkpartitioning/QuorumQuery.java[tag=qq]
 
 === Split-Brain Recovery
 
-Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will going to initiate the merge process is decided. This decision is based on the cluster size; the smaller cluster will merge into the bigger one. If they have an equal number of members, then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
+Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will initiate the merge process is decided. This decision is based on the cluster size; the smaller cluster, by member count, will merge into the bigger one. If they have an equal number of members, then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
 
-After the merging side is decided, the master member (the eldest one) of the merging cluster initiates the cluster merge process by sending merge instructions to the members in its cluster.
+After the merging side is decided, the master member (the eldest one) of the merging side initiates the cluster merge process by sending merge instructions to the members in its cluster.
 
-While recovering from partitioning, Hazelcast uses merge policies for supported data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging data. Hazelcast provides an interface to be implemented and also a couple of out-of-the-box policies. Data structures without split-brain support discard the data from merging side.
+While recovering from partitioning, Hazelcast uses merge policies for supported data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging data. Hazelcast provides an interface to be implemented and also a selection of out-of-the-box policies. Data structures without split-brain support discard the data from merging side.
 
 Each member of the merging cluster will do the following:
-
 
 - Close all of its network connections (detach from its cluster).
 - Take a snapshot of local data structures which support split-brain recovery.
@@ -291,7 +290,7 @@ For more information, please see the <<consistency-and-replication-model, Consis
 
 ==== Merge Policies
 
-Since Hazelcast 3.10 all merge policies are implementing the unified interface `com.hazelcast.spi.SplitBrainMergePolicy`. We provide the following out-of-the-box implementations:
+Since Hazelcast 3.10 all merge policies implement the unified interface `com.hazelcast.spi.SplitBrainMergePolicy`. We provide the following out-of-the-box implementations:
 
 * `DiscardMergePolicy`: the entry from the smaller cluster will be discarded.
 * `ExpirationTimeMergePolicy`: the entry with the higher expiration time wins.
@@ -308,8 +307,8 @@ Additionally you can develop a custom merge policy by implementing the `SplitBra
 
 The following data structures support split-brain recovery:
 
-* `IMap` (including also High-Density Memory Store backed IMap)
-* `ICache` (including also High-Density Memory Store backed IMap)
+* `IMap` (including High-Density Memory Store backed IMap)
+* `ICache` (including High-Density Memory Store backed IMap)
 * `ReplicatedMap`
 * `MultiMap`
 * `IAtomicLong`
@@ -317,11 +316,11 @@ The following data structures support split-brain recovery:
 * `IQueue`
 * `IList`
 * `ISet`
-* `Ringbuffer`
+* `RingBuffer`
 * `CardinalityEstimator`
 * `ScheduledExecutorService`
 
-The statistic based out-of-the-box merge policies are just supported by `IMap`, `ICache`, `ReplicatedMap` and `MultiMap`. The `HyperLogLogMergePolicy` is just supported by the `CardinalityEstimator`.
+The statistic based out-of-the-box merge policies are only supported by `IMap`, `ICache`, `ReplicatedMap` and `MultiMap`. The `HyperLogLogMergePolicy` is supported by the `CardinalityEstimator`.
 
 Please have a look at `com.hazelcast.spi.merge.SplitBrainMergeTypes` for a complete overview of supported merge types of each data structure. There is a config validation which checks these constraints to provide fail-fast behavior for invalid configurations.
 
@@ -331,7 +330,7 @@ NOTE: For the other data structures, e.g., `ISemaphore`, `ICountdownLatch` and `
 
 The merge policies are configured via a `MergePolicyConfig`, which can be set for all supported data structures. The only exception is `ICache`, which just accepts the merge policy classname (due to compatibility reasons with older Hazelcast clients). For `ICache`, all other configurable merge parameters are the default values from `MergePolicyConfig`.
 
-For your custom merge policy you should set the full class name of your implementation to the `merge-policy` configuration. For the out-of-the-box merge policies the simple classname is enough.
+For custom merge policies you should set the full class name of your implementation as the `merge-policy` configuration. For the out-of-the-box merge policies the simple classname is enough.
 
 ===== Declarative Configuration
 
