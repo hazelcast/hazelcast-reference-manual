@@ -618,25 +618,25 @@ You can also use the following URL in your REST call if you want to synchronize 
 NOTE: Synchronization for a target cluster operates only with the data residing in the memory. Therefore, evicted entries will not be
 synchronized, not even if `MapLoader` is configured.
 
-==== Dynamically adding WAN publishers
+==== Dynamically Adding WAN Publishers
 
-When running clusters for an extensive period you might need to dynamically change configuration while the cluster is running. This includes dynamically adding new WAN replication publishers (new target clusters) and have subsequent map and cache updates be replicated to the new publishers without any manual intervention.
+When running clusters for an extensive period, you might need to dynamically change the configuration while the cluster is running. This includes dynamically adding new WAN replication publishers (new target clusters) and replicating the subsequent map and cache updates to the new publishers without any manual intervention.
 
-You can add new WAN publishers to an existing WAN replication using almost all of the configuration options that are available when configuring WAN publishers in the static configuration (including using discovery SPI). The new configuration is not persisted but it is replicated to all existing and new members. Once the cluster is completely restarted, the dynamically added publisher configuration is lost and the updates are not replicated to the target cluster anymore until added again.
+You can add new WAN publishers to an existing WAN replication using almost all of the configuration options that are available when configuring the WAN publishers in the static configuration (including using Discovery SPI). The new configuration is not persisted but it is replicated to all existing and new members. Once the cluster is completely restarted, the dynamically added publisher configuration is lost and the updates are not replicated to the target cluster anymore until added again.
 
 If you wish to preserve the new configuration over cluster restarts, you must add the exact same configuration to the static configuration file after dynamically adding the publisher configuration to a running cluster.
 
-Existing configurations cannot be removed but publishers can be put into a STOPPED state which prevents WAN events from being enqueued in the WAN queues and prevents replication, rendering the publisher idle. Configurations also cannot be changed.
+You cannot remove the existing configurations but can put the publishers into a STOPPED state which prevents the WAN events from being enqueued in the WAN queues and prevents the replication, rendering the publisher idle. The configurations also cannot be changed.
 
 Synchronization can be initiated through https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center] and Hazelcast’s REST API.
 
-Below is the URL for the REST call;
+Below is the URL for the REST call:
 
 ```
 http://member_ip:port/hazelcast/rest/mancenter/wan/addWanConfig
 ```
 
-You need to add the configuration for the WAN publishers as a JSON parameter. You can, at any point, even when maps and caches are concurrently mutated, add a new WAN publisher to an existing WAN replication configuration. The limitation is that there must be an existing WAN replication configuration but it can be empty, without any publishers (target clusters). For instance, this is an example of a XML configuration to which new publishers can be dynamically added:
+You need to add the configuration for the WAN publishers as a JSON parameter. You can, at any point, even when maps and caches are concurrently mutated, add a new WAN publisher to an existing WAN replication configuration. The limitation is that there must be an existing WAN replication configuration but it can be empty, without any publishers (target clusters). For instance, this is an example of an XML configuration to which you can dynamically add new publishers:
 
 ```
 <wan-replication name="wanReplication"></wan-replication>
@@ -649,16 +649,30 @@ You need to add the configuration for the WAN publishers as a JSON parameter. Yo
 </map>
 ```
 
-Note that the map has defined WAN replication but there is no target cluster yet. The user can then add new WAN replication publishers (target clusters) by performing a HTTP POST:
+Note that the map has defined WAN replication but there is no target cluster yet. You can then add the new WAN replication publishers (target clusters) by performing a HTTP POST as shown below:
 
 ```
 curl -H "Content-type: text/plain" -X POST -d "{...}" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/addWanConfig
 
 ```
 
-The user provides the full configuration as JSON as a parameter. Any WAN configuration supported in XML and Java config is also supported in this JSON format. Below are some examples of JSON configuration for a WAN publisher using Discovery SPI and static IP configuration. The integer values for "initialPublisherState", "queueFullBehavior" and "consistencyCheckStrategy" can be found in the javadoc for the respective java configuration classes ("com.hazelcast.config.WanPublisherState","com.hazelcast.config.WANQueueFullBehavior" and "com.hazelcast.config.ConsistencyCheckStrategy").
+You can provide the full configuration as JSON as a parameter. Any WAN configuration supported in the XML and programmatic configurations is also supported in this JSON format. Below are some examples of JSON configuration for a WAN publisher using the Discovery SPI and static IP configuration. Here are the integer values for `initialPublisherState`, `queueFullBehavior` and `consistencyCheckStrategy`:
 
-Example with Discovery SPI config (AWS config):
+* `initialPublisherState`:
+** 0: REPLICATING
+** 1: PAUSED
+** 2: STOPPED
+* `queueFullBehavior`:
+** 0: DISCARD_AFTER_MUTATION
+** 1: THROW_EXCEPTION
+** 2: THROW_EXCEPTION_ONLY_IF_REPLICATION_ACTIVE
+* `consistencyCheckStrategy`:
+** 0: NONE
+** 1: MERKLE_TREES
+
+
+Below is an example using Discovery SPI (AWS configuration):
+
 ```
 {
    "name":"wanReplication",
@@ -696,7 +710,8 @@ Example with Discovery SPI config (AWS config):
 }
 ```
 
-Example with Discovery SPI (new AWS config)
+Below is an example with Discovery SPI (the new AWS configuration)
+
 ```
 {
    "name":"wanReplication",
@@ -732,7 +747,8 @@ Example with Discovery SPI (new AWS config)
 }
 ```
 
-Example with static IP config (with some optional attributes):
+Below is an example with static IP configuration (with some optional attributes):
+
 ```
 {
    "name":"wanReplication",
@@ -760,7 +776,8 @@ Example with static IP config (with some optional attributes):
 }
 ```
 
-XML config with two publishers and several (disabled) discovery strategy configurations:
+Below is an XML configuration with two publishers and several (disabled) discovery strategy configurations:
+
 ```
 {
    "name":"wanReplication",
