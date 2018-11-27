@@ -618,6 +618,263 @@ You can also use the following URL in your REST call if you want to synchronize 
 NOTE: Synchronization for a target cluster operates only with the data residing in the memory. Therefore, evicted entries will not be
 synchronized, not even if `MapLoader` is configured.
 
+==== Dynamically adding WAN publishers
+
+When running clusters for an extensive period you might need to dynamically change configuration while the cluster is running. This includes dynamically adding new WAN replication publishers (new target clusters) and have subsequent map and cache updates be replicated to the new publishers without any manual intervention.
+
+You can add new WAN publishers to an existing WAN replication using almost all of the configuration options that are available when configuring WAN publishers in the static configuration (including using discovery SPI). The new configuration is not persisted but it is replicated to all existing and new members. Once the cluster is completely restarted, the dynamically added publisher configuration is lost and the updates are not replicated to the target cluster anymore until added again.
+
+If you wish to preserve the new configuration over cluster restarts, you must add the exact same configuration to the static configuration file after dynamically adding the publisher configuration to a running cluster.
+
+Existing configurations cannot be removed but publishers can be put into a STOPPED state which prevents WAN events from being enqueued in the WAN queues and prevents replication, rendering the publisher idle. Configurations also cannot be changed.
+
+Synchronization can be initiated through https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center] and Hazelcast’s REST API.
+
+Below is the URL for the REST call;
+
+```
+http://member_ip:port/hazelcast/rest/mancenter/wan/addWanConfig
+```
+
+You need to add the configuration for the WAN publishers as a JSON parameter. You can, at any point, even when maps and caches are concurrently mutated, add a new WAN publisher to an existing WAN replication configuration. The limitation is that there must be an existing WAN replication configuration but it can be empty, without any publishers (target clusters). For instance, this is an example of a XML configuration to which new publishers can be dynamically added:
+
+```
+<wan-replication name="wanReplication"></wan-replication>
+...
+<map name="my-map">
+    <wan-replication-ref name="wan-replication">
+        <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+        <republishing-enabled>false</republishing-enabled>
+    </wan-replication-ref>
+</map>
+```
+
+Note that the map has defined WAN replication but there is no target cluster yet. The user can then add new WAN replication publishers (target clusters) by performing a HTTP POST:
+
+```
+curl -H "Content-type: text/plain" -X POST -d "{...}" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/addWanConfig
+
+```
+
+The user provides the full configuration as JSON as a parameter. Any WAN configuration supported in XML and Java config is also supported in this JSON format. Below are some examples of JSON configuration for a WAN publisher using Discovery SPI and static IP configuration. The integer values for "initialPublisherState", "queueFullBehavior" and "consistencyCheckStrategy" can be found in the javadoc for the respective java configuration classes ("com.hazelcast.config.WanPublisherState","com.hazelcast.config.WANQueueFullBehavior" and "com.hazelcast.config.ConsistencyCheckStrategy").
+
+Example with Discovery SPI config (AWS config):
+```
+{
+   "name":"wanReplication",
+   "publishers":[
+      {
+         "groupName":"tokyo",
+         "queueCapacity":10000,
+         "queueFullBehavior":0,
+         "initialPublisherState":0,
+         "properties":{
+            "group.password":"pass"
+         },
+         "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
+         "discovery":{
+            "nodeFilterClass":null,
+            "discoveryStrategy":[
+               {
+                  "className":"com.hazelcast.aws.AwsDiscoveryStrategy",
+                  "properties":{
+                     "security-group-name":"hazelcast",
+                     "tag-value":"cluster1",
+                     "host-header":"ec2.amazonaws.com",
+                     "tag-key":"aws-test-cluster",
+                     "secret-key":"my-secret-key",
+                     "iam-role":"s3access",
+                     "access-key":"my-access-key",
+                     "hz-port":"5701-5708",
+                     "region":"us-west-1"
+                  }
+               }
+            ]
+         }
+      }
+   ]
+}
+```
+
+Example with Discovery SPI (new AWS config)
+```
+{
+   "name":"wanReplication",
+   "publishers":[
+      {
+         "groupName":"tokyo",
+         "queueCapacity":1000,
+         "queueFullBehavior":0,
+         "initialPublisherState":0,
+         "properties":{
+            "group.password":"pass"
+         },
+         "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
+         "aws":{
+            "enabled":true,
+            "usePublicIp":false,
+            "properties":{
+               "security-group-name":"hazelcast-sg",
+               "tag-value":"hz-nodes",
+               "host-header":"ec2.amazonaws.com",
+               "tag-key":"type",
+               "secret-key":"my-secret-key",
+               "iam-role":"dummy",
+               "access-key":"my-access-key",
+               "region":"us-west-1"
+            }
+         },
+         "sync":{
+            "consistencyCheckStrategy":0
+         }
+      }
+   ]
+}
+```
+
+Example with static IP config (with some optional attributes):
+```
+{
+   "name":"wanReplication",
+   "publishers":[
+      {
+         "groupName":"tokyo",
+         "queueCapacity":1000,
+         "queueFullBehavior":0,
+         "initialPublisherState":0,
+         "properties":{
+            "response.timeout.millis":"5000",
+            "group.password":"pass",
+            "endpoints":"10.3.5.1:5701, 10.3.5.2:5701",
+            "batch.max.delay.millis":"3000",
+            "batch.size":"50",
+            "snapshot.enabled":"false",
+            "ack.type":"ACK_ON_OPERATION_COMPLETE"
+         },
+         "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
+         "sync":{
+            "consistencyCheckStrategy":0
+         }
+      }
+   ]
+}
+```
+
+XML config with two publishers and several (disabled) discovery strategy configurations:
+```
+{
+   "name":"wanReplication",
+   "publishers":[
+      {
+         "groupName":"tokyo",
+         "queueCapacity":1000,
+         "queueFullBehavior":0,
+         "initialPublisherState":0,
+         "properties":{
+            "group.password":"pass"
+         },
+         "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
+         "aws":{
+            "enabled":true,
+            "usePublicIp":false,
+            "properties":{
+               "security-group-name":"hazelcast-sg",
+               "tag-value":"hz-nodes",
+               "host-header":"ec2.amazonaws.com",
+               "tag-key":"type",
+               "secret-key":"my-secret-key",
+               "iam-role":"dummy",
+               "access-key":"my-access-key",
+               "region":"us-west-1"
+            }
+         },
+         "gcp":{
+            "enabled":false,
+            "usePublicIp":true,
+            "properties":{
+               "gcp-prop":"gcp-val"
+            }
+         },
+         "azure":{
+            "enabled":false,
+            "usePublicIp":true,
+            "properties":{
+               "azure-prop":"azure-val"
+            }
+         },
+         "kubernetes":{
+            "enabled":false,
+            "usePublicIp":true,
+            "properties":{
+               "k8s-prop":"k8s-val"
+            }
+         },
+         "eureka":{
+            "enabled":false,
+            "usePublicIp":true,
+            "properties":{
+               "eureka-prop":"eureka-val"
+            }
+         },
+         "discovery":{
+            "nodeFilterClass":null,
+            "discoveryStrategy":[
+
+            ]
+         },
+         "sync":{
+            "consistencyCheckStrategy":0
+         }
+      },
+      {
+         "groupName":"london",
+         "queueCapacity":1000,
+         "queueFullBehavior":0,
+         "initialPublisherState":0,
+         "properties":{
+            "response.timeout.millis":"5000",
+            "group.password":"pass",
+            "endpoints":"10.3.5.1:5701, 10.3.5.2:5701",
+            "batch.max.delay.millis":"3000",
+            "batch.size":"50",
+            "snapshot.enabled":"false",
+            "ack.type":"ACK_ON_OPERATION_COMPLETE"
+         },
+         "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
+         "aws":{
+            "enabled":false,
+            "usePublicIp":false
+         },
+         "gcp":{
+            "enabled":false,
+            "usePublicIp":false
+         },
+         "azure":{
+            "enabled":false,
+            "usePublicIp":false
+         },
+         "kubernetes":{
+            "enabled":false,
+            "usePublicIp":false
+         },
+         "eureka":{
+            "enabled":false,
+            "usePublicIp":false
+         },
+         "discovery":{
+            "nodeFilterClass":null,
+            "discoveryStrategy":[
+
+            ]
+         },
+         "sync":{
+            "consistencyCheckStrategy":1
+         }
+      }
+   ]
+}
+```
+
 
 ==== WAN Replication Failure Detection and Recovery
 
