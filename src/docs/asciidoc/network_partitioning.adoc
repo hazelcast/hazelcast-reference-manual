@@ -46,7 +46,7 @@ Cluster Membership is established and maintained by heartbeats. A network partit
 
 For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection, a time window to detect quorum is not satisfied anymore. Length of this window depends on the failure detector. Given guarantee is, every member will eventually detect the failed members and will reject the operation on the data structure which requires the quorum.
 
-Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box `QuorumFunction`s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.  
+Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box `QuorumFunction`s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
 
@@ -181,7 +181,7 @@ Quorum configuration has the following elements:
 * `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
 * `quorum-function-class-name`: Class name of a `QuorumFunction` implementation, allows to configure Split-Brain Protection with a custom quorum function. It cannot be used in conjunction with `probabilistic-quorum` or `recently-active-quorum`.
 * `quorum-listeners`: Declaration of quorum listeners which are notified on quorum status changes.
-8 `probabilistic-quorum`: Configures the quorum with a probabilistic quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `recently-active-quorum`. 
+8 `probabilistic-quorum`: Configures the quorum with a probabilistic quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `recently-active-quorum`.
 * `recently-active-quorum`: Configures the quorum with a recently-active quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `probabilistic-quorum`.
 
 **Sample configuration with custom QuorumFunction implementation**
@@ -272,14 +272,13 @@ include::{javasource}/networkpartitioning/QuorumQuery.java[tag=qq]
 
 === Split-Brain Recovery
 
-Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will going to initiate the merge process is decided. This decision is based on the cluster size; the smaller cluster will merge into the bigger one. If they have an equal number of members, then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
+Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will initiate the merge process is decided. This decision is based on the cluster size; the smaller cluster, by member count, will merge into the bigger one. If they have an equal number of members, then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
 
-After the merging side is decided, the master member (the eldest one) of the merging cluster initiates the cluster merge process by sending merge instructions to the members in its cluster.
+After the merging side is decided, the master member (the eldest one) of the merging side initiates the cluster merge process by sending merge instructions to the members in its cluster.
 
-While recovering from partitioning, Hazelcast uses merge policies for supported data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging data. Hazelcast provides an interface to be implemented and also a couple of out-of-the-box policies. Data structures without split-brain support discard the data from merging side.
+While recovering from partitioning, Hazelcast uses merge policies for supported data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging data. Hazelcast provides an interface to be implemented and also a selection of out-of-the-box policies. Data structures without split-brain support discard the data from merging side.
 
 Each member of the merging cluster will do the following:
-
 
 - Close all of its network connections (detach from its cluster).
 - Take a snapshot of local data structures which support split-brain recovery.
@@ -291,7 +290,7 @@ For more information, please see the <<consistency-and-replication-model, Consis
 
 ==== Merge Policies
 
-Since Hazelcast 3.10 all merge policies are implementing the unified interface `com.hazelcast.spi.SplitBrainMergePolicy`. We provide the following out-of-the-box implementations:
+Since Hazelcast 3.10 all merge policies implement the unified interface `com.hazelcast.spi.SplitBrainMergePolicy`. We provide the following out-of-the-box implementations:
 
 * `DiscardMergePolicy`: the entry from the smaller cluster will be discarded.
 * `ExpirationTimeMergePolicy`: the entry with the higher expiration time wins.
@@ -302,14 +301,14 @@ Since Hazelcast 3.10 all merge policies are implementing the unified interface `
 * `PassThroughMergePolicy`: the entry from the smaller cluster wins.
 * `PutIfAbsentMergePolicy`: the entry from the smaller cluster wins if it doesn't exist in the cluster.
 
-Additionally you can develop a custom merge policy by implementing the `SplitBrainMergePolicy` interface.
+Additionally you can develop a custom merge policy by implementing the `SplitBrainMergePolicy` interface, as explained in the <<custom-merge-policies, Custom Merge Policies section>>
 
 ==== Supported Data Structures
 
 The following data structures support split-brain recovery:
 
-* `IMap` (including also High-Density Memory Store backed IMap)
-* `ICache` (including also High-Density Memory Store backed IMap)
+* `IMap` (including High-Density Memory Store backed IMap)
+* `ICache` (including High-Density Memory Store backed IMap)
 * `ReplicatedMap`
 * `MultiMap`
 * `IAtomicLong`
@@ -317,13 +316,15 @@ The following data structures support split-brain recovery:
 * `IQueue`
 * `IList`
 * `ISet`
-* `Ringbuffer`
+* `RingBuffer`
 * `CardinalityEstimator`
 * `ScheduledExecutorService`
 
-The statistic based out-of-the-box merge policies are just supported by `IMap`, `ICache`, `ReplicatedMap` and `MultiMap`. The `HyperLogLogMergePolicy` is just supported by the `CardinalityEstimator`.
+The statistic based out-of-the-box merge policies are only supported by `IMap`, `ICache`, `ReplicatedMap` and `MultiMap`. The `HyperLogLogMergePolicy` is supported by the `CardinalityEstimator`.
 
-Please have a look at `com.hazelcast.spi.merge.SplitBrainMergeTypes` for a complete overview of supported merge types of each data structure. There is a config validation which checks these constraints to provide fail-fast behavior for invalid configurations.
+IMPORTANT: Except the `CardinalityEstimator` data structure, the default merge policy for all the Hazelcast data structures that support split-brain recovery (listed above) is `PutIfAbsentMergePolicy`. For the `CardinalityEstimator` data structure, the default merge policy is `HyperLogLogMergePolicy`.
+
+See also the <<merge-types, Merge Types section>> for a complete overview of supported merge types of each data structure. There is a config validation which checks these constraints to provide fail-fast behavior for invalid configurations.
 
 NOTE: For the other data structures, e.g., `ISemaphore`, `ICountdownLatch` and `ILock`, the instance from the smaller cluster is discarded during the split-brain recovery.
 
@@ -331,7 +332,7 @@ NOTE: For the other data structures, e.g., `ISemaphore`, `ICountdownLatch` and `
 
 The merge policies are configured via a `MergePolicyConfig`, which can be set for all supported data structures. The only exception is `ICache`, which just accepts the merge policy classname (due to compatibility reasons with older Hazelcast clients). For `ICache`, all other configurable merge parameters are the default values from `MergePolicyConfig`.
 
-For your custom merge policy you should set the full class name of your implementation to the `merge-policy` configuration. For the out-of-the-box merge policies the simple classname is enough.
+For custom merge policies you should set the full class name of your implementation as the `merge-policy` configuration. For the out-of-the-box merge policies the simple classname is enough.
 
 ===== Declarative Configuration
 
@@ -343,7 +344,7 @@ Here are examples how merge policies can be specified for various data structure
   ...
   <map name="default">
      ...
-     <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>     
+     <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>
   </map>
 
   <replicatedmap name="default">
@@ -360,7 +361,7 @@ Here are examples how merge policies can be specified for various data structure
     ...
     <merge-policy batch-size="500">org.example.merge.MyMergePolicy</merge-policy>
   </list>
-  
+
   <atomic-long name="default">
     ...
     <merge-policy>PutIfAbsentMergePolicy</merge-policy>
@@ -377,9 +378,9 @@ Here is how merge policies are specified for `ICache` (it is the same configurat
    ...
    <cache name="default">
       ...
-      <merge-policy>org.example.merge.MyMergePolicy</merge-policy>        
+      <merge-policy>org.example.merge.MyMergePolicy</merge-policy>
    </cache>
-</hazelcast>    
+</hazelcast>
 ----
 
 ===== Programmatic Configuration
@@ -448,7 +449,7 @@ public interface MergingEntry<K, V> extends MergingValue<V> {
 }
 ----
 
-In addition we have a bunch of specialized merge types, e.g. for provided statistics. An example is `MergingHits`, which provides the hit counter of the merge data:
+In addition we have a bunch of specialized merge types, e.g., for provided statistics. An example is `MergingHits`, which provides the hit counter of the merge data:
 
 [source,java]
 ----
@@ -475,7 +476,90 @@ The `ReplicatedMap` provides key/value merge data, with the creation time, acces
 
 The `IQueue` just provides a collection of values. The return type is also a `Collection<Object>`.
 
-The following sections will show various examples how to implement this interface for all data structures, specific merge types or a specific data structure.
+
+The following is the full list of merge types:
+
+* `MergingValue`: Represents the value of the merged data.
+* `MergingEntry`: Represents the key and value of the merged data.
+* `MergingCreationTime`: Represents the creation time of the merging process.
+* `MergingHits`: Represents the access hits of the merged data.
+* `MergingLastAccessTime`: Represents the last time when the merged data is accessed.
+* `MergingLastUpdateTime`: Represents the last time when the merged data is updated.
+* `MergingTTL`: Represents the time-to-live value of the merged data.
+* `MergingMaxIdle`: Represents the maximum idle timeout value of the merged data.
+* `MergingCost`: Represents the memory costs for the merging process after a split-brain.
+* `MergingVersion`: Represents the version of the merged data.
+* `MergingExpirationTime`: Represents the expiration time of the merged data.
+* `MergingLastStoredTime`: Represents the last stored time of the merged data.
+
+
+And the following table shows the merge types provided by each data structure:
+
+.Merge Types
+[cols="1,3a"]
+|===
+|Data Structure |Merge Type
+
+| `IMap`
+| 
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+* `MergingMaxIdle`
+* `MergingCosts`
+* `MergingVersion`
+* `MergingExpirationTime`
+* `MergingLastStoredTime`
+| `ICache`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+| `ReplicatedMap`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+| `MultiMap`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+| `IQueue`, `ISet`, `IList`, `Ringbuffer`
+|
+
+* `MergingValue`
+| `IAtomicLong`, `IAtomicReference`
+|
+
+* `MergingValue`
+| `CardinalityEstimator`
+|
+
+* `MergingEntry`
+| `ScheduledExecutorService`
+|
+
+* `MergingEntry`
+|===
+
+
+The following sections show various examples on how to implement merge type interfaces for all data structures, specific merge types or a specific data structure.
 
 ===== Accessing Deserialized Values
 
@@ -539,7 +623,7 @@ userContext.put(TruthProvider.TRUTH_PROVIDER_ID, new ExampleTruthProvider());
 Config config = new Config()
   .addMapConfig(mapConfig)
   .setUserContext(userContext);
-  
+
 Hazelcast.newHazelcastInstance(config);
 ----
 
