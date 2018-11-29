@@ -301,7 +301,7 @@ Since Hazelcast 3.10 all merge policies implement the unified interface `com.haz
 * `PassThroughMergePolicy`: the entry from the smaller cluster wins.
 * `PutIfAbsentMergePolicy`: the entry from the smaller cluster wins if it doesn't exist in the cluster.
 
-Additionally you can develop a custom merge policy by implementing the `SplitBrainMergePolicy` interface.
+Additionally you can develop a custom merge policy by implementing the `SplitBrainMergePolicy` interface, as explained in the <<custom-merge-policies, Custom Merge Policies section>>
 
 ==== Supported Data Structures
 
@@ -322,7 +322,9 @@ The following data structures support split-brain recovery:
 
 The statistic based out-of-the-box merge policies are only supported by `IMap`, `ICache`, `ReplicatedMap` and `MultiMap`. The `HyperLogLogMergePolicy` is supported by the `CardinalityEstimator`.
 
-Please have a look at `com.hazelcast.spi.merge.SplitBrainMergeTypes` for a complete overview of supported merge types of each data structure. There is a config validation which checks these constraints to provide fail-fast behavior for invalid configurations.
+IMPORTANT: Except the `CardinalityEstimator` data structure, the default merge policy for all the Hazelcast data structures that support split-brain recovery (listed above) is `PutIfAbsentMergePolicy`. For the `CardinalityEstimator` data structure, the default merge policy is `HyperLogLogMergePolicy`.
+
+See also the <<merge-types, Merge Types section>> for a complete overview of supported merge types of each data structure. There is a config validation which checks these constraints to provide fail-fast behavior for invalid configurations.
 
 NOTE: For the other data structures, e.g., `ISemaphore`, `ICountdownLatch` and `ILock`, the instance from the smaller cluster is discarded during the split-brain recovery.
 
@@ -447,7 +449,7 @@ public interface MergingEntry<K, V> extends MergingValue<V> {
 }
 ----
 
-In addition we have a bunch of specialized merge types, e.g. for provided statistics. An example is `MergingHits`, which provides the hit counter of the merge data:
+In addition we have a bunch of specialized merge types, e.g., for provided statistics. An example is `MergingHits`, which provides the hit counter of the merge data:
 
 [source,java]
 ----
@@ -474,7 +476,90 @@ The `ReplicatedMap` provides key/value merge data, with the creation time, acces
 
 The `IQueue` just provides a collection of values. The return type is also a `Collection<Object>`.
 
-The following sections will show various examples how to implement this interface for all data structures, specific merge types or a specific data structure.
+
+The following is the full list of merge types:
+
+* `MergingValue`: Represents the value of the merged data.
+* `MergingEntry`: Represents the key and value of the merged data.
+* `MergingCreationTime`: Represents the creation time of the merging process.
+* `MergingHits`: Represents the access hits of the merged data.
+* `MergingLastAccessTime`: Represents the last time when the merged data is accessed.
+* `MergingLastUpdateTime`: Represents the last time when the merged data is updated.
+* `MergingTTL`: Represents the time-to-live value of the merged data.
+* `MergingMaxIdle`: Represents the maximum idle timeout value of the merged data.
+* `MergingCost`: Represents the memory costs for the merging process after a split-brain.
+* `MergingVersion`: Represents the version of the merged data.
+* `MergingExpirationTime`: Represents the expiration time of the merged data.
+* `MergingLastStoredTime`: Represents the last stored time of the merged data.
+
+
+And the following table shows the merge types provided by each data structure:
+
+.Merge Types
+[cols="1,3a"]
+|===
+|Data Structure |Merge Type
+
+| `IMap`
+| 
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+* `MergingMaxIdle`
+* `MergingCosts`
+* `MergingVersion`
+* `MergingExpirationTime`
+* `MergingLastStoredTime`
+| `ICache`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+| `ReplicatedMap`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+| `MultiMap`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+| `IQueue`, `ISet`, `IList`, `Ringbuffer`
+|
+
+* `MergingValue`
+| `IAtomicLong`, `IAtomicReference`
+|
+
+* `MergingValue`
+| `CardinalityEstimator`
+|
+
+* `MergingEntry`
+| `ScheduledExecutorService`
+|
+
+* `MergingEntry`
+|===
+
+
+The following sections show various examples on how to implement merge type interfaces for all data structures, specific merge types or a specific data structure.
 
 ===== Accessing Deserialized Values
 
