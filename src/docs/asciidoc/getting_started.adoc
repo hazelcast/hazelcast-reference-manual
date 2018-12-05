@@ -503,6 +503,153 @@ Also MergePolicy interface has been renamed to MapMergePolicy and also returning
 * **ISemaphore API:** The `ISemaphore` has been substantially changed. `attach()`, `detach()` methods have been removed.
 - In 2.x releases, the default value for `max-size` eviction policy was **cluster_wide_map_size**. In 3.x releases, default is **PER_NODE**. After upgrading, the `max-size` should be set according to this new default, if it is not changed. Otherwise, it is likely that OutOfMemory exception may be thrown.
 
+=== hazelcast-member Tool
+
+The `hazelcast-member` tool is a command line utility that can run one or more Hazelcast member(s) on the local machine. Below sections provide its installation instructions for various platforms and usage details.
+
+==== Installing the Tool
+
+The `hazelcast-member` tool is packaged in `yum` for Red Hat and CentOT, `apt` for Debian and Ubuntu, and `brew` for Mac OS X. See the below sections for installation details.
+
+====== On Mac OS X
+
+If you have brew installed, run the following commands to install this tool:
+
+[source,plain]
+----
+brew tap hazelcast/homebrew-hazelcast
+brew install hazelcast-member
+----
+
+[NOTE]
+====
+Make sure that Apple Xcode is installed on the machine. If not, you will get an `xcrun` error while the `brew tap` command shown above is running. To have the Xcode, run the following commands in the shown order:
+
+[source,plain]
+----
+xcode-select --install
+xcode-select --reset
+----
+====
+
+====== On Ubuntu and Debian
+
+To resolve the `.deb` artifacts from Bintray, follow the below instructions.
+
+First, you need to import the Bintray's GPG key using the following command:
+
+```
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
+```
+
+Then, run the following commands to add the `.deb` artifact to your system configuration file and update the lists of packages:
+
+```
+echo "deb https://dl.bintray.com/hazelcast/deb stable main" | sudo tee -a /etc/apt/sources.list
+sudo apt-get update
+``` 
+
+Finally, run the following command to install the `hazelcast-member` tool:
+
+```
+sudo apt-get install hazelcast-member
+```
+
+===== On Red Hat and CentOS
+
+To resolve the `RPM` artifacts from Bintray, follow the below instructions.
+
+First, run the following command to get a generated `.repo` file:
+
+```
+wget https://bintray.com/hazelcast/rpm/rpm -O bintray-hazelcast-rpm.repo
+```
+
+Then, install the `.repo` file using the following command:
+
+
+```
+sudo mv bintray-hazelcast-rpm.repo /etc/yum.repos.d/
+```
+
+Finally, run the following command to install the `hazelcast-member` tool:
+
+```
+sudo yum install hazelcast-member
+```
+
+==== Using the Tool
+
+After successfully installing the `hazelcast-member` tool, you can perform the operations described below.
+
+====== Starting a Member
+
+Run the following command to start a Hazelcast member instance.
+
+```
+hazelcast-member start
+```
+
+As soon as you run the command, it shows you a name assigned to the process ID which corresponds to the newly started Hazelcast member. An example output is shown below:
+
+```
+john@Johns-MacBook-Pro:~/Desktop$ hazelcast-member start
+ID:  confident_tharp
+```
+
+The process naming (`confident_tharp` in the above example) is for your convenience. As you start other members, you will see different names for each of them. You can start as many members as you want using the above `hazelcast-member start` command.
+
+You can use the arguments described in the below table for the `start` command:
+
+|===
+|Command Argument | Description
+
+| `-c` or `--config` <file>`
+|
+
+
+To stop a member, run the following command:
+
+```
+hazelcast-member stop
+```
+
+
+
+
+  -c or --config <file>
+        Use <file> for Hazelcast configuration.
+        If <file> is '-', read the standard input.
+
+  -cn or --cluster-name <name>
+        Use the specified cluster <name> (default: 'dev').
+
+  -cp or --cluster-password <password>
+        Use the specified cluster <password> (default: 'password').
+
+  -fg or --foreground
+        Run in the foreground.
+
+  -i or --interface <interface>
+        Bind to the specified <interface> (default: bind to all interfaces).
+
+  -j or --jar <path>
+        Add <path> to Hazelcast class path.
+
+  -p or --port <port>
+        Bind to the specified <port> (default: 5701).
+
+  -v or --verbose
+        Show extra info about running environment.
+
+  -J or --JAVA_OPTS <options>
+        Specify additional Java <options>.
+
+
+
+
+You can find more information about the `hazelcast-member` tool at its GitHub [repo](https://github.com/hazelcast/hazelcast-member-tool).
+
 [[starting-the-member-and-client]]
 === Starting the Member and Client
 
