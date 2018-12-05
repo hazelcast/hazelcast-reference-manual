@@ -1502,16 +1502,16 @@ Hazelcast Management Center enables you to monitor and manage your cluster membe
 
 Please refer to https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[Hazelcast Management Center Documentation] for its usage details.
 
-==== Toggle scripting support
+==== Toggle Scripting Support
 
-Support for script execution is enabled in Hazelcast and disabled in Hazelcast Enterprise by default. The reason is security. Script engines allow to access underlying system on members (files and other resources). Scripts get access to the system on which member is running with permissions of the running user.
+The support for script execution is enabled in the Hazelcast IMDG Open Source edition and disabled in the Hazelcast IMDG Enterprise edition by default. The reason is security. Script engines allow to access the underlying system on the members (files and other resources). Scripts access the system, on which the member runs, with permissions of the running user.
 
-The scripting can be allowed or forbidden by specifying `scripting-enabled` attribute in Management center configuration within Hazelcast member configuration file:
+The scripting can be allowed or prevented by specifying the `scripting-enabled` attribute of the `management-center` element within the Hazelcast member configuration file, as shown below:
 
 [source,xml]
 ----
 <management-center enabled="true" scripting-enabled="false">
-http://localhost:8080/hazelcast-mancenter
+    http://localhost:8080/hazelcast-mancenter
 </management-center>
 ----
 
