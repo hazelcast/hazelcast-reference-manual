@@ -505,6 +505,19 @@ Collection<Motorbike> result = map.values(p);
 
 `[]` notation applies to both collections and arrays.
 
+[NOTE]
+====
+Hazelcast requires all elements of a collection to have the same type. Considering and expanding the above example:
+
+* if you have a `wheels` collection attribute, all of its elements must be of the `Wheel` type, subclasses of `Wheel` are not allowed.
+
+* Let’s say you have added a `seats` collection attribute, which is a `Seat` object.  Then all of its elements must of this concrete `Seat` type.
+
+So, you may have collections of different types in your map. However, each collection’s elements must be of the same concrete type within that collection attribute.
+
+Consider custom attribute extractors if it is impossible or undesirable to reduce the variety of types to a single type. See the <<custom-attributes, Custom Attributes section>> for information on them.
+====
+
 ==== Indexing in Collections and Arrays
 
 You can also create an index using a query in collections and arrays.
