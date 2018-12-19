@@ -3059,7 +3059,7 @@ The Flake ID generator provides similar features with more safety guarantees dur
 * Replace all calls to `HazelcastInstance.getIdGenerator()` with `HazelcastInstance.getFlakeIdGenerator()`. If you use Spring configuration, replace `<id-generator>` with `<flake-id-generator>`
 
 [[flakeidgenerator]]
-=== FlakeIdGenerator
+=== Flake ID Generator
 
 Hazelcast Flake ID Generator is used to generate cluster-wide unique identifiers. Generated identifiers are `long` primitive values and are k-ordered (roughly ordered). IDs are in the range from 0 to Long.MAX_VALUE.
 
@@ -3097,6 +3097,34 @@ The join algorithm is specifically designed to ensure that member list join vers
 ===== Node ID Overflow
 
 Node ID component of the ID has 16 bits. Members with the member list join version higher than 2^16 won't be able to generate IDs, but functionality will be preserved by forwarding to another member. It is possible to generate IDs on any member or client as long as there is at least one member with join version smaller than 2^16 in the cluster. The remedy is to restart the cluster: the node ID component will be reset and assigned starting from zero again. Uniqueness after the restart will be preserved thanks to the timestamp component.
+
+==== Configuring Flake ID Generator
+
+Following is an example declarative configuration snippet:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <flake-id-generator name="default">
+        <prefetch-count>100</prefetch-count>
+        <prefetch-validity-millis>600000</prefetch-validity-millis>
+        <id-offset>0</id-offset>
+        <node-id-offset>0</node-id-offset>
+        <statistics-enabled>true</statistics-enabled>
+    </flake-id-generator>
+    ...
+</hazelcast>
+----
+
+Here are the descriptions of configuration elements and attributes:
+
+* `name`: Name of your Flake ID Generator. It is a required attribute.
+* `prefetch-count`: Count of IDs which are pre-fetched on the background when one call to FlakeIdGenerator.newId() is made. Its value must be in the range 1 -100,000. Its default value is 100. This setting pertains only to `newId()` calls made on the member that configured it.
+* `prefetch-validity-millis`: Specifies for how long the pre-fetched IDs can be used. After this time elapses, a new batch of IDs are fetched. Time unit is milliseconds. Its default value is 600,000 milliseconds (10 minutes). The IDs contain a timestamp component, which ensures a rough global ordering of them. If an ID is assigned to an object that was created later, it will be out of order. If ordering is not important, set this value to 0. This setting pertains only to `newId()` calls made on the member that configured it.
+* `id-offset`: Specifies the offset that will be added to the returned IDs. Its default value is 0. Setting might be useful when migrating from ID Generator. The default value works for all green-field projects. For example, assume the largest ID returned from ID Generator is 150. And, Flake ID Generator now returns 100. If you set this element to 50 and stop using the ID Generator, the next ID from Flake ID Generator will be 151 or larger and no duplicate IDs will be generated. In real-life, the IDs are much larger. You also need to add a reserve to the offset because the IDs from Flake ID Generator are only roughly ordered. Recommended reserve is 2^38, that is 274877906944. Negative values are allowed to increase the lifespan of the generator, however keep in mind that the generated IDs might also be negative.
+* `node-id-offset`: Specifies the offset that will be added to the node ID assigned to cluster member for this generator. Might be useful in A/B deployment scenarios where you have cluster A which you want to upgrade. You create cluster B and for some time both will generate IDs and you want to have them unique. In this case, configure node ID offset for generators on cluster B.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your Flake ID Generator. If set to `false`, you cannot collect statistics in your implementation (using `getLocalFlakeIdGeneratorStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-flake-id-generators[Hazelcast Management Center] will not show them. Its default value is `true`.
 
 [[replicated-map]]
 === Replicated Map
@@ -3204,7 +3232,7 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 
 * `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. Its default value is `OBJECT`.
 * `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. Its default value is `true`. If set to `false` (i.e., synchronous initial fill up), no exception will be thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
-* `statistics-enabled`: If set to `true`, the statistics such as cache hits and misses are collected. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your Replicated Map. If set to `false`, you cannot collect statistics in your implementation (using `getLocalReplicatedMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-replicated-maps[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `entry-listener`: Full canonical classname of the `EntryListener` implementation.
 ** `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. Its default value is `true`.
 ** `entry-listener#local`: Not used for Replicated Map since listeners are always local.
