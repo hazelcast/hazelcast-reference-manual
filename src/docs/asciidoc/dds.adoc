@@ -941,7 +941,27 @@ Here the configured map will use the `map-lock-actions-quorum` quorum for map lo
 [[accessing-entry-statistics]]
 ==== Accessing Entry Statistics
 
-Hazelcast keeps statistics about each map entry, such as creation time, last update time, last access time, number of hits and version. To access the map entry statistics, use an `IMap.getEntryView(key)` call. Here is an example.
+You can retrieve the statistics of the map in your Hazelcast IMDG member using the `getLocalMapStats()` method, which is the programmatic approach. It returns information such as primary and backup entry count, last update time and locked entry count. If you need the cluster-wide map statistics, you can get the local map statistics from all members of the cluster and combine them. Alternatively, you can see the map statistics on the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#managing-maps[Hazelcast Management Center]. 
+
+To be able to retrieve the map statistics, the `statistics-enabled` element under the map configuration should be set as `true`, which is the default value:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="myMap">
+        ...
+        <statistics-enabled>true</statistics-enabled>
+        ...
+    </map>
+    ...
+</hazelcast>
+----
+
+When this element is set to `false`, the statistics will not be gathered for the map and cannot be seen on the Hazelcast Management Center, nor retrieved by the `getLocalMapStats()` method. 
+
+
+Hazelcast also keeps statistics about each map entry, such as creation time, last update time, last access time, and number of hits and version. To access the map entry statistics, use an `IMap.getEntryView(key)` call. Here is an example.
 
 [source,java]
 ----
@@ -1332,7 +1352,7 @@ The following is the full list of queue configuration elements with their descri
 * `empty-queue-ttl`: Used to purge unused or empty queues. If you define a value (time in seconds) for this element, then your queue will be destroyed if it stays empty or unused for that time.
 * `item-listeners`: Adds listeners (listener classes) for the queue items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values. You can set `local` to `true` if you want to listen to the items on the local member.
 * `queue-store`: Includes the queue store factory class name and the properties  *binary*, *memory limit* and *bulk load*. Please refer to <<queueing-with-persistent-datastore, Queueing with Persistent Datastore>>.
-* `statistics-enabled`: If set to `true`, you can retrieve statistics for this queue using the method `getLocalQueueStats()`.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your queue. If set to `false`, you cannot collect statistics in your implementation (using `getLocalQueueStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-queues[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `quorum-ref` : Name of quorum configuration that you want this queue to use.
 
 [[multimap]]
@@ -1408,7 +1428,7 @@ The following are the configuration elements and their descriptions:
 * `backup-count`: Defines the number of synchronous backups. For example, if it is set to 1, backup of a partition will be
 placed on one other member. If it is 2, it will be placed on two other members.
 * `async-backup-count`: The number of asynchronous backups. Behavior is the same as that of the `backup-count` element.
-* `statistics-enabled`: You can retrieve some statistics such as owned entry count, backup entry count, last update time and locked entry count by setting this parameter's value as "true". The method for retrieving the statistics is `getLocalMultiMapStats()`.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your MultiMap. If set to `false`, you cannot collect statistics in your implementation (using `getLocalMultiMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-multimaps[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `value-collection-type`: Type of the value collection. It can be `SET` or `LIST`.
 * `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 include-value to true if you want the item event to contain the entry values. You can set
@@ -2185,7 +2205,7 @@ include::{javasource}/dds/topic/TopicConfiguration.java[tag=tc]
 
 Topic configuration has the following elements.
 
-* `statistics-enabled`: Default is `true`, meaning statistics are calculated.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your topic. If set to `false`, you cannot collect statistics in your implementation (using `getLocalTopicStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `global-ordering-enabled`: Default is `false`, meaning there is no global order guarantee.
 * `message-listeners`: Lets you add listeners (listener classes) for the topic messages.
 
@@ -2299,7 +2319,7 @@ rtConfig.setTopicOverloadPolicy( TopicOverloadPolicy.BLOCK )
 
 Reliable Topic configuration has the following elements.
 
-* `statistics-enabled`: Enables or disables the statistics collection for the Reliable Topic. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your Reliable Topic. If set to `false`, you cannot collect statistics in your implementation and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-reliable-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `message-listener`: Message listener class that listens to the messages when they are added or removed.
 * `read-batch-size`: Minimum number of messages that Reliable Topic will try to read in batches. Its default value is 10.
 * `topic-overload-policy`: Policy to handle an overloaded topic. Available values are `DISCARD_OLDEST`, `DISCARD_NEWEST`, `BLOCK` and `ERROR`. Its default value is `BLOCK`. See <<slow-consumers, Slow Consumers>> for definitions of these policies.
@@ -2936,7 +2956,7 @@ Following is an example declarative configuration snippet:
 
 * `name`: Name of your PN Counter.
 * `replica-count`: Number of replicas on which state for this PN counter will be kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE. Generally, keeping the state on more replicas means that more Hazelcast members will be able to perform updates locally but it also means that the PN counter state will be kept on more replicas, increasing the network traffic, decreasing the speed at which replica states converge and increasing the size of the PN counter state kept on each replica.
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your PN Counter. If set to `false`, you cannot collect statistics in your implementation and also Hazelcast Management Center will not show them. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your PN Counter. If set to `false`, you cannot collect statistics in your implementation (using `getLocalPNCounterStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-pn-counters[Hazelcast Management Center] will not show them. Its default value is `true`.
 
 Following is an equivalent snippet of Java configuration:
 
