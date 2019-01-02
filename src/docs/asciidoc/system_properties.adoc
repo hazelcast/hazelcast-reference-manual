@@ -59,6 +59,11 @@ NOTE: When you want to reconfigure a system property, you need to restart the me
 |int
 | Number of threads to process query requests coming from the clients. Default count is the number of cores multiplied by 1.
 
+|`hazelcast.client.endpoint.remove.delay.seconds`
+| 60
+|int
+| Time, in seconds, after which the client connection is removed or the owner member of a client is removed from the cluster, in case of a client disconnection. Normally, the disconnection cleans all resources of a client, i.e., listeners are removed and locks/transactions are released. Using this property, the client has a window to connect back and prevent cleaning up its resources.
+
 |`hazelcast.clientengine.thread.count`
 |
 |int
