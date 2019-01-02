@@ -439,6 +439,8 @@ If the port part is omitted, then 5701, 5702 and 5703 will be tried in random or
 
 You can provide multiple addresses with ports provided or not, as seen above. The provided list is shuffled and tried in random order. Its default value is *localhost*.
 
+IMPORTANT:  If you have multiple members on a single machine and you are using <<java-client-operation-modes, unisocket clients>>, we recommend you to set explicit <<port, ports>> for each member. Then you should provide those ports in your client configuration when you give the member addresses (using the `address` configuration element or `addAddress` method as exemplified above). Otherwise, all the load coming from your clients may go through a single member.
+
 ====== Setting Outbound Ports
 
 You may want to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast Java client to use only defined outbound ports. The following are example configurations.
