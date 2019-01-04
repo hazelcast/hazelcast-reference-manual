@@ -2010,6 +2010,46 @@ for(;;) {
 Please take a careful look at how your sequence is being incremented. You cannot always rely on the number of items being returned
 if the items are filtered out.
 
+There is not any filtering applied in the above example. The following example shows how you can apply a filter when reading batched items. First, let's create our filter as shown below:
+
+[source,java]
+----
+public class FruitFilter implements IFunction<String, Boolean> {
+    public FruitFilter() {}
+
+    public Boolean apply(String s) {
+        return s.startsWith("a");
+    }
+}
+----
+
+So, the `FruitFilter` checks whether a String object starts with the letter "a". You can see this filter in action in the below example:
+
+[source,java]
+----
+HazelcastInstance hz = Hazelcast.newHazelcastInstance();
+Ringbuffer<String> rb = hz.getRingbuffer("rb");
+
+rb.add("apple");
+rb.add("orange");
+rb.add("pear");
+rb.add("peach");
+rb.add("avocado");
+
+long sequence = rb.headSequence();
+ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, 2, 5, new FruitFilter());
+
+try {
+    ReadResultSet<String> rs = f.get();
+    for (String s : rs) {
+        System.out.println(s);
+    }
+}
+catch (InterruptedException | ExecutionException e) {
+    System.out.println(e.getMessage());
+}
+----
+
 [[using-async-methods]]
 ==== Using Async Methods
 
