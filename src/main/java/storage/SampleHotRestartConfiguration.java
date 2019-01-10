@@ -14,7 +14,8 @@ public class SampleHotRestartConfiguration {
         .setParallelism(1)
         .setValidationTimeoutSeconds(120)
         .setDataLoadTimeoutSeconds(900)
-        .setClusterDataRecoveryPolicy(HotRestartClusterDataRecoveryPolicy.FULL_RECOVERY_ONLY);
+        .setClusterDataRecoveryPolicy(HotRestartClusterDataRecoveryPolicy.FULL_RECOVERY_ONLY)
+        .setAutoRemoveStaleData(true);
         config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
 
 
