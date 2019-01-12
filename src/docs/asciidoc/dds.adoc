@@ -394,11 +394,11 @@ NOTE: As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-
 
 To put it briefly, Hazelcast maps have no restrictions on the size and may grow arbitrarily large, by default. When it comes to reducing the size of a map, there are two concepts: expiration and eviction.
 
-Expiration puts a limit on the maximum lifetime of an entry stored inside the map. When the entry expires it cannot be retrieved from the map any longer and at some point in time it will be cleaned out from the map to free up the memory. Expiration, and hence the eviction based on the expiration, can be configured using the element `time-to-live-seconds- and `max-idle-seconds` as described above.
+Expiration puts a limit on the maximum lifetime of an entry stored inside the map. When the entry expires it cannot be retrieved from the map any longer and at some point in time it will be cleaned out from the map to free up the memory. Expiration, and hence the eviction based on the expiration, can be configured using the element `time-to-live-seconds` and `max-idle-seconds` as described above.
 
 Eviction puts a limit on the maximum size of the map. If the size of the map grows larger than the maximum allowed size, an eviction policy decides which item to evict from the map to reduce its size. The maximum allowed size can be configured using the element `max-size` and the eviction policy can be configured using the element `eviction-policy` as described above.
 
-Eviction and expiration can be used together. In this case, the expiration configurations (`time-to-live-seconds- and `max-idle-seconds`) continue to work as usual cleaning out the expired entries regardless of the map size. Note that locked map entries are not the subjects for eviction and expiration.
+Eviction and expiration can be used together. In this case, the expiration configurations (`time-to-live-seconds` and `max-idle-seconds`) continue to work as usual cleaning out the expired entries regardless of the map size. Note that locked map entries are not the subjects for eviction and expiration.
 
 [[example-eviction-configurations]]
 ===== Example Eviction Configurations
