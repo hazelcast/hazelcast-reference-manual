@@ -75,7 +75,7 @@ Hazelcast can run inside OpenShift benefiting from its cluster management softwa
 * https://github.com/hazelcast/hazelcast-openshift[Hazelcast IMDG and Hazelcast IMDG Enterprise]
 * https://github.com/hazelcast/management-center-openshift[Management Center]
 
-Please also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift[Hazelcast for OpenShift] guide, which presents how to set up local OpenShift environment, start Hazelcast cluster, configure Management Center and finally run a sample client application.
+Please also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift[Hazelcast for OpenShift] guide, which presents how to set up the local OpenShift environment, start a Hazelcast cluster, configure the Management Center and finally run a sample client application.
 
 [[eureka-cloud-discovery]]
 ==== Eureka Cloud Discovery
@@ -383,15 +383,15 @@ In your `hazelcast-client.xml`:
 ----
 <user-code-deployment enabled="true">
     <jarPaths>
-        <jarPath>/User/sample/sample.jar</jarPath>
-        <jarPath>sample.jar</jarPath> <!--from class path -->
-        <jarPath>https://com.sample.com/sample.jar</jarPath>
-        <jarPath>file://Users/sample/sample.jar</jarPath>
+        <jarPath>/User/example/example.jar</jarPath>
+        <jarPath>example.jar</jarPath> <!--from class path -->
+        <jarPath>https://com.example.com/example.jar</jarPath>
+        <jarPath>file://Users/example/example.jar</jarPath>
     </jarPaths>
     <classNames>
     	<!-- for the classes available in client class path -->
-        <className>sample.ClassName</className>
-        <className>sample.ClassName2</className>
+        <className>example.ClassName</className>
+        <className>example.ClassName2</className>
     </classNames>
 </user-code-deployment>
 ----
@@ -486,12 +486,13 @@ Following are declarative and programmatic configuration snippets that show how 
 ```
 
 
-```
+[source,java]
+----
 Config config = ...;
 PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
 partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.HOST_AWARE );
-```
+----
 
 ===== CUSTOM
 
@@ -499,7 +500,8 @@ You can do custom grouping using Hazelcast's interface matching configuration. T
 
 Following are declarative and programmatic configuration examples that show how to enable and use CUSTOM grouping.
 
-```
+[source,xml]
+----
 <partition-group enabled="true" group-type="CUSTOM">
 <member-group>
   <interface>10.10.0.*</interface>
@@ -512,7 +514,7 @@ Following are declarative and programmatic configuration examples that show how 
   <interface>10.10.2.*</interface>
 </member-group>
 </partition-group>
-```
+----
 
 [source,java]
 ----
@@ -534,12 +536,13 @@ Following are declarative and programmatic configuration snippets that show how 
 <partition-group enabled="true" group-type="PER_MEMBER" />
 ```
 
-```
+[source,java]
+----
 Config config = ...;
 PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
 partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.PER_MEMBER );
-```
+----
 
 ===== ZONE_AWARE
 
@@ -563,20 +566,22 @@ Following are declarative and programmatic configuration snippets that show how 
 <partition-group enabled="true" group-type="ZONE_AWARE" />
 ```
 
-```
+[source,java]
+----
 Config config = ...;
 PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
 partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.ZONE_AWARE );
-```
+----
 
 ===== SPI
 
 You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()` and return the `PartitionGroupStrategy` configuration in that overridden method.
 
-Following is a sample code covering the implementation steps mentioned in the above paragraph:
+The following code covers the implementation steps mentioned in the above paragraph:
 
-```
+[source,java]
+----
 public class CustomDiscovery extends AbstractDiscoveryStrategy {
 
     public CustomDiscovery(ILogger logger, Map<String, Comparable> properties) {
@@ -602,7 +607,7 @@ public class CustomDiscovery extends AbstractDiscoveryStrategy {
         }
     }
 }
-```
+----
 
 [[logging-configuration]]
 === Logging Configuration
@@ -623,21 +628,23 @@ NOTE: If you choose to use `log4j`, `log4j2`, or `slf4j`, you should include the
 
 **Declarative Configuration**
 
-```
+[source,xml]
+----
   ....
   <properties>
     <property name="hazelcast.logging.type">log4j</property>
     ....
   </properties>
 </hazelcast>
-```
+----
 
 **Programmatic Configuration**
 
-```
+[source,java]
+----
 Config config = new Config() ;
 config.setProperty( "hazelcast.logging.type", "log4j" );
-```
+----
 
 **System Property**
 
@@ -653,7 +660,8 @@ If the provided logging mechanisms are not satisfactory, you can implement your 
 
 You can also listen to logging events generated by Hazelcast runtime by registering ``LogListener``s to `LoggingService`.
 
-```
+[source,java]
+----
 LogListener listener = new LogListener() {
   public void log( LogEvent logEvent ) {
     // do something
@@ -662,7 +670,8 @@ LogListener listener = new LogListener() {
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 LoggingService loggingService = instance.getLoggingService();
 loggingService.addLogListener( Level.INFO, listener );
-```
+----
+
 Through the `LoggingService`, you can get the currently used ILogger implementation and log your own messages too.
 
 NOTE: If you are not using command line for configuring logging, you should be careful about Hazelcast classes. They may be defaulted to `jdk` logging before newly configured logging is read. When logging mechanism is selected, it will not change.
@@ -682,7 +691,8 @@ Using JVM arguments:
 
 Using declarative configuration (`hazelcast.xml`):
 
-```
+[source,xml]
+----
 <hazelcast>
    ...
    <properties>
@@ -692,11 +702,12 @@ Using declarative configuration (`hazelcast.xml`):
    </properties>
    ...
 </hazelcast>
-```
+----
 
 Following is an example `log4j2.properties` file:
 
-```
+[source,plain]
+----
 rootLogger=file
 rootLogger.level=info
 property.filepath=/path/to/log/files
@@ -729,7 +740,7 @@ rootLogger.appenderRef.file.ref=RollingFile
 #log4j.logger.com.hazelcast.partition.InternalPartitionService=debug
 #log4j.logger.com.hazelcast.nio=debug
 #log4j.logger.com.hazelcast.hibernate=debug
-```
+----
 
 To enable the debug logs for all Hazelcast operations uncomment the below line in the above configuration file:
 
@@ -752,7 +763,8 @@ Its configuration is similar to that of Log4j2. Below is the JVM argument way of
 
 Following is an example `log4j.properties` file:
 
-```
+[source,plain]
+----
 log4j.rootLogger=INFO,file
 
 log4j.appender.file=org.apache.log4j.RollingFileAppender
@@ -770,7 +782,7 @@ log4j.appender.file.threshold=DEBUG
 #log4j.logger.com.hazelcast.partition.InternalPartitionService=debug
 #log4j.logger.com.hazelcast.nio=debug
 #log4j.logger.com.hazelcast.hibernate=debug
-```
+----
 
 
 [[other-network-configurations]]
@@ -785,19 +797,21 @@ All network related configurations are performed via the `network` element in th
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <network>
     <public-address>11.22.33.44:5555</public-address>
 </network>
-```
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 Config config = new Config();
 config.getNetworkConfig()
     .setPublicAddress( "11.22.33.44:5555" );
-```
+----
 
 [[port]]
 ==== Port
@@ -806,19 +820,21 @@ You can specify the ports that Hazelcast will use to communicate between cluster
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <network>
   <port port-count="20" auto-increment="true">5701</port>
 </network>
-```
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 Config config = new Config();
 config.getNetworkConfig().setPort( 5701 )
     .setPortAutoIncrement( true ).setPortCount( 20 );
-```
+----
 
 According to the above example, Hazelcast will try to find free ports between 5701 and 5720.
 
@@ -835,7 +851,8 @@ By default, Hazelcast lets the system pick up an ephemeral port during socket bi
 
 **Declarative:**
 
-```
+[source,xml]
+----
   <network>
     <outbound-ports>
       <!-- ports between 33000 and 35000 -->
@@ -845,11 +862,12 @@ By default, Hazelcast lets the system pick up an ephemeral port during socket bi
       <ports>38000,38500-38600</ports>
     </outbound-ports>
   </network>
-```
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 ...
 NetworkConfig networkConfig = config.getNetworkConfig();
 // ports between 35000 and 35100
@@ -859,7 +877,7 @@ networkConfig.addOutboundPortDefinition("36001, 36002, 36003");
 networkConfig.addOutboundPort(37000);
 networkConfig.addOutboundPort(37001);
 ...
-```
+----
 
 NOTE: You can use port ranges and/or comma separated ports.
 
@@ -876,21 +894,23 @@ The following are example configurations.
 
 **Declarative:**
 
-```
+[source,xml]
+----
   <network>
     <reuse-address>true</reuse-address>
   </network>
-```
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 ...
 NetworkConfig networkConfig = config.getNetworkConfig();
 
 networkConfig.setReuseAddress( true );
 ...
-```
+----
 
 
 [[join]]
@@ -900,8 +920,11 @@ The `join` configuration element is used to discover Hazelcast members and enabl
 
 **Declarative:**
 
-```
-   <network>
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
         <join>
             <multicast enabled="true">
                 <multicast-group>224.2.2.3</multicast-group>
@@ -909,7 +932,7 @@ The `join` configuration element is used to discover Hazelcast members and enabl
                 <multicast-time-to-live>32</multicast-time-to-live>
                 <multicast-timeout-seconds>2</multicast-timeout-seconds>
                 <trusted-interfaces>
-                   <interface>192.168.1.102</interface>
+                    <interface>192.168.1.102</interface>
                 </trusted-interfaces>
             </multicast>
             <tcp-ip enabled="false">
@@ -927,15 +950,18 @@ The `join` configuration element is used to discover Hazelcast members and enabl
                 <tag-value>hz-members</tag-value>
             </aws>
             <discovery-strategies>
-              <discovery-strategy ... />
+                <discovery-strategy ... />
             </discovery-strategies>
         </join>
-   </network>
-```
+    </network>
+    ...
+</hazelcast>
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 Config config = new Config();
 NetworkConfig network = config.getNetworkConfig();
 JoinConfig join = network.getJoin();
@@ -943,7 +969,7 @@ join.getMulticastConfig().setEnabled( false )
             .addTrustedInterface( "192.168.1.102" );
 join.getTcpIpConfig().addMember( "10.45.67.32" ).addMember( "10.45.67.100" )
             .setRequiredMember( "192.168.10.100" ).setEnabled( true );
-```
+----
 
 The `join` element has the following sub-elements and attributes.
 
@@ -952,12 +978,12 @@ The `join` element has the following sub-elements and attributes.
 
 The `multicast` element includes parameters to fine tune the multicast join mechanism.
 
-- `enabled`: Specifies whether the multicast discovery is enabled or not, `true` or `false`.
-- `multicast-group`: The multicast group IP address. Specify it when you want to create clusters within the same network. Values can be between 224.0.0.0 and 239.255.255.255. Its default value is 224.2.2.3.
-- `multicast-port`: The multicast socket port that the Hazelcast member listens to and sends discovery messages through. Its default value is 54327.
-- `multicast-time-to-live`: Time-to-live value for multicast packets sent out to control the scope of multicasts. See more information http://www.tldp.org/HOWTO/Multicast-HOWTO-2.html[here].
-- `multicast-timeout-seconds`: Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another member. For example, if you set it as 60 seconds, each member will wait for 60 seconds until a leader member is selected. Its default value is 2 seconds.
-- `trusted-interfaces`: Includes IP addresses of trusted members. When a member wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (\*) on the last digit of IP address, e.g., 192.168.1.\* or 192.168.1.100-110.
+* `enabled`: Specifies whether the multicast discovery is enabled or not, `true` or `false`.
+* `multicast-group`: The multicast group IP address. Specify it when you want to create clusters within the same network. Values can be between 224.0.0.0 and 239.255.255.255. Its default value is 224.2.2.3.
+* `multicast-port`: The multicast socket port that the Hazelcast member listens to and sends discovery messages through. Its default value is 54327.
+* `multicast-time-to-live`: Time-to-live value for multicast packets sent out to control the scope of multicasts. See more information http://www.tldp.org/HOWTO/Multicast-HOWTO-2.html[here].
+* `multicast-timeout-seconds`: Only when the members are starting up, this timeout (in seconds) specifies the period during which a member waits for a multicast response from another member. For example, if you set it as 60 seconds, each member will wait for 60 seconds until a leader member is selected. Its default value is 2 seconds.
+* `trusted-interfaces`: Includes IP addresses of trusted members. When a member wants to join to the cluster, its join request will be rejected if it is not a trusted member. You can give an IP addresses range using the wildcard (\*) on the last digit of IP address, e.g., 192.168.1.\* or 192.168.1.100-110.
 
 [[tcp-ip-element]]
 ===== tcp-ip element
@@ -977,13 +1003,13 @@ NOTE: `tcp-ip` element also accepts the `interface` parameter. Please refer to t
 
 The `aws` element includes parameters to allow the members to form a cluster on the Amazon EC2 environment.
 
-- `enabled`: Specifies whether the EC2 discovery is enabled or not, `true` or `false`.
-- `access-key`, `secret-key`: Access and secret keys of your account on EC2.
-- `region`: The region where your members are running. Its default value is `us-east-1`. You need to specify this if the region is other than the default one.
-- `host-header`: The URL that is the entry point for a web service. It is optional.
-- `security-group-name`: Name of the security group you specified at the EC2 management console. It is used to narrow the Hazelcast members to be within this group. It is optional.
-- `tag-key`, `tag-value`: To narrow the members in the cloud down to only Hazelcast members, you can set these parameters as the ones you specified in the EC2 console. They are optional.
-- `connection-timeout-seconds`: The maximum amount of time, in seconds, Hazelcast will try to connect to a well known member before giving up. Setting this value too low could mean that a member is not able to connect to a cluster. Setting the value too high means that member startup could slow down because of longer timeouts (for example, when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5 seconds.
+* `enabled`: Specifies whether the EC2 discovery is enabled or not, `true` or `false`.
+* `access-key`, `secret-key`: Access and secret keys of your account on EC2.
+* `region`: The region where your members are running. Its default value is `us-east-1`. You need to specify this if the region is other than the default one.
+* `host-header`: The URL that is the entry point for a web service. It is optional.
+* `security-group-name`: Name of the security group you specified at the EC2 management console. It is used to narrow the Hazelcast members to be within this group. It is optional.
+* `tag-key`, `tag-value`: To narrow the members in the cloud down to only Hazelcast members, you can set these parameters as the ones you specified in the EC2 console. They are optional.
+* `connection-timeout-seconds`: The maximum amount of time, in seconds, Hazelcast will try to connect to a well known member before giving up. Setting this value too low could mean that a member is not able to connect to a cluster. Setting the value too high means that member startup could slow down because of longer timeouts (for example, when a well known member is not up). Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5 seconds.
 
 
 If you are using a cloud provider other than AWS, you can use the programmatic configuration to specify a TCP/IP cluster. The members will need to be retrieved from that provider, e.g., jclouds.
@@ -998,7 +1024,8 @@ The `discovery-strategies` element configures internal or external discovery str
 
 To make sure EC2 instances are found correctly, you can use the `AWSClient` class. It determines the private IP addresses of EC2 instances to be connected. Give the `AWSClient` class the values for the parameters that you specified in the `aws` element, as shown below. You will see whether your EC2 instances are found.
 
-```
+[source,java]
+----
 public static void main( String[] args )throws Exception{
   AwsConfig config = new AwsConfig();
   config.setSecretKey( ... ) ;
@@ -1015,7 +1042,7 @@ public static void main( String[] args )throws Exception{
     System.out.println( ip );
   }
 }
-```
+----
 
 [[interfaces]]
 ==== Interfaces
@@ -1026,30 +1053,32 @@ The following are example configurations.
 
 **Declarative:**
 
-```
+[source,xml]
+----
 <hazelcast>
-  ...
-  <network>
     ...
-    <interfaces enabled="true">
-      <interface>10.3.16.*</interface>
-      <interface>10.3.10.4-18</interface>
-      <interface>192.168.1.3</interface>
-    </interfaces>
-  </network>
-  ...
+    <network>
+    ...
+        <interfaces enabled="true">
+            <interface>10.3.16.*</interface>
+            <interface>10.3.10.4-18</interface>
+            <interface>192.168.1.3</interface>
+        </interfaces>
+    </network>
+    ...
 </hazelcast>
-```
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 Config config = new Config();
 NetworkConfig network = config.getNetworkConfig();
 InterfacesConfig interfaceConfig = network.getInterfaces();
 interfaceConfig.setEnabled( true )
             .addInterface( "192.168.1.3" );
-```
+----
 
 
 [[ipv6-support]]
@@ -1059,34 +1088,34 @@ Hazelcast supports IPv6 addresses seamlessly (This support is switched off by de
 
 All you need is to define IPv6 addresses or interfaces in the network configuration. The only current limitation is that you cannot define wildcard IPv6 addresses in the TCP/IP join configuration (`tcp-ip` element). <<interfaces, Interfaces>> configuration does not have this limitation, you can configure wildcard IPv6 interfaces in the same way as IPv4 interfaces.
 
-```
+[source,xml]
+----
 <hazelcast>
-  ...
-  <network>
-    <port auto-increment="true">5701</port>
-    <join>
-      <multicast enabled="false">
-        <multicast-group>FF02:0:0:0:0:0:0:1</multicast-group>
-        <multicast-port>54327</multicast-port>
-      </multicast>
-      <tcp-ip enabled="true">
-        <member>[fe80::223:6cff:fe93:7c7e]:5701</member>
-        <interface>192.168.1.0-7</interface>
-        <interface>192.168.1.*</interface>
-        <interface>fe80:0:0:0:45c5:47ee:fe15:493a</interface>
-      </tcp-ip>
-    </join>
-    <interfaces enabled="true">
-      <interface>10.3.16.*</interface>
-      <interface>10.3.10.4-18</interface>
-      <interface>fe80:0:0:0:45c5:47ee:fe15:*</interface>
-      <interface>fe80::223:6cff:fe93:0-5555</interface>
-    </interfaces>
     ...
-  </network>
-  ...
+    <network>
+        <port auto-increment="true">5701</port>
+        <join>
+            <multicast enabled="false">
+                <multicast-group>FF02:0:0:0:0:0:0:1</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+            <tcp-ip enabled="true">
+                <member>[fe80::223:6cff:fe93:7c7e]:5701</member>
+                <interface>192.168.1.0-7</interface>
+                <interface>192.168.1.*</interface>
+                <interface>fe80:0:0:0:45c5:47ee:fe15:493a</interface>
+            </tcp-ip>
+        </join>
+        <interfaces enabled="true">
+            <interface>10.3.16.*</interface>
+            <interface>10.3.10.4-18</interface>
+            <interface>fe80:0:0:0:45c5:47ee:fe15:*</interface>
+            <interface>fe80::223:6cff:fe93:0-5555</interface>
+        </interfaces>
+    </network>
+    ...
 </hazelcast>
-```
+----
 
 JVM has two system properties for setting the preferred protocol stack (IPv4 or IPv6) as well as the preferred address family types (inet4 or inet6). On a dual stack machine, IPv6 stack is preferred by default, you can change this through the `java.net.preferIPv4Stack=<true|false>` system property. When querying name services, JVM prefers IPv4 addresses over IPv6 addresses and will return an IPv4 address if possible. You can change this through `java.net.preferIPv6Addresses=<true|false>` system property.
 
@@ -1105,7 +1134,8 @@ In these cases, it is possible to configure the bind and public address in a mor
 
 The details of the implementation depend heavily on the environment in which Hazelcast is deployed. As such, we will demonstrate how to configure Hazelcast to use a simplified custom member address provider SPI implementation. An example of an implementation is shown below:
 
-```
+[source,java]
+----
 public static final class SimpleMemberAddressProvider implements MemberAddressProvider {
     @Override
     public InetSocketAddress getBindAddress() {
@@ -1119,7 +1149,7 @@ public static final class SimpleMemberAddressProvider implements MemberAddressPr
         return new InetSocketAddress(hostname, port);
     }
 }
-```
+----
 
 Note that if the bind address port is `0` then it will use a port as configured in the Hazelcast network configuration (see the <<port, Port section>>). If the public address port is set to `0` then it will broadcast the same port that it is bound to. If you wish to bind to any local interface, you may return `new InetSocketAddress((InetAddress) null, port)` from the `getBindAddress()` address.
 
@@ -1128,8 +1158,11 @@ The following configuration examples contain properties that will be provided to
 
 **Declarative:**
 
-```
-   <network>
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
         <member-address-provider enabled="true">
             <class-name>SimpleMemberAddressProvider</class-name>
             <properties>
@@ -1137,13 +1170,16 @@ The following configuration examples contain properties that will be provided to
                 <property name="prop2">prop2-value</property>
             </properties>
         </member-address-provider>
-        <!-- other network configuration -->
-   </network>
-```
+        <!-- other network configurations -->
+    </network>
+    ...
+</hazelcast>
+----
 
 **Programmatic:**
 
-```
+[source,java]
+----
 Config config = new Config();
 MemberAddressProviderConfig memberAddressProviderConfig = config.getNetworkConfig().getMemberAddressProviderConfig();
 memberAddressProviderConfig
@@ -1158,7 +1194,7 @@ config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
 // perform other configuration
 
 Hazelcast.newHazelcastInstance(config);
-```
+----
 
 [[failure-detector-configuration]]
 === Failure Detector Configuration
@@ -1183,7 +1219,8 @@ _Deadline Failure Detector_ has two configuration properties:
 
 To use _Deadline Failure Detector_ configuration property `hazelcast.heartbeat.failuredetector.type` should be set to `"deadline"`.
 
-```
+[source,xml]
+----
 <hazelcast>
     [...]
     <properties>
@@ -1194,15 +1231,16 @@ To use _Deadline Failure Detector_ configuration property `hazelcast.heartbeat.f
     </properties>
     [...]
 </hazelcast>
-```
+----
 
-```java
+[source,java]
+----
 Config config = ...;
 config.setProperty("hazelcast.heartbeat.failuredetector.type", "deadline");
 config.setProperty("hazelcast.heartbeat.interval.seconds", "5");
 config.setProperty("hazelcast.max.no.heartbeat.seconds", "120");
 [...]
-```
+----
 
 NOTE: _Deadline Failure Detector_ is the default failure detector in Hazelcast.
 
@@ -1226,7 +1264,8 @@ Additional to above two properties, _Phi Accrual Failure Detector_ has three mor
 
 To use _Phi Accrual Failure Detector_, configuration property `hazelcast.heartbeat.failuredetector.type` should be set to `"phi-accrual"`.
 
-```
+[source,xml]
+----
 <hazelcast>
    [...]
    <properties>
@@ -1240,9 +1279,10 @@ To use _Phi Accrual Failure Detector_, configuration property `hazelcast.heartbe
    </properties>
    [...]
 </hazelcast>
-```
+----
 
-```
+[source,java]
+----
 Config config = ...;
 config.setProperty("hazelcast.heartbeat.failuredetector.type", "phi-accrual");
 config.setProperty("hazelcast.heartbeat.interval.seconds", "1");
@@ -1251,7 +1291,7 @@ config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.threshold", "
 config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.sample.size", "200");
 config.setProperty("hazelcast.heartbeat.phiaccrual.failuredetector.min.std.dev.millis", "100");
 [...]
-```
+----
 
 [[ping-failure-detector]]
 ==== Ping Failure Detector
@@ -1284,7 +1324,8 @@ If any of the above criteria isn't met, then the `isReachable` will always fallb
 
 To be able to use the Ping Failure Detector, please add the following properties in your Hazelcast declarative configuration file:
 
-```
+[source,xml]
+----
 <hazelcast>
    [...]
     <properties>
@@ -1298,14 +1339,14 @@ To be able to use the Ping Failure Detector, please add the following properties
    </properties>
    [...]
 </hazelcast>
-```
+----
 
-- `hazelcast.icmp.enabled` (default false) - Enables legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member.
-- `hazelcast.icmp.parallel.mode` (default true) - Enabling the parallel ping detector, works separately from the other detectors.
-- `hazelcast.icmp.timeout` (default 1000) - Number of milliseconds until a ping attempt is considered failed if there was no reply.
-- `hazelcast.icmp.max.attempts` (default 3) - The maximum number of ping attempts before the member/node gets suspected by the detector.
-- `hazelcast.icmp.interval` (default 1000) - The interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed.
-- `hazelcast.icmp.ttl` (default 0) - The maximum number of hops the packets should go through or 0 for the default.
+* `hazelcast.icmp.enabled` (default false) - Enables legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member.
+* `hazelcast.icmp.parallel.mode` (default true) - Enabling the parallel ping detector, works separately from the other detectors.
+* `hazelcast.icmp.timeout` (default 1000) - Number of milliseconds until a ping attempt is considered failed if there was no reply.
+* `hazelcast.icmp.max.attempts` (default 3) - The maximum number of ping attempts before the member/node gets suspected by the detector.
+* `hazelcast.icmp.interval` (default 1000) - The interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed.
+* `hazelcast.icmp.ttl` (default 0) - The maximum number of hops the packets should go through or 0 for the default.
 
 In the above configuration, the Ping detector will attempt 3 pings, one every second and will wait up-to 1 second for each to complete. If after 3 seconds, there was no successful ping, the member will get suspected.
 
