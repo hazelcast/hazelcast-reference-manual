@@ -24,7 +24,7 @@ Follow the below links for more information on them:
 
 === Integration with Java EE
 
-You can integrate Hazelcast into Java EE containers. This integration is offered as a Hazelcast plugin. See <<hazelcast-jca-resource-adapter, Hazelcast JCA Resource Adapter section>> and its own GitHub repository https://github.com/hazelcast/hazelcast-ra[here] for information on configuring the resource adapter, glassfish applications and JBoss web applications.
+You can integrate Hazelcast into Java EE containers. This integration is offered as a Hazelcast plugin. See <<hazelcast-jca-resource-adapter, Hazelcast JCA Resource Adapter section>> and its own GitHub repository https://github.com/hazelcast/hazelcast-ra[here] for information on configuring the resource adapter, Glassfish applications and JBoss web applications.
 
 === Integration with Spring
 
@@ -37,7 +37,7 @@ IMPORTANT: Some old versions of Spring may require minor changes in the Hazelcas
 
 ==== Configuring Spring
 
-*Sample Code*: See our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-configuration[sample application] for Spring Configuration.
+*Code Sample*: See our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-configuration[sample application] for Spring Configuration.
 
 ===== Enabling Spring Integration
 
@@ -443,7 +443,7 @@ NOTE: Spring managed properties/fields are marked as `transient`.
 
 ==== Adding Caching to Spring
 
-**Sample Code**: Please see our sample application for https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-cache-manager[Spring Cache].
+**Code Sample**: Please see our sample application for https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-cache-manager[Spring Cache].
 
 As of version 3.1, Spring Framework provides support for adding caching into an existing Spring application. Spring 3.2 and later versions support JCache compliant caching providers. You can also use JCache caching backed by Hazelcast if your Spring version supports JCache.
 
@@ -494,13 +494,13 @@ public interface IDummyBean {
 
 Starting with Hazelcast 3.8.4, you can define a timeout value for the get operations from your Spring cache. This may be useful for some cases, such as SLA requirements. Hazelcast provides a property to specify this timeout: `hazelcast.spring.cache.prop`. This can be specified as a Java property (using `-D`) or you can add this property to your Spring properties file (usually named as `application.properties`).
 
-A sample usage is given below:
+An example usage is given below:
 
 ```
 hazelcast.spring.cache.prop=defaultReadTimeout=2,cache1=10,cache2=20
 ```
 
-The argument `defaultReadTimeout` applies to all of your Spring caches. If you want to define different timeout values for some specific Spring caches, you can provide them as a comma separated list as shown in the above sample usage. The values are in milliseconds. If you want to have no timeout for a cache, simply set it to `0` or a negative value.
+The argument `defaultReadTimeout` applies to all of your Spring caches. If you want to define different timeout values for some specific Spring caches, you can provide them as a comma separated list as shown in the above example usage. The values are in milliseconds. If you want to have no timeout for a cache, simply set it to `0` or a negative value.
 
 
 
@@ -576,7 +576,7 @@ For more information about Spring Cache, please see http://static.springsource.o
 
 ==== Configuring Hibernate Second Level Cache
 
-**Sample Code**: Please see our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-hibernate-2ndlevel-cache[sample application] for Hibernate 2nd Level Cache Config.
+**Code Sample**: Please see our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-hibernate-2ndlevel-cache[sample application] for Hibernate 2nd Level Cache Config.
 
 If you are using Hibernate with Hazelcast as a second level cache provider, you can easily configure your
 `LocalSessionFactoryBean` to use a Hazelcast instance by passing Hazelcast instance name. That way, you can use the
@@ -610,12 +610,12 @@ Please refer to Hibernate https://github.com/hazelcast/hazelcast-hibernate#confi
 
 ==== Configuring Hazelcast Transaction Manager
 
-**Sample Code**: Please see our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-transaction-manager[sample application] for Hazelcast Transaction Manager in our code samples repository.
+**Code Sample**: Please see our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-transaction-manager[sample application] for Hazelcast Transaction Manager in our code samples repository.
 
 Starting with Hazelcast 3.7, you can get rid of the boilerplate code to begin, commit or rollback transactions by using https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spring/transaction/HazelcastTransactionManager.html[HazelcastTransactionManager]
 which is a `PlatformTransactionManager` implementation to be used with Spring Transaction API.
 
-===== Sample Configuration for Hazelcast Transaction Manager
+===== Example Configuration for Hazelcast Transaction Manager
 
 You need to register `HazelcastTransactionManager` as your transaction manager implementation and also you need to
 register https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spring/transaction/ManagedTransactionalTaskContext.html[ManagedTransactionalTaskContext]
@@ -642,7 +642,7 @@ to access transactional data structures within your service class.
 ...
 ----
 
-===== Sample Transactional Method
+===== Example Transactional Method
 
 [source,java]
 ----
@@ -667,7 +667,7 @@ through the `TransactionalTaskContext`, `HazelcastTransactionManager` will begin
 
 Spring tries to create a new `Map`/`Collection` instance and fill the new instance by iterating and converting values of the original `Map`/`Collection` (`IMap`, `IQueue`, etc.) to required types when generic type parameters of the original `Map`/`Collection` and the target property/attribute do not match.
 
-Since Hazelcast `Map`s/`Collection`s are designed to hold very large data which a single machine cannot carry, iterating through whole values can cause out of memory errors.
+Since Hazelcast ``Map``s/``Collection``s are designed to hold very large data which a single machine cannot carry, iterating through whole values can cause out of memory errors.
 
 To avoid this issue, the target property/attribute can be declared as un-typed `Map`/`Collection` as shown below.
 

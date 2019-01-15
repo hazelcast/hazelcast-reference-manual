@@ -120,7 +120,7 @@ The following is an example Distributed Object Listener class.
 
 [source,java]
 ----
-include::{javasource}/distributedevents/SampleDistObjListener.java[tag=distobjlistener]
+include::{javasource}/distributedevents/ExampleDistObjListener.java[tag=distobjlistener]
 ----
 
 
@@ -134,9 +134,9 @@ After you create your class, you can configure your cluster to include distribut
 [source,java]
 ----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-SampleDistObjListener sample = new SampleDistObjListener();
+ExampleDistObjListener example = new ExampleDistObjListener();
 
-hazelcastInstance.addDistributedObjectListener( sample );
+hazelcastInstance.addDistributedObjectListener( example );
 ----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
@@ -146,7 +146,7 @@ The following is an example programmatic configuration.
 [source,java]
 ----
 config.addListenerConfig(
-new ListenerConfig( "com.yourpackage.SampleDistObjListener" ) );
+new ListenerConfig( "com.yourpackage.ExampleDistObjListener" ) );
 ----
 
 
@@ -158,7 +158,7 @@ The following is an example of the equivalent declarative configuration.
    ...
    <listeners>
       <listener>
-         com.yourpackage.SampleDistObjListener
+         com.yourpackage.ExampleDistObjListener
       </listener>
    </listeners>
    ...
@@ -170,7 +170,7 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:listeners>
-   <hz:listener class-name="com.yourpackage.SampleDistObjListener"/>
+   <hz:listener class-name="com.yourpackage.ExampleDistObjListener"/>
    <hz:listener implementation="DistributedObjectListener"/>
 </hz:listeners>
 ----
@@ -395,7 +395,7 @@ which are invoked when a client is connected to or disconnected from the cluster
 
 [source,java]
 ----
-hazelcastInstance.getClientService().addClientListener(new SampleClientListener());
+hazelcastInstance.getClientService().addClientListener(new ExampleClientListener());
 ----
 
 The following is the equivalent declarative configuration.
@@ -404,7 +404,7 @@ The following is the equivalent declarative configuration.
 ----
 <listeners>
    <listener>
-      com.yourpackage.SampleClientListener
+      com.yourpackage.ExampleClientListener
    </listener>
 </listeners>
 ----
@@ -414,8 +414,8 @@ The following is the equivalent configuration in the Spring context.
 [source,xml]
 ----
 <hz:listeners>
-   <hz:listener class-name="com.yourpackage.SampleClientListener"/>
-   <hz:listener implementation="com.yourpackage.SampleClientListener"/>
+   <hz:listener class-name="com.yourpackage.ExampleClientListener"/>
+   <hz:listener implementation="com.yourpackage.ExampleClientListener"/>
 </hz:listeners>
 ----
 
@@ -573,7 +573,7 @@ You can listen to entry-based events in the MultiMap using `EntryListener`. The 
 
 [source,java]
 ----
-include::{javasource}/distributedevents/SampleEntryListener.java[tag=mm]
+include::{javasource}/distributedevents/ExampleEntryListener.java[tag=mm]
 ----
 
 
@@ -585,7 +585,7 @@ After you create your listener class, you can configure your cluster to include 
 ----
 HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 MultiMap<String, String> map = hz.getMultiMap( "somemap" );
-map.addEntryListener( new SampleEntryListener(), true );
+map.addEntryListener( new ExampleEntryListener(), true );
 ----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
@@ -595,7 +595,7 @@ The following is an example programmatic configuration.
 [source,xml]
 ----
 multiMapConfig.addEntryListenerConfig(
-  new EntryListenerConfig( "com.yourpackage.SampleEntryListener",
+  new EntryListenerConfig( "com.yourpackage.ExampleEntryListener",
     false, false ) );
 [source,xml]
 ----
@@ -611,7 +611,7 @@ The following is an example of the equivalent declarative configuration.
       <value-collection-type>SET</value-collection-type>
       <entry-listeners>
          <entry-listener include-value="false" local="false">
-            com.yourpackage.SampleEntryListener
+            com.yourpackage.ExampleEntryListener
          </entry-listener>
       </entry-listeners>
    </multimap>
@@ -626,7 +626,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:multimap name="somemap" value-collection-type="SET">
    <hz:entry-listeners>
       <hz:entry-listener include-value="false"
-         class-name="com.yourpackage.SampleEntryListener"/>
+         class-name="com.yourpackage.ExampleEntryListener"/>
       <hz:entry-listener implementation="EntryListener" local="false"/>
    </hz:entry-listeners>
 </hz:multimap>
@@ -650,7 +650,7 @@ The following is an example Item Listener class for an `ISet` structure.
 
 [source,java]
 ----
-public class SampleItemListener implements ItemListener<Price> {
+public class ExampleItemListener implements ItemListener<Price> {
 
     @Override
     public void itemAdded(ItemEvent<Price> event) {
@@ -676,7 +676,7 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 ICollection<Price> set = hazelcastInstance.getSet( "default" );
 // or ISet<Prices> set = hazelcastInstance.getSet( "default" );
-set.addItemListener( new SampleItemListener(), true );
+set.addItemListener( new ExampleItemListener(), true );
 ----
 
 With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
@@ -686,7 +686,7 @@ The following is an example programmatic configuration.
 [source,java]
 ----
 setConfig.addItemListenerConfig(
-new ItemListenerConfig( "com.yourpackage.SampleItemListener", true ) );
+new ItemListenerConfig( "com.yourpackage.ExampleItemListener", true ) );
 ----
 
 
@@ -698,7 +698,7 @@ The following is an example of the equivalent declarative configuration.
   <set>
     <item-listeners>
       <item-listener include-value="true">
-        com.yourpackage.SampleItemListener
+        com.yourpackage.ExampleItemListener
       </item-listener>
     </item-listeners>
   </set>
@@ -712,7 +712,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:set name="default" >
   <hz:item-listeners>
     <hz:item-listener include-value="true"
-      class-name="com.yourpackage.SampleItemListener"/>
+      class-name="com.yourpackage.ExampleItemListener"/>
   </hz:item-listeners>
 </hz:set>
 ----
@@ -735,7 +735,7 @@ The following is an example Message Listener class.
 
 [source,java]
 ----
-public class SampleMessageListener implements MessageListener<MyEvent> {
+public class ExampleMessageListener implements MessageListener<MyEvent> {
 
     public void onMessage( Message<MyEvent> message ) {
         MyEvent myEvent = message.getMessageObject();
@@ -753,7 +753,7 @@ After you create your class, you can configure your cluster to include message l
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 
 ITopic topic = hazelcastInstance.getTopic( "default" );
-topic.addMessageListener( new SampleMessageListener() );
+topic.addMessageListener( new ExampleMessageListener() );
 ----
 
 With the above approach, there is the possibility of missing messaging events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register this listener in the configuration. You can register it using declarative, programmatic, or Spring configuration, as shown below.
@@ -763,7 +763,7 @@ The following is an example programmatic configuration.
 [source,java]
 ----
 topicConfig.addMessageListenerConfig(
-  new ListenerConfig( "com.yourpackage.SampleMessageListener" ) );
+  new ListenerConfig( "com.yourpackage.ExampleMessageListener" ) );
 ----
 
 
@@ -776,7 +776,7 @@ The following is an example of the equivalent declarative configuration.
    <topic name="default">
       <message-listeners>
          <message-listener>
-            com.yourpackage.SampleMessageListener
+            com.yourpackage.ExampleMessageListener
          </message-listener>
       </message-listeners>
    </topic>
@@ -791,7 +791,7 @@ The following is an example of the equivalent Spring configuration.
 <hz:topic name="default">
   <hz:message-listeners>
     <hz:message-listener
-      class-name="com.yourpackage.SampleMessageListener"/>
+      class-name="com.yourpackage.ExampleMessageListener"/>
   </hz:message-listeners>
 </hz:topic>
 ----

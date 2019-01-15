@@ -3,7 +3,7 @@ import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.MapEvent;
 
 //tag::mm[]
-public class SampleEntryListener implements EntryListener<String, String> {
+public class ExampleEntryListener implements EntryListener<String, String> {
     @Override
     public void entryAdded(EntryEvent<String, String> event) {
         System.out.println("Entry Added: " + event);

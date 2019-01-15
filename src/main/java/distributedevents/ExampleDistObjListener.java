@@ -3,7 +3,7 @@ import com.hazelcast.core.DistributedObjectEvent;
 import com.hazelcast.core.DistributedObjectListener;
 
 //tag::distobjlistener[]
-public class SampleDistObjListener implements DistributedObjectListener {
+public class ExampleDistObjListener implements DistributedObjectListener {
 
     @Override
     public void distributedObjectCreated(DistributedObjectEvent event) {

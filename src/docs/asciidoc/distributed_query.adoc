@@ -272,7 +272,7 @@ values = map.values( pagingPredicate );
 
 If a comparator is not specified for `PagingPredicate`, but you want to get a collection of keys or values page by page, this collection must be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`). Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
-Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the method `setPage()`. This way, if you make a query for the hundredth page, for example, it will get all 100 pages at once instead of reaching the hundredth page one by one using the method `nextPage()`. Please note that this feature tires the memory and refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
+Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the `setPage()` method. This way, if you make a query for the hundredth page, for example, it will get all 100 pages at once instead of reaching the hundredth page one by one using the `nextPage()` method. Please note that this feature tires the memory and refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
 
 Paging Predicate, also known as Order & Limit, is not supported in Transactional Context.
 
@@ -357,7 +357,7 @@ mapConfig.addMapIndexConfig( new MapIndexConfig( "name", false ) );
 mapConfig.addMapIndexConfig( new MapIndexConfig( "age", true ) );
 ----
 
-The following is the Spring declarative configuration for the same sample.
+The following is the Spring declarative configuration for the same example.
 
 [source,xml]
 ----
@@ -371,7 +371,7 @@ The following is the Spring declarative configuration for the same sample.
 
 NOTE: Non-primitive types to be indexed should implement *`Comparable`*.
 
-NOTE: Starting with Hazelcast 3.9, if you configure the data structure to use <<configuring-high-density-memory-store, High-Density Memory Store>> **and** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full GCs, when doing a lot of updates to index.
+NOTE: Starting with Hazelcast 3.9, if you configure the data structure to use <<configuring-high-density-memory-store, High-Density Memory Store>> **and** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full garbage collections, when doing a lot of updates to index.
 
 ===== Copying Indexes
 
@@ -405,7 +405,7 @@ map.addIndex("this", true);
 Predicate<Integer, Integer> lessEqual = Predicates.between("this", 12, 20);
 ----
 
-Another basic sample using `SqlPredicate` is shown below.
+Another basic example using `SqlPredicate` is shown below.
 
 [source,java]
 ----
@@ -617,7 +617,7 @@ To make the analysis simpler, let's assume that there is only one `Motorbike` ob
 | Yes
 |===
 
-As you can see, **no** `NullPointerException`s or `IndexOutOfBoundException`s are thrown in the extraction process, even
+As you can see, **no** ``NullPointerException``s or ``IndexOutOfBoundException``s are thrown in the extraction process, even
 though parts of the expression are `null`.
 
 Looking at examples 4, 6 and 8, we can also easily notice that it is impossible to distinguish which part of the
@@ -892,7 +892,7 @@ The Internet is full of useful resources for finding deeper information on MapRe
 
 This section explains the basics of the Hazelcast MapReduce framework. While walking through the different API classes, we will build the <<understanding-mapreduce, word count example that was discussed earlier>> and create it step by step.
 
-The Hazelcast API for MapReduce operations consists of a fluent DSL-like configuration syntax to build and submit jobs. `JobTracker` is the basic entry point to all MapReduce operations and is retrieved from `com.hazelcast.core.HazelcastInstance` by calling `getJobTracker` and supplying the name of the required `JobTracker` configuration. The configuration for `JobTracker`s will be discussed later; for now we focus on the API itself.
+The Hazelcast API for MapReduce operations consists of a fluent DSL-like configuration syntax to build and submit jobs. `JobTracker` is the basic entry point to all MapReduce operations and is retrieved from `com.hazelcast.core.HazelcastInstance` by calling `getJobTracker` and supplying the name of the required `JobTracker` configuration. The configuration for ``JobTracker``s will be discussed later; for now we focus on the API itself.
 In addition, the complete submission part of the API is built to support a fully reactive way of programming.
 
 To give an easy introduction to people used to Hadoop, we created the class names to be as familiar as possible to their counterparts on Hadoop. That means while most users will recognize a lot of similar sounding classes, the way to configure the jobs is more fluent due to the DSL-like styled API.
@@ -1367,10 +1367,9 @@ Benefits:
 
 ====== Moving MapReduce Tasks to Hazelcast Jet
 
-
 We'll use the example of the "word count" application which summarizes a set of documents into a mapping from each word to the total number of its occurrences in the documents. This involves both a mapping stage where one document is transformed into a stream of words and a reducing stage that performs a COUNT DISTINCT operation on the stream and populates a Hazelcast IMap with the results.
 
-This is the word count code in MapReduce (also available on https://github.com/hazelcast/hazelcast-jet-code-samples/blob/v0.4/batch/mapreduce-migration/src/main/java/WordCountCoreApi.java[hazelcast-jet-code-samples]):
+This is the word count code in MapReduce (also available on https://github.com/hazelcast/hazelcast-jet-code-samples/blob/v0.4/batch/mapreduce-migration/src/main/java/WordCountCoreApi.java[Hazelcast Jet Code Samples]):
 
 [source,java]
 ----
@@ -1406,10 +1405,9 @@ This can be taken as a general template to express a MapReduce job in terms of J
 
 Keep in mind that MapReduce and java.util.stream use the same terminology, but with quite different meaning: in JUS the final step is called "combine" (MapReduce calls it "reduce") and the middle step is called "reduce" (MapReduce calls this one "combine"). MapReduce's "combine" collapses the stream in fixed-size batches, whereas in Jet JUS "reduce" collapses the complete local dataset and sends just a single item per distinct key to the final step. In Jet JUS, the final "combine" step combines just one partial result per member into the total result, whereas in MR the final step "reduces" all the one-per-batch items to the final result. Therefore, in Jet there are only O(distinct-key-count) items sent over the network whereas in MapReduce it is still O(total-item-count) with just a linear scaling factor equal to the configured batch size.
 
-A complete example of the word count done with the Streams API can be found in the hazelcast-jet-code-samples
-repository, located in the "java.util.stream/wordcount-j.u.s" module in the file WordCount.java. A minor difference is that the code on GitHub stores the documents line by line, with the effect of a finer-grained distribution across the cluster.
+A complete example of the word count done with the Streams API can be found in the https://github.com/hazelcast/hazelcast-jet-code-samples/tree/v0.4/batch/wordcount-j.u.s[Hazelcast Jet Code Samples]. A minor difference is that the code on GitHub stores the documents line by line, with the effect of a finer-grained distribution across the cluster.
 
-To better understand how the JUS pipeline is executed by Jet, take a look at the file WordCount.java in the "core/wordcount" module, which builds the same DAG as the Jet JUS implementation, but using the Jet Core API. Here is a somewhat simplified DAG from this sample:
+To better understand how the JUS pipeline is executed by Jet, take a look at the file `WordCount.java` in the `core/wordcount` module, which builds the same DAG as the Jet JUS implementation, but using the Jet Core API. Here is a somewhat simplified DAG from this example:
 
 [source,java]
 ----
@@ -1434,7 +1432,7 @@ dag.edge(between(source, map))
    .edge(between(combine, sink));
 ----
 
-It is a simple cascade of vertices: source -> map -> reduce -> combine -> sink and matches quite closely the workflow of a MapReduce job. On each member, a distinct slice of data (IMap partitions stored locally) is ingested by the source vertex and sent to map on the local member. The output of map are words and they travel over a partitioned edge to reduce. Note that, as opposed to MapReduce, a single instance of a processor doesn't count occurrences of just one word, but is responsible for entire partitions. There are only as many processors as configured by the localParallelism property. This is one of several examples where Jet's DAG exposes performance-critical attributes of the computation to the user.
+It is a simple cascade of vertices: source -> map -> reduce -> combine -> sink and matches quite closely the workflow of a MapReduce job. On each member, a distinct slice of data (IMap partitions stored locally) is ingested by the source vertex and sent to map on the local member. The output of map are words and they travel over a partitioned edge to reduce. Note that, as opposed to MapReduce, a single instance of a processor doesn't count occurrences of just one word, but is responsible for entire partitions. There are only as many processors as configured by the `localParallelism` property. This is one of several examples where Jet's DAG exposes performance-critical attributes of the computation to the user.
 
 Another example of this can be seen in arguments passed to partitioned(wholeItem(), HASH_CODE). The user has precise control over the partitioning key as well as the algorithm used to map the key to a partition ID. In this case we use the whole item (the word) as the key and apply the fast HASH_CODE strategy, which derives the partition ID from the object's hashCode().
 
@@ -1447,7 +1445,7 @@ In the above example we can see many out-of-the-box processors being used:
 - groupAndAccumulate to perform the reduction and combining
 
 There are some more in the Processors class.
-For even more flexibility we'll now show how you can implement a processor on your own (also available in the Code Samples repository):
+For even more flexibility we'll now show how you can implement a processor on your own (also available in the Hazelcast Jet Code Samples repository):
 
 [source,java]
 ----
@@ -1759,7 +1757,7 @@ The `Supplier` `apply` methods are expected to return null whenever the input va
 process. This can be used, as in the example above, to implement filter rules directly. Implementing filters using the
 `KeyPredicate` and `Predicate` interfaces might be more convenient.
 
-To use your own `Supplier`, just pass it to the aggregate method or use it in combination with other `Supplier`s.
+To use your own `Supplier`, just pass it to the aggregate method or use it in combination with other ``Supplier``s.
 
 [source,java]
 ----
@@ -1909,7 +1907,7 @@ class AgeExtractor implements PropertyExtractor<Person, Integer> {
 
 In this example, we extract the value from the person's age attribute. The value type changes from Person to `Integer` which is reflected in the generics information to stay type safe.
 
-You can use `PropertyExtractor`s for any kind of transformation of data. You might even want to have multiple
+You can use ``PropertyExtractor``s for any kind of transformation of data. You might even want to have multiple
 transformation steps chained one after another.
 
 ===== Configuring Aggregations
@@ -2003,7 +2001,7 @@ class SalaryYear implements Serializable {
 }
 ----
 
-The two `IMap`s and the `MultiMap` are keyed by the string of email. They are defined as follows:
+The two ``IMap``s and the `MultiMap` are keyed by the string of email. They are defined as follows:
 
 [source,java]
 ----
@@ -2238,9 +2236,9 @@ In case of the `DoubleAverage` aggregation, the Aggregator would just divide the
 Fast-Aggregations are available on `com.hazelcast.core.IMap` only. IMap offers the method `aggregate` to apply the aggregation logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-[Javadoc] to see the method details.
 
 
-==== Sample Implementation
+==== Example Implementation
 
-Here's a sample implementation of the Aggregator:
+Here's an example implementation of the Aggregator:
 
 [source,java]
 ----
@@ -2297,7 +2295,7 @@ The Projection API provides the method `transform()` which is called on each res
 Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method `project` to apply the projection logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc] to see the method details.
 
 
-==== Sample implementation
+==== Example implementation
 
 Let's consider the following domain object stored in an IMap:
 

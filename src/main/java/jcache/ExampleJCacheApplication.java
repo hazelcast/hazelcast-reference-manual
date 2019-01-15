@@ -5,7 +5,7 @@ import javax.cache.configuration.CompleteConfiguration;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.spi.CachingProvider;
 
-public class SampleJCacheApplication {
+public class ExampleJCacheApplication {
 
     public static void main(String[] args){
 //tag::jcacheapp[]
