@@ -3,7 +3,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.ringbuffer.Ringbuffer;
 
 
-public class SampleRB {
+public class ExampleRB {
     public static void main(String[] args) throws Exception {
 //tag::rb[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();

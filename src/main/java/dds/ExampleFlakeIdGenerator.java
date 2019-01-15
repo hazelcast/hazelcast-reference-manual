@@ -9,7 +9,7 @@ import static com.hazelcast.examples.helper.CommonUtils.sleepSeconds;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 //tag::fid[]
-public class FlakeIdGeneratorSample {
+public class ExampleFlakeIdGenerator {
     public static void main(String[] args) {
         HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance();
 

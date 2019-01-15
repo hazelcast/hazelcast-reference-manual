@@ -2,7 +2,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IdGenerator;
 
-public class IdGeneratorSample {
+public class ExampleIdGenerator {
 
     public static void main( String[] args ) throws Exception {
 //tag::idg[]

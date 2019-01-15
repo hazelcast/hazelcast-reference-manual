@@ -4,7 +4,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicReference;
 
 
-public class IAtomicReferenceSample {
+public class ExampleIAtomicReference {
     public static void main(String[] args){
 //tag::iar[]
                 Config config = new Config();

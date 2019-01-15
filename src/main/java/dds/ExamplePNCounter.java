@@ -5,7 +5,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.crdt.pncounter.PNCounter;
 
 
-public class PNCounterSample {
+public class ExamplePNCounter {
     public static void main(String[] args) throws Exception {
 //tag::pncc[]
         PNCounterConfig pnCounterConfig = new PNCounterConfig("default")

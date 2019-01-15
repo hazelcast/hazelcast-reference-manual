@@ -132,7 +132,7 @@ Here is an example of how you can retrieve existing data structure instances (ma
 
 [source,java]
 ----
-include::{javasource}/SampleDOL.java[tag=sampledol]
+include::{javasource}/ExampleDOL.java[tag=sampledol]
 ----
 
 
@@ -679,7 +679,7 @@ NOTE: If a map entry is marked as dirty, meaning that it is waiting to be persis
 
 NOTE: `MapStore` or `MapLoader` implementations should not use Hazelcast Map/Queue/MultiMap/List/Set operations. Your implementation should only work with your data store. Otherwise, you may get into deadlock situations.
 
-Here is a sample configuration:
+Here is an example configuration:
 
 [source,xml]
 ----
@@ -711,7 +711,7 @@ The following are the descriptions of MapStore configuration elements and attrib
 
 A configuration can be applied to more than one map using wildcards (see <<using-wildcards, Using Wildcards>>), meaning that the configuration is shared among the maps. But `MapStore` does not know which entries to store when there is one configuration applied to multiple maps.
 
-To store entries when there is one configuration applied to multiple maps, use Hazelcast's `MapStoreFactory` interface. Using the `MapStoreFactory` interface, `MapStore`s for each map can be created when a wildcard configuration is used. Example code is shown below.
+To store entries when there is one configuration applied to multiple maps, use Hazelcast's `MapStoreFactory` interface. Using the `MapStoreFactory` interface, ``MapStore``s for each map can be created when a wildcard configuration is used. Example code is shown below.
 
 [source,java]
 ----
@@ -840,14 +840,14 @@ The Hazelcast distributed map supports a local Near Cache for remotely stored en
 
 Hazelcast Distributed Map (IMap) is thread-safe to meet your thread safety requirements. When these requirements increase or you want to have more control on the concurrency, consider the Hazelcast solutions described here.
 
-Let's work on a sample case as shown below.
+Consider the following example:
 
 [source,java]
 ----
 include::{javasource}/dds/map/RacyUpdateMember.java[tag=racy]
 ----
 
-If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic locking or optimistic locking.
+If the above code is run by more than one cluster member simultaneously, a race condition is likely. You can solve this condition with Hazelcast using either pessimistic or optimistic locking.
 
 [[pessimistic-looking]]
 ===== Pessimistic Locking
@@ -1141,7 +1141,7 @@ Use the Hazelcast instance's `getQueue` method to get the queue, then use the qu
 
 [source,java]
 ----
-include::{javasource}/dds/queue/SampleQueue.java[tag=samplequeue]
+include::{javasource}/dds/queue/ExampleQueue.java[tag=samplequeue]
 ----
 
 FIFO ordering will apply to all queue operations across the cluster. The user objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
@@ -1166,7 +1166,7 @@ include::{javasource}/dds/queue/ProducerMember.java[tag=producer]
 ----
 
 
-`Producer` puts a **-1** on the queue to show that the `put`s are finished.
+`Producer` puts a **-1** on the queue to show that the ``put``s are finished.
 
 [[taking-items-off-the-queue]]
 ===== Taking Items off the Queue
@@ -1186,7 +1186,7 @@ When you first start `Producer` and then start `Consumer`, items produced on the
 [[balancing-the-queue-operations]]
 ===== Balancing the Queue Operations
 
-From the above example code, you can see that an item is produced every second and consumed every five seconds. Therefore, the consumer keeps growing. To balance the produce/consume operation, let's start another consumer. This way, consumption is distributed to these two consumers, as seen in the sample outputs below.
+From the above example code, you can see that an item is produced every second and consumed every five seconds. Therefore, the consumer keeps growing. To balance the produce/consume operation, let's start another consumer. This way, consumption is distributed to these two consumers, as seen in the example outputs below.
 
 The second consumer is started. After a while, here is the first consumer output:
 
@@ -1218,8 +1218,8 @@ NOTE: The items are taken from the queue in the same order they were put on the 
 Hazelcast gives an `itemId` for each item you offer, which is an incrementing sequence identification for the queue items. You should consider the following to understand the `itemId` assignment behavior:
 
 * When a Hazelcast member has a queue and that queue is configured to have at least one backup, and that member is restarted, the `itemId` assignment resumes from the last known highest `itemId` before the restart; `itemId` assignment does not start from the beginning for the new items.
-* When the whole cluster is restarted, the same behavior explained in the above consideration applies if your queue has a persistent data store (`QueueStore`). If the queue has `QueueStore`, the `itemId` for the new items are given, starting from the highest `itemId` found in the IDs returned by the method `loadAllKeys`. If the method `loadAllKeys` does not return anything, the `itemId`s will started from the beginning after a cluster restart.
-* The above two considerations mean there will be no duplicated `itemId`s in the memory or in the persistent data store.
+* When the whole cluster is restarted, the same behavior explained in the above consideration applies if your queue has a persistent data store (`QueueStore`). If the queue has `QueueStore`, the `itemId` for the new items are given, starting from the highest `itemId` found in the IDs returned by the method `loadAllKeys`. If the method `loadAllKeys` does not return anything, the ``itemId``s will started from the beginning after a cluster restart.
+* The above two considerations mean there will be no duplicated ``itemId``s in the memory or in the persistent data store.
 
 [[setting-a-bounded-queue]]
 ==== Setting a Bounded Queue
@@ -1365,21 +1365,23 @@ Hazelcast `MultiMap` is not an implementation of `java.util.Map` due to the diff
 [[getting-a-multimap-and-putting-an-entry]]
 ==== Getting a MultiMap and Putting an Entry
 
-The following example creates a MultiMap and puts items into it. Use the HazelcastInstance `getMultiMap` method to get the MultiMap, then use the MultiMap `put` method to put an entry into the MultiMap.
+The following example creates a MultiMap and puts items into it:
 
 [source,java]
 ----
-include::{javasource}/dds/multimap/SampleMultiMap.java[tag=mm]
+include::{javasource}/dds/multimap/ExampleMultiMap.java[tag=mm]
 ----
 
-Now let's print the entries in this MultiMap.
+We use the `getMultiMap` method to create the MultiMap and then use the `put` method to put an entry into it.
+
+Now let's print the entries in this MultiMap using the following code:
 
 [source,java]
 ----
 include::{javasource}/dds/multimap/PrintMember.java[tag=pm]
 ----
 
-After you run the first code sample, run the `PrintMember` sample. You will see the key **`a`** has two values, as shown below.
+After you run `ExampleMultiMap`, run `PrintMember`. You will see the key **`a`** has two values, as shown below:
 
 `b -> [3]`
 
@@ -1431,8 +1433,8 @@ placed on one other member. If it is 2, it will be placed on two other members.
 * `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your MultiMap. If set to `false`, you cannot collect statistics in your implementation (using `getLocalMultiMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-multimaps[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `value-collection-type`: Type of the value collection. It can be `SET` or `LIST`.
 * `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
-include-value to true if you want the item event to contain the entry values. You can set
-local to true if you want to listen to the entries on the local member.
+`include-value` to `true` if you want the item event to contain the entry values. You can set
+`local` to `true` if you want to listen to the entries on the local member.
 * `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. Please see the <<split-brain-protection-for-multimap-and-transactionalmultimap, Split-Brain Protection for MultiMap and TransactionalMultiMap section>>.
 
 [[split-brain-protection-for-multimap-and-transactionalmultimap]]
@@ -1512,7 +1514,7 @@ Use the HazelcastInstance `getSet` method to get the Set, then use the `add` met
 
 [source,java]
 ----
-include::{javasource}/dds/set/SampleSet.java[tag=set]
+include::{javasource}/dds/set/ExampleSet.java[tag=set]
 ----
 
 
@@ -1627,7 +1629,7 @@ Use the HazelcastInstance `getList` method to get the List, then use the `add` m
 
 [source,java]
 ----
-include::{javasource}/dds/list/SampleList.java[tag=list]
+include::{javasource}/dds/list/ExampleList.java[tag=list]
 ----
 
 
@@ -1749,7 +1751,7 @@ given sequence; `readOne` blocks if no item is available. To read the next item,
 
 [source,java]
 ----
-include::{javasource}/dds/ringbuffer/SampleRB.java[tag=rb]
+include::{javasource}/dds/ringbuffer/ExampleRB.java[tag=rb]
 ----
 
 
@@ -1763,7 +1765,7 @@ Adding an item to a Ringbuffer is also easy with the Ringbuffer `add` method:
 
 [source,java]
 ----
-Ringbuffer<String> ringbuffer = hz.getRingbuffer("SampleRB");
+Ringbuffer<String> ringbuffer = hz.getRingbuffer("ExampleRB");
 ringbuffer.add("someitem");
 ----
 
@@ -2125,14 +2127,14 @@ remote members; it works as fire and forget.
 [[getting-a-topic-and-publishing-messages]]
 ==== Getting a Topic and Publishing Messages
 
-Use the HazelcastInstance's `getTopic` method to get the topic, then use the topic's `publish` method to publish your messages. The following is a sample publisher:
+Use the HazelcastInstance's `getTopic` method to get the topic, then use the topic's `publish` method to publish your messages. The following is an example publisher:
 
 [source,java]
 ----
 include::{javasource}/dds/topic/TopicPublisher.java[tag=tp]
 ----
 
-And here is a sample subscriber:
+And here is an example subscriber:
 
 [source,java]
 ----
@@ -2206,8 +2208,6 @@ In both cases, there is a `StripedExecutor` in EventService that is responsible 
 
 In `StripedExecutor`, there are as many threads as are specified in the property  `hazelcast.event.thread.count` (default is five). For a specific event source (for a particular topic name), *hash of that source's name % 5* gives the ID of the responsible thread. Note that there can be another event source (entry listener of a map, item listener of a collection, etc.) corresponding to the same thread. In order not to make other messages to block, heavy processing should not be done in this thread. If there is time-consuming work that needs to be done, the work should be handed over to another thread. Please see the <<getting-a-topic-and-publishing-messages, Getting a Topic and Publishing Messages section>>.
 
-
-
 [[configuring-topic]]
 ==== Configuring Topic
 
@@ -2249,8 +2249,6 @@ Topic configuration has the following elements.
 * `global-ordering-enabled`: Default is `false`, meaning there is no global order guarantee.
 * `message-listeners`: Lets you add listeners (listener classes) for the topic messages.
 
-
-
 Besides the above elements, there are the following system properties that are topic related but not topic specific:
 
 * `hazelcast.event.queue.capacity` with a default value of 1,000,000
@@ -2270,15 +2268,14 @@ as a regular topic. The main difference is that Reliable Topic is backed up by t
 * Since the event system behind a regular `ITopic` is shared with other data structures, e.g., collection listeners,
   you can run into isolation problems. This does not happen with the Reliable `ITopic`.
 
-Here is a sample code snippet for a publisher using Reliable Topic:
+Here is an example for a publisher using Reliable Topic:
 
 [source,java]
 ----
 include::{javasource}/dds/reliabletopic/PublisherMember.java[tag=publisher]
 ----
 
-
-And the following is a sample code snippet for the subscriber:
+And the following is an example for the subscriber:
 
 [source,java]
 ----
@@ -2380,7 +2377,7 @@ if the lock operation itself fails.
 
 [source,java]
 ----
-include::{javasource}/dds/lock/SampleLock.java[tag=lock]
+include::{javasource}/dds/lock/ExampleLock.java[tag=lock]
 ----
 
 [[releasing-locks-with-trylock-timeout]]
@@ -2561,7 +2558,7 @@ The following example code creates an instance, increments it by a million and p
 
 [source,java]
 ----
-include::{javasource}/dds/iatomiclong/IAtomicLongSample.java[tag=ial]
+include::{javasource}/dds/iatomiclong/ExampleIAtomicLong.java[tag=ial]
 ----
 
 When you start other instances with the code above, you will see the count as *member count* times *a million*.
@@ -2569,7 +2566,7 @@ When you start other instances with the code above, you will see the count as *m
 [[sending-functions-to-iatomiclong]]
 ==== Sending Functions to IAtomicLong
 
-You can send functions to an IAtomicLong. `IFunction` is a Hazelcast owned, single method interface. The following sample `IFunction` implementation adds two to the original value.
+You can send functions to an IAtomicLong. `IFunction` is a Hazelcast owned, single method interface. The following example `IFunction` implementation adds two to the original value.
 
 [source,java]
 ----
@@ -2586,7 +2583,7 @@ You can use the following methods to execute functions on IAtomicLong.
 * `alterAndGet`: Alters the value stored in the IAtomicLong by applying the function, storing the result in the IAtomicLong and returning the result.
 * `getAndAlter`: Alters the value stored in the IAtomicLong by applying the function and returning the original value.
 
-The following sample code includes these methods.
+The following example includes these methods.
 
 [source,java]
 ----
@@ -2797,7 +2794,7 @@ Here is an IAtomicReference example.
 
 [source,java]
 ----
-include::{javasource}/dds/IAtomicReferenceSample.java[tag=iar]
+include::{javasource}/dds/ExampleIAtomicReference.java[tag=iar]
 ----
 
 
@@ -2880,9 +2877,9 @@ Hazelcast `ICountDownLatch` is the distributed implementation of `java.util.conc
 [[gate-keeping-concurrent-activities]]
 ==== Gate-Keeping Concurrent Activities
 
-`CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations.
+`CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations. The following examples describe the mechanism of `ICountDownLatch`. 
 
-The following code samples describe the mechanism of `ICountDownLatch`. Assume that there is a leader process and there are follower processes that will wait until the leader completes. Here is the leader:
+Assume that there is a leader process and there are follower processes that will wait until the leader completes. Here is the leader:
 
 [source,java]
 ----
@@ -2973,7 +2970,7 @@ The following is an example code.
 
 [source,java]
 ----
-include::{javasource}/dds/PNCounterSample.java[tag=pnc]
+include::{javasource}/dds/ExamplePNCounter.java[tag=pnc]
 ----
 
 
@@ -3002,7 +2999,7 @@ Following is an equivalent snippet of Java configuration:
 
 [source,java]
 ----
-include::{javasource}/dds/PNCounterSample.java[tag=pncc]
+include::{javasource}/dds/ExamplePNCounter.java[tag=pncc]
 ----
 
 [[configuring-the-crdt-replication-mechanism]]
@@ -3033,8 +3030,6 @@ Following is an equivalent snippet of Java configuration:
 include::{javasource}/dds/CRDTReplication.java[tag=crdt]
 ----
 
-
-
 [[idgenerator]]
 === IdGenerator
 
@@ -3047,15 +3042,13 @@ NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs 
 
 ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10,000 identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 10,000 IDs. This way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.
 
-Let's write a sample identifier generator.
+Let's write an example identifier generator.
 
 
 [source,java]
 ----
-include::{javasource}/dds/IdGeneratorSample.java[tag=idg]
+include::{javasource}/dds/ExampleIdGenerator.java[tag=idg]
 ----
-
-
 
 Let's run the above code two times. The output will be similar to the following.
 
@@ -3118,13 +3111,12 @@ Operation on member is always local, if the member has valid node ID, otherwise 
 [[flakeidgenerator-example]]
 ==== Example
 
-Let's write a sample identifier generator.
+Let's write an example identifier generator.
 
 [source,java]
 ----
-include::{javasource}/dds/FlakeIdGeneratorSample.java[tag=fid]
+include::{javasource}/dds/ExampleFlakeIdGenerator.java[tag=fid]
 ----
-
 
 [[node-id-assignment]]
 ==== Node ID Assignment
@@ -3401,7 +3393,7 @@ The following is an example code.
 
 [source,java]
 ----
-include::{javasource}/dds/CardinalityEstimatorSample.java[tag=ces]
+include::{javasource}/dds/ExampleCardinalityEstimator.java[tag=ces]
 ----
 
 
@@ -3460,7 +3452,7 @@ Following out-of-the-box merge policies are available:
 [[event-journal]]
 === Event Journal
 
-The event journal is a distributed data structure that stores the history of mutation actions on map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) will create an event which will be stored in the event journal. The event will store the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or by configuring expiration and eviction.  By reading from the event journal you can recreate the state of the map or cache at any point in time.
+The event journal is a distributed data structure that stores the history of mutation actions on map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) will create an event which will be stored in the event journal. The event will store the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or configuring the expiration and eviction.  By reading from the event journal you can recreate the state of the map or cache at any point in time.
 
 NOTE: Currently the event journal does not expose a public API for reading the event journal in Hazelcast IMDG. The event journal can be used to stream event data to Hazelcast Jet, so it should be used in conjunction with http://jet.hazelcast.org/[Hazelcast Jet]. Because of this we will describe how to configure it but not how to use it from IMDG. If you enable and configure the event journal, you may only reach it through private API and you will most probably not get any benefits but the journal will retain events nevertheless and consume heap space.
 
@@ -3518,7 +3510,7 @@ Also, the backup count for the event journal is equal to the backup count of the
 
 You can configure Hazelcast event journal with a `time-to-live` in seconds. Using this setting, you can control how long the items remain in
 the event journal before they are expired. By default, the `time-to-live` is set to 0, meaning that unless the item is overwritten,
-it will remain in the journal indefinitely. The expiration time of the existing journal events is checked whenever a new event is appended to the event journal or when the event journal is being read. If the journal is not being read or written to, the journal may keep expired items indefinitely.
+it will remain in the journal indefinitely. The expiration time of the existing journal events is checked whenever a new event is appended to the event journal or when the event journal is being read. If the journal is not being read from or written to, the journal may keep expired items indefinitely.
 
 In the example below, an event journal is configured with a `time-to-live` of 180 seconds:
 

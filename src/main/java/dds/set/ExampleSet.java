@@ -1,18 +1,18 @@
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
+import com.hazelcast.core.ISet;
 
-public class SampleList {
+public class ExampleSet {
 
     public static void main(String[] args) {
-//tag::list[]
+//tag::set[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-        IList<String> list = hz.getList("list");
-        list.add("Tokyo");
-        list.add("Paris");
-        list.add("London");
-        list.add("New York");
+        ISet<String> set = hz.getSet("set");
+        set.add("Tokyo");
+        set.add("Paris");
+        set.add("London");
+        set.add("New York");
         System.out.println("Putting finished!");
-//end::list[]
+//end::set[]
     }
 }

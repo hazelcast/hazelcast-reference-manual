@@ -3,7 +3,7 @@ import com.hazelcast.core.HazelcastInstance;
 
 import java.util.concurrent.locks.Lock;
 
-public class SampleLock {
+public class ExampleLock {
     public static void main(String[] args) throws Exception{
 //tag::lock[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();

@@ -4,7 +4,7 @@ import com.hazelcast.core.HazelcastInstance;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class SampleQueue {
+public class ExampleQueue {
 
     public static void main(String[] args) throws Exception {
 //tag::samplequeue[]

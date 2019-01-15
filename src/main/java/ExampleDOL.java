@@ -5,15 +5,15 @@ import com.hazelcast.core.*;
 import java.util.Collection;
 
 
-public class SampleDOL implements DistributedObjectListener {
+public class ExampleDOL implements DistributedObjectListener {
 
     public static void main(String[] args) {
       //tag::sampledol[]
-        SampleDOL sample = new SampleDOL();
+        ExampleDOL example = new ExampleDOL();
         Config config = new Config();
 
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-        hazelcastInstance.addDistributedObjectListener(sample);
+        hazelcastInstance.addDistributedObjectListener(example);
 
         Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
         for (DistributedObject distributedObject : distributedObjects) {

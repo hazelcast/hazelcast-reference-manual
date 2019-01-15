@@ -3,7 +3,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 
 
-public class IAtomicLongSample {
+public class ExampleIAtomicLong {
 
     public static void main( String[] args ) {
 //tag::ial[]

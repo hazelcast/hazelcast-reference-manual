@@ -8,13 +8,13 @@ import java.io.InputStreamReader;
 
 import static com.hazelcast.nio.IOUtil.closeResource;
 
-public class CardinalityEstimatorSample {
+public class ExampleCardinalityEstimator {
     public static void main(String[] args) throws Exception {
 //tag::ces[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
         CardinalityEstimator visitorsEstimator = hz.getCardinalityEstimator("visitors");
 
-        InputStreamReader isr = new InputStreamReader(CardinalityEstimatorSample.class.getResourceAsStream("visitors.txt"));
+        InputStreamReader isr = new InputStreamReader(ExampleCardinalityEstimator.class.getResourceAsStream("visitors.txt"));
         BufferedReader br = new BufferedReader(isr);
         try {
             String visitor = br.readLine();

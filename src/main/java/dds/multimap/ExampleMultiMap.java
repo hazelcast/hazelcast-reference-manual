@@ -2,7 +2,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
-public class SampleMultiMap {
+public class ExampleMultiMap {
     public static void main( String[] args ) throws Exception {
 //tag::mm[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
