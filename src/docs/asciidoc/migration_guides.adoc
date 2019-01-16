@@ -2,44 +2,52 @@
 [appendix]
 == Migration Guides
 
-This appendix provides information on compatibility related changes of Hazelcast IMDG releases. 
+This appendix provides information on compatibility related changes for Hazelcast IMDG releases.
 
-[[upgrading-from-3x]]
-=== Upgrading from 3.x
+=== Hazelcast IMDG 3.8.x
 
-* **Upgrading from 3.6.x to 3.7.x when using `JCache`:** Hazelcast 3.7 introduced changes in `JCache` implementation which broke compatibility of 3.6.x clients to 3.7-3.7.2 cluster members and vice versa, so 3.7-3.7.2 clients are also incompatible with 3.6.x cluster members. This issue only affects Java clients which use `JCache` functionality.
+* **Introducing <wan-publisher> element**: The configuration element `<target-cluster>` has been replaced with the element `<wan-publisher>` in WAN replication configuration.
+* **WaitNotifyService** interface has been renamed as **OperationParker**.
+* **Synchronizing WAN Target Cluster**: The URL for the related REST call has been changed from
+`+http://member_ip:port/hazelcast/rest/wan/sync/map+` to `+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map+`.
+* **`JCache usage`:** Due to a compatibility problem, `CacheConfig` serialization may not work if your member is 3.8.x where x < 5. You need to use the 3.8.5 or higher versions where the problem is fixed.
+
+
+=== Hazelcast IMDG 3.7.x
+
+* **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from system properties, there has been a change to inform to the users who have been using this class: the class `GroupProperties.java` has been replaced by `GroupProperty.java`.
+In this new class, system properties are instances of the newly introduced `HazelcastProperty` object. You can access the names of these properties by calling the `getName()` method of `HazelcastProperty`.
+* **Removal of WanNoDelayReplication**: `WanNoDelayReplication` implementation of Hazelcast's WAN Replication has been removed. You can still achieve this behavior by setting the batch size to `1` while configuring the WanBatchReplication. See the <<defining-wan-replication, Defining WAN Replication section>> for more information.
+* **`JCache` usage:** Changes in `JCache` implementation which broke compatibility of 3.6.x clients to 3.7, 3.7.1, 3.7.2 cluster members and vice versa. 3.7, 3.7.1, 3.7.2 clients are also incompatible with 3.6.x cluster members. This issue only affects Java clients which use `JCache` functionality.
 +
-Starting with Hazelcast 3.7.3, a compatibility option is provided which can be used to ensure backwards compatibility with 3.6.x clients.
+You can use a compatibility option which can be used to ensure backwards compatibility with 3.6.x clients.
 +
 In order to upgrade a 3.6.x cluster and clients to 3.7.3 (or later), you will need to use this compatibility option on either the member or the client side, depending on which one is upgraded first:
 +
-** first upgrade your cluster members to 3.7.3, adding property `hazelcast.compatibility.3.6.client=true` to your configuration; when started with this property, cluster members are compatible with 3.6.x and 3.7.3+ clients but not with 3.7-3.7.2 clients. Once your cluster is upgraded, you may upgrade your applications to use client version 3.7.3+.
-** upgrade your clients from 3.6.x to 3.7.3, adding property `hazelcast.compatibility.3.6.server=true` to your Hazelcast client configuration. A 3.7.3 client started with this compatibility option is compatible with 3.6.x and 3.7.3+ cluster members but incompatible with 3.7-3.7.2 cluster members. Once your clients are upgraded, you may then proceed to upgrade your cluster members to version 3.7.3 or later.
+** first upgrade your cluster members to 3.7.3, adding property `hazelcast.compatibility.3.6.client=true` to your configuration; when started with this property, cluster members are compatible with 3.6.x and 3.7.3+ clients but not with 3.7, 3.7.1, 3.7.2 clients. Once your cluster is upgraded, you may upgrade your applications to use client version 3.7.3+.
+** upgrade your clients from 3.6.x to 3.7.3, adding property `hazelcast.compatibility.3.6.server=true` to your Hazelcast client configuration. A 3.7.3 client started with this compatibility option is compatible with 3.6.x and 3.7.3+ cluster members but incompatible with 3.7, 3.7.1, 3.7.2 cluster members. Once your clients are upgraded, you may then proceed to upgrade your cluster members to version 3.7.3 or later.
 +
 You may use any of the supported ways as described in the <<system-properties, System Properties section>> to configure the compatibility option. When done upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration.
-* **Upgrading from 3.6.x to 3.8.x EE when using `JCache`:** Due to a compatibility problem CacheConfig serialization may not work if your member is 3.8.x where x < 5. Hence, you will need to use the 3.8.5 or higher version where the problem is being fixed.
-* **Introducing the `spring-aware` element:** Before the release 3.5, Hazelcast uses `SpringManagedContext` to scan `SpringAware` annotations by default. This may cause some performance overhead for the users who do not use `SpringAware`.
-This behavior has been changed with the release of Hazelcast 3.5. `SpringAware` annotations are disabled by default. By introducing the `spring-aware` element, now it is possible to enable it by adding the `<hz:spring-aware />` tag to the configuration. Please see the <<integration-with-spring, Spring Integration section>>.
-* **Introducing new configuration options for WAN replication:** Starting with Hazelcast 3.6, WAN replication related system properties, which are configured on a per member basis, can now be configured per target cluster. The 4 system properties below are no longer valid.
-** `hazelcast.enterprise.wanrep.batch.size`, please see the <<batch-size, WAN Replication Batch Size>>.
-** `hazelcast.enterprise.wanrep.batchfrequency.seconds`, please see the <<batch-maximum-delay, WAN Replication Batch Maximum Delay>>.
-** `hazelcast.enterprise.wanrep.optimeout.millis`, please see the <<response-timeout, WAN Replication Response Timeout>>.
-** `hazelcast.enterprise.wanrep.queue.capacity`, please see the <<queue-capacity, WAN Replication Queue Capacity>>.
-* **Removal of deprecated getId() method**: The method `getId()` in the interface `DistributedObject` has been removed. Please use the method `getName()` instead.
-* **Change in the Custom Serialization in the C++ Client Distribution**: Before, the method `getTypeId()` was used to retrieve the ID of the object to be serialized. Now, the method `getHazelcastTypeId()` is used and you give your object as a parameter to this new method. Also, `getTypeId()` was used in your custom serializer class, now it has been renamed to `getHazelcastTypeId()` too. Note that, these changes also apply when you want to switch from Hazelcast 3.6.1 to 3.6.2 too.
-* **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from System Properties, there has been a change to inform to the users who have been using this class. Starting with Hazelcast 3.7, the class `GroupProperties.java` has been replaced by `GroupProperty.java`.
-In this new class, system properties are instances of the newly introduced `HazelcastProperty` object. You can access the names of these properties by calling `getName()` method of `HazelcastProperty`.
-* **Removal of WanNoDelayReplication**: `WanNoDelayReplication` implementation of Hazelcast's WAN Replication has been removed starting with Hazelcast 3.7. You can still achieve this behavior by setting the batch size to `1` while configuring the WanBatchReplication. Please refer to the <<defining-wan-replication, Defining WAN Replication section>> for more information.
-* **Introducing <wan-publisher> element**: Starting with Hazelcast 3.8, the configuration element `<target-cluster>` is replaced with the element `<wan-publisher>` in WAN replication configuration.
-* **WaitNotifyService** interface has been renamed as **OperationParker**.
-* **Synchronizing WAN Target Cluster**: Starting with Hazelcast 3.8 release, the URL for the REST call has been changed from
-`+http://member_ip:port/hazelcast/rest/wan/sync/map+` to `+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map+`.
 
 
-[[upgrading-from-2x]]
-=== Upgrading from 2.x
+=== Hazelcast IMDG 3.6.x
 
-* **Removal of deprecated static methods:** The static methods of Hazelcast class reaching Hazelcast data components have been removed. The functionality of these methods can be reached from the HazelcastInstance interface. You should replace the following:
+* **Introducing new configuration options for WAN replication:** WAN replication related system properties, which are configured on a per member basis, can now be configured per target cluster. The following system properties are no longer valid.
+** `hazelcast.enterprise.wanrep.batch.size`, see the <<batch-size, Batch Size section>>.
+** `hazelcast.enterprise.wanrep.batchfrequency.seconds`, see the <<batch-maximum-delay, Batch Maximum Delay section>>.
+** `hazelcast.enterprise.wanrep.optimeout.millis`, see the <<response-timeout, Response Timeout section>>.
+** `hazelcast.enterprise.wanrep.queue.capacity`, see the <<queue-capacity, Queue Capacity section>>.
+* **Removal of deprecated `getId()` method**: The method `getId()` in the interface `DistributedObject` has been removed. Please use the `getName()` method instead.
+* **Change in the Custom Serialization in the C++ Client Distribution**: Before, the method `getTypeId()` was used to retrieve the ID of the object to be serialized. With this release, the method `getHazelcastTypeId()` is used and you give your object as a parameter to this new method. Also, `getTypeId()` was used in your custom serializer class; it has been renamed to `getHazelcastTypeId()`, too.
+
+=== Hazelcast IMDG 3.5.x
+
+* **Introducing the `spring-aware` element:** Hazelcast used `SpringManagedContext` to scan `SpringAware` annotations by default. This was causing some performance overhead for the users who do not use `SpringAware`. With this release, `SpringAware` annotations are disabled by default. By introducing the `spring-aware` element, it is possible to enable it by adding the `<hz:spring-aware />` tag to the configuration. See the <<integration-with-spring, Spring Integration section>>.
+
+
+=== Hazelcast IMDG 3.0.x
+
+* **Removal of deprecated static methods:** The static methods of Hazelcast class reaching Hazelcast data components have been removed. The functionality of these methods can be reached from the `HazelcastInstance` interface. You should replace the following:
 +
 ```
 Map<Integer, String> customers = Hazelcast.getMap( "customers" );
@@ -55,7 +63,7 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
 ----
 +
-* **Renaming "instance" to "distributed object":** Before 3.0 there was confusion about the term "instance": it was used for both the cluster members and the distributed objects (map, queue, topic, etc. instances). Starting with Hazelcast 3.0, the term instance will be only used for Hazelcast instances, namely cluster members. We will use the term "distributed object" for map, queue, etc. instances. You should replace the related methods with the new renamed ones. 3.0 clients are smart clients in that they know in which cluster member the data is located, so you can replace your lite members with native clients.
+* **Renaming "instance" to "distributed object":** There were confusions about the term "instance"; it was used for both the cluster members and distributed objects (map, queue, topic, etc. instances). Starting with this release, the term "instance" is used for Hazelcast instances. The term "distributed object" is used for map, queue, etc. instances. You should replace the related methods with the new renamed ones. 3.0.x clients are smart clients in that they know in which cluster member the data is located, so you can replace your lite members with native clients.
 +
 [source,java]
 ----
@@ -87,9 +95,8 @@ public static void main( String[] args ) throws InterruptedException {
 }
 ----
 +
-* **Package structure change:**
-PartitionService has been moved to package `com.hazelcast.core` from `com.hazelcast.partition`.
-* **Listener API change:** Before 3.0, `removeListener` methods were taking the Listener object as a parameter. But this caused confusion because same listener object may be used as a parameter for different listener registrations. So we have changed the listener API. `addListener` methods returns a unique ID and you can remove a listener by using this ID. So you should do the following replacement if needed:
+* **Package structure change:** `PartitionService` has been moved to the `com.hazelcast.core` package from `com.hazelcast.partition`.
+* **Listener API change:** The `removeListener` methods were taking the listener object as a parameter. But this caused confusion since the same listener object may be used as a parameter for different listener registrations. So we have changed the listener API. The `addListener` methods returns a unique ID and you can remove a listener by using this ID. So you should do the following replacement if needed:
 +
 [source,java]
 ----
@@ -112,20 +119,20 @@ map.removeEntryListener( listenerId );
 ** `tryLockAndGet(K key, long time, TimeUnit timeunit)` is removed.
 ** `putAndUnlock(K key, V value)` is removed.
 ** `lockMap(long time, TimeUnit timeunit)` and `unlockMap()` are removed.
-** `getMapEntry(K key)` is renamed as `getEntryView(K key)`. The returned object's type, MapEntry class is renamed as EntryView.
+** `getMapEntry(K key)` is renamed as `getEntryView(K key)`. The returned object's type (`MapEntry` class) is renamed as `EntryView`.
 ** There is no predefined names for merge policies. You just give the full class name of the merge policy implementation:
 +
 ```
 <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
 ```
 +
-Also MergePolicy interface has been renamed to MapMergePolicy and also returning null from the implemented `merge()` method causes the existing entry to be removed.
+Also the `MergePolicy` interface has been renamed as `MapMergePolicy` and returning null from the implemented `merge()` method causes the existing entry to be removed.
 +
-* **IQueue changes:** There is no change on IQueue API but there are changes on how `IQueue` is configured. With Hazelcast 3.0 there will be no backing map configuration for queue. Settings like backup count will be directly configured on queue config. For queue configuration details, please see the <<queue, Queue section>>.
-* **Transaction API change:** In Hazelcast 3.0, transaction API is completely different. Please see the <<transactions, Transactions chapter>>.
-* **ExecutorService API change:** Classes MultiTask and DistributedTask have been removed. All the functionality is supported by the newly presented interface IExecutorService. Please see the <<executor-service, Executor Service section>>.
-* **LifeCycleService API:** The lifecycle has been simplified. `pause()`, `resume()`, `restart()` methods have been removed.
-* **AtomicNumber:** `AtomicNumber` class has been renamed to `IAtomicLong`.
-* **ICountDownLatch:** `await()` operation has been removed. We expect users to use `await()` method with timeout parameters.
-* **ISemaphore API:** The `ISemaphore` has been substantially changed. `attach()`, `detach()` methods have been removed.
-- In 2.x releases, the default value for `max-size` eviction policy was **cluster_wide_map_size**. In 3.x releases, default is **PER_NODE**. After upgrading, the `max-size` should be set according to this new default, if it is not changed. Otherwise, it is likely that OutOfMemory exception may be thrown.
+* **IQueue changes:** There is no change on IQueue API but there are changes on how `IQueue` is configured: there is no backing map configuration for queue. Settings like backup count are directly configured on the queue configuration. See the <<queue, Queue section>>.
+* **Transaction API change:** Transaction API has been changed. See the <<transactions, Transactions chapter>>.
+* **ExecutorService API change:** The `MultiTask` and `DistributedTask` classes have been removed. All the functionality is supported by the newly presented interface IExecutorService. See the <<executor-service, Executor Service section>>.
+* **LifeCycleService API:** The lifecycle has been simplified. The `pause()`, `resume()`, `restart()` methods have been removed.
+* **AtomicNumber:** `AtomicNumber` class has been renamed as `IAtomicLong`.
+* **ICountDownLatch:** The `await()` operation has been removed. We expect users to use `await()` method with timeout parameters.
+* **ISemaphore API:** The `ISemaphore` has been substantially changed. The `attach()`, `detach()` methods have been removed.
+*  Before, the default value for `max-size` eviction policy was **cluster_wide_map_size**. Starting with this release, the default is **PER_NODE**. After upgrading, the `max-size` should be set according to this new default, if it is not changed. Otherwise, it is likely that `OutOfMemoryException` may be thrown.
