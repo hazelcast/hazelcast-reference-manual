@@ -4,7 +4,7 @@ import com.hazelcast.core.MultiMap;
 import com.hazelcast.monitor.LocalMultiMapStats;
 
 
-public class SampleMultiMapStats {
+public class ExampleMultiMapStats {
 
     public static void main(String[] args) throws Exception{
 //tag::mms[]

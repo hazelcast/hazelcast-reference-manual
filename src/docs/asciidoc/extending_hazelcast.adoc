@@ -402,9 +402,9 @@ class IncOperation extends Operation implements PartitionAwareOperation {
 }
 ----
 
-===== Running the Sample Code
+===== Running the Example Code
 
-Let's run the following sample code.
+Let's run the following example code.
 
 [source,java]
 ----
@@ -636,7 +636,7 @@ public class CounterService implements ManagedService, RemoteService, MigrationA
 }
 ----
 
-===== Running the Sample Code
+===== Running the Example Code
 
 We can run the following code.
 
@@ -739,9 +739,9 @@ class IncOperation extends Operation
 }
 ----
 
-The methods `getAsyncBackupCount` and `getSyncBackupCount` specify the count for asynchronous and synchronous backups. Our sample has one synchronous backup and no asynchronous backups. In the above code, counts of the backups are hard-coded, but they can also be passed to `IncOperation` as parameters.
+The methods `getAsyncBackupCount` and `getSyncBackupCount` specify the count for asynchronous and synchronous backups. Our example has one synchronous backup and no asynchronous backups. In the above code, counts of the backups are hard-coded, but they can also be passed to `IncOperation` as parameters.
 
-The method `shouldBackup` specifies whether our Operation needs a backup or not. For our sample, it returns `true`, meaning the Operation will always have a backup even if there are no changes. Of course, in real systems, we want to have backups if there is a change. For `IncOperation` for example, having a backup when `amount` is null would be a good practice.
+The method `shouldBackup` specifies whether our Operation needs a backup or not. For our example, it returns `true`, meaning the Operation will always have a backup even if there are no changes. Of course, in real systems, we want to have backups if there is a change. For `IncOperation` for example, having a backup when `amount` is null would be a good practice.
 
 The method `getBackupOperation` returns the operation (`IncBackupOperation`) that actually performs the backup creation; the backup itself is an operation and will run on the same infrastructure.
 
@@ -795,7 +795,7 @@ public class IncBackupOperation
 NOTE: Hazelcast will also make sure that a new IncOperation for that particular key will not be executed before the (synchronous) backup operation has completed.
 
 
-===== Running the Sample Code
+===== Running the Example Code
 
 Let's see the backup functionality in action with the following code.
 
@@ -911,7 +911,7 @@ This subsection will walk through the implementation of a simple `DiscoveryStrat
 
 The example strategy will use the local `/etc/hosts` (and on Windows it will use the equivalent to the \*nix hosts file named `%SystemRoot%\system32\drivers\etc\hosts`) to lookup IP addresses of different hosts. The strategy implementation expects hosts to be configured with hostname sub-groups under the same domain. So far to theory, let's get into it.
 
-The full example's source code can be found in the https://github.com/hazelcast/hazelcast-code-samples[Hazelcast examples repository].
+The full example's source code can be found https://github.com/hazelcast/hazelcast-code-samples[here].
 
 ===== Configuring Site Domain
 

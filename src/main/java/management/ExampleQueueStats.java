@@ -3,7 +3,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
 import com.hazelcast.monitor.LocalQueueStats;
 
-public class SampleQueueStats {
+public class ExampleQueueStats {
 
     public static void main(String[] args) throws Exception{
 //tag::qs[]

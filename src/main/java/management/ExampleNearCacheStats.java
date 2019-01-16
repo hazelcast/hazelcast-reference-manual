@@ -5,7 +5,7 @@ import com.hazelcast.monitor.LocalMapStats;
 import com.hazelcast.monitor.NearCacheStats;
 
 
-public class SampleNearCacheStats {
+public class ExampleNearCacheStats {
 
     public static void main(String[] args) throws Exception{
 //tag::ncs[]

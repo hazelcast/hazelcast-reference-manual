@@ -4,7 +4,7 @@ import com.hazelcast.core.ITopic;
 import com.hazelcast.monitor.LocalTopicStats;
 
 
-public class SampleTopicStats {
+public class ExampleTopicStats {
 
     public static void main(String[] args) throws Exception{
 //tag::ts[]

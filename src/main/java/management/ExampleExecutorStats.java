@@ -3,7 +3,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.monitor.LocalExecutorStats;
 
-public class SampleExecutorStats {
+public class ExampleExecutorStats {
 
     public static void main(String[] args) throws Exception{
 //tag::es[]

@@ -4,7 +4,7 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
 
 
-public class SampleLocalMapStats {
+public class ExampleLocalMapStats {
 
     public static void main(String[] args) throws Exception{
 //tag::lms[]

@@ -3,7 +3,7 @@ import com.hazelcast.config.*;
 import java.util.Map;
 
 
-public class SampleWANReplicationDiscoveryConfiguration {
+public class ExampleWANReplicationDiscoveryConfiguration {
 
     public static void main(String[] args) throws Exception{
 //tag::wrdc[]

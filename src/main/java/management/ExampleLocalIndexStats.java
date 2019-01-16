@@ -6,7 +6,7 @@ import com.hazelcast.monitor.LocalMapStats;
 
 import java.util.Map;
 
-public class SampleLocalIndexStats {
+public class ExampleLocalIndexStats {
 
     public static void main(String[] args) {
 //tag::lis[]

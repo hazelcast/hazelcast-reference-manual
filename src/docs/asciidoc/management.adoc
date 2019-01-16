@@ -20,7 +20,7 @@ Below is an example code where the `getLocalMapStats()` method and the `getOwned
 
 [source,java]
 ----
-include::{javasource}/management/SampleLocalMapStats.java[tag=lms]
+include::{javasource}/management/ExampleLocalMapStats.java[tag=lms]
 ----
 
 NOTE: Since Hazelcast IMDG 3.8 `getOwnedEntryMemoryCost()` method is now supported for NATIVE in-memory format as well.
@@ -46,7 +46,7 @@ Below is an example where the `getIndexStats()` method is used to examine an ave
 
 [source,java]
 ----
-include::{javasource}/management/SampleLocalIndexStats.java[tag=lis]
+include::{javasource}/management/ExampleLocalIndexStats.java[tag=lis]
 ----
 
 The following are some of the metrics that you can obtain via the `LocalIndexStats` interface:
@@ -96,13 +96,13 @@ Below is an example code where the `getNearCacheStats()` method and the `getRati
 
 [source,java]
 ----
-include::{javasource}/management/SampleNearCacheStats.java[tag=ncs]
+include::{javasource}/management/ExampleNearCacheStats.java[tag=ncs]
 ----
 
 The following are some of the metrics that you can access via the `NearCacheStats` object.
 This behavior applies to both client and member Near Caches.
 
-* Creation time of the Near Cache map on the member (`getCreationTime()`).
+* Creation time of the Near Cache on the member (`getCreationTime()`).
 * Number of entries owned by the member (`getOwnedEntryCount()`).
 * Memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`).
 * Number of hits (reads) of the locally owned entries (`getHits()`).
@@ -120,7 +120,7 @@ Below is an example code where the `getLocalMultiMapStats()` method and the `get
 
 [source,java]
 ----
-include::{javasource}/management/SampleMultiMapStats.java[tag=mms]
+include::{javasource}/management/ExampleMultiMapStats.java[tag=mms]
 ----
 
 The following are some of the metrics that you can access via the `LocalMultiMapStats` object.
@@ -145,7 +145,7 @@ Below is an example code where the `getLocalQueueStats()` method and the `getAvg
 
 [source,java]
 ----
-include::{javasource}/management/SampleQueueStats.java[tag=qs]
+include::{javasource}/management/ExampleQueueStats.java[tag=qs]
 ----
 
 
@@ -168,7 +168,7 @@ Below is an example code where the `getLocalTopicStats()` method and the `getPub
 
 [source,java]
 ----
-include::{javasource}/management/SampleTopicStats.java[tag=ts]
+include::{javasource}/management/ExampleTopicStats.java[tag=ts]
 ----
 
 The following are the metrics that you can access via the `LocalTopicStats ` object.
@@ -189,7 +189,7 @@ Below is an example code where the `getLocalExecutorStats()` method and the `get
 
 [source,java]
 ----
-include::{javasource}/management/SampleExecutorStats.java[tag=es]
+include::{javasource}/management/ExampleExecutorStats.java[tag=es]
 ----
 
 The following are some of the metrics that you can access via the `LocalExecutorStats ` object.
@@ -527,7 +527,7 @@ Hazelcast set the naming convention for MBeans as follows:
 final ObjectName mapMBeanName = new ObjectName("com.hazelcast:instance=_hzInstance_1_dev,type=IMap,name=trial");
 ----
 
-The MBeans name consists of the Hazelcast instance name, the type of the data structure and that data structure's name. In the above sample, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`.
+The MBeans name consists of the Hazelcast instance name, the type of the data structure and that data structure's name. In the above example, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`.
 
 
 
@@ -537,7 +537,7 @@ One of the ways you can connect to JMX agent is using jconsole, jvisualvm (with 
 
 The other way to connect is to use a custom JMX client.
 
-First, you need to specify the URL where the Hazelcast JMX service is running. Please see the following sample code snippet. The `port` in this sample should be the one that you define while setting the JMX remote port number (if different than the default port `1099`).
+First, you need to specify the URL where the Hazelcast JMX service is running. See the following code snippet:
 
 
 [source,java]
@@ -547,6 +547,8 @@ int port = 1099;
 String hostname = InetAddress.getLocalHost().getHostName();
 JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://" + hostname + ":" + port + "/jndi/rmi://" + hostname + ":" + port + "/jmxrmi");
 ----
+
+The `port` in the above example should be the one that you define while setting the JMX remote port number (if different than the default port `1099`).
 
 Then use the URL you acquired to connect to the JMX service and get the `JMXConnector` object. Using this object, get the `MBeanServerConnection` object. The `MBeanServerConnection` object will enable you to use the MBean methods. Please see the example code below.
 
@@ -578,7 +580,7 @@ The following example code does the above: registers for member events, notifies
 
 [source,java]
 ----
-public class SampleGetMemberEventsAndSets {
+public class ExampleGetMemberEventsAndSets {
 
     public static void main(String[] args) {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
@@ -955,7 +957,7 @@ For example, you can tag your members with their CPU characteristics and you can
 
 [source,java]
 ----
-public class SampleMemberAttributes {
+public class ExampleMemberAttributes {
 
     public static void main(String[] args) {
         MemberAttributeConfig fourCore = new MemberAttributeConfig();
@@ -1041,8 +1043,7 @@ Similarly, the method `isLocalMemberSafe` does the same check for the local memb
 
 NOTE: If you want to use the above methods, please note that they are available starting with Hazelcast 3.3.
 
-NOTE: For more code samples please refer to https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster-safety[PartitionService Code Samples].
-
+See https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster-safety[here] for more `PartitionService` code samples.
 
 === Diagnostics
 
@@ -1154,7 +1155,7 @@ It shows the slow operations and invocations, Please refer to <<slowoperationdet
 
 ===== Invocations
 
-It shows all kinds of statistics about current and past invocations including current pending invocations, history of invocations and slow history, i.e. all samples where the invocation took more than the defined threshold.  Slow history does not only include the invocations where the operations took a lot of time, but it also includes any other invocations that have been obstructed.
+It shows all kinds of statistics about current and past invocations including current pending invocations, history of invocations and slow history, i.e., all samples where the invocation took more than the defined threshold.  Slow history does not only include the invocations where the operations took a lot of time, but it also includes any other invocations that have been obstructed.
 
 Using the following properties, you can configure the frequency of scanning all pending invocations and the threshold that makes an invocation to be considered as slow:
 
@@ -1185,27 +1186,27 @@ It shows statistics including the count of methods for each store (`load`, `load
 
 ```
 17-9-2016 13:12:34 MapStoreLatency[
-              map[
-                 loadAllKeys[
-                    count=1
-                    totalTime(us)=8
-                    avg(us)=8
-                    max(us)=8
-                    latency-distribution[
-                    0..99us=1]]
-                 load[
-                    count=100
-                    totalTime(us)=4,632,190
-                    avg(us)=46,321
-                    max(us)=99,178
-                    latency-distribution[
-                           0..99us=1
-                           1600..3199us=3
-                           3200..6399us=3
-                           6400..12799us=7
-                           12800..25599us=13
-                           25600..51199us=32
-                           51200..102399us=41]]]]
+    map[
+        loadAllKeys[
+            count=1
+            totalTime(us)=8
+            avg(us)=8
+            max(us)=8
+            latency-distribution[
+                0..99us=1]]
+        load[
+            count=100
+            totalTime(us)=4,632,190
+            avg(us)=46,321
+            max(us)=99,178
+            latency-distribution[
+                0..99us=1
+                1600..3199us=3
+                3200..6399us=3
+                6400..12799us=7
+                12800..25599us=13
+                25600..51199us=32
+                51200..102399us=41]]]]
 ```
 
 According to your store usage, a similar output can be seen for Hazelcast JCache, Queue and Ringbuffer with persistent datastores.
@@ -1218,7 +1219,7 @@ You can control the StoreLatency plugin using the following properties:
 ===== OperationHeartbeats
 
 It shows the deviation between member/member operation heartbeats. Every member will send to every other member, regardless if
-there is an operation running on behalf of that member, an operation heartbeat. It contains a listing of all `callId`s of the running
+there is an operation running on behalf of that member, an operation heartbeat. It contains a listing of all ``callId``s of the running
 operations from a given member. This plugin also works fine between members/lite-members.
 
 Because this operation heartbeat is sent periodically; by default 1/4 of the operation call timeout of 60 seconds, we would expect
@@ -1230,13 +1231,13 @@ The following shows an example of the output where an operation heartbeat has no
 
 ```
 20-7-2017 11:12:55 OperationHeartbeats[
-            member[10.212.1.119]:5701[
-                   deviation(%)=146.6666717529297
-                   noHeartbeat(ms)=37,000
-                   lastHeartbeat(ms)=1,500,538,375,603
-                   lastHeartbeat(date-time)=20-7-2017 11:12:55
-                   now(ms)=1,500,538,338,603
-                   now(date-time)=20-7-2017 11:12:18]]]
+    member[10.212.1.119]:5701[
+        deviation(%)=146.6666717529297
+        noHeartbeat(ms)=37,000
+        lastHeartbeat(ms)=1,500,538,375,603
+        lastHeartbeat(date-time)=20-7-2017 11:12:55
+        now(ms)=1,500,538,338,603
+        now(date-time)=20-7-2017 11:12:18]]]
 ```
 
 The OperationHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
@@ -1257,13 +1258,13 @@ The following shows an example of the output where no member/member heartbeat ha
 
 ```
 20-7-2017 19:32:22 MemberHeartbeats[
-             member[10.212.1.119]:5701[
-                    deviation(%)=80.0
-                    noHeartbeat(ms)=9,000
-                    lastHeartbeat(ms)=1,500,568,333,645
-                    lastHeartbeat(date-time)=20-7-2017 19:32:13
-                    now(ms)=1,500,568,342,645
-                    now(date-time)=20-7-2017 19:32:22]]
+    member[10.212.1.119]:5701[
+        deviation(%)=80.0
+        noHeartbeat(ms)=9,000
+        lastHeartbeat(ms)=1,500,568,333,645
+        lastHeartbeat(date-time)=20-7-2017 19:32:13
+        now(ms)=1,500,568,342,645
+        now(date-time)=20-7-2017 19:32:22]]
 ```
 
 The MemberHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
@@ -1289,19 +1290,19 @@ The following shows an example of the output when the property `hazelcast.diagno
 
 ```
 28-08-2018 07:40:07 1535442007330 OperationThreadSamples[
-              Partition[
-                        com.hazelcast.map.impl.operation.MapSizeOperation=304623 85.6927%
-                        com.hazelcast.map.impl.operation.PutOperation=33061 9.300304%
-                        com.hazelcast.map.impl.operation.GetOperation=17799 5.0069904%]
-              Generic[
-                        com.hazelcast.client.impl.ClientEngineImpl$PriorityPartitionSpecificRunnable=2308 35.738617%
-                        com.hazelcast.nio.Packet=1767 27.361412%
-                        com.hazelcast.internal.cluster.impl.operations.JoinRequestOp=821 12.712914%
-                        com.hazelcast.spi.impl.operationservice.impl.operations.PartitionIteratingOperation=278 4.3047385%
-                        com.hazelcast.internal.cluster.impl.operations.HeartbeatOp=93 1.4400743%
-                        com.hazelcast.internal.cluster.impl.operations.OnJoinOp=89 1.3781357%
-                        com.hazelcast.internal.cluster.impl.operations.WhoisMasterOp=75 1.1613503%
-                        com.hazelcast.client.impl.operations.ClientReAuthOperation=33 0.51099414%]]
+    Partition[
+        com.hazelcast.map.impl.operation.MapSizeOperation=304623 85.6927%
+        com.hazelcast.map.impl.operation.PutOperation=33061 9.300304%
+        com.hazelcast.map.impl.operation.GetOperation=17799 5.0069904%]
+    Generic[
+        com.hazelcast.client.impl.ClientEngineImpl$PriorityPartitionSpecificRunnable=2308 35.738617%
+        com.hazelcast.nio.Packet=1767 27.361412%
+        com.hazelcast.internal.cluster.impl.operations.JoinRequestOp=821 12.712914%
+        com.hazelcast.spi.impl.operationservice.impl.operations.PartitionIteratingOperation=278 4.3047385%
+        com.hazelcast.internal.cluster.impl.operations.HeartbeatOp=93 1.4400743%
+        com.hazelcast.internal.cluster.impl.operations.OnJoinOp=89 1.3781357%
+        com.hazelcast.internal.cluster.impl.operations.WhoisMasterOp=75 1.1613503%
+        com.hazelcast.client.impl.operations.ClientReAuthOperation=33 0.51099414%]]
 ```
 
 As can be seen above, the `MapSizeOperations` run on the operation threads most of the time.
@@ -1319,21 +1320,21 @@ The following shows an example of the output:
 
 ```
 10-11-2017 14:11:32 1510319492497 WanBatchSenderLatency[
-               targetClusterGroupName[
-                    [127.0.0.1]:5801[
-                        count=1
-                        totalTime(us)=2,010,567
-                        avg(us)=2,010,567
-                        max(us)=2,010,567
-                        latency-distribution[
-                              1638400..3276799us=1]]
-                    [127.0.0.1]:5802[
-                        count=1
-                        totalTime(us)=1,021,867
-                        avg(us)=1,021,867
-                        max(us)=1,021,867
-                        latency-distribution[
-                              819200..1638399us=1]]]]
+    targetClusterGroupName[
+        [127.0.0.1]:5801[
+            count=1
+            totalTime(us)=2,010,567
+            avg(us)=2,010,567
+            max(us)=2,010,567
+            latency-distribution[
+                1638400..3276799us=1]]
+         [127.0.0.1]:5802[
+             count=1
+             totalTime(us)=1,021,867
+             avg(us)=1,021,867
+             max(us)=1,021,867
+             latency-distribution[
+                 819200..1638399us=1]]]]
 ```
 
 === Health Check and Monitoring
@@ -1399,8 +1400,6 @@ $ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o cluster-safe
 Error while checking health of hazelcast cluster on ip 127.0.0.1 on port 5701.
 Please check that cluster is running and that health check is enabled (property set to true: 'hazelcast.http.healthcheck.enabled' or 'hazelcast.rest.enabled').
 ```
-
-
 
 ==== Health Monitor
 
