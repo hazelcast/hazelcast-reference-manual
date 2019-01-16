@@ -681,14 +681,12 @@ socketInterceptorConfig.setEnabled(true);
 socketInterceptorConfig.setImplementation(myClientSocketInterceptor);
 ----
 
-If you want to configure the socket connector with a class name instead of an instance, see the example below.
+If you want to configure the socket interceptor with a class name instead of an instance, see the example below.
 
 [source,java]
 ----
 SocketInterceptorConfig socketInterceptorConfig = clientConfig
             .getNetworkConfig().getSocketInterceptorConfig();
-
-MyClientSocketInterceptor myClientSocketInterceptor = new MyClientSocketInterceptor();
 
 socketInterceptorConfig.setEnabled(true);
 
@@ -696,7 +694,7 @@ socketInterceptorConfig.setEnabled(true);
 socketInterceptorConfig.setProperty("kerberos-host","kerb-host-name");
 socketInterceptorConfig.setProperty("kerberos-config-file","kerb.conf");
 
-socketInterceptorConfig.setClassName(myClientSocketInterceptor);
+socketInterceptorConfig.setClassName(MyClientSocketInterceptor.class.getName());
 ----
 
 NOTE: Please see the <<socket-interceptor, Socket Interceptor section>> for more information.
