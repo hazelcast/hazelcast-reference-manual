@@ -8,7 +8,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
 
 
-public class SampleRTClient {
+public class ExampleRTClient {
 
     public static void main(String[] args) throws Exception{
 //tag::rtclient[]

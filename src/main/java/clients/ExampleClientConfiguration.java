@@ -4,7 +4,7 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.core.HazelcastInstance;
 
-public class SampleClientConfiguration {
+public class ExampleClientConfiguration {
 
     public static void main(String[] args) throws Exception{
 //tag::scc[]

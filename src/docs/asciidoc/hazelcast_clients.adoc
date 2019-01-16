@@ -4,24 +4,23 @@
 
 This chapter provides information about Hazelcast's client and language implementations, which are listed below:
 
-* Java
-* C++
-* .NET
-* Memcache
-* REST
-* Node.js
-* Go
-* Python
-* Scala
-
+* <<java-client, Java>>
+* <<c-client, C++>>
+* <<net-client, .NET>>
+* <<memcache-client, Memcache>>
+* <<rest-client, REST>>
+* <<node-js-client, Node.js>>
+* <<go-client, Go>>
+* <<python-client, Python>>
+* <<scala, Scala>>
 
 **Feature Comparison for Hazelcast Clients:**
 
-Please refer to https://hazelcast.org/clients-languages/[Feature Comparison Matrix] to see the features implemented across the clients and language APIs.
+See the https://hazelcast.org/clients-languages/[feature comparison matrix] to learn about the features implemented across the clients and language APIs.
 
-**Sample Codes for Clients:**
+**Code Samples:**
 
-Please refer to https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients[Client Code Samples].
+In the following client sections, you will find links to each client's code samples.
 
 [[java-client]]
 === Java Client
@@ -49,7 +48,7 @@ You should include two dependencies in your classpath to start using the Hazelca
 
 After adding these dependencies, you can start using the Hazelcast client as if you are using the Hazelcast API. The differences are discussed in the below sections.
 
-If you prefer to use maven, add the following lines to your `pom.xml`.
+If you prefer to use Maven, add the following lines to your `pom.xml`:
 
 [source,xml]
 ----
@@ -65,6 +64,8 @@ If you prefer to use maven, add the following lines to your `pom.xml`.
 </dependency>
 ----
 
+You can find Hazelcast Java client's code samples https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients[here].
+
 ===== Client API
 
 The first step is configuration. You can configure the Java client declaratively or programmatically. We will use the programmatic approach throughout this tutorial. Please refer to the <<configuring-java-client, Java Client Declarative Configuration section>> for details.
@@ -76,7 +77,7 @@ clientConfig.getGroupConfig().setName("dev");
 clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
 ----
 
-The second step is to initialize the HazelcastInstance to be connected to the cluster.
+The second step is initializing the `HazelcastInstance` to be connected to the cluster.
 
 ```
 HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
@@ -184,7 +185,7 @@ Collection<String> values = multiMap.get(1);
 
 ====== Using Queue with Java Client
 
-A sample usage is shown below.
+An example usage is shown below.
 
 [source,java]
 ----
@@ -304,7 +305,7 @@ The equivalent programmatic approach is shown below.
 [source,java]
 ----
 ClientConfig clientConfig = new ClientConfig();
-clientConfig.setInstanceName("SampleClientName");
+clientConfig.setInstanceName("ExampleClientName");
 clientConfig.setAttribute("role", "user");
 clientConfig.setAttribute("region", "bar");
 
@@ -437,7 +438,7 @@ Here is an example of configuring network for Java Client programmatically.
 
 [source,java]
 ----
-include::{javasource}/clients/SampleClientConfiguration.java[tag=scc]
+include::{javasource}/clients/ExampleClientConfiguration.java[tag=scc]
 ----
 
 ====== Configuring Address List
@@ -704,21 +705,22 @@ NOTE: Please see the <<socket-interceptor, Socket Interceptor section>> for more
 
 You can configure the network socket options using `SocketOptions`. It has the following methods.
 
-- `socketOptions.setKeepAlive(x)`: Enables/disables the *SO_KEEPALIVE* socket option. Its default value is `true`.
-- `socketOptions.setTcpNoDelay(x)`: Enables/disables the *TCP_NODELAY* socket option. Its default value is `true`.
-- `socketOptions.setReuseAddress(x)`: Enables/disables the *SO_REUSEADDR* socket option. Its default value is `true`.
-- `socketOptions.setLingerSeconds(x)`: Enables/disables *SO_LINGER* with the specified linger time in seconds. Its default value is `3`.
-- `socketOptions.setBufferSize(x)`: Sets the *SO_SNDBUF* and *SO_RCVBUF* options to the specified value in KB for this Socket. Its default value is `32`.
+* `socketOptions.setKeepAlive(x)`: Enables/disables the *SO_KEEPALIVE* socket option. Its default value is `true`.
+* `socketOptions.setTcpNoDelay(x)`: Enables/disables the *TCP_NODELAY* socket option. Its default value is `true`.
+* `socketOptions.setReuseAddress(x)`: Enables/disables the *SO_REUSEADDR* socket option. Its default value is `true`.
+* `socketOptions.setLingerSeconds(x)`: Enables/disables *SO_LINGER* with the specified linger time in seconds. Its default value is `3`.
+* `socketOptions.setBufferSize(x)`: Sets the *SO_SNDBUF* and *SO_RCVBUF* options to the specified value in KB for this Socket. Its default value is `32`.
 
 
-```
+[source,java]
+----
 SocketOptions socketOptions = clientConfig.getNetworkConfig().getSocketOptions();
-socketOptions.setBufferSize(32);
-socketOptions.setKeepAlive(true);
-socketOptions.setTcpNoDelay(true);
-socketOptions.setReuseAddress(true);
-socketOptions.setLingerSeconds(3);
-```
+socketOptions.setBufferSize(32)
+             .setKeepAlive(true)
+             .setTcpNoDelay(true)
+             .setReuseAddress(true)
+             .setLingerSeconds(3);
+----
 
 ====== Enabling Client TLS/SSL
 
@@ -757,10 +759,10 @@ The example declarative and programmatic configurations below show how to config
 
 [source,java]
 ----
-include::{javasource}/clients/SampleClientAwsConfig.java[tag=clientaws]
+include::{javasource}/clients/ExampleClientAwsConfig.java[tag=clientaws]
 ----
 
-You can refer to the <<aws-element, aws element section>> for the descriptions of above AWS configuration elements except `inside-aws` and `iam-role`, which are explained below.
+You can refer to the <<aws-element, aws element section>> for the descriptions of the above AWS configuration elements except `inside-aws` and `iam-role`, which are explained below.
 
 If the `inside-aws` element is not set, the private addresses of cluster members will always be converted to public addresses. Also, the client will use public addresses to connect to the members. In order to use private addresses, set the `inside-aws` parameter to `true`. Also note that, when connecting outside from AWS, setting the `inside-aws` parameter to `true` will cause the client to not be able to reach the members.
 
@@ -918,7 +920,7 @@ A pseudo-code is as follows:
     current_backoff = Min(current_backoff_millis * MULTIPLIER, MAX_BACKOFF_MILLIS)
 ----
 
-Note that, `TryConnect` above tries to connect any member that the client knows of, and for each connection we have a connection timeout, see the <<setting-connection-timeout, Setting Connection Timeout section>>.
+Note that, `TryConnect` above tries to connect to any member that the client knows, and for each connection we have a connection timeout; see the <<setting-connection-timeout, Setting Connection Timeout section>>.
 
 
 ===== Other Configurations
@@ -964,7 +966,7 @@ Here is an example programmatic configuration snippet:
 
 [source,java]
 ----
-include::{javasource}/clients/SampleRTClient.java[tag=rtclient]
+include::{javasource}/clients/ExampleRTClient.java[tag=rtclient]
 ----
 
 Note that, when you create a Reliable Topic structure at your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created at the member side, with its default configuration. Please see the <<ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
@@ -1259,8 +1261,7 @@ The features of {cpp} clients are listed below:
 - Ability to add cluster listeners to a cluster and entry/item listeners to distributed data structures.
 - Distributed synchronization mechanisms with ILock, ISemaphore and ICountDownLatch.
 
-Please refer to C++ client's own GitHub https://github.com/hazelcast/hazelcast-cpp-client[repo] for information on setting the client up, installing and compiling it, its serialization support and APIs such as raw pointer and query.
-
+See Hazelcast C++ client's own GitHub https://github.com/hazelcast/hazelcast-cpp-client[repo] for information on setting the client up, installing and compiling it, its serialization support and APIs such as raw pointer and query. You can also find https://github.com/hazelcast/hazelcast-cpp-client/tree/master/examples[code samples] for this client in this repo.
 
 
 [[net-client]]
@@ -1268,7 +1269,7 @@ Please refer to C++ client's own GitHub https://github.com/hazelcast/hazelcast-c
 
 You can use the native .NET client to connect to Hazelcast client members. You need to add `HazelcastClient3x.dll` into your .NET project references. The API is very similar to the Java native client.
 
-Please refer to .NET client's own GitHub repo at https://github.com/hazelcast/hazelcast-csharp-client[Hazelcast .NET Client] for information on configuring and starting the client.
+See Hazelcast .NET client's own GitHub https://github.com/hazelcast/hazelcast-csharp-client[repo] for information on configuring and starting the client. You can also find https://github.com/hazelcast/hazelcast-csharp-client/tree/master/Hazelcast.Examples[code samples] for this client in this repo.
 
 
 === REST Client
@@ -1288,7 +1289,8 @@ NOTE: REST client request listener service is not enabled by default. You should
 
 In the following GET, POST and DELETE examples, assume that your cluster members are as shown below.
 
-```
+[source,plain]
+----
 Members [5] {
   Member [10.20.17.1:5701]
   Member [10.20.17.2:5701]
@@ -1296,7 +1298,7 @@ Members [5] {
   Member [10.20.17.3:5701]
   Member [10.20.17.5:5701]
 }
-```
+----
 
 [NOTE]
 ====
@@ -1323,7 +1325,7 @@ Content-Length: 0
 You can put a new `key1/value1` entry into a map by using POST call to
 `+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+` URL. This call's content body should contain the value of the key. Also, if the call contains the MIME type, Hazelcast stores this information, too.
 
-A sample POST call is shown below.
+An example POST call is shown below.
 
 [source,plain]
 ----
@@ -1347,13 +1349,13 @@ If you want to retrieve an entry, you can use a GET call to `+http://10.20.17.1:
 
 An example of a GET call is shown below.
 
-```plain
+```
 $ curl -X GET http://10.20.17.3:5701/hazelcast/rest/maps/mapName/foo
 ```
 
 It will return the following response if there is a corresponding value:
 
-```plain
+```
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Content-Length: 3
@@ -1364,61 +1366,70 @@ This GET call returned a value, its length and also the MIME type (`text/plain`)
 
 It will return the following if there is no mapping for the given key:
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 204 No Content
 < Content-Length: 0
-```
+----
 
 
 ===== Removing Entries from a Map for REST Client
 
-You can use a DELETE call to remove an entry. A sample DELETE call is shown below with its response.
+You can use a DELETE call to remove an entry. An example DELETE call is shown below with its response.
 
-```plain
+[source,plain]
+----
 $ curl -v -X DELETE http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
-```
+----
+
 ```
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Content-Length: 0
 ```
+
 If you leave the key empty as follows, DELETE will delete all entries from the map.
 
-```plain
+[source,plain]
+----
 $ curl -v -X DELETE http://10.20.17.1:5701/hazelcast/rest/maps/mapName
-```
+----
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Content-Length: 0
-```
+----
 
 ===== Offering Items on a Queue for REST Client
 
-You can use a POST call to create an item on the queue. A sample is shown below.
+You can use a POST call to create an item on the queue. An example is shown below.
 
-```plain
+[source,plain]
+----
 $ curl -v -X POST -H "Content-Type: text/plain" -d "foo"
     http://10.20.17.1:5701/hazelcast/rest/queues/myEvents
-```
+----
 
 The above call is equivalent to `HazelcastInstance.getQueue("myEvents").offer("foo");`.
 
 It will return the following if successful:
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Content-Length: 0
-```
+----
 
 It will return the following if the queue is full and the item is not able to be offered to the queue:
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 503 Service Unavailable
 < Content-Length: 0
-```
+----
 
 ===== Retrieving Items from a Queue for REST Client
 
@@ -1426,54 +1437,60 @@ You can use a DELETE call for retrieving items from a queue. Note that you shoul
 
 An example is shown below (**10** being the timeout value).
 
-```plain
+[source,plain]
+----
 $ curl -v -X DELETE \http://10.20.17.1:5701/hazelcast/rest/queues/myEvents/10
-```
+----
 
 The above call is equivalent to `HazelcastInstance.getQueue("myEvents").poll(10, SECONDS);`. Below is the response.
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Content-Length: 3
 foo
-```
+----
 
 When the timeout is reached, the response will be `No Content` success, i.e. there is no item on the queue to be returned.
 
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 204 No Content
 < Content-Length: 0
-```
+----
 
 ===== Getting the size of the queue for REST Client
 
-```plain
+[source,plain]
+----
 $ curl -v -X GET \http://10.20.17.1:5701/hazelcast/rest/queues/myEvents/size
-```
+----
 
-The above call is equivalent to `HazelcastInstance.getQueue("myEvents").size();`. Below is a sample response.
+The above call is equivalent to `HazelcastInstance.getQueue("myEvents").size();`. Below is an example response.
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Content-Length: 1
 5
-```
 ---
 
 ==== Checking the Status of the Cluster for REST Client
 
-Besides the above operations, you can check the status of your cluster, a sample of which is shown below.
+Besides the above operations, you can check the status of your cluster, an example of which is shown below.
 
-```plain
+[source,plain]
+----
 $ curl -v http://127.0.0.1:5701/hazelcast/rest/cluster
-```
+----
 
 The return will be similar to the following:
 
-```plain
+[source,plain]
+----
 < HTTP/1.1 200 OK
 < Content-Length: 119
 
@@ -1487,7 +1504,7 @@ Members [5] {
 
 ConnectionCount: 5
 AllConnectionCount: 20
-```
+----
 
 ---
 
@@ -1511,7 +1528,8 @@ NOTE: Memcache client request listener service is not enabled by default. You sh
 
 Assume that your cluster members are as shown below.
 
-```plain
+[source,plain]
+----
 Members [5] {
   Member [10.20.17.1:5701]
   Member [10.20.17.2:5701]
@@ -1519,7 +1537,8 @@ Members [5] {
   Member [10.20.17.3:5701]
   Member [10.20.17.5:5701]
 }
-```
+----
+
 Assume that you have a PHP application that uses PHP Memcache client to cache things in Hazelcast. All you need to do is have your PHP Memcache client connect to one of these members. It does not matter which member the client connects to because the Hazelcast cluster looks like one giant machine (Single System Image). Here is a PHP client code example.
 
 [source,php]
@@ -1535,24 +1554,26 @@ Assume that you have a PHP application that uses PHP Memcache client to cache th
 
 Notice that Memcache client connects to `10.20.17.1` and uses port `5701`. Here is a Java client code example with SpyMemcached client:
 
-```
+[source,java]
+----
 MemcachedClient client = new MemcachedClient(
     AddrUtil.getAddresses( "10.20.17.1:5701 10.20.17.2:5701" ) );
 client.set( "key1", 3600, "value1" );
 System.out.println( client.get( "key1" ) );
-```
+----
 
 If you want your data to be stored in different maps, for example to utilize per map configuration, you can do that with a map name prefix as in the following example code.
 
 
-```
+[source,java]
+----
 MemcachedClient client = new MemcachedClient(
     AddrUtil.getAddresses( "10.20.17.1:5701 10.20.17.2:5701" ) );
 client.set( "map1:key1", 3600, "value1" ); // store to *hz_memcache_map1
 client.set( "map2:key1", 3600, "value1" ); // store to hz_memcache_map2
 System.out.println( client.get( "key1" ) ); // get from hz_memcache_map1
 System.out.println( client.get( "key2" ) ); // get from hz_memcache_map2
-```
+----
 
 *hz\_memcache prefix\_* separates Memcache maps from Hazelcast maps. If no map name is given, it will be stored
 in a default map named *hz_memcache_default*.
@@ -1574,22 +1595,22 @@ An entry written with a Memcache client can be read by another Memcache client w
 
 Python Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol.
 
-See http://hazelcast.github.io/hazelcast-python-client[Hazelcast Python Client] for its documentation.
+See Hazelcast Python client's GitHub https://github.com/hazelcast/hazelcast-python-client[repo] for its documentation and https://github.com/hazelcast/hazelcast-python-client/tree/master/examples[code samples].
 
 === Node.js Client
 
 Node.js Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol.
 
-See https://github.com/hazelcast/hazelcast-nodejs-client[Hazelcast Node.js Client] for its documentation.
+See Hazelcast Node.js client's GitHub https://github.com/hazelcast/hazelcast-nodejs-client[repo] for its documentation and https://github.com/hazelcast/hazelcast-nodejs-client/tree/master/code_samples[code samples].
 
 === Go Client
 
 Go Client implementation for Hazelcast. It is implemented using the Hazelcast Open Binary Client Protocol.
 
-See https://github.com/hazelcast/hazelcast-go-client[Go Client] for its documentation.
+See Hazelcast Go client's GitHub https://github.com/hazelcast/hazelcast-go-client[repo] for its documentation and https://github.com/hazelcast/hazelcast-go-client/tree/master/sample[code samples].
 
 === Scala
 
 The API for Hazelcast Scala is based on Scala 2.11 and Hazelcast 3.6/3.7/3.8 releases. However, these are not hard dependencies provided that you include the relevant Hazelcast dependencies.
 
-See https://github.com/hazelcast/hazelcast-scala[Hazelcast Scala] for its documentation.
+See Hazelcast Scala's GitHub https://github.com/hazelcast/hazelcast-scala[repo] for its documentation.

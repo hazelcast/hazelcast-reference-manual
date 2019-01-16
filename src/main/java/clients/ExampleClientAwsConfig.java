@@ -3,7 +3,7 @@ import com.hazelcast.client.config.ClientAwsConfig;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
 
-public class SampleClientAwsConfig {
+public class ExampleClientAwsConfig {
 
     public static void main(String[] args) throws Exception{
 //tag::clientaws[]
