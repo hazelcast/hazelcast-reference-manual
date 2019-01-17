@@ -123,10 +123,10 @@ The following lines are simple `put` and `get` calls from the `java.util.Map` in
 
 Hazelcast JCache provides two different methods for cache configuration:
 
-* programmatically: the typical Hazelcast way, using the Config API seen above
 * declaratively: using `hazelcast.xml` or `hazelcast-client.xml`
+* programmatically: the typical Hazelcast way, using the Config API seen above
 
-===== JCache Declarative Configuration
+===== Declarative Configuration
 
 You can declare your JCache cache configuration using the `hazelcast.xml` or `hazelcast-client.xml` configuration files. Using this declarative configuration makes creating the `javax.cache.Cache` fully transparent and automatically ensures internal thread safety. You do not need a call to `javax.cache.Cache.createCache()` in this case: you can retrieve the cache using
 `javax.cache.Cache.getCache()` overloads and by passing in the name defined in the configuration for the cache.
@@ -192,7 +192,7 @@ NOTE: The JMX MBeans provided by Hazelcast JCache show statistics of the local m
 To show the cluster-wide statistics, the user should collect statistic information from all members and accumulate them to
 the overall statistics.
 
-===== JCache Programmatic Configuration
+===== Programmatic Configuration
 
 To configure the JCache programmatically:
 

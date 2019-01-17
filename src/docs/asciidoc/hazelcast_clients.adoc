@@ -445,7 +445,7 @@ include::{javasource}/clients/ExampleClientConfiguration.java[tag=scc]
 
 Address List is the initial list of cluster addresses to which the client will connect. The client uses this list to find an alive member. Although it may be enough to give only one address of a member in the cluster (since all members communicate with each other), it is recommended that you give the addresses for all the members.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -462,7 +462,7 @@ Address List is the initial list of cluster addresses to which the client will c
 </hazelcast-client>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -482,7 +482,7 @@ IMPORTANT:  If you have multiple members on a single machine and you are using <
 You may want to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast Java client to use only defined outbound ports. The following are example configurations.
 
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -497,7 +497,7 @@ You may want to restrict outbound ports to be used by Hazelcast-enabled applicat
   </network>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -523,7 +523,7 @@ Smart routing defines whether the client operation mode is smart or unisocket. S
 
 The following are example configurations.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -536,7 +536,7 @@ The following are example configurations.
 ...
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -551,7 +551,7 @@ Its default value is `true` (smart client mode).
 
 It enables/disables redo-able operations as described in <<handling-failures, Handling Retry-able Operation Failure>>. The following are the example configurations.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -563,7 +563,7 @@ It enables/disables redo-able operations as described in <<handling-failures, Ha
 </network>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -578,7 +578,7 @@ Its default value is `false` (disabled).
 
 Connection timeout is the timeout value in milliseconds for members to accept client connection requests. The following are the example configurations.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -590,7 +590,7 @@ Connection timeout is the timeout value in milliseconds for members to accept cl
 </network>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -604,7 +604,7 @@ Its default value is *5000* milliseconds.
 
 While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, that member might not be available at that moment. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `ClientNetworkConfig.connectionAttemptLimit` times. This is also the case when the previously established connection between the client and that member goes down. The following are example configurations.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -616,7 +616,7 @@ While the client is trying to connect initially to one of the members in the `Cl
 </network>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -630,7 +630,7 @@ Its default value is *2*.
 
 Connection attempt period is the duration in milliseconds between the connection attempts defined by `ClientNetworkConfig.connectionAttemptLimit`. The following are example configurations.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -642,7 +642,7 @@ Connection attempt period is the duration in milliseconds between the connection
 </network>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -734,7 +734,7 @@ As explained in the <<tlsssl , TLS/SSL section>>, Hazelcast members have keyStor
 
 The example declarative and programmatic configurations below show how to configure a Java client for connecting to a Hazelcast cluster in AWS.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -755,7 +755,7 @@ The example declarative and programmatic configurations below show how to config
 </network>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -776,7 +776,7 @@ If the client is configured in smart mode, only the operations that are not key-
 
 The following are example configurations.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -789,7 +789,7 @@ The following are example configurations.
 </hazelcast-client>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -831,7 +831,7 @@ The option `ASYNC` enables reconnection in a non-blocking manner where all the w
 The example declarative and programmatic configurations below show how to configure a Java client's starting and reconnecting modes.
 
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -842,7 +842,7 @@ The example declarative and programmatic configurations below show how to config
 </hazelcast-client>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -863,7 +863,7 @@ This configuration is used when trying to establish the initial connection and a
 
 Connection retry configuration is done using the `connection-retry` element when configuring declaratively or the object `ConnectionRetryConfig` when configuring programmatically. Below are the example configurations for each.
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -882,7 +882,7 @@ Connection retry configuration is done using the `connection-retry` element when
 </hazelcast-client>
 ----
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -1072,11 +1072,11 @@ clientIcmpPingConfig.setIntervalMilliseconds(1000)
 [...]
 ----
 
-- `enabled`: Enables the legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member. Its default value is `false`.
-- `timeout-milliseconds`: Number of milliseconds until a ping attempt is considered failed if there was no reply. Its default value is *1000* milliseconds.
-- `max-attempts`: Maximum number of ping attempts before the member gets suspected by the detector. Its default value is *3*.
-- `interval-milliseconds`: Interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed. Its default value is *1000* milliseconds.
-- `ttl`: Maximum number of hops the packets should go through. Its default value is *255*. You can set to *0* to use your system's default TTL.
+* `enabled`: Enables the legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member. Its default value is `false`.
+* `timeout-milliseconds`: Number of milliseconds until a ping attempt is considered failed if there was no reply. Its default value is *1000* milliseconds.
+* `max-attempts`: Maximum number of ping attempts before the member gets suspected by the detector. Its default value is *3*.
+* `interval-milliseconds`: Interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed. Its default value is *1000* milliseconds.
+* `ttl`: Maximum number of hops the packets should go through. Its default value is *255*. You can set to *0* to use your system's default TTL.
 
 In the above example configuration, the Ping Failure Detector will attempt 2 pings, one every second and will wait up to 1 second for each to complete. If there is no successful ping after 2 seconds, the member will get suspected.
 
@@ -1256,10 +1256,10 @@ You can use the native {cpp} client to connect to Hazelcast cluster members and 
 
 The features of {cpp} clients are listed below:
 
-- Access to distributed data structures (IMap, IQueue, MultiMap, ITopic, etc.).
-- Access to transactional distributed data structures (TransactionalMap, TransactionalQueue, etc.).
-- Ability to add cluster listeners to a cluster and entry/item listeners to distributed data structures.
-- Distributed synchronization mechanisms with ILock, ISemaphore and ICountDownLatch.
+* Access to distributed data structures (IMap, IQueue, MultiMap, ITopic, etc.).
+* Access to transactional distributed data structures (TransactionalMap, TransactionalQueue, etc.).
+* Ability to add cluster listeners to a cluster and entry/item listeners to distributed data structures.
+* Distributed synchronization mechanisms with ILock, ISemaphore and ICountDownLatch.
 
 See Hazelcast C++ client's own GitHub https://github.com/hazelcast/hazelcast-cpp-client[repo] for information on setting the client up, installing and compiling it, its serialization support and APIs such as raw pointer and query. You can also find https://github.com/hazelcast/hazelcast-cpp-client/tree/master/examples[code samples] for this client in this repo.
 

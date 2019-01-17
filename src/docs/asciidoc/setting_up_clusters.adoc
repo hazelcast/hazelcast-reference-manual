@@ -291,7 +291,7 @@ The following is the brief working mechanism of the User Code Deployment feature
 
 User Code Deployment feature is not enabled by default. You can configure this feature declaratively or programmatically. Following are example configuration snippets:
 
-**Declarative Configuration**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -304,7 +304,7 @@ User Code Deployment feature is not enabled by default. You can configure this f
 </user-code-deployment>
 ----
 
-**Programmatic Configuration**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -375,7 +375,7 @@ You can also use the client permission policy to specify which clients are permi
 
 Client User Code Deployment feature is not enabled by default. You can configure this feature declaratively or programmatically. Following are example configuration snippets:
 
-**Declarative Configuration**
+**Declarative Configuration:**
 
 In your `hazelcast-client.xml`:
 
@@ -396,7 +396,7 @@ In your `hazelcast-client.xml`:
 </user-code-deployment>
 ----
 
-**Programmatic Configuration**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -626,7 +626,7 @@ You can set `hazelcast.logging.type` through declarative configuration, programm
 
 NOTE: If you choose to use `log4j`, `log4j2`, or `slf4j`, you should include the proper dependencies in the classpath.
 
-**Declarative Configuration**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -795,7 +795,7 @@ All network related configurations are performed via the `network` element in th
 
 `public-address` overrides the public address of a member. By default, a member selects its socket address as its public address. But behind a network address translation (NAT), two endpoints (members) may not be able to see/access each other. If both members set their public addresses to their defined addresses on NAT, then that way they can communicate with each other. In this case, their public addresses are not an address of a local network interface but a virtual address defined by NAT. It is optional to set and useful when you have a private cloud. Note that, the value for this element should be given in the format *`host IP address:port number`*. See the following examples.
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -804,7 +804,7 @@ All network related configurations are performed via the `network` element in th
 </network>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -818,7 +818,7 @@ config.getNetworkConfig()
 
 You can specify the ports that Hazelcast will use to communicate between cluster members. Its default value is `5701`. The following are example configurations.
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -827,7 +827,7 @@ You can specify the ports that Hazelcast will use to communicate between cluster
 </network>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -849,7 +849,7 @@ According to the above example, Hazelcast will try to find free ports between 57
 By default, Hazelcast lets the system pick up an ephemeral port during socket bind operation. But security policies/firewalls may require you to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast to use only defined outbound ports. The following are example configurations.
 
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -864,7 +864,7 @@ By default, Hazelcast lets the system pick up an ephemeral port during socket bi
   </network>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -892,7 +892,7 @@ When you shutdown a cluster member, the server socket port will be in the `TIME_
 
 The following are example configurations.
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -901,7 +901,7 @@ The following are example configurations.
   </network>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -918,7 +918,7 @@ networkConfig.setReuseAddress( true );
 
 The `join` configuration element is used to discover Hazelcast members and enable them to form a cluster. Hazelcast provides multicast, TCP/IP, EC2 and jclouds® discovery mechanisms. These mechanisms are explained the <<discovery-mechanisms, Discovery Mechanisms section>>. This section describes all the sub-elements and attributes of `join` element. The following are example configurations.
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -958,7 +958,7 @@ The `join` configuration element is used to discover Hazelcast members and enabl
 </hazelcast>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -1051,7 +1051,7 @@ You can specify which network interfaces that Hazelcast should use. Servers most
 
 The following are example configurations.
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -1069,7 +1069,7 @@ The following are example configurations.
 </hazelcast>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -1156,7 +1156,7 @@ Note that if the bind address port is `0` then it will use a port as configured 
 The following configuration examples contain properties that will be provided to the constructor of the provided class. If you do not provide any properties, the class may have either a no-arg constructor or a constructor accepting a single `java.util.Properties` instance. On the other hand, if you do provide properties in the configuration, the class must have a constructor accepting a single `java.util.Properties` instance.
 
 
-**Declarative:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -1176,7 +1176,7 @@ The following configuration examples contain properties that will be provided to
 </hazelcast>
 ----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----

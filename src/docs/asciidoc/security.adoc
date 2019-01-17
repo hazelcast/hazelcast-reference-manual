@@ -436,7 +436,7 @@ https://netty.io/wiki/forked-tomcat-native.html[netty-tcnative] libraries:
 
 * OpenSSL
 ** dynamically linked;
-** prerequisities: `libapr`, `openssl` packages installed on your system;
+** prerequisites: `libapr`, `openssl` packages installed on your system;
 * BoringSSL - Google managed fork of the OpenSSL
 ** statically linked;
 ** easier to get started with;
@@ -704,11 +704,11 @@ Requirements (rules) for the secrets are as follows:
 
 * Minimum length of eight characters; and
 * Large keyspace use, ensuring the use of at least three of the following:
-** mixed case;
-** alpha;
-** numerals;
-** special characters; and
-** no dictionary words.
+** mixed case
+** alpha
+** numerals
+** special characters
+** no dictionary words
 
 The rules “Minimum length of eight characters” and “no dictionary words” can be configured using the following system properties:
 
@@ -793,7 +793,7 @@ at com.hazelcast.core.Hazelcast.newHazelcastInstance(Hazelcast.java:58)
 
 [blue]*Hazelcast IMDG Enterprise Feature*
 
-All security attributes are carried in the `Credentials` object. `Credentials` is used by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule] s during the authentication process. User supplied attributes from `LoginModule`s are accessed by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html[CallbackHandler] s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.
+All security attributes are carried in the `Credentials` object. `Credentials` is used by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule]s during the authentication process. User supplied attributes from ``LoginModule``s are accessed by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html[CallbackHandler]s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.
 
 Your implementation of `LoginModule` should create an instance of `com.hazelcast.security.CredentialsCallback` and call the `handle(Callback[] callbacks)` method of `CallbackHandler` during the login process.
 

@@ -44,7 +44,7 @@ include::{javasource}/performance/OrderKey.java[tag=orderkey]
 ----
 
 
-Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`. This will make sure that the `Customer` entry and its `Order`s will be stored on the same member.
+Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`. This will make sure that the `Customer` entry and its ``Order``s will be stored on the same member.
 
 [source,java]
 ----
@@ -179,7 +179,7 @@ Hazelcast offers the following out-of-the-box partitioning strategies:
 Following are the example configuration snippets. Note that these strategy configurations are **per map**.
 
 
-**Declarative Configuration**
+**Declarative Configuration:**
 
 
 [source,xml]
@@ -197,7 +197,7 @@ Following are the example configuration snippets. Note that these strategy confi
 </hazelcast>
 ----
 
-**Programmatic Configuration**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -275,7 +275,7 @@ Back pressure is only applied to normal operations. System operations like heart
 are not influenced by back pressure. 27200 invocations might seem like a lot, but keep in mind that executing a task on `IExecutor`
 or acquiring a lock also requires an operation.
 
-If the maximum number of invocations has been reached, Hazelcast will automatically apply an exponential back off policy. This
+If the maximum number of invocations has been reached, Hazelcast will automatically apply an exponential backoff policy. This
 gives the system some time to deal with the load. Using the following system property, you can configure the maximum time to wait before a `HazelcastOverloadException` is thrown:
 
 `hazelcast.backpressure.backoff.timeout.millis`
@@ -606,7 +606,7 @@ The following shows the configuration for the Hazelcast Near Cache.
 NOTE: Please keep in mind that, if you want to use near cache on a Hazelcast member, configure it on the member; if you want to use it on a Hazelcast client, configure it on the client.
 
 
-**Declarative**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -632,7 +632,7 @@ NOTE: Please keep in mind that, if you want to use near cache on a Hazelcast mem
 
 The element `<near-cache>` has an optional attribute `name` whose default value is `default`.
 
-**Programmatic**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
