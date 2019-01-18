@@ -165,7 +165,7 @@ The MBean `HazelcastInstance.LicenseInfo` holds all the relative license details
 - `expiryDate`: Expiration date of the current license.
 - `typeCode`: Type code of the current license.
 - `type`: Type of the current license.
-- `ownerEmail`: Email of the current licence's owner.
+- `ownerEmail`: Email of the current license's owner.
 - `companyName`: Company name on the current license.
 
 Following is the list of license `type`s and `typeCode`s:
@@ -185,7 +185,7 @@ You can access the license details by issuing a `GET` request through the REST A
 
 
 ```
-curl -v -X GET -H "Content-Type: text/plain" http://localhost:5701/hazelcast/licence
+curl -v http://localhost:5701/hazelcast/rest/license
 ```
 
 Its output is similar to the following:
@@ -195,7 +195,7 @@ Note: Unnecessary use of -X or --request, GET is already inferred.
 *   Trying 127.0.0.1...
 * TCP_NODELAY set
 * Connected to localhost (127.0.0.1) port 5701 (#0)
-> GET /hazelcast/licence HTTP/1.1
+> GET /hazelcast/rest/license HTTP/1.1
 > Host: localhost:5701
 > User-Agent: curl/7.58.0
 > Accept: */*
@@ -203,11 +203,10 @@ Note: Unnecessary use of -X or --request, GET is already inferred.
 >
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
-< Content-Length: 105
+< Content-Length: 187
 <
 
-licenseInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,"companyName":"ExampleCompany","ownerEmail":"ExampleOwner"}
-
+licenseInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,"companyName":"ExampleCompany","ownerEmail":"info@example.com","keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="}
 ```
 
 ===== Logs
