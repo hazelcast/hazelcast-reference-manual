@@ -5,18 +5,17 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 import com.hazelcast.core.ISemaphore;
 
-
 public class SemaphoreMember {
     public static void main( String[] args ) throws Exception{
-//tag::sc[]
+        //tag::sc[]
         Config config = new Config();
         SemaphoreConfig semaphoreConfig = config.getSemaphoreConfig("MySemaphore");
         semaphoreConfig.setName( "semaphore" ).setBackupCount( 1 )
                 .setInitialPermits( 3 )
                 .setQuorumName( "quorumname" );
-//end::sc[]
+        //end::sc[]
 
-//tag::sm[]
+        //tag::sm[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         ISemaphore semaphore = hazelcastInstance.getSemaphore( "semaphore" );
         IAtomicLong resource = hazelcastInstance.getAtomicLong( "resource" );
@@ -32,6 +31,6 @@ public class SemaphoreMember {
             }
         }
         System.out.println("Finished");
-//end::sm[]
+        //end::sm[]
     }
 }

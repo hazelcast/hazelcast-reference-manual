@@ -5,7 +5,7 @@ import com.hazelcast.core.IList;
 public class ExampleList {
 
     public static void main(String[] args) {
-//tag::list[]
+        //tag::list[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
         IList<String> list = hz.getList("list");
         list.add("Tokyo");
@@ -13,6 +13,6 @@ public class ExampleList {
         list.add("London");
         list.add("New York");
         System.out.println("Putting finished!");
-//end::list[]
+        //end::list[]
     }
 }

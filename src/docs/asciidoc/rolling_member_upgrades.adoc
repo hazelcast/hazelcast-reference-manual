@@ -50,13 +50,9 @@ one at version `3.9.0`, includes the following steps which should be repeated fo
  INFO: [192.168.2.2]:5701 [cluster] [3.9] Cluster version set to 3.8
 ```
 
-The version in brackets `[3.9]` still denotes the member's codebase version (running on the hypothetical `hazelcast-3.9.jar` binary). Once the member
- locates existing cluster members, it sends its join request to the master. The master validates that the new member is allowed to join the cluster and
- lets the new member know that the cluster is currently operating at `3.8` cluster version. The new member sets `3.8` as its cluster version and starts operating
- normally.
+The version in brackets (`[3.9]`) still denotes the member's codebase version (running on the hypothetical `hazelcast-3.9.jar` binary). Once the member locates the existing cluster members, it sends its join request to the master. The master validates that the new member is allowed to join the cluster and lets the new member know that the cluster is currently operating at `3.8` cluster version. The new member sets `3.8` as its cluster version and starts operating normally.
 
- At this point all members of the cluster have been upgraded to codebase version `3.9.0` but the cluster still operates at cluster version `3.8`. In order to use `3.9` features
- the cluster version must be changed to `3.9`. There are two ways to accomplish this:
+At this point all members of the cluster have been upgraded to codebase version `3.9.0` but the cluster still operates at cluster version `3.8`. In order to use `3.9` features the cluster version must be changed to `3.9`. There are two ways to accomplish this:
 
 * Use https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Management Center].
 * Use the command line <<using-the-script-cluster-sh, cluster.sh script>>.

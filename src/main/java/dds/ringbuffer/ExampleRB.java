@@ -5,7 +5,7 @@ import com.hazelcast.ringbuffer.Ringbuffer;
 
 public class ExampleRB {
     public static void main(String[] args) throws Exception {
-//tag::rb[]
+        //tag::rb[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
         Ringbuffer<String> ringbuffer = hz.getRingbuffer("rb");
         long sequence = ringbuffer.headSequence();
@@ -14,6 +14,6 @@ public class ExampleRB {
             sequence++;
             // process item
         }
-//end::rb[]
+        //end::rb[]
     }
 }

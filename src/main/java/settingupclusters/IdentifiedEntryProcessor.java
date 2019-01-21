@@ -7,27 +7,27 @@ import java.util.Map;
 
 //tag::iep[]
 public class IdentifiedEntryProcessor extends AbstractEntryProcessor<String, String> implements IdentifiedDataSerializable {
-     static final int CLASS_ID = 1;
-     private String value;
-     public IdentifiedEntryProcessor() {
+    static final int CLASS_ID = 1;
+    private String value;
+    public IdentifiedEntryProcessor() {
     }
-     @Override
+    @Override
     public int getFactoryId() {
         return IdentifiedFactory.FACTORY_ID;
     }
-     @Override
+    @Override
     public int getId() {
         return CLASS_ID;
     }
-     @Override
+    @Override
     public void writeData(ObjectDataOutput out) throws IOException {
         out.writeUTF(value);
     }
-     @Override
+    @Override
     public void readData(ObjectDataInput in) throws IOException {
         value = in.readUTF();
     }
-     @Override
+    @Override
     public Object process(Map.Entry<String, String> entry) {
         entry.setValue(value);
         return value;

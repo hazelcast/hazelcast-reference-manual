@@ -10,7 +10,7 @@ import static com.hazelcast.nio.IOUtil.closeResource;
 
 public class ExampleCardinalityEstimator {
     public static void main(String[] args) throws Exception {
-//tag::ces[]
+        //tag::ces[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
         CardinalityEstimator visitorsEstimator = hz.getCardinalityEstimator("visitors");
 

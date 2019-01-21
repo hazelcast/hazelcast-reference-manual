@@ -11,7 +11,7 @@ import static java.lang.Math.min;
 public class Writer {
 
     public static void main(String[] args) throws Exception {
-//tag::writer[]
+        //tag::writer[]
         Random random = new Random();
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
         Ringbuffer<Long> rb = hz.getRingbuffer("rb");
@@ -34,6 +34,6 @@ public class Writer {
             System.out.println("Written: " + i);
             i++;
         }
-//end::writer[]
+        //end::writer[]
     }
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentMap;
 public class LoadAll {
 
     public static void main(String[] args) {
-//tag::loadall[]
+        //tag::loadall[]
         final int numberOfEntriesToAdd = 1000;
         final String mapName = LoadAll.class.getCanonicalName();
         final Config config = createNewConfig(mapName);
@@ -32,7 +32,7 @@ public class LoadAll {
 
         map.loadAll(true);
         System.out.printf("# After loadAll map size\t: %d\n", map.size());
-//end::loadall[]
+        //end::loadall[]
     }
 
     private static void populateMap(IMap<Integer, Integer> map, int itemCount) {

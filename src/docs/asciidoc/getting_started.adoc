@@ -19,10 +19,10 @@ classpath (Maven does that for you). Just add the following lines to your `pom.x
 [source,xml]
 ----
 <dependencies>
-   <dependency>
-      <groupId>com.hazelcast</groupId>
-      <artifactId>hazelcast</artifactId>
-      <version>Hazelcast IMDG Version To Be Installed</version>
+    <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast</artifactId>
+        <version>Hazelcast IMDG Version To Be Installed</version>
     </dependency>
 </dependencies>
 ----
@@ -41,12 +41,12 @@ There are two Maven repositories defined for Hazelcast IMDG Enterprise:
 [source,xml]
 ----
 <repository>
-   <id>Hazelcast Private Snapshot Repository</id>
-   <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
+    <id>Hazelcast Private Snapshot Repository</id>
+    <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
 </repository>
 <repository>
-   <id>Hazelcast Private Release Repository</id>
-   <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
+    <id>Hazelcast Private Release Repository</id>
+    <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
 </repository>
 ----
 
@@ -55,14 +55,14 @@ Hazelcast IMDG Enterprise customers may also define dependencies. See the follow
 [source,xml]
 ----
 <dependency>
-   <groupId>com.hazelcast</groupId>
-   <artifactId>hazelcast-enterprise</artifactId>
-   <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise</artifactId>
+    <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
 <dependency>
-   <groupId>com.hazelcast</groupId>
-   <artifactId>hazelcast-enterprise-all</artifactId>
-   <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise-all</artifactId>
+    <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
 </dependency>
 ----
 
@@ -94,9 +94,9 @@ Add the below line to any place you like in the file `hazelcast.xml`. This XML f
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <license-key>Your Enterprise License Key</license-key>
-  ...
+    ...
+    <license-key>Your Enterprise License Key</license-key>
+    ...
 </hazelcast>
 ----
 
@@ -110,7 +110,6 @@ Config config = new Config();
 config.setLicenseKey( "Your Enterprise License Key" );
 ----
 
-
 **Spring XML Configuration:**
 
 If you are using Spring with Hazelcast, then you can set the license key using the Spring XML schema, as shown below.
@@ -118,13 +117,11 @@ If you are using Spring with Hazelcast, then you can set the license key using t
 [source,xml]
 ----
 <hz:config>
-  ...
-  <hz:license-key>Your Enterprise License Key</hz:license-key>
-  ...
+    ...
+    <hz:license-key>Your Enterprise License Key</hz:license-key>
+    ...
 </hz:config>
 ----
-
-
 
 **JVM System Property:**
 
@@ -422,7 +419,6 @@ and prints the size of the `customers` map.
 [source,java]
 ----
 public class GettingStartedClient {
-
     public static void main( String[] args ) {
         ClientConfig clientConfig = new ClientConfig();
         HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );

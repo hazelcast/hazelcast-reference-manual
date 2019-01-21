@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public class ExampleQueue {
 
     public static void main(String[] args) throws Exception {
-//tag::samplequeue[]
+        //tag::samplequeue[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         BlockingQueue<MyTask> queue = hazelcastInstance.getQueue( "tasks" );
         queue.put( new MyTask() );

@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Lock;
 
 public class ExampleLock {
     public static void main(String[] args) throws Exception{
-//tag::lock[]
+        //tag::lock[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         Lock lock = hazelcastInstance.getLock( "myLock" );
         lock.lock();
@@ -14,6 +14,6 @@ public class ExampleLock {
         } finally {
             lock.unlock();
         }
-//end::lock[]
+        //end::lock[]
     }
 }

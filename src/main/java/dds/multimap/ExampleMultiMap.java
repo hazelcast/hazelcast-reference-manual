@@ -4,7 +4,7 @@ import com.hazelcast.core.MultiMap;
 
 public class ExampleMultiMap {
     public static void main( String[] args ) throws Exception {
-//tag::mm[]
+        //tag::mm[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         MultiMap<String , String > map = hazelcastInstance.getMultiMap( "map" );
 
@@ -12,6 +12,6 @@ public class ExampleMultiMap {
         map.put( "a", "2" );
         map.put( "b", "3" );
         System.out.println( "PutMember:Done" );
-//end::mm[]
+        //end::mm[]
     }
 }

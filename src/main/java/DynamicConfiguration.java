@@ -5,13 +5,13 @@ import com.hazelcast.core.HazelcastInstance;
 
 public class DynamicConfiguration {
     public static void main(String[] args) {
-//tag::dynconf[]
+        //tag::dynconf[]
         Config config = new Config();
         MapConfig mapConfig = new MapConfig("sessions");
         config.addMapConfig(mapConfig);
         HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
         MapConfig noBackupsMap = new MapConfig("dont-backup").setBackupCount(0);
         instance.getConfig().addMapConfig(noBackupsMap);
-//end::dynconf[]
+        //end::dynconf[]
     }
 }

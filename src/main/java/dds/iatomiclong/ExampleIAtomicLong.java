@@ -2,11 +2,10 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 
-
 public class ExampleIAtomicLong {
 
     public static void main( String[] args ) {
-//tag::ial[]
+        //tag::ial[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         IAtomicLong counter = hazelcastInstance.getAtomicLong( "counter" );
         for ( int k = 0; k < 1000 * 1000; k++ ) {
@@ -16,6 +15,6 @@ public class ExampleIAtomicLong {
             counter.incrementAndGet();
         }
         System.out.printf( "Count is %s\n", counter.get() );
-//end::ial[]
+        //end::ial[]
     }
 }

@@ -5,7 +5,7 @@ import com.hazelcast.core.IdGenerator;
 public class ExampleIdGenerator {
 
     public static void main( String[] args ) throws Exception {
-//tag::idg[]
+        //tag::idg[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         IdGenerator idGen = hazelcastInstance.getIdGenerator( "newId" );
         while (true) {
@@ -13,6 +13,6 @@ public class ExampleIdGenerator {
             System.err.println( "Id: " + id );
             Thread.sleep( 1000 );
         }
-//end::idg[]
+        //end::idg[]
     }
 }

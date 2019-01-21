@@ -6,7 +6,7 @@ import java.util.Map;
 public class FillMapMember {
 
     public static void main(String[] args) {
-//tag::fmm[]
+        //tag::fmm[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
         Map<String, String> map = hz.getReplicatedMap("map");
 
@@ -16,6 +16,6 @@ public class FillMapMember {
 
         System.out.println("Finished loading map");
         hz.shutdown();
-//end::fmm[]
+        //end::fmm[]
     }
 }

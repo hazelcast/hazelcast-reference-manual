@@ -3,10 +3,9 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 import com.hazelcast.core.IFunction;
 
-
 public class IAtomicLongExecuteFuncs {
     public static void main( String[] args ) {
-//tag::ialef[]
+        //tag::ialef[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         IAtomicLong atomicLong = hazelcastInstance.getAtomicLong( "counter" );
 
@@ -28,14 +27,14 @@ public class IAtomicLongExecuteFuncs {
         result = atomicLong.getAndAlter( new Add2Function() );
         System.out.println( "getAndAlter.result: " + result );
         System.out.println( "getAndAlter.value: " + atomicLong.get() );
-//end::ialef[]
+        //end::ialef[]
     }
-//tag::add2func[]
+    //tag::add2func[]
     private static class Add2Function implements IFunction<Long, Long> {
         @Override
         public Long apply( Long input ) {
             return input + 2;
         }
     }
-//end::add2func[]
+    //end::add2func[]
 }

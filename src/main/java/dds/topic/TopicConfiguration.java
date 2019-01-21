@@ -7,7 +7,7 @@ import com.hazelcast.core.MessageListener;
 
 public class TopicConfiguration {
     public static void main(String[] args) throws Exception{
- //tag::tc[]
+        //tag::tc[]
         TopicConfig topicConfig = new TopicConfig();
         topicConfig.setGlobalOrderingEnabled( true );
         topicConfig.setStatisticsEnabled( true );
@@ -20,6 +20,6 @@ public class TopicConfiguration {
         };
         topicConfig.addMessageListenerConfig( new ListenerConfig( implementation ) );
         HazelcastInstance instance = Hazelcast.newHazelcastInstance();
-//end::tc[]
+        //end::tc[]
     }
 }
