@@ -11,7 +11,7 @@ import java.util.Map;
 public class CQC {
 
     public static void main(String[] args) throws Exception{
-//tag::cqc[]
+        //tag::cqc[]
         QueryCacheConfig queryCacheConfig = new QueryCacheConfig("cache-name");
         queryCacheConfig.getPredicateConfig().setImplementation(new OddKeysPredicate());
 
@@ -23,7 +23,7 @@ public class CQC {
 
         HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
         IMap<Integer, String> map = (IMap) node.getMap("map-name");
-//end::cqc[]
+        //end::cqc[]
     }
 
     private static class OddKeysPredicate implements Predicate<Integer, Integer> {

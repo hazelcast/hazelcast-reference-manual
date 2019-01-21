@@ -57,16 +57,19 @@ The following is the declarative configuration example.
 
 [source,xml]
 ----
-<native-memory allocator-type="POOLED" enabled="true">
-     <size unit="MEGABYTES" value="512"/>
-     <min-block-size>16</min-block-size>
-     <page-size>4194304</page-size>
-     <metadata-space-percentage>12.5</metadata-space-percentage>
-</native-memory>
+<hazelcast>
+    ...
+    <native-memory allocator-type="POOLED" enabled="true">
+        <size unit="MEGABYTES" value="512"/>
+        <min-block-size>16</min-block-size>
+        <page-size>4194304</page-size>
+        <metadata-space-percentage>12.5</metadata-space-percentage>
+    </native-memory>
+    ...
+</hazelcast>
 ----
 
 NOTE: You can check whether there is enough free physical memory for the requested number of bytes using the system property `hazelcast.hidensity.check.freememory`. Please see the <<system-properties, System Properties appendix>> on how to use Hazelcast system properties.
-
 
 === Sizing Practices
 
@@ -112,9 +115,9 @@ In the case of a restart after a cluster crash, the Hot Restart feature realizes
 
 Assume the following:
 
-- You have a cluster consisting of members A, B and C with Hot Restart enabled, which is initially stable.
-- Member B is killed.
-- Member B restarts.
+* You have a cluster consisting of members A, B and C with Hot Restart enabled, which is initially stable.
+* Member B is killed.
+* Member B restarts.
 
 Since only a single member has failed, the cluster performed the standard High Availability routine by recovering member B's data from backups and redistributing the data among the remaining members (the members A and B in this case). Member B's persisted Hot Restart data is completely irrelevant.
 
@@ -129,15 +132,15 @@ A member can crash permanently and then be unable to recover from the failure. I
 
 Assume the following which is a valid scenario to use force start:
 
-- You have a cluster consisting of members A and B which is initially stable.
-- Cluster transitions into `FROZEN` or `PASSIVE` state.
-- Cluster gracefully shuts down.
-- Member A restarts, but member B does not.
-- Member A uses its Hot Restart data to initiate the Hot Restart procedure.
-- Since it knows the cluster originally contained member B as well, it waits for it to join.
-- This never happens.
-- Now you have the choice to Force Start the cluster without member B.
-- Cluster discards all Hot Restart data and starts empty.
+* You have a cluster consisting of members A and B which is initially stable.
+* Cluster transitions into `FROZEN` or `PASSIVE` state.
+* Cluster gracefully shuts down.
+* Member A restarts, but member B does not.
+* Member A uses its Hot Restart data to initiate the Hot Restart procedure.
+* Since it knows the cluster originally contained member B as well, it waits for it to join.
+* This never happens.
+* Now you have the choice to Force Start the cluster without member B.
+* Cluster discards all Hot Restart data and starts empty.
 
 You can trigger the force start process using the Management Center, REST API and cluster management scripts.
 
@@ -203,31 +206,30 @@ An example configuration is shown below.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <hot-restart-persistence enabled="true">
-	   <base-dir>/mnt/hot-restart</base-dir>
-	   <parallelism>1</parallelism>
-	   <validation-timeout-seconds>120</validation-timeout-seconds>
-	   <data-load-timeout-seconds>900</data-load-timeout-seconds>
-	   <cluster-data-recovery-policy>FULL_RECOVERY_ONLY</cluster-data-recovery-policy>
-      <auto-remove-stale-data>true</auto-remove-stale-data>
-   </hot-restart-persistence>
-   ...
-   <map name="test-map">
-	   <hot-restart enabled="true">
-		   <fsync>false</fsync>
-	   </hot-restart>
-   </map>
-   ...
-   <cache name="test-cache">
-	   <hot-restart enabled="true">
-		   <fsync>false</fsync>
-	   </hot-restart>
-   </cache>
-   ...
+    ...
+    <hot-restart-persistence enabled="true">
+        <base-dir>/mnt/hot-restart</base-dir>
+        <parallelism>1</parallelism>
+        <validation-timeout-seconds>120</validation-timeout-seconds>
+        <data-load-timeout-seconds>900</data-load-timeout-seconds>
+        <cluster-data-recovery-policy>FULL_RECOVERY_ONLY</cluster-data-recovery-policy>
+        <auto-remove-stale-data>true</auto-remove-stale-data>
+    </hot-restart-persistence>
+    ...
+    <map name="test-map">
+        <hot-restart enabled="true">
+            <fsync>false</fsync>
+        </hot-restart>
+    </map>
+    ...
+    <cache name="test-cache">
+        <hot-restart enabled="true">
+            <fsync>false</fsync>
+        </hot-restart>
+    </cache>
+    ...
 </hazelcast>
 ----
-
 
 **Programmatic Configuration**:
 
@@ -238,15 +240,14 @@ The programmatic equivalent of the above declarative configuration is shown belo
 include::{javasource}/storage/SampleHotRestartConfiguration.java[tag=hrconf]
 ----
 
-
 ==== Moving/Copying Hot Restart Data
 
 After Hazelcast member owning the Hot Restart data is shutdown, Hot Restart `base-dir` can be copied/moved to a different server (which may have different IP address and/or different number of CPU cores) and Hazelcast member can be restarted using the existing Hot Restart data on that new server. Having a new IP address does not affect Hot Restart, since it does not rely on the IP address of the server but instead uses `Member` UUID as a unique identifier.
 
 This flexibility provides;
-- ability to replace one or more faulty servers with new ones easily without touching remaining cluster
-- ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
-- ability to copy production data to test environment, so that a more functional test cluster can bet setup
+* ability to replace one or more faulty servers with new ones easily without touching remaining cluster
+* ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
+* ability to copy production data to test environment, so that a more functional test cluster can bet setup
 
 Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores, e.g., `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see <<system-properties, System Properties appendix>>.
 
@@ -254,11 +255,11 @@ Unfortunately having different number of CPU cores is not that straightforward. 
 
 Hazelcast's Hot Restart Persistence uses the log-structured storage approach. The following is a top-level design description:
 
-- The only kind of update operation on persistent data is _appending_.
-- What is appended are facts about events that happened to the data model represented by the store; either a new value was assigned to a key or a key was removed.
-- Each record associated with a key makes stale the previous record that was associated with that key.
-- Stale records contribute to the amount of _garbage_ present in the persistent storage.
-- Measures are taken to remove garbage from the storage.
+* The only kind of update operation on persistent data is _appending_.
+* What is appended are facts about events that happened to the data model represented by the store; either a new value was assigned to a key or a key was removed.
+* Each record associated with a key makes stale the previous record that was associated with that key.
+* Stale records contribute to the amount of _garbage_ present in the persistent storage.
+* Measures are taken to remove garbage from the storage.
 
 This kind of design focuses almost all of the system's complexity into the garbage collection (GC) process, stripping down the client's operation to the bare necessity of guaranteeing persistent behavior: a simple file append operation. Consequently, the latency of operations is close to the theoretical minimum in almost all cases. Complications arise only during prolonged periods of maximum load; this is where the details of the GC process begin to matter.
 
@@ -306,8 +307,8 @@ In this section you can find performance test summaries which are results of ben
 
 The member has the following:
 
-- An IMap data structure with High-Density Memory Store.
-- Its data size is changed for each test, started from 10 GB to 500 GB (each map entry has a value of 1 KB).
+* An IMap data structure with High-Density Memory Store.
+* Its data size is changed for each test, started from 10 GB to 500 GB (each map entry has a value of 1 KB).
 
 The tests investigate the write and read performance of Hot Restart Persistence and are performed on HP ProLiant servers with RHEL 7 operating system using Hazelcast Simulator.
 
@@ -325,24 +326,23 @@ The below table shows the test results.
 
 image::HotRestartPerf.png[Hot Restart Perf]
 
-
 ===== Performance on AWS R3
 
 The member has the following:
 
-- An IMap data structure with High-Density Memory Store.
-- IMap has 40 million distinct keys, each map entry is 1 KB.
-- High-Density Memory Store is 59 GiB whose 19% is metadata.
-- Hot Restart is configured with `fsync` turned off.
-- Data size reloaded on restart is 38 GB.
+* An IMap data structure with High-Density Memory Store.
+* IMap has 40 million distinct keys, each map entry is 1 KB.
+* High-Density Memory Store is 59 GiB whose 19% is metadata.
+* Hot Restart is configured with `fsync` turned off.
+* Data size reloaded on restart is 38 GB.
 
 The tests investigate the write and read performance of Hot Restart Persistence and are performed on R3.2xlarge and R3.4xlarge EC2 instances using Hazelcast Simulator.
 
 The following are the AWS storage types used for the test:
 
-- Elastic Block Storage (EBS) General Purpose SSD (GP2).
-- Elastic Block Storage with Provisioned IOPS (IO1). Provisioned 10,000 IOPS on a 340 GiB volume, enabled EBS-optimized on instance.
-- SSD-backed instance store.
+* Elastic Block Storage (EBS) General Purpose SSD (GP2).
+* Elastic Block Storage with Provisioned IOPS (IO1). Provisioned 10,000 IOPS on a 340 GiB volume, enabled EBS-optimized on instance.
+* SSD-backed instance store.
 
 The below table shows the test results.
 
@@ -358,7 +358,7 @@ Simple file copying of a currently running cluster does not suffice and can prod
 
 To create snapshots you must first configure the Hot Restart backup directory. You can configure the directory programmatically or declaratively using the following configuration element:
 
-- `backup-dir`: This element is included in the `hot-restart-persistence` and denotes the destination under which backups will be stored. If this element is not defined, hot backup will be disabled. If a directory is defined which does not exist, it will be created on the first backup. To avoid clashing data on multiple backups, each backup has a unique sequence ID which determines the name of the directory which will contain all Hot Restart data. This unique directory is created as a subdirectory of the configured `backup-dir`.
+* `backup-dir`: This element is included in the `hot-restart-persistence` and denotes the destination under which backups will be stored. If this element is not defined, hot backup will be disabled. If a directory is defined which does not exist, it will be created on the first backup. To avoid clashing data on multiple backups, each backup has a unique sequence ID which determines the name of the directory which will contain all Hot Restart data. This unique directory is created as a subdirectory of the configured `backup-dir`.
 
 The following are examples configurations for Hot backup.
 
@@ -369,16 +369,14 @@ An example configuration is shown below.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <hot-restart-persistence enabled="true">
-	   ...
-	   <backup-dir>/mnt/hot-backup</backup-dir>
-	   ...
-   </hot-restart-persistence>
-   ...
+    ...
+    <hot-restart-persistence enabled="true">
+        <backup-dir>/mnt/hot-backup</backup-dir>
+	...
+    </hot-restart-persistence>
+    ...
 </hazelcast>
 ----
-
 
 **Programmatic Configuration**:
 
@@ -428,13 +426,12 @@ Let's say you have configured your hot backup directory as follows:
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <hot-restart-persistence enabled="true">
-	   ...
-	   <backup-dir>/mnt/hot-backup</backup-dir>
-	   ...
-   </hot-restart-persistence>
-   ...
+    ...
+    <hot-restart-persistence enabled="true">
+        <backup-dir>/mnt/hot-backup</backup-dir>
+        ...
+    </hot-restart-persistence>
+    ...
 </hazelcast>
 ----
 
@@ -443,24 +440,20 @@ And let's say you have a subdirectory named `backup-2018Oct24` under the backup 
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <hot-restart-persistence enabled="true">
-	   ...
-	   <base-dir>backup-2018Oct24</base-dir>
-	   <parallelism>1</parallelism>
-	   ...
-	   ...
-   </hot-restart-persistence>
-   ...
-   <map name="test-map">
-	   <hot-restart enabled="true">
-		   <fsync>false</fsync>
-	   </hot-restart>
-   </map>
-   ...
+    ...
+    <hot-restart-persistence enabled="true">
+        <base-dir>backup-2018Oct24</base-dir>
+        <parallelism>1</parallelism>
+    </hot-restart-persistence>
+    ...
+    <map name="test-map">
+        <hot-restart enabled="true">
+            <fsync>false</fsync>
+        </hot-restart>
+    </map>
+    ...
 </hazelcast>
 ----
-
 
 ===== Achieving High Consistency of Backup Data
 
@@ -493,10 +486,9 @@ BackupTaskStatus status = service.getBackupTaskStatus();
 
 The returned object contains local member backup status:
 
-- the backup state (NOT_STARTED, IN_PROGRESS, FAILURE, SUCCESS)
-- the completed count
-- the total count
-
+* the backup state (NOT_STARTED, IN_PROGRESS, FAILURE, SUCCESS)
+* the completed count
+* the total count
 
 The completed and total count can provide you a way to track the percentage of the copied data. Currently the count defines the number of copied and total local member Hot Restart Stores (defined by `HotRestartPersistenceConfig.setParallelism()`) but this can change at a later point to provide greater resolution.
 

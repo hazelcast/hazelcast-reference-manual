@@ -8,7 +8,7 @@ import javax.cache.spi.CachingProvider;
 public class ExampleJCacheApplication {
 
     public static void main(String[] args){
-//tag::jcacheapp[]
+        //tag::jcacheapp[]
         // Retrieve the CachingProvider which is automatically backed by
         // the chosen Hazelcast member or client provider.
         CachingProvider cachingProvider = Caching.getCachingProvider();
@@ -35,6 +35,6 @@ public class ExampleJCacheApplication {
 
         // Print the value 'Hello World'.
         System.out.println( value );
-//end::jcacheapp[]
+        //end::jcacheapp[]
     }
 }

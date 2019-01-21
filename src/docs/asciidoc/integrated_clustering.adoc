@@ -4,14 +4,11 @@
 
 In this chapter, we mention how Hazelcast is integrated with Hibernate 2nd level cache and Spring and how it helps with your Filter, Tomcat and Jetty based web session replications.
 
-
-
 === Integration with Hibernate Second Level Cache
 
 Hazelcast provides its own distributed second level cache for your Hibernate entities, collections and queries. This feature is offered as a Hazelcast plugin. See <<hazelcast-hibernate-2lc, Hazelcast Hibernate 2LC>> for details.
 
 === Web Session Replications
-
 
 Hazelcast can cluster your web sessions using Servlet Filter, Tomcat and Jetty based solutions.
 
@@ -20,7 +17,6 @@ Follow the below links for more information on them:
 * <<filter-based-web-session-replication, Filter Based Web Session Replication>>
 * <<tomcat-based-web-session-replication, Tomcat Based Web Session Replication>>
 * <<jetty-based-web-session-replication, Jetty Based Web Session Replication>>
-
 
 === Integration with Java EE
 
@@ -33,7 +29,6 @@ You can integrate Hazelcast with Spring and this section explains the configurat
 Supported Versions are Spring 2.5 and higher releases and the latest tested Spring version is 4.3.
 
 IMPORTANT: Some old versions of Spring may require minor changes in the Hazelcast configuration. The code and configuration snippets provided in this section are tested using Spring 4.3.
-
 
 ==== Configuring Spring
 
@@ -52,9 +47,9 @@ If you use `hazelcast-all.jar`:
 [source,xml]
 ----
 <dependency>
-  <groupId>com.hazelcast</groupId>
-  <artifactId>hazelcast-all</artifactId>
-  <version>"your Hazelcast version, e.g. 3.8"</version>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-all</artifactId>
+    <version>"your Hazelcast version, e.g. 3.8"</version>
 </dependency>
 ----
 
@@ -63,9 +58,9 @@ If you use `hazelcast-spring.jar`:
 [source,xml]
 ----
 <dependency>
-  <groupId>com.hazelcast</groupId>
-  <artifactId>hazelcast-spring</artifactId>
-  <version>"your Hazelcast version, e.g. 3.8"</version>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-spring</artifactId>
+    <version>"your Hazelcast version, e.g. 3.8"</version>
 </dependency>
 ----
 
@@ -101,24 +96,23 @@ You can declare Hazelcast Objects using the default Spring *beans* namespace. Ex
 [source,xml]
 ----
 <bean id="instance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
-  <constructor-arg>
-    <bean class="com.hazelcast.config.Config">
-      <property name="groupConfig">
-        <bean class="com.hazelcast.config.GroupConfig">
-          <property name="name" value="dev"/>
-          <property name="password" value="pwd"/>
+    <constructor-arg>
+        <bean class="com.hazelcast.config.Config">
+            <property name="groupConfig">
+                <bean class="com.hazelcast.config.GroupConfig">
+                    <property name="name" value="dev"/>
+                    <property name="password" value="pwd"/>
+                </bean>
+            </property>
+            <!-- and so on ... -->
         </bean>
-      </property>
-      <!-- and so on ... -->
-    </bean>
-  </constructor-arg>
+    </constructor-arg>
 </bean>
 
 <bean id="map" factory-bean="instance" factory-method="getMap">
-  <constructor-arg value="map"/>
+    <constructor-arg value="map"/>
 </bean>
 ----
-
 
 ===== Declaring Beans by *hazelcast* Namespace
 
@@ -137,7 +131,6 @@ Here is an example schema definition for Hazelcast 3.3.x:
                 http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd">
 ----
 
-
 ===== Supported Configurations with *hazelcast* Namespace
 
 * **Configuring Hazelcast Instance**
@@ -145,26 +138,26 @@ Here is an example schema definition for Hazelcast 3.3.x:
 [source,xml]
 ----
 <hz:hazelcast id="instance">
-  <hz:config>
-    <hz:group name="dev" password="password"/>
-    <hz:network port="5701" port-auto-increment="false">
-      <hz:join>
-        <hz:multicast enabled="false"
-                      multicast-group="224.2.2.3"
-                      multicast-port="54327"/>
-        <hz:tcp-ip enabled="true">
-          <hz:members>10.10.1.2, 10.10.1.3</hz:members>
-        </hz:tcp-ip>
-      </hz:join>
-    </hz:network>
-    <hz:map name="map"
+    <hz:config>
+        <hz:group name="dev" password="password"/>
+        <hz:network port="5701" port-auto-increment="false">
+            <hz:join>
+                <hz:multicast enabled="false"
+                    multicast-group="224.2.2.3"
+                    multicast-port="54327"/>
+                <hz:tcp-ip enabled="true">
+                    <hz:members>10.10.1.2, 10.10.1.3</hz:members>
+                </hz:tcp-ip>
+            </hz:join>
+        </hz:network>
+        <hz:map name="map"
             backup-count="2"
             max-size="0"
             eviction-percentage="30"
             read-backup-data="true"
             eviction-policy="NONE"
             merge-policy="com.hazelcast.map.merge.PassThroughMergePolicy"/>
-  </hz:config>
+    </hz:config>
 </hz:hazelcast>
 ----
 +
@@ -173,15 +166,15 @@ Here is an example schema definition for Hazelcast 3.3.x:
 [source,xml]
 ----
 <hz:client id="client">
-  <hz:group name="${cluster.group.name}" password="${cluster.group.password}" />
-  <hz:network connection-attempt-limit="3"
-              connection-attempt-period="3000"
-              connection-timeout="1000"
-              redo-operation="true"
-              smart-routing="true">
-    <hz:member>10.10.1.2:5701</hz:member>
-    <hz:member>10.10.1.3:5701</hz:member>
-  </hz:network>
+    <hz:group name="${cluster.group.name}" password="${cluster.group.password}" />
+    <hz:network connection-attempt-limit="3"
+                connection-attempt-period="3000"
+                connection-timeout="1000"
+                redo-operation="true"
+                smart-routing="true">
+        <hz:member>10.10.1.2:5701</hz:member>
+        <hz:member>10.10.1.3:5701</hz:member>
+    </hz:network>
 </hz:client>
 ----
 +
@@ -248,10 +241,10 @@ Hazelcast also supports `lazy-init`, `scope` and `depends-on` bean attributes.
 [source,xml]
 ----
 <hz:hazelcast id="instance" lazy-init="true" scope="singleton">
-  ...
+    ...
 </hz:hazelcast>
 <hz:client id="client" scope="prototype" depends-on="instance">
-  ...
+    ...
 </hz:client>
 ----
 +
@@ -280,14 +273,13 @@ For map-store, you should set either the *class-name* or the *implementation* at
 <bean id="dummyMapStore" class="com.foo.DummyStore" />
 ----
 
-
 ==== Enabling SpringAware Objects
 
 You can mark Hazelcast Distributed Objects with @SpringAware if the object wants:
 
-- to apply bean properties,
-- to apply factory callbacks such as `ApplicationContextAware`, `BeanNameAware`,
-- to apply bean post-processing annotations such as `InitializingBean`, `@PostConstruct`.
+* to apply bean properties,
+* to apply factory callbacks such as `ApplicationContextAware`, `BeanNameAware`,
+* to apply bean post-processing annotations such as `InitializingBean`, `@PostConstruct`.
 
 Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed object, can benefit from these features. To enable SpringAware objects, you must first configure `HazelcastInstance` using *hazelcast* namespace as explained in <<configuring-spring, Configuring Spring>> and add `<hz:spring-aware />` tag.
 
@@ -310,27 +302,27 @@ Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed
                 http://www.hazelcast.com/schema/spring
                 http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd">
 
-  <context:component-scan base-package="..."/>
+    <context:component-scan base-package="..."/>
 
-  <hz:hazelcast id="instance">
-    <hz:config>
-      <hz:spring-aware />
-      <hz:group name="dev" password="password"/>
-      <hz:network port="5701" port-auto-increment="false">
-        <hz:join>
-          <hz:multicast enabled="false" />
-          <hz:tcp-ip enabled="true">
-            <hz:members>10.10.1.2, 10.10.1.3</hz:members>
-          </hz:tcp-ip>
-        </hz:join>
-      </hz:network>
-      ...
-    </hz:config>
-  </hz:hazelcast>
+    <hz:hazelcast id="instance">
+        <hz:config>
+            <hz:spring-aware />
+            <hz:group name="dev" password="password"/>
+            <hz:network port="5701" port-auto-increment="false">
+                <hz:join>
+                    <hz:multicast enabled="false" />
+                    <hz:tcp-ip enabled="true">
+                        <hz:members>10.10.1.2, 10.10.1.3</hz:members>
+                    </hz:tcp-ip>
+                </hz:join>
+            </hz:network>
+            ...
+        </hz:config>
+    </hz:hazelcast>
 
-  <bean id="someBean" class="com.hazelcast.examples.spring.SomeBean"
+    <bean id="someBean" class="com.hazelcast.examples.spring.SomeBean"
       scope="singleton" />
-  ...
+    ...
 </beans>
 ----
 
@@ -440,13 +432,11 @@ Assert.assertEquals(bean.value, f2.get().longValue());
 
 NOTE: Spring managed properties/fields are marked as `transient`.
 
-
 ==== Adding Caching to Spring
 
 **Code Sample**: Please see our sample application for https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-cache-manager[Spring Cache].
 
 As of version 3.1, Spring Framework provides support for adding caching into an existing Spring application. Spring 3.2 and later versions support JCache compliant caching providers. You can also use JCache caching backed by Hazelcast if your Spring version supports JCache.
-
 
 ===== Declarative Spring Cache Configuration
 
@@ -455,11 +445,11 @@ As of version 3.1, Spring Framework provides support for adding caching into an 
 <cache:annotation-driven cache-manager="cacheManager" />
 
 <hz:hazelcast id="instance">
-  ...
+    ...
 </hz:hazelcast>
 
 <bean id="cacheManager" class="com.hazelcast.spring.cache.HazelcastCacheManager">
-  <constructor-arg ref="instance"/>
+    <constructor-arg ref="instance"/>
 </bean>
 ----
 
@@ -470,15 +460,15 @@ Hazelcast uses its Map implementation for underlying cache. You can configure a 
 <cache:annotation-driven cache-manager="cacheManager" />
 
 <hz:hazelcast id="instance">
-  <hz:config>
-    ...
+    <hz:config>
+        ...
 
-    <hz:map name="city" time-to-live-seconds="0" in-memory-format="BINARY" />
-  </hz:config>
+        <hz:map name="city" time-to-live-seconds="0" in-memory-format="BINARY" />
+    </hz:config>
 </hz:hazelcast>
 
 <bean id="cacheManager" class="com.hazelcast.spring.cache.HazelcastCacheManager">
-  <constructor-arg ref="instance"/>
+    <constructor-arg ref="instance"/>
 </bean>
 ----
 
@@ -502,8 +492,6 @@ hazelcast.spring.cache.prop=defaultReadTimeout=2,cache1=10,cache2=20
 
 The argument `defaultReadTimeout` applies to all of your Spring caches. If you want to define different timeout values for some specific Spring caches, you can provide them as a comma separated list as shown in the above example usage. The values are in milliseconds. If you want to have no timeout for a cache, simply set it to `0` or a negative value.
 
-
-
 ===== Declarative Hazelcast JCache Based Caching Configuration
 
 [source,xml]
@@ -511,7 +499,7 @@ The argument `defaultReadTimeout` applies to all of your Spring caches. If you w
 <cache:annotation-driven cache-manager="cacheManager" />
 
 <hz:hazelcast id="instance">
-  ...
+    ...
 </hz:hazelcast>
 
 <hz:cache-manager id="hazelcastJCacheCacheManager" instance-ref="instance" name="hazelcastJCacheCacheManager"/>
@@ -573,7 +561,6 @@ context.refresh();
 
 For more information about Spring Cache, please see http://static.springsource.org/spring/docs/3.1.x/spring-framework-reference/html/cache.html[Spring Cache Abstraction].
 
-
 ==== Configuring Hibernate Second Level Cache
 
 **Code Sample**: Please see our https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/spring-hibernate-2ndlevel-cache[sample application] for Hibernate 2nd Level Cache Config.
@@ -588,25 +575,24 @@ same `HazelcastInstance` as Hibernate L2 cache instance.
 <bean id="sessionFactory"
       class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
 	  scope="singleton">
-  <property name="dataSource" ref="dataSource"/>
-  <property name="hibernateProperties">
-      <props>
-          ...
-          <prop key="hibernate.cache.region.factory_class">com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory</prop>
-          <prop key="hibernate.cache.hazelcast.instance_name">${hz.instance.name}</prop>
-      </props>
-  </property>
-  ...
+    <property name="dataSource" ref="dataSource"/>
+    <property name="hibernateProperties">
+        <props>
+            ...
+            <prop key="hibernate.cache.region.factory_class">com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory</prop>
+            <prop key="hibernate.cache.hazelcast.instance_name">${hz.instance.name}</prop>
+        </props>
+    </property>
+    ...
 </bean>
 ----
 
 **Hibernate RegionFactory Classes**
 
-- `com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory`
-- `com.hazelcast.hibernate.HazelcastCacheRegionFactory`
+* `com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory`
+* `com.hazelcast.hibernate.HazelcastCacheRegionFactory`
 
 Please refer to Hibernate https://github.com/hazelcast/hazelcast-hibernate#configuring-regionfactory[Configuring RegionFactory] for more information.
-
 
 ==== Configuring Hazelcast Transaction Manager
 
@@ -626,7 +612,7 @@ to access transactional data structures within your service class.
 ----
 ...
 <hz:hazelcast id="instance">
-      ...
+    ...
 </hz:hazelcast>
 ...
 <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -661,7 +647,6 @@ public class ServiceWithTransactionalMethod {
 
 After marking your method as `Transactional` either declaratively or by annotation and accessing the data structure
 through the `TransactionalTaskContext`, `HazelcastTransactionManager` will begin, commit or rollback the transaction for you.
-
 
 ==== Best Practices
 
@@ -706,6 +691,5 @@ public class SomeBean {
     ...
 }
 ----
-
 
 NOTE: For more information please see https://jira.springsource.org/browse/SPR-3407[Spring issue-3407].

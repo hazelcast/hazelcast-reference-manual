@@ -9,7 +9,7 @@ import java.util.Map;
 public class ExampleLocalIndexStats {
 
     public static void main(String[] args) {
-//tag::lis[]
+        //tag::lis[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         IMap<String, String> customers = hazelcastInstance.getMap("customers");        
         customers.addIndex("name", true); // or add the index using the map config
@@ -18,7 +18,6 @@ public class ExampleLocalIndexStats {
         LocalIndexStats nameIndexStats = indexStats.get("name");
         System.out.println("average name index hit selectivity on this member = "
                 + nameIndexStats.getAverageHitSelectivity());
-//end::lis[]
+        //end::lis[]
     }
-
 }

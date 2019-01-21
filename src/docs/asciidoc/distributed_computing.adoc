@@ -78,7 +78,6 @@ Below is Runnable example code. It is a task that waits for some time and echoes
 include::{javasource}/distributedcomputing/EchoTask.java[tag=et]
 ----
 
-
 ===== Executing a Runnable Task
 
 To execute the runnable task:
@@ -168,7 +167,6 @@ public void echoOnMembers( String input, Set<Member> members ) throws Exception 
 }
 ----
 
-
 NOTE: You can obtain the set of cluster members via `HazelcastInstance.getCluster().getMembers()` call.
 
 [[canceling-an-executing-task]]
@@ -187,7 +185,6 @@ The Fibonacci callable class below calculates the Fibonacci number for a given n
 include::{javasource}/distributedcomputing/FibonacciCallable.java[tag=fc]
 ----
 
-
 ===== Example Method to Execute and Cancel the Task
 
 The `fib()` method below submits the Fibonacci calculation task above for number 'n' and waits a maximum of 3 seconds for the result. If the execution does not completed in three seconds, `future.get()` will throw a `TimeoutException` and upon catching it, we cancel the execution, saving some CPU cycles.
@@ -196,7 +193,6 @@ The `fib()` method below submits the Fibonacci calculation task above for number
 ----
 include::{javasource}/distributedcomputing/FibonacciCallable.java[lines=36..47]
 ----
-
 
 `fib(20)` will probably take less than 3 seconds. However, `fib(50)` will take much longer. (This is not an example for writing better Fibonacci calculation code, but for showing how to cancel a running execution that takes too long.) The method `future.cancel(false)` can only cancel execution before it is running (executing), but `future.cancel(true)` can interrupt running executions provided that your code is able to handle the interruption. If you are willing to cancel an already running task, then your task should be designed to handle interruptions. If the `calculate (int n)` method did not have the `(Thread.currentThread().isInterrupted())` line, then you would not be able to cancel the execution after it is started.
 
@@ -257,12 +253,16 @@ The following are example configurations for executor service.
 
 [source,xml]
 ----
-<executor-service name="exec">
-   <pool-size>1</pool-size>
-   <queue-capacity>10</queue-capacity>
-   <statistics-enabled>true</statistics-enabled>
-   <quorum-ref>quorumname</quorum-ref>
-</executor-service>
+<hazelcast>
+    ...
+    <executor-service name="exec">
+        <pool-size>1</pool-size>
+        <queue-capacity>10</queue-capacity>
+        <statistics-enabled>true</statistics-enabled>
+        <quorum-ref>quorumname</quorum-ref>
+    </executor-service>
+    ...
+</hazelcast>
 ----
 
 **Programmatic Configuration:**
@@ -271,7 +271,6 @@ The following are example configurations for executor service.
 ----
 include::{javasource}/distributedcomputing/ExecutorConfiguration.java[tag=execconf]
 ----
-
 
 Executor service configuration has the following elements.
 
@@ -285,7 +284,6 @@ Executor service configuration has the following elements.
 IExecutorService can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
 Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
-
 
 * WRITE, READ_WRITE:
 ** `execute`
@@ -307,15 +305,16 @@ Split-Brain protection for Executor Service can be configured programmatically u
 
 [source,xml]
 ----
-<executor-service name="default">
-   ...
-   <quorum-ref>quorumname</quorum-ref>
-   ...
-</executor-service>
+<hazelcast>
+    ...
+    <executor-service name="default">
+        <quorum-ref>quorumname</quorum-ref>
+    </executor-service>
+    ...
+</hazelcast>
 ----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
-
 
 === Durable Executor Service
 
@@ -342,12 +341,16 @@ This section presents example configurations for durable executor service along 
 
 [source,xml]
 ----
-<durable-executor-service name="myDurableExecSvc">
-	<pool-size>8</pool-size>
-	<durability>1</durability>
-	<capacity>1</capacity>
-	<quorum-ref>quorumname</quorum-ref>
-</durable-executor-service>
+<hazelcast>
+    ...
+    <durable-executor-service name="myDurableExecSvc">
+        <pool-size>8</pool-size>
+        <durability>1</durability>
+        <capacity>1</capacity>
+        <quorum-ref>quorumname</quorum-ref>
+    </durable-executor-service>
+    ...
+</hazelcast>
 ----
 
 **Programmatic Configuration:**
@@ -389,15 +392,16 @@ Split-Brain protection for Durable Executor Service can be configured programmat
 
 [source,xml]
 ----
-<durable-executor-service name="myDurableExecSvc">
+<hazelcast>
     ...
-	<quorum-ref>quorumname</quorum-ref>
-	...
-</durable-executor-service>
+    <durable-executor-service name="myDurableExecSvc">
+        <quorum-ref>quorumname</quorum-ref>
+    </durable-executor-service>
+    ...
+</hazelcast>
 ----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
-
 
 === Scheduled Executor Service
 
@@ -445,12 +449,16 @@ This section presents example configurations for scheduled executor service alon
 
 [source,xml]
 ----
-<scheduled-executor-service name="myScheduledExecSvc">
-	<pool-size>16</pool-size>
-	<durability>1</durability>
-	<capacity>100</capacity>
-	<quorum-ref>quorumname</quorum-ref>
-</scheduled-executor-service>
+<hazelcast>
+    ...
+    <scheduled-executor-service name="myScheduledExecSvc">
+        <pool-size>16</pool-size>
+        <durability>1</durability>
+        <capacity>100</capacity>
+        <quorum-ref>quorumname</quorum-ref>
+    </scheduled-executor-service>
+    ...
+</hazelcast>
 ----
 
 **Programmatic Configuration:**
@@ -529,15 +537,16 @@ Split-Brain protection for Scheduled Executor Service can be configured programm
 
 [source,xml]
 ----
-<scheduled-executor-service name="myScheduledExecSvc">
+<hazelcast>
     ...
-	<quorum-ref>quorumname</quorum-ref>
-	...
-</scheduled-executor-service>
+    <scheduled-executor-service name="myScheduledExecSvc">
+        <quorum-ref>quorumname</quorum-ref>
+    </scheduled-executor-service>
+    ...
+</hazelcast>
 ----
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
-
 
 === Entry Processor
 
@@ -551,7 +560,6 @@ NOTE: Entry processor is meant to process a single entry per call. Processing mu
 
 NOTE: Note that Hazelcast Jet is a good fit when you want to perform processing that involves multiple entries (aggregations, joins, etc.), or involves multiple computing steps to be made parallel. Hazelcast Jet contains an Entry Processor Sink to allow you to update Hazelcast IMDG data as a result of your Hazelcast Jet computation. Please refer to https://docs.hazelcast.org/docs/jet/latest/manual/index.html#connector-imdg[Hazelcast Jet's Reference Manual].
 
-
 ==== Performing Fast In-Memory Map Operations
 
 An entry processor enables fast in-memory operations on your map without you having to worry about locks or concurrency issues. You can apply it to a single map entry or to all map entries. Entry processors support choosing target entries using predicates. You do not need any explicit lock on entry thanks to the isolated threading model: Hazelcast runs the entry processor for all entries on a `partitionThread` so there will NOT be any interleaving of the entry processor and other mutations.
@@ -561,7 +569,6 @@ Hazelcast sends the entry processor to each cluster member and these members app
 ===== Using Indexes
 
 Entry processors can be used with predicates. Predicates help to process a subset of data by selecting eligible entries. This selection can happen either by doing a full-table scan or by using indexes. To accelerate entry selection step, you can consider to add indexes. If indexes are there, entry processor will automatically use them.
-
 
 ===== Using OBJECT In-Memory Format
 
@@ -578,7 +585,6 @@ The methods below are in the https://docs.hazelcast.org/docs/latest/javadoc/com/
 * `submitToKey` processes an entry mapped by a key while listening to event status.
 * `executeOnEntries` processes all entries in a map.
 * `executeOnEntries` can also process all entries in a map with a defined predicate.
-
 
 When using the `executeOnEntries` method, if the number of entries is high and you need the results, then returning null with the `process()` method is a good practice. This method is offered by the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface]. By returning null, results of the processing is not stored in the map and thus out of memory errors are eliminated.
 
@@ -598,13 +604,11 @@ ICompletableFuture submitToKey(K key, EntryProcessor entryProcessor);
 
 Therefore, if you want to to perform an entry processor execution on a single key using one of these methods and that key has a lock on it, the execution will wait until the lock on that key is removed.
 
-
 ===== Processing Backup Entries
 
 If your code modifies the data, then you should also provide a processor for backup entries. This is required to prevent the primary map entries from having different values than the backups because it causes the entry processor to be applied both on the primary and backup entries. The interface https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryBackupProcessor.html[EntryBackupProcessor] offers the method `processBackup` for this purpose.
 
 NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it at the run time due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually will synchronize those owner and backup partitions so you will not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
-
 
 ==== Creating an Entry Processor
 
@@ -636,7 +640,6 @@ NOTE: You should explicitly call the `setValue` method of `Map.Entry` when modif
 
 NOTE: An entry processor instance is not thread safe. If you are storing a partition specific state between invocations, be sure to register this in a thread-local.  An entry processor instance can be used by multiple partition threads.
 
-
 ==== Abstract Entry Processor
 
 You can use the `AbstractEntryProcessor` class when the same processing will be performed both on the primary and backup map entries, i.e., the same logic applies to them. If you use entry processor, you need to apply the same logic to the backup entries separately. The `AbstractEntryProcessor` class makes this primary/backup processing easier.
@@ -644,7 +647,6 @@ You can use the `AbstractEntryProcessor` class when the same processing will be 
 You can use the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[`AbstractEntryProcessor` class] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing will be applied to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null.
 
 NOTE: Beware of the null issue described above. Due to a yet unsent backup from a previous operation, an `EntryBackupProcessor` may temporarily receive `null` from `Map.Entry.getValue()` even though the value actually exists in the map. If you decide to use `AbstractEntryProcessor`, make sure your code logic is not sensitive to null values, or you may encounter `NullPointerException` during runtime.
-
 
 ==== Entry Processor Performance Optimizations
 
@@ -686,7 +688,6 @@ In this case the threading looks as follows:
 . execution thread (process(entry) method)
 . partition thread (set new value & unlock key, or just unlock key if the entry has not been modified)
 
-
 The method `getExecutorName()` method may also return two constants defined in the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Offloadable.html[`Offloadable` interface]:
 
 * NO_OFFLOADING: Processing will not be offloaded if the method `getExecutorName()` returns this constant; it will be executed as if it does not implement the `Offloadable` interface.
@@ -696,24 +697,31 @@ Note that if the method `getExecutorName()` cannot find an executor whose name m
 
 [source,xml]
 ----
-<executor-service name="default">
-    <pool-size>16</pool-size>
-    <queue-capacity>0</queue-capacity>
-</executor-service>
+<hazelcast>
+    ...
+    <executor-service name="default">
+        <pool-size>16</pool-size>
+        <queue-capacity>0</queue-capacity>
+    </executor-service>
+    ...
+</hazelcast>
 ----
 
 An example of an Offloadable called "OffloadedInventoryEntryProcessor" would be as follows:
 
 [source,xml]
 ----
-<executor-service name="OffloadedInventoryEntryProcessor”>
-    <pool-size>30</pool-size>
-    <queue-capacity>0</queue-capacity>
-</executor-service>
+<hazelcast>
+    ...
+    <executor-service name="OffloadedInventoryEntryProcessor”>
+        <pool-size>30</pool-size>
+        <queue-capacity>0</queue-capacity>
+    </executor-service>
+    ...
+</hazelcast>
 ----
 
 Remember to set the `pool-size` (count of executor threads per member) according to your execution needs. Please refer to the <<configuring-executor-service, Configuring Executor Service section>> for the configuration details.
-
 
 ===== ReadOnly Entry Processor
 
@@ -725,7 +733,6 @@ be offloaded to an external executor. However, the entry processor will not obse
 locked, nor will try to acquire the lock since the entry processor will not do any modifications.
 
 If the entry processor implements `ReadOnly` and modifies the entry, an `UnsupportedOperationException` will be thrown.
-
 
 ===== ReadOnly and Offloadable Entry Processor
 

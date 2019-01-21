@@ -21,9 +21,9 @@ For Maven users, the coordinates look like the following code:
 [source,xml]
 ----
 <dependency>
-  <groupId>javax.cache</groupId>
-  <artifactId>cache-api</artifactId>
-  <version>1.1.0</version>
+    <groupId>javax.cache</groupId>
+    <artifactId>cache-api</artifactId>
+    <version>1.1.0</version>
 </dependency>
 ----
 
@@ -39,9 +39,9 @@ If you use `hazelcast-all.jar`:
 [source,xml]
 ----
 <dependency>
-  <groupId>com.hazelcast</groupId>
-  <artifactId>hazelcast-all</artifactId>
-  <version>"your Hazelcast version, e.g. 3.10"</version>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-all</artifactId>
+    <version>"your Hazelcast version, e.g. 3.10"</version>
 </dependency>
 ----
 
@@ -50,9 +50,9 @@ If you use `hazelcast.jar`:
 [source,xml]
 ----
 <dependency>
-  <groupId>com.hazelcast</groupId>
-  <artifactId>hazelcast</artifactId>
-  <version>"your Hazelcast version, e.g. 3.10"</version>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast</artifactId>
+    <version>"your Hazelcast version, e.g. 3.10"</version>
 </dependency>
 ----
 
@@ -67,9 +67,9 @@ Maven snippet:
 [source,xml]
 ----
 <dependency>
-  <groupId>com.hazelcast</groupId>
-  <artifactId>hazelcast-client</artifactId>
-  <version>"your Hazelcast version, e.g. 3.10"</version>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-client</artifactId>
+    <version>"your Hazelcast version, e.g. 3.10"</version>
 </dependency>
 ----
 
@@ -145,31 +145,32 @@ Note that this section only describes the JCache provided standard properties. F
 
 [source,xml]
 ----
-<cache name="default">
-  <key-type class-name="java.lang.Object" />
-  <value-type class-name="java.lang.Object" />
-  <statistics-enabled>false</statistics-enabled>
-  <management-enabled>false</management-enabled>
-
-  <read-through>true</read-through>
-  <write-through>true</write-through>
-  <cache-loader-factory
-     class-name="com.example.cache.MyCacheLoaderFactory" />
-  <cache-writer-factory
-     class-name="com.example.cache.MyCacheWriterFactory" />
-  <expiry-policy-factory
-     class-name="com.example.cache.MyExpiryPolicyFactory" />
-
-  <cache-entry-listeners>
-    <cache-entry-listener old-value-required="false" synchronous="false">
-      <cache-entry-listener-factory
-         class-name="com.example.cache.MyEntryListenerFactory" />
-      <cache-entry-event-filter-factory
-         class-name="com.example.cache.MyEntryEventFilterFactory" />
-    </cache-entry-listener>
+<hazelcast>
     ...
-  </cache-entry-listeners>
-</cache>
+    <cache name="default">
+        <key-type class-name="java.lang.Object" />
+        <value-type class-name="java.lang.Object" />
+        <statistics-enabled>false</statistics-enabled>
+        <management-enabled>false</management-enabled>
+        <read-through>true</read-through>
+        <write-through>true</write-through>
+        <cache-loader-factory
+            class-name="com.example.cache.MyCacheLoaderFactory" />
+        <cache-writer-factory
+            class-name="com.example.cache.MyCacheWriterFactory" />
+        <expiry-policy-factory
+            class-name="com.example.cache.MyExpiryPolicyFactory" />
+        <cache-entry-listeners>
+            <cache-entry-listener old-value-required="false" synchronous="false">
+                <cache-entry-listener-factory
+                    class-name="com.example.cache.MyEntryListenerFactory" />
+                <cache-entry-event-filter-factory
+                    class-name="com.example.cache.MyEntryEventFilterFactory" />
+            </cache-entry-listener>
+        </cache-entry-listeners>
+    </cache>
+    ...
+</hazelcast>
 ----
 
 * `key-type#class-name`: Fully qualified class name of the cache key type. Its default value is `java.lang.Object`.
@@ -187,7 +188,6 @@ Note that this section only describes the JCache provided standard properties. F
 ** `cache-entry-listener/entry-listener-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.CacheEntryListener` instance.
 ** `cache-entry-listener/entry-event-filter-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.CacheEntryEventFilter` instance.
 
-
 NOTE: The JMX MBeans provided by Hazelcast JCache show statistics of the local member only.
 To show the cluster-wide statistics, the user should collect statistic information from all members and accumulate them to
 the overall statistics.
@@ -203,7 +203,6 @@ only the JCache standard configuration,
 `com.hazelcast.config.CacheConfig` offers additional options that are specific to Hazelcast, such as asynchronous and synchronous backup counts.
 Both classes share the same supertype interface `javax.cache.configuration.CompleteConfiguration` which is part of the JCache
 standard.
-
 
 NOTE: To stay vendor independent, try to keep your code as near as possible to the standard JCache API. We recommend that you use declarative configuration and that you use the `javax.cache.configuration.Configuration` or `javax.cache.configuration.CompleteConfiguration` interfaces in
 your code only when you need to pass the configuration instance throughout your code.

@@ -185,15 +185,13 @@ Following are the example configuration snippets. Note that these strategy confi
 [source,xml]
 ----
 <hazelcast>
-...
-   <map name="name-of-the-map">
-   ...
-      <partition-strategy>
-         com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
-      </partition-strategy>
-   ...
-   </map>
-...
+    ...
+    <map name="name-of-the-map">
+        <partition-strategy>
+             com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
+        </partition-strategy>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -218,30 +216,26 @@ As stated previously, above strategies are defined **per map** in your Hazelcast
 [source,xml]
 ----
 <hazelcast>
-...
-  <properties>
-    <property name="hazelcast.partitioning.strategy.class">
-       com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
-    </property>
-    ....
-  </properties>
-  ...
+    ...
+    <properties>
+        <property name="hazelcast.partitioning.strategy.class">
+            com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
+        </property>
+    </properties>
+    ...
 </hazelcast>
 ----
 
 You can also use other system property configuring options as explained in the <<configuring-with-system-properties, Configuring with System Properties section>>.
 
+=== Running on EC2
 
-=== Running in EC2
-
-For the best performance of your Hazelcast in AWS EC2:
+For the best performance of your Hazelcast on AWS EC2:
 
 * It is best to select the newest Linux AMIs.
 * HVM based instances give the best performance.
 * Select at least a system with 8 vCPUs, e.g., c4.2xlarge. For an overview of all types of EC2 instances, please check https://www.ec2instances.info.
 * Consider setting a placement group. A placement group can have a significant impact on the performance.
-
-
 
 === Back Pressure
 
@@ -250,13 +244,13 @@ and one operation for each of the backups, i.e. `map.put` is executed for the pr
 and the number of operations being executed. However, there are two situations where this balance and operations
 can pile up and eventually lead to Out of Memory Exception (OOME):
 
-- Asynchronous calls: With async calls, the system may be flooded with the requests.
-- Asynchronous backups: The asynchronous backups may be piling up.
+* Asynchronous calls: With async calls, the system may be flooded with the requests.
+* Asynchronous backups: The asynchronous backups may be piling up.
 
 To prevent the system from crashing, Hazelcast provides back pressure. Back pressure works by:
 
-- limiting the number of concurrent operation invocations,
-- periodically making an async backup sync.
+* limiting the number of concurrent operation invocations,
+* periodically making an async backup sync.
 
 ==== Member Side
 
@@ -330,7 +324,6 @@ then sent to the system where it is de-multiplexed. If the `Packet` header signa
 over to the operation service (please see the <<operation-threading, Operation Threading section>>). If the `Packet` is an event, it is handed
 over to the event service (please see the <<event-threading, Event Threading section>>).
 
-
 ==== Event Threading
 
 Hazelcast uses a shared event system to deal with components that rely on events, such as topic, collections, listeners and Near Cache.
@@ -359,7 +352,6 @@ and running into an `OutOfMemoryException`, the queue is given a capacity of 1 m
 dropped. This means that the event system is a 'best effort' system. There is no guarantee that you are going to get an
 event. Topic A might have a lot of pending messages and therefore B cannot receive messages because the queue
 has no capacity and messages for B are dropped.
-
 
 ==== IExecutor Threading
 
@@ -472,7 +464,6 @@ In the future, this will be optimized to reduce the amount of expensive systems 
 interaction with the operation-queue. Probably, we will add support for a caller-runs mode, so that an operation is directly run on
 the calling thread.
 
-
 === SlowOperationDetector
 
 The `SlowOperationDetector` monitors the operation threads and collects information about all slow operations. An `Operation` is a task executed by a generic or partition thread (see <<operation-threading, Operation Threading>>). An operation is considered as slow when it takes more computation time than the configured threshold.
@@ -481,13 +472,13 @@ The `SlowOperationDetector` stores the fully qualified classname of the operatio
 
 The `SlowOperationDetector` is configured via the following system properties.
 
-- `hazelcast.slow.operation.detector.enabled`
-- `hazelcast.slow.operation.detector.log.purge.interval.seconds`
-- `hazelcast.slow.operation.detector.log.retention.seconds`
-- `hazelcast.slow.operation.detector.stacktrace.logging.enabled`
-- `hazelcast.slow.operation.detector.threshold.millis`
+* `hazelcast.slow.operation.detector.enabled`
+* `hazelcast.slow.operation.detector.log.purge.interval.seconds`
+* `hazelcast.slow.operation.detector.log.retention.seconds`
+* `hazelcast.slow.operation.detector.stacktrace.logging.enabled`
+* `hazelcast.slow.operation.detector.threshold.millis`
 
-Please refer to the <<system-properties, System Properties appendix>> for explanations of these properties.
+Refer to the <<system-properties, System Properties appendix>> for explanations of these properties.
 
 ==== Logging of Slow Operations
 
@@ -514,16 +505,15 @@ Since a Hazelcast cluster can run for a very long time, Hazelcast purges the slo
 
 The purging removes each invocation whose retention time is exceeded. When all invocations are purged from a slow operation log, the log is deleted.
 
-
 === Near Cache
 
 Map or Cache entries in Hazelcast are partitioned across the cluster members. Hazelcast clients do not have local data at all. Suppose you read the key `k` a number of times from a Hazelcast client or `k` is owned by another member in your cluster. Then each `map.get(k)` or `cache.get(k)` will be a remote operation, which creates a lot of network trips. If you have a data structure that is mostly read, then you should consider creating a local Near Cache, so that reads are sped up and less network traffic is created.
 
 These benefits do not come for free, please consider the following trade-offs:
 
-- Members with a Near Cache will have to hold the extra cached data, which increases memory consumption.
-- If invalidation is enabled and entries are updated frequently, then invalidations will be costly.
-- Near Cache breaks the strong consistency guarantees; you might be reading stale data.
+* Members with a Near Cache will have to hold the extra cached data, which increases memory consumption.
+* If invalidation is enabled and entries are updated frequently, then invalidations will be costly.
+* Near Cache breaks the strong consistency guarantees; you might be reading stale data.
 
 Near Cache is highly recommended for data structures that are mostly read.
 
@@ -610,24 +600,28 @@ NOTE: Please keep in mind that, if you want to use near cache on a Hazelcast mem
 
 [source,xml]
 ----
-<near-cache name="myDataStructure">
-  <in-memory-format>(OBJECT|BINARY|NATIVE)</in-memory-format>
-  <serialize-keys>(true|false)</serialize-keys>
-  <invalidate-on-change>(true|false)</invalidate-on-change>
-  <time-to-live-seconds>(0..INT_MAX)</time-to-live-seconds>
-  <max-idle-seconds>(0..INT_MAX)</max-idle-seconds>
-  <eviction eviction-policy="(LRU|LFU|RANDOM|NONE)"
+<hazelcast>
+    ...
+    <near-cache name="myDataStructure">
+        <in-memory-format>(OBJECT|BINARY|NATIVE)</in-memory-format>
+        <serialize-keys>(true|false)</serialize-keys>
+        <invalidate-on-change>(true|false)</invalidate-on-change>
+        <time-to-live-seconds>(0..INT_MAX)</time-to-live-seconds>
+        <max-idle-seconds>(0..INT_MAX)</max-idle-seconds>
+        <eviction eviction-policy="(LRU|LFU|RANDOM|NONE)"
             max-size-policy="(ENTRY_COUNT
               |USED_NATIVE_MEMORY_SIZE|USED_NATIVE_MEMORY_PERCENTAGE
               |FREE_NATIVE_MEMORY_SIZE|FREE_NATIVE_MEMORY_PERCENTAGE"
             size="(0..INT_MAX)"/>
-  <cache-local-entries>(false|true)</cache-local-entries>
-  <local-update-policy>(INVALIDATE|CACHE_ON_UPDATE)</local-update-policy>
-  <preloader enabled="(true|false)"
+        <cache-local-entries>(false|true)</cache-local-entries>
+        <local-update-policy>(INVALIDATE|CACHE_ON_UPDATE)</local-update-policy>
+        <preloader enabled="(true|false)"
              directory="nearcache-example"
              store-initial-delay-seconds="(0..INT_MAX)"
              store-interval-seconds="(0..INT_MAX)"/>
-</near-cache>
+    </near-cache>
+    ...
+</hazelcast>
 ----
 
 The element `<near-cache>` has an optional attribute `name` whose default value is `default`.
@@ -687,16 +681,18 @@ The following are configuration examples for IMap Near Caches for Hazelcast memb
 [source,xml]
 ----
 <hazelcast>
-  <map name="mostlyReadMap">
-    <in-memory-format>BINARY</in-memory-format>
-    <near-cache>
-      <in-memory-format>OBJECT</in-memory-format>
-      <invalidate-on-change>false</invalidate-on-change>
-      <time-to-live-seconds>600</time-to-live-seconds>
-      <eviction eviction-policy="NONE" max-size-policy="ENTRY_COUNT" size="5000"/>
-      <cache-local-entries>true</cache-local-entries>
-    </near-cache>
-  </map>
+    ...
+    <map name="mostlyReadMap">
+        <in-memory-format>BINARY</in-memory-format>
+        <near-cache>
+            <in-memory-format>OBJECT</in-memory-format>
+            <invalidate-on-change>false</invalidate-on-change>
+            <time-to-live-seconds>600</time-to-live-seconds>
+            <eviction eviction-policy="NONE" max-size-policy="ENTRY_COUNT" size="5000"/>
+            <cache-local-entries>true</cache-local-entries>
+        </near-cache>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -724,11 +720,13 @@ The Near Cache configuration for maps on members is a child of the map configura
 [source,xml]
 ----
 <hazelcast-client>
-  <near-cache name="mostlyReadMap">
-    <in-memory-format>OBJECT</in-memory-format>
-    <invalidate-on-change>true</invalidate-on-change>
-    <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="50000"/>
-  </near-cache>
+    ...
+    <near-cache name="mostlyReadMap">
+        <in-memory-format>OBJECT</in-memory-format>
+        <invalidate-on-change>true</invalidate-on-change>
+        <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="50000"/>
+    </near-cache>
+    ...
 </hazelcast-client>
 ----
 
@@ -760,12 +758,14 @@ The following is a configuration example for a JCache Near Cache for a Hazelcast
 [source,xml]
 ----
 <hazelcast-client>
-  <near-cache name="mostlyReadCache">
-    <in-memory-format>OBJECT</in-memory-format>
-    <invalidate-on-change>true</invalidate-on-change>
-    <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="30000"/>
-    <local-update-policy>CACHE_ON_UPDATE</local-update-policy>
-  </near-cache>
+    ...
+    <near-cache name="mostlyReadCache">
+        <in-memory-format>OBJECT</in-memory-format>
+        <invalidate-on-change>true</invalidate-on-change>
+        <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="30000"/>
+        <local-update-policy>CACHE_ON_UPDATE</local-update-policy>
+    </near-cache>
+    ...
 </hazelcast-client>
 ----
 
@@ -791,19 +791,20 @@ ClientConfig clientConfig = new ClientConfig()
 
 [navy]*Hazelcast IMDG Enterprise HD Feature*
 
-
 The following is a configuration example for an IMap High-Density Near Cache for a Hazelcast member.
 
 [source,xml]
 ----
 <hazelcast>
-  <map name="mostlyReadMapWithHighDensityNearCache">
-    <in-memory-format>OBJECT</in-memory-format>
-    <near-cache>
-      <in-memory-format>NATIVE</in-memory-format>
-      <eviction eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_PERCENTAGE" size="90"/>
-    </near-cache>
-  </map>
+    ...
+    <map name="mostlyReadMapWithHighDensityNearCache">
+        <in-memory-format>OBJECT</in-memory-format>
+        <near-cache>
+            <in-memory-format>NATIVE</in-memory-format>
+            <eviction eviction-policy="LFU" max-size-policy="USED_NATIVE_MEMORY_PERCENTAGE" size="90"/>
+        </near-cache>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -840,13 +841,13 @@ Once the eviction is triggered the configured `eviction-policy` determines which
 
 Expiration means the eviction of expired records. A record is expired:
 
-- if it is not touched (accessed/read) for `max-idle-seconds`
-- `time-to-live-seconds` passed since it is put to Near Cache
+* if it is not touched (accessed/read) for `max-idle-seconds`
+* `time-to-live-seconds` passed since it is put to Near Cache
 
 The actual expiration is performed in two cases:
 
-- When a record is accessed: it is checked if the record is expired or not. If it is expired, it is evicted and `null` is returned as the value to the caller.
-- In the background: there is an expiration task that periodically (currently 5 seconds) scans records and evicts the expired records.
+* When a record is accessed: it is checked if the record is expired or not. If it is expired, it is evicted and `null` is returned as the value to the caller.
+* In the background: there is an expiration task that periodically (currently 5 seconds) scans records and evicts the expired records.
 
 ==== Near Cache Invalidation
 
@@ -856,9 +857,9 @@ Invalidations can be sent from members to client Near Caches or to member Near C
 
 You can use the following system properties to configure the Near Cache invalidation:
 
-- `hazelcast.map.invalidation.batch.enabled`: Enable or disable batching. Its default value is `true`. When it is set to `false`, all invalidations are sent immediately.
-- `hazelcast.map.invalidation.batch.size`: Maximum number of invalidations in a batch. Its default value is `100`.
-- `hazelcast.map.invalidation.batchfrequency.seconds`: If the collected invalidations do not reach the configured batch size, a background process sends them periodically. Its default value is `10` seconds.
+* `hazelcast.map.invalidation.batch.enabled`: Enable or disable batching. Its default value is `true`. When it is set to `false`, all invalidations are sent immediately.
+* `hazelcast.map.invalidation.batch.size`: Maximum number of invalidations in a batch. Its default value is `100`.
+* `hazelcast.map.invalidation.batchfrequency.seconds`: If the collected invalidations do not reach the configured batch size, a background process sends them periodically. Its default value is `10` seconds.
 
 If there are a lot of clients or many mutating operations, batching should remain enabled and the batch size should be configured with the `hazelcast.map.invalidation.batch.size` system property to a suitable value.
 
@@ -873,15 +874,15 @@ After detection of an invalidation loss, stale data will be made unreachable and
 
 You can configure eventual consistency with the system properties below (same properties are valid for both member and client side Near Caches):
 
-- `hazelcast.invalidation.max.tolerated.miss.count`: Default value is 10. If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
-- `hazelcast.invalidation.reconciliation.interval.seconds`: Default value is 60 seconds. This is a periodic task that scans cluster members periodically to compare generated invalidation events with the received ones from Near Cache.
+* `hazelcast.invalidation.max.tolerated.miss.count`: Default value is 10. If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
+* `hazelcast.invalidation.reconciliation.interval.seconds`: Default value is 60 seconds. This is a periodic task that scans cluster members periodically to compare generated invalidation events with the received ones from Near Cache.
 
 ===== Locally Initiated Changes
 
 For local invalidations, when a record is updated/removed, future reads will see this update/remove to provide read-your-writes consistency. To achieve this consistency, Near Cache configuration provides two update policies:
 
-- `INVALIDATE`
-- `CACHE_ON_UPDATE`
+* `INVALIDATE`
+* `CACHE_ON_UPDATE`
 
 If you choose `INVALIDATE`, the entry is removed from the Near Cache after the update/remove occurs in the underlying data structure and before the operation (get) returns to the caller. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache.
 
@@ -899,7 +900,6 @@ The configuration parameter `directory` is optional. If you omit it the base fol
 
 NOTE: If you run multiple Hazelcast clients with enabled Near Cache preloader on the same machine, you have to configure a unique storage filename for each client or run them from different user directories. If two clients would write into the same file, only the first client will succeed. The following clients will throw an exception as soon as the Near Cache preloader is triggered.
 
-
 === Caching Deserialized Values
 
 There may be cases where you do not want to deserialize some values in your Hazelcast map again which were already deserialized previously. This way your query operations get faster. This is possible by using the `cache-deserialized-values` element in your declarative Hazelcast configuration, as shown below.
@@ -907,24 +907,20 @@ There may be cases where you do not want to deserialize some values in your Haze
 [source,xml]
 ----
 <hazelcast>
-   ...
-   ...
-   <map name="myMap">
-      ...
-      <in-memory-format>BINARY</in-memory-format>
-      <cache-deserialized-values>INDEX-ONLY</cache-deserialized-values>
-      <backup-count>1</backup-count>
-      ...
-   </map>
-   ...
-   ...
+    ...
+    <map name="myMap">
+        <in-memory-format>BINARY</in-memory-format>
+        <cache-deserialized-values>INDEX-ONLY</cache-deserialized-values>
+        <backup-count>1</backup-count>
+    </map>
+    ...
 </hazelcast>
 ----
 
 The element `cache-deserialized-values` controls the caching of deserialized values. Note that caching makes the query evaluation faster, but it will consume more memory. This element has the following values:
 
-- NEVER: Deserialized values will never be cached.
-- INDEX-ONLY: Deserialized values will be cached only when they are inserted into an index.
-- ALWAYS: Deserialized values will always be cached.
+* NEVER: Deserialized values will never be cached.
+* INDEX-ONLY: Deserialized values will be cached only when they are inserted into an index.
+* ALWAYS: Deserialized values will always be cached.
 
 If you are using portable serialization or your map's in-memory format is `OBJECT` or `NATIVE`, then `cache-deserialized-values` element does not have any effect.

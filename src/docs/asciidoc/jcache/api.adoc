@@ -187,9 +187,9 @@ For the bulk load operation (`loadAll()`), some keys may not be found in the ret
 
 Let's look at the `UserCacheLoader` implementation. This implementation is quite straight forward.
 
-- It implements `CacheLoader`.
-- It overrides the `load` method to compute or retrieve the value corresponding to `key`.
-- It overrides the `loadAll` method to compute or retrieve the values corresponding to `keys`.
+* It implements `CacheLoader`.
+* It overrides the `load` method to compute or retrieve the value corresponding to `key`.
+* It overrides the `loadAll` method to compute or retrieve the values corresponding to `keys`.
 
 An important note is that
 any kind of exception has to be wrapped into `javax.cache.integration.CacheLoaderException`.
@@ -198,7 +198,6 @@ any kind of exception has to be wrapped into `javax.cache.integration.CacheLoade
 ----
 include::{javasource}/jcache/UserCacheLoader.java[tag=ucl]
 ----
-
 
 ==== CacheWriter
 
@@ -211,11 +210,11 @@ the cache implementation can determine what keys are written and can be applied 
 
 The following example performs the following tasks:
 
-- It implements `CacheWriter`.
-- It overrides the `write` method to write the specified entry to the underlying store.
-- It overrides the `writeAll` method to write the specified entires to the underlying store.
-- It overrides the `delete` method to delete the key entry from the store.
-- It overrides the `deleteAll` method to delete the data and keys from the underlying store for the given collection of keys, if present.
+* It implements `CacheWriter`.
+* It overrides the `write` method to write the specified entry to the underlying store.
+* It overrides the `writeAll` method to write the specified entires to the underlying store.
+* It overrides the `delete` method to delete the key entry from the store.
+* It overrides the `deleteAll` method to delete the data and keys from the underlying store for the given collection of keys, if present.
 
 [source,java]
 ----
@@ -241,15 +240,13 @@ to be fully serializable because in a distributed environment like Hazelcast, it
 
 The following example performs the following tasks.
 
-- It implements `EntryProcessor`.
-- It overrides the `process` method to process an entry.
+* It implements `EntryProcessor`.
+* It overrides the `process` method to process an entry.
 
 [source,java]
 ----
 include::{javasource}/jcache/UserUpdateEntryProcessor.java[tag=uuep]
 ----
-
-
 
 NOTE: By executing the bulk `Cache.invokeAll()` operation, atomicity is only guaranteed for a
 single cache entry. No transactional rules are applied to the bulk operation.
@@ -265,10 +262,10 @@ In addition, when using a `Cache.invokeAll()` method, a `java.util.Map` is retur
 
 The `javax.cache.event.CacheEntryListener` implementation is straight forward. `CacheEntryListener` is a super-interface that is used as a marker for listener classes in JCache. The specification brings a set of sub-interfaces.
 
-- `CacheEntryCreatedListener`: Fires after a cache entry is added (even on read-through by a `CacheLoader`) to the cache.
-- `CacheEntryUpdatedListener`: Fires after an already existing cache entry updates.
-- `CacheEntryRemovedListener`: Fires after a cache entry was removed (not expired) from the cache.
-- `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be a parallel process-- Hazelcast JCache implementation detects and removes expired entries periodically. Therefore, the expiration event may not be fired as soon as the entry expires. See <<ExpiryPolicy>> for details.
+* `CacheEntryCreatedListener`: Fires after a cache entry is added (even on read-through by a `CacheLoader`) to the cache.
+* `CacheEntryUpdatedListener`: Fires after an already existing cache entry updates.
+* `CacheEntryRemovedListener`: Fires after a cache entry was removed (not expired) from the cache.
+* `CacheEntryExpiredListener`: Fires after a cache entry has been expired. Expiry does not have to be a parallel process-- Hazelcast JCache implementation detects and removes expired entries periodically. Therefore, the expiration event may not be fired as soon as the entry expires. See <<ExpiryPolicy>> for details.
 
 To configure `CacheEntryListener`, add a `javax.cache.configuration.CacheEntryListenerConfiguration` instance to
 the JCache configuration class, as seen in the above example configuration. In addition, listeners can be configured to be
@@ -276,18 +273,16 @@ executed synchronously (blocking the calling thread) or asynchronously (fully ru
 
 In this example application, the listener is implemented to print event information on the console. That visualizes what is going on in the cache. This application performs the following tasks:
 
-- It implements the `CacheEntryCreatedListener.onCreated` method to call after an entry is created.
-- It implements the `CacheEntryUpdatedListener.onUpdated` method to call after an entry is updated.
-- It implements the `CacheEntryRemovedListener.onRemoved` method to call after an entry is removed.
-- It implements the `CacheEntryExpiredListener.onExpired` method to call after an entry expires.
-- It implements `printEvents` to print event information on the console.
-
+* It implements the `CacheEntryCreatedListener.onCreated` method to call after an entry is created.
+* It implements the `CacheEntryUpdatedListener.onUpdated` method to call after an entry is updated.
+* It implements the `CacheEntryRemovedListener.onRemoved` method to call after an entry is removed.
+* It implements the `CacheEntryExpiredListener.onExpired` method to call after an entry expires.
+* It implements `printEvents` to print event information on the console.
 
 [source,java]
 ----
 include::{javasource}/jcache/UserCacheEntryListener.java[tag=ucel]
 ----
-
 
 ==== ExpiryPolicy
 
@@ -308,15 +303,11 @@ cache entry expires immediately.
 
 By default, JCache delivers a set of predefined expiry strategies in the standard API.
 
-- `AccessedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on accessing the key.
-- `CreatedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is never updated.
-- `EternalExpiryPolicy`: Never expires. This is the default behavior, similar to `ExpiryPolicy` being set to null.
-- `ModifiedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on updating the key.
-- `TouchedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on accessing or updating the key.
+* `AccessedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on accessing the key.
+* `CreatedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is never updated.
+* `EternalExpiryPolicy`: Never expires. This is the default behavior, similar to `ExpiryPolicy` being set to null.
+* `ModifiedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on updating the key.
+* `TouchedExpiryPolicy`: Expires after a given set of time measured from creation of the cache entry. The expiry timeout is updated on accessing or updating the key.
 
 Because `EternalExpiryPolicy` does not expire cache entries, it is still possible to evict values from memory if an underlying
 `CacheLoader` is defined.
-
-
-
-

@@ -1,9 +1,7 @@
 
-
 == Management
 
 This chapter provides information on managing and monitoring your Hazelcast cluster. It gives detailed instructions related to gathering statistics, monitoring via JMX protocol and managing the cluster with useful utilities.
-
 
 === Getting Member Statistics
 
@@ -36,7 +34,7 @@ The following are some of the metrics that you can access via the `LocalMapStats
 * Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
 * Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`). May be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storage.
 
-Please refer to https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc] to see all the metrics.
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc] to see all the metrics.
 
 ==== Map Index Statistics
 
@@ -52,18 +50,13 @@ include::{javasource}/management/ExampleLocalIndexStats.java[tag=lis]
 The following are some of the metrics that you can obtain via the `LocalIndexStats` interface:
 
 * Number of queries and hits into an index (`getQueryCount()` and `getHitCount()`). Number of hits and queries may differ since a single query may hit the same index more than once.
-
 * Average index hit latency measured in nanoseconds (`getAverageHitLatency()`).
-
 * Average index hit selectivity (`getAverageHitSelectivity`). Returned values are in the range from 0.0 to 1.0. Values close to 1.0 indicate a high selectivity meaning the index is efficient; values close to 0.0 indicate a low selectivity meaning the index efficiency is approaching an efficiency of a simple full scan.
-
 * Number of index insert, update and remove operations (`getInsertCount()`, `getUpdateCount()` and `getRemoveCount()`).
-
 * Total latencies of insert, update and remove operations (`getTotalInsertLatency()`, `getTotalUpdateLatency()`, `getTotalRemoveLatency()`). To compute an average latency divide the returned value by the number of operations of a corresponding type.
-
 * Memory cost of an index (`getMemoryCost()`). For on-heap storages, this memory cost metric value is a best-effort approximation and doesn't indicate a precise on-heap memory usage of an index.
 
-Refer to https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc] to see all the metrics.
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc] to see all the metrics.
 
 To compute an aggregated value of `getAverageHitSelectivity()` for all cluster members, you can use a simple averaging computation as shown below:
 
@@ -107,8 +100,7 @@ This behavior applies to both client and member Near Caches.
 * Memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`).
 * Number of hits (reads) of the locally owned entries (`getHits()`).
 
-Please refer to https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc] to see all the metrics.
-
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc] to see all the metrics.
 
 ==== Multimap Statistics
 
@@ -116,7 +108,6 @@ To get MultiMap statistics, use the `getLocalMultiMapStats()` method from the `M
 This method returns a `LocalMultiMapStats` object that holds local MultiMap statistics.
 
 Below is an example code where the `getLocalMultiMapStats()` method and the `getLastUpdateTime` method from `LocalMultiMapStats` get the last update time.
-
 
 [source,java]
 ----
@@ -133,8 +124,7 @@ The following are some of the metrics that you can access via the `LocalMultiMap
 * Number of hits (reads) of the locally owned entries (`getHits()`).
 * Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
 
-Please refer to https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc] to see all the metrics.
-
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc] to see all the metrics.
 
 ==== Queue Statistics
 
@@ -148,7 +138,6 @@ Below is an example code where the `getLocalQueueStats()` method and the `getAvg
 include::{javasource}/management/ExampleQueueStats.java[tag=qs]
 ----
 
-
 The following are some of the metrics that you can access via the `LocalQueueStats ` object.
 
 * Number of owned items in the member (`getOwnedItemCount()`).
@@ -156,8 +145,7 @@ The following are some of the metrics that you can access via the `LocalQueueSta
 * Minimum and maximum ages of the items in the member (`getMinAge()` and `getMaxAge()`).
 * Number of offer, put and add operations (`getOfferOperationCount()`).
 
-Please refer to https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc] to see all the metrics.
-
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc] to see all the metrics.
 
 ==== Topic Statistics
 
@@ -177,8 +165,7 @@ The following are the metrics that you can access via the `LocalTopicStats ` obj
 * Total number of published messages of the topic on the member (`getPublishOperationCount()`).
 * Total number of received messages of the topic on the member (`getReceiveOperationCount()`).
 
-Please refer to https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalTopicStats.html[here] for its Javadoc.
-
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalTopicStats.html[`LocalTopicStats` Javadoc] to see all the metrics.
 
 ==== Executor Statistics
 
@@ -198,7 +185,7 @@ The following are some of the metrics that you can access via the `LocalExecutor
 * Number of started operations of the executor service (`getStartedTaskCount()`).
 * Number of completed operations of the executor service (`getCompletedTaskCount()`).
 
-Please refer to https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc] to see all the metrics.
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc] to see all the metrics.
 
 === JMX API per Member
 
@@ -479,7 +466,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 **  Is terminated ( `isTerminated` )
 **  Completed task count ( `completedTaskCount` )
 
-
 === Monitoring with JMX
 
 You can monitor your Hazelcast members via the JMX protocol.
@@ -497,9 +483,13 @@ Then enable the Hazelcast property `hazelcast.jmx` (please refer to the <<system
 +
 [source,xml]
 ----
-<properties>
-   <property name="hazelcast.jmx">true</property>
-</properties>
+<hazelcast>
+    ...
+    <properties>
+        <property name="hazelcast.jmx">true</property>
+    </properties>
+    ...
+</hazelcast>
 ----
 +
 * By programmatic configuration:
@@ -511,7 +501,7 @@ Then enable the Hazelcast property `hazelcast.jmx` (please refer to the <<system
 [source,xml]
 ----
 <hz:properties>
-  <hz: property name="hazelcast.jmx">true</hz:property>
+    <hz: property name="hazelcast.jmx">true</hz:property>
 </hz:properties>
 ----
 +
@@ -529,8 +519,6 @@ final ObjectName mapMBeanName = new ObjectName("com.hazelcast:instance=_hzInstan
 
 The MBeans name consists of the Hazelcast instance name, the type of the data structure and that data structure's name. In the above example, `_hzInstance_1_dev` is the instance name, we connect to an IMap with the name `trial`.
 
-
-
 ==== Connecting to JMX Agent
 
 One of the ways you can connect to JMX agent is using jconsole, jvisualvm (with MBean plugin) or another JMX compliant monitoring tool.
@@ -538,7 +526,6 @@ One of the ways you can connect to JMX agent is using jconsole, jvisualvm (with 
 The other way to connect is to use a custom JMX client.
 
 First, you need to specify the URL where the Hazelcast JMX service is running. See the following code snippet:
-
 
 [source,java]
 ----
@@ -551,7 +538,6 @@ JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://" + hostname + ":" + po
 The `port` in the above example should be the one that you define while setting the JMX remote port number (if different than the default port `1099`).
 
 Then use the URL you acquired to connect to the JMX service and get the `JMXConnector` object. Using this object, get the `MBeanServerConnection` object. The `MBeanServerConnection` object will enable you to use the MBean methods. Please see the example code below.
-
 
 [source,java]
 ----
@@ -647,18 +633,13 @@ Hazelcast clusters have the following states:
 ** It is a temporary and intermediate state.
 ** During this state, your cluster does not accept new members and migration/replication tasks are paused.
 
-
 NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the cluster, it throws an exception immediately (it will not be retried).
 
-
 The following snippet is from the `Cluster` interface showing the methods used to manage your cluster's states.
-
 
 [source,java]
 ----
 public interface Cluster {
-...
-...
     ClusterState getClusterState();
     void changeClusterState(ClusterState newState);
     void changeClusterState(ClusterState newState, TransactionOptions transactionOptions);
@@ -666,7 +647,7 @@ public interface Cluster {
     void shutdown(TransactionOptions transactionOptions);
 ----
 
-Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface] for information on these methods.
+Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface Javadoc] for information on these methods.
 
 ===== Cluster Member States
 
@@ -678,13 +659,11 @@ Hazelcast cluster members have the following states:
 . Cluster's state is changed to `PASSIVE` using the method `changeClusterState()`.
 * **`SHUT_DOWN`**: A member goes into this state when the member's shutdown process is completed. The member in this state rejects all operations and invocations. A member in this state cannot be restarted.
 
-
 ==== Using the Script cluster.sh
 
 You can use the script `cluster.sh`, which comes with the Hazelcast package, to get/change the state of your cluster, to shutdown your cluster and to force your cluster to clean its persisted data and make a fresh start. The latter is the Force Start operation of Hazelcast's Hot Restart Persistence feature. Please refer to the <<force-start, Force Start section>>.
 
 NOTE: The script `cluster.sh` uses `curl` command and `curl` must be installed to be able to use the script.
-
 
 The script `cluster.sh` needs the following parameters to operate according to your needs. If these parameters are not provided, the default values are used.
 
@@ -728,7 +707,6 @@ The script `cluster.sh` is self-documented; you can see the parameter descriptio
 
 NOTE: You can perform the above operations using the Hot Restart tab of Hazelcast Management Center or using the REST API. Please see the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart] and <<using-rest-api-for-cluster-management, Using REST API for Cluster Management>>.
 
-
 ===== Example Usages for cluster.sh
 
 Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP  `172.16.254.1` and on the port
@@ -765,7 +743,6 @@ Similarly, you can use the following command for the same purpose:
 
 `sh cluster.sh --operation shutdown --address 172.16.254.1 --port 5702 --groupname test --password test`
 
-
 **Partial starting the cluster:**
 
 To partial start the cluster when Hot Restart is enabled, use the following command:
@@ -775,7 +752,6 @@ To partial start the cluster when Hot Restart is enabled, use the following comm
 Similarly, you can use the following command for the same purpose:
 
 `sh cluster.sh --operation partial-start --address 172.16.254.1 --port 5702 --groupname test --password test`
-
 
 **Force starting the cluster:**
 
@@ -787,7 +763,6 @@ Similarly, you can use the following command for the same purpose:
 
 `sh cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --groupname test --password test`
 
-
 **Getting the current cluster version:**
 
 To get the cluster version, use the following command:
@@ -797,7 +772,6 @@ To get the cluster version, use the following command:
 The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
 
 `sh cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --groupname test --password test`
-
 
 **Changing cluster version:**
 
@@ -810,7 +784,6 @@ To change the cluster version to `3.9`, use the following command:
 Cluster version is always in `major.minor` format, using other formats will result in a failure.
 
 NOTE: Currently, this script is not supported on the Windows platforms.
-
 
 ==== Using REST API for Cluster Management
 
@@ -899,7 +872,6 @@ $ curl --data "dev&dev-pass&3.9" http://127.0.0.1:5701/hazelcast/rest/management
 NOTE: You can also perform the above cluster version operations using Hazelcast Management Center or using the script `cluster.sh`. Please see the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Rolling Member Upgrades] and <<using-the-script-cluster-sh, `cluster.sh`>>.
 |===
 
-
 ==== Enabling Lite Members
 
 Lite members are the Hazelcast cluster members that do not store data. These members are used mainly to execute tasks and register listeners and they do not have partitions.
@@ -915,7 +887,9 @@ You can enable a cluster member to be a lite member using declarative or program
 [source,xml]
 ----
 <hazelcast>
+    ...
     <lite-member enabled="true">
+    ...
 </hazelcast>
 ----
 
@@ -943,15 +917,14 @@ cluster.promoteLocalLiteMember();
 
 NOTE: A data member cannot be downgraded to a lite member back.
 
-
 ==== Defining Member Attributes
 
 You can define various member attributes on your Hazelcast members. You can use these member attributes to tag your members as may be required by your business logic.
 
 To define a member attribute on a member, you can either:
 
-* provide `MemberAttributeConfig` to your `Config` object,
-* or provide member attributes at runtime via attribute setter methods on the `Member` interface.
+* provide `MemberAttributeConfig` to your `Config` object, or
+* provide member attributes at runtime via attribute setter methods on the `Member` interface.
 
 For example, you can tag your members with their CPU characteristics and you can route CPU intensive tasks to those CPU-rich members. Here is how you can do it:
 
@@ -1005,9 +978,13 @@ You can also define your member attributes through declarative configuration and
 
 [source,xml]
 ----
-<member-attributes>
-  <attribute name="CPU_CORE_COUNT">4</attribute-name>
-</member-attributes>
+<hazelcast>
+    ...
+    <member-attributes>
+        <attribute name="CPU_CORE_COUNT">4</attribute-name>
+    </member-attributes>
+    ...
+</hazelcast>
 ----
 
 ==== Safety Checking Cluster Members
@@ -1021,7 +998,6 @@ Please note that the process of shutting down members waits for a predefined amo
 ===== Ensuring Safe State with PartitionService
 
 With the improvements in graceful shutdown procedure in Hazelcast 3.7, the following methods are not needed to perform graceful shutdown. Nevertheless, you can use them to check the current safety status of the partitions in your cluster.
-
 
 [source,java]
 ----
@@ -1429,7 +1405,6 @@ operations.running.count=0, operations.pending.invocations.percentage=0.00%, ope
 connection.active.count=2, client.connection.count=1, connection.count=1
 ```
 
-
 NOTE: Please see the <<configuring-with-system-properties, Configuring with System Properties section>> to learn how to set system properties.
 
 ==== Using Health Check on F5 BIG-IP LTM
@@ -1485,21 +1460,18 @@ HEAD /hazelcast/health HTTP/1.1\r\n\nHost: [HOST-ADDRESS-OF-HAZELCAST-MEMBER] \r
 200 OK
 ```
 
-
 As you can see, the HEAD request only checks for a `200 OK` response. A Hazelcast cluster member will send this status code when it is alive and running without issue. This provides a very basic health check. For increased flexibility, we recommend using the GET request API.
-
 
 ====== TCP_HALF_OPEN Monitors
 
-- Set the "Type" as `TCP Half Open`.
-- Optionally, set the "Alias Service Port" as the port of Hazelcast cluster member if you want to specify the port in the monitor.
-
+* Set the "Type" as `TCP Half Open`.
+* Optionally, set the "Alias Service Port" as the port of Hazelcast cluster member if you want to specify the port in the monitor.
 
 === Management Center
 
 Hazelcast Management Center enables you to monitor and manage your cluster members running Hazelcast. In addition to monitoring the overall state of your clusters, you can also analyze and browse your data structures in detail, update map configurations and take thread dumps from members. You can run scripts (JavaScript, Groovy, etc.) and commands on your members with its scripting and console modules.
 
-Please refer to https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[Hazelcast Management Center Documentation] for its usage details.
+Refer to the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[Hazelcast Management Center Documentation] for its usage details.
 
 ==== Toggle Scripting Support
 
@@ -1509,9 +1481,13 @@ The scripting can be allowed or prevented by specifying the `scripting-enabled` 
 
 [source,xml]
 ----
-<management-center enabled="true" scripting-enabled="false">
-    http://localhost:8080/hazelcast-mancenter
-</management-center>
+<hazelcast>
+    ...
+    <management-center enabled="true" scripting-enabled="false">
+        http://localhost:8080/hazelcast-mancenter
+    </management-center>
+    ...
+</hazelcast>
 ----
 
 === Clustered JMX and REST via Management Center

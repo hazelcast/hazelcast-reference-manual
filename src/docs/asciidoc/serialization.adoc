@@ -16,17 +16,15 @@ Serialization is used in the following cases:
 * Locking an object
 * Sending a message to a topic
 
-
 Hazelcast optimizes the serialization for the basic types and their array types. You cannot override this behavior.
 
 **Default Types**;
 
-* Byte, Boolean, Character, Short, Integer, Long, Float, Double, String
-* byte[], boolean[], char[], short[], int[], long[], float[], double[], String[]
+* `Byte`, `Boolean`, `Character`, `Short`, `Integer`, `Long`, `Float`, `Double`, `String`
+* `byte[]`, `boolean[]`, `char[]`, `short[]`, `int[]`, `long[]`, `float[]`, `double[]`, `String[]`
 * `java.util.Date`, `java.math.BigInteger`, `java.math.BigDecimal`, `java.lang.Class`
 
 Hazelcast optimizes all of the above object types. You do not need to worry about their (de)serializations.
-
 
 === Serialization Interface Types
 
@@ -40,7 +38,6 @@ For complex objects, use the following interfaces for serialization and deserial
 * Custom Serialization (using <<implementing-streamserializer, StreamSerializer>> and <<implementing-bytearrayserializer, ByteArraySerializer>>).
 * Global Serializer: Please see the <<global-serializer, Global Serializer section>> for details.
 
-
 When Hazelcast serializes an object into `Data`:
 
 . It first checks whether the object is `null`.
@@ -52,7 +49,6 @@ When Hazelcast serializes an object into `Data`:
 . If the above check fails, Hazelcast will use the registered Global Serializer if one exists.
 
 If all of the above checks fail, then serialization will fail. When a class implements multiple interfaces, the above steps are important to determine the serialization mechanism that Hazelcast will use. When a class definition is required for any of these serializations, you need to have all the classes needed by the application on your classpath because Hazelcast does not download them automatically, unless you are using <<member-user-code-deployment-beta, user code deployment>>.
-
 
 === Comparing Serialization Interfaces
 
@@ -129,7 +125,6 @@ The table below provides a comparison between the interfaces listed in the previ
 
 Let's dig into the details of the above serialization mechanisms in the following sections.
 
-
 === Implementing Java Serializable and Externalizable
 
 A class often needs to implement the `java.io.Serializable` interface; native Java serialization is the easiest way to do serialization.
@@ -198,7 +193,6 @@ Let's take a look at another example which encapsulates a `DataSerializable` fie
 Since the `address` field itself is `DataSerializable`, it calls `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur
 in the same order. When Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast deserializes it, `className` is used to instantiate the object using reflection.
 
-
 [source,java]
 ----
 public class Employee implements DataSerializable {
@@ -240,7 +234,6 @@ NOTE: `DataSerializable` is a good option if serialization is only needed for in
 
 NOTE: `DataSerializable` is not supported by non-Java clients as it uses Java reflection. If you need non-Java clients, please use <<identifieddataserializable, IdentifiedDataSerializable>> or <<implementing-portable-serialization, Portable>>.
 
-
 ==== IdentifiedDataSerializable
 
 For a faster serialization of objects, avoiding reflection and long class names, Hazelcast recommends you implement `com.hazelcast.nio.serialization.IdentifiedDataSerializable` which is a slightly better version of `DataSerializable`.
@@ -253,7 +246,6 @@ For a faster serialization of objects, avoiding reflection and long class names,
 
 * `int getId();`
 * `int getFactoryId();`
-
 
 `IdentifiedDataSerializable` uses `getId()` instead of class name and it uses `getFactoryId()` to load the class when given the Id. To complete the implementation, you should also implement  `com.hazelcast.nio.serialization.DataSerializableFactory` and register it into `SerializationConfig`, which can be accessed from `Config.getSerializationConfig()`. Factory's responsibility is to return an instance of the right `IdentifiedDataSerializable` object, given the Id. This is currently the most efficient way of Serialization that Hazelcast supports off the shelf.
 
@@ -334,19 +326,19 @@ As the last step, you need to register `EmployeeDataSerializableFactory` declara
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <serialization>
-    <data-serializable-factories>
-      <data-serializable-factory factory-id="1">
-        EmployeeDataSerializableFactory
-      </data-serializable-factory>
-    </data-serializable-factories>
-  </serialization>
-  ...
+    ...
+    <serialization>
+        <data-serializable-factories>
+            <data-serializable-factory factory-id="1">
+                EmployeeDataSerializableFactory
+            </data-serializable-factory>
+        </data-serializable-factories>
+    </serialization>
+    ...
 </hazelcast>
 ----
 
-NOTE: Please refer to the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>> for a full description of Hazelcast Serialization configuration.
+NOTE: See the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>> for a full description of Hazelcast Serialization configuration.
 
 === Implementing Portable Serialization
 
@@ -404,19 +396,20 @@ config.getSerializationConfig().addPortableFactory( 1, new MyPortableFactory() )
 [source,xml]
 ----
 <hazelcast>
-  <serialization>
-    <portable-version>0</portable-version>
-    <portable-factories>
-      <portable-factory factory-id="1">
-          com.hazelcast.nio.serialization.MyPortableFactory
-      </portable-factory>
-    </portable-factories>
-  </serialization>
+    ...
+    <serialization>
+        <portable-version>0</portable-version>
+        <portable-factories>
+            <portable-factory factory-id="1">
+                com.hazelcast.nio.serialization.MyPortableFactory
+            </portable-factory>
+        </portable-factories>
+    </serialization>
+    ...
 </hazelcast>
 ----
 
 Note that the `id` that is passed to the `SerializationConfig` is the same as the `factoryId` that the `Foo` class returns.
-
 
 ==== Versioning for Portable Serialization
 
@@ -428,14 +421,18 @@ You can declare Version in the configuration file `hazelcast.xml` using the `por
 
 [source,xml]
 ----
-<serialization>
-  <portable-version>1</portable-version>
-  <portable-factories>
-    <portable-factory factory-id="1">
-        PortableFactoryImpl
-    </portable-factory>
-  </portable-factories>
-</serialization>
+<hazelcast>
+    ...
+    <serialization>
+        <portable-version>1</portable-version>
+        <portable-factories>
+            <portable-factory factory-id="1">
+                PortableFactoryImpl
+            </portable-factory>
+        </portable-factories>
+    </serialization>
+    ...
+</hazelcast>
 ----
 
 You can also use the interface https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/nio/serialization/VersionedPortable.html[VersionedPortable] which enables to upgrade the version per class, instead of global versioning. If you need to update only one class, you can use this interface. In this case, your class should implement `VersionedPortable` instead of `Portable`, and you can give the desired version using the method `VersionedPortable.getClassVersion()`.
@@ -446,7 +443,6 @@ You should consider the following when you perform versioning.
 * If a client performs a Portable deserialization on a field and then that Portable is updated by removing that field on the cluster side, this may lead to a problem.
 * Portable serialization does not use reflection and hence, fields in the class and in the serialized content are not automatically mapped. Field renaming is a simpler process. Also, since the class ID is stored, renaming the Portable does not lead to problems.
 * Types of fields need to be updated carefully. Hazelcast performs basic type upgradings, such as `int` to `float`.
-
 
 ===== Example Portable Versioning Scenarios
 
@@ -472,7 +468,6 @@ include::{javasource}/serialization/EmployeePortable.java[tag=empportable]
 ----
 
 As you see in the above example, first the `name` and then the `age` is written. This order should be preserved in other members or clients.
-
 
 ==== Null Portable Serialization
 
@@ -506,7 +501,6 @@ NOTE: Please refer to the <<serialization-configuration-wrap-up, Serialization C
 
 Hazelcast lets you plug in a custom serializer for serializing your objects. You can use <<implementing-streamserializer, StreamSerializer>> and <<implementing-bytearrayserializer, ByteArraySerializer>> interfaces for this purpose.
 
-
 ==== Implementing StreamSerializer
 
 You can use a stream to serialize and deserialize data by using `StreamSerializer`. This is a good option for your own implementations. It can also be adapted to external serialization libraries like Kryo, JSON and protocol buffers.
@@ -519,7 +513,6 @@ First, let's create a simple object.
 ----
 include::{javasource}/serialization/EmployeeSS.java[]
 ----
-
 
 Now, let's implement StreamSerializer for `Employee` class.
 
@@ -534,11 +527,15 @@ As the last step, let's register the `EmployeeStreamSerializer` in the configura
 
 [source,xml]
 ----
-<serialization>
-  <serializers>
-    <serializer type-class="Employee" class-name="EmployeeStreamSerializer" />
-  </serializers>
-</serialization>
+<hazelcast>
+    ...
+    <serialization>
+        <serializers>
+            <serializer type-class="Employee" class-name="EmployeeStreamSerializer" />
+        </serializers>
+    </serialization>
+    ...
+</hazelcast>
 ----
 
 NOTE: `StreamSerializer` cannot be created for well-known types, such as Long and String and primitive arrays. Hazelcast already registers these types.
@@ -587,11 +584,12 @@ config.getSerializationConfig().addSerializerConfig(sc);
 [source,xml]
 ----
 <hazelcast>
-  <serialization>
-    <serializers>
-      <serializer type-class="com.www.Foo" class-name="com.www.FooXmlSerializer" />
-    </serializers>
-  </serialization>
+    <serialization>
+        <serializers>
+            <serializer type-class="com.www.Foo" class-name="com.www.FooXmlSerializer" />
+        </serializers>
+    </serialization>
+    ...
 </hazelcast>
 ----
 
@@ -611,18 +609,21 @@ Let's implement `ByteArraySerializer` for the `Employee` class mentioned in <<im
 include::{javasource}/serialization/EmployeeByteArraySerializer.java[tag=empbas]
 ----
 
-
 ===== Configuring ByteArraySerializer
 
 As usual, let's register the `EmployeeByteArraySerializer` in the configuration file `hazelcast.xml`, as shown below.
 
 [source,xml]
 ----
-<serialization>
-  <serializers>
-    <serializer type-class="Employee">EmployeeByteArraySerializer</serializer>
-  </serializers>
-</serialization>
+<hazelcast>
+    ...
+    <serialization>
+        <serializers>
+            <serializer type-class="Employee">EmployeeByteArraySerializer</serializer>
+        </serializers>
+    </serialization>
+    ...
+</hazelcast>
 ----
 
 NOTE: Please refer to the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>> for a full description of Hazelcast Serialization configuration.
@@ -635,8 +636,7 @@ By default, the global serializer does not handle `java.io.Serializable` and `ja
 
 A custom serializer should be registered for a specific class type. The global serializer will handle all class types if all the steps in searching for a serializer fail as described in <<serialization-interface-types, Serialization Interface Types>>.
 
-
-**Use cases**
+**Use cases:**
 
 * Third party serialization frameworks can be integrated using the global serializer.
 * For your custom objects, you can implement a single serializer to handle all of them.
@@ -690,11 +690,15 @@ Now, we can register the global serializer in the configuration file `hazelcast.
 
 [source,xml]
 ----
-<serialization>
-  <serializers>
-    <global-serializer override-java-serialization="true">GlobalStreamSerializer</global-serializer>
-  </serializers>
-</serialization>
+<hazelcast>
+    ...
+    <serialization>
+        <serializers>
+            <global-serializer override-java-serialization="true">GlobalStreamSerializer</global-serializer>
+        </serializers>
+    </serialization>
+    ...
+</hazelcast>
 ----
 
 === Implementing HazelcastInstanceAware
@@ -707,7 +711,6 @@ Let's implement it for the `Employee` class mentioned in the <<custom-serializat
 ----
 include::{javasource}/serialization/PersonAwr.java[tag=personawr]
 ----
-
 
 After deserialization, the object is checked to see if it implements `HazelcastInstanceAware` and the method `setHazelcastInstance` is called. Notice the `hazelcastInstance` is `transient`. This is because this field should not be serialized.
 
@@ -724,6 +727,7 @@ op
 [source,xml]
 ----
 <hazelcast>
+    ...
     <serialization>
         <java-serialization-filter defaults-disabled="true">
             <whitelist>
@@ -739,6 +743,7 @@ op
             </blacklist>
         </java-serialization-filter>
     </serialization>
+    ...
 </hazelcast>
 ----
 
@@ -762,7 +767,6 @@ The protection uses a whitelist as the default configuration. When this list is 
 
 If you do not want to use the default whitelist prefixes, you must set the `defaults-disabled` attribute to true.
 
-
 Once the protection is enabled, the following filtering rules are used when objects are deserialized.
 
 * When whitelist is not provided:
@@ -777,7 +781,6 @@ When deserialization fails, a `SecurityException` is thrown.
 
 NOTE: Note that the safest way to provide a protection against untrusted deserialization is using whitelisting (also keep in mind that maintaining such a whitelist can be difficult).
 
-
 === Serialization Configuration Wrap-Up
 
 This section summarizes the configuration of serialization options, explained in the above sections, into all-in-one examples. The following are example serialization configurations.
@@ -786,30 +789,34 @@ This section summarizes the configuration of serialization options, explained in
 
 [source,xml]
 ----
-<serialization>
-   <portable-version>2</portable-version>
-   <use-native-byte-order>true</use-native-byte-order>
-   <byte-order>BIG_ENDIAN</byte-order>
-   <enable-compression>true</enable-compression>
-   <enable-shared-object>false</enable-shared-object>
-   <allow-unsafe>true</allow-unsafe>
-   <data-serializable-factories>
-      <data-serializable-factory factory-id="1001">
-          abc.xyz.Class
-      </data-serializable-factory>
-   </data-serializable-factories>
-   <portable-factories>
-      <portable-factory factory-id="9001">
-         xyz.abc.Class
-      </portable-factory>
-   </portable-factories>
-   <serializers>
-      <global-serializer>abc.Class</global-serializer>
-      <serializer type-class="Employee" class-name="com.EmployeeSerializer">
-      </serializer>
-   </serializers>
-   <check-class-def-errors>true</check-class-def-errors>
-</serialization>
+<hazelcast>
+    ...
+    <serialization>
+        <portable-version>2</portable-version>
+        <use-native-byte-order>true</use-native-byte-order>
+        <byte-order>BIG_ENDIAN</byte-order>
+        <enable-compression>true</enable-compression>
+        <enable-shared-object>false</enable-shared-object>
+        <allow-unsafe>true</allow-unsafe>
+        <data-serializable-factories>
+            <data-serializable-factory factory-id="1001">
+                abc.xyz.Class
+            </data-serializable-factory>
+        </data-serializable-factories>
+        <portable-factories>
+            <portable-factory factory-id="9001">
+                xyz.abc.Class
+            </portable-factory>
+        </portable-factories>
+        <serializers>
+            <global-serializer>abc.Class</global-serializer>
+            <serializer type-class="Employee" class-name="com.EmployeeSerializer">
+            </serializer>
+        </serializers>
+        <check-class-def-errors>true</check-class-def-errors>
+    </serialization>
+    ...
+</hazelcast>
 ----
 
 **Programmatic Configuration:**
@@ -832,14 +839,14 @@ serializerConfig.setTypeClass( "Employee" )
 
 Serialization configuration has the following elements.
 
-- `portable-version`: Defines versioning of the portable serialization. Portable version differentiates two of the same classes that have changes, such as adding/removing field or changing a type of a field.
-- `use-native-byte-order`: Set to `true` to use native byte order for the underlying platform. Its default value is `false`.
-- `byte-order`: Defines the byte order that the serialization will use: `BIG_ENDIAN` or `LITTLE_ENDIAN`. Its default value is `BIG_ENDIAN`.
-- `enable-compression`: Enables compression if default Java serialization is used. Its default value is `false`.
-- `enable-shared-object`: Enables shared object if default Java serialization is used. Its default value is `false`.
-- `allow-unsafe`: Set to `true` to allow `unsafe` to be used. Its default value is `false`.
-- `data-serializable-factory`: Custom classes implementing `com.hazelcast.nio.serialization.DataSerializableFactory` to be registered. These can be used to speed up serialization/deserialization of objects.
-- `portable-factory`: The `PortableFactory` class to be registered.
-- `global-serializer`: The global serializer class to be registered if no other serializer is applicable. This element has the optional boolean attribute `override-java-serialization`. If set to `true`, the Java serialization step is assumed to be handled by the global serializer. Java Serializable and Externalizable is prior to global serializer by default (`false`).
-- `serializer`: The class name of the serializer implementation.
-- `check-class-def-errors`: When set to `true`, the serialization system will check for class definitions error at start and will throw a Serialization Exception with an error definition.
+* `portable-version`: Defines versioning of the portable serialization. Portable version differentiates two of the same classes that have changes, such as adding/removing field or changing a type of a field.
+* `use-native-byte-order`: Set to `true` to use native byte order for the underlying platform. Its default value is `false`.
+* `byte-order`: Defines the byte order that the serialization will use: `BIG_ENDIAN` or `LITTLE_ENDIAN`. Its default value is `BIG_ENDIAN`.
+* `enable-compression`: Enables compression if default Java serialization is used. Its default value is `false`.
+* `enable-shared-object`: Enables shared object if default Java serialization is used. Its default value is `false`.
+* `allow-unsafe`: Set to `true` to allow `unsafe` to be used. Its default value is `false`.
+* `data-serializable-factory`: Custom classes implementing `com.hazelcast.nio.serialization.DataSerializableFactory` to be registered. These can be used to speed up serialization/deserialization of objects.
+* `portable-factory`: The `PortableFactory` class to be registered.
+* `global-serializer`: The global serializer class to be registered if no other serializer is applicable. This element has the optional boolean attribute `override-java-serialization`. If set to `true`, the Java serialization step is assumed to be handled by the global serializer. Java Serializable and Externalizable is prior to global serializer by default (`false`).
+* `serializer`: The class name of the serializer implementation.
+* `check-class-def-errors`: When set to `true`, the serialization system will check for class definitions error at start and will throw a Serialization Exception with an error definition.

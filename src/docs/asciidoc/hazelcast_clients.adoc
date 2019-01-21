@@ -132,9 +132,9 @@ While sending the requests to related members, operations can fail due to variou
 
 You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client will retry an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes:
 
-- Member throws an exception.
-- Connection between the client and member is closed.
-- Client's heartbeat requests are timed out.
+* Member throws an exception.
+* Connection between the client and member is closed.
+* Client's heartbeat requests are timed out.
 
 Please see the <<client-system-properties, Client System Properties section>> for the description of the property `hazelcast.client.invocation.timeout.seconds`.
 
@@ -144,7 +144,6 @@ When any failure happens between a client and member (such as an exception at th
 * if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect.
 
 If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member and then the connection is lost. Since there will be no respond for this operation, you will not know whether it has run on the member or not. If you enabled `redoOperation`, that `queue.offer` operation may rerun and this will cause the same objects to be offered twice in the member's queue.
-
 
 ===== Using Supported Distributed Data Structures
 
@@ -203,18 +202,17 @@ myQueue.offer(“ali”)
 
 The distributed data structures listed below are also supported by the client. Since their logic is the same in both the member side and client side, you can refer to their sections as listed below.
 
-- <<replicated-map, Replicated Map>>
-- <<mapreduce, MapReduce>>
-- <<list, List>>
-- <<set, Set>>
-- <<iatomiclong, IAtomicLong>>
-- <<iatomicreference, IAtomicReference>>
-- <<icountdownlatch, ICountDownLatch>>
-- <<isemaphore, ISemaphore>>
-- <<idgenerator, IdGenerator>>
-- <<flakeidgenerator, FlakeIdGenerator>>
-- <<lock, Lock>>
-
+* <<replicated-map, Replicated Map>>
+* <<mapreduce, MapReduce>>
+* <<list, List>>
+* <<set, Set>>
+* <<iatomiclong, IAtomicLong>>
+* <<iatomicreference, IAtomicReference>>
+* <<icountdownlatch, ICountDownLatch>>
+* <<isemaphore, ISemaphore>>
+* <<idgenerator, IdGenerator>>
+* <<flakeidgenerator, FlakeIdGenerator>>
+* <<lock, Lock>>
 
 ===== Using Client Services
 
@@ -231,7 +229,6 @@ IExecutorService executorService = client.getExecutorService("default");
 After getting an instance of `IExecutorService`, you can use the instance as the interface with the one provided on the server side. Please see the <<distributed-computing, Distributed Computing chapter>> for detailed usage.
 
 NOTE: This service is only supported by the Java client.
-
 
 ====== Listening to Client Connection
 
@@ -261,11 +258,10 @@ Set<Partition> partitions = partitionService.getPartitions();
 
 Lifecycle handling performs the following:
 
-- Check if the client is running.
-- Shut down the client gracefully.
-- Terminate the client ungracefully (forced shutdown).
-- Add/remove lifecycle listeners.
-
+* Check if the client is running.
+* Shut down the client gracefully.
+* Terminate the client ungracefully (forced shutdown).
+* Add/remove lifecycle listeners.
 
 [source,java]
 ----
@@ -372,7 +368,6 @@ If you want to specify your own configuration file to create a `Config` object, 
 * `Config cfg = new XmlClientConfigBuilder(xmlFileName).build();`
 * `Config cfg = new XmlClientConfigBuilder(inputStream).build();`
 
-
 For programmatic configuration of the Hazelcast Java Client, just instantiate a `ClientConfig` object and configure the desired aspects. An example is shown below.
 
 [source,java]
@@ -395,41 +390,40 @@ Here is an example of configuring network for Java Client declaratively.
 
 [source,xml]
 ----
-<hazelcast-client xsi:schemaLocation=
-    "http://www.hazelcast.com/schema/client-config hazelcast-client-config-<version>.xsd"
-                  xmlns="http://www.hazelcast.com/schema/client-config"
-                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-...
-<network>
-  <cluster-members>
-    <address>127.0.0.1</address>
-    <address>127.0.0.2</address>
-  </cluster-members>
-  <outbound-ports>
-     <ports>34600</ports>
-     <ports>34700-34710</ports>
-  </outbound-ports>
-  <smart-routing>true</smart-routing>
-  <redo-operation>true</redo-operation>
-  <socket-interceptor enabled="true">
-    <class-name>com.hazelcast.XYZ</class-name>
-    <properties>
-      <property name="kerberos-host">kerb-host-name</property>
-      <property name="kerberos-config-file">kerb.conf</property>
-    </properties>
-   </socket-interceptor>
-  <aws enabled="true" connection-timeout-seconds="11">
-    <inside-aws>false</inside-aws>
-    <access-key>my-access-key</access-key>
-    <secret-key>my-secret-key</secret-key>
-    <iam-role>s3access</iam-role>
-    <region>us-west-1</region>
-    <host-header>ec2.amazonaws.com</host-header>
-    <security-group-name>hazelcast-sg</security-group-name>
-    <tag-key>type</tag-key>
-    <tag-value>hz-members</tag-value>
-  </aws>
-</network>
+<hazelcast-client>
+    ...
+    <network>
+        <cluster-members>
+            <address>127.0.0.1</address>
+            <address>127.0.0.2</address>
+        </cluster-members>
+        <outbound-ports>
+            <ports>34600</ports>
+            <ports>34700-34710</ports>
+        </outbound-ports>
+        <smart-routing>true</smart-routing>
+        <redo-operation>true</redo-operation>
+        <socket-interceptor enabled="true">
+            <class-name>com.hazelcast.XYZ</class-name>
+            <properties>
+                <property name="kerberos-host">kerb-host-name</property>
+                <property name="kerberos-config-file">kerb.conf</property>
+            </properties>
+        </socket-interceptor>
+        <aws enabled="true" connection-timeout-seconds="11">
+            <inside-aws>false</inside-aws>
+            <access-key>my-access-key</access-key>
+            <secret-key>my-secret-key</secret-key>
+            <iam-role>s3access</iam-role>
+            <region>us-west-1</region>
+            <host-header>ec2.amazonaws.com</host-header>
+            <security-group-name>hazelcast-sg</security-group-name>
+            <tag-key>type</tag-key>
+            <tag-value>hz-members</tag-value>
+        </aws>
+    </network>
+    ...
+</hazelcast>
 ----
 
 ====== Programmatic Client Network Configuration
@@ -450,15 +444,14 @@ Address List is the initial list of cluster addresses to which the client will c
 [source,xml]
 ----
 <hazelcast-client>
-  ...
-  <network>
-    <cluster-members>
-      <address>10.1.1.21</address>
-      <address>10.1.1.22:5703</address>
-    </cluster-members>
-  ...
-  </network>
-...
+    ...
+    <network>
+        <cluster-members>
+            <address>10.1.1.21</address>
+            <address>10.1.1.22:5703</address>
+        </cluster-members>
+    </network>
+    ...
 </hazelcast-client>
 ----
 
@@ -481,20 +474,23 @@ IMPORTANT:  If you have multiple members on a single machine and you are using <
 
 You may want to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast Java client to use only defined outbound ports. The following are example configurations.
 
-
 **Declarative Configuration:**
 
 [source,xml]
 ----
-  <network>
-    <outbound-ports>
-      <!-- ports between 34700 and 34710 -->
-      <ports>34700-34710</ports>
-      <!-- comma separated ports -->
-      <ports>34700,34701,34702,34703</ports>
-      <ports>34700,34705-34710</ports>
-    </outbound-ports>
-  </network>
+<hazelcast-client>
+    ...
+    <network>
+        <outbound-ports>
+            <!-- ports between 34700 and 34710 -->
+            <ports>34700-34710</ports>
+            <!-- comma separated ports -->
+            <ports>34700,34701,34702,34703</ports>
+            <ports>34700,34705-34710</ports>
+        </outbound-ports>
+    </network>
+    ...
+</hazelcast-client>
 ----
 
 **Programmatic Configuration:**
@@ -527,13 +523,13 @@ The following are example configurations.
 
 [source,xml]
 ----
-...
-<network>
-...
-  <smart-routing>true</smart-routing>
-...
-</network>
-...
+<hazelcast-client>
+    ...
+    <network>
+        <smart-routing>true</smart-routing>
+    </network>
+    ...
+</hazelcast-client>
 ----
 
 **Programmatic Configuration:**
@@ -555,12 +551,13 @@ It enables/disables redo-able operations as described in <<handling-failures, Ha
 
 [source,xml]
 ----
-...
-<network>
-...
-  <redo-operation>true</redo-operation>
-...
-</network>
+<hazelcast-client>
+    ...
+    <network>
+        <redo-operation>true</redo-operation>
+    </network>
+    ...
+</hazelcast-client>
 ----
 
 **Programmatic Configuration:**
@@ -582,12 +579,13 @@ Connection timeout is the timeout value in milliseconds for members to accept cl
 
 [source,xml]
 ----
-...
-<network>
-...
-  <connection-timeout>5000</connection-timeout>
-...
-</network>
+<hazelcast-client>
+    ...
+    <network>
+        <connection-timeout>5000</connection-timeout>
+    </network>
+    ...
+</hazelcast-client>
 ----
 
 **Programmatic Configuration:**
@@ -608,12 +606,13 @@ While the client is trying to connect initially to one of the members in the `Cl
 
 [source,xml]
 ----
-...
-<network>
-...
-  <connection-attempt-limit>5</connection-attempt-limit>
-...
-</network>
+<hazelcast-client>
+    ...
+    <network>
+        <connection-attempt-limit>5</connection-attempt-limit>
+    </network>
+    ...
+</hazelcast-client>
 ----
 
 **Programmatic Configuration:**
@@ -634,12 +633,13 @@ Connection attempt period is the duration in milliseconds between the connection
 
 [source,xml]
 ----
-...
-<network>
-...
-  <connection-attempt-period>5000</connection-attempt-period>
-...
-</network>
+<hazelcast-client>
+    ...
+    <network>
+        <connection-attempt-period>5000</connection-attempt-period>
+    </network>
+    ...
+</hazelcast-client>
 ----
 
 **Programmatic Configuration:**
@@ -736,21 +736,23 @@ The example declarative and programmatic configurations below show how to config
 
 [source,xml]
 ----
-...
-<network>
-  <aws enabled="true">
-    <inside-aws>false</inside-aws>
-    <access-key>my-access-key</access-key>
-    <secret-key>my-secret-key</secret-key>
-    <iam-role>s3access</iam-role>
-    <region>us-west-1</region>
-    <host-header>ec2.amazonaws.com</host-header>
-    <security-group-name>hazelcast-sg</security-group-name>
-    <tag-key>type</tag-key>
-    <tag-value>hz-members</tag-value>
-  </aws>
-...
-</network>
+<hazelcast-client>
+    ...
+    <network>
+        <aws enabled="true">
+            <inside-aws>false</inside-aws>
+            <access-key>my-access-key</access-key>
+            <secret-key>my-secret-key</secret-key>
+            <iam-role>s3access</iam-role>
+            <region>us-west-1</region>
+            <host-header>ec2.amazonaws.com</host-header>
+            <security-group-name>hazelcast-sg</security-group-name>
+            <tag-key>type</tag-key>
+            <tag-value>hz-members</tag-value>
+        </aws>
+    </network>
+    ...
+</hazelcast-client>
 ----
 
 **Programmatic Configuration:**
@@ -779,11 +781,11 @@ The following are example configurations.
 [source,xml]
 ----
 <hazelcast-client>
-  ...
-  <load-balancer type=“random”>
-    yourLoadBalancer
-  </load-balancer>
-  ...
+    ...
+    <load-balancer type=“random”>
+        yourLoadBalancer
+    </load-balancer>
+    ...
 </hazelcast-client>
 ----
 
@@ -797,7 +799,6 @@ clientConfig.setLoadBalancer(yourLoadBalancer);
 
 ===== Configuring Client Listeners
 You can configure global event listeners using `ListenerConfig` as shown below.
-
 
 [source,java]
 ----
@@ -815,9 +816,9 @@ clientConfig.addListenerConfig(listenerConfig);
 
 You can add three types of event listeners.
 
-- LifecycleListener
-- MembershipListener
-- DistributedObjectListener
+* LifecycleListener
+* MembershipListener
+* DistributedObjectListener
 
 ===== Configuring Client Connection Strategy
 
@@ -834,9 +835,9 @@ The example declarative and programmatic configurations below show how to config
 [source,xml]
 ----
 <hazelcast-client>
-  ...
-  <connection-strategy async-start="true" reconnect-mode="ASYNC" />
-  ...
+    ...
+    <connection-strategy async-start="true" reconnect-mode="ASYNC" />
+    ...
 </hazelcast-client>
 ----
 
@@ -866,8 +867,8 @@ Connection retry configuration is done using the `connection-retry` element when
 [source,xml]
 ----
 <hazelcast-client>
-  ...
-   <connection-strategy async-start="false" reconnect-mode="ON">
+    ...
+    <connection-strategy async-start="false" reconnect-mode="ON">
         <connection-retry enabled="true">
             <initial-backoff-millis>1000</initial-backoff-millis>
             <max-backoff-millis>60000</max-backoff-millis>
@@ -875,8 +876,8 @@ Connection retry configuration is done using the `connection-retry` element when
             <fail-on-max-backoff>true</fail-on-max-backoff>
             <jitter>0.5</jitter>
         </connection-retry>
-   </connection-strategy>
-  ...
+    </connection-strategy>
+    ...
 </hazelcast-client>
 ----
 
@@ -920,7 +921,6 @@ A pseudo-code is as follows:
 
 Note that, `TryConnect` above tries to connect to any member that the client knows, and for each connection we have a connection timeout; see the <<setting-connection-timeout, Setting Connection Timeout section>>.
 
-
 ===== Other Configurations
 
 ====== Configuring Client Near Cache
@@ -941,12 +941,9 @@ clientConfig.setGroupConfig(new GroupConfig("dev","dev-pass"));
 
 In the cases where the security established with `GroupConfig` is not enough and you want your clients connecting securely to the cluster, you can use `ClientSecurityConfig`. This configuration has a `credentials` parameter to set the IP address and UID. Please see `ClientSecurityConfig.java` in our code.
 
-
 ====== Client Serialization Configuration
 
 For the client side serialization, use Hazelcast configuration. Please refer to the <<serialization , Serialization chapter>>.
-
-
 
 ====== ExecutorPoolSize
 
@@ -981,24 +978,22 @@ _Deadline Failure Detector_ uses an absolute timeout for missing/lost heartbeats
 
 _Deadline Failure Detector_ has two configuration properties:
 
-- `hazelcast.client.heartbeat.interval`: This is the interval at which client sends heartbeat messages to members.
-- `hazelcast.client.heartbeat.timeout`: This is the timeout which defines when a cluster member is suspected, because it has not sent any response back to client requests.
+* `hazelcast.client.heartbeat.interval`: This is the interval at which client sends heartbeat messages to members.
+* `hazelcast.client.heartbeat.timeout`: This is the timeout which defines when a cluster member is suspected, because it has not sent any response back to client requests.
 
 NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than that of `hazelcast.client.heartbeat.timeout`. In addition, the value of system property <<client-max-no, hazelcast.client.max.no.heartbeat.seconds>>, which is set at the member side, should be larger than that of `hazelcast.client.heartbeat.interval`.
 
 The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's configuration XML file, e.g., `hazelcast-client.xml`):
 
-
 [source,xml]
 ----
 <hazelcast-client>
-    [...]
-	<properties>
+    ...
+    <properties>
         <property name="hazelcast.client.heartbeat.timeout">60000</property>
         <property name="hazelcast.client.heartbeat.interval">5000</property>
-        [...]
     </properties>
-    [...]
+    ...
 </hazelcast-client>
 ----
 
@@ -1012,7 +1007,6 @@ config.setProperty("hazelcast.client.heartbeat.interval", "5000");
 [...]
 ----
 
-
 ===== Client Ping Failure Detector
 
 In addition to the Deadline Failure Detector, the Ping Failure Detector may be configured on your client. Please note that this detector is disabled by default. The Ping Failure Detector operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events.
@@ -1022,13 +1016,12 @@ If there are not enough permissions, it can be configured to fallback on attempt
 
 For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met:
 
-- Supported OS: as of Java 1.8 only Linux/Unix environments are supported.
-- The Java executable must have the `cap_net_raw` capability.
-- The file `ld.conf` must be edited to overcome the rejection by the dynamic linker when loading libs from untrusted paths.
-- ICMP Echo Requests must not be blocked by the receiving hosts.
+* Supported OS: as of Java 1.8 only Linux/Unix environments are supported.
+* The Java executable must have the `cap_net_raw` capability.
+* The file `ld.conf` must be edited to overcome the rejection by the dynamic linker when loading libs from untrusted paths.
+* ICMP Echo Requests must not be blocked by the receiving hosts.
 
 The details of these requirements are explained in the <<requirements-and-linuxunix-configuration, Requirements section>> of Hazelcast members' <<ping-failure-detector, Ping Failure Detector>>.
-
 
 If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
 
@@ -1037,9 +1030,8 @@ An example declarative configuration to use the Ping Failure Detector is as foll
 [source,xml]
 ----
 <hazelcast-client>
-    [...]
+    ...
     <network>
-        [...]
         <icmp-ping enabled="true">
             <timeout-milliseconds>1000</timeout-milliseconds>
             <interval-milliseconds>1000</interval-milliseconds>
@@ -1047,9 +1039,8 @@ An example declarative configuration to use the Ping Failure Detector is as foll
             <echo-fail-fast-on-startup>false</echo-fail-fast-on-startup>
             <max-attempts>2</max-attempts>
         </icmp-ping>
-        [...]
     </network>
-    [...]
+    ...
 </hazelcast-client>
 ----
 
@@ -1067,7 +1058,6 @@ clientIcmpPingConfig.setIntervalMilliseconds(1000)
         .setMaxAttempts(2)
         .setEchoFailFastOnStartup(false)
         .setEnabled(true);
-[...]
 ----
 
 * `enabled`: Enables the legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member. Its default value is `false`.
@@ -1080,7 +1070,6 @@ In the above example configuration, the Ping Failure Detector will attempt 2 pin
 
 To enforce the <<requirements-and-linuxunix-configuration, Requirements>>, the property `echo-fail-fast-on-startup` can also be set to `true`, in which case Hazelcast will fail to start if any of the requirements
 isn't met.
-
 
 Unlike the Hazelcast members, Ping Failure Detector works always in parallel with Deadline Failure Detector on the clients.
 Below is a summary table of all possible configuration combinations of the Ping Failure Detector.
@@ -1102,8 +1091,6 @@ Below is a summary table of all possible configuration combinations of the Ping 
 | Not Supported
 | Not Supported - Requires root privileges
 |===
-
-
 
 ==== Client System Properties
 
@@ -1195,7 +1182,6 @@ Let's recall the Java client's Near Cache configuration (please see the <<config
 ----
 <hazelcast-client>
     ...
-    ...
     <near-cache name="MENU">
         <max-size>2000</max-size>
         <time-to-live-seconds>0</time-to-live-seconds>
@@ -1214,15 +1200,12 @@ You can configure this Near Cache to use Hazelcast's High-Density Memory Store b
 ----
 <hazelcast-client>
     ...
-    ...
     <near-cache>
-       ...
-       <time-to-live-seconds>0</time-to-live-seconds>
-       <max-idle-seconds>0</max-idle-seconds>
-       <invalidate-on-change>true</invalidate-on-change>
-       <in-memory-format>NATIVE</in-memory-format>
-       <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
-       ...
+        <time-to-live-seconds>0</time-to-live-seconds>
+        <max-idle-seconds>0</max-idle-seconds>
+        <invalidate-on-change>true</invalidate-on-change>
+        <in-memory-format>NATIVE</in-memory-format>
+        <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
     </near-cache>
 </hazelcast-client>
 ----
@@ -1317,7 +1300,6 @@ Content-Length: 0
 ```
 ====
 
-
 ===== Creating/Updating Entries in a Map for REST Client
 
 You can put a new `key1/value1` entry into a map by using POST call to
@@ -1369,7 +1351,6 @@ It will return the following if there is no mapping for the given key:
 < HTTP/1.1 204 No Content
 < Content-Length: 0
 ----
-
 
 ===== Removing Entries from a Map for REST Client
 
@@ -1452,7 +1433,6 @@ foo
 
 When the timeout is reached, the response will be `No Content` success, i.e. there is no item on the queue to be returned.
 
-
 [source,plain]
 ----
 < HTTP/1.1 204 No Content
@@ -1511,14 +1491,11 @@ RESTful access is provided through any member of your cluster. You can even put 
 
 NOTE: You need to handle the failures on REST polls as there is no transactional guarantee.
 
-
-
 === Memcache Client
 
 NOTE: Hazelcast Memcache Client only supports ASCII protocol. Binary Protocol is not supported.
 
 A Memcache client written in any language can talk directly to a Hazelcast cluster. No additional configuration is required.
-
 
 NOTE: Memcache client request listener service is not enabled by default. You should enable it on your cluster members to use Memcache client. It can be enabled using the system property `hazelcast.memcache.enabled`. Please refer to the <<system-properties, System Properties appendix>> for the definition of this property and how to set a system property.
 
@@ -1542,11 +1519,11 @@ Assume that you have a PHP application that uses PHP Memcache client to cache th
 [source,php]
 ----
 <?php
-  $memcache = new Memcache;
-  $memcache->connect( '10.20.17.1', 5701 ) or die ( "Could not connect" );
-  $memcache->set( 'key1', 'value1', 0, 3600 );
-  $get_result = $memcache->get( 'key1' ); // retrieve your data
-  var_dump( $get_result ); // show it
+    $memcache = new Memcache;
+    $memcache->connect( '10.20.17.1', 5701 ) or die ( "Could not connect" );
+    $memcache->set( 'key1', 'value1', 0, 3600 );
+    $get_result = $memcache->get( 'key1' ); // retrieve your data
+    var_dump( $get_result ); // show it
 ?>
 ----
 
@@ -1561,7 +1538,6 @@ System.out.println( client.get( "key1" ) );
 ----
 
 If you want your data to be stored in different maps, for example to utilize per map configuration, you can do that with a map name prefix as in the following example code.
-
 
 [source,java]
 ----

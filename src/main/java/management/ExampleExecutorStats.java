@@ -6,12 +6,12 @@ import com.hazelcast.monitor.LocalExecutorStats;
 public class ExampleExecutorStats {
 
     public static void main(String[] args) throws Exception{
-//tag::es[]
+        //tag::es[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         IExecutorService orderProcessor = hazelcastInstance.getExecutorService( "orderProcessor" );
         LocalExecutorStats executorStatistics = orderProcessor.getLocalExecutorStats();
         System.out.println( "completed task count = "
                 + executorStatistics.getCompletedTaskCount() );
-//end::es[]
+        //end::es[]
     }
 }

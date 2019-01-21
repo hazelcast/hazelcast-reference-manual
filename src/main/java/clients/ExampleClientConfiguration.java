@@ -7,7 +7,7 @@ import com.hazelcast.core.HazelcastInstance;
 public class ExampleClientConfiguration {
 
     public static void main(String[] args) throws Exception{
-//tag::scc[]
+        //tag::scc[]
         ClientConfig clientConfig = new ClientConfig();
         ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
         networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703")
@@ -30,6 +30,6 @@ public class ExampleClientConfiguration {
                 .setEnabled( true );
         clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-//end::scc[]
+        //end::scc[]
     }
 }

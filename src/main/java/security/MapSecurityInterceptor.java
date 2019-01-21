@@ -94,7 +94,7 @@ public class MapSecurityInterceptor {
         securityConfig.addClientPermissionConfig(permissionConfig);
         return config;
     }
-//tag::mysi[]
+    //tag::mysi[]
     private static class MySecurityInterceptor implements SecurityInterceptor {
 
         @Override
@@ -122,6 +122,6 @@ public class MapSecurityInterceptor {
             System.err.println("qwe c: " + credentials + "\t\tt: " + objectType + "\t\tn: " + objectName
                     + "\t\tm: " + methodName + "\t\tp1: " + parameters.get(0) + "\t\tp2: " + parameters.get(1));
         }
-//end::mysi[]
+    //end::mysi[]
     }
 }

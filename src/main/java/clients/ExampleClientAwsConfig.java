@@ -6,7 +6,7 @@ import com.hazelcast.core.HazelcastInstance;
 public class ExampleClientAwsConfig {
 
     public static void main(String[] args) throws Exception{
-//tag::clientaws[]
+        //tag::clientaws[]
         ClientConfig clientConfig = new ClientConfig();
         ClientAwsConfig clientAwsConfig = new ClientAwsConfig();
         clientAwsConfig.setInsideAws( false )
@@ -21,6 +21,6 @@ public class ExampleClientAwsConfig {
                 .setEnabled( true );
         clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-//end::clientaws[]
+        //end::clientaws[]
     }
 }

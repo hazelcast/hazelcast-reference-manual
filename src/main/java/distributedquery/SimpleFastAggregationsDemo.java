@@ -35,7 +35,7 @@ public class SimpleFastAggregationsDemo {
 
         Hazelcast.shutdownAll();
     }
-//tag::fademo[]
+    //tag::fademo[]
     private static void simpleCustomAverageAggregation(IMap<String, FAEmployee> employees) {
         System.out.println("Calculating salary average");
 
@@ -70,7 +70,7 @@ public class SimpleFastAggregationsDemo {
         System.out.println("Overall average salary: " + avgSalary);
         System.out.println("\n");
     }
-//end::fademo[]
+    //end::fademo[]
     private static void fillEmployeeMap(IMap<String, FAEmployee> employees) {
         Random random = new Random();
         for (int i = 0; i < 10000; i++) {
@@ -91,6 +91,4 @@ public class SimpleFastAggregationsDemo {
         }
         System.out.println("Employee map filled.");
     }
-
-
 }

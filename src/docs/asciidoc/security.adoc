@@ -8,29 +8,23 @@ This chapter describes the security features of Hazelcast. These features allow 
 
 === Enabling JAAS Security
 
-
 With Hazelcast's extensible, JAAS based security feature, you can:
 
-- authenticate both cluster members and clients,
-- and perform access control checks on client operations. Access control can be done according to endpoint principal and/or endpoint address.
+* authenticate both cluster members and clients,
+* and perform access control checks on client operations. Access control can be done according to endpoint principal and/or endpoint address.
 
 You can enable security declaratively or programmatically, as shown below.
 
 [source,xml]
 ----
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config
-    http://www.hazelcast.com/schema/config/hazelcast-config-3.9.xsd"
-    xmlns="http://www.hazelcast.com/schema/config"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
-  ...
-
-  <security enabled="true">
+<hazelcast>
     ...
-  </security>
+    <security enabled="true">
+    ...
+    </security>
+    ...
 </hazelcast>
 ----
-
 
 [source,java]
 ----
@@ -42,7 +36,6 @@ Also, see the <<setting-the-license-key, Setting License Key section>> for infor
 === Socket Interceptor
 
 [blue]*Hazelcast IMDG Enterprise Feature*
-
 
 Hazelcast allows you to intercept socket connections before a member joins a cluster or a client connects to a member of a cluster. This allow you to add custom hooks to join and perform connection procedures (like identity checking using Kerberos, etc.).
 
@@ -60,31 +53,26 @@ You can declaratively configure this socket interceptor as follows:
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <network>
     ...
-    <socket-interceptor enabled="true">
-      <class-name>com.hazelcast.examples.MySocketInterceptor</class-name>
-      <properties>
-        <property name="kerberos-host">kerb-host-name</property>
-        <property name="kerberos-config-file">kerb.conf</property>
-      </properties>
-    </socket-interceptor>
-  </network>
-  ...
+    <network>
+        <socket-interceptor enabled="true">
+            <class-name>com.hazelcast.examples.MySocketInterceptor</class-name>
+            <properties>
+                <property name="kerberos-host">kerb-host-name</property>
+                <property name="kerberos-config-file">kerb.conf</property>
+            </properties>
+        </socket-interceptor>
+    </network>
+    ...
 </hazelcast>
 ----
 
-
 The following is an example configuration of the above socket interceptor for the client side.
-
 
 [source,java]
 ----
 include::{javasource}/security/SocketInterceptorClient.java[tag=sic]
 ----
-
-
 
 === Security Interceptor
 
@@ -98,7 +86,6 @@ include::{javasource}/security/MapSecurityInterceptor.java[tag=mysi]
 ----
 
 The `before` method will be called before processing the request on the remote server. The `after` method will be called after the processing. Exceptions thrown while executing the `before` method will propagate to the client, but exceptions thrown while executing the `after` method will be suppressed.
-
 
 === Encryption
 
@@ -137,22 +124,20 @@ In symmetric encryption, each member uses the same key, so the key is shared. He
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <network>
     ...
-    <symmetric-encryption enabled="true">
-      <algorithm>AES</algorithm>
-      <salt>thesalt</salt>
-      <password>thepass</password>
-      <iteration-count>175</iteration-count>
-    </symmetric-encryption>
-  </network>
-  ...
+    <network>
+        <symmetric-encryption enabled="true">
+            <algorithm>AES</algorithm>
+            <salt>thesalt</salt>
+            <password>thepass</password>
+            <iteration-count>175</iteration-count>
+        </symmetric-encryption>
+    </network>
+    ...
 </hazelcast>
 ----
 
 You set the encryption algorithm, the salt value to use for generating the secret key, the password to use when generating the secret key and the iteration count to use when generating the secret key. You also need to set `enabled` to true. Note that all members should have the same encryption configuration.
-
 
 [[tlsssl]]
 === TLS/SSL
@@ -162,7 +147,6 @@ You set the encryption algorithm, the salt value to use for generating the secre
 NOTE: You cannot use TLS/SSL when <<encryption, Hazelcast Encryption>> is enabled.
 
 One of the offers of Hazelcast is the SSL (Secure Sockets Layer) protocol which you can use to establish an encrypted communication across your cluster with key stores and trust stores. Note that, if you are developing applications using Java 8, you will be using its successor TLS (Transport Layer Security).
-
 
 NOTE: It is NOT recommended to reuse the key stores and trust stores for external applications.
 
@@ -191,19 +175,18 @@ The following is the base declarative configuration for the implemented `SSLCont
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <network>
     ...
-    <ssl enabled="true">
-      <factory-class-name>
-          com.hazelcast.examples.MySSLContextFactory
-      </factory-class-name>
-      <properties>
-        <property name="foo">bar</property>
-      </properties>
-    </ssl>
-  </network>
-  ...
+    <network>
+        <ssl enabled="true">
+            <factory-class-name>
+                com.hazelcast.examples.MySSLContextFactory
+            </factory-class-name>
+            <properties>
+                <property name="foo">bar</property>
+            </properties>
+        </ssl>
+    </network>
+    ...
 </hazelcast>
 ----
 
@@ -212,26 +195,25 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <network>
     ...
-    <ssl enabled="true">
-      <factory-class-name>
-          com.hazelcast.nio.ssl.BasicSSLContextFactory
-      </factory-class-name>
-      <properties>
-        <property name="keyStore">/opt/hazelcast-keystore.p12</property>
-        <property name="keyStorePassword">secret.123</property>
-        <property name="keyStoreType">PKCS12</property>
-        <property name="trustStore">/opt/hazelcast-truststore.p12</property>
-        <property name="trustStorePassword">changeit</property>
-        <property name="trustStoreType">PKCS12</property>
-        <property name="protocol">TLSv1.2</property>
-        <property name="mutualAuthentication">REQUIRED</property>
-      </properties>
-    </ssl>
-  </network>
-  ...
+    <network>
+        <ssl enabled="true">
+            <factory-class-name>
+                com.hazelcast.nio.ssl.BasicSSLContextFactory
+            </factory-class-name>
+            <properties>
+                <property name="keyStore">/opt/hazelcast-keystore.p12</property>
+                <property name="keyStorePassword">secret.123</property>
+                <property name="keyStoreType">PKCS12</property>
+                <property name="trustStore">/opt/hazelcast-truststore.p12</property>
+                <property name="trustStorePassword">changeit</property>
+                <property name="trustStoreType">PKCS12</property>
+                <property name="protocol">TLSv1.2</property>
+                <property name="mutualAuthentication">REQUIRED</property>
+            </properties>
+        </ssl>
+    </network>
+    ...
 </hazelcast>
 ----
 
@@ -288,23 +270,22 @@ The TLS configuration in Hazelcast clients is very similar to member configurati
 [source,xml]
 ----
 <hazelcast-client>
-  ...
-  <network>
     ...
-    <ssl enabled="true">
-      <factory-class-name>
-          com.hazelcast.nio.ssl.BasicSSLContextFactory
-      </factory-class-name>
-      <properties>
-        <property name="keyStore">/opt/hazelcast-client.keystore</property>
-        <property name="keyStorePassword">clientsSecret</property>
-        <property name="trustStore">/opt/hazelcast-client.truststore</property>
-        <property name="trustStorePassword">changeit</property>
-        <property name="protocol">TLSv1.2</property>
-      </properties>
-    </ssl>
-  </network>
-  ...
+    <network>
+        <ssl enabled="true">
+            <factory-class-name>
+                com.hazelcast.nio.ssl.BasicSSLContextFactory
+            </factory-class-name>
+            <properties>
+                <property name="keyStore">/opt/hazelcast-client.keystore</property>
+                <property name="keyStorePassword">clientsSecret</property>
+                <property name="trustStore">/opt/hazelcast-client.truststore</property>
+                <property name="trustStorePassword">changeit</property>
+                <property name="protocol">TLSv1.2</property>
+            </properties>
+        </ssl>
+    </network>
+    ...
 </hazelcast-client>
 ----
 
@@ -353,17 +334,14 @@ clientSslProps.setProperty("keyStore", "/opt/client.keystore");
 clientSslProps.setProperty("keyStorePassword", "123456");
 ----
 
-
 The property `mutualAuthentication` has two options:
 
 * `REQUIRED`: Server asks for client certificate. If the client does not provide a keystore or the provided keys is not verified against member's truststore, the client will not be authenticated.
 * `OPTIONAL`: Server asks for client certificate, but client is not required to provide any valid certificate.
 
-
 NOTE: When a new client is introduced with a new keystore, the truststore at the member side should be updated accordingly to include new clients' information to be able to accept it.
 
-
-Please see the below example snippet to see the full configuration at the client side:
+See the below example snippet to see the full configuration at the client side:
 
 [source,java]
 ----
@@ -421,11 +399,9 @@ The property will provide a lot of logging output including the TLS/SSL handshak
 
 In order to use secured communication between cluster and Management Center, you have to configure the cluster, see https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center].
 
-
 === Integrating OpenSSL / BoringSSL
 
 [blue]*Hazelcast IMDG Enterprise Feature*
-
 
 NOTE: You cannot integrate OpenSSL into Hazelcast when <<encryption, Hazelcast Encryption>> is enabled.
 
@@ -529,21 +505,23 @@ using OpenSSL:
 
 [source,xml]
 ----
-<network>
+<hazelcast>
     ...
-    <ssl enabled="true">
-        <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
-
-        <properties>
-            <property name="protocol">TLSv1.2</property>
-            <property name="trustCertCollectionFile">trusted-certs.pem</property>
-            <!-- If the TLS mutual authentication is not used,
-                 then the key configuration is not needed on client side. -->
-            <property name="keyFile">privkey.pem</property>
-            <property name="keyCertChainFile">chain.pem</property>
-        </properties>
-    </ssl>
-</network>
+    <network>
+        <ssl enabled="true">
+            <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
+            <properties>
+                <property name="protocol">TLSv1.2</property>
+                <property name="trustCertCollectionFile">trusted-certs.pem</property>
+                 <!-- If the TLS mutual authentication is not used,
+                     then the key configuration is not needed on client side. -->
+                <property name="keyFile">privkey.pem</property>
+                <property name="keyCertChainFile">chain.pem</property>
+            </properties>
+        </ssl>
+    </network>
+    ...
+</hazelcast>
 ----
 
 The configuration is similar to a regular TLS/SSL integration. The main difference is the `OpenSSLEngineFactory` factory class and following new properties:
@@ -582,7 +560,6 @@ Other supported properties are:
 All of the algorithms listed above support Java 6 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
 provide only `SSL` or `TLS` as a value for the `protocol` property, they will be converted to `SSLv3` and `TLSv1.2`, respectively. We strongly recommend to avoid SSL protocols.
 
-
 ==== Configuring Cipher Suites
 
 To get the best performance, the correct https://en.wikipedia.org/wiki/Cipher_suite[cipher suites] need to be configured.
@@ -592,16 +569,20 @@ The cipher suites are configured using the `ciphersuites` property as shown belo
 
 [source,xml]
 ----
-<ssl enabled="true">
-    <factory-class-name>...</factory-class-name>
-
-    <properties>
-        <property name="keyStore">upload/hazelcast.keystore</property>
-        ...
-        <property name="ciphersuites">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+<hazelcast>
+    ...
+    <network>
+        <ssl enabled="true">
+            <factory-class-name>...</factory-class-name>
+            <properties>
+                <property name="keyStore">upload/hazelcast.keystore</property>
+                <property name="ciphersuites">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
                                       TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA</property>
-    </properties>
-</ssl>
+           </properties>
+       </ssl>
+    </network>
+    ...
+</hazelcast>
 ----
 
 The `ciphersuites` property accepts a comma separated list (spaces, enters, tabs are filtered out) of cipher suites in the order
@@ -656,7 +637,6 @@ Or,
 === Credentials
 
 [blue]*Hazelcast IMDG Enterprise Feature*
-
 
 One of the key elements in Hazelcast security is the `Credentials` object, which carries all credentials of an endpoint (member or client). Credentials is an interface which extends `Serializable`. You can either implement the three methods in the `Credentials` interface, or you can extend the `AbstractCredentials` class, which is an abstract implementation of `Credentials`.
 
@@ -832,15 +812,13 @@ public abstract class ClusterLoginModule implements LoginModule {
 }
 ----
 
-
 ==== Enterprise Integration
 
 Using the above API, you can implement a `LoginModule` that performs authentication against the Security System of your choice, such as an LDAP store like https://directory.apache.org/[Apache Directory] or some other corporate standard you might have. For example, you may wish to have your clients send an identification token in the `Credentials` object. This token can then be sent to your back-end security system via the `LoginModule` that runs on the cluster side.
 
 Additionally, the same system may authenticate the user and also then return the roles that are attributed to the user. These roles can then be used for data structure authorization.
 
-NOTE: Please refer to http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html[JAAS Reference Guide] for further information.
-
+NOTE: Refer to the http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html[JAAS Reference Guide] for further information.
 
 === Cluster Member Security
 
@@ -850,36 +828,39 @@ Hazelcast supports standard Java Security (JAAS) based authentication between cl
 
 [source,xml]
 ----
-<security enabled="true">
-  <member-credentials-factory
-      class-name="com.hazelcast.examples.MyCredentialsFactory">
-    <properties>
-      <property name="property1">value1</property>
-      <property name="property2">value2</property>
-    </properties>
-  </member-credentials-factory>
-  <member-login-modules>
-    <login-module usage="REQUIRED"
-        class-name="com.hazelcast.examples.MyRequiredLoginModule">
-      <properties>
-        <property name="property3">value3</property>
-      </properties>
-    </login-module>
-    <login-module usage="SUFFICIENT"
-        class-name="com.hazelcast.examples.MySufficientLoginModule">
-      <properties>
-        <property name="property4">value4</property>
-      </properties>
-    </login-module>
-    <login-module usage="OPTIONAL"
-        class-name="com.hazelcast.examples.MyOptionalLoginModule">
-      <properties>
-        <property name="property5">value5</property>
-      </properties>
-    </login-module>
-  </member-login-modules>
-  ...
-</security>
+<hazelcast>
+    ...
+    <security enabled="true">
+        <member-credentials-factory
+            class-name="com.hazelcast.examples.MyCredentialsFactory">
+            <properties>
+                <property name="property1">value1</property>
+                <property name="property2">value2</property>
+            </properties>
+        </member-credentials-factory>
+        <member-login-modules>
+            <login-module usage="REQUIRED"
+                class-name="com.hazelcast.examples.MyRequiredLoginModule">
+                <properties>
+                    <property name="property3">value3</property>
+                </properties>
+           </login-module>
+           <login-module usage="SUFFICIENT"
+               class-name="com.hazelcast.examples.MySufficientLoginModule">
+               <properties>
+                    <property name="property4">value4</property>
+              </properties>
+           </login-module>
+           <login-module usage="OPTIONAL"
+               class-name="com.hazelcast.examples.MyOptionalLoginModule">
+               <properties>
+                   <property name="property5">value5</property>
+               </properties>
+           </login-module>
+       </member-login-modules>
+    </security>
+    ...
+</hazelcast>
 ----
 
 You can define as many as LoginModules as you want in configuration. They are executed in the order listed in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
@@ -903,11 +884,9 @@ public interface ICredentialsFactory {
 
 Properties defined in the configuration are passed to the `ICredentialsFactory.configure()` method as `java.util.Properties` and to the `LoginModule.initialize()` method as `java.util.Map`.
 
-
 === Native Client Security
 
 [blue]*Hazelcast IMDG Enterprise Feature*
-
 
 Hazelcast's Client security includes both authentication and authorization.
 
@@ -917,29 +896,32 @@ The authentication mechanism works the same as cluster member authentication. To
 
 [source,xml]
 ----
-<security enabled="true">
-  <client-login-modules>
-    <login-module usage="REQUIRED"
-        class-name="com.hazelcast.examples.MyRequiredClientLoginModule">
-      <properties>
-        <property name="property3">value3</property>
-      </properties>
-    </login-module>
-    <login-module usage="SUFFICIENT"
-        class-name="com.hazelcast.examples.MySufficientClientLoginModule">
-      <properties>
-        <property name="property4">value4</property>
-      </properties>
-    </login-module>
-    <login-module usage="OPTIONAL"
-        class-name="com.hazelcast.examples.MyOptionalClientLoginModule">
-      <properties>
-        <property name="property5">value5</property>
-      </properties>
-    </login-module>
-  </client-login-modules>
-  ...
-</security>
+<hazelcast>
+    ...
+    <security enabled="true">
+        <client-login-modules>
+            <login-module usage="REQUIRED"
+                class-name="com.hazelcast.examples.MyRequiredClientLoginModule">
+                <properties>
+                    <property name="property3">value3</property>
+                </properties>
+            </login-module>
+            <login-module usage="SUFFICIENT"
+                class-name="com.hazelcast.examples.MySufficientClientLoginModule">
+                <properties>
+                    <property name="property4">value4</property>
+                </properties>
+            </login-module>
+            <login-module usage="OPTIONAL"
+                class-name="com.hazelcast.examples.MyOptionalClientLoginModule">
+                <properties>
+                    <property name="property5">value5</property>
+                </properties>
+            </login-module>
+        </client-login-modules>
+    </security>
+    ...
+</hazelcast>
 ----
 
 You can define as many as `LoginModules` as you want in the configuration. Those are executed in the order given in configuration. The `usage` attribute has 4 values: 'required', 'requisite', 'sufficient' and 'optional' as defined in `javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag`.
@@ -953,67 +935,70 @@ HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 
 NOTE: See an implementation and configuration example https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/client-custom-credentials[here].
 
-
 ==== Authorization
 
 Hazelcast client authorization is configured by a client permission policy. Hazelcast has a default permission policy implementation that uses permission configurations defined in the Hazelcast security configuration. Default policy permission checks are done against instance types (map, queue, etc.), instance names (map, queue, name, etc.), instance actions (put, read, remove, add, etc.), client endpoint addresses and client principal defined by the Credentials object. The default permission policy allows to use comma separated names in the principal attribute configuration. Instance and principal names and endpoint addresses can be defined as wildcards(*). Please see the <<other-network-configurations, Network Configuration section>> and <<using-wildcards, Using Wildcards section>>.
 
 [source,xml]
 ----
-<security enabled="true">
-  <client-permissions>
-    <!-- Principals 'admin' and 'root' from endpoint '127.0.0.1' have all permissions. -->
-    <all-permissions principal="admin,root">
-      <endpoints>
-        <endpoint>127.0.0.1</endpoint>
-      </endpoints>
-    </all-permissions>
+<hazelcast>
+    ...
+    <security enabled="true">
+        <client-permissions>
+            <!-- Principals 'admin' and 'root' from endpoint '127.0.0.1' have all permissions. -->
+            <all-permissions principal="admin,root">
+                <endpoints>
+                    <endpoint>127.0.0.1</endpoint>
+                </endpoints>
+            </all-permissions>
 
-    <!-- Principals named 'dev' from all endpoints have 'create', 'destroy',
-         'put', 'read' permissions for map named 'myMap'. -->
-    <map-permission name="myMap" principal="dev">
-      <actions>
-        <action>create</action>
-        <action>destroy</action>
-        <action>put</action>
-        <action>read</action>
-      </actions>
-    </map-permission>
+            <!-- Principals named 'dev' from all endpoints have 'create', 'destroy',
+            'put', 'read' permissions for map named 'myMap'. -->
+            <map-permission name="myMap" principal="dev">
+                <actions>
+                    <action>create</action>
+                    <action>destroy</action>
+                    <action>put</action>
+                    <action>read</action>
+                </actions>
+            </map-permission>
 
-    <!-- All principals from endpoints '127.0.0.1' or matching to '10.10.*.*'
-         have 'put', 'read', 'remove' permissions for map
-         whose name matches to 'com.foo.entity.*'. -->
-    <map-permission name="com.foo.entity.*">
-      <endpoints>
-        <endpoint>10.10.*.*</endpoint>
-        <endpoint>127.0.0.1</endpoint>
-      </endpoints>
-      <actions>
-        <action>put</action>
-        <action>read</action>
-        <action>remove</action>
-      </actions>
-    </map-permission>
+            <!-- All principals from endpoints '127.0.0.1' or matching to '10.10.*.*'
+            have 'put', 'read', 'remove' permissions for map
+            whose name matches to 'com.foo.entity.*'. -->
+            <map-permission name="com.foo.entity.*">
+                <endpoints>
+                    <endpoint>10.10.*.*</endpoint>
+                    <endpoint>127.0.0.1</endpoint>
+                </endpoints>
+                <actions>
+                    <action>put</action>
+                    <action>read</action>
+                    <action>remove</action>
+                </actions>
+            </map-permission>
 
-    <!-- Principals named 'dev' from endpoints matching to either
-         '192.168.1.1-100' or '192.168.2.*'
-         have 'create', 'add', 'remove' permissions for all queues. -->
-    <queue-permission name="*" principal="dev">
-      <endpoints>
-        <endpoint>192.168.1.1-100</endpoint>
-        <endpoint>192.168.2.*</endpoint>
-      </endpoints>
-      <actions>
-        <action>create</action>
-        <action>add</action>
-        <action>remove</action>
-      </actions>
-    </queue-permission>
+            <!-- Principals named 'dev' from endpoints matching to either
+            '192.168.1.1-100' or '192.168.2.*'
+            have 'create', 'add', 'remove' permissions for all queues. -->
+            <queue-permission name="*" principal="dev">
+                <endpoints>
+                    <endpoint>192.168.1.1-100</endpoint>
+                    <endpoint>192.168.2.*</endpoint>
+                </endpoints>
+                <actions>
+                    <action>create</action>
+                    <action>add</action>
+                    <action>remove</action>
+                </actions>
+            </queue-permission>
 
-    <!-- All principals from all endpoints have transaction permission.-->
-    <transaction-permission />
-  </client-permissions>
-</security>
+           <!-- All principals from all endpoints have transaction permission.-->
+           <transaction-permission />
+       </client-permissions>
+    </security>
+    ...
+</hazelcast>
 ----
 
 You can also define your own policy by implementing `com.hazelcast.security.IPermissionPolicy`.
@@ -1051,9 +1036,9 @@ Permission policy should return a `PermissionCollection` containing permissions 
 [source,xml]
 ----
 <all-permissions principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
+    <endpoints>
+        ...
+    </endpoints>
 </all-permissions>
 ----
 +
@@ -1062,12 +1047,12 @@ Permission policy should return a `PermissionCollection` containing permissions 
 [source,xml]
 ----
 <map-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </map-permission>
 ----
 +
@@ -1078,12 +1063,12 @@ Actions: all, create, destroy, put, read, remove, lock, intercept, index, listen
 [source,xml]
 ----
 <queue-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </queue-permission>
 ----
 +
@@ -1094,12 +1079,12 @@ Actions: all, create, destroy, add, remove, read, listen
 [source,xml]
 ----
 <multimap-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+     </actions>
 </multimap-permission>
 ----
 +
@@ -1110,12 +1095,12 @@ Actions: all, create, destroy, put, read, remove, listen, lock
 [source,xml]
 ----
 <topic-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </topic-permission>
 ----
 +
@@ -1126,12 +1111,12 @@ Actions: create, destroy, publish, listen
 [source,xml]
 ----
 <list-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </list-permission>
 ----
 +
@@ -1142,12 +1127,12 @@ Actions: all, create, destroy, add, read, remove, listen
 [source,xml]
 ----
 <set-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </set-permission>
 ----
 +
@@ -1158,12 +1143,12 @@ Actions: all, create, destroy, add, read, remove, listen
 [source,xml]
 ----
 <lock-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </lock-permission>
 ----
 +
@@ -1174,12 +1159,12 @@ Actions: all, create, destroy, lock, read
 [source,xml]
 ----
 <atomic-long-permission name="name" principal="principal">
-  <endpoints>
+    <endpoints>
         ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </atomic-long-permission>
 ----
 +
@@ -1190,12 +1175,12 @@ Actions: all, create, destroy, read, modify
 [source,xml]
 ----
 <countdown-latch-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </countdown-latch-permission>
 ----
 +
@@ -1206,12 +1191,12 @@ Actions: all, create, destroy, modify, read
 [source,xml]
 ----
 <id-generator-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </id-generator-permission>
 ----
 +
@@ -1222,12 +1207,12 @@ Actions: all, create, destroy, modify, read
 [source,xml]
 ----
 <flake-id-generator-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </flake-id-generator-permission>
 ----
 +
@@ -1238,12 +1223,12 @@ Actions: all, create, destroy, modify
 [source,xml]
 ----
 <semaphore-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </semaphore-permission>
 ----
 +
@@ -1254,12 +1239,12 @@ Actions: all, create, destroy, acquire, release, read
 [source,xml]
 ----
 <executor-service-permission name="name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </executor-service-permission>
 ----
 +
@@ -1270,9 +1255,9 @@ Actions: all, create, destroy
 [source,xml]
 ----
 <transaction-permission principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
+    <endpoints>
+        ...
+    </endpoints>
 </transaction-permission>
 ----
 +
@@ -1281,12 +1266,12 @@ Actions: all, create, destroy
 [source,xml]
 ----
 <cache-permission name="/hz/cache-name" principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </cache-permission>
 ----
 +
@@ -1297,12 +1282,12 @@ Actions: all, create, destroy, put, read, remove, listen
 [source,xml]
 ----
 <user-code-deployment-permission principal="principal">
-  <endpoints>
-    ...
-  </endpoints>
-  <actions>
-    ...
-  </actions>
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+    </actions>
 </user-code-deployment-permission>
 ----
 +

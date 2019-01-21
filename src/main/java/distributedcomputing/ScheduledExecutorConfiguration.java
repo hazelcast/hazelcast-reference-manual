@@ -3,10 +3,9 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
 
-
 public class ScheduledExecutorConfiguration {
     public static void main(String[] args) throws Exception{
-//tag::sec[]
+        //tag::sec[]
         Config config = new Config();
         config.getScheduledExecutorConfig( "myScheduledExecSvc" )
                 .setPoolSize ( 16 )
@@ -16,6 +15,6 @@ public class ScheduledExecutorConfiguration {
 
         HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
         IScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduledExecutorService("myScheduledExecSvc");
-//end::sec[]
+        //end::sec[]
     }
 }

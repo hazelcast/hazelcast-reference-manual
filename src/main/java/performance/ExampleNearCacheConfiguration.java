@@ -1,11 +1,10 @@
 import com.hazelcast.config.*;
 import com.hazelcast.config.EvictionConfig.MaxSizePolicy;
 
-
 public class ExampleNearCacheConfiguration {
 
     public static void main(String[] args) throws Exception{
-//tag::nearcacheconfig[]
+        //tag::nearcacheconfig[]
         EvictionConfig evictionConfig = new EvictionConfig()
                 .setMaximumSizePolicy(MaxSizePolicy.ENTRY_COUNT)
                 .setEvictionPolicy(EvictionPolicy.LRU)
@@ -28,6 +27,6 @@ public class ExampleNearCacheConfiguration {
                 .setCacheLocalEntries(true)
                 .setLocalUpdatePolicy(NearCacheConfig.LocalUpdatePolicy.CACHE_ON_UPDATE)
                 .setPreloaderConfig(preloaderConfig);
-//end::nearcacheconfig[]
+     //end::nearcacheconfig[]
     }
 }

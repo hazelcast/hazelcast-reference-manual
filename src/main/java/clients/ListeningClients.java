@@ -4,11 +4,10 @@ import com.hazelcast.core.*;
 
 import java.util.Collection;
 
-
 public class ListeningClients {
 
     public static void main(String[] args) throws Exception{
-//tag::lc[]
+        //tag::lc[]
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.getGroupConfig().setName("dev");
         clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
@@ -36,6 +35,6 @@ public class ListeningClients {
 
         //this will trigger `clientDisconnected` event
         client.shutdown();
-//end::lc[]
+        //end::lc[]
     }
 }

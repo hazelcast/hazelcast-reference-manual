@@ -91,13 +91,13 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <listeners>
-      <listener>
-         com.yourpackage.ClusterMembershipListener
-      </listener>
-   </listeners>
-   ...
+    ...
+    <listeners>
+        <listener>
+            com.yourpackage.ClusterMembershipListener
+        </listener>
+    </listeners>
+    ...
 </hazelcast>
 ----
 
@@ -106,8 +106,9 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:listeners>
- <hz:listener class-name="com.yourpackage.ClusterMembershipListener"/>
  <hz:listener implementation="MembershipListener"/>
+    <hz:listener class-name="com.yourpackage.ClusterMembershipListener"/>
+    <hz:listener implementation="MembershipListener"/>
 </hz:listeners>
 ----
 
@@ -122,7 +123,6 @@ The following is an example Distributed Object Listener class.
 ----
 include::{javasource}/distributedevents/ExampleDistObjListener.java[tag=distobjlistener]
 ----
-
 
 When a respective event is fired, the distributed object listener outputs the event type, the object name and a service name (for example, for a Map object the service name is `"hz:impl:mapService"`).
 
@@ -155,13 +155,13 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <listeners>
-      <listener>
-         com.yourpackage.ExampleDistObjListener
-      </listener>
-   </listeners>
-   ...
+    ...
+    <listeners>
+        <listener>
+            com.yourpackage.ExampleDistObjListener
+        </listener>
+    </listeners>
+    ...
 </hazelcast>
 ----
 
@@ -170,8 +170,8 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:listeners>
-   <hz:listener class-name="com.yourpackage.ExampleDistObjListener"/>
-   <hz:listener implementation="DistributedObjectListener"/>
+    <hz:listener class-name="com.yourpackage.ExampleDistObjListener"/>
+    <hz:listener implementation="DistributedObjectListener"/>
 </hz:listeners>
 ----
 
@@ -229,13 +229,13 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <listeners>
-      <listener>
-         com.yourpackage.ClusterMigrationListener
-      </listener>
-   </listeners>
-   ...
+    ...
+    <listeners>
+        <listener>
+            com.yourpackage.ClusterMigrationListener
+        </listener>
+    </listeners>
+    ...
 </hazelcast>
 ----
 
@@ -244,8 +244,8 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:listeners>
-   <hz:listener class-name="com.yourpackage.ClusterMigrationListener"/>
-   <hz:listener implementation="MigrationListener"/>
+    <hz:listener class-name="com.yourpackage.ClusterMigrationListener"/>
+    <hz:listener implementation="MigrationListener"/>
 </hz:listeners>
 ----
 
@@ -300,16 +300,15 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <listeners>
-      <listener>
-         com.yourpackage.ConsoleLoggingPartitionLostListener
-      </listener>
-   </listeners>
-   ...
+    ...
+    <listeners>
+        <listener>
+            com.yourpackage.ConsoleLoggingPartitionLostListener
+        </listener>
+    </listeners>
+    ...
 </hazelcast>
 ----
-
 
 [[listening-for-lifecycle-events]]
 ==== Listening for Lifecycle Events
@@ -365,13 +364,13 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <listeners>
-      <listener>
-         com.yourpackage.NodeLifecycleListener
-      </listener>
-   </listeners>
-   ...
+    ...
+    <listeners>
+        <listener>
+            com.yourpackage.NodeLifecycleListener
+        </listener>
+    </listeners>
+    ...
 </hazelcast>
 ----
 
@@ -380,8 +379,8 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:listeners>
-   <hz:listener class-name="com.yourpackage.NodeLifecycleListener"/>
-   <hz:listener implementation="LifecycleListener"/>
+    <hz:listener class-name="com.yourpackage.NodeLifecycleListener"/>
+    <hz:listener implementation="LifecycleListener"/>
 </hz:listeners>
 ----
 
@@ -402,11 +401,15 @@ The following is the equivalent declarative configuration.
 
 [source,xml]
 ----
-<listeners>
-   <listener>
-      com.yourpackage.ExampleClientListener
-   </listener>
-</listeners>
+<hazelcast>
+    ...
+    <listeners>
+        <listener>
+            com.yourpackage.ExampleClientListener
+        </listener>
+    </listeners>
+    ...
+</hazelcast>
 ----
 
 The following is the equivalent configuration in the Spring context.
@@ -414,8 +417,8 @@ The following is the equivalent configuration in the Spring context.
 [source,xml]
 ----
 <hz:listeners>
-   <hz:listener class-name="com.yourpackage.ExampleClientListener"/>
-   <hz:listener implementation="com.yourpackage.ExampleClientListener"/>
+    <hz:listener class-name="com.yourpackage.ExampleClientListener"/>
+    <hz:listener implementation="com.yourpackage.ExampleClientListener"/>
 </hz:listeners>
 ----
 
@@ -494,7 +497,6 @@ Let's consider the following example code:
 include::{javasource}/distributedevents/ListenMapPartitionLostEvents.java[tag=lmple]
 ----
 
-
 Within this example code, a `MapPartitionLostListener` implementation is registered to a map
 that is configured with one backup. For this particular map and any of the partitions in the
 system, if the partition owner member and its first backup member crash simultaneously, the
@@ -534,16 +536,15 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <map name="somemap">
-      ...
-      <entry-listeners>
-         <entry-listener include-value="false" local="false">
-            com.yourpackage.MyEntryListener
-         </entry-listener>
-      </entry-listeners>
-   </map>
-   ...
+    ...
+    <map name="somemap">
+        <entry-listeners>
+            <entry-listener include-value="false" local="false">
+                com.yourpackage.MyEntryListener
+            </entry-listener>
+        </entry-listeners>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -552,11 +553,11 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:map name="somemap">
-   <hz:entry-listeners>
-      <hz:entry-listener include-value="true"
-         class-name="com.hazelcast.spring.DummyEntryListener"/>
-      <hz:entry-listener implementation="dummyEntryListener" local="true"/>
-   </hz:entry-listeners>
+    <hz:entry-listeners>
+        <hz:entry-listener include-value="true"
+            class-name="com.hazelcast.spring.DummyEntryListener"/>
+        <hz:entry-listener implementation="dummyEntryListener" local="true"/>
+    </hz:entry-listeners>
 </hz:map>
 ----
 
@@ -566,7 +567,6 @@ As you see, there are attributes of the map listeners in the above examples: `in
 
 The attribute `local` is also a boolean attribute that is optional, and if you set it to `true`, you can listen to the map on the local member. Its default value is `false`.
 
-
 ==== Listening for MultiMap Events
 
 You can listen to entry-based events in the MultiMap using `EntryListener`. The following is an example entry listener implementation for MultiMap.
@@ -575,7 +575,6 @@ You can listen to entry-based events in the MultiMap using `EntryListener`. The 
 ----
 include::{javasource}/distributedevents/ExampleEntryListener.java[tag=mm]
 ----
-
 
 ===== Registering MultiMap Listeners
 
@@ -606,16 +605,16 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <multimap name="somemap">
-      <value-collection-type>SET</value-collection-type>
-      <entry-listeners>
-         <entry-listener include-value="false" local="false">
-            com.yourpackage.ExampleEntryListener
-         </entry-listener>
-      </entry-listeners>
-   </multimap>
-   ...
+    ...
+    <multimap name="somemap">
+        <value-collection-type>SET</value-collection-type>
+        <entry-listeners>
+            <entry-listener include-value="false" local="false">
+                com.yourpackage.ExampleEntryListener
+            </entry-listener>
+        </entry-listeners>
+    </multimap>
+    ...
 </hazelcast>
 ----
 
@@ -624,11 +623,11 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:multimap name="somemap" value-collection-type="SET">
-   <hz:entry-listeners>
-      <hz:entry-listener include-value="false"
-         class-name="com.yourpackage.ExampleEntryListener"/>
-      <hz:entry-listener implementation="EntryListener" local="false"/>
-   </hz:entry-listeners>
+    <hz:entry-listeners>
+        <hz:entry-listener include-value="false"
+            class-name="com.yourpackage.ExampleEntryListener"/>
+        <hz:entry-listener implementation="EntryListener" local="false"/>
+    </hz:entry-listeners>
 </hz:multimap>
 ----
 
@@ -695,13 +694,15 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-  <set>
-    <item-listeners>
-      <item-listener include-value="true">
-        com.yourpackage.ExampleItemListener
-      </item-listener>
-    </item-listeners>
-  </set>
+    ...
+    <set>
+        <item-listeners>
+            <item-listener include-value="true">
+                com.yourpackage.ExampleItemListener
+            </item-listener>
+        </item-listeners>
+    </set>
+    ...
 </hazelcast>
 ----
 
@@ -710,10 +711,10 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:set name="default" >
-  <hz:item-listeners>
-    <hz:item-listener include-value="true"
-      class-name="com.yourpackage.ExampleItemListener"/>
-  </hz:item-listeners>
+    <hz:item-listeners>
+        <hz:item-listener include-value="true"
+            class-name="com.yourpackage.ExampleItemListener"/>
+    </hz:item-listeners>
 </hz:set>
 ----
 
@@ -772,15 +773,15 @@ The following is an example of the equivalent declarative configuration.
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <topic name="default">
-      <message-listeners>
-         <message-listener>
-            com.yourpackage.ExampleMessageListener
-         </message-listener>
-      </message-listeners>
-   </topic>
-   ...
+    ...
+    <topic name="default">
+        <message-listeners>
+            <message-listener>
+                com.yourpackage.ExampleMessageListener
+            </message-listener>
+        </message-listeners>
+    </topic>
+    ...
 </hazelcast>
 ----
 
@@ -789,10 +790,10 @@ The following is an example of the equivalent Spring configuration.
 [source,xml]
 ----
 <hz:topic name="default">
-  <hz:message-listeners>
-    <hz:message-listener
-      class-name="com.yourpackage.ExampleMessageListener"/>
-  </hz:message-listeners>
+    <hz:message-listeners>
+        <hz:message-listener
+            class-name="com.yourpackage.ExampleMessageListener"/>
+    </hz:message-listeners>
 </hz:topic>
 ----
 

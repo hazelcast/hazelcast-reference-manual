@@ -6,12 +6,12 @@ import com.hazelcast.monitor.LocalQueueStats;
 public class ExampleQueueStats {
 
     public static void main(String[] args) throws Exception{
-//tag::qs[]
+        //tag::qs[]
         HazelcastInstance node = Hazelcast.newHazelcastInstance();
         IQueue<Integer> orders = node.getQueue( "orders" );
         LocalQueueStats queueStatistics = orders.getLocalQueueStats();
         System.out.println( "average age of items = "
                 + queueStatistics.getAvgAge() );
-//end::qs[]
+        //end::qs[]
     }
 }
