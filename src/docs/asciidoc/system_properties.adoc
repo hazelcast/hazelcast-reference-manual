@@ -6,7 +6,7 @@ The table below lists the system properties with their descriptions in alphabeti
 
 NOTE: When you want to reconfigure a system property, you need to restart the members for which the property is modified.
 
-[cols="2,1,1,6"]
+[cols="2,1,1,6a"]
 .System Properties
 |===
 |Property Name
@@ -783,5 +783,5 @@ CAUTION: Setting this value to a lower number might prevent some instances from 
 |`hazelcast.wan.map.useDeleteWhenProcessingRemoveEvents`
 | false
 | bool
-| Configures WAN replication for `IMap` on the PASSIVE cluster to remove entries using delete instead of remove and when using `com.hazelcast.enterprise.wan.replication.WanBatchReplication` as an endpoint implementation. The member which receives the event batch in the PASSIVE cluster dispatches WAN events to the partition owners as map merge and remove operations. When using remove operations, the old entry value is sent from the partition owner to the caller even though the caller does not use the old value. This can also lead to issues if the PASSIVE cluster does not contain the class definition for the entry value as the value will try to get deserialized, causing `ClassNotFoundException`s. You can switch to using map remove instead on the PASSIVE cluster with this property. This will both save bandwidth and avoid the exception.
+| Configures WAN replication for `IMap` on the PASSIVE cluster to remove entries using delete instead of remove and when using `com.hazelcast.enterprise.wan.replication.WanBatchReplication` as an endpoint implementation. The member which receives the event batch in the PASSIVE cluster dispatches WAN events to the partition owners as map merge and remove operations. When using remove operations, the old entry value is sent from the partition owner to the caller even though the caller does not use the old value. This can also lead to issues if the PASSIVE cluster does not contain the class definition for the entry value as the value will try to get deserialized, causing ``ClassNotFoundException``s. You can switch to using map remove instead on the PASSIVE cluster with this property. This will both save bandwidth and avoid the exception.
 |===

@@ -12,7 +12,7 @@ would be operating at native speed in their own LAN (Local Area Network), but yo
 these clusters to be replicated to each other: updates in the Tokyo cluster should also replicate to London and New York and updates
 in the New York cluster are to be synchronized to the Tokyo and London clusters.
 
-This chapter explains how you can replicate the state of your clusters over Wide Area Network (WAN) through Hazelcast WAN Replication.
+This section explains how you can replicate the state of your clusters over Wide Area Network (WAN) through Hazelcast WAN Replication.
 
 NOTE: You can download the white paper **Hazelcast on AWS: Best Practices for Deployment** at
 http://hazelcast.com/resources/hazelcast-on-aws-best-practices-for-deployment/[Hazelcast.com].
@@ -29,8 +29,8 @@ Hazelcast supports two different operation modes of WAN Replication:
 
 There are two different ways of defining the WAN replication endpoints:
 
-- Static endpoints
-- Discovery SPI
+* Static endpoints
+* Discovery SPI
 
 You can use at most one of these when defining a single WAN publisher.
 
@@ -41,32 +41,32 @@ Below is an example of declarative configuration of WAN Replication from New Yor
 [source,xml]
 ----
 <hazelcast>
-...
-  <wan-replication name="my-wan-cluster-batch">
-      <wan-publisher group-name="london">
-          <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
-          <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
-          <queue-capacity>1000</queue-capacity>
-          <properties>
-              <property name="batch.size">500</property>
-              <property name="batch.max.delay.millis">1000</property>
-              <property name="snapshot.enabled">false</property>
-              <property name="response.timeout.millis">60000</property>
-              <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
-              <property name="endpoints">10.3.5.1:5701, 10.3.5.2:5701</property>
-              <property name="group.password">london-pass</property>
-              <property name="discovery.period">20</property>
-              <property name="executorThreadCount">2</property>
-          </properties>
-      </wan-publisher>
-  </wan-replication>
-...
+    ...
+    <wan-replication name="my-wan-cluster-batch">
+        <wan-publisher group-name="london">
+            <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
+            <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
+            <queue-capacity>1000</queue-capacity>
+            <properties>
+                <property name="batch.size">500</property>
+                <property name="batch.max.delay.millis">1000</property>
+                <property name="snapshot.enabled">false</property>
+                <property name="response.timeout.millis">60000</property>
+                <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
+                <property name="endpoints">10.3.5.1:5701, 10.3.5.2:5701</property>
+                <property name="group.password">london-pass</property>
+                <property name="discovery.period">20</property>
+                <property name="executorThreadCount">2</property>
+            </properties>
+        </wan-publisher>
+    </wan-replication>
+    ...
 </hazelcast>
 ----
 
 Following are the definitions of configuration elements:
 
-* `name`: Name of your WAN Replication. This name is referenced in IMap or ICache configuration when you add WAN Replication for these data structures (using the element <wan-replication-ref> in the configuration of IMap or ICache).
+* `name`: Name of your WAN Replication. This name is referenced in IMap or ICache configuration when you add WAN Replication for these data structures (using the element `wan-replication-ref` in the configuration of IMap or ICache).
 * `group-name`: Configures target cluster's group name.
 * `class-name`: Name of the class implementation for the WAN replication.
 * `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full. Please see the <<queue-full-behavior, Queue Full Behavior section>>.
@@ -109,42 +109,42 @@ Following is an example of setting up the WAN replication with the EC2 discovery
 [source,xml]
 ----
 <hazelcast>
-...
-  <wan-replication name="my-wan-cluster-batch">
-      <wan-publisher group-name="london">
-          <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
-          <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
-          <queue-capacity>1000</queue-capacity>
-          <properties>
-              <property name="batch.size">500</property>
-              <property name="batch.max.delay.millis">1000</property>
-              <property name="snapshot.enabled">false</property>
-              <property name="response.timeout.millis">60000</property>
-              <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
-              <property name="group.password">london-pass</property>
-              <property name="discovery.period">20</property>
-              <property name="maxEndpoints">5</property>
-              <property name="executorThreadCount">5</property>
-          </properties>
-          <discovery-strategies>
-              <discovery-strategy enabled="true" class="com.hazelcast.aws.AwsDiscoveryStrategy">
-                  <properties>
-                      <property name="access-key">test-access-key</property>
-                      <property name="secret-key">test-secret-key</property>
-                      <property name="region">test-region</property>
-                      <property name="iam-role">test-iam-role</property>
-                      <property name="host-header">ec2.test-host-header</property>
-                      <property name="security-group-name">test-security-group-name</property>
-                      <property name="tag-key">test-tag-key</property>
-                      <property name="tag-value">test-tag-value</property>
-                      <property name="connection-timeout-seconds">10</property>
-                      <property name="hz-port">5701</property>
-                  </properties>
-              </discovery-strategy>
-          </discovery-strategies>
-      </wan-publisher>
-  </wan-replication>
-...
+    ...
+    <wan-replication name="my-wan-cluster-batch">
+        <wan-publisher group-name="london">
+            <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
+            <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
+            <queue-capacity>1000</queue-capacity>
+            <properties>
+                <property name="batch.size">500</property>
+                <property name="batch.max.delay.millis">1000</property>
+                <property name="snapshot.enabled">false</property>
+                <property name="response.timeout.millis">60000</property>
+                <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
+                <property name="group.password">london-pass</property>
+                <property name="discovery.period">20</property>
+                <property name="maxEndpoints">5</property>
+                <property name="executorThreadCount">5</property>
+            </properties>
+            <discovery-strategies>
+                <discovery-strategy enabled="true" class="com.hazelcast.aws.AwsDiscoveryStrategy">
+                    <properties>
+                        <property name="access-key">test-access-key</property>
+                        <property name="secret-key">test-secret-key</property>
+                        <property name="region">test-region</property>
+                        <property name="iam-role">test-iam-role</property>
+                        <property name="host-header">ec2.test-host-header</property>
+                        <property name="security-group-name">test-security-group-name</property>
+                        <property name="tag-key">test-tag-key</property>
+                        <property name="tag-value">test-tag-value</property>
+                        <property name="connection-timeout-seconds">10</property>
+                        <property name="hz-port">5701</property>
+                    </properties>
+                </discovery-strategy>
+            </discovery-strategies>
+        </wan-publisher>
+    </wan-replication>
+    ...
 </hazelcast>
 ----
 
@@ -155,36 +155,36 @@ The other properties are the same as when using the `aws` element. In case of EC
 [source,xml]
 ----
 <hazelcast>
-...
-  <wan-replication name="my-wan-cluster-batch">
-      <wan-publisher group-name="london">
-          <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
-          <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
-          <queue-capacity>1000</queue-capacity>
-          <properties>
-              <property name="batch.size">500</property>
-              <property name="batch.max.delay.millis">1000</property>
-              <property name="snapshot.enabled">false</property>
-              <property name="response.timeout.millis">60000</property>
-              <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
-              <property name="group.password">london-pass</property>
-              <property name="discovery.period">20</property>
-              <property name="discovery.useEndpointPrivateAddress">false</property>
-              <property name="maxEndpoints">5</property>
-              <property name="executorThreadCount">5</property>
-          </properties>
-          <aws enabled="true">
-              <access-key>my-access-key</access-key>
-              <secret-key>my-secret-key</secret-key>
-              <region>us-west-1</region>
-              <security-group-name>hazelcast-sg</security-group-name>
-              <tag-key>type</tag-key>
-              <tag-value>hz-members</tag-value>
-              <hz-port>5701</hz-port>
-          </aws>
-      </wan-publisher>
-  </wan-replication>
-...
+    ...
+    <wan-replication name="my-wan-cluster-batch">
+        <wan-publisher group-name="london">
+            <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
+            <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
+            <queue-capacity>1000</queue-capacity>
+            <properties>
+                <property name="batch.size">500</property>
+                <property name="batch.max.delay.millis">1000</property>
+                <property name="snapshot.enabled">false</property>
+                <property name="response.timeout.millis">60000</property>
+                <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
+                <property name="group.password">london-pass</property>
+                <property name="discovery.period">20</property>
+                <property name="discovery.useEndpointPrivateAddress">false</property>
+                <property name="maxEndpoints">5</property>
+                <property name="executorThreadCount">5</property>
+            </properties>
+            <aws enabled="true">
+                <access-key>my-access-key</access-key>
+                <secret-key>my-secret-key</secret-key>
+                <region>us-west-1</region>
+                <security-group-name>hazelcast-sg</security-group-name>
+                <tag-key>type</tag-key>
+                <tag-value>hz-members</tag-value>
+                <hz-port>5701</hz-port>
+            </aws>
+        </wan-publisher>
+    </wan-replication>
+    ...
 </hazelcast>
 ----
 
@@ -229,16 +229,17 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
 [source,xml]
 ----
 <hazelcast>
-  <wan-replication name="my-wan-cluster">
     ...
-  </wan-replication>
-  <map name="my-shared-map">
-    <wan-replication-ref name="my-wan-cluster">
-       <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
-       <republishing-enabled>false</republishing-enabled>
-    </wan-replication-ref>
-  </map>
-  ...
+    <wan-replication name="my-wan-cluster">
+        ...
+    </wan-replication>
+    <map name="my-shared-map">
+        <wan-replication-ref name="my-wan-cluster">
+            <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+            <republishing-enabled>false</republishing-enabled>
+        </wan-replication-ref>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -254,21 +255,21 @@ You see that we have `my-shared-map` configured to replicate itself to the clust
 
 `wan-replication-ref` has the following elements;
 
-- `name`: Name of `wan-replication` configuration. IMap or ICache instance uses this `wan-replication` configuration.
-- `merge-policy`: Resolve conflicts that are occurred when target cluster already has the replicated entry key.
-- `republishing-enabled`: When enabled, an incoming event to a member is forwarded to target cluster of that member. Enabling the event republishing is useful in a scenario where cluster A replicates to cluster B and cluster B replicates to cluster C. You do not need to enable republishing when all your clusters replicate to each other.
+* `name`: Name of `wan-replication` configuration. IMap or ICache instance uses this `wan-replication` configuration.
+* `merge-policy`: Resolve conflicts that are occurred when target cluster already has the replicated entry key.
+* `republishing-enabled`: When enabled, an incoming event to a member is forwarded to target cluster of that member. Enabling the event republishing is useful in a scenario where cluster A replicates to cluster B and cluster B replicates to cluster C. You do not need to enable republishing when all your clusters replicate to each other.
 
 When using Active-Active Replication, multiple clusters can simultaneously update the same entry in a distributed data structure.
 You can configure a merge policy to resolve these potential conflicts, as shown in the above example configuration (using the `merge-policy` sub-element under the `wan-replication-ref` element).
 
 Hazelcast provides the following merge policies for IMap:
 
-- `com.hazelcast.map.merge.PutIfAbsentMapMergePolicy`: Incoming entry merges from the source map to the target map if it does not exist in the target map.
-- `com.hazelcast.map.merge.HigherHitsMapMergePolicy`: Incoming entry merges from the source map to the target map if the source entry has more hits than the target one.
-- `com.hazelcast.map.merge.PassThroughMergePolicy`: Incoming entry merges from the source map to the target map unless the incoming entry is not null.
-- `com.hazelcast.map.merge.LatestUpdateMapMergePolicy`: Incoming entry merges from the source map to the target map if the source entry has been updated more recently than the target entry. Please note that this merge policy can only be used when the clusters' clocks are in sync.
+* `com.hazelcast.map.merge.PutIfAbsentMapMergePolicy`: Incoming entry merges from the source map to the target map if it does not exist in the target map.
+* `com.hazelcast.map.merge.HigherHitsMapMergePolicy`: Incoming entry merges from the source map to the target map if the source entry has more hits than the target one.
+* `com.hazelcast.map.merge.PassThroughMergePolicy`: Incoming entry merges from the source map to the target map unless the incoming entry is not null.
+* `com.hazelcast.map.merge.LatestUpdateMapMergePolicy`: Incoming entry merges from the source map to the target map if the source entry has been updated more recently than the target entry. Please note that this merge policy can only be used when the clusters' clocks are in sync.
 
-NOTE When using WAN replication, please note that only key based events are replicated to the target cluster. Operations like `clear`, `destroy` and `evictAll` are NOT replicated.
+NOTE: When using WAN replication, please note that only key based events are replicated to the target cluster. Operations like `clear`, `destroy` and `evictAll` are NOT replicated.
 
 
 **Enabling WAN Replication for ICache:**
@@ -277,15 +278,19 @@ The following is a declarative configuration example for enabling WAN Replicatio
 
 [source,xml]
 ----
-<wan-replication name="my-wan-cluster">
-   ...
-</wan-replication>
-<cache name="my-shared-cache">
-   <wan-replication-ref name="my-wan-cluster">
-      <merge-policy>com.hazelcast.cache.merge.PassThroughCacheMergePolicy</merge-policy>
-      <republishing-enabled>true</republishing-enabled>
-   </wan-replication-ref>
-</cache>
+<hazelcast>
+    ...
+    <wan-replication name="my-wan-cluster">
+        ...
+    </wan-replication>
+    <cache name="my-shared-cache">
+        <wan-replication-ref name="my-wan-cluster">
+            <merge-policy>com.hazelcast.cache.merge.PassThroughCacheMergePolicy</merge-policy>
+            <republishing-enabled>true</republishing-enabled>
+        </wan-replication-ref>
+    </cache>
+    ...
+</hazelcast>
 ----
 
 The following is the equivalent programmatic configuration:
@@ -296,15 +301,12 @@ The following is the equivalent programmatic configuration:
 include::{javasource}/wan/EnablingWRforCache.java[tag=wrcache]
 ----
 
-
 NOTE: Caches that are created dynamically do not support WAN replication functionality. Cache configurations should be defined either declaratively (by XML) or programmatically on both source and target clusters.
-
 
 Hazelcast provides the following merge policies for ICache:
 
-- `com.hazelcast.cache.merge.HigherHitsCacheMergePolicy`: Incoming entry merges from the source cache to the target cache if the source entry has more hits than the target one.
-- `com.hazelcast.cache.merge.PassThroughCacheMergePolicy`: Incoming entry merges from the source cache to the target cache unless the incoming entry is not null.
-
+* `com.hazelcast.cache.merge.HigherHitsCacheMergePolicy`: Incoming entry merges from the source cache to the target cache if the source entry has more hits than the target one.
+* `com.hazelcast.cache.merge.PassThroughCacheMergePolicy`: Incoming entry merges from the source cache to the target cache unless the incoming entry is not null.
 
 ==== Batch Size
 
@@ -317,37 +319,31 @@ Below is the declarative configuration for changing the value of the property:
 
 [source,xml]
 ----
-...
- <wan-replication name="my-wan-cluster">
-    <wan-publisher group-name="london">
-        ...
-        <properties>
-            ...
-            <property name="batch.size">1000</property>
-            ...
-        </properties>
-        ...
-    </wan-publisher>
- </wan-replication>
-...
+<hazelcast>
+    ...
+    <wan-replication name="my-wan-cluster">
+        <wan-publisher group-name="london">
+            <properties>
+                <property name="batch.size">1000</property>
+            </properties>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 And, following is the equivalent programmatic configuration:
 
 [source,java]
 ----
-...
- WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
- WanPublisherConfig publisherConfig = new WanPublisherConfig();
- ...
- Map<String, Comparable> props = publisherConfig.getProperties();
- props.put("batch.size", 1000);
- wanConfig.addWanPublisherConfig(publisherConfig);
-...
+WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
+WanPublisherConfig publisherConfig = new WanPublisherConfig();
+Map<String, Comparable> props = publisherConfig.getProperties();
+props.put("batch.size", 1000);
+wanConfig.addWanPublisherConfig(publisherConfig);
 ----
 
 NOTE: `WanNoDelayReplication` implementation has been removed. You can still achieve this behavior by setting the batch size to `1` while configuring your WAN replication.
-
 
 ==== Batch Maximum Delay
 
@@ -360,35 +356,29 @@ You can change this property using the declarative configuration as shown below.
 
 [source,xml]
 ----
-...
- <wan-replication name="my-wan-cluster">
-    <wan-publisher group-name="london">
-        ...
-        <properties>
-            ...
-            <property name="batch.max.delay.millis">2000</property>
-            ...
-        </properties>
-        ...
-    </wan-publisher>
- </wan-replication>
-...
+<hazelcast>
+    ...
+    <wan-replication name="my-wan-cluster">
+        <wan-publisher group-name="london">
+            <properties>
+                <property name="batch.max.delay.millis">2000</property>
+            </properties>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 And, the following is the equivalent programmatic configuration:
 
 [source,java]
 ----
-...
- WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
- WanPublisherConfig publisherConfig = new WanPublisherConfig();
- ...
- Map<String, Comparable> props = publisherConfig.getProperties();
- props.put("batch.max.delay.millis", 2000);
- wanConfig.addWanPublisherConfig(publisherConfig);
-...
+WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
+WanPublisherConfig publisherConfig = new WanPublisherConfig();
+Map<String, Comparable> props = publisherConfig.getProperties();
+props.put("batch.max.delay.millis", 2000);
+wanConfig.addWanPublisherConfig(publisherConfig);
 ----
-
 
 ==== Response Timeout
 
@@ -401,32 +391,29 @@ Below is an example of declarative configuration:
 
 [source,xml]
 ----
-...
-  <wan-replication name="my-wan-cluster">
-    <wan-publisher group-name="london">
-      <properties>
-        <property name="response.timeout.millis">5000</property>
-      </properties>
-    </wan-publisher>
-  </wan-replication>
-...
+<hazelcast>
+    ...
+    <wan-replication name="my-wan-cluster">
+        <wan-publisher group-name="london">
+            <properties>
+                <property name="response.timeout.millis">5000</property>
+            </properties>
+       </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 And, the following is the equivalent programmatic configuration:
 
-
 [source,java]
 ----
-...
- WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
- WanPublisherConfig publisherConfig = new WanPublisherConfig();
- ...
- Map<String, Comparable> props = publisherConfig.getProperties();
- props.put("response.timeout.millis", 5000);
- wanConfig.addWanPublisherConfig(publisherConfig);
-...
+WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
+WanPublisherConfig publisherConfig = new WanPublisherConfig();
+Map<String, Comparable> props = publisherConfig.getProperties();
+props.put("response.timeout.millis", 5000);
+wanConfig.addWanPublisherConfig(publisherConfig);
 ----
-
 
 ==== Queue Capacity
 
@@ -440,28 +427,25 @@ You can change this property using the declarative configuration as shown below.
 
 [source,xml]
 ----
-...
- <wan-replication name="my-wan-cluster">
-    <wan-publisher group-name="london">
-        ...
-        <queue-capacity>15000</queue-capacity>
-        ...
-    </target-cluster>
- </wan-replication>
-...
+<hazelcast>
+    ...
+    <wan-replication name="my-wan-cluster">
+        <wan-publisher group-name="london">
+            <queue-capacity>15000</queue-capacity>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 And, the following is the equivalent programmatic configuration:
 
 [source,java]
 ----
-...
- WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
- WanPublisherConfig publisherConfig = new WanPublisherConfig();
- ...
- publisherConfig.setQueueCapacity(15000);
- wanConfig.addWanPublisherConfig(publisherConfig);
-...
+WanReplicationConfig wanConfig = config.getWanReplicationConfig("my-wan-cluster");
+WanPublisherConfig publisherConfig = new WanPublisherConfig();
+publisherConfig.setQueueCapacity(15000);
+wanConfig.addWanPublisherConfig(publisherConfig);
 ----
 
 Note that you can clear a member's WAN replication event queue. It can be initiated through Management Center's https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-wan-replication[Clear Queues action] or Hazelcast’s REST API. Below is the URL for its REST call:
@@ -479,27 +463,28 @@ This behavior is configurable starting with Hazelcast 3.6.
 
 There are following supported behaviors:
 
-- `DISCARD_AFTER_MUTATION`: If you select this option, the new WAN events generated by the member are dropped and not replicated to the target cluster
+* `DISCARD_AFTER_MUTATION`: If you select this option, the new WAN events generated by the member are dropped and not replicated to the target cluster
 when the WAN event queues are full.
-- `THROW_EXCEPTION`: If you select this option, the WAN queue size is checked before each supported mutating operation (like `IMap.put()`, `ICache.put()`).
+* `THROW_EXCEPTION`: If you select this option, the WAN queue size is checked before each supported mutating operation (like `IMap.put()`, `ICache.put()`).
 If one the queues of target cluster is full, `WANReplicationQueueFullException` is thrown and the operation is not allowed.
-- `THROW_EXCEPTION_ONLY_IF_REPLICATION_ACTIVE`: Its effect is similar to that of `THROW_EXCEPTION`. But, it  throws exception only when WAN replication is active. It discards the new events if WAN replication is stopped.
-
+* `THROW_EXCEPTION_ONLY_IF_REPLICATION_ACTIVE`: Its effect is similar to that of `THROW_EXCEPTION`. But, it  throws exception only when WAN replication is active. It discards the new events if WAN replication is stopped.
 
 The following is an example configuration:
 
 [source,xml]
 ----
-<wan-replication name="my-wan-cluster">
-  <wan-publisher group-name="test-cluster-1">
+<hazelcast>
     ...
-    <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
-  </wan-publisher>
-</wan-replication>
+    <wan-replication name="my-wan-cluster">
+        <wan-publisher group-name="test-cluster-1">
+            <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 NOTE: `queue-full-behavior` configuration is optional. Its default value is `DISCARD_AFTER_MUTATION`.
-
 
 ==== Event Filtering API
 
@@ -512,14 +497,16 @@ You can attach filters to your data structures using the `filter` property of `w
 [source,xml]
 ----
 <hazelcast>
-  <map name="testMap">
-    <wan-replication-ref name="test">
-      <filters>
-        <filter-impl>com.example.MyFilter</filter-impl>
-        <filter-impl>com.example.MyFilter2</filter-impl>
-      </filters>
-    </wan-replication-ref>
-  </map>
+    ...
+    <map name="testMap">
+        <wan-replication-ref name="test">
+            <filters>
+                <filter-impl>com.example.MyFilter</filter-impl>
+                <filter-impl>com.example.MyFilter2</filter-impl>
+            </filters>
+        </wan-replication-ref>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -528,34 +515,36 @@ A WAN replication event is only eligible to publish if it passes all the filters
 
 Map and Cache have different filter interfaces: `MapWanEventFilter` and `CacheWanEventFilter`. Both of these interfaces have the method `filter` which takes the following parameters:
 
-- `mapName`/`cacheName`: Name of the related data structure.
-- `entryView`: https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/EntryView.html[EntryView]
+* `mapName`/`cacheName`: Name of the related data structure.
+* `entryView`: https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/EntryView.html[EntryView]
 or https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cache/CacheEntryView.html[CacheEntryView] depending on the data structure.
-- `eventType`: Enum type - `UPDATED(1)`, `REMOVED(2)` or `LOADED(3)` - depending on the event.
+* `eventType`: Enum type - `UPDATED(1)`, `REMOVED(2)` or `LOADED(3)` - depending on the event.
 
 NOTE: `LOADED` events are filtered out and not replicated to target cluster.
-
 
 ==== Acknowledgment Types
 
 Starting with Hazelcast 3.6, WAN replication supports different acknowledgment (ACK) types for each target cluster group.
 You can choose from 2 different ACK type depending on your consistency requirements. The following ACK types are supported:
 
-- `ACK_ON_RECEIPT`: A batch of replication events is considered successful as soon as it is received by the target cluster. This option does not guarantee that the received event is actually applied but it is faster.
-- `ACK_ON_OPERATION_COMPLETE`: This option guarantees that the event is received by the target cluster and it is applied. It is more time consuming. But it is the best way if you have strong consistency requirements.
+* `ACK_ON_RECEIPT`: A batch of replication events is considered successful as soon as it is received by the target cluster. This option does not guarantee that the received event is actually applied but it is faster.
+* `ACK_ON_OPERATION_COMPLETE`: This option guarantees that the event is received by the target cluster and it is applied. It is more time consuming. But it is the best way if you have strong consistency requirements.
 
 Following is an example configuration:
 
 [source,xml]
 ----
-<wan-replication name="my-wan-cluster">
-  <wan-publisher group-name="test-cluster-1">
+<hazelcast>
     ...
-    <properties>
-        <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
-    </properties>
-  </wan-publisher>
-</wan-replication>
+    <wan-replication name="my-wan-cluster">
+        <wan-publisher group-name="test-cluster-1">
+            <properties>
+                <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
+            </properties>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 NOTE: `ack.type` configuration is optional. Its default value is `ACK_ON_RECEIPT`.
@@ -585,18 +574,20 @@ Assume that you have configured an IMap with a WAN replication configuration as 
 
 [source,xml]
 ----
-<wan-replication name="my-wan-cluster">
-      <wan-publisher group-name="istanbul">
-          <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
-            ...
-      </wan-publisher>
-<wan-replication>
-...
-<map name="my-map">
-    <wan-replication-ref name="my-wan-cluster">
-       <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
-    </wan-replication-ref>
-</map>
+<hazelcast>
+    ...
+    <wan-replication name="my-wan-cluster">
+        <wan-publisher group-name="istanbul">
+            <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
+        </wan-publisher>
+    <wan-replication>
+    <map name="my-map">
+        <wan-replication-ref name="my-wan-cluster">
+            <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+        </wan-replication-ref>
+    </map>
+    ...
+</hazelcast>
 ----
 
 Then, an example CURL command to initiate the synchronization for "my-map" would be as follows:
@@ -637,18 +628,22 @@ http://member_ip:port/hazelcast/rest/mancenter/wan/addWanConfig
 
 You need to add the configuration for the WAN publishers as a JSON parameter. You can, at any point, even when maps and caches are concurrently mutated, add a new WAN publisher to an existing WAN replication configuration. The limitation is that there must be an existing WAN replication configuration but it can be empty, without any publishers (target clusters). For instance, this is an example of an XML configuration to which you can dynamically add new publishers:
 
-```
-<wan-replication name="wanReplication"></wan-replication>
-...
-<map name="my-map">
-    <wan-replication-ref name="wan-replication">
-        <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
-        <republishing-enabled>false</republishing-enabled>
-    </wan-replication-ref>
-</map>
-```
+[source,xml]
+----
+<hazelcast>
+    ...
+    <wan-replication name="wanReplication"></wan-replication>
+    <map name="my-map">
+        <wan-replication-ref name="wan-replication">
+            <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+            <republishing-enabled>false</republishing-enabled>
+       </wan-replication-ref>
+    </map>
+    ...
+</hazelcast>
+----
 
-Note that the map has defined WAN replication but there is no target cluster yet. You can then add the new WAN replication publishers (target clusters) by performing a HTTP POST as shown below:
+Note that the map has defined WAN replication but there is no target cluster yet. You can then add the new WAN replication publishers (target clusters) by performing an HTTP POST as shown below:
 
 ```
 curl -H "Content-type: text/plain" -X POST -d "{...}" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/addWanConfig
@@ -941,7 +936,6 @@ To be able to use Delta WAN synchronization, the following must be met:
 * Both clusters must use the same partitioning strategy.
 * Both clusters must have the Merkle tree structure enabled.
 
-
 ==== Using Delta WAN Synchronization
 
 To be able to use Delta WAN synchronization for a Hazelcast data structure:
@@ -953,23 +947,22 @@ Following is a declarative configuration example of the above:
 
 [source,xml]
 ----
-<map name="myMap">
-    <wan-replication-ref name="wanReplicationScheme">
-        ...
-    </wan-replication-ref>
+<hazelcast>
     ...
-</map>
-...
-...
-<wan-replication name="wanReplicationScheme">
-    <wan-publisher group-name="groupName">
-        <class-name>...</class-name>
-        <wan-sync>
-            <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
-        </wan-sync>
-        ...
-    </wan-publisher>
-</wan-replication>
+    <map name="myMap">
+        <wan-replication-ref name="wanReplicationScheme">
+        </wan-replication-ref>
+    </map>
+    <wan-replication name="wanReplicationScheme">
+        <wan-publisher group-name="groupName">
+            <class-name>...</class-name>
+            <wan-sync>
+                <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
+            </wan-sync>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 Here, the element `consistency-check-strategy` sets the strategy for checking the consistency of data between the source and target clusters. You must initiate the WAN synchronization (via Management Center or REST API as explained in <<synchronizing-wan-target-cluster, Synchronizing WAN clusters>>) to let this strategy reconcile the inconsistencies. The element `consistency-check-strategy` has currently two values:
@@ -985,10 +978,14 @@ Following is a declarative configuration example showing how to enable Delta WAN
 
 [source,xml]
 ----
-<merkle-tree enabled="true">
-    <mapName>someMap</mapName>
-    <depth>5</depth>
-</merkle-tree>
+<hazelcast>
+    ...
+    <merkle-tree enabled="true">
+        <mapName>someMap</mapName>
+        <depth>5</depth>
+    </merkle-tree>
+    ...
+</hazelcast>
 ----
 
 Here are the descriptions of sub-elements and attributes:
@@ -1003,32 +1000,30 @@ Following is a declarative example including the Merkle tree configuration.
 
 [source,xml]
 ----
-<map name="myMap">
-    <wan-replication-ref name="wanReplicationScheme">
-        ...
-    </wan-replication-ref>
+<hazelcast>
     ...
-</map>
-...
-<merkle-tree enabled="true">
-    <mapName>myMap</mapName>
-    <depth>10</depth>
-</merkle-tree>
-...
-<wan-replication name="wanReplicationScheme">
-    <wan-publisher group-name="groupName">
-        <class-name>...</class-name>
-        <wan-sync>
-            <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
-        </wan-sync>
-        ...
-    </wan-publisher>
-</wan-replication>
+    <map name="myMap">
+        <wan-replication-ref name="wanReplicationScheme">
+            ...
+        </wan-replication-ref>
+    </map>
+    <merkle-tree enabled="true">
+        <mapName>myMap</mapName>
+        <depth>10</depth>
+    </merkle-tree>
+    <wan-replication name="wanReplicationScheme">
+        <wan-publisher group-name="groupName">
+            <class-name>...</class-name>
+            <wan-sync>
+                <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
+            </wan-sync>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
-
 NOTE: If you do not specifically configure the `merkle-tree` in your Hazelcast configuration, Hazelcast uses the default Merkle tree structure values (i.e., it is enabled by default and its default depth is 10) when there is a WAN publisher using the Merkle tree (i.e., `consistency-check-strategy` for a WAN replication configuration is set as `MERKLE_TREES` and there is a data structure using that WAN replication configuration).
-
 
 NOTE: Merkle trees are created for each partition holding IMap data. Therefore, increasing the partition count also
 increases the efficiency of the Delta WAN Synchronization.
@@ -1253,16 +1248,16 @@ You can register these classes using the configuration elements `<wan-publisher>
 
 [source,xml]
 ----
-  <dependency>
+<dependency>
     <groupId>com.hazelcast</groupId>
     <artifactId>hazelcast-solace</artifactId>
     <version>1.0.0</version>
-  </dependency>
+</dependency>
 ----
 
 NOTE: The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the <<installing-hazelcast-imdg-enterprise, Installing Hazelcast IMDG Enterprise section>> for information on how to configure this repository.
 
-Please see the following sections for configuration details.
+See the following sections for configuration details.
 
 ==== Configuring Publisher
 
@@ -1270,20 +1265,24 @@ Following is an example declarative configuration for the publisher side:
 
 [source,xml]
 ----
-<wan-replication name="AtoB">
-    <wan-publisher group-name="clusterB">
-        <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanPublisher</class-name>
-        <properties>
-            <property name="host">192.168.2.66</property>
-            <property name="vpn.name">YOUR_VPN_NAME</property>
-            <property name="username">admin</property>
-            <property name="password">YOUR_PASSWORD</property>
-            <property name="topic.base.name">BaseTopic</property>
-            <property name="queue.name">Q/hz/clusterA</property>
-            <property name="initial.queue.mapping.enabled">true</property>
-        </properties>
-    </wan-publisher>
-</wan-replication>
+<hazelcast>
+    ...
+    <wan-replication name="AtoB">
+        <wan-publisher group-name="clusterB">
+            <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanPublisher</class-name>
+            <properties>
+                <property name="host">192.168.2.66</property>
+                <property name="vpn.name">YOUR_VPN_NAME</property>
+                <property name="username">admin</property>
+                <property name="password">YOUR_PASSWORD</property>
+                <property name="topic.base.name">BaseTopic</property>
+                <property name="queue.name">Q/hz/clusterA</property>
+                <property name="initial.queue.mapping.enabled">true</property>
+            </properties>
+        </wan-publisher>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 Descriptions of the properties are as follows:
@@ -1303,19 +1302,23 @@ Following is an example declarative configuration for the consumer side:
 
 [source,xml]
 ----
-<wan-replication name="AtoB">
-    <wan-consumer>
-        <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanConsumer</class-name>
-        <persist-wan-replicated-data>false</persist-wan-replicated-data>
-        <properties>
-            <property name="host">192.168.2.66</property>
-            <property name="vpn.name">YOUR_VPN_NAME</property>
-            <property name="username">admin</property>
-            <property name="password">YOUR_PASSWORD</property>
-            <property name="queue.name">Q/hz/clusterA</property>
-        </properties>
-    </wan-consumer>
-</wan-replication>
+<hazelcast>
+    ...
+    <wan-replication name="AtoB">
+        <wan-consumer>
+            <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanConsumer</class-name>
+            <persist-wan-replicated-data>false</persist-wan-replicated-data>
+            <properties>
+                <property name="host">192.168.2.66</property>
+                <property name="vpn.name">YOUR_VPN_NAME</property>
+                <property name="username">admin</property>
+                <property name="password">YOUR_PASSWORD</property>
+                <property name="queue.name">Q/hz/clusterA</property>
+            </properties>
+        </wan-consumer>
+    </wan-replication>
+    ...
+</hazelcast>
 ----
 
 Descriptions of the properties are as follows:
@@ -1327,7 +1330,6 @@ Descriptions of the properties are as follows:
 * `username`: Username for the Solace host. It is a mandatory property.
 * `password`: Password for the Solace host. It is an optional property.
 * `queue.name`: Name of the queue to be polled by the consumer. It is a mandatory property.
-
 
 You can find the Hazelcast Solace code samples https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/wan-replication/src/main/java/com/hazelcast/wan/solace[here].
 

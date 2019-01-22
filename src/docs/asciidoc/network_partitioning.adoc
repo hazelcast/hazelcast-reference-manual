@@ -50,7 +50,6 @@ Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new 
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
 
-
 ==== Configuring Split-Brain Protection
 
 You can set up Split-Brain Protection Cluster Quorum using either declarative or programmatic configuration.
@@ -58,7 +57,6 @@ You can set up Split-Brain Protection Cluster Quorum using either declarative or
 Assume that you have a 7-member Hazelcast Cluster and you want to set the minimum number of four members for the cluster to continue operating. In this case, if a split-brain happens, the sub-clusters of sizes 1, 2 and 3 will be prevented from being used. Only the sub-cluster of four members will be allowed to be used.
 
 NOTE: It is preferable to have an odd-sized initial cluster size to prevent a single network partitioning (split-brain) from creating two equal sized clusters.
-
 
 ===== Member Count Quorum
 
@@ -69,15 +67,14 @@ This type of quorum function determines the presence of quorum based on the coun
 [source,xml]
 ----
 <hazelcast>
-....
-<quorum name="quorumRuleWithFourMembers" enabled="true">
-  <quorum-size>4</quorum-size>
-</quorum>
-
-<map name="default">
-  <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
-</map>
-....
+    ...
+    <quorum name="quorumRuleWithFourMembers" enabled="true">
+        <quorum-size>4</quorum-size>
+    </quorum>
+    <map name="default">
+        <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -123,16 +120,17 @@ The probabilistic quorum function can be configured with the following parameter
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <quorum enabled="true" name="probabilistic-quorum">
-    <quorum-size>3</quorum-size>
-    <quorum-type>READ_WRITE</quorum-type>
-    <probabilistic-quorum acceptable-heartbeat-pause-millis="5000"
+    ...
+    <quorum enabled="true" name="probabilistic-quorum">
+        <quorum-size>3</quorum-size>
+        <quorum-type>READ_WRITE</quorum-type>
+        <probabilistic-quorum acceptable-heartbeat-pause-millis="5000"
                 max-sample-size="500" suspicion-threshold="10" />
-  </quorum>
-  <set name="split-brain-protected-set">
-    <quorum-ref>probabilistic-quorum</quorum-ref>
-  </set>
+    </quorum>
+    <set name="split-brain-protected-set">
+        <quorum-ref>probabilistic-quorum</quorum-ref>
+    </set>
+    ...
 </hazelcast>
 ----
 
@@ -143,7 +141,6 @@ The probabilistic quorum function can be configured with the following parameter
 include::{javasource}/networkpartitioning/ProbabilisticQuorum.java[tag=pq]
 ----
 
-
 ===== Recently-Active Quorum Function
 
 A quorum with a recently-active quorum function can be used to implement more conservative split-brain protection by requiring that a heartbeat has been received from each member within a configurable time window since now.
@@ -153,15 +150,16 @@ A quorum with a recently-active quorum function can be used to implement more co
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <quorum enabled="true" name="recently-active-quorum">
-    <quorum-size>4</quorum-size>
-    <quorum-type>READ_WRITE</quorum-type>
-    <recently-active-quorum heartbeat-tolerance-millis="60000" />
-  </quorum>
-  <set name="split-brain-protected-set">
-    <quorum-ref>recently-active-quorum</quorum-ref>
-  </set>
+    ...
+    <quorum enabled="true" name="recently-active-quorum">
+        <quorum-size>4</quorum-size>
+        <quorum-type>READ_WRITE</quorum-type>
+        <recently-active-quorum heartbeat-tolerance-millis="60000" />
+    </quorum>
+    <set name="split-brain-protected-set">
+        <quorum-ref>recently-active-quorum</quorum-ref>
+    </set>
+    ...
 </hazelcast>
 ----
 
@@ -171,7 +169,6 @@ A quorum with a recently-active quorum function can be used to implement more co
 ----
 include::{javasource}/networkpartitioning/RecentlyActiveQuorum.java[tag=raq]
 ----
-
 
 ===== Quorum Configuration Reference
 
@@ -200,11 +197,15 @@ public class CustomQuorumFunction implements QuorumFunction {
 
 [source,xml]
 ----
-<quorum enabled="true" name="member-count-quorum">
-   <quorum-type>READ_WRITE</quorum-type>
-   <quorum-size>3</quorum-size>
-   <quorum-function-class-name>my.domain.CustomQuorumFunction</quorum-function-class-name>
-</quorum>
+<hazelcast>
+    ... 
+    <quorum enabled="true" name="member-count-quorum">
+        <quorum-type>READ_WRITE</quorum-type>
+        <quorum-size>3</quorum-size>
+        <quorum-function-class-name>my.domain.CustomQuorumFunction</quorum-function-class-name>
+    </quorum>
+    ...
+</hazelcast>    
 ----
 
 ==== Configuring Quorum Listeners
@@ -218,18 +219,17 @@ Quorum listeners can be configured via declarative or programmatic configuration
 [source,xml]
 ----
 <hazelcast>
-....
-<quorum name="quorumRuleWithFourMembers" enabled="true">
-  <quorum-size>4</quorum-size>
-  <quorum-listeners>
-    <quorum-listener>com.company.quorum.FourMemberQuorumListener</quorum-listener>
-  </quorum-listeners>
-</quorum>
-
-<map name="default">
-  <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
-</map>
-....
+    ...
+    <quorum name="quorumRuleWithFourMembers" enabled="true">
+        <quorum-size>4</quorum-size>
+        <quorum-listeners>
+            <quorum-listener>com.company.quorum.FourMemberQuorumListener</quorum-listener>
+        </quorum-listeners>
+    </quorum>
+    <map name="default">
+        <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
+    </map>
+    ...
 </hazelcast>
 ----
 
@@ -269,7 +269,6 @@ You can retrieve the quorum instance for a particular quorum over the quorum ser
 include::{javasource}/networkpartitioning/QuorumQuery.java[tag=qq]
 ----
 
-
 === Split-Brain Recovery
 
 Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will initiate the merge process is decided. This decision is based on the cluster size; the smaller cluster, by member count, will merge into the bigger one. If they have an equal number of members, then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
@@ -280,11 +279,11 @@ While recovering from partitioning, Hazelcast uses merge policies for supported 
 
 Each member of the merging cluster will do the following:
 
-- Close all of its network connections (detach from its cluster).
-- Take a snapshot of local data structures which support split-brain recovery.
-- Discard all data structure data.
-- Join to the new cluster as lite member.
-- Send merge operations to the new cluster from local snapshots.
+* Close all of its network connections (detach from its cluster).
+* Take a snapshot of local data structures which support split-brain recovery.
+* Discard all data structure data.
+* Join to the new cluster as lite member.
+* Send merge operations to the new cluster from local snapshots.
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
 
@@ -341,32 +340,27 @@ Here are examples how merge policies can be specified for various data structure
 [source,xml]
 ----
 <hazelcast>
-  ...
-  <map name="default">
-     ...
-     <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>
-  </map>
-
-  <replicatedmap name="default">
     ...
-    <merge-policy batch-size="100">org.example.merge.MyMergePolicy</merge-policy>
-  </replicatedmap>
+    <map name="default">
+        <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>
+    </map>
 
-  <multimap name="default">
-    ...
-    <merge-policy batch-size="50">HigherHitsMergePolicy</merge-policy>
-  </multimap>
+    <replicatedmap name="default">
+        <merge-policy batch-size="100">org.example.merge.MyMergePolicy</merge-policy>
+    </replicatedmap>
 
-  <list name="default">
-    ...
-    <merge-policy batch-size="500">org.example.merge.MyMergePolicy</merge-policy>
-  </list>
+    <multimap name="default">
+        <merge-policy batch-size="50">HigherHitsMergePolicy</merge-policy>
+    </multimap>
 
-  <atomic-long name="default">
+    <list name="default">
+        <merge-policy batch-size="500">org.example.merge.MyMergePolicy</merge-policy>
+    </list>
+
+    <atomic-long name="default">
+        <merge-policy>PutIfAbsentMergePolicy</merge-policy>
+    </atomic-long>
     ...
-    <merge-policy>PutIfAbsentMergePolicy</merge-policy>
-  </atomic-long>
-  ...
 </hazelcast>
 ----
 
@@ -375,11 +369,11 @@ Here is how merge policies are specified for `ICache` (it is the same configurat
 [source,xml]
 ----
 <hazelcast>
-   ...
-   <cache name="default">
-      ...
-      <merge-policy>org.example.merge.MyMergePolicy</merge-policy>
-   </cache>
+    ...
+    <cache name="default">
+        <merge-policy>org.example.merge.MyMergePolicy</merge-policy>
+    </cache>
+    ...
 </hazelcast>
 ----
 
@@ -476,7 +470,6 @@ The `ReplicatedMap` provides key/value merge data, with the creation time, acces
 
 The `IQueue` just provides a collection of values. The return type is also a `Collection<Object>`.
 
-
 The following is the full list of merge types:
 
 * `MergingValue`: Represents the value of the merged data.
@@ -491,7 +484,6 @@ The following is the full list of merge types:
 * `MergingVersion`: Represents the version of the merged data.
 * `MergingExpirationTime`: Represents the expiration time of the merged data.
 * `MergingLastStoredTime`: Represents the last stored time of the merged data.
-
 
 And the following table shows the merge types provided by each data structure:
 
@@ -606,7 +598,6 @@ If you need access to external references in your merge policy, you can use the 
 include::{javasource}/networkpartitioning/UserContextMergePolicy.java[tag=ucmp]
 ----
 
-
 The `UserContext` can be setup like this:
 
 [source,java]
@@ -634,7 +625,6 @@ The merge operations are executed on the partition threads. Database accesses ar
 Also the `com.hazelcast.core.LifeCycleEvent.MERGED` will be thrown after a timeout (we don't wait forever for merge operations to continue). At the moment this timeout is 500 milliseconds per merged item or entry, but at least 5 seconds. If your database is slow, you might get the `LifeCycleEvent` while there are still merge operations in progress.
 ====
 
-
 ===== Merge Policies With Multiple Merge Types
 
 You can also write a merge policy, which requires multiple merge types. This merge policy is supported by all data structures, which provide `MergingHits` and `MergingCreationTime`:
@@ -643,7 +633,6 @@ You can also write a merge policy, which requires multiple merge types. This mer
 ----
 include::{javasource}/networkpartitioning/ComposedHitsAndCreationTimeMergePolicy.java[tag=ch]
 ----
-
 
 If you configure this merge policy on a data structures, which does not provide these merge types, you will get an `InvalidConfigurationException` with a message like:
 
