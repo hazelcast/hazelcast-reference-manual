@@ -1100,9 +1100,15 @@ NOTE: When you want to reconfigure a system property, you need to restart the me
 
 The table below lists the client configuration properties with their descriptions.
 
+[cols="3,1,1,4"]
+.Client System Properties
 |===
 |Property Name | Default Value | Type | Description
 
+|`hazelcast.client.allow.invocations.when.disconnected`
+|false
+|bool
+|When set to true, even the client's owner member is gone in the cluster (so its state known by the cluster is `CLIENT_DISCONNECTED`), the invocations from this client can go through the other available cluster members. The default behavior (false) disallows performing invocations in this state.
 
 |`hazelcast.client.event.queue.capacity`
 |1000000
