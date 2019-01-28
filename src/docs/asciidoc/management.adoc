@@ -798,51 +798,57 @@ Besides the Management Center's Hot Restart https://docs.hazelcast.org/docs/mana
 +
 To get the state of the cluster, use the following command:
 +
-```
+[source,plain]
+----
 curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/state
-```
+----
 +
 * _Changing the cluster state:_
 +
 To change the state of the cluster to `frozen`, use the following command:
 +
-```
+[source,plain]
+----
 curl --data "${GROUPNAME}&${PASSWORD}&${STATE}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/changeState
-```
+----
 +
 * _Shutting down the cluster:_
 +
 To shutdown the cluster, use the following command:
 +
-```
+[source,plain]
+----
 curl --data "${GROUPNAME}&${PASSWORD}"  http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/clusterShutdown
-```
+----
 +
 * _Querying the current cluster version:_
 +
 To get the current cluster version, use the following `curl` command:
 +
-```
+[source,plain]
+----
 $ curl http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
   {"status":"success","version":"3.9"}
-```
+----
 |**IMDG Enterprise commands**
 
 * _Partial starting the cluster:_
 +
 To partial start the cluster when Hot Restart is enabled, use the following command:
 +
-```
+[source,plain]
+----
 curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/partialStart/
-```
+----
 +
 * _Force starting the cluster:_
 +
 To force start the cluster when Hot Restart is enabled, use the following command:
 +
-```
+[source,plain]
+----
 curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/forceStart/
-```
+----
 +
 NOTE: You can also perform the above operations (partialStart and forceStart) using the Hot Restart tab of Hazelcast Management Center or using the script `cluster.sh`. Please see the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart] and <<using-the-script-cluster-sh, `cluster.sh`>>.
 +
@@ -850,24 +856,27 @@ NOTE: You can also perform the above operations (partialStart and forceStart) us
 +
 To initiate the Hot Backup, use the following `curl` command:
 +
-```
+[source,plain]
+----
 curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/hotBackup
-```
+----
 +
 * _Changing the cluster version:_
 +
 To upgrade the cluster version, after having upgraded all members of your cluster to a new minor version, use the following `curl` command:
 +
-```
+[source,plain]
+----
 $ curl --data "${GROUPNAME}&${PASSWORD}&${CLUSTER_VERSION}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
-```
+----
 +
 For example, assuming the default group name and password, issue the following command to any member of the cluster to upgrade from cluster version 3.8 to 3.9:
 +
-```
+[source,plain]
+----
 $ curl --data "dev&dev-pass&3.9" http://127.0.0.1:5701/hazelcast/rest/management/cluster/version
   {"status":"success","version":"3.9"}
-```
+----
 +
 NOTE: You can also perform the above cluster version operations using Hazelcast Management Center or using the script `cluster.sh`. Please see the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Rolling Member Upgrades] and <<using-the-script-cluster-sh, `cluster.sh`>>.
 |===
