@@ -64,10 +64,14 @@ Below is an example of declarative configuration of WAN Replication from New Yor
 </hazelcast>
 ----
 
-Following are the definitions of configuration elements:
+The `wan-publisher` element is used to configure the target cluster, i.e., to define how WAN events are sent to a specific endpoint. As mentioned above just before the configuration example, the endpoint can be a different cluster defined by static IP's or discovered using a cloud discovery mechanism. The `wan-publisher` element has the following attributes:
+
+* `group-name`: Specifies the target cluster's group name for authentication on the target endpoint. It is mandatory to set this attribute.
+* `publisher-id`: Specifies the publisher ID used for identifying the publisher. Setting this ID may be useful when the target group names are not unique for all of the WAN replication publishers in a single WAN replication scheme. It is optional to set this attribute. If this ID is not specified, the `group-name` will be used as a publisher ID.
+
+And, the following are definitions of the configuration elements within `wan-publisher`:
 
 * `name`: Name of your WAN Replication. This name is referenced in IMap or ICache configuration when you add WAN Replication for these data structures (using the element `wan-replication-ref` in the configuration of IMap or ICache).
-* `group-name`: Configures target cluster's group name.
 * `class-name`: Name of the class implementation for the WAN replication.
 * `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full. Please see the <<queue-full-behavior, Queue Full Behavior section>>.
 * `queue-capacity`: Size of the queue of events. Its default value is 10000. Please see the <<queue-capacity, Queue Capacity section>>.
