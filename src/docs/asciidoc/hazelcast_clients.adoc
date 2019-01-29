@@ -377,14 +377,13 @@ clientConfig.setGroupConfig(new GroupConfig("dev","dev-pass");
 clientConfig.setLoadBalancer(yourLoadBalancer);
 ----
 
-
 ===== Client Network
 
 All network related configuration of Hazelcast Java Client is performed via the `network` element in the declarative configuration file, or in the class `ClientNetworkConfig` when using programmatic configuration. Let's first give the examples for these two approaches. Then we will look at its sub-elements and attributes.
 
-====== Declarative Client Network Configuration
+**Declarative Configuration:**
 
-Here is an example of configuring network for Java Client declaratively.
+Here is an example declarative configuration of `network` for Java Client, which includes all the parent configuration elements.
 
 [source,xml]
 ----
@@ -401,30 +400,56 @@ Here is an example of configuring network for Java Client declaratively.
         </outbound-ports>
         <smart-routing>true</smart-routing>
         <redo-operation>true</redo-operation>
+        <connection-timeout>60000</connection-timeout>
+        <connection-attempt-period>3000</connection-attempt-period>
+        <connection-attempt-limit>2</connection-attempt-limit>
+        <socket-options>
+            ...
+        </socket-options>
         <socket-interceptor enabled="true">
-            <class-name>com.hazelcast.XYZ</class-name>
-            <properties>
-                <property name="kerberos-host">kerb-host-name</property>
-                <property name="kerberos-config-file">kerb.conf</property>
-            </properties>
+            ...
         </socket-interceptor>
+
+        <ssl enabled="false">
+            ...
+        </ssl>
         <aws enabled="true" connection-timeout-seconds="11">
-            <inside-aws>false</inside-aws>
-            <access-key>my-access-key</access-key>
-            <secret-key>my-secret-key</secret-key>
-            <iam-role>s3access</iam-role>
-            <region>us-west-1</region>
-            <host-header>ec2.amazonaws.com</host-header>
-            <security-group-name>hazelcast-sg</security-group-name>
-            <tag-key>type</tag-key>
-            <tag-value>hz-members</tag-value>
+            ...
         </aws>
+        <gcp enabled="false">
+            ...
+        </gcp>
+        <azure enabled="false">
+            ...
+        </azure>
+        <kubernetes enabled="false">
+            ...
+        </kubernetes>
+        <eureka enabled="false">
+            ...
+        </eureka>
+        <icmp-ping enabled="false">
+            ...
+        </icmp-ping>
+        <hazelcast-cloud enabled="false">
+            <discovery-token>EXAMPLE_TOKEN</discovery-token>
+        </hazelcast-cloud>
+        <discovery-strategies>
+            <node-filter class="DummyFilterClass" />
+            <discovery-strategy class="DummyDiscoveryStrategy1" enabled="true">
+                <properties>
+                    <property name="key-string">foo</property>
+                    <property name="key-int">123</property>
+                    <property name="key-boolean">true</property>
+                </properties>
+            </discovery-strategy>
+        </discovery-strategies>
     </network>
     ...
 </hazelcast>
 ----
 
-====== Programmatic Client Network Configuration
+**Programmatic Configuration:**
 
 Here is an example of configuring network for Java Client programmatically.
 
@@ -437,7 +462,7 @@ include::{javasource}/clients/ExampleClientConfiguration.java[tag=scc]
 
 Address List is the initial list of cluster addresses to which the client will connect. The client uses this list to find an alive member. Although it may be enough to give only one address of a member in the cluster (since all members communicate with each other), it is recommended that you give the addresses for all the members.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -453,7 +478,7 @@ Address List is the initial list of cluster addresses to which the client will c
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -472,7 +497,7 @@ IMPORTANT:  If you have multiple members on a single machine and you are using <
 
 You may want to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast Java client to use only defined outbound ports. The following are example configurations.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -491,7 +516,7 @@ You may want to restrict outbound ports to be used by Hazelcast-enabled applicat
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -517,7 +542,7 @@ Smart routing defines whether the client operation mode is smart or unisocket. S
 
 The following are example configurations.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -530,7 +555,7 @@ The following are example configurations.
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -545,7 +570,7 @@ Its default value is `true` (smart client mode).
 
 It enables/disables redo-able operations as described in <<handling-failures, Handling Retry-able Operation Failure>>. The following are the example configurations.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -558,7 +583,7 @@ It enables/disables redo-able operations as described in <<handling-failures, Ha
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -573,7 +598,7 @@ Its default value is `false` (disabled).
 
 Connection timeout is the timeout value in milliseconds for members to accept client connection requests. The following are the example configurations.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -586,7 +611,7 @@ Connection timeout is the timeout value in milliseconds for members to accept cl
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -600,7 +625,7 @@ Its default value is *5000* milliseconds.
 
 While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, that member might not be available at that moment. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `ClientNetworkConfig.connectionAttemptLimit` times. This is also the case when the previously established connection between the client and that member goes down. The following are example configurations.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -613,7 +638,7 @@ While the client is trying to connect initially to one of the members in the `Cl
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -627,7 +652,7 @@ Its default value is *2*.
 
 Connection attempt period is the duration in milliseconds between the connection attempts defined by `ClientNetworkConfig.connectionAttemptLimit`. The following are example configurations.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -640,7 +665,7 @@ Connection attempt period is the duration in milliseconds between the connection
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -730,7 +755,7 @@ As explained in the <<tlsssl , TLS/SSL section>>, Hazelcast members have keyStor
 
 The example declarative and programmatic configurations below show how to configure a Java client for connecting to a Hazelcast cluster in AWS.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -753,7 +778,7 @@ The example declarative and programmatic configurations below show how to config
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -774,7 +799,7 @@ If the client is configured in smart mode, only the operations that are not key-
 
 The following are example configurations.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -787,7 +812,7 @@ The following are example configurations.
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -828,7 +853,7 @@ The option `ASYNC` enables reconnection in a non-blocking manner where all the w
 The example declarative and programmatic configurations below show how to configure a Java client's starting and reconnecting modes.
 
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -839,7 +864,7 @@ The example declarative and programmatic configurations below show how to config
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
@@ -860,7 +885,7 @@ This configuration is used when trying to establish the initial connection and a
 
 Connection retry configuration is done using the `connection-retry` element when configuring declaratively or the object `ConnectionRetryConfig` when configuring programmatically. Below are the example configurations for each.
 
-**Declarative Configuration:**
+Declarative Configuration:
 
 [source,xml]
 ----
@@ -879,7 +904,7 @@ Connection retry configuration is done using the `connection-retry` element when
 </hazelcast-client>
 ----
 
-**Programmatic Configuration:**
+Programmatic Configuration:
 
 [source,java]
 ----
