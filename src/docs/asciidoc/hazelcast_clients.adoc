@@ -749,7 +749,60 @@ socketOptions.setBufferSize(32)
 
 You can use TLS/SSL to secure the connection between the client and the members. If you want TLS/SSL enabled for the client-cluster connection, you should set `SSLConfig`. Once set, the connection (socket) is established out of an TLS/SSL factory defined either by a factory class name or factory implementation. Please see the <<tlsssl , TLS/SSL section>>.
 
-As explained in the <<tlsssl , TLS/SSL section>>, Hazelcast members have keyStores used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust. Starting with Hazelcast 3.8.1 release, mutual authentication is introduced. This allows the clients also to have their keyStores and members to have their trustStores so that the members can know which clients they can trust. Please see the <<mutual-authentication, Mutual Authentication section>>.
+As explained in the <<tlsssl , TLS/SSL section>>, Hazelcast members have keyStores used to identify themselves (to other members) and Hazelcast clients have trustStore used to define which members they can trust. The clients also have their keyStores and members have their trustStores so that the members can know which clients they can trust: see the <<mutual-authentication, Mutual Authentication section>>.
+
+====== Configuring Hazelcast Cloud
+
+You can connect your Java client to a Hazelcast cluster which is hosted on https://hazelcast.com/products/cloud/[Hazelcast Cloud]. For this, you simply enable the Hazelcast Cloud and specify the cluster's discovery token provided by Hazelcast Cloud while creating the cluster; this will allow the Hazelcast cluster to discover your clients. See the following example configurations.
+
+Declarative Configuration:
+
+[source,xml]
+----
+<hazelcast-client>
+    ...
+    <network>
+        <ssl enabled="true"/>
+        <hazelcast-cloud enabled="true">
+            <discovery-token>YOUR_TOKEN</discovery-token>
+        </hazelcast-cloud>
+    </network>
+    ...
+</hazelcast-client>
+----
+
+Programmatic Configuration:
+
+[source,java]
+----
+ClientConfig config = new ClientConfig();
+ClientNetworkConfig networkConfig = config.getNetworkConfig();
+networkConfig.getCloudConfig().setDiscoveryToken("TOKEN").setEnabled(true);
+networkConfig.setSSLConfig(new SSLConfig().setEnabled(true));
+HazelcastInstance client = HazelcastClient.newHazelcastClient(config);
+----
+
+Hazelcast Cloud is disabled for the Java client, by default (`enabled` attribute is `false`).
+
+See this Hazelcast Cloud https://hazelcast.com/products/cloud/[web page] for more information on Hazelcast Cloud.
+
+NOTE: Since this is a REST based discovery, you need to enable the REST listener service, too, by setting the `hazelcast.rest.enabled` property to `true`.
+
+[NOTE]
+====
+It is advised to enable certificate revocation status JRE-wide, for security reasons.
+You need to set the following Java system properties to `true`:
+
+* `com.sun.net.ssl.checkRevocation`
+* `com.sun.security.enableCRLDP`
+
+And you need to set the Java security property as follows:
+
+`Security.setProperty("ocsp.enable", "true")`
+
+You can find more details on the related security topics http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CERTPATH[here] and 
+http://docs.oracle.com/javase/6/docs/technotes/guides/security/certpath/CertPathProgGuide.html#AppC[here].
+====
 
 ====== Configuring Client for AWS
 
