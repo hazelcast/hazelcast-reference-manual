@@ -81,7 +81,7 @@ To destroy a Hazelcast distributed object, you can use the method `destroy`. Thi
 include::{javasource}/MapMember.java[tag=mapmember]
 ----
 
-If you start the `Member` above, the output will be as shown below:
+If you start the `Member` above, the output is as shown below:
 
 [source,plain]
 ----
@@ -123,7 +123,7 @@ ISemaphore s3 = hazelcastInstance.getSemaphore("s3@"+partitionKey);
 [[common-features-of-all-hazelcast-data-structures]]
 ==== Common Features of all Hazelcast Data Structures
 
-* If a member goes down, its backup replica (which holds the same data) will dynamically redistribute the data, including the ownership and locks on them, to the remaining live members. As a result, there will not be any data loss.
+* If a member goes down, its backup replica (which holds the same data) dynamically redistributes the data, including the ownership and locks on them, to the remaining live members. As a result, there will not be any data loss.
 * There is no single cluster master that can be a single point of failure. Every member in the cluster has equal rights and responsibilities. No single member is superior. There is no dependency on an external 'server' or 'master'.
 
 [[example-distributed-object-code]]
@@ -148,7 +148,7 @@ NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelca
 [[getting-a-map-and-putting-an-entry]]
 ==== Getting a Map and Putting an Entry
 
-Hazelcast will partition your map entries and their backups, and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "number of map entries * 2 * 1/n" entries, where **n** is the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
+Hazelcast partitions your map entries and their backups, and almost evenly distribute them onto all Hazelcast members. Each member carries approximately "number of map entries * 2 * 1/n" entries, where **n** is the number of members in the cluster. For example, if you have a member with 1000 objects to be stored in the cluster and then you start a second member, each member will both store 500 objects and back up the 500 objects in the other member.
 
 Let's create a Hazelcast instance and fill a map named `Capitals` with key-value pairs using the following code. Use the HazelcastInstance `getMap` method to get the map, then use the map `put` method to put an entry into the map.
 
@@ -175,12 +175,12 @@ When you run this code, a cluster member is created with a map whose entries are
 
 image::1Node.png[Map Entries in a Single Member]
 
-NOTE: Please note that some of the partitions will not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the <<system-properties, System Properties appendix>>.
+NOTE: Please note that some of the partitions do not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the <<system-properties, System Properties appendix>>.
 
 [[creating-a-member-for-map-backup]]
 ==== Creating A Member for Map Backup
 
-Now let's create a second member by running the above code again. This will create a cluster with two members. This is also where backups of entries are created - remember the backup partitions mentioned in the <<hazelcast-overview, Hazelcast Overview section>>. The following illustration shows two members and how the data and its backup is distributed.
+Now let's create a second member by running the above code again. This creates a cluster with two members. This is also where backups of entries are created - remember the backup partitions mentioned in the <<hazelcast-overview, Hazelcast Overview section>>. The following illustration shows two members and how the data and its backup is distributed.
 
 image::2Nodes.png[Map Entries with Backups in Two Members]
 
@@ -213,7 +213,7 @@ Distributed maps have one backup by default. If a member goes down, your data is
 [[creating-sync-backups]]
 ===== Creating Sync Backups
 
-To provide data safety, Hazelcast allows you to specify the number of backup copies you want to have. That way, data on a cluster member will be copied onto other member(s).
+To provide data safety, Hazelcast allows you to specify the number of backup copies you want to have. That way, data on a cluster member is copied onto other member(s).
 
 To create synchronous backups, select the number of backup copies using the `backup-count` property.
 
@@ -260,7 +260,7 @@ NOTE: A map can have both sync and async backups at the same time.
 [[enabling-backup-reads]]
 ===== Enabling Backup Reads
 
-By default, Hazelcast has one sync backup copy. If `backup-count` is set to more than 1, then each member will carry both owned entries and backup copies of other members. So for the `map.get(key)` call, it is possible that the calling member has a backup copy of that key. By default, `map.get(key)` will always read the value from the actual owner of the key for consistency.
+By default, Hazelcast has one sync backup copy. If `backup-count` is set to more than 1, then each member will carry both owned entries and backup copies of other members. So for the `map.get(key)` call, it is possible that the calling member has a backup copy of that key. By default, `map.get(key)` always reads the value from the actual owner of the key for consistency.
 
 To enable backup reads (read local backup entries), set the value of the `read-backup-data` property to **true**. Its default value is **false** for consistency. Enabling backup reads can improve performance but on the other hand it can cause stale reads while still preserving monotonic-reads property.
 
@@ -309,11 +309,11 @@ Assume that you have the following figures as examples:
 
 The total number of entries here is 20000 (partition count * entry count for each partition). This means you are at the eviction threshold since you set the `max-size` to 20000. When you try to put an entry
 
-. the entry goes to the relevant partition;
-. the partition checks whether the eviction threshold is reached (`max-size`);
+. the entry goes to the relevant partition,
+. the partition checks whether the eviction threshold is reached (`max-size`),
 . only one entry will be evicted.
 
-As a result of this eviction process, when you check the size of your map, it is 19999. After this eviction, subsequent put operations will not trigger the next eviction until the map size is again close to the `max-size`.
+As a result of this eviction process, when you check the size of your map, it is 19999. After this eviction, subsequent put operations do not trigger the next eviction until the map size is again close to the `max-size`.
 
 NOTE: The above scenario is simply an example that describes how the eviction process works. Hazelcast finds the most optimum number of entries to be evicted according to your cluster size and selected policy.
 
@@ -344,7 +344,7 @@ Let's describe each element:
 NOTE: Both `time-to-live-seconds` and `max-idle-seconds` may be used simultaneously on the map entries. In that case, the entry is considered expired if at least one of the policies marks it as expired.
 +
 * `eviction-policy`: Eviction policy to be applied when the size of map grows larger than the value specified by the `max-size` element described below.  Valid values are:
-** NONE: Default policy. If set, no items will be evicted and the property `max-size` described below will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
+** NONE: Default policy. If set, no items are evicted and the property `max-size` described below is ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
 ** LRU: Least Recently Used.
 ** LFU: Least Frequently Used.
 +
@@ -355,7 +355,7 @@ Apart from the above values, you can also develop and use your own eviction poli
 +
 `<max-size policy="PER_NODE">5000</max-size>`
 +
-** `PER_PARTITION`: Maximum number of map entries within each partition. Storage size depends on the partition count in a cluster member. This attribute should not be used often. For instance, avoid using this attribute with a small cluster. If the cluster is small, it will be hosting more partitions, and therefore map entries, than that of a larger cluster. Thus, for a small cluster, eviction of the entries will decrease performance (the number of entries is large).
+** `PER_PARTITION`: Maximum number of map entries within each partition. Storage size depends on the partition count in a cluster member. This attribute should not be used often. For instance, avoid using this attribute with a small cluster. If the cluster is small, it hosts more partitions, and therefore map entries, than that of a larger cluster. Thus, for a small cluster, eviction of the entries decreases performance (the number of entries is large).
 +
 `<max-size policy="PER_PARTITION">27100</max-size>`
 +
@@ -392,7 +392,7 @@ Apart from the above values, you can also develop and use your own eviction poli
 `<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
 
 
-NOTE: As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-check-millis` are deprecated. They will be ignored if configured since map eviction is based on the sampling of entries. Please see the <<eviction-algorithm, Eviction Algorithm section>> for details.
+NOTE: As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-check-millis` are deprecated. They are ignored if configured since map eviction is based on the sampling of entries. Please see the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 To put it briefly, Hazelcast maps have no restrictions on the size and may grow arbitrarily large, by default. When it comes to reducing the size of a map, there are two concepts: expiration and eviction.
 
@@ -533,9 +533,9 @@ IMap (and a few other Hazelcast data structures, such as ICache) has an `in-memo
 
 To set how the data will be stored in memory, set `in-memory-format` in the configuration. You have the following format options:
 
-* `BINARY` (default): The data (both the key and value) will be stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as `put` and `get`.
-* `OBJECT`: The data will be stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing will not contain the deserialization cost. Note that when you use `OBJECT` as the in-memory format, the key will still be stored in binary format and the value will be stored in object format.
-* `NATIVE`: ([navy]*Hazelcast IMDG Enterprise HD*) This format behaves the same as BINARY, however, instead of heap memory, key and value will be stored in the off-heap memory.
+* `BINARY` (default): The data (both the key and value) is stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as `put` and `get`.
+* `OBJECT`: The data is stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing does not contain the deserialization cost. Note that when you use `OBJECT` as the in-memory format, the key is still stored in binary format and the value is stored in object format.
+* `NATIVE`: ([navy]*Hazelcast IMDG Enterprise HD*) This format behaves the same as BINARY, however, instead of heap memory, key and value are stored in the off-heap memory.
 
 Regular operations like `get` rely on the object instance. When the `OBJECT` format is used and a `get` is performed, the map does not return the stored instance, but creates a clone. Therefore, this whole `get` operation first includes a serialization on the member owning the instance and then a deserialization on the member calling the instance. When the `BINARY` format is used, only a deserialization is required; `BINARY` is faster.
 
@@ -631,7 +631,7 @@ NOTE: Please refer to the <<high-density-memory-store, High-Density Memory Store
 
 Hazelcast allows you to load and store the distributed map entries from/to a persistent data store such as a relational database. To do this, you can use Hazelcast's `MapStore` and `MapLoader` interfaces.
 
-When you provide a `MapLoader` implementation and request an entry (`IMap.get()`) that does not exist in memory, ``MapLoader``'s `load` method will load that entry from the data store. This loaded entry is placed into the map and will stay there until it is removed or evicted.
+When you provide a `MapLoader` implementation and request an entry (`IMap.get()`) that does not exist in memory, ``MapLoader``'s `load` method loads that entry from the data store. This loaded entry is placed into the map and will stay there until it is removed or evicted.
 
 When a `MapStore` implementation is provided, an entry is also put into a user defined data store.
 
@@ -666,7 +666,7 @@ If an entry does not exist in memory when an application asks for it, Hazelcast 
 [[setting-write-through-persistence]]
 ===== Setting Write-Through Persistence
 
-`MapStore` can be configured to be write-through by setting the `write-delay-seconds` property to **0**. This means the entries will be put to the data store synchronously.
+`MapStore` can be configured to be write-through by setting the `write-delay-seconds` property to **0**. This means the entries are put to the data store synchronously.
 
 In this mode, when the `map.put(key,value)` call returns:
 
@@ -685,7 +685,7 @@ You can configure `MapStore` as write-behind by setting the `write-delay-seconds
 
 NOTE: In write-behind mode, Hazelcast coalesces updates on a specific key by default, which means it applies only the last update on that key. However, you can set `MapStoreConfig.setWriteCoalescing()` to `FALSE` and you can store all updates performed on a key to the data store.
 
-NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception will be thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the <<system-properties, System Properties section>> for information on this property and how to set the system properties.
+NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception is thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the <<system-properties, System Properties section>> for information on this property and how to set the system properties.
 
 
 In write-behind mode, when the `map.put(key,value)` call returns:
@@ -699,7 +699,7 @@ The same behavior goes for the `map.remove(key)`, the only difference is that  `
 
 If `MapStore` throws an exception, then Hazelcast tries to store the entry again. If the entry still cannot be stored, a log message is printed and the entry is re-queued.
 
-For batch write operations, which are only allowed in write-behind mode, Hazelcast will call `MapStore.storeAll(map)` and `MapStore.deleteAll(collection)` to do all writes in a single call.
+For batch write operations, which are only allowed in write-behind mode, Hazelcast calls the `MapStore.storeAll(map)` and `MapStore.deleteAll(collection)` methods to do all writes in a single call.
 
 NOTE: If a map entry is marked as dirty, meaning that it is waiting to be persisted to the `MapStore` in a write-behind scenario, the eviction process forces the entry to be stored. This way you have control over the number of entries waiting to be stored, and thus you can prevent a possible OutOfMemory exception.
 
@@ -726,8 +726,8 @@ Here is an example configuration:
 The following are the descriptions of MapStore configuration elements and attributes:
 
 * `class-name`: Name of the class implementing MapLoader and/or MapStore.
-* `write-delay-seconds`: Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through so MapStore.store(key, value) will be called as soon as the entry is updated. Otherwise it is write-behind so updates will be stored after write-delay-seconds value by calling Hazelcast.storeAll(map). Its default value is 0.
-* `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries will be tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
+* `write-delay-seconds`: Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through, so the `MapStore.store(key,value)` method is called as soon as the entry is updated. Otherwise, it is write-behind; so the updates will be stored after the `write-delay-seconds` value by calling the `Hazelcast.storeAll(map)` method. Its default value is 0.
+* `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries are tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
 * `write-coalescing`: In write-behind mode, Hazelcast coalesces updates on a specific key by default; it applies only the last update on it. You can set this element to `false` to store all updates performed on a key to the data store.
 * `enabled`: True to enable this map-store, false to disable. Its default value is true.
 * `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded. Please see the <<initializing-map-on-startup, Initializing Map on Startup section>> for more details.
@@ -763,19 +763,19 @@ Hazelcast calls the method `destroy()` before shutting down. You can override th
 
 To pre-populate the in-memory map when the map is first touched/used, use the `MapLoader.loadAllKeys` API.
 
-If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the keys which are most important to you that you want to load them while initializing the map. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast will optimize the loading process by having each cluster member load its owned portion of the entries.
+If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded. Your `MapLoader.loadAllKeys` implementation can return all or some of the keys. For example, you may select and return only the keys which are most important to you that you want to load them while initializing the map. `MapLoader.loadAllKeys` is the fastest way of pre-populating the map since Hazelcast optimizes the loading process by having each cluster member load its owned portion of the entries.
 
 The `InitialLoadMode` configuration parameter in the class https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapStoreConfig.html[MapStoreConfig] has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to `LAZY`, data is not loaded during the map creation. If it is set to `EAGER`, all the data is loaded while the map is created and everything becomes ready to use. Also, if you add indices to your map with the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MapIndexConfig.html[MapIndexConfig] class or the <<indexing-queries, `addIndex`>> method, then `InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
 
 Here is the `MapLoader` initialization flow:
 
-. When `getMap()` is first called from any member, initialization will start depending on the value of `InitialLoadMode`. If it is set to `EAGER`, initialization starts on all partitions as soon as the map is touched, i.e., all partitions will be loaded when `getMap` is called.  If it is set to `LAZY`, data will be loaded partition by partition, i.e., each partition will be loaded with its first touch.
-. Hazelcast will call `MapLoader.loadAllKeys()` to get all your keys on one of the members.
-. That member will distribute keys to all other members in batches.
-. Each member will load values of all its owned keys by calling `MapLoader.loadAll(keys)`.
+. When `getMap()` is first called from any member, initialization starts depending on the value of `InitialLoadMode`. If it is set to `EAGER`, initialization starts on all partitions as soon as the map is touched, i.e., all partitions are loaded when `getMap` is called.  If it is set to `LAZY`, data is loaded partition by partition, i.e., each partition is loaded with its first touch.
+. Hazelcast calls `MapLoader.loadAllKeys()` to get all your keys on one of the members.
+. That member distributes keys to all other members in batches.
+. Each member loads values of all its owned keys by calling `MapLoader.loadAll(keys)`.
 . Each member puts its owned entries into the map by calling `IMap.putTransient(key,value)`.
 
-NOTE: If the load mode is `LAZY` and the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast will remove **ONLY** the loaded entries from your map and datastore. Since all the data is not loaded in this case (`LAZY` mode), please note that there may still be entries in your datastore.*
+NOTE: If the load mode is `LAZY` and the `clear()` method is called (which triggers `MapStore.deleteAll()`), Hazelcast removes **ONLY** the loaded entries from your map and datastore. Since all the data is not loaded in this case (`LAZY` mode), please note that there may still be entries in your datastore.*
 
 NOTE: If you do not want the MapStore start to load as soon as the first cluster member starts, you can use the system property `hazelcast.initial.min.cluster.size`. For example, if you set its value as `3`, loading process will be blocked until all three members are completely up.*
 
@@ -805,7 +805,7 @@ include::{javasource}/dds/map/LoadAll.java[tag=loadall]
 In some scenarios, you may need to modify the object after storing it into the map store.
 For example, you can get an ID or version auto-generated by your database and then need to modify your object stored in the distributed map, but not to break the synchronization between the database and the data grid.
 
-To post-process an object in the map store, implement the `PostProcessingMapStore` interface to put the modified object into the distributed map. This will trigger an extra step of `Serialization`, so use it only when needed. (This is only valid when using the `write-through` map store configuration.)
+To post-process an object in the map store, implement the `PostProcessingMapStore` interface to put the modified object into the distributed map. This triggers an extra step of `Serialization`, so use it only when needed. (This is only valid when using the `write-through` map store configuration.)
 
 Here is an example of post processing map store:
 
@@ -820,7 +820,7 @@ class ProcessingStore implements MapStore<Integer, Employee>, PostProcessingMapS
 }
 ----
 
-NOTE: Please note that if you are using a post processing map store in combination with entry processors, post-processed values will not be carried to backups.
+NOTE: Please note that if you are using a post-processing map store in combination with the entry processors, post-processed values will not be carried to backups.
 
 [[accessing-a-database-using-properties]]
 ===== Accessing a Database Using `Properties`
@@ -911,7 +911,7 @@ include::{javasource}/dds/map/OptimisticMember.java[tag=om]
 [[pessimistic-vs-optimistic-locking]]
 ===== Pessimistic vs. Optimistic Locking
 
-The locking strategy you choose will depend on your locking requirements.
+The locking strategy you choose depends on your locking requirements.
 
 Optimistic locking is better for mostly read-only systems. It has a performance boost over pessimistic locking.
 
