@@ -917,23 +917,23 @@ Optimistic locking is better for mostly read-only systems. It has a performance 
 
 Pessimistic locking is good if there are lots of updates on the same key. It is more robust than optimistic locking from the perspective of data consistency.
 
-In Hazelcast, use `IExecutorService` to submit a task to a key owner, or to a member or members. This is the recommended way to perform task executions, rather than using pessimistic or optimistic locking techniques. `IExecutorService` will have fewer network hops and less data over wire, and tasks will be executed very near to the data. Please refer to the <<data-affinity, Data Affinity section>>.
+In Hazelcast, use `IExecutorService` to submit a task to a key owner, or to a member or members. This is the recommended way to perform task executions, rather than using pessimistic or optimistic locking techniques. `IExecutorService` has fewer network hops and less data over wire, and tasks are executed very near to the data. See the <<data-affinity, Data Affinity section>>.
 
 [[solving-the-aba-problem]]
 ===== Solving the ABA Problem
 
 The ABA problem occurs in environments when a shared resource is open to change by multiple threads. Even if one thread sees the same value for a particular key in consecutive reads, it does not mean that nothing has changed between the reads. Another thread may change the value, do work and change the value back, while the first thread thinks that nothing has changed.
 
-To prevent these kind of problems, you can assign a version number and check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields will be equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy; it is used in environments that do not expect intensive concurrent changes on a specific key.
+To prevent these kind of problems, you can assign a version number and check it before any write to be sure that nothing has changed between consecutive reads. Although all the other fields are equal, the version field will prevent objects from being seen as equal. This is the optimistic locking strategy; it is used in environments that do not expect intensive concurrent changes on a specific key.
 
 In Hazelcast, you can apply the <<optimistic-locking, optimistic locking>> strategy with the map `replace` method.
 
 [[lock-split-brain-protection-with-pessimistic-locking]]
 ===== Lock Split-Brain Protection with Pessimistic Locking
 
-Locks can be configured to check the number of currently present members before applying a locking operation. If the check fails, the lock operation will fail with a `QuorumException` (see <<split-brain-protection, Split-Brain Protection>>). As pessimistic locking uses lock operations internally, it will also use the configured lock quorum. This means that you can configure a lock quorum with the same name or a pattern that matches the map name. Note that the quorum for IMap locking actions can be different from the quorum for other IMap actions.
+Locks can be configured to check the number of currently present members before applying a locking operation. If the check fails, the lock operation fails with a `QuorumException` (see <<split-brain-protection, Split-Brain Protection>>). As pessimistic locking uses lock operations internally, it also uses the configured lock quorum. This means that you can configure a lock quorum with the same name or a pattern that matches the map name. Note that the quorum for IMap locking actions can be different from the quorum for other IMap actions.
 
-The following actions will then check for lock quorum before being applied:
+The following actions check for lock quorum before being applied:
 
 * `IMap.lock(K)` and `IMap.lock(K, long, java.util.concurrent.TimeUnit)`
 * `IMap.isLocked()`
@@ -962,7 +962,7 @@ An example of declarative configuration:
 </hazelcast>
 ----
 
-Here the configured map will use the `map-lock-actions-quorum` quorum for map lock actions and the `map-actions-quorum` quorum for other map actions.
+Here the configured map uses the `map-lock-actions-quorum` quorum for map lock actions and the `map-actions-quorum` quorum for other map actions.
 
 
 [[accessing-entry-statistics]]
@@ -983,7 +983,7 @@ To be able to retrieve the map statistics, the `statistics-enabled` element unde
 </hazelcast>
 ----
 
-When this element is set to `false`, the statistics will not be gathered for the map and cannot be seen on the Hazelcast Management Center, nor retrieved by the `getLocalMapStats()` method. 
+When this element is set to `false`, the statistics are not gathered for the map and cannot be seen on the Hazelcast Management Center, nor retrieved by the `getLocalMapStats()` method. 
 
 Hazelcast also keeps statistics about each map entry, such as creation time, last update time, last access time, and number of hits and version. To access the map entry statistics, use an `IMap.getEntryView(key)` call. Here is an example.
 
@@ -1014,7 +1014,7 @@ You can listen to the modifications performed on specific map entries. You can t
 
 NOTE: The default backwards-compatible event publishing strategy only publishes
 `UPDATED` events when map entries are updated to a value that matches the predicate with which the listener was registered.
-This implies that when using the default event publishing strategy, your listener will not be notified about an entry whose
+This implies that when using the default event publishing strategy, your listener is not notified about an entry whose
 value is updated from one that matches the predicate to a new value that does not match the predicate.
 
 Since version 3.7, when you configure Hazelcast members with property `hazelcast.map.entry.filtering.natural.event.types` set to `true`,
@@ -1059,7 +1059,7 @@ include::{javasource}/dds/map/ListenerWithPredicate.java[tag=lwp]
 ----
 
 
-And now, let's play with the employee "smith" and see how that employee will be listened to.
+And now, let's play with the employee "smith" and see how that employee is listened to.
 
 [source,java]
 ----
@@ -1067,7 +1067,7 @@ include::{javasource}/dds/map/Modify.java[tag=modify]
 ----
 
 
-When you first run the class `ListenerWithPredicate` and then run `Modify`, you will see output similar to the listing below.
+When you first run the class `ListenerWithPredicate` and then run `Modify`, an output similar to the one below appears.
 
 ```
 entryAdded:EntryEvent {Address[192.168.178.10]:5702} key=1,oldValue=null,
@@ -1098,7 +1098,7 @@ You can add intercept operations and execute your own business logic synchronous
 
 Interceptors are different from listeners. With listeners, you take an action after the operation has been completed. Interceptor actions are synchronous and you can alter the behavior of operation, change its values, or totally cancel it.
 
-Map interceptors are chained, so adding the same interceptor multiple times to the same map can result in duplicate effects. This can easily happen when the interceptor is added to the map at member initialization, so that each member adds the same interceptor. When you add the interceptor in this way, be sure to implement the `hashCode()` method to return the same value for every instance of the interceptor. It is not strictly necessary, but it is a good idea to also implement `equals()` as this will ensure that the map interceptor can be removed reliably.
+Map interceptors are chained, so adding the same interceptor multiple times to the same map can result in duplicate effects. This can easily happen when the interceptor is added to the map at member initialization, so that each member adds the same interceptor. When you add the interceptor in this way, be sure to implement the `hashCode()` method to return the same value for every instance of the interceptor. It is not strictly necessary, but it is a good idea to also implement `equals()` as this ensures that the map interceptor can be removed reliably.
 
 The IMap API has two methods for adding and removing an interceptor to the map: `addInterceptor` and `removeInterceptor`. Please also refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/MapInterceptor.html[`MapInterceptor` interface] to see the methods used to intercept the changes in a map.
 
@@ -1137,7 +1137,7 @@ Since the local pre-check can increase the latency of a `QueryOperation`, you ca
 [[scope-of-result-size-limit]]
 ===== Scope of Result Size Limit
 
-Besides the designated query operations, there are other operations that use predicates internally. Those method calls will throw the `QueryResultSizeExceededException` as well. Please see the following matrix to see the methods that are covered by the query result size limit.
+Besides the designated query operations, there are other operations that use predicates internally. Those method calls throw the `QueryResultSizeExceededException` as well. See the following matrix for the methods that are covered by the query result size limit.
 
 image::Map-QueryResultSizeLimiterScope.png[Methods Covered by Query Result Size Limit]
 
@@ -1166,9 +1166,9 @@ Use the Hazelcast instance's `getQueue` method to get the queue, then use the qu
 include::{javasource}/dds/queue/ExampleQueue.java[tag=samplequeue]
 ----
 
-FIFO ordering will apply to all queue operations across the cluster. The user objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
+FIFO ordering applies to all queue operations across the cluster. The user objects (such as `MyTask` in the example above) that are enqueued or dequeued have to be `Serializable`.
 
-Hazelcast distributed queue performs no batching while iterating over the queue. All items will be copied locally and iteration will occur locally.
+Hazelcast distributed queue performs no batching while iterating over the queue. All items are copied locally and iteration occurs locally.
 
 Hazelcast distributed queue uses `ItemListener` to listen to the events that occur when items are added to and removed from the queue. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
 
@@ -1240,15 +1240,15 @@ NOTE: The items are taken from the queue in the same order they were put on the 
 Hazelcast gives an `itemId` for each item you offer, which is an incrementing sequence identification for the queue items. You should consider the following to understand the `itemId` assignment behavior:
 
 * When a Hazelcast member has a queue and that queue is configured to have at least one backup, and that member is restarted, the `itemId` assignment resumes from the last known highest `itemId` before the restart; `itemId` assignment does not start from the beginning for the new items.
-* When the whole cluster is restarted, the same behavior explained in the above consideration applies if your queue has a persistent data store (`QueueStore`). If the queue has `QueueStore`, the `itemId` for the new items are given, starting from the highest `itemId` found in the IDs returned by the method `loadAllKeys`. If the method `loadAllKeys` does not return anything, the ``itemId``s will started from the beginning after a cluster restart.
-* The above two considerations mean there will be no duplicated ``itemId``s in the memory or in the persistent data store.
+* When the whole cluster is restarted, the same behavior explained in the above consideration applies if your queue has a persistent data store (`QueueStore`). If the queue has `QueueStore`, the `itemId` for the new items are given, starting from the highest `itemId` found in the IDs returned by the method `loadAllKeys`. If the method `loadAllKeys` does not return anything, the ``itemId``s starts from the beginning after a cluster restart.
+* The above two considerations mean there are no duplicated ``itemId``s in the memory or in the persistent data store.
 
 [[setting-a-bounded-queue]]
 ==== Setting a Bounded Queue
 
 A bounded queue is a queue with a limited capacity. When the bounded queue is full, no more items can be put into the queue until some items are taken out.
 
-To turn a Hazelcast distributed queue into a bounded queue, set the capacity limit with the `max-size` property. You can set the `max-size` property in the configuration, as shown below. `max-size` specifies the maximum size of the queue. Once the queue size reaches this value, `put` operations will be blocked until the queue size goes below `max-size`, which happens when a consumer removes items from the queue.
+To turn a Hazelcast distributed queue into a bounded queue, set the capacity limit with the `max-size` property. You can set the `max-size` property in the configuration, as shown below. The `max-size` element specifies the maximum size of the queue. Once the queue size reaches this value, `put` operations are blocked until the queue size goes below `max-size`, which happens when a consumer removes items from the queue.
 
 Let's set **10** as the maximum size of our example queue in <<creating-an-example-queue, Creating an Example Queue>>.
 
@@ -1270,7 +1270,7 @@ In this example code, the producer is five times faster than the consumer. It wi
 [[queueing-with-persistent-datastore]]
 ==== Queueing with Persistent Datastore
 
-Hazelcast allows you to load and store the distributed queue items from/to a persistent datastore using the interface `QueueStore`. If queue store is enabled, each item added to the queue will also be stored at the configured queue store. When the number of items in the queue exceeds the memory limit, the subsequent items are persisted in the queue store, they are not stored in the queue memory.
+Hazelcast allows you to load and store the distributed queue items from/to a persistent datastore using the interface `QueueStore`. If queue store is enabled, each item added to the queue is also stored at the configured queue store. When the number of items in the queue exceeds the memory limit, the subsequent items are persisted in the queue store, they are not stored in the queue memory.
 
 The `QueueStore` interface enables you to store, load and delete queue items with methods like `store`, `storeAll`, `load` and `delete`. The following example class includes all of the `QueueStore` methods.
 
@@ -1303,7 +1303,7 @@ include::{javasource}/dds/queue/TheQueueStore.java[tag=qs]
 Let's explain the queue store properties.
 
 * **Binary**: By default, Hazelcast stores the queue items in serialized form, and before it inserts the queue items into the queue store, it deserializes them. If you are not reaching the queue store from an external application, you might prefer that the items be inserted in binary form. Do this by setting the `binary` property to true: then you can get rid of the deserialization step, which is a performance optimization. The `binary` property is false by default.
-* **Memory Limit**: This is the number of items after which Hazelcast will store items only to the datastore. For example, if the memory limit is 1000, then the 1001st item will be put only to the datastore. This feature is useful when you want to avoid out-of-memory conditions. If you want to always use memory, you can set it to `Integer.MAX_VALUE`. The default number for `memory-limit` is 1000.
+* **Memory Limit**: This is the number of items after which Hazelcast stores items only to the datastore. For example, if the memory limit is 1000, then the 1001st item is put only to the datastore. This feature is useful when you want to avoid out-of-memory conditions. If you want to always use memory, you can set it to `Integer.MAX_VALUE`. The default number for `memory-limit` is 1000.
 * **Bulk Load**: When the queue is initialized, items are loaded from `QueueStore` in bulks. Bulk load is the size of these bulks. The default value of `bulk-load` is 250.
 
 [[split-brain-protection-for-queue]]
@@ -1382,7 +1382,7 @@ The following is the full list of queue configuration elements with their descri
 * `empty-queue-ttl`: Used to purge unused or empty queues. If you define a value (time in seconds) for this element, then your queue will be destroyed if it stays empty or unused for that time.
 * `item-listeners`: Adds listeners (listener classes) for the queue items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values. You can set `local` to `true` if you want to listen to the items on the local member.
 * `queue-store`: Includes the queue store factory class name and the properties  *binary*, *memory limit* and *bulk load*. Please refer to <<queueing-with-persistent-datastore, Queueing with Persistent Datastore>>.
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your queue. If set to `false`, you cannot collect statistics in your implementation (using `getLocalQueueStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-queues[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your queue. If set to `false`, you cannot collect statistics in your implementation (using `getLocalQueueStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-queues[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `quorum-ref` : Name of quorum configuration that you want this queue to use.
 
 [[multimap]]
@@ -1464,7 +1464,7 @@ The following are the configuration elements and their descriptions:
 * `backup-count`: Defines the number of synchronous backups. For example, if it is set to 1, backup of a partition will be
 placed on one other member. If it is 2, it will be placed on two other members.
 * `async-backup-count`: The number of asynchronous backups. Behavior is the same as that of the `backup-count` element.
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your MultiMap. If set to `false`, you cannot collect statistics in your implementation (using `getLocalMultiMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-multimaps[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your MultiMap. If set to `false`, you cannot collect statistics in your implementation (using `getLocalMultiMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-multimaps[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `value-collection-type`: Type of the value collection. It can be `SET` or `LIST`.
 * `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 `include-value` to `true` if you want the item event to contain the entry values. You can set
@@ -1537,8 +1537,8 @@ Hazelcast Set (`ISet`) is a distributed and concurrent implementation of `java.u
 
 * Hazelcast Set does not allow duplicate elements.
 * Hazelcast Set does not preserve the order of elements.
-* Hazelcast Set is a non-partitioned data structure--all the data that belongs to a set will live on one single partition in that member.
-* Hazelcast Set cannot be scaled beyond the capacity of a single machine. Since the whole set lives on a single partition, storing a large amount of data on a single set may cause memory pressure. Therefore, you should use multiple sets to store a large amount of data. This way, all the sets will be spread across the cluster, sharing the load.
+* Hazelcast Set is a non-partitioned data structure: all the data that belongs to a set lives on one single partition in that member.
+* Hazelcast Set cannot be scaled beyond the capacity of a single machine. Since the whole set lives on a single partition, storing a large amount of data on a single set may cause memory pressure. Therefore, you should use multiple sets to store a large amount of data. This way, all the sets are spread across the cluster, sharing the load.
 * A backup of Hazelcast Set is stored on a partition of another member in the cluster so that data is not lost in the event of a primary member failure.
 * All items are copied to the local member and iteration occurs locally.
 * The equals method implemented in Hazelcast Set uses a serialized byte version of objects, as opposed to `java.util.HashSet`.
@@ -1806,7 +1806,7 @@ Ringbuffer<String> ringbuffer = hz.getRingbuffer("ExampleRB");
 ringbuffer.add("someitem");
 ----
 
-Use the method `add` to return the sequence of the inserted item; the sequence value will always be unique. You can use this as a
+Use the method `add` to return the sequence of the inserted item; the sequence value is always unique. You can use this as a
 very cheap way of generating unique IDs if you are already using Ringbuffer.
 
 [[iqueue-vs-ringbuffer]]
@@ -1865,7 +1865,7 @@ synchronous backups and one asynchronous backup:
 </hazelcast>
 ----
 
-An asynchronous backup will probably give you better performance. However, there is a chance that the item added will be lost
+An asynchronous backup probably gives you better performance. However, there is a chance that the item added will be lost
 when the member owning the primary crashes before the backup could complete. You may want to consider batching
 methods if you need high performance but do not want to give up on consistency.
 
@@ -1913,11 +1913,11 @@ include::{javasource}/dds/ringbuffer/Writer.java[tag=writer]
 
 Hazelcast allows you to load and store the Ringbuffer items from/to a persistent datastore using the interface `RingbufferStore`. If a Ringbuffer store is enabled, each item added to the Ringbuffer will also be stored at the configured Ringbuffer store.
 
-If the Ringbuffer store is configured, you can get items with sequences which are no longer in the actual Ringbuffer but are only in the Ringbuffer store. This will probably be much slower but still allow you to continue consuming items from the Ringbuffer even if they are overwritten with newer items in the Ringbuffer.
+If the Ringbuffer store is configured, you can get items with sequences which are no longer in the actual Ringbuffer but are only in the Ringbuffer store. This is probably much slower but still allows you to continue consuming items from the Ringbuffer even if they are overwritten with newer items in the Ringbuffer.
 
-When a Ringbuffer is being instantiated, it will check if the Ringbuffer store is configured and will request the latest sequence in the Ringbuffer store. This is to enable the Ringbuffer to start with sequences larger than the ones in the Ringbuffer store. In this case, the Ringbuffer is empty but you can still request older items from it (which will be loaded from the Ringbuffer store).
+When a Ringbuffer is being instantiated, it checks if the Ringbuffer store is configured and requests the latest sequence in the Ringbuffer store. This is to enable the Ringbuffer to start with sequences larger than the ones in the Ringbuffer store. In this case, the Ringbuffer is empty but you can still request older items from it (which will be loaded from the Ringbuffer store).
 
-The Ringbuffer store will store items in the same format as the Ringbuffer. If the `BINARY` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<byte[]>` meaning that the Ringbuffer will receive items in the binary format. If the `OBJECT` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<K>`, where `K` is the type of item being stored (meaning that the Ringbuffer store will receive the deserialized object).
+The Ringbuffer store stores items in the same format as the Ringbuffer. If the `BINARY` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<byte[]>` meaning that the Ringbuffer receives items in the binary format. If the `OBJECT` in-memory format is used, the Ringbuffer store must implement the interface `RingbufferStore<K>`, where `K` is the type of item being stored (meaning that the Ringbuffer store receives the deserialized object).
 
 When adding items to the Ringbuffer, the method `storeAll` allows you to store items in batches.
 
@@ -2216,7 +2216,7 @@ Topic has two statistic variables that you can query. These values are increment
 include::{javasource}/dds/topic/TopicStats.java[tag=ts]
 ----
 
-`getPublishOperationCount` and `getReceiveOperationCount` returns the total number of published and received messages since the start of this member, respectively. Please note that these values are not backed up, so if the member goes down, these values will be lost.
+`getPublishOperationCount` and `getReceiveOperationCount` returns the total number of published and received messages since the start of this member, respectively. Note that these values are not backed up, so if the member goes down, these values will be lost.
 
 You can disable this feature with topic configuration. Please see the <<configuring-topic, Configuring Topic section>>.
 
@@ -2225,18 +2225,18 @@ NOTE: These statistics values can be also viewed in Management Center. Please se
 [[understanding-topic-behavior]]
 ==== Understanding Topic Behavior
 
-Each cluster member has a list of all registrations in the cluster. When a new member is registered for a topic, it sends a registration message to all members in the cluster. Also, when a new member joins the cluster, it will receive all registrations made so far in the cluster.
+Each cluster member has a list of all registrations in the cluster. When a new member is registered for a topic, it sends a registration message to all members in the cluster. Also, when a new member joins the cluster, it receives all registrations made so far in the cluster.
 
 The behavior of a topic varies depending on the value of the configuration parameter `globalOrderEnabled`.
 
 [[ordering-messages-as-published]]
 ===== Ordering Messages as Published
 
-If `globalOrderEnabled` is disabled, messages are not ordered and listeners (subscribers) process the messages in the order that the messages are published. If cluster member M publishes messages *m1, m2, m3, ..., mn* to a topic **T**, then Hazelcast makes sure that all of the subscribers of topic **T** will receive and process *m1, m2, m3, ..., mn* in the given order.
+If `globalOrderEnabled` is disabled, messages are not ordered and listeners (subscribers) process the messages in the order that the messages are published. If cluster member M publishes messages *m1, m2, m3, ..., mn* to a topic **T**, then Hazelcast makes sure that all of the subscribers of topic **T** receive and process *m1, m2, m3, ..., mn* in the given order.
 
-Here is how it works. Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
+Here is how it works: Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
 
-In this example, *member1* publishes two messages: `a1` and `a2`. *Member3* publishes two messages: `c1` and `c2`. When *member1* and *member3* publish a message, they will check their local list for registered members, they will discover that *member1* and *member2* are in their lists, and then they will fire messages to those members. One possible order of the messages received could be the following.
+In this example, *member1* publishes two messages: `a1` and `a2`. *Member3* publishes two messages: `c1` and `c2`. When *member1* and *member3* publish a message, they check their local list for registered members, discover that *member1* and *member2* are in their lists, and then they fire messages to those members. One possible order of the messages received could be the following.
 
 *member1* -> `c1`, `a1`, `a2`, `c2`
 
@@ -2245,7 +2245,7 @@ In this example, *member1* publishes two messages: `a1` and `a2`. *Member3* publ
 [[ordering-messages-for-members]]
 ===== Ordering Messages for Members
 
-If `globalOrderEnabled` is enabled, all members listening to the same topic will get its messages in the same order.
+If `globalOrderEnabled` is enabled, all members listening to the same topic get its messages in the same order.
 
 Here is how it works. Let's say that we have three members (*member1*, *member2* and *member3*) and that *member1* and *member2* are registered to a topic named `news`. Note that all three members know that *member1* and *member2* are registered to `news`.
 
@@ -2259,7 +2259,7 @@ In this example, *member1* publishes two messages: `a1` and `a2`. *Member3* publ
 
 *member2* -> `a1`, `c1`, `a2`, `c2`
 
-This way we guarantee that all members will see the events in the same order.
+This way we guarantee that all members see the events in the same order.
 
 [[keeping-generated-and-published-order-the-same]]
 ===== Keeping Generated and Published Order the Same
@@ -2305,7 +2305,7 @@ include::{javasource}/dds/topic/TopicConfiguration.java[tag=tc]
 
 Topic configuration has the following elements.
 
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your topic. If set to `false`, you cannot collect statistics in your implementation (using `getLocalTopicStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your topic. If set to `false`, you cannot collect statistics in your implementation (using `getLocalTopicStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `global-ordering-enabled`: Default is `false`, meaning there is no global order guarantee.
 * `message-listeners`: Lets you add listeners (listener classes) for the topic messages.
 
@@ -2342,7 +2342,7 @@ And the following is an example for the subscriber:
 include::{javasource}/dds/reliabletopic/SubscribedMember.java[tag=sm]
 ----
 
-When you create a Reliable Topic, Hazelcast automatically creates a Ringbuffer for it. You may configure this Ringbuffer by adding a Ringbuffer config with the same name as the Reliable Topic. For instance, if you have a Reliable Topic with the name "sometopic", you should add a Ringbuffer config with the name "sometopic" to configure the backing Ringbuffer. Some of the things that you may configure is the capacity, the time-to-live for the topic messages and you can even add a Ringbuffer store which will allow you to have a persistent topic.
+When you create a Reliable Topic, Hazelcast automatically creates a Ringbuffer for it. You may configure this Ringbuffer by adding a Ringbuffer config with the same name as the Reliable Topic. For instance, if you have a Reliable Topic with the name "sometopic", you should add a Ringbuffer config with the name "sometopic" to configure the backing Ringbuffer. Some of the things that you may configure are the capacity, the time-to-live for the topic messages, and you can even add a Ringbuffer store which allows you to have a persistent topic.
 By default, a Ringbuffer does not have any TTL (time-to-live) and it has a limited capacity; you may want to change that configuration. The following is an example configuration for the "sometopic" given above.
 
 [source,xml]
@@ -2420,9 +2420,9 @@ rtConfig.setTopicOverloadPolicy( TopicOverloadPolicy.BLOCK )
 
 Reliable Topic configuration has the following elements.
 
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your Reliable Topic. If set to `false`, you cannot collect statistics in your implementation and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-reliable-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Reliable Topic. If set to `false`, you cannot collect statistics in your implementation and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-reliable-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `message-listener`: Message listener class that listens to the messages when they are added or removed.
-* `read-batch-size`: Minimum number of messages that Reliable Topic will try to read in batches. Its default value is 10.
+* `read-batch-size`: Minimum number of messages that Reliable Topic tries to read in batches. Its default value is 10.
 * `topic-overload-policy`: Policy to handle an overloaded topic. Available values are `DISCARD_OLDEST`, `DISCARD_NEWEST`, `BLOCK` and `ERROR`. Its default value is `BLOCK`. See <<slow-consumers, Slow Consumers>> for definitions of these policies.
 
 [[lock]]
@@ -2434,7 +2434,7 @@ section that it guards is guaranteed to be executed by only one thread in the en
 [[using-try-catch-blocks-with-locks]]
 ==== Using Try-Catch Blocks with Locks
 
-Always use locks with *try*-*catch* blocks. This will ensure that locks are released if an exception is thrown from
+Always use locks with *try*-*catch* blocks. This ensures that locks are released if an exception is thrown from
 the code in a critical section. Also note that the `lock` method is outside the *try*-*catch* block because we do not want to unlock
 if the lock operation itself fails.
 
@@ -2497,7 +2497,7 @@ locks are immediately available for live members.
 * In the split-brain scenario, the cluster behaves as if it were two different clusters. Since two separate clusters are not aware of each other,
 two members from different clusters can acquire the same lock.
 For more information on places where split-brain syndrome can be handled, please see <<split-brain-syndrome, Split-Brain syndrome>>.
-* Locks are not automatically removed. If a lock is not used anymore, Hazelcast will not automatically garbage collect the lock.
+* Locks are not automatically removed. If a lock is not used anymore, Hazelcast does not automatically perform garbage collection in the lock.
 This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sure they are destroyed.
 * Hazelcast IMap also provides locking support on the entry level with the method `IMap.lock(key)`. Although the same infrastructure
 is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it directly.
@@ -2569,7 +2569,7 @@ try {
 
 Locks can be configured to check for a minimum number of available members before applying lock operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful lock operations on all parts of a cluster during a network partition. Due to the implementation details, the check does not guarantee that the lock will fail in all conditions of a network partition and it can happen that two members can acquire the same lock.
 
-Once the membership change has been detected, the lock operations will fail with a `QuorumException` if enough size of members are not present. In essence, this does not provide correctness but rather narrows down the window of opportunity in which locks can continue operations on several members concurrently.
+Once the membership change has been detected, the lock operations fail with a `QuorumException` if enough size of members are not present. In essence, this does not provide correctness but rather narrows down the window of opportunity in which locks can continue operations on several members concurrently.
 
 Although the check does not provide correctness it can still be useful. In cases where members acquire the lock to perform some costly but idempotent operation, configuring lock quorum can further prevent some cases where the cluster has been split into several sub-clusters and more than one member perform the same operation.
 
@@ -2644,7 +2644,7 @@ include::{javasource}/dds/iatomiclong/IAtomicLongExecuteFuncs.java[tag=add2func]
 You can use the following methods to execute functions on IAtomicLong.
 
 * `apply`: Applies the function to the value in IAtomicLong without changing the actual value and returning the result.
-* `alter`: Alters the value stored in the IAtomicLong by applying the function. It will not send back a result.
+* `alter`: Alters the value stored in the IAtomicLong by applying the function. It does not send back a result.
 * `alterAndGet`: Alters the value stored in the IAtomicLong by applying the function, storing the result in the IAtomicLong and returning the result.
 * `getAndAlter`: Alters the value stored in the IAtomicLong by applying the function and returning the original value.
 
@@ -2742,8 +2742,8 @@ NOTE: Hazelcast ISemaphore does not support fairness at all times. There are som
 
 When a permit is acquired on ISemaphore:
 
-* if there are permits, the number of permits in the semaphore is decreased by one and the calling thread performs its activity. If there is contention, the longest waiting thread will acquire the permit before all other threads.
-* if no permits are available, the calling thread blocks until a permit becomes available. When a timeout happens during this block, the thread is interrupted.
+* If there are permits, the number of permits in the semaphore is decreased by one and the calling thread performs its activity. If there is contention, the longest waiting thread acquires the permit before all other threads.
+* If no permits are available, the calling thread blocks until a permit becomes available. When a timeout happens during this block, the thread is interrupted.
 
 [[example-semaphore-code]]
 ==== Example Semaphore Code
@@ -2770,7 +2770,7 @@ Let's limit the concurrent access to this resource by allowing at most three thr
 
 NOTE: If there is a shortage of permits while the semaphore is being created, value of this property can be set to a negative number.
 
-If you execute the above `SemaphoreMember` class 5 times, the output will be similar to the following:
+If you execute the above `SemaphoreMember` class 5 times, the following output appears:
 
 `At iteration: 0, Active Threads: 1`
 
@@ -2869,7 +2869,7 @@ Here is an IAtomicReference example.
 include::{javasource}/dds/ExampleIAtomicReference.java[tag=iar]
 ----
 
-When you execute the above example, you will see the following output.
+When you execute the above example, the output is as follows:
 
 `foo`
 
@@ -2886,9 +2886,9 @@ Just like `IAtomicLong`, `IAtomicReference` has methods that accept a 'function'
 
 Below are some considerations you need to know when you use IAtomicReference.
 
-* `IAtomicReference` works based on the byte-content and not on the object-reference. If you use the `compareAndSet` method, do not change to original value because its serialized content will then be different. It is also important to know that if you rely on Java serialization, sometimes (especially with hashmaps) the same object can result in different binary content.
-* `IAtomicReference` will always have one synchronous backup.
-* All methods returning an object will return a private copy. You can modify the private copy, but the rest of the world will be shielded from your changes. If you want these changes to be visible to the rest of the world, you need to write the change back to the `IAtomicReference`; but be careful about introducing a data-race.
+* `IAtomicReference` works based on the byte-content and not on the object-reference. If you use the `compareAndSet` method, do not change to the original value because its serialized content will then be different. It is also important to know that if you rely on Java serialization, sometimes (especially with hashmaps) the same object can result in different binary content.
+* `IAtomicReference` always has one synchronous backup.
+* All methods returning an object return a private copy. You can modify the private copy, but the rest of the world is shielded from your changes. If you want these changes to be visible to the rest of the world, you need to write the change back to the `IAtomicReference`; but be careful about introducing a data-race.
 * The 'in-memory format' of an `IAtomicReference` is `binary`. The receiving side does not need to have the class definition available unless it needs to be deserialized on the other side, e.g., because a method like 'alter' is executed. This deserialization is done for every call that needs to have the object instead of the binary content, so be careful with expensive object graphs that need to be deserialized.
 * If you have an object with many fields or an object graph and you only need to calculate some information or need a subset of fields, you can use the `apply` method. With the `apply` method, the whole object does not need to be sent over the line; only the information that is relevant is sent.
 
@@ -2966,7 +2966,7 @@ Since only a single step is needed to be completed as a sample, the above code i
 include::{javasource}/dds/countdownlatch/Follower.java[tag=follower]
 ----
 
-The follower class above first retrieves `ICountDownLatch` and then calls the `await` method to enable the thread to listen for the latch. The method `await` has a timeout value as a parameter. This is useful when the `countDown` method fails. To see `ICountDownLatch` in action, start the leader first and then start one or more followers. You will see that the followers will wait until the leader completes.
+The follower class above first retrieves `ICountDownLatch` and then calls the `await` method to enable the thread to listen for the latch. The method `await` has a timeout value as a parameter. This is useful when the `countDown` method fails. To see `ICountDownLatch` in action, start the leader first and then start one or more followers. You will see that the followers wait until the leader completes.
 
 [[recovering-from-failure]]
 ==== Recovering From Failure
@@ -2976,9 +2976,9 @@ In a distributed environment, the counting down cluster member may go down. In t
 [[using-icountdownlatch]]
 ==== Using ICountDownLatch
 
-Although the `ICountDownLatch` is a very useful synchronization aid, you will probably not use it on a daily basis. Unlike Java's implementation, Hazelcast's `ICountDownLatch` count can be reset after a countdown has finished, but not during an active count.
+Although `ICountDownLatch` is a very useful synchronization aid, you may probably not use it on a daily basis. Unlike Java's implementation, Hazelcast's `ICountDownLatch` count can be reset after a countdown has finished, but not during an active count.
 
-NOTE: ICountDownLatch has 1 synchronous backup and no asynchronous backups. Its backup count is not configurable. Also, the count cannot be re-set during an active count, it should be re-set after the countdown is finished.
+NOTE: ICountDownLatch has one synchronous backup and no asynchronous backups. Its backup count is not configurable. Also, the count cannot be re-set during an active count, it should be re-set after the countdown is finished.
 
 [[split-brain-protection-for-icountdownlatch]]
 ==== Split-Brain Protection for ICountDownLatch
@@ -3014,7 +3014,7 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 [[pn-counter]]
 === PN Counter
 
-A Conflict-free Replicated Data Type (CRDT) is a distributed data structure that achieves high availability by relaxing consistency constraints. There may be several replicas for the same data and these replicas can be modified concurrently without coordination. This means that you may achieve high throughput and low latency when updating a CRDT data structure. On the other hand, all of the updates are replicated asynchronously. Each replica will then receive updates made on other replicas eventually and if no new updates are done, all replicas which can communicate to each other will return the same state (converge) after some time.
+A Conflict-free Replicated Data Type (CRDT) is a distributed data structure that achieves high availability by relaxing consistency constraints. There may be several replicas for the same data and these replicas can be modified concurrently without coordination. This means that you may achieve high throughput and low latency when updating a CRDT data structure. On the other hand, all of the updates are replicated asynchronously. Each replica then receives updates made on other replicas eventually and if no new updates are done, all replicas which can communicate to each other return the same state (converge) after some time.
 
 Hazelcast offers a lightweight CRDT PN counter (Positive-Negative Counter) implementation where each Hazelcast instance can increment and decrement the counter value and these updates are propagated to all replicas. Only a Hazelcast member can store state for a counter which means that counter method invocations performed on a Hazelcast member are usually local (depending on the configured replica count). If there is no member failure, it is guaranteed that each replica sees the final value of the counter eventually. Counter's state converges with each update and all CRDT replicas that can communicate to each other will eventually have the same state.
 
@@ -3032,9 +3032,9 @@ The counter supports adding and subtracting values as well as retrieving the cur
 
 The updates to the counter are applied locally when invoked on a CRDT replica. A CRDT replica can be any Hazelcast instance **which is NOT a client or a lite member**. You can configure the number of replicas in the cluster using the `replica-count` configuration element.
 
-When invoking updates from a non-replica instance, the invocation is remote. This may lead to indeterminate state - the update may be applied but the response has not been received. In this case, the caller will be notified with a `TargetDisconnectedException` when invoked from a client or a `MemberLeftException` when invoked from a member.
+When invoking updates from a non-replica instance, the invocation is remote. This may lead to indeterminate state - the update may be applied but the response has not been received. In this case, the caller is notified with a `TargetDisconnectedException` when invoked from a client or a `MemberLeftException` when invoked from a member.
 
-The read and write methods provide monotonic read and RYW (read-your-write) guarantees. These guarantees are session guarantees which means that if no replica with the previously observed state is reachable, the session guarantees are lost and the method invocation will throw a `ConsistencyLostException`. This does not mean that an update is lost. All of the updates are part of some replica and will be eventually reflected in the state of all other replicas. This exception just means that you cannot observe your own writes because all replicas that contain your updates are currently unreachable. After you have received a `ConsistencyLostException`, you can either wait for a sufficiently up-to-date replica to become reachable in which case the session can be continued or you can reset the session by calling the method `reset(). If you have called this method, a new session is started with the next invocation to a CRDT replica.
+The read and write methods provide monotonic read and RYW (read-your-write) guarantees. These guarantees are session guarantees which mean that if no replica with the previously observed state is reachable, the session guarantees are lost and the method invocation throws a `ConsistencyLostException`. This does not mean that an update is lost. All of the updates are part of some replica and eventually reflected in the state of all other replicas. This exception just means that you cannot observe your own writes because all replicas that contain your updates are currently unreachable. After you have received a `ConsistencyLostException`, you can either wait for a sufficiently up-to-date replica to become reachable in which case the session can be continued or you can reset the session by calling the method `reset(). If you have called this method, a new session is started with the next invocation to a CRDT replica.
 
 NOTE: The CRDT state is kept entirely on non-lite (data) members. If there aren't any and the methods here are invoked on a lite member, they fail with a `NoDataMemberInClusterException`.
 
@@ -3066,8 +3066,8 @@ Following is an example declarative configuration snippet:
 ----
 
 * `name`: Name of your PN Counter.
-* `replica-count`: Number of replicas on which state for this PN counter will be kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE. Generally, keeping the state on more replicas means that more Hazelcast members will be able to perform updates locally but it also means that the PN counter state will be kept on more replicas, increasing the network traffic, decreasing the speed at which replica states converge and increasing the size of the PN counter state kept on each replica.
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your PN Counter. If set to `false`, you cannot collect statistics in your implementation (using `getLocalPNCounterStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-pn-counters[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `replica-count`: Number of replicas on which state for this PN counter is kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE. Generally, keeping the state on more replicas means that more Hazelcast members are able to perform updates locally but it also means that the PN counter state is kept on more replicas, increasing the network traffic, decreasing the speed at which replica states converge and increasing the size of the PN counter state kept on each replica.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your PN Counter. If set to `false`, you cannot collect statistics in your implementation (using `getLocalPNCounterStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-pn-counters[Hazelcast Management Center] will not show them. Its default value is `true`.
 
 Following is an equivalent snippet of Java configuration:
 
@@ -3079,7 +3079,7 @@ include::{javasource}/dds/ExamplePNCounter.java[tag=pncc]
 [[configuring-the-crdt-replication-mechanism]]
 ==== Configuring the CRDT replication mechanism
 
-NOTE: Configuring the replication mechanism is for advanced use cases only - usually the default configuration will work fine for most cases.
+NOTE: Configuring the replication mechanism is for advanced use cases only - usually the default configuration works fine for most cases.
 
 In some cases, you may want to configure the replication mechanism for all CRDT implementations. The CRDT states are replicated in rounds (the period is configurable) and in each round the state is replicated up to the configured number of members. Generally speaking, you may increase the speed at which replicas converge at the expense of more network traffic or decrease the network traffic at the expense of slower convergence of replicas.
 Hazelcast implements the state-based replication mechanism - the CRDT state for changed CRDTs is replicated in its entirety to other replicas on each replication round.
@@ -3096,7 +3096,7 @@ Hazelcast implements the state-based replication mechanism - the CRDT state for 
 </hazelcast>
 ----
 
-* `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count will lead to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT will lead to a sudden burst in the number of replication messages in a short time interval. Its default value is 1 which means that each replica will replicate state to only one other replica in each replication round.
+* `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count leads to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT leads to a sudden burst in the number of replication messages in a short time interval. Its default value is 1 which means that each replica will replicate state to only one other replica in each replication round.
 * `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates will be batched together in one replication message and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. Its default value is 1000 milliseconds which means that the changed CRDT state is replicated every 1 second.
 
 Following is an equivalent snippet of Java configuration:
