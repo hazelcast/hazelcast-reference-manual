@@ -3096,8 +3096,8 @@ Hazelcast implements the state-based replication mechanism - the CRDT state for 
 </hazelcast>
 ----
 
-* `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count leads to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT leads to a sudden burst in the number of replication messages in a short time interval. Its default value is 1 which means that each replica will replicate state to only one other replica in each replication round.
-* `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value will increase the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates will be batched together in one replication message and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. Its default value is 1000 milliseconds which means that the changed CRDT state is replicated every 1 second.
+* `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count leads to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT leads to a sudden burst in the number of replication messages in a short time interval. Its default value is 1 which means that each replica replicates state to only one other replica in each replication round.
+* `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value increases the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates are batched together in one replication message, and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. Its default value is 1000 milliseconds which means that the changed CRDT state is replicated every 1 second.
 
 Following is an equivalent snippet of Java configuration:
 
@@ -3116,7 +3116,7 @@ NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs 
 [[generating-cluster-wide-ids]]
 ==== Generating Cluster-Wide IDs
 
-ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10,000 identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it will get another 10,000 IDs. This way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.
+ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. A group of 10,000 identifiers is allocated for each cluster member. In the background, this allocation takes place with an `IAtomicLong` incremented by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator` increments a local counter. If a cluster member uses all IDs in the group, it gets another 10000 IDs. This way, only one time of network traffic is needed, meaning that 9,999 identifiers are generated in memory instead of over the network. This is fast.
 
 Let's write an example identifier generator.
 
@@ -3125,7 +3125,7 @@ Let's write an example identifier generator.
 include::{javasource}/dds/ExampleIdGenerator.java[tag=idg]
 ----
 
-Let's run the above code two times. The output will be similar to the following.
+Let's run the above code two times. The output is similar to the following:
 
 ```
 Members [1] {
@@ -3176,12 +3176,12 @@ Hazelcast Flake ID Generator is used to generate cluster-wide unique identifiers
 
 The IDs contain timestamp component and a node ID component, which is assigned when the member joins the cluster. This allows the IDs to be ordered and unique without any coordination between the members, which makes the generator safe even in split-brain scenarios (for limitations in this case, please see the <<node-id-assignment, Node ID assignment section>> below).
 
-Timestamp component is in milliseconds since 1.1.2018, 0:00 UTC and has 41 bits. This caps the useful lifespan of the generator to little less than 70 years (until ~2088). The sequence component is 6 bits. If more than 64 IDs are requested in single millisecond, IDs will gracefully overflow to the next millisecond and uniqueness is guaranteed in this case. The implementation does not allow overflowing by more than 15 seconds, if IDs are requested at higher rate, the call will block. Note, however, that clients are able to generate even faster because each call goes to a different (random) member and the 64 IDs/ms limit is for single member.
+Timestamp component is in milliseconds since 1.1.2018, 0:00 UTC and has 41 bits. This caps the useful lifespan of the generator to little less than 70 years (until ~2088). The sequence component is 6 bits. If more than 64 IDs are requested in single millisecond, IDs gracefully overflow to the next millisecond and uniqueness is guaranteed in this case. The implementation does not allow overflowing by more than 15 seconds, if IDs are requested at higher rate, the call blocks. Note, however, that clients are able to generate even faster because each call goes to a different (random) member and the 64 IDs/ms limit is for single member.
 
 [[flakeidgenerator-performance]]
 ==== Performance
 
-Operation on member is always local, if the member has valid node ID, otherwise it's remote. On client, the newId() method goes to a random member and gets a batch of IDs, which will then be returned locally for limited time. The pre-fetch size and the validity time can be configured for each client and member.
+Operation on member is always local, if the member has valid node ID, otherwise it's remote. On the client, the `newId()` method goes to a random member and gets a batch of IDs, which is then returned locally for a limited time. The pre-fetch size and the validity time can be configured for each client and member.
 
 [[flakeidgenerator-example]]
 ==== Example
@@ -3198,12 +3198,12 @@ include::{javasource}/dds/ExampleFlakeIdGenerator.java[tag=fid]
 
 Flake IDs require a unique node ID to be assigned to each member, from which point the member can generate unique IDs without any coordination. Hazelcast uses the member list version from the moment when the member joined the cluster as a unique node ID.
 
-The join algorithm is specifically designed to ensure that member list join version is unique for each member in the cluster. This ensures that IDs are unique even during network splits, with one caveat: at most one member is allowed to join the cluster during a network split. If two members join different subclusters, they are likely to get the same node ID. This will be resolved when the cluster heals, but until then, they can generate duplicate IDs.
+The join algorithm is specifically designed to ensure that member list join version is unique for each member in the cluster. This ensures that IDs are unique even during network splits, with one caveat: at most one member is allowed to join the cluster during a network split. If two members join different subclusters, they are likely to get the same node ID. This is resolved when the cluster heals, but until then, they can generate duplicate IDs.
 
 [[node-id-overflow]]
 ===== Node ID Overflow
 
-Node ID component of the ID has 16 bits. Members with the member list join version higher than 2^16 won't be able to generate IDs, but functionality will be preserved by forwarding to another member. It is possible to generate IDs on any member or client as long as there is at least one member with join version smaller than 2^16 in the cluster. The remedy is to restart the cluster: the node ID component will be reset and assigned starting from zero again. Uniqueness after the restart will be preserved thanks to the timestamp component.
+Node ID component of the ID has 16 bits. Members with the member list join version higher than 2^16 won't be able to generate IDs, but functionality is preserved by forwarding to another member. It is possible to generate IDs on any member or client as long as there is at least one member with join version smaller than 2^16 in the cluster. The remedy is to restart the cluster: the node ID component will be reset and assigned starting from zero again. Uniqueness after the restart will be preserved thanks to the timestamp component.
 
 ==== Configuring Flake ID Generator
 
@@ -3229,9 +3229,9 @@ Here are the descriptions of configuration elements and attributes:
 * `name`: Name of your Flake ID Generator. It is a required attribute.
 * `prefetch-count`: Count of IDs which are pre-fetched on the background when one call to FlakeIdGenerator.newId() is made. Its value must be in the range 1 -100,000. Its default value is 100. This setting pertains only to `newId()` calls made on the member that configured it.
 * `prefetch-validity-millis`: Specifies for how long the pre-fetched IDs can be used. After this time elapses, a new batch of IDs are fetched. Time unit is milliseconds. Its default value is 600,000 milliseconds (10 minutes). The IDs contain a timestamp component, which ensures a rough global ordering of them. If an ID is assigned to an object that was created later, it will be out of order. If ordering is not important, set this value to 0. This setting pertains only to `newId()` calls made on the member that configured it.
-* `id-offset`: Specifies the offset that will be added to the returned IDs. Its default value is 0. Setting might be useful when migrating from ID Generator. The default value works for all green-field projects. For example, assume the largest ID returned from ID Generator is 150. And, Flake ID Generator now returns 100. If you set this element to 50 and stop using the ID Generator, the next ID from Flake ID Generator will be 151 or larger and no duplicate IDs will be generated. In real-life, the IDs are much larger. You also need to add a reserve to the offset because the IDs from Flake ID Generator are only roughly ordered. Recommended reserve is 2^38, that is 274877906944. Negative values are allowed to increase the lifespan of the generator, however keep in mind that the generated IDs might also be negative.
-* `node-id-offset`: Specifies the offset that will be added to the node ID assigned to cluster member for this generator. Might be useful in A/B deployment scenarios where you have cluster A which you want to upgrade. You create cluster B and for some time both will generate IDs and you want to have them unique. In this case, configure node ID offset for generators on cluster B.
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your Flake ID Generator. If set to `false`, you cannot collect statistics in your implementation (using `getLocalFlakeIdGeneratorStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-flake-id-generators[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `id-offset`: Specifies the offset that is added to the returned IDs. Its default value is 0. Setting might be useful when migrating from ID Generator. The default value works for all green-field projects. For example, assume the largest ID returned from ID Generator is 150. And, Flake ID Generator now returns 100. If you set this element to 50 and stop using the ID Generator, the next ID from Flake ID Generator will be 151 or larger and no duplicate IDs will be generated. In real-life, the IDs are much larger. You also need to add a reserve to the offset because the IDs from Flake ID Generator are only roughly ordered. Recommended reserve is 2^38, that is 274877906944. Negative values are allowed to increase the lifespan of the generator, however keep in mind that the generated IDs might also be negative.
+* `node-id-offset`: Specifies the offset that is added to the node ID assigned to cluster member for this generator. Might be useful in A/B deployment scenarios where you have cluster A which you want to upgrade. You create cluster B and for some time both will generate IDs and you want to have them unique. In this case, configure node ID offset for generators on cluster B.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Flake ID Generator. If set to `false`, you cannot collect statistics in your implementation (using `getLocalFlakeIdGeneratorStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-flake-id-generators[Hazelcast Management Center] will not show them. Its default value is `true`.
 
 [[replicated-map]]
 === Replicated Map
@@ -3285,15 +3285,15 @@ If you have a large cluster or very high occurrences of updates, the Replicated 
 
 Since the replication of updates is performed in an asynchronous manner, we recommend you enable back pressure in case your system has high occurrences of updates. Please refer to the <<back-pressure, Back Pressure>> section to learn how to enable it.
 
-Replicated Map has an anti-entropy system that will converge values to a common one if some of the members are missing replication updates.
+Replicated Map has an anti-entropy system that converges values to a common one if some of the members are missing replication updates.
 
 Replicated Map does not guarantee eventual consistency because there are some edge cases that fail to provide consistency.
 
 Replicated Map uses the internal partition system of Hazelcast in order to serialize updates happening on the same key at the same time. This happens by sending updates of the same key to the same Hazelcast member in the cluster.
 
-Due to the asynchronous nature of replication, a Hazelcast member could die before successfully replicating a "write" operation to other members after sending the "write completed" response to its caller during the write process. In this scenario, Hazelcast's internal partition system will promote one of the replicas of the partition as the primary one. The new primary partition will not have the latest "write" since the dead member could not successfully replicate the update. (This will leave the system in a state that the caller is the only one that has the update and the rest of the cluster have not.) In this case even the anti-entropy system simply could not converge the value since the source of true information is lost for the update. This leads to a break in the eventual consistency because different values can be read from the system for the same key.
+Due to the asynchronous nature of replication, a Hazelcast member could die before successfully replicating a "write" operation to other members after sending the "write completed" response to its caller during the write process. In this scenario, Hazelcast's internal partition system promotes one of the replicas of the partition as the primary one. The new primary partition does not have the latest "write" since the dead member could not successfully replicate the update. (This leaves the system in a state that the caller is the only one that has the update and the rest of the cluster have not.) In this case even the anti-entropy system simply could not converge the value since the source of true information is lost for the update. This leads to a break in the eventual consistency because different values can be read from the system for the same key.
 
-Other than the aforementioned scenario, the Replicated Map will behave like an eventually consistent system with read-your-writes and monotonic-reads consistency.
+Other than the aforementioned scenario, the Replicated Map behaves like an eventually consistent system with read-your-writes and monotonic-reads consistency.
 
 [[configuration-design-for-replicated-map]]
 ==== Configuration Design for Replicated Map
@@ -3341,10 +3341,10 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 ----
 
 * `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. Its default value is `OBJECT`.
-* `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. Its default value is `true`. If set to `false` (i.e., synchronous initial fill up), no exception will be thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your Replicated Map. If set to `false`, you cannot collect statistics in your implementation (using `getLocalReplicatedMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-replicated-maps[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. Its default value is `true`. If set to `false`, i.e., synchronous initial fill up, no exception is thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Replicated Map. If set to `false`, you cannot collect statistics in your implementation (using `getLocalReplicatedMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-replicated-maps[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `entry-listener`: Full canonical classname of the `EntryListener` implementation.
-** `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` will save a deserialization cycle. Its default value is `true`.
+** `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` saves a deserialization cycle. Its default value is `true`.
 ** `entry-listener#local`: Not used for Replicated Map since listeners are always local.
 * `quorum-ref`: Name of quorum configuration that you want this Replicated Map to use. Please see the <<split-brain-protection-for-replicated-map, Split-Brain Protection for Replicated Map section>>.
 
@@ -3366,7 +3366,7 @@ by transforming the tag names into getter or setter names.
 
 Currently, two `in-memory-format` values are usable with the Replicated Map.
 
-* `OBJECT` (default): The data will be stored in deserialized form. This configuration is the default choice since
+* `OBJECT` (default): The data is stored in deserialized form. This configuration is the default choice since
 the data replication is mostly used for high speed access. Please be aware that changing the values without a `Map.put()` is
 not reflected on the other members but is visible on the changing members for later value accesses.
 * `BINARY`: The data is stored in serialized binary format and has to be deserialized on every request. This
@@ -3522,33 +3522,33 @@ So the merge policy resolves these kinds of conflicts with different out-of-the-
 
 Following out-of-the-box merge policies are available:
 
-* `DiscardMergePolicy`: Estimator from the smaller cluster will be discarded.
-* `HyperLogLogMergePolicy`: Estimator will merge with the existing one, using the algorithmic merge for HyperLogLog. This is the default policy.
+* `DiscardMergePolicy`: Estimator from the smaller cluster is discarded.
+* `HyperLogLogMergePolicy`: Estimator merges with the existing one, using the algorithmic merge for HyperLogLog. This is the default policy.
 * `PassThroughMergePolicy`: Estimator from the smaller cluster wins.
 * `PutIfAbsentMergePolicy`: Estimator from the smaller cluster wins if it doesn't exist in the cluster.
 
 [[event-journal]]
 === Event Journal
 
-The event journal is a distributed data structure that stores the history of mutation actions on map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) will create an event which will be stored in the event journal. The event will store the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or configuring the expiration and eviction.  By reading from the event journal you can recreate the state of the map or cache at any point in time.
+The event journal is a distributed data structure that stores the history of mutation actions on map or cache. Each action on the map or cache which modifies its contents (such as `put`, `remove` or scheduled tasks which are not triggered by using the public API) creates an event which is stored in the event journal. The event stores the event type as well as the key, old value and updated value for the entry (when applicable). As a user, you can only append to the journal indirectly by using the map and cache methods or configuring the expiration and eviction.  By reading from the event journal you can recreate the state of the map or cache at any point in time.
 
-NOTE: Currently the event journal does not expose a public API for reading the event journal in Hazelcast IMDG. The event journal can be used to stream event data to Hazelcast Jet, so it should be used in conjunction with http://jet.hazelcast.org/[Hazelcast Jet]. Because of this we will describe how to configure it but not how to use it from IMDG. If you enable and configure the event journal, you may only reach it through private API and you will most probably not get any benefits but the journal will retain events nevertheless and consume heap space.
+NOTE: Currently the event journal does not expose a public API for reading the event journal in Hazelcast IMDG. The event journal can be used to stream event data to Hazelcast Jet, so it should be used in conjunction with http://jet.hazelcast.org/[Hazelcast Jet]. Because of this we describe how to configure it but not how to use it from IMDG in this section. If you enable and configure the event journal, you may only reach it through private API and you most probably do not get any benefits but the journal retains events nevertheless and consumes heap space.
 
 The event journal has a fixed capacity and an expiration time. Internally it is structured as a ringbuffer (partitioned by ringbuffer item) and shares many similarities with it.
 
 [[interaction-with-evictions-and-expiration-for-imap]]
 ==== Interaction with Evictions and Expiration for IMap
 
-Configuring IMap with eviction and expiration can cause the event journal to contain different events on the different replicas of the same partition. You can run into issues if you are reading from the event journal and the partition owner is terminated. A backup replica will then be promoted into the partition owner but the event journal will contain different events. The event count should stay the same but the entries which you previously thought were evicted and expired could now be "alive" and vice versa.
+Configuring IMap with eviction and expiration can cause the event journal to contain different events on the different replicas of the same partition. You can run into issues if you are reading from the event journal and the partition owner is terminated. A backup replica is then promoted into the partition owner but the event journal will contain different events. The event count should stay the same but the entries which you previously thought were evicted and expired could now be "alive" and vice versa.
 
-This is because eviction and expiration randomly choose entries to be evicted/expired. The entry is not coordinated between partition replicas. In these cases, the event journal diverges and will not converge at any future point but will remain inconsistent just as well as the contents of the internal record stores are inconsistent between replicas. You may say that the event journal on a specific replica is in-sync with the record store on that replica but the event journals and record stores between replicas are out-of-sync.
+This is because eviction and expiration randomly choose entries to be evicted/expired. The entry is not coordinated between partition replicas. In these cases, the event journal diverges and will not converge at any future point, but will remain inconsistent just as well as the contents of the internal record stores are inconsistent between replicas. You may say that the event journal on a specific replica is in-sync with the record store on that replica but the event journals and record stores between replicas are out-of-sync.
 
 [[configuring-event-journal-capacity]]
 ==== Configuring Event Journal Capacity
 
-By default, an event journal is configured with a `capacity` of 10000 items. This creates a single array per partition, roughly the size of the capacity divided by the number of partitions. Thus, if the configured capacity is 10000 and the number of partitions is 271, we will create 271 arrays of size 36 (10000/271). If
+By default, an event journal is configured with a `capacity` of 10000 items. This creates a single array per partition, roughly the size of the capacity divided by the number of partitions. Thus, if the configured capacity is 10000 and number of partitions is 271, we create 271 arrays of size 36 (10000/271). If
 a `time-to-live` is configured, then an array of longs is also created that stores the expiration time for every item.
-A single array of the event journal keeps events that are only related to the map entries in that partition. In a lot of cases you may want to change this `capacity` number to something that better fits your needs. As the capacity is shared between partitions, keep in mind not to set it to a value which is too low for you. Setting the capacity to a number lower than the partition count will result in an error when initializing the event journal.
+A single array of the event journal keeps events that are only related to the map entries in that partition. In a lot of cases you may want to change this `capacity` number to something that better fits your needs. As the capacity is shared between partitions, keep in mind not to set it to a value which is too low for you. Setting the capacity to a number lower than the partition count results in an error when initializing the event journal.
 
 Below is a declarative configuration example of an event journal with a `capacity` of 5000 items for a map and 10000 items for a cache:
 
@@ -3577,7 +3577,7 @@ You can also configure an event journal programmatically. The following is a pro
 include::{javasource}/dds/EventJournalConfiguration.java[tag=ejc]
 ----
 
-The `mapName` and `cacheName` attributes define the map or cache to which this event journal configuration applies. You can use pattern-matching and the `default` keyword when doing so. For instance, by using a `mapName` of `journaled*`, the journal configuration will apply to all maps whose names start with "journaled" and don't have other journal configurations that match (e.g., if you would have a more specific journal configuration with an exact name match). If you specify the `mapName` or `cacheName` as `default`, the journal configuration will apply to all maps and caches that don't have any other journal configuration. This means that potentially all maps and/or caches will have one single event journal configuration.
+The `mapName` and `cacheName` attributes define the map or cache to which this event journal configuration applies. You can use pattern-matching and the `default` keyword when doing so. For instance, by using a `mapName` of `journaled*`, the journal configuration applies to all maps whose names start with "journaled" and don't have other journal configurations that match (e.g., if you would have a more specific journal configuration with an exact name match). If you specify the `mapName` or `cacheName` as `default`, the journal configuration applies to all maps and caches that don't have any other journal configuration. This means that potentially all maps and/or caches have one single event journal configuration.
 
 [[event-journal-partitioning]]
 ==== Event Journal Partitioning
@@ -3590,7 +3590,7 @@ Also, the backup count for the event journal is equal to the backup count of the
 
 You can configure Hazelcast event journal with a `time-to-live` in seconds. Using this setting, you can control how long the items remain in
 the event journal before they are expired. By default, the `time-to-live` is set to 0, meaning that unless the item is overwritten,
-it will remain in the journal indefinitely. The expiration time of the existing journal events is checked whenever a new event is appended to the event journal or when the event journal is being read. If the journal is not being read from or written to, the journal may keep expired items indefinitely.
+it remains in the journal indefinitely. The expiration time of the existing journal events is checked whenever a new event is appended to the event journal or when the event journal is being read. If the journal is not being read from or written to, the journal may keep expired items indefinitely.
 
 In the example below, an event journal is configured with a `time-to-live` of 180 seconds:
 

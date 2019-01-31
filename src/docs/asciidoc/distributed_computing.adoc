@@ -15,7 +15,7 @@ The default implementation of this framework (`ThreadPoolExecutor`) is designed 
 '''
 NOTE: Note that you may want to use https://jet.hazelcast.org/[Hazelcast Jet] if you want to process batch or real-time streaming data. Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
 
-With `IExecutorService`, you can execute tasks asynchronously and perform other useful tasks. If your task execution takes longer than expected, you can cancel the task execution. Tasks should be `Serializable` since they will be distributed.
+With `IExecutorService`, you can execute tasks asynchronously and perform other useful tasks. If your task execution takes longer than expected, you can cancel the task execution. Tasks should be `Serializable` since they are distributed.
 
 In the Java Executor framework, you implement tasks two ways: Callable or Runnable.
 
@@ -99,7 +99,7 @@ You can scale the Executor service both vertically (scale up) and horizontally (
 
 To scale up, you should improve the processing capacity of the cluster member (JVM). You can do this by increasing the `pool-size` property mentioned in <<configuring-executor-service, Configuring Executor Service>> (i.e., increasing the thread count). However, please be aware of your member's capacity. If you think it cannot handle such an additional load caused by increasing the thread count, you may want to consider improving the member's resources (CPU, memory, etc.). As an example, set the `pool-size` to 5 and run the above `MasterMember`. You will see that `EchoTask` is run as soon as it is produced.
 
-To scale out, add more members instead of increasing only one member's capacity. In reality, you may want to expand your cluster by adding more physical or virtual machines. For example, in the EchoTask example in the <<implementing-a-runnable-task, Runnable section>>, you can create another Hazelcast instance. That instance will automatically get involved in the executions started in `MasterMember` and start processing.
+To scale out, add more members instead of increasing only one member's capacity. In reality, you may want to expand your cluster by adding more physical or virtual machines. For example, in the EchoTask example in the <<implementing-a-runnable-task, Runnable section>>, you can create another Hazelcast instance. That instance automatically gets involved in the executions started in `MasterMember` and start processing.
 
 [[executing-code-in-the-cluster]]
 ==== Executing Code in the Cluster
@@ -172,7 +172,7 @@ NOTE: You can obtain the set of cluster members via `HazelcastInstance.getCluste
 [[canceling-an-executing-task]]
 ==== Canceling an Executing Task
 
-A task in the code that you execute in a cluster might take longer than expected. If you cannot stop/cancel that task, it will keep eating your resources.
+A task in the code that you execute in a cluster might take longer than expected. If you cannot stop/cancel that task, it keeps eating your resources.
 
 To cancel a task, you can use the standard Java executor framework's `cancel()` API. This framework encourages us to code and design for cancellations, a highly ignored part of software development.
 
@@ -187,14 +187,14 @@ include::{javasource}/distributedcomputing/FibonacciCallable.java[tag=fc]
 
 ===== Example Method to Execute and Cancel the Task
 
-The `fib()` method below submits the Fibonacci calculation task above for number 'n' and waits a maximum of 3 seconds for the result. If the execution does not completed in three seconds, `future.get()` will throw a `TimeoutException` and upon catching it, we cancel the execution, saving some CPU cycles.
+The `fib()` method below submits the Fibonacci calculation task above for number 'n' and waits a maximum of 3 seconds for the result. If the execution does not completed in three seconds, the `future.get()` method throws a `TimeoutException` and upon catching it, we cancel the execution, saving some CPU cycles.
 
 [source,java]
 ----
 include::{javasource}/distributedcomputing/FibonacciCallable.java[lines=36..47]
 ----
 
-`fib(20)` will probably take less than 3 seconds. However, `fib(50)` will take much longer. (This is not an example for writing better Fibonacci calculation code, but for showing how to cancel a running execution that takes too long.) The method `future.cancel(false)` can only cancel execution before it is running (executing), but `future.cancel(true)` can interrupt running executions provided that your code is able to handle the interruption. If you are willing to cancel an already running task, then your task should be designed to handle interruptions. If the `calculate (int n)` method did not have the `(Thread.currentThread().isInterrupted())` line, then you would not be able to cancel the execution after it is started.
+`fib(20)` probably takes less than 3 seconds. However, `fib(50)` takes much longer. (This is not an example for writing better Fibonacci calculation code, but for showing how to cancel a running execution that takes too long.) The method `future.cancel(false)` can only cancel execution before it is running (executing), but `future.cancel(true)` can interrupt running executions provided that your code is able to handle the interruption. If you are willing to cancel an already running task, then your task should be designed to handle interruptions. If the `calculate (int n)` method did not have the `(Thread.currentThread().isInterrupted())` line, then you would not be able to cancel the execution after it is started.
 
 [[callback-when-task-completes]]
 ==== Callback When Task Completes
@@ -206,7 +206,7 @@ You can use the `ExecutionCallback` offered by Hazelcast to asynchronously be no
 
 ===== Example Task to Callback
 
-Let's use the Fibonacci series to explain this. The example code below is the calculation that will be executed. Note that it is Callable and Serializable.
+Let's use the Fibonacci series to explain this. The example code below is the calculation that is executed. Note that it is Callable and Serializable.
 
 [source,java]
 ----
@@ -276,7 +276,7 @@ Executor service configuration has the following elements.
 
 * `pool-size`: The number of executor threads per Member for the Executor. By default, Executor is configured to have 16 threads in the pool. You can change that with this element.
 * `queue-capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
-* `statistics-enabled`: Specifies whether the statistics gathering will be enabled for your Executor Service. If set to `false`, you cannot collect statistics in your implementation (using `getLocalExecutorStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-executors[Hazelcast Management Center] will not show them. Its default value is `true`.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Executor Service. If set to `false`, you cannot collect statistics in your implementation (using `getLocalExecutorStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-executors[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `quorum-ref`: Name of quorum configuration that you want this Executor Service to use. Please see the <<split-brain-protection-for-iexecutorservice, Split-Brain Protection for IExecutorService section>>.
 
 ==== Split-Brain Protection for IExecutorService
@@ -419,10 +419,10 @@ Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast
 
 There are two different modes of durability for the service:
 
-1. Upon partition specific scheduling, the future task is stored both in the primary partition and also in its N backups, N being the `<durability>` property in the configuration. More specifically, there are always one or more backups to take ownership of the task in the event of a lost member. If a member is lost, the task will be re-scheduled on the backup (new primary) member, which might induce further delays on the subsequent executions of the task.
-For example, if we schedule a task to run in 10 seconds from now, `schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds the owner member goes down (before the execution takes place), then the backup owner will re-schedule the task in 10 seconds from now. Therefore, from the user's perspective waiting on the result, this will be available in `10 + 5 = 15` seconds rather than 10 seconds as it is anticipated originally. If `atFixedRate` was used, then only the initial delay is affected in the above scenario, all subsequent executions should adhere to the given period parameter.
+1. Upon partition specific scheduling, the future task is stored both in the primary partition and also in its N backups, N being the `<durability>` property in the configuration. More specifically, there are always one or more backups to take ownership of the task in the event of a lost member. If a member is lost, the task is re-scheduled on the backup (new primary) member, which might induce further delays on the subsequent executions of the task.
+For example, if we schedule a task to run in 10 seconds from now, `schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds the owner member goes down (before the execution takes place), then the backup owner re-schedules the task in 10 seconds from now. Therefore, from the user's perspective waiting on the result, this will be available in `10 + 5 = 15` seconds rather than 10 seconds as it is anticipated originally. If `atFixedRate` was used, then only the initial delay is affected in the above scenario, all subsequent executions should adhere to the given period parameter.
 
-2. Upon member specific scheduling, the future task is *only* stored in the member itself, which means that in the event of a lost member, the task will be lost as well.
+2. Upon member specific scheduling, the future task is *only* stored in the member itself, which means that in the event of a lost member, the task is lost as well.
 
 To accomplish the described durability, all tasks provide a unique identity/name before the scheduling takes place. The name allows the service to reach the scheduled task even after the caller (client or member) goes down and also allows to prevent duplicate tasks.
 The name of the task can be user-defined if it needs to be, by implementing the `com.hazelcast.scheduledexecutor.NamedTask` interface (plain wrapper util is available here: `com.hazelcast.scheduledexecutor.TaskUtils.named(java.lang.String, java.lang.Runnable)`). If the task does not provide a name in its implementation, the service provides a random UUID for it, internally.
@@ -437,7 +437,7 @@ The handler is always available after scheduling and can be stored in a plain st
 
 Last but not least, similar to <<executor-service, executor service>>, the scheduled executor service allows Stateful tasks to be scheduled. Stateful tasks, are tasks that require any kind of state during their runtime, which must also be durable along with the task in the event of a lost partition.
 
-Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask` interface, providing implementation details for saving the state and loading it back. If a partition is lost, then the re-scheduled task will load the previously saved state before its execution.
+Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask` interface, providing implementation details for saving the state and loading it back. If a partition is lost, then the re-scheduled task loads the previously saved state before its execution.
 
 NOTE: As with the tasks, Objects stored in the state Map need to be Hazelcast serializable.
 
@@ -472,7 +472,7 @@ Following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the scheduled executor.
 * `pool-size`: Number of executor threads per member for the executor.
-* `capacity`: Maximum number of tasks that a scheduler can have per partition. Attempt to schedule more, will result in `RejectedExecutionException`. To free up the capacity, tasks should get disposed by the user.
+* `capacity`: Maximum number of tasks that a scheduler can have per partition. Attempt to schedule more results in `RejectedExecutionException`. To free up the capacity, tasks should get disposed by the user.
 * `durability`: Durability of the executor.
 * `quorum-ref`: Name of quorum configuration that you want this Scheduled Executor Service to use. Please see the <<split-brain-protection-for-ischeduled-executor-service, Split-Brain Protection for IScheduled Executor Service section>>.
 
@@ -568,7 +568,7 @@ Hazelcast sends the entry processor to each cluster member and these members app
 
 ===== Using Indexes
 
-Entry processors can be used with predicates. Predicates help to process a subset of data by selecting eligible entries. This selection can happen either by doing a full-table scan or by using indexes. To accelerate entry selection step, you can consider to add indexes. If indexes are there, entry processor will automatically use them.
+Entry processors can be used with predicates. Predicates help to process a subset of data by selecting eligible entries. This selection can happen either by doing a full-table scan or by using indexes. To accelerate entry selection step, you can consider to add indexes. If indexes are there, entry processor automatically uses them.
 
 ===== Using OBJECT In-Memory Format
 
@@ -608,7 +608,7 @@ Therefore, if you want to to perform an entry processor execution on a single ke
 
 If your code modifies the data, then you should also provide a processor for backup entries. This is required to prevent the primary map entries from having different values than the backups because it causes the entry processor to be applied both on the primary and backup entries. The interface https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryBackupProcessor.html[EntryBackupProcessor] offers the method `processBackup` for this purpose.
 
-NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it at the run time due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually will synchronize those owner and backup partitions so you will not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
+NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it at the run time due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually synchronizes those owner and backup partitions so you do not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
 
 ==== Creating an Entry Processor
 
@@ -636,7 +636,7 @@ for ( int i = 0; i < 100; i++ ) {
 Map<Integer, Object> res = map.executeOnEntries( new IncrementingEntryProcessor() );
 ----
 
-NOTE: You should explicitly call the `setValue` method of `Map.Entry` when modifying data in the entry processor. Otherwise, the entry processor will be accepted as read-only.
+NOTE: You should explicitly call the `setValue` method of `Map.Entry` when modifying data in the entry processor. Otherwise, the entry processor is accepted as read-only.
 
 NOTE: An entry processor instance is not thread safe. If you are storing a partition specific state between invocations, be sure to register this in a thread-local.  An entry processor instance can be used by multiple partition threads.
 
@@ -644,7 +644,7 @@ NOTE: An entry processor instance is not thread safe. If you are storing a parti
 
 You can use the `AbstractEntryProcessor` class when the same processing will be performed both on the primary and backup map entries, i.e., the same logic applies to them. If you use entry processor, you need to apply the same logic to the backup entries separately. The `AbstractEntryProcessor` class makes this primary/backup processing easier.
 
-You can use the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[`AbstractEntryProcessor` class] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing will be applied to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null.
+You can use the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[`AbstractEntryProcessor` class] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing applies to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null.
 
 NOTE: Beware of the null issue described above. Due to a yet unsent backup from a previous operation, an `EntryBackupProcessor` may temporarily receive `null` from `Map.Entry.getValue()` even though the value actually exists in the map. If you decide to use `AbstractEntryProcessor`, make sure your code logic is not sensitive to null values, or you may encounter `NullPointerException` during runtime.
 
@@ -676,11 +676,11 @@ As of 3.9, these optimizations apply to the following IMap methods only:
 
 ===== Offloadable Entry Processor
 
-If an entry processor implements the `Offloadable` interface, the `process()` method will be executed in the executor
+If an entry processor implements the `Offloadable` interface, the `process()` method is executed in the executor
 specified by the ``Offloadable``'s `getExecutorName()` method.
 
-Offloading will unblock the partition thread allowing the user to profit from much higher throughput.
-The key will be locked for the time span of the processing in order to not generate a write conflict.
+Offloading unblocks the partition thread allowing the user to profit from much higher throughput.
+The key is locked for the time span of the processing in order to not generate a write conflict.
 
 In this case the threading looks as follows:
 
@@ -690,8 +690,8 @@ In this case the threading looks as follows:
 
 The method `getExecutorName()` method may also return two constants defined in the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Offloadable.html[`Offloadable` interface]:
 
-* NO_OFFLOADING: Processing will not be offloaded if the method `getExecutorName()` returns this constant; it will be executed as if it does not implement the `Offloadable` interface.
-* OFFLOADABLE_EXECUTOR: Processing will be offloaded to the default `ExecutionService.OFFLOADABLE_EXECUTOR`.
+* NO_OFFLOADING: Processing is not offloaded if the method `getExecutorName()` returns this constant; it is executed as if it does not implement the `Offloadable` interface.
+* OFFLOADABLE_EXECUTOR: Processing is offloaded to the default `ExecutionService.OFFLOADABLE_EXECUTOR`.
 
 Note that if the method `getExecutorName()` cannot find an executor whose name matches the one called by this method, then the default executor service is used. Here is the configuration for the "default" executor:
 
@@ -725,22 +725,21 @@ Remember to set the `pool-size` (count of executor threads per member) according
 
 ===== ReadOnly Entry Processor
 
-By default, an entry processor will not run if the key is locked.
-It will wait until the key has been unlocked (it applies to the `executeOnKey`, `submitToKey` methods, that were mentioned before).
+By default, an entry processor does not run if the key is locked.
+It waits until the key has been unlocked (it applies to the `executeOnKey`, `submitToKey` methods, that were mentioned before).
 
-If the entry processor implements the `ReadOnly` interface without implementing the `Offloadable` interface, the processing will not
-be offloaded to an external executor. However, the entry processor will not observe if the key of the processed entry is
-locked, nor will try to acquire the lock since the entry processor will not do any modifications.
+If the entry processor implements the `ReadOnly` interface without implementing the `Offloadable` interface, the processing is not offloaded to an external executor. However, the entry processor does not observe if the key of the processed entry is
+locked, nor tries to acquire the lock since the entry processor will not do any modifications.
 
-If the entry processor implements `ReadOnly` and modifies the entry, an `UnsupportedOperationException` will be thrown.
+If the entry processor implements `ReadOnly` and modifies the entry, an `UnsupportedOperationException` is thrown.
 
 ===== ReadOnly and Offloadable Entry Processor
 
-If the entry processor implements both `ReadOnly` and `Offloadable` interfaces, we will observe the combination of both
+If the entry processor implements both `ReadOnly` and `Offloadable` interfaces, we observe the combination of both
 optimizations described above.
 
-The `process()` method will be executed in the executor specified by the `Offloadable`'s `getExecutorName()` method.
-Also, the entry processor will not observe if the key of the processed entry is locked, nor will try to acquire the
+The `process()` method is executed in the executor specified by the `Offloadable`'s `getExecutorName()` method.
+Also, the entry processor does not observe if the key of the processed entry is locked, nor tries to acquire the
 lock since the entry processor will not do any modifications.
 
 In this case the threading looks as follows:
@@ -751,7 +750,7 @@ In this case the threading looks as follows:
 In this case the `EntryProcessor.getBackupProcessor()` has to return null; otherwise an `IllegalArgumentException`
 exception is thrown.
 
-If the entry processor implements `ReadOnly` and modifies the entry, an `UnsupportedOperationException` will be thrown.
+If the entry processor implements `ReadOnly` and modifies the entry, an `UnsupportedOperationException` is thrown.
 
 Putting it all together:
 

@@ -4,7 +4,7 @@
 
 Distributed queries access data from multiple data sources stored on either the same or different members.
 
-Hazelcast partitions your data and spreads it across cluster of members. You can iterate over the map entries and look for certain entries (specified by predicates) you are interested in. However, this is not very efficient because you will have to bring the entire entry set and iterate locally. Instead, Hazelcast allows you to run distributed queries on your distributed map.
+Hazelcast partitions your data and spreads it across cluster of members. You can iterate over the map entries and look for certain entries (specified by predicates) you are interested in. However, this is not very efficient because you have to bring the entire entry set and iterate locally. Instead, Hazelcast allows you to run distributed queries on your distributed map.
 
 
 === How Distributed Query Works
@@ -246,7 +246,7 @@ In the example code below:
 
 * The `greaterEqual` predicate gets values from the "students" map. This predicate has a filter
 to retrieve the objects with an "age" greater than or equal to 18.
-* Then a `PagingPredicate` is constructed in which the page size is 5, so there will be five objects in each page.
+* Then a `PagingPredicate` is constructed in which the page size is 5, so that there are five objects in each page.
 The first time the values are called creates the first page.
 * It gets subsequent pages with the `nextPage()`
 method of `PagingPredicate` and querying the map again with the updated `PagingPredicate`.
@@ -268,7 +268,7 @@ values = map.values( pagingPredicate );
 
 If a comparator is not specified for `PagingPredicate`, but you want to get a collection of keys or values page by page, this collection must be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`). Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
-Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the `setPage()` method. This way, if you make a query for the hundredth page, for example, it will get all 100 pages at once instead of reaching the hundredth page one by one using the `nextPage()` method. Please note that this feature tires the memory and refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
+Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the `setPage()` method. This way, if you make a query for the hundredth page, for example, it gets all 100 pages at once instead of reaching the hundredth page one by one using the `nextPage()` method. Please note that this feature tires the memory and refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
 
 Paging Predicate, also known as Order & Limit, is not supported in Transactional Context.
 
@@ -291,7 +291,7 @@ Collection<String> keys = map.keySet(predicate);
 ----
 
 By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. However, if the
-partition predicate will only access a single partition, this can lead to a big performance gain.
+partition predicate only accesses a single partition, this can lead to a big performance gain.
 
 For the partition predicate to work correctly, you need to know which partition your data belongs to so that you can send the
 request to the correct partition. One of the ways of doing it is to make use of the `PartitionAware` interface when data is
@@ -305,12 +305,12 @@ the accessories for that phone; and this reduces the load on the system and get 
 
 ==== Indexing Queries
 
-Hazelcast distributed queries will run on each member in parallel and will return only the results to the caller.
-Then, on the caller side, the results will be merged.
+Hazelcast distributed queries run on each member in parallel and return only the results to the caller.
+Then, on the caller side, the results are merged.
 
 When a query runs on a
-member, Hazelcast will iterate through all the owned entries and find the matching ones. This can be made faster by indexing
-the mostly queried fields, just like you would do for your database. Indexing will add overhead for each `write`
+member, Hazelcast iterates through all the owned entries and find the matching ones. This can be made faster by indexing
+the mostly queried fields, just like you would do for your database. Indexing adds overhead for each `write`
 operation but queries will be a lot faster. If you query your map a lot, make sure to add indexes for the most frequently
 queried fields. For example, if you do an `active and age < 30` query, make sure you add an index for the `active` and
 `age` fields. The following example code does that by getting the map from the Hazelcast instance and adding indexes to the map with the IMap `addIndex` method.
@@ -375,7 +375,7 @@ NOTE: Starting with Hazelcast 3.9, if you configure the data structure to use <<
 
 The underlying data structures used by the indexes need to copy the query results to make sure that the results are correct. This copying process is performed either when reading the index from the data structure (on-read) or writing to it (on-write).
 
-On-read copying means that, for each index-read operation, the result of the query is copied before it is sent to the caller. Depending on the query result's size, this type of index copying may be slower since the result is stored in a map, i.e., all entries need to have the hash calculated before being stored. Unlike the index-read operations, each index-write operation is fast, since there will be no copying taking place. So, this option can be preferred in index-write intensive cases.
+On-read copying means that, for each index-read operation, the result of the query is copied before it is sent to the caller. Depending on the query result's size, this type of index copying may be slower since the result is stored in a map, i.e., all entries need to have the hash calculated before being stored. Unlike the index-read operations, each index-write operation is fast, since there is no copying. So, this option can be preferred in index-write intensive cases.
 
 On-write copying means that each index-write operation completely copies the underlying map to provide the copy-on-write semantics and this may be a slow operation depending on the index size. Unlike index-write operations, each index-read operation is fast since the operation only includes accessing the map that stores the results and returning them to the caller.
 
@@ -417,7 +417,7 @@ The special attribute `this` acts on the value of a map entry. Typically, you do
 
 You can change the size of thread pool dedicated to query operations using the `pool-size` property. Each query consumes a single thread from a Generic Operations ThreadPool on each Hazelcast member - let's call it the query-orchestrating thread.  That thread is blocked throughout the whole execution-span of a query on the member.
 
-The query-orchestrating thread will use the threads from the query-thread pool in two cases:
+The query-orchestrating thread used the threads from the query-thread pool in two cases:
 
 * if you run a `PagingPredicate` - since each page is run as a separate task,
 * if you set the system property `hazelcast.query.predicate.parallel.evaluation` to true - since the predicates are evaluated in parallel.
@@ -534,14 +534,14 @@ Let's assume you have the following index definition:
 </hazelcast>
 ----
 
-The following query will use the index:
+The following query uses the index:
 
 [source,java]
 ----
 Predicate p = Predicates.equal("wheels[any].name", "front-wheel");
 ----
 
-The following query, however, will NOT leverage the index, since it does not use exactly the same attribute name that
+The following query, however, does NOT leverage the index, since it does not use exactly the same attribute name that
 was used in the index:
 
 [source,java]
@@ -659,7 +659,7 @@ Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast
 
 Portable serialization is a special kind of serialization where there is no need to have the class of the serialized object on the
 classpath in order to read its attributes. That is the reason why the target object passed to the `ValueExtractor.extract()`
-method will not be of the exact type that has been stored. Instead, an instance of a `com.hazelcast.query.extractor.ValueReader` will be passed.
+method is not of the exact type that has been stored. Instead, an instance of a `com.hazelcast.query.extractor.ValueReader` is passed.
 `ValueReader` enables reading the attributes of a Portable object in a generic and type-agnostic way.
 It contains two methods:
 
@@ -695,7 +695,7 @@ Let's assume that we registered a custom extractor with the name `wheelName` and
 
 The extraction may return up to two wheel names for each `Motorbike` since each `Motorbike` has up to two wheels.
 In such a case, it is enough if a single value evaluates the predicate's condition to true to return a match, so
-it will return a `Motorbike` if "any" of the wheels matches the expression.
+it returns a `Motorbike` if "any" of the wheels matches the expression.
 
 ==== Extraction Arguments
 
@@ -706,8 +706,8 @@ e.g., `customAttribute[argument]`.
 Let's have a look at the following query: `currency[incoming] == EUR`
 The `currency` is a custom attribute that uses a `com.test.CurrencyExtractor` for extraction.
 
-The string `incoming` is an argument that will be passed to the `ArgumentParser` during the extraction.
-The parser will parse the string according to the parser's custom logic and it will return a parsed object.
+The string `incoming` is an argument that is passed to the `ArgumentParser` during the extraction.
+The parser parses the string according to its custom logic and it returns a parsed object.
 The parsed object may be a single object, array, collection, or any arbitrary object.
 It is up to the `ValueExtractor`'s implementor to understand the semantics of the parsed argument object.
 
@@ -811,7 +811,7 @@ The best known examples for MapReduce algorithms are text processing tools, such
 
 ==== Understanding MapReduce
 
-This section will give deeper insight into the MapReduce pattern and will help you understand the semantics behind the different MapReduce phases and how they are implemented in Hazelcast.
+This section gives a deeper insight into the MapReduce pattern and helps you understand the semantics behind the different MapReduce phases and how they are implemented in Hazelcast.
 
 In addition to this, the following sections compare Hadoop and Hazelcast MapReduce implementations to help adopters with Hadoop backgrounds quickly get familiar with Hazelcast MapReduce.
 
@@ -822,7 +822,7 @@ corresponding reducers, where they are eventually reduced to a single key-value 
 
 image::MapReduceWorkflow.png[MapReduce Workflow Example]
 
-In pseudo code, the corresponding map and reduce function would look like the following. A Hazelcast code example will be shown in the next section.
+In pseudo code, the corresponding map and reduce function would look like the following. A Hazelcast code example is shown in the next section.
 
 [source,plain]
 ----
