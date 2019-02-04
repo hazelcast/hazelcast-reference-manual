@@ -970,7 +970,7 @@ Here the configured map uses the `map-lock-actions-quorum` quorum for map lock a
 [[accessing-entry-statistics]]
 ==== Accessing Map and Entry Statistics
 
-You can retrieve the statistics of the map in your Hazelcast IMDG member using the `getLocalMapStats()` method, which is the programmatic approach. It returns information such as primary and backup entry count, last update time and locked entry count. If you need the cluster-wide map statistics, you can get the local map statistics from all members of the cluster and combine them. Alternatively, you can see the map statistics on the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#managing-maps[Hazelcast Management Center]. 
+You can retrieve the statistics of the map in your Hazelcast IMDG member using the `getLocalMapStats()` method, which is the programmatic approach. It returns information such as primary and backup entry count, last update time and locked entry count. If you need the cluster-wide map statistics, you can get the local map statistics from all members of the cluster and combine them. Alternatively, you can see the map statistics on the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#managing-maps[Hazelcast Management Center].
 
 To be able to retrieve the map statistics, the `statistics-enabled` element under the map configuration should be set as `true`, which is the default value:
 
@@ -985,7 +985,7 @@ To be able to retrieve the map statistics, the `statistics-enabled` element unde
 </hazelcast>
 ----
 
-When this element is set to `false`, the statistics are not gathered for the map and cannot be seen on the Hazelcast Management Center, nor retrieved by the `getLocalMapStats()` method. 
+When this element is set to `false`, the statistics are not gathered for the map and cannot be seen on the Hazelcast Management Center, nor retrieved by the `getLocalMapStats()` method.
 
 Hazelcast also keeps statistics about each map entry, such as creation time, last update time, last access time, and number of hits and version. To access the map entry statistics, use an `IMap.getEntryView(key)` call. Here is an example.
 
@@ -2430,8 +2430,10 @@ Reliable Topic configuration has the following elements.
 [[lock]]
 === Lock
 
-ILock is the distributed implementation of `java.util.concurrent.locks.Lock`, meaning that if you lock using an ILock, the critical
-section that it guards is guaranteed to be executed by only one thread in the entire cluster, provided that there are no network failures. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
+`FencedLock` is a linearizable & distributed implementation of `java.util.concurrent.locks.Lock`, meaning that if you lock using an FencedLock, the critical
+section that it guards is guaranteed to be executed by only one thread in the entire cluster. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
+
+NOTE: In 3.12, `ILock` interface and implementation of `ILock` has been deprecated. To read about `ILock`, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#lock[Lock] section in 3.11. This section will introduce `FencedLock` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
 
 [[using-try-catch-blocks-with-locks]]
 ==== Using Try-Catch Blocks with Locks
@@ -2465,30 +2467,6 @@ if ( lock.tryLock ( 10, TimeUnit.SECONDS ) ) {
 }
 ----
 
-[[avoiding-waiting-threads-with-lease-time]]
-==== Avoiding Waiting Threads with Lease Time
-
-You can also avoid indefinitely waiting threads by using lock with lease time - the lock will be released in the given lease time. The lock can be safely unlocked before the lease time expires. Note that the unlock operation can
-throw an `IllegalMonitorStateException` if the lock is released because the lease time expires. If that is the case, critical section guarantee is broken.
-
-Please see the below example.
-
-[source,java]
-----
-lock.lock( 5, TimeUnit.SECONDS )
-try {
-    // do some stuff here..
-} finally {
-  try {
-      lock.unlock();
-  } catch ( IllegalMonitorStateException ex ){
-    // WARNING Critical section guarantee can be broken
-  }
-}
-----
-
-You can also specify a lease time when trying to acquire a lock: `tryLock(time, unit, leaseTime, leaseUnit)`. In that case, it tries to acquire the lock within the specified lease time. If the lock is not available, the current thread becomes disabled for thread scheduling purposes until either it acquires the lock or the specified waiting time elapses. Note that this lease time cannot be longer than the time you specify with the system property `hazelcast.lock.max.lease.time.seconds`. Please see the <<system-properties, System Properties appendix>> to see the description of this property and to learn how to set a system property.
-
 [[understanding-lock-behavior]]
 ==== Understanding Lock Behavior
 
@@ -2496,130 +2474,17 @@ You can also specify a lease time when trying to acquire a lock: `tryLock(time, 
 Moreover, when a member leaves the cluster, all the locks acquired by that dead member will be removed so that those
 locks are immediately available for live members.
 * Locks are re-entrant. The same thread can lock multiple times on the same lock. Note that for other threads to be able to require this lock, the owner of the lock must call `unlock` as many times as the owner called `lock`.
-* In the split-brain scenario, the cluster behaves as if it were two different clusters. Since two separate clusters are not aware of each other,
-two members from different clusters can acquire the same lock.
-For more information on places where split-brain syndrome can be handled, please see <<split-brain-syndrome, Split-Brain syndrome>>.
 * Locks are not automatically removed. If a lock is not used anymore, Hazelcast does not automatically perform garbage collection in the lock.
 This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sure they are destroyed.
-* Hazelcast IMap also provides locking support on the entry level with the method `IMap.lock(key)`. Although the same infrastructure
-is used, `IMap.lock(key)` is not an ILock and it is not possible to expose it directly.
 
-[[ilock-vs-imaplock]]
-===== ILock vs. IMap.lock
-
-ILock-based locks use system resources even when they are not acquired. You have to call `destroy()`, but this can have a side effect when another thread is trying to acquire it. ILock-based lock is a good choice when you have a limited number of locks. The IMap-based locks are auto-destructed. They use no resources when they are not acquired. This implies they are invisible for monitoring unless they are being hold by some thread.
-
-[[synchronizing-threads-with-icondition]]
-==== Synchronizing Threads with ICondition
-
-`ICondition` is the distributed implementation of the `notify`, `notifyAll` and `wait` operations on the Java object. You can use it to synchronize
-threads across the cluster. More specifically, you use `ICondition` when a thread's work depends on another thread's output. A good example
-is producer/consumer methodology.
-
-Please see the below code examples for a producer/consumer implementation.
-
-**Producer thread:**
-
-[source,java]
-----
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-Lock lock = hazelcastInstance.getLock( "myLockId" );
-ICondition condition = lock.newCondition( "myConditionId" );
-
-lock.lock();
-try {
-    while ( !shouldProduce() ) {
-        condition.await(); // frees the lock and waits for signal
-            // when it wakes up it re-acquires the lock
-            // if available or waits for it to become
-            // available
-    }
-    produce();
-    condition.signalAll();
-} finally {
-  lock.unlock();
-}
-----
-
-NOTE: The method `await()` takes time value and time unit as arguments. If you specify a negative value for the time, it is interpreted as infinite.
-
-**Consumer thread:**
-
-[source,java]
-----
-HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-Lock lock = hazelcastInstance.getLock( "myLockId" );
-ICondition condition = lock.newCondition( "myConditionId" );
-
-lock.lock();
-try {
-    while ( !canConsume() ) {
-        condition.await(); // frees the lock and waits for signal
-             // when it wakes up it re-acquires the lock if
-             // available or waits for it to become
-             // available
-    }
-    consume();
-    condition.signalAll();
-} finally {
-  lock.unlock();
-}
-----
-
-[[split-brain-protection-for-lock]]
-==== Split-Brain Protection for Lock
-
-Locks can be configured to check for a minimum number of available members before applying lock operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful lock operations on all parts of a cluster during a network partition. Due to the implementation details, the check does not guarantee that the lock will fail in all conditions of a network partition and it can happen that two members can acquire the same lock.
-
-Once the membership change has been detected, the lock operations fail with a `QuorumException` if enough size of members are not present. In essence, this does not provide correctness but rather narrows down the window of opportunity in which locks can continue operations on several members concurrently.
-
-Although the check does not provide correctness it can still be useful. In cases where members acquire the lock to perform some costly but idempotent operation, configuring lock quorum can further prevent some cases where the cluster has been split into several sub-clusters and more than one member perform the same operation.
-
-Following is a list of methods that now support quorum checks. The list is grouped by quorum type. Additionally, since Hazelcast IMap also provides locking support, certain map and multimap methods also allow quorum checks.
-
-* WRITE, READ_WRITE
-** `Condition.await(())`, `Condition.awaitUninterruptibly()`, `Condition.awaitNanos()`, `Condition.awaitUntil()`
-** `Lock.lockInterruptibly()`, `ILock.lock()`, `IMap.tryLock()`, `IMap.lock()`, `MultiMap.lock()`, `MultiMap.tryLock()`
-** `Condition.signal()`, `Condition.signalAll()`
-* READ, READ_WRITE
-** `ILock.getLockCount()`
-** `ILock.getRemainingLeaseTime()`
-** `ILock.isLocked()`, `IMap.isLocked()`, `MultiMap.isLocked()`
-** `ILock.forceUnlock()`, `IMap.forceUnlock()`, `MultiMap.forceUnlock()`, `ILock.unlock()`, `IMap.unlock()`, `ObjectMultiMapProxy.unlock()`
-
-[[lock-configuration]]
-==== Lock Configuration
-
-As mentioned in the <<split-brain-protection-for-lock, Split-brain Protection for Lock section>>, Lock allows for split-brain protection.
-
-An example of declarative configuration is as follows:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <lock name="myLock">
-        <quorum-ref>quorum-name</quorum-ref>
-    </lock>
-    ...
-</hazelcast>
-----
-
-* `quorum-ref` : Name of quorum configuration that you want this lock to use.
-
-An example of programmatic configuration is as follows:
-
-[source,java]
-----
-include::{javasource}/dds/lock/LockConfiguration.java[tag=lc]
-----
-
-NOTE: As mentioned above, a quorum definition for a lock that has the same name or a pattern that matches a map name will force the map locking actions to use the defined quorum. It is important to keep this in mind when using lock quorum and map locking actions.
+NOTE: For detailed information and configuration please refer to <<fencedlock, FencedLock>> under CP Subsystem section.
 
 [[iatomiclong]]
 === IAtomicLong
 
 Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and thus their performances differ from AtomicLong.
+
+NOTE: In 3.12, the original implementation of IAtomicLong has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomiclong[IAtomicLong] section in 3.11. This section will introduce `IAtomicLong` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
 
 The following example code creates an instance, increments it by a million and prints the count.
 
@@ -2670,75 +2535,24 @@ getAndAlter.value: 3
 ```
 
 [[reasons-to-use-functions-with-iatomic]]
-==== Reasons to Use Functions with IAtomic
+==== Reasons to Use Functions with IAtomicLong
 
 The reason for using a function instead of a simple code line like `atomicLong.set(atomicLong.get() + 2));` is that the IAtomicLong read and write operations are not atomic. Since `IAtomicLong` is a distributed implementation, those operations can be remote ones, which may lead to race problems. By using functions, the data is not pulled into the code, but the code is sent to the data. This makes it more scalable.
 
-NOTE: IAtomicLong has one synchronous backup and no asynchronous backups. Its backup count is not configurable.
-
-[[split-brain-protection-for-iatomiclong]]
-==== Split-Brain Protection for IAtomicLong
-
-IAtomicLong can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful operations on all parts of a cluster during a network partition.  Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
-
-* WRITE, READ_WRITE:
-** `addAndGet`
-** `addAndGetAsync`
-** `alter`
-** `alterAndGet`
-** `alterAndGetAsync`
-** `alterAsync`
-** `apply`
-** `applyAsync`
-** `compareAndSet`
-** `compareAndSetAsync`
-** `decrementAndGet`
-** `decrementAndGetAsync`
-** `getAndAdd`
-** `getAndAddAsync`
-** `getAndAlter`
-** `getAndAlterAsync`
-** `getAndIncrement`
-** `getAndIncrementAsync`
-** `getAndSet`
-** `getAndSetAsync`
-** `incrementAndGet`
-** `incrementAndGetAsync`
-** `set`
-** `setAsync`
-* READ, READ_WRITE:
-** `get`
-** `getAsync`
-
-
-**Configuring Split-Brain Protection**
-
-Split-Brain protection for IAtomicLong can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicLongConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <atomic-long name="default">
-        <quorum-ref>quorumname</quorum-ref>
-    </atomic-long>
-    ...
-</hazelcast>
-----
-
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[isemaphore]]
 === ISemaphore
 
 Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.Semaphore`.
 
+NOTE: In 3.12, the original implementation of ISemaphore has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#isemaphore[ISemaphore] section in 3.11. This section will introduce `ISemaphore` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
+
 [[controlling-thread-counts-with-permits]]
 ==== Controlling Thread Counts with Permits
 
 Semaphores offer **permit**s to control the thread counts when performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.
 
-NOTE: ISemaphore with a single permit may be considered as a lock. Unlike the locks, when semaphores are used, any thread can release the permit, and semaphores can have multiple permits.
+NOTE: ISemaphore with a single permit may be considered as a lock. Unlike the locks, when semaphores are used, any thread can release the permit depending on the configuration, and semaphores can have multiple permits. For more info please refer to <<semaphore-configuration, Semaphore Configuration>> section.
 
 NOTE: Hazelcast ISemaphore does not support fairness at all times. There are some edge cases where the fairness is not honored, e.g., when the permit becomes available at the time when an internal timeout occurs.
 
@@ -2757,21 +2571,6 @@ The following example code uses an `IAtomicLong` resource 1000 times, increments
 include::{javasource}/dds/semaphore/SemaphoreMember.java[tag=sm]
 ----
 
-Let's limit the concurrent access to this resource by allowing at most three threads. You can configure it declaratively by setting the `initial-permits` property, as shown below.
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <semaphore name="semaphore">
-        <initial-permits>3</initial-permits>
-    </semaphore>
-    ...
-</hazelcast>
-----
-
-NOTE: If there is a shortage of permits while the semaphore is being created, value of this property can be set to a negative number.
-
 If you execute the above `SemaphoreMember` class 5 times, the following output appears:
 
 `At iteration: 0, Active Threads: 1`
@@ -2786,83 +2585,13 @@ If you execute the above `SemaphoreMember` class 5 times, the following output a
 
 As you can see, the maximum count of concurrent threads is equal or smaller than three. If you remove the semaphore acquire/release statements in `SemaphoreMember`, you will see that there is no limitation on the number of concurrent usages.
 
-Hazelcast also provides backup support for `ISemaphore`. When a member goes down, you can have another member take over the semaphore with the permit information (permits are automatically released when a member goes down). To enable this, configure synchronous or asynchronous backup with the properties `backup-count` and `async-backup-count` (by default, synchronous backup is already enabled).
-
-[[configuring-semaphore]]
-==== Configuring Semaphore
-
-The following are example semaphore configurations.
-
-**Declarative Configuration:**
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <semaphore name="semaphore">
-        <backup-count>1</backup-count>
-        <async-backup-count>0</async-backup-count>
-        <initial-permits>3</initial-permits>
-        <quorum-ref>quorumname</quorum-ref>
-    </semaphore>
-    ...
-</hazelcast>
-----
-
-**Programmatic Configuration:**
-
-[source,java]
-----
-include::{javasource}/dds/semaphore/SemaphoreMember.java[tag=sc]
-----
-
-Semaphore configuration has the below elements.
-
-* `initial-permits`: Thread count to which the concurrent access is limited. For example, if you set it to "3", concurrent access to the object is limited to 3 threads.
-* `backup-count`: Number of synchronous backups.
-* `async-backup-count`: Number of asynchronous backups.
-* `quorum-ref`: Name of quorum configuration that you want this Semaphore to use. Please see the <<split-brain-protection-for-isemaphore, Split-Brain Protection for ISemaphore section>> below.
-
-NOTE: If high performance is more important than not losing the permit information, you can disable the backups by setting `backup-count` to 0.
-
-[[split-brain-protection-for-isemaphore]]
-==== Split-Brain Protection for ISemaphore
-
-ISemaphore can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
-
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
-
-* WRITE, READ_WRITE:
-** `acquire`
-** `drainPermits`
-** `init`
-** `reducePermits`
-** `release`
-** `tryAcquire`
-* READ, READ_WRITE:
-** `availablePermits`
-
-**Configuring Split-Brain Protection**
-
-Split-Brain protection for ISemaphore can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SemaphoreConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <semaphore name="default">
-        <quorum-ref>quorumname</quorum-ref>
-    </semaphore>
-    ...
-</hazelcast>
-----
-
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[iatomicreference]]
 === IAtomicReference
 
 The `IAtomicLong` is very useful if you need to deal with a long, but in some cases you need to deal with a reference. That is why Hazelcast also supports the `IAtomicReference` which is the distributed version of the `java.util.concurrent.atomic.AtomicReference`.
+
+NOTE: In 3.12, the original implementation of IAtomicReference has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomicreference[IAtomicReference] section in 3.11. This section will introduce `IAtomicReference` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
 
 Here is an IAtomicReference example.
 
@@ -2889,70 +2618,22 @@ Just like `IAtomicLong`, `IAtomicReference` has methods that accept a 'function'
 Below are some considerations you need to know when you use IAtomicReference.
 
 * `IAtomicReference` works based on the byte-content and not on the object-reference. If you use the `compareAndSet` method, do not change to the original value because its serialized content will then be different. It is also important to know that if you rely on Java serialization, sometimes (especially with hashmaps) the same object can result in different binary content.
-* `IAtomicReference` always has one synchronous backup.
 * All methods returning an object return a private copy. You can modify the private copy, but the rest of the world is shielded from your changes. If you want these changes to be visible to the rest of the world, you need to write the change back to the `IAtomicReference`; but be careful about introducing a data-race.
 * The 'in-memory format' of an `IAtomicReference` is `binary`. The receiving side does not need to have the class definition available unless it needs to be deserialized on the other side, e.g., because a method like 'alter' is executed. This deserialization is done for every call that needs to have the object instead of the binary content, so be careful with expensive object graphs that need to be deserialized.
 * If you have an object with many fields or an object graph and you only need to calculate some information or need a subset of fields, you can use the `apply` method. With the `apply` method, the whole object does not need to be sent over the line; only the information that is relevant is sent.
 
-[[split-brain-protection-for-iatomicreference]]
-==== Split-Brain Protection for IAtomicReference
-
-IAtomicReference can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful operations on all parts of a cluster during a network partition.
-
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
-
-* WRITE, READ_WRITE:
-** `alter`
-** `alterAndGet`
-** `alterAndGetAsync`
-** `alterAsync`
-** `apply`
-** `applyAsync`
-** `clear`
-** `clearAsync`
-** `compareAndSet`
-** `compareAndSetAsync`
-** `getAndAlter`
-** `getAndAlterAsync`
-** `getAndSet`
-** `getAndSetAsync`
-** `set`
-** `setAndGet`
-** `setAsync`
-* READ, READ_WRITE:
-** `contains`
-** `containsAsync`
-** `get`
-** `getAsync`
-** `isNull`
-** `isNullAsync`
-
-**Configuring Split-Brain Protection**
-
-Split-Brain protection for IAtomicReference can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/AtomicReferenceConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <atomic-reference name="default">
-        <quorum-ref>quorumname</quorum-ref>
-    </atomic-reference>
-    ...
-</hazelcast>
-----
-
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[icountdownlatch]]
 === ICountDownLatch
 
 Hazelcast `ICountDownLatch` is the distributed implementation of `java.util.concurrent.CountDownLatch`.
 
+NOTE: In 3.12, the original implementation of ICountDownLatch has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#icountdownlatch[ICountDownLatch] section in 3.11. This section will introduce `ICountDownLatch` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
+
 [[gate-keeping-concurrent-activities]]
 ==== Gate-Keeping Concurrent Activities
 
-`CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations. The following examples describe the mechanism of `ICountDownLatch`. 
+`CountDownLatch` is considered to be a gate keeper for concurrent activities. It enables the threads to wait for other threads to complete their operations. The following examples describe the mechanism of `ICountDownLatch`.
 
 Assume that there is a leader process and there are follower processes that will wait until the leader completes. Here is the leader:
 
@@ -2980,38 +2661,6 @@ In a distributed environment, the counting down cluster member may go down. In t
 
 Although `ICountDownLatch` is a very useful synchronization aid, you may probably not use it on a daily basis. Unlike Java's implementation, Hazelcast's `ICountDownLatch` count can be reset after a countdown has finished, but not during an active count.
 
-NOTE: ICountDownLatch has one synchronous backup and no asynchronous backups. Its backup count is not configurable. Also, the count cannot be re-set during an active count, it should be re-set after the countdown is finished.
-
-[[split-brain-protection-for-icountdownlatch]]
-==== Split-Brain Protection for ICountDownLatch
-
-ICountDownLatch can be configured to check for a minimum number of available members before applying ICountDownLatch operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
-
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
-
-* WRITE, READ_WRITE:
-** `countDown`
-** `trySetCount`
-* READ, READ_WRITE:
-** `await`
-** `getCount`
-
-**Configuring Split-Brain Protection**
-
-Split-Brain protection for ICountDownLatch can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CountDownLatchConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <count-down-latch name="default">
-        <quorum-ref>quorumname</quorum-ref>
-    </count-down-latch>
-    ...
-</hazelcast>
-----
-
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[pn-counter]]
 === PN Counter

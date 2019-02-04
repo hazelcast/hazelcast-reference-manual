@@ -10,7 +10,7 @@ public class ExampleIAtomicReference {
 
         HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 
-        IAtomicReference<String> ref = hz.getAtomicReference("reference");
+        IAtomicReference<String> ref = hz.getCPSubsystem().getAtomicReference("reference");
         ref.set("foo");
         System.out.println(ref.get());
         System.exit(0);

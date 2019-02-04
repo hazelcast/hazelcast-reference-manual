@@ -7,7 +7,8 @@ public class ExampleLock {
     public static void main(String[] args) throws Exception{
         //tag::lock[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        Lock lock = hazelcastInstance.getLock( "myLock" );
+
+        Lock lock = hazelcastInstance.getCPSubsystem().getLock("myLock");
         lock.lock();
         try {
             // do something here
