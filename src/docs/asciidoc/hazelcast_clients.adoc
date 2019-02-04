@@ -27,7 +27,7 @@ In the following client sections, you will find links to each client's code samp
 
 The Java client is the most full featured Hazelcast native client. It is offered both with Hazelcast IMDG and Hazelcast IMDG Enterprise. The main idea behind the Java client is to provide the same Hazelcast functionality by proxying each operation through a Hazelcast member. It can access and change distributed data and it can listen to distributed events of an already established Hazelcast cluster from another Java application.
 
-Hundreds or even thousands of clients can be connected to the cluster. By default, there are `core count * 20` threads on the server side that will handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
+Hundreds or even thousands of clients can be connected to the cluster. By default, there are `core count * 20` threads on the server side that handle all the requests, e.g., if the server has 4 cores, there will be 40 threads.
 
 Imagine a trading application where all the trading data are stored and managed in a Hazelcast cluster with tens of members. Swing/Web applications at the traders' desktops can use clients to access and modify the data in the Hazelcast cluster.
 
@@ -68,7 +68,7 @@ You can find Hazelcast Java client's code samples https://github.com/hazelcast/h
 
 ===== Client API
 
-The first step is configuration. You can configure the Java client declaratively or programmatically. We will use the programmatic approach throughout this tutorial. Please refer to the <<configuring-java-client, Java Client Declarative Configuration section>> for details.
+The first step is configuration. You can configure the Java client declaratively or programmatically. We use the programmatic approach for this section, as shown below.
 
 [source,java]
 ----
@@ -76,6 +76,8 @@ ClientConfig clientConfig = new ClientConfig();
 clientConfig.getGroupConfig().setName("dev");
 clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
 ----
+
+See the <<configuring-java-client, Configuring Java Client section>> for more information.
 
 The second step is initializing the `HazelcastInstance` to be connected to the cluster.
 
@@ -96,7 +98,7 @@ mapCustomers.put("2", new Customer("Ali", "Selam"));
 mapCustomers.put("3", new Customer("Avi", "Noyan"));
 ----
 
-As a final step, if you are done with your client, you can shut it down as shown below. This will release all the used resources and will close connections to the cluster.
+As a final step, if you are done with your client, you can shut it down as shown below. This releases all the used resources and closes connections to the cluster.
 
 ```
 client.shutdown();
@@ -106,12 +108,12 @@ client.shutdown();
 
 The client has two operation modes because of the distributed nature of the data and cluster.
 
-**Smart Client**: In the smart mode, clients connect to each cluster member. Since each data partition uses the well known and consistent hashing algorithm, each client can send an operation to the relevant cluster member, which increases the overall throughput and efficiency. Smart mode is the default mode.
+**Smart Client**: In the smart mode, the clients connect to each cluster member. Since each data partition uses the well known and consistent hashing algorithm, each client can send an operation to the relevant cluster member, which increases the overall throughput and efficiency. Smart mode is the default mode.
 
 
 **Unisocket Client**: For some cases, the clients can be required to connect to a single member instead of to each member in the cluster. Firewalls, security, or some custom networking issues can be the reason for these cases.
 
-In unisocket client mode, the client will only connect to one of the configured addresses. This single member will behave as a gateway to the other members. For any operation requested from the client, it will redirect the request to the relevant member and return the response back to the client returned from this member.
+In the unisocket client mode, the clients only connect to one of the configured addresses. This single member behaves as a gateway to the other members. For any operation requested from the client, it redirects the request to the relevant member and returns the response back to the client returned from that member.
 
 ===== Handling Failures
 
@@ -119,18 +121,18 @@ There are two main failure cases and configurations you can perform to achieve p
 
 **Handling Client Connection Failure:**
 
-While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, all the members might be not available. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `connectionAttemptLimit` times.
+While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, all the members might be not available. Instead of giving up, throwing an exception and stopping the client, the client retries as many as `connectionAttemptLimit` times.
 
 You can configure `connectionAttemptLimit` for the number of times you want the client to retry connecting. Please see <<setting-connection-attempt-limit, Setting Connection Attempt Limit>>.
 
-The client executes each operation through the already established connection to the cluster. If this connection(s) disconnects or drops, the client will try to reconnect as configured.
+The client executes each operation through the already established connection to the cluster. If this connection(s) disconnects or drops, the client tries to reconnect as configured.
 
 
 **Handling Retry-able Operation Failure:**
 
 While sending the requests to related members, operations can fail due to various reasons. Read-only operations are retried by default. If you want to enable retry for the other operations, you can set the `redoOperation` to `true`. Please see <<enabling-redo-operation, Enabling Redo Operation>>.
 
-You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client will retry an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes:
+You can set a timeout for retrying the operations sent to a member. This can be provided by using the property `hazelcast.client.invocation.timeout.seconds` in `ClientProperties`. The client retries an operation within this given period, of course, if it is a read-only operation or you enabled the `redoOperation` as stated in the above paragraph. This timeout value is important when there is a failure resulted by either of the following causes:
 
 * Member throws an exception.
 * Connection between the client and member is closed.
@@ -241,7 +243,7 @@ include::{javasource}/clients/ListeningClients.java[tag=lc]
 
 ====== Finding the Partition of a Key
 
-You use partition service to find the partition of a key. It will return all partitions. See the example code below.
+You use partition service to find the partition of a key. It returns all partitions. See the example code below.
 
 [source,java]
 ----
@@ -322,8 +324,8 @@ Transactional distributed objects are supported on the client side. Please see t
 
 Java client can be configured to connect to a cluster in an async manner during the client start and reconnecting after a cluster disconnect. Both of these options are configured via `ClientConnectionStrategyConfig`.
 
-Async client start is configured by setting the configuration element `async-start` to `true`. This configuration will change the behavior of `HazelcastClient.newHazelcastClient()` call. It'll return a client instance without waiting to establish a cluster connection.
-Until the client connects to cluster, it will throw `HazelcastClientOfflineException` on any network dependent operations hence they won't block. If you want to check or wait the client to complete its cluster connection, you can use the built-in lifecycle listener:
+Async client start is configured by setting the configuration element `async-start` to `true`. This configuration changes the behavior of `HazelcastClient.newHazelcastClient()` call. It returns a client instance without waiting to establish a cluster connection.
+Until the client connects to cluster, it throws `HazelcastClientOfflineException` on any network dependent operations hence they won't block. If you want to check or wait the client to complete its cluster connection, you can use the built-in lifecycle listener:
 
 
 [source,java]
@@ -348,7 +350,7 @@ Java client can also be configured to specify how it reconnects after a cluster 
 
 * A client can reject to reconnect to the cluster and trigger the client shutdown process.
 * Client can open a connection to the cluster by blocking all waiting invocations.
-* Client can open a connection to the cluster without blocking the waiting invocations. All invocations will receive `HazelcastClientOfflineException` during the establishment of cluster connection. If cluster connection is failed to connect, then client shutdown will be triggered.
+* Client can open a connection to the cluster without blocking the waiting invocations. All invocations receive `HazelcastClientOfflineException` during the establishment of cluster connection. If cluster connection is failed to connect, then client shutdown is triggered.
 
 You can refer to the <<configuring-client-connection-strategy, Configuring Client Connection Strategy section>> to learn how to configure these.
 
@@ -487,7 +489,7 @@ ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703");
 ----
 
-If the port part is omitted, then 5701, 5702 and 5703 will be tried in random order.
+If the port part is omitted, then 5701, 5702 and 5703 are tried in a random order.
 
 You can provide multiple addresses with ports provided or not, as seen above. The provided list is shuffled and tried in random order. Its default value is *localhost*.
 
@@ -623,7 +625,7 @@ Its default value is *5000* milliseconds.
 
 ====== Setting Connection Attempt Limit
 
-While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, that member might not be available at that moment. Instead of giving up, throwing an exception and stopping the client, the client will retry as many as `ClientNetworkConfig.connectionAttemptLimit` times. This is also the case when the previously established connection between the client and that member goes down. The following are example configurations.
+While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`, that member might not be available at that moment. Instead of giving up, throwing an exception and stopping the client, the client retries as many as `ClientNetworkConfig.connectionAttemptLimit` times. This is also the case when the previously established connection between the client and that member goes down. The following are example configurations.
 
 Declarative Configuration:
 

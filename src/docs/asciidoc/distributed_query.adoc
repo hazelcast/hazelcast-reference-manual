@@ -900,7 +900,7 @@ This section explains the basics of the Hazelcast MapReduce framework. While wal
 The Hazelcast API for MapReduce operations consists of a fluent DSL-like configuration syntax to build and submit jobs. `JobTracker` is the basic entry point to all MapReduce operations and is retrieved from `com.hazelcast.core.HazelcastInstance` by calling `getJobTracker` and supplying the name of the required `JobTracker` configuration. The configuration for ``JobTracker``s will be discussed later; for now we focus on the API itself.
 In addition, the complete submission part of the API is built to support a fully reactive way of programming.
 
-To give an easy introduction to people used to Hadoop, we created the class names to be as familiar as possible to their counterparts on Hadoop. That means while most users will recognize a lot of similar sounding classes, the way to configure the jobs is more fluent due to the DSL-like styled API.
+To give an easy introduction to people used to Hadoop, we created the class names to be as familiar as possible to their counterparts on Hadoop. That means while most users recognize a lot of similar sounding classes, the way to configure the jobs is more fluent due to the DSL-like styled API.
 
 While building the example, we will go through as many options as possible, e.g., we will create a specialized `JobTracker` configuration (at the end). Special `JobTracker` configuration is not required, because for all other Hazelcast features you can use "default" as the configuration name. However, special configurations offer better options to predict behavior of the framework execution.
 
@@ -912,7 +912,7 @@ The full example is available http://github.com/noctarius/hz-map-reduce[here] as
 
 NOTE: After retrieving the `JobTracker`, be aware that it should only be used with data structures derived from the same HazelcastInstance. Otherwise, you can get unexpected behavior.
 
-To retrieve a `JobTracker` from Hazelcast, we will start by using the "default" configuration for convenience reasons to show the basic way.
+To retrieve a `JobTracker` from Hazelcast, we start by using the "default" configuration for convenience reasons to show the basic way.
 
 [source,java]
 ----
@@ -921,19 +921,19 @@ JobTracker jobTracker = hazelcastInstance.getJobTracker( "default" );
 
 `JobTracker` is retrieved using the same kind of entry point as most other Hazelcast features. After building the cluster connection, you use the created HazelcastInstance to request the configured (or default) `JobTracker` from Hazelcast.
 
-The next step will be to create a new `Job` and configure it to execute our first MapReduce request against cluster data.
+The next step is creating a new `Job` and configuring it to execute our first MapReduce request against cluster data.
 
 ===== Creating a Job
 
-As mentioned in the previous section, you create a Job using the retrieved `JobTracker` instance. A Job defines exactly one configuration of a MapReduce task. Mapper, combiner and reducers will be defined per job. However, since the Job instance is only a configuration, it can be submitted multiple times, regardless of whether executions happen in parallel or one after the other.
+As mentioned in the previous section, you create a Job using the retrieved `JobTracker` instance. A Job defines exactly one configuration of a MapReduce task. Mapper, combiner and reducers are defined per job. However, since the Job instance is only a configuration, it can be submitted multiple times, regardless of whether executions happen in parallel or one after the other.
 
-A submitted job is always identified using a unique combination of the `JobTracker`'s name and a jobId generated on submit-time. The way to retrieve the jobId will be shown in one of the later sections.
+A submitted job is always identified using a unique combination of the `JobTracker`'s name and a jobId generated on submit-time. The way to retrieve the `jobId` is shown in one of the later sections.
 
 To create a Job, a second class `com.hazelcast.mapreduce.KeyValueSource` is necessary. We will have a deeper look at the `KeyValueSource` class in the next section. `KeyValueSource` is used to wrap any kind of data or data structure into a well defined set of key-value pairs.
 
 The example code below is a direct follow up to the example in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>. It reuses the already created HazelcastInstance and `JobTracker` instances.
 
-The example starts by retrieving an instance of our data map and then it creates the Job instance. Implementations used to configure the Job will be discussed while walking further through the API documentation.
+The example starts by retrieving an instance of our data map and then it creates the Job instance. Implementations used to configure the Job are discussed while walking further through the API documentation.
 
 NOTE: Since the Job class is highly dependent upon generics to support type safety, the generics change over time and may not be assignment compatible to old variable types. To make use of the full potential of the fluent API, we recommend you use fluent method chaining as shown in this example to prevent the need for too many variables.
 
@@ -1004,7 +1004,7 @@ multiple times but once per partitionId.
 
 ===== Implementing Mapping Logic with Mapper
 
-Using the `Mapper` interface, you will implement the mapping logic. Mappers can transform, split, calculate and aggregate data from data sources. In Hazelcast you can also integrate data from more than the KeyValueSource data source by implementing `com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps, list and/or sets.
+You implement the mapping logic using the `Mapper` interface. Mappers can transform, split, calculate and aggregate data from data sources. In Hazelcast you can also integrate data from more than the KeyValueSource data source by implementing `com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps, list and/or sets.
 
 The mappers `map` function is called once per available entry in the data structure. If you work on distributed data structures that operate in a partition-based fashion, multiple mappers work in parallel on the different cluster members on the members' assigned partitions. Mappers then prepare and maybe transform the input key-value pair and emit zero or more key-value pairs for the reducing phase.
 
@@ -1090,7 +1090,7 @@ Unlike combiners, a reducer's `finalizeReduce` method is only called once per re
 
 Reducers can override `beginReduce` to perform preparation work.
 
-For our word count example, the implementation will look similar to the following code example.
+For our word count example, the implementation looks similar to the following code example.
 
 [source,java]
 ----
@@ -1239,7 +1239,7 @@ The following snippet shows a typical `JobTracker` configuration. The configurat
 * `chunk-size`: Number of emitted values before a chunk is sent to the reducers. If your emitted values are big or you want to better balance your work, you might want to change this to a lower or higher value. A value of 0 means immediate transmission, but remember that low values mean higher traffic costs. A very high value might cause an OutOfMemoryError to occur if the emitted values do not fit into heap memory before
 being sent to the reducers. To prevent this, you might want to use a combiner to pre-reduce values on mapping members.
 * `communicate-stats`: Specifies whether the statistics (for example, statistics about processed entries) are transmitted to the job emitter. This can show progress to a user inside of an UI system, but it produces additional traffic. If not needed, you might want to deactivate this.
-* `topology-changed-strategy`: Specifies how the MapReduce framework reacts on topology changes while executing a job. Currently, only CANCEL_RUNNING_OPERATION is fully supported, which throws an exception to the job emitter (will throw a `com.hazelcast.mapreduce.TopologyChangedException`).
+* `topology-changed-strategy`: Specifies how the MapReduce framework reacts on topology changes while executing a job. Currently, only CANCEL_RUNNING_OPERATION is fully supported, which throws an exception to the job emitter (throws `com.hazelcast.mapreduce.TopologyChangedException`).
 
 ==== Hazelcast MapReduce Architecture
 
@@ -1407,7 +1407,7 @@ IMap<String, Long> counts = documents
         .collect(DistributedCollectors.toIMap(w -> w, w -> 1L, (left, right) -> left + right));
 ----
 
-This can be taken as a general template to express a MapReduce job in terms of Jet JUS: the logic of the mapper is inside `flatMap` and the logic of both the combiner and the reducer is inside collect. Jet will automatically apply the optimization where the data stream is first "combined" locally on each member, then the partial results "reduced" in the final step, after sending across the network.
+This can be taken as a general template to express a MapReduce job in terms of Jet JUS: the logic of the mapper is inside `flatMap` and the logic of both the combiner and the reducer is inside collect. Jet automatically applies the optimization where the data stream is first "combined" locally on each member, then the partial results "reduced" in the final step, after sending across the network.
 
 Keep in mind that MapReduce and JUS use the same terminology, but with quite different meaning: in JUS the final step is called "combine" (MapReduce calls it "reduce") and the middle step is called "reduce" (MapReduce calls this one "combine"). MapReduce's "combine" collapses the stream in fixed-size batches, whereas in Jet JUS "reduce" collapses the complete local dataset and sends just a single item per distinct key to the final step. In Jet JUS, the final "combine" step combines just one partial result per member into the total result, whereas in MapReduce the final step "reduces" all the one-per-batch items to the final result. Therefore, in Jet there are only O (distinct-key-count) items sent over the network whereas in MapReduce it is still O (total-item-count) with just a linear scaling factor equal to the configured batch size.
 
@@ -1546,7 +1546,7 @@ One of the challenges of implementing a custom processor is cooperativeness: it 
 
 Hazelcast has native support for aggregation operations on the contents of its distributed data structures. They operate on the assumption that the aggregating function is commutative and associative, which allows the two-tiered approach where first the local data is aggregated, then all the local subresults sent to one member, where they are combined and returned to the user. This approach works quite well as long as the result is of manageable size. Many interesting aggregations produce an O(1) result and for those, the native aggregations are a good match.
 
-The main area where native aggregations may not be sufficient are the operations that group the data by key and produce results of size O (`keyCount`). The architecture of Hazelcast aggregations is not well adapted to this use case, although it will still work even for moderately-sized results (up to 100 MB, as a ballpark figure). Beyond these numbers, and whenever something more than a single aggregation step is needed, Jet becomes the preferred choice. In the mentioned use case Jet helps because it doesn't send the entire hashtables in serialized form and materialize all the results on the user's machine, but rather streams the key-value pairs directly into a target IMap. Since it is a distributed structure, it doesn't focus its load on a single member.
+The main area where native aggregations may not be sufficient are the operations that group the data by key and produce results of size O (`keyCount`). The architecture of Hazelcast aggregations is not well adapted to this use case, although it still works even for moderately-sized results (up to 100 MB, as a ballpark figure). Beyond these numbers, and whenever something more than a single aggregation step is needed, Jet becomes the preferred choice. In the mentioned use case Jet helps because it doesn't send the entire hashtables in serialized form and materialize all the results on the user's machine, but rather streams the key-value pairs directly into a target IMap. Since it is a distributed structure, it doesn't focus its load on a single member.
 
 Jet's DAG paradigm offers much more than the basic map-reduce-combine cascade. Among other setups, it can compose several such cascades and also perform co-grouping, joining and many other operations in complex combinations.
 
@@ -1563,8 +1563,8 @@ achieved using pure MapReduce calls. However, using the Aggregation feature is m
 
 ==== Aggregations Basics
 
-This section will quickly guide you through the basics of the Aggregations framework and some of its available classes.
-We also will implement a first base example.
+This section quickly guides you through the basics of the Aggregations framework and some of its available classes.
+We also implement a first base example in this section.
 
 ===== Aggregations and Map Interfaces
 
@@ -1587,7 +1587,7 @@ https://jcp.org/en/jsr/detail?id=335[JSR 335]) support.
 For illustration of the differences in Java 6 and 7 in comparison to Java 8, we will have a quick look at code
 examples for both. After that, we will focus on using Java 8 syntax to keep examples short and easy to understand. We will see some hints about what the code looks like in Java 6 or 7.
 
-The first example will produce the sum of some `int` values stored in a Hazelcast IMap. This example does not use much of the functionality of the Aggregations framework, but it will show the main difference.
+The first example produces the sum of some `int` values stored in a Hazelcast IMap. This example does not use much of the functionality of the Aggregations framework, but it shows the main difference.
 
 [source,java]
 ----
@@ -1622,7 +1622,7 @@ int sum = personAgeMapping.aggregate( supplier, aggregation );
 ===== Aggregations and Java 8
 
 With Java 8, the Aggregations API looks simpler because Java 8 can resolve the generic parameters for us. That means
-the above lines of Java 6/7 example code will end up in just one easy line on Java 8.
+the above lines of Java 6/7 example code ends up in just one easy line on Java 8.
 
 [source,java]
 ----
@@ -1919,7 +1919,7 @@ As stated before, the easiest way to configure the resources used by the underly
 to the aggregation call itself by passing it to either `IMap.aggregate()` or `MultiMap.aggregate()`.
 
 There is another way to implicitly configure the underlying used `JobTracker`. If no specific `JobTracker` was
-passed for the aggregation call, internally one will be created using the following naming specifications:
+passed for the aggregation call, internally one is created using the following naming specifications:
 
 For `IMap` aggregation calls the naming specification is created as:
 * `hz::aggregation-map-` and the concatenated name of the map.
@@ -2071,7 +2071,7 @@ int avgSalary = salaries.aggregate( Supplier.fromKeyPredicate(
 
 ===== Grouping Example
 
-For our next example, we will do some grouping based on the different worldwide offices. Currently, a group aggregator is not yet
+For our next example, we do some grouping based on the different worldwide offices. Currently, a group aggregator is not yet
 available, so we need a small workaround to achieve this goal. (In later versions of the Aggregations API this will not be
 required because it will be available out-of-the-box in a much more convenient way.)
 
@@ -2380,7 +2380,7 @@ The following features of continuous query cache are valid for both the member a
 * A continuous query cache is evictable. Note that a continuous query cache has a default maximum capacity of 10000. If you need a non-evictable cache, you should configure the eviction via `QueryCacheConfig.setEvictionConfig()`.
 * A listener can be added to a continuous query cache using `QueryCache.addEntryListener()`.
 * `IMap` events are reflected in continuous query cache in the same order as they were generated on map entries. Since events are created on entries stored in partitions, ordering of events is maintained based on the ordering within the partition. You can add listeners to capture lost events using `EventLostListener` and you can recover lost events with the method `QueryCache.tryRecover()`.
-Recovery of lost events largely depends on the size of the buffer on Hazelcast members. Default buffer size is 16 per partition; i.e. 16 events per partition can be maintained in the buffer. If the event generation is high, setting the buffer size to a higher number will provide better chances of recovering lost events. You can set buffer size with `QueryCacheConfig.setBufferSize()`. You can use the following example code for a recovery case.
+Recovery of lost events largely depends on the size of the buffer on Hazelcast members. Default buffer size is 16 per partition, i.e., 16 events per partition can be maintained in the buffer. If the event generation is high, setting the buffer size to a higher number provides better chances of recovering lost events. You can set buffer size with `QueryCacheConfig.setBufferSize()`. You can use the following example code for a recovery case.
 +
 [source,java]
 ----
@@ -2435,7 +2435,7 @@ Here are the descriptions of configuration elements and attributes:
 
 * `name`: Name of your continuous query cache.
 * `include-value`: Specifies whether the value will be cached too. Its default value is true.
-* `predicate`: Predicate to filter events which will be applied to the query cache.
+* `predicate`: Predicate to filter events which are applied to the query cache.
 * `entry-listeners`: Adds listeners (listener classes) for your query cache entries. Please see the <<registering-map-listeners, Registering Map Listeners section>>.
 * `in-memory-format`: Type of the data to be stored in your query cache. Please see the <<setting-in-memory-format, Setting In-Memory Format section>>. Its default value is BINARY.
 * `populate`: Specifies whether the initial population of your query cache is enabled. Its default value is true.
