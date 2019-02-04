@@ -1036,15 +1036,18 @@ public interface IPermissionPolicy {
 }
 ----
 
-Permission policy implementations can access client-permissions that are in configuration by using
+Permission policy implementations can access the client permissions that are in the configuration by using the
 `SecurityConfig.
-getClientPermissionConfigs()` when Hazelcast calls the method `configure(SecurityConfig securityConfig, Properties properties)`.
+getClientPermissionConfigs()` method when Hazelcast calls `configure(SecurityConfig securityConfig, Properties properties)`.
 
 The `IPermissionPolicy.getPermissions(Subject subject, Class<? extends Permission> type)` method is used to determine a client request that has been granted permission to perform a security-sensitive operation.
 
 Permission policy should return a `PermissionCollection` containing permissions of the given type for the given `Subject`. The Hazelcast access controller will call `PermissionCollection.implies(Permission)` on returning `PermissionCollection` and it will decide whether or not the current `Subject` has permission to access the requested resources.
 
 ==== Permissions
+
+NOTE: You can choose whether a new member joining to a cluster will apply the client permissions stored in its own configuration, or will use the ones defined in the cluster. The decision for this can be set using the <<permission-onjoin, `hazelcast.security.permission.update.onjoin.disable`>> system property. Its default value is `false`, meaning that the new member applies the permissions defined in the cluster. If you set this property to `true` for a member and it has different permission configurations than the cluster, the new member and other cluster members will behave differently in terms of using client permissions.
+
 
 * All Permission
 +
