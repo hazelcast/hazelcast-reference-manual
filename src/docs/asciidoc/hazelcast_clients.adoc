@@ -145,7 +145,7 @@ When any failure happens between a client and member (such as an exception at th
 * it is certain that it has not run on the member yet, or
 * if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect.
 
-If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member and then the connection is lost. Since there will be no respond for this operation, you will not know whether it has run on the member or not. If you enabled `redoOperation`, that `queue.offer` operation may rerun and this will cause the same objects to be offered twice in the member's queue.
+If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member and then the connection is lost. Since there will be no respond for this operation, you will not know whether it has run on the member or not. If you enabled `redoOperation`, that `queue.offer` operation may rerun and this causes the same objects to be offered twice in the member's queue.
 
 ===== Using Supported Distributed Data Structures
 
@@ -692,7 +692,7 @@ public interface SocketInterceptor {
 }
 ----
 
-`SocketInterceptor` has two steps. First, it will be initialized by the configured properties. Second, it will be informed just after the socket is connected using `onConnect`.
+`SocketInterceptor` has two steps. First, it is initialized by the configured properties. Second, it is informed just after the socket is connected using the `onConnect` method.
 
 
 [source,java]
@@ -755,7 +755,7 @@ As explained in the <<tlsssl , TLS/SSL section>>, Hazelcast members have keyStor
 
 ====== Configuring Hazelcast Cloud
 
-You can connect your Java client to a Hazelcast cluster which is hosted on https://hazelcast.com/products/cloud/[Hazelcast Cloud]. For this, you simply enable the Hazelcast Cloud and specify the cluster's discovery token provided by Hazelcast Cloud while creating the cluster; this will allow the Hazelcast cluster to discover your clients. See the following example configurations.
+You can connect your Java client to a Hazelcast cluster which is hosted on https://hazelcast.com/products/cloud/[Hazelcast Cloud]. For this, you simply enable the Hazelcast Cloud and specify the cluster's discovery token provided by Hazelcast Cloud while creating the cluster; this allows the Hazelcast cluster to discover your clients. See the following example configurations.
 
 Declarative Configuration:
 
@@ -842,7 +842,7 @@ include::{javasource}/clients/ExampleClientAwsConfig.java[tag=clientaws]
 
 You can refer to the <<aws-element, aws element section>> for the descriptions of the above AWS configuration elements except `inside-aws` and `iam-role`, which are explained below.
 
-If the `inside-aws` element is not set, the private addresses of cluster members will always be converted to public addresses. Also, the client will use public addresses to connect to the members. In order to use private addresses, set the `inside-aws` parameter to `true`. Also note that, when connecting outside from AWS, setting the `inside-aws` parameter to `true` will cause the client to not be able to reach the members.
+If the `inside-aws` element is not set, the private addresses of cluster members are always converted to public addresses. Also, the client uses public addresses to connect to the members. In order to use private addresses, set the `inside-aws` parameter to `true`. Also note that, when connecting outside from AWS, setting the `inside-aws` parameter to `true` causes the client to not be able to reach the members.
 
 IAM roles are used to make secure requests from your clients. You can provide the name of your IAM role that you created previously on your AWS console using the `iam-role` or `setIamRole()` method.
 
@@ -850,7 +850,7 @@ IAM roles are used to make secure requests from your clients. You can provide th
 
 `LoadBalancer` allows you to send operations to one of a number of endpoints (Members). Its main purpose is to determine the next `Member` if queried. It is up to your implementation to use different load balancing policies. You should implement the interface `com.hazelcast.client.LoadBalancer` for that purpose.
 
-If the client is configured in smart mode, only the operations that are not key-based will be routed to the endpoint that is returned by the `LoadBalancer`. If the client is not a smart client, `LoadBalancer` will be ignored.
+If it is a <<java-client-operation-modes, smart client>>, only the operations that are not key-based are routed to the endpoint that is returned by the `LoadBalancer`. If it is not a smart client, `LoadBalancer` is ignored.
 
 The following are example configurations.
 
@@ -900,10 +900,10 @@ You can add three types of event listeners.
 
 ===== Configuring Client Connection Strategy
 
-You can configure the client's starting mode as async or sync using the configuration element `async-start`. When it is set to `true` (async), Hazelcast will create the client without waiting a connection to the cluster. In this case, the client instance throws an exception until it connects to the cluster. If it is `false`, the client will not be created until the cluster is ready to use clients and a connection with the cluster is established. Its default value is `false` (sync)
+You can configure the client's starting mode as async or sync using the configuration element `async-start`. When it is set to `true` (async), Hazelcast creates the client without waiting a connection to the cluster. In this case, the client instance throws an exception until it connects to the cluster. If it is `false`, the client is not created until the cluster is ready to use clients and a connection with the cluster is established. Its default value is `false` (sync)
 
-You can also configure how the client will reconnect to the cluster after a disconnection. This is configured using the configuration element `reconnect-mode`; it has three options (`OFF`, `ON` or `ASYNC`). The option `OFF` disables the reconnection. `ON` enables reconnection in a blocking manner where all the waiting invocations will be blocked until a cluster connection is established or failed.
-The option `ASYNC` enables reconnection in a non-blocking manner where all the waiting invocations will receive a `HazelcastClientOfflineException`. Its default value is `ON`.
+You can also configure how the client reconnects to the cluster after a disconnection. This is configured using the configuration element `reconnect-mode`; it has three options (`OFF`, `ON` or `ASYNC`). The option `OFF` disables the reconnection. `ON` enables reconnection in a blocking manner where all the waiting invocations are blocked until a cluster connection is established or failed.
+The option `ASYNC` enables reconnection in a non-blocking manner where all the waiting invocations receive a `HazelcastClientOfflineException`. Its default value is `ON`.
 
 The example declarative and programmatic configurations below show how to configure a Java client's starting and reconnecting modes.
 
@@ -1029,7 +1029,7 @@ Hazelcast has an internal executor service (different from the data structure *E
 
 ====== ClassLoader
 
-You can configure a custom `classLoader`. It will be used by the serialization service and to load any class configured in configuration, such as event listeners or ProxyFactories.
+You can configure a custom `classLoader`. It is used by the serialization service and to load any class configured in configuration, such as event listeners or ProxyFactories.
 
 ====== Configuring Reliable Topic at Client Side
 
@@ -1088,9 +1088,9 @@ config.setProperty("hazelcast.client.heartbeat.interval", "5000");
 ===== Client Ping Failure Detector
 
 In addition to the Deadline Failure Detector, the Ping Failure Detector may be configured on your client. Please note that this detector is disabled by default. The Ping Failure Detector operates at Layer 3 of the OSI protocol and provides much quicker and more deterministic detection of hardware and other lower level events.
-When the JVM process has enough permissions to create RAW sockets, the implementation will choose to rely on ICMP Echo requests. This is preferred.
+When the JVM process has enough permissions to create RAW sockets, the implementation chooses to rely on ICMP Echo requests. This is preferred.
 
-If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection will be treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled.
+If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection is treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled.
 
 For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met:
 
@@ -1101,7 +1101,7 @@ For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are 
 
 The details of these requirements are explained in the <<requirements-and-linuxunix-configuration, Requirements section>> of Hazelcast members' <<ping-failure-detector, Ping Failure Detector>>.
 
-If any of the above criteria isn't met, then the `isReachable` will always fallback on TCP Echo attempts on port 7.
+If any of the above criteria isn't met, then `isReachable` will always fallback on TCP Echo attempts on port 7.
 
 An example declarative configuration to use the Ping Failure Detector is as follows (in the client's configuration XML file, e.g., `hazelcast-client.xml`):
 
@@ -1144,9 +1144,9 @@ clientIcmpPingConfig.setIntervalMilliseconds(1000)
 * `interval-milliseconds`: Interval, in milliseconds, between each ping attempt. 1000ms (1 sec) is also the minimum interval allowed. Its default value is *1000* milliseconds.
 * `ttl`: Maximum number of hops the packets should go through. Its default value is *255*. You can set to *0* to use your system's default TTL.
 
-In the above example configuration, the Ping Failure Detector will attempt 2 pings, one every second and will wait up to 1 second for each to complete. If there is no successful ping after 2 seconds, the member will get suspected.
+In the above example configuration, the Ping Failure Detector attempts 2 pings, one every second, and waits up to 1 second for each to complete. If there is no successful ping after 2 seconds, the member gets suspected.
 
-To enforce the <<requirements-and-linuxunix-configuration, Requirements>>, the property `echo-fail-fast-on-startup` can also be set to `true`, in which case Hazelcast will fail to start if any of the requirements
+To enforce the <<requirements-and-linuxunix-configuration, Requirements>>, the property `echo-fail-fast-on-startup` can also be set to `true`, in which case Hazelcast fails to start if any of the requirements
 isn't met.
 
 Unlike the Hazelcast members, Ping Failure Detector works always in parallel with Deadline Failure Detector on the clients.
@@ -1226,7 +1226,7 @@ The table below lists the client configuration properties with their description
 |`hazelcast.compatibility.3.6.server`
 |false
 |bool
-|When this property is true, if the client cannot know the server version, it will assume that the server has the version 3.6.x.
+|When this property is true, if the client cannot know the server version, it assumes that the server has the version 3.6.x.
 
 |`hazelcast.invalidation.max.tolerated.miss.count`
 |10
@@ -1251,7 +1251,7 @@ The table below lists the client configuration properties with their description
 |`hazelcast.client.responsequeue.idlestrategy`
 |block
 |string
-|Specifies whether the response thread for internal operations at the client side will be blocked or not. If you use `block` (the default value) the thread will be blocked and need to be notified which can cause a reduction in the performance. If you use `backoff` there will be no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this will increase CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
+|Specifies whether the response thread for internal operations at the client side is blocked or not. If you use `block` (the default value), the thread is blocked and needs to be notified which can cause a reduction in the performance. If you use `backoff` there is no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this increases the CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
 |===
 
 ==== Using High-Density Memory Store with Java Client
@@ -1306,7 +1306,7 @@ The element `<eviction>` has the following attributes:
 ** FREE_NATIVE_MEMORY_SIZE: Minimum free native memory size to trigger cleanup.
 ** FREE_NATIVE_MEMORY_PERCENTAGE: Minimum free native memory percentage to trigger cleanup.
 * `eviction-policy`: Eviction policy configuration. Its default values is NONE. Available values are as follows:
-** NONE: No items will be evicted and the property max-size will be ignored. You still can combine it with time-to-live-seconds.
+** NONE: No items are evicted and the `max-size` property is ignored. You still can combine it with time-to-live-seconds.
 ** LRU: Least Recently Used.
 ** LFU: Least Frequently Used.
 
@@ -1355,7 +1355,7 @@ parameter value would be encoded as `name.with%2Fspecial%40chars`.
 
 ==== REST Client GET/POST/DELETE Examples
 
-In the following GET, POST and DELETE examples, assume that your cluster members are as shown below.
+In the following `GET`, `POST` and `DELETE` examples, assume that your cluster members are as shown below.
 
 [source,plain]
 ----
@@ -1372,14 +1372,14 @@ Members [5] {
 ====
 All of the requests below can return one of the following responses in case of a failure.
 
-* If the HTTP request syntax is not known, the following response will be returned.
+* If the HTTP request syntax is not known, the following response is returned.
 +
 ```
 HTTP/1.1 400 Bad Request
 Content-Length: 0
 ```
 +
-* In case of an unexpected exception, the following response will be returned.
+* In case of an unexpected exception, the following response is returned.
 +
 ```
 < HTTP/1.1 500 Internal Server Error
@@ -1389,10 +1389,10 @@ Content-Length: 0
 
 ===== Creating/Updating Entries in a Map for REST Client
 
-You can put a new `key1/value1` entry into a map by using POST call to
+You can put a new `key1/value1` entry into a map by using `POST` call to
 `+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+` URL. This call's content body should contain the value of the key. Also, if the call contains the MIME type, Hazelcast stores this information, too.
 
-An example POST call is shown below.
+An example `POST` call is shown below.
 
 [source,plain]
 ----
@@ -1400,7 +1400,7 @@ $ curl -v -X POST -H "Content-Type: text/plain" -d "bar"
     http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
 ----
 
-It will return the following response if successful:
+It returns the following response if successful:
 
 [source,plain]
 ----
@@ -1411,16 +1411,16 @@ It will return the following response if successful:
 
 ===== Retrieving Entries from a Map for REST Client
 
-If you want to retrieve an entry, you can use a GET call to `+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+`. You can also retrieve this entry from another member of your cluster, such as
+If you want to retrieve an entry, you can use a `GET` call to `+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+`. You can also retrieve this entry from another member of your cluster, such as
 `+http://10.20.17.3:5701/hazelcast/rest/maps/mapName/key1+`.
 
-An example of a GET call is shown below.
+An example of a `GET` call is shown below.
 
 ```
 $ curl -X GET http://10.20.17.3:5701/hazelcast/rest/maps/mapName/foo
 ```
 
-It will return the following response if there is a corresponding value:
+It returns the following response if there is a corresponding value:
 
 ```
 < HTTP/1.1 200 OK
@@ -1429,9 +1429,9 @@ It will return the following response if there is a corresponding value:
 bar
 ```
 
-This GET call returned a value, its length and also the MIME type (`text/plain`) since the POST call example shown above included the MIME type.
+This `GET` call returned a value, its length and also the MIME type (`text/plain`) since the POST call example shown above included the MIME type.
 
-It will return the following if there is no mapping for the given key:
+It returns the following if there is no mapping for the given key:
 
 [source,plain]
 ----
@@ -1441,7 +1441,7 @@ It will return the following if there is no mapping for the given key:
 
 ===== Removing Entries from a Map for REST Client
 
-You can use a DELETE call to remove an entry. An example DELETE call is shown below with its response.
+You can use a `DELETE` call to remove an entry. An example `DELETE` call is shown below with its response.
 
 [source,plain]
 ----
@@ -1454,7 +1454,7 @@ $ curl -v -X DELETE http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
 < Content-Length: 0
 ```
 
-If you leave the key empty as follows, DELETE will delete all entries from the map.
+If you leave the key empty as follows, the `DELETE` call deletes all entries from the map.
 
 [source,plain]
 ----
@@ -1470,7 +1470,7 @@ $ curl -v -X DELETE http://10.20.17.1:5701/hazelcast/rest/maps/mapName
 
 ===== Offering Items on a Queue for REST Client
 
-You can use a POST call to create an item on the queue. An example is shown below.
+You can use a `POST` call to create an item on the queue. An example is shown below.
 
 [source,plain]
 ----
@@ -1480,7 +1480,7 @@ $ curl -v -X POST -H "Content-Type: text/plain" -d "foo"
 
 The above call is equivalent to `HazelcastInstance.getQueue("myEvents").offer("foo");`.
 
-It will return the following if successful:
+It returns the following if successful:
 
 [source,plain]
 ----
@@ -1489,7 +1489,7 @@ It will return the following if successful:
 < Content-Length: 0
 ----
 
-It will return the following if the queue is full and the item is not able to be offered to the queue:
+It returns the following if the queue is full and the item is not able to be offered to the queue:
 
 [source,plain]
 ----
@@ -1499,7 +1499,7 @@ It will return the following if the queue is full and the item is not able to be
 
 ===== Retrieving Items from a Queue for REST Client
 
-You can use a DELETE call for retrieving items from a queue. Note that you should state the poll timeout while polling for queue events by an extra path parameter.
+You can use a `DELETE` call for retrieving items from a queue. Note that you should state the poll timeout while polling for queue events by an extra path parameter.
 
 An example is shown below (**10** being the timeout value).
 
@@ -1518,7 +1518,7 @@ The above call is equivalent to `HazelcastInstance.getQueue("myEvents").poll(10,
 foo
 ----
 
-When the timeout is reached, the response will be `No Content` success, i.e. there is no item on the queue to be returned.
+When the timeout is reached, the response is `No Content` success, i.e., there is no item on the queue to be returned.
 
 [source,plain]
 ----
@@ -1552,7 +1552,7 @@ Besides the above operations, you can check the status of your cluster, an examp
 $ curl -v http://127.0.0.1:5701/hazelcast/rest/cluster
 ----
 
-The return will be similar to the following:
+The response is as follows:
 
 [source,plain]
 ----
@@ -1636,7 +1636,7 @@ System.out.println( client.get( "key1" ) ); // get from hz_memcache_map1
 System.out.println( client.get( "key2" ) ); // get from hz_memcache_map2
 ----
 
-*hz\_memcache prefix\_* separates Memcache maps from Hazelcast maps. If no map name is given, it will be stored
+*hz\_memcache prefix\_* separates Memcache maps from Hazelcast maps. If no map name is given, it is stored
 in a default map named *hz_memcache_default*.
 
 An entry written with a Memcache client can be read by another Memcache client written in another language.
