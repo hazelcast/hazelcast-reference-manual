@@ -46,9 +46,9 @@ When Hazelcast serializes an object into `Data`:
 . If the above check fails, then Hazelcast checks if it is an instance of one of the default types (see the <<serialization, Serialization chapter introduction>> for default types).
 . If the above check fails, then Hazelcast looks for a user-specified <<custom-serialization, Custom Serializer>>, i.e. an implementation of `ByteArraySerializer` or `StreamSerializer`. Custom serializer is searched using the input Object's Class and its parent class up to Object. If parent class search fails, all interfaces implemented by the class are also checked (excluding `java.io.Serializable` and `java.io.Externalizable`).
 . If the above check fails, then Hazelcast checks if it is an instance of `java.io.Serializable` or `java.io.Externalizable` and a Global Serializer is not registered with Java Serialization Override feature.
-. If the above check fails, Hazelcast will use the registered Global Serializer if one exists.
+. If the above check fails, Hazelcast uses the registered Global Serializer if one exists.
 
-If all of the above checks fail, then serialization will fail. When a class implements multiple interfaces, the above steps are important to determine the serialization mechanism that Hazelcast will use. When a class definition is required for any of these serializations, you need to have all the classes needed by the application on your classpath because Hazelcast does not download them automatically, unless you are using <<member-user-code-deployment-beta, user code deployment>>.
+If all of the above checks fail, then serialization fails. When a class implements multiple interfaces, the above steps are important to determine the serialization mechanism that Hazelcast uses. When a class definition is required for any of these serializations, you need to have all the classes needed by the application on your classpath because Hazelcast does not download them automatically, unless you are using <<member-user-code-deployment-beta, user code deployment>>.
 
 === Comparing Serialization Interfaces
 
@@ -350,7 +350,7 @@ As an alternative to the existing serialization methods, Hazelcast offers a lang
 
 In order to support these features, a serialized Portable object contains meta information like the version and the concrete location of the each field in the binary data. This way, Hazelcast navigates in the `byte[]` and deserializes only the required field without actually deserializing the whole object. This improves the Query performance.
 
-With multi-version support, you can have two cluster members where each has different versions of the same object. Hazelcast will store both meta information and use the correct one to serialize and deserialize Portable objects depending on the member. This is very helpful when you are doing a rolling upgrade without shutting down the cluster.
+With multi-version support, you can have two cluster members where each has different versions of the same object. Hazelcast stores both meta information and uses the correct one to serialize and deserialize Portable objects depending on the member. This is very helpful when you are doing a rolling upgrade without shutting down the cluster.
 
 Portable serialization is totally language independent and is used as the binary protocol between Hazelcast server and clients.
 
@@ -448,13 +448,13 @@ You should consider the following when you perform versioning.
 
 Assume that a new member joins to the cluster with a class that has been modified and class' version has been upgraded due to this modification.
 
-* If you modified the class by adding a new field, the new member's `put` operations will include that new field. If this new member tries to get an object that was put from the older members, it will get `null` for the newly added field.
+* If you modified the class by adding a new field, the new member's `put` operations include that new field. If this new member tries to get an object that was put from the older members, it gets `null` for the newly added field.
 * If you modified the class by removing a field, the old members get `null` for the objects that are put by the new member.
 * If you modified the class by changing the type of a field, the error `IncompatibleClassChangeError` is generated unless the change was made on a built-in type or the byte size of the new type is less than or equal to the old one. The following are example allowed type conversions:
 ** `long` -> `int`, `byte`, `char`, `short`
 ** `int`-> `byte`, `char`, `short`
 
-If you have not modify a class at all, it will work as usual.
+If you have not modify a class at all, it works as usual.
 
 ==== Ordering Consistency for `writePortable`
 
@@ -521,7 +521,7 @@ Now, let's implement StreamSerializer for `Employee` class.
 include::{javasource}/serialization/EmployeeStreamSerializer.java[tag=empss]
 ----
 
-In practice, classes may have many fields. Just make sure the fields are read in the same order as they are written. The type ID must be unique and greater than or equal to **1**. Uniqueness of the type ID enables Hazelcast to determine which serializer will be used during deserialization.
+In practice, classes may have many fields. Just make sure the fields are read in the same order as they are written. The type ID must be unique and greater than or equal to **1**. Uniqueness of the type ID enables Hazelcast to determine which serializer is used during deserialization.
 
 As the last step, let's register the `EmployeeStreamSerializer` in the configuration file `hazelcast.xml`, as shown below.
 
@@ -559,7 +559,7 @@ public class Foo {
 }
 ----
 
-Assume that our custom serialization will serialize
+Assume that our custom serialization serializes
 Foo into XML. First you need to implement a
 `com.hazelcast.nio.serialization.StreamSerializer`. A very simple one that uses XMLEncoder and XMLDecoder could look like the following:
 
@@ -570,7 +570,7 @@ include::{javasource}/serialization/FooXmlSerializer.java[tag=fooxml]
 
 ===== Configuring StreamSerializer
 
-Note that `typeId` must be unique because Hazelcast will use it to look up the `StreamSerializer` while it deserializes the object. The last required step is to register the `StreamSerializer` in your Hazelcast configuration. Below are the programmatic and declarative configurations for this step.
+Note that `typeId` must be unique because Hazelcast uses it to look up the `StreamSerializer` while it deserializes the object. The last required step is to register the `StreamSerializer` in your Hazelcast configuration. Below are the programmatic and declarative configurations for this step.
 
 [source,xml]
 ----
@@ -634,7 +634,7 @@ The global serializer is identical to <<custom-serialization, custom serializers
 
 By default, the global serializer does not handle `java.io.Serializable` and `java.io.Externalizable` instances. However, you can configure it to be responsible for those instances.
 
-A custom serializer should be registered for a specific class type. The global serializer will handle all class types if all the steps in searching for a serializer fail as described in <<serialization-interface-types, Serialization Interface Types>>.
+A custom serializer should be registered for a specific class type. The global serializer handles all class types if all the steps in searching for a serializer fail as described in <<serialization-interface-types, Serialization Interface Types>>.
 
 **Use cases:**
 
@@ -841,7 +841,7 @@ Serialization configuration has the following elements.
 
 * `portable-version`: Defines versioning of the portable serialization. Portable version differentiates two of the same classes that have changes, such as adding/removing field or changing a type of a field.
 * `use-native-byte-order`: Set to `true` to use native byte order for the underlying platform. Its default value is `false`.
-* `byte-order`: Defines the byte order that the serialization will use: `BIG_ENDIAN` or `LITTLE_ENDIAN`. Its default value is `BIG_ENDIAN`.
+* `byte-order`: Defines the byte order that the serialization uses: `BIG_ENDIAN` or `LITTLE_ENDIAN`. Its default value is `BIG_ENDIAN`.
 * `enable-compression`: Enables compression if default Java serialization is used. Its default value is `false`.
 * `enable-shared-object`: Enables shared object if default Java serialization is used. Its default value is `false`.
 * `allow-unsafe`: Set to `true` to allow `unsafe` to be used. Its default value is `false`.
@@ -849,4 +849,4 @@ Serialization configuration has the following elements.
 * `portable-factory`: The `PortableFactory` class to be registered.
 * `global-serializer`: The global serializer class to be registered if no other serializer is applicable. This element has the optional boolean attribute `override-java-serialization`. If set to `true`, the Java serialization step is assumed to be handled by the global serializer. Java Serializable and Externalizable is prior to global serializer by default (`false`).
 * `serializer`: The class name of the serializer implementation.
-* `check-class-def-errors`: When set to `true`, the serialization system will check for class definitions error at start and will throw a Serialization Exception with an error definition.
+* `check-class-def-errors`: When set to `true`, the serialization system checks for class definitions error at start and throws a Serialization Exception with an error definition.

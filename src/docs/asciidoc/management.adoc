@@ -537,7 +537,7 @@ JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://" + hostname + ":" + po
 
 The `port` in the above example should be the one that you define while setting the JMX remote port number (if different than the default port `1099`).
 
-Then use the URL you acquired to connect to the JMX service and get the `JMXConnector` object. Using this object, get the `MBeanServerConnection` object. The `MBeanServerConnection` object will enable you to use the MBean methods. Please see the example code below.
+Then use the URL you acquired to connect to the JMX service and get the `JMXConnector` object. Using this object, get the `MBeanServerConnection` object. The `MBeanServerConnection` object enables you to use the MBean methods. Please see the example code below.
 
 [source,java]
 ----
@@ -560,7 +560,7 @@ This section provides information on programmatic utilities you can use to liste
 
 ==== Getting Member Events and Member Sets
 
-Hazelcast allows you to register for membership events so you will be notified when members are added or removed. You can also get the set of cluster members.
+Hazelcast allows you to register for membership events so that you are notified when members are added or removed. You can also get the set of cluster members.
 
 The following example code does the above: registers for member events, notifies when members are added or removed and gets the set of cluster members.
 
@@ -608,15 +608,15 @@ Hazelcast clusters have the following states:
 
 * **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 * **`NO_MIGRATION`**:
-** In this state, migrations (partition rebalancing) and backup replications are not allowed. In other words, there will be no data movement between Hazelcast members. However, in case of member failures, backup replicas can be still promoted to the primaries to maintain availability and migration listeners can be notified for these promotion migrations. Please note that promoting a backup replica to the primary replica is a local operation and does not transfer partition data between Hazelcast members.
+** In this state, migrations (partition rebalancing) and backup replications are not allowed. In other words, there are no data movement between Hazelcast members. However, in case of member failures, backup replicas can be still promoted to the primaries to maintain availability and migration listeners can be notified for these promotion migrations. Please note that promoting a backup replica to the primary replica is a local operation and does not transfer partition data between Hazelcast members.
 ** The cluster accepts new members.
 ** All other operations are allowed.
 ** You cannot change the state of a cluster to `NO_MIGRATION` when migration/replication tasks are being performed.
-** When you want to add multiple new members to the cluster, you can first change the cluster state to `NO_MIGRATION`, then start the new members. Once all of them join to the cluster, you can change the cluster state back to `ACTIVE`. Then, the cluster will rebalance partition replica distribution at once.
+** When you want to add multiple new members to the cluster, you can first change the cluster state to `NO_MIGRATION`, then start the new members. Once all of them join to the cluster, you can change the cluster state back to `ACTIVE`. Then, the cluster rebalances partition replica distribution at once.
 * **`FROZEN`**:
 ** In this state, the partition table is frozen and partition assignments are not performed.
 ** The cluster does not accept new members.
-** If a member leaves, it can join back. Its partition assignments (both primary and backup replicas) remain the same until either it joins back or the cluster state is changed to `ACTIVE`. When it joins back to the cluster, it will own all previous partition assignments as it was. On the other hand, when the cluster state changes to `ACTIVE`, re-partitioning starts and unassigned partition replicas are assigned to the active members.
+** If a member leaves, it can join back. Its partition assignments (both primary and backup replicas) remain the same until either it joins back or the cluster state is changed to `ACTIVE`. When it joins back to the cluster, it owns all previous partition assignments as it was. On the other hand, when the cluster state changes to `ACTIVE`, re-partitioning starts and unassigned partition replicas are assigned to the active members.
 ** All other operations in the cluster, except migration, continue without restrictions.
 ** You cannot change the state of a cluster to `FROZEN` when migration/replication tasks are being performed.
 ** You can make use of `FROZEN` state along with the <<hot-restart-persistence, Hot Restart Persistence>> feature. You can change the cluster state to `FROZEN`, then restart some of your members using the Hot Restart feature. The data on the restarting members will not be accessible but you will be able to access to the data that is stored in other members. Basically, `FROZEN` cluster state allows you do perform maintenance on your members with degrading availability partially.
@@ -633,7 +633,7 @@ Hazelcast clusters have the following states:
 ** It is a temporary and intermediate state.
 ** During this state, your cluster does not accept new members and migration/replication tasks are paused.
 
-NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the cluster, it throws an exception immediately (it will not be retried).
+NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the cluster, it throws an exception immediately (it is not retried).
 
 The following snippet is from the `Cluster` interface showing the methods used to manage your cluster's states.
 
@@ -781,7 +781,7 @@ To change the cluster version to `3.9`, use the following command:
 
 `sh cluster.sh -o change-cluster-version -v 3.9 -a 172.16.254.1 -p 5702 -g test -P test`
 
-Cluster version is always in `major.minor` format, using other formats will result in a failure.
+Cluster version is always in `major.minor` format, using other formats results in a failure.
 
 NOTE: Currently, this script is not supported on the Windows platforms.
 
@@ -1203,8 +1203,7 @@ You can control the StoreLatency plugin using the following properties:
 
 ===== OperationHeartbeats
 
-It shows the deviation between member/member operation heartbeats. Every member will send to every other member, regardless if
-there is an operation running on behalf of that member, an operation heartbeat. It contains a listing of all ``callId``s of the running
+It shows the deviation between member/member operation heartbeats. Each member, regardless if there is an operation running on behalf of that member, sends an operation heartbeat to every other member. It contains a listing of all ``callId``s of the running
 operations from a given member. This plugin also works fine between members/lite-members.
 
 Because this operation heartbeat is sent periodically; by default 1/4 of the operation call timeout of 60 seconds, we would expect
@@ -1225,17 +1224,17 @@ The following shows an example of the output where an operation heartbeat has no
         now(date-time)=20-7-2017 11:12:18]]]
 ```
 
-The OperationHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
-file if the max-deviation (explained below) is exceeded.
+The OperationHeartbeats plugin is enabled by default since it has very little overhead and only prints to the diagnostics
+file if the maximum deviation percentage (explained below) is exceeded.
 
 You can control the OperationHeartbeats plugin using the following properties:
 
 - `hazelcast.diagnostics.operation-heartbeat.seconds`: The frequency this plugin is writing the collected information to the disk. It is configured to be 10 seconds by default. 0 disables the plugin.
-- `hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage. Its default value is 33. For example, with a default 60 call timeout and operation heartbeat interval being 15 seconds, the maximum deviation with a deviation-percentage of 33, is 5 seconds. So there is no problem if a packet is arrived after 19 seconds, but if it arrives after 21 seconds, then the plugin will render.
+- `hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`:  The maximum allowed deviation percentage. Its default value is 33. For example, with a default 60 call timeout and operation heartbeat interval being 15 seconds, the maximum deviation with a deviation-percentage of 33, is 5 seconds. So there is no problem if a packet is arrived after 19 seconds, but if it arrives after 21 seconds, then the plugin renders.
 
 ===== MemberHeartbeats
 
-This plugin looks a lot like the OperationHeartbeats plugin, but instead of relying on operation heartbeats to determine the deviation, it relies on member/member cluster heartbeats. Every member will send a heartbeat to every other member periodically (by default every 5 seconds).
+This plugin looks a lot like the OperationHeartbeats plugin, but instead of relying on operation heartbeats to determine the deviation, it relies on member/member cluster heartbeats. Every member sends a heartbeat to other members periodically (by default every 5 seconds).
 
 Just like the OperationHeartbeats, the MemberHeartbeats plugin can be used to detect if there are networking problems long before they actually lead to problems such as split-brain syndromes.
 
@@ -1252,13 +1251,13 @@ The following shows an example of the output where no member/member heartbeat ha
         now(date-time)=20-7-2017 19:32:22]]
 ```
 
-The MemberHeartbeats plugin is enabled by default since it has very little overhead and will only print to the diagnostics
-file if the max-deviation (explained below) is exceeded.
+The MemberHeartbeats plugin is enabled by default since it has very little overhead and only prints to the diagnostics
+file if the maximum deviation percentage (explained below) is exceeded.
 
 You can control the MemberHeartbeats plugin using the following properties:
 
 - `hazelcast.diagnostics.member-heartbeat.seconds`: The frequency this plugin is writing the collected information to the disk. It is configured to be 10 seconds by default. 0 disables the plugin.
-- `hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`: The maximum allowed deviation percentage. Its default value is 100. For example, if the interval of member/member heartbeats is 5 seconds, a 100% deviation will be fine with heartbeats arriving up to 5 seconds after they are expected. So a heartbeat arriving after 9 seconds will not be rendered, but a heartbeat received after 11 seconds will be rendered.
+- `hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`: The maximum allowed deviation percentage. Its default value is 100. For example, if the interval of member/member heartbeats is 5 seconds, a 100% deviation is fine with heartbeats arriving up to 5 seconds after they are expected. So a heartbeat arriving after 9 seconds is not rendered, but a heartbeat received after 11 seconds is rendered.
 
 
 ===== OperationThreadSamples
@@ -1392,7 +1391,7 @@ Health monitor periodically prints logs in your console to provide information a
 
 You can set the interval of health monitoring using the `hazelcast.health.monitoring.delay.seconds` system property. Its default value is 30 seconds.
 
-The system property `hazelcast.health.monitoring.level` is used to configure the monitoring's log level. If it is set to OFF, the monitoring will be disabled. If it is set to NOISY, monitoring logs are always printed for the defined intervals. When it is SILENT, which is the default value, monitoring logs are printed only when the values exceed some predefined thresholds. These thresholds are related to memory and CPU percentages, and can be configured using the `hazelcast.health.monitoring.threshold.memory.percentage` and `hazelcast.health.monitoring.threshold.cpu.percentage` system properties, whose default values are both 70.
+The system property `hazelcast.health.monitoring.level` is used to configure the monitoring's log level. If it is set to OFF, the monitoring is disabled. If it is set to NOISY, monitoring logs are always printed for the defined intervals. When it is SILENT, which is the default value, monitoring logs are printed only when the values exceed some predefined thresholds. These thresholds are related to memory and CPU percentages, and can be configured using the `hazelcast.health.monitoring.threshold.memory.percentage` and `hazelcast.health.monitoring.threshold.cpu.percentage` system properties, whose default values are both 70.
 
 The following is an example monitoring output
 
@@ -1452,7 +1451,7 @@ Hazelcast::NodeState=ACTIVE\nHazelcast::ClusterState=ACTIVE\nHazelcast::ClusterS
 ```
 
 
-The BIG-IP LTM monitors accept regular expressions in these strings allowing you to configure them as needed. The example provided above will remain green even if the cluster size changes.
+The BIG-IP LTM monitors accept regular expressions in these strings allowing you to configure them as needed. The example provided above remains green even if the cluster size changes.
 
 
 **Using a HEAD request:**
@@ -1469,7 +1468,7 @@ HEAD /hazelcast/health HTTP/1.1\r\n\nHost: [HOST-ADDRESS-OF-HAZELCAST-MEMBER] \r
 200 OK
 ```
 
-As you can see, the HEAD request only checks for a `200 OK` response. A Hazelcast cluster member will send this status code when it is alive and running without issue. This provides a very basic health check. For increased flexibility, we recommend using the GET request API.
+As you can see, the HEAD request only checks for a `200 OK` response. A Hazelcast cluster member sends this status code when it is alive and running without an issue. This provides a very basic health check. For increased flexibility, we recommend using the GET request API.
 
 ====== TCP_HALF_OPEN Monitors
 

@@ -11,7 +11,7 @@ Data affinity ensures that related entries exist on the same member. If related 
 
 **Co-location of related data and computation**
 
-Hazelcast has a standard way of finding out which member owns/manages each key object. The following operations will be routed to the same member, since all of them are operating based on the same key `"key1"`.
+Hazelcast has a standard way of finding out which member owns/manages each key object. The following operations are routed to the same member, since all of them are operating based on the same key `"key1"`.
 
 [source,java]
 ----
@@ -44,7 +44,7 @@ include::{javasource}/performance/OrderKey.java[tag=orderkey]
 ----
 
 
-Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`. This will make sure that the `Customer` entry and its ``Order``s will be stored on the same member.
+Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`. These make sure that the `Customer` entry and its ``Order``s are stored on the same member.
 
 [source,java]
 ----
@@ -172,9 +172,9 @@ Another way of storing the related data on the same location is using/implementi
 
 Hazelcast offers the following out-of-the-box partitioning strategies:
 
-- `DefaultPartitioningStrategy`: Default strategy. It checks whether the key implements `PartitionAware`. If it implements, the object is converted to binary and then hashed, to find the partition of the key.
-- `StringPartitioningStrategy`: Works only for string keys. It uses the string after `@` character as the partition ID. For example, if you have two keys `ordergroup1@region1` and `customergroup1@region1`, both `ordergroup1` and `customergroup1` will fall into the partition where `region1` is located.
-- `StringAndPartitionAwarePartitioningStrategy`: Works as the combination of the above two strategies. If the key implements `PartitionAware`, it works like the `DefaultPartitioningStrategy`. If it is a string key, it works like the `StringPartitioningStrategy`.
+* `DefaultPartitioningStrategy`: Default strategy. It checks whether the key implements `PartitionAware`. If it implements, the object is converted to binary and then hashed, to find the partition of the key.
+* `StringPartitioningStrategy`: Works only for string keys. It uses the string after `@` character as the partition ID. For example, if you have two keys `ordergroup1@region1` and `customergroup1@region1`, both `ordergroup1` and `customergroup1` fall into the partition where `region1` is located.
+* `StringAndPartitionAwarePartitioningStrategy`: Works as the combination of the above two strategies. If the key implements `PartitionAware`, it works like the `DefaultPartitioningStrategy`. If it is a string key, it works like the `StringPartitioningStrategy`.
 
 Following are the example configuration snippets. Note that these strategy configurations are **per map**.
 
@@ -240,7 +240,7 @@ For the best performance of your Hazelcast on AWS EC2:
 === Back Pressure
 
 Hazelcast uses operations to make remote calls. For example, a `map.get` is an operation and a `map.put` is one operation for the primary
-and one operation for each of the backups, i.e. `map.put` is executed for the primary and also for each backup. In most cases, there will be a natural balance between the number of threads performing operations
+and one operation for each of the backups, i.e., `map.put` is executed for the primary and also for each backup. In most cases, there is a natural balance between the number of threads performing operations
 and the number of operations being executed. However, there are two situations where this balance and operations
 can pile up and eventually lead to Out of Memory Exception (OOME):
 
@@ -269,7 +269,7 @@ Back pressure is only applied to normal operations. System operations like heart
 are not influenced by back pressure. 27200 invocations might seem like a lot, but keep in mind that executing a task on `IExecutor`
 or acquiring a lock also requires an operation.
 
-If the maximum number of invocations has been reached, Hazelcast will automatically apply an exponential backoff policy. This
+If the maximum number of invocations has been reached, Hazelcast automatically applies an exponential backoff policy. This
 gives the system some time to deal with the load. Using the following system property, you can configure the maximum time to wait before a `HazelcastOverloadException` is thrown:
 
 `hazelcast.backpressure.backoff.timeout.millis`
@@ -284,7 +284,7 @@ controlled through the following property:
 
 `hazelcast.backpressure.syncwindow`
 
-This system property's default value is 100. It means, out of 100 *asynchronous* backups, Hazelcast makes 1 of them a *synchronous* one. A randomization is added, so the sync window with default configuration will be between 75 and 125
+This system property's default value is 100. It means, out of 100 *asynchronous* backups, Hazelcast makes 1 of them a *synchronous* one. A randomization is added, so the sync window with default configuration is between 75 and 125
 invocations.
 
 ==== Client Side
@@ -293,7 +293,7 @@ To prevent the system at the client side from overloading, you can apply a const
 
 `hazelcast.client.max.concurrent.invocations`
 
-This property defines the maximum allowed number of concurrent invocations. When it is not explicitly set, it has the value `Integer.MAX_VALUE` by default, which means infinite. When you set it and if the maximum number of concurrent invocations is exceeded this value, Hazelcast will throw `HazelcastOverloadException` when a new invocation comes in.
+This property defines the maximum allowed number of concurrent invocations. When it is not explicitly set, it has the value `Integer.MAX_VALUE` by default, which means infinite. When you set it and if the maximum number of concurrent invocations is exceeded this value, Hazelcast throws `HazelcastOverloadException` when a new invocation comes in.
 
 Please note that back off timeout and controlling the number of pending async backups (sync window) is not supported at the client side.
 
@@ -402,7 +402,7 @@ till one of the partitions is finished, even though there are other free partiti
 
 **Example:**
 
-Take a cluster with three members. Two members will have 90 primary partitions and one member will have 91 primary partitions. Let's
+Take a cluster with three members. Two members have 90 primary partitions and one member has 91 primary partitions. Let's
 say you have one CPU and four cores per CPU. By default, four operation threads will be allocated to serve 90 or 91 partitions.
 
 ===== Non-Partition-aware Operations
@@ -511,7 +511,7 @@ Map or Cache entries in Hazelcast are partitioned across the cluster members. Ha
 
 These benefits do not come for free, please consider the following trade-offs:
 
-* Members with a Near Cache will have to hold the extra cached data, which increases memory consumption.
+* Members with a Near Cache has to hold the extra cached data, which increases memory consumption.
 * If invalidation is enabled and entries are updated frequently, then invalidations will be costly.
 * Near Cache breaks the strong consistency guarantees; you might be reading stale data.
 
@@ -637,10 +637,10 @@ The class https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/Ne
 
 Following are the descriptions of all configuration elements:
 
-* `in-memory-format`: Specifies in which format data will be stored in your Near Cache. Note that a map's in-memory format can be different from that of its Near Cache. Available values are as follows:
-** `BINARY`: Data will be stored in serialized binary format (default value).
-** `OBJECT`: Data will be stored in deserialized form.
-** `NATIVE`: Data will be stored in the Near Cache that uses Hazelcast's High-Density Memory Store feature. This option is available only in Hazelcast IMDG Enterprise HD. Note that a map and its Near Cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its Near Cache can use it.
+* `in-memory-format`: Specifies in which format data is stored in your Near Cache. Note that a map's in-memory format can be different from that of its Near Cache. Available values are as follows:
+** `BINARY`: Data is stored in serialized binary format (default value).
+** `OBJECT`: Data is stored in deserialized form.
+** `NATIVE`: Data is stored in the Near Cache that uses Hazelcast's High-Density Memory Store feature. This option is available only in Hazelcast IMDG Enterprise HD. Note that a map and its Near Cache can independently use High-Density Memory Store. For example, while your map does not use High-Density Memory Store, its Near Cache can use it.
 * `serialize-keys`: Specifies if the keys of a Near Cache entry should be serialized or not. Serializing the keys has a big impact on the read performance of the Near Cache. It should just be activated when you have mutable keys, which are changed after use for the Near Cache. Its default value is `false`.
 * `invalidate-on-change`: Specifies whether the cached entries are evicted when the entries are updated or removed. Its default value is true.
 * `time-to-live-seconds`: Maximum number of seconds for each entry to stay in the Near Cache. Entries that are older than this period are automatically evicted from the Near Cache. Regardless of the eviction policy used, `time-to-live-seconds` still applies. Any integer between 0 and `Integer.MAX_VALUE`. 0 means infinite. Its default value is 0.
@@ -649,8 +649,8 @@ Following are the descriptions of all configuration elements:
 ** `eviction-policy`: Eviction policy configuration. Available values are as follows:
 *** `LRU`: Least Recently Used (default value).
 *** `LFU`: Least Frequently Used.
-*** `NONE`: No items will be evicted and the property max-size will be ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds` to evict items from the Near Cache.
-*** `RANDOM`: A random item will be evicted.
+*** `NONE`: No items are evicted and the property `max-size` is ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds` to evict items from the Near Cache.
+*** `RANDOM`: A random item is evicted.
 ** `max-size-policy`: Maximum size policy for eviction of the Near Cache. Available values are as follows:
 *** `ENTRY_COUNT`: Maximum size based on the entry count in the Near Cache (default value).
 *** `USED_NATIVE_MEMORY_SIZE`: Maximum used native memory size of the specified Near Cache in MB to trigger the eviction. If the used native memory size exceeds this threshold, the eviction is triggered.  Available only for `NATIVE` in-memory format. This is supported only by Hazelcast IMDG Enterprise.
@@ -660,13 +660,13 @@ Following are the descriptions of all configuration elements:
 ** `size`: Maximum size of the Near Cache used for `max-size-policy`. When this is reached the Near Cache is evicted based on the policy defined. Any integer between `1` and `Integer.MAX_VALUE`. This value has different defaults, depending on the data structure.
 *** `IMap`: Its default value is `Integer.MAX_VALUE` for on-heap maps and `10000` for the `NATIVE` in-memory format.
 *** `JCache`: Its default value is `10000`.
-* `cache-local-entries`: Specifies whether the local entries will be cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
+* `cache-local-entries`: Specifies whether the local entries are cached. It can be useful when in-memory format for Near Cache is different from that of the map. By default, it is disabled. Is just available on Hazelcast members, not on Hazelcast clients (which have no local entries).
 * `local-update-policy`: Specifies the update policy of the local Near Cache. It is available on JCache clients. Available values are as follows:
 ** `INVALIDATE`: Removes the Near Cache entry on mutation. After the mutative call to the member completes but before the operation returns to the caller, the Near Cache entry is removed. Until the mutative operation completes, the readers still continue to read the old value. But as soon as the update completes the Near Cache entry is removed. Any threads reading the key after this point will have a Near Cache miss and call through to the member, obtaining the new entry. This setting provides read-your-writes consistency. This is the default setting.
-** `CACHE_ON_UPDATE`: Updates the Near Cache entry on mutation. After the mutative call to the member completes but before the put returns to the caller, the Near Cache entry is updated. So a remove will remove it and one of the put methods will update it to the new value. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. But before the call completes the Near Cache entry is updated. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the cache, both the Near Cache and the original copy in the member. The member will initiate an invalidate event to any other Near Caches, however the caller Near Cache is not invalidated as it already has the new value. This setting also provides read-your-writes consistency.
+** `CACHE_ON_UPDATE`: Updates the Near Cache entry on mutation. After the mutative call to the member completes but before the put returns to the caller, the Near Cache entry is updated. So a remove will remove it and one of the put methods will update it to the new value. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. But before the call completes the Near Cache entry is updated. Any threads reading the key after this point read the new entry. If the mutative operation was a remove, the key will no longer exist in the cache, both the Near Cache and the original copy in the member. The member initiates an invalidate event to any other Near Caches, however the caller Near Cache is not invalidated as it already has the new value. This setting also provides read-your-writes consistency.
 * `preloader`: Specifies if the Near Cache should store and pre-load its keys for a faster re-population after a Hazelcast client restart. Is just available on IMap and JCache clients. It has the following attributes:
 ** `enabled`: Specifies whether the preloader for this Near Cache is enabled or not, `true` or `false`.
-** `directory`: Specifies the parent directory for the preloader of this Near Cache. The filenames for the preloader storage will be generated from the Near Cache name. You can additionally specify the parent directory to have multiple clients on the same machine with the same Near Cache names.
+** `directory`: Specifies the parent directory for the preloader of this Near Cache. The filenames for the preloader storage are generated from the Near Cache name. You can additionally specify the parent directory to have multiple clients on the same machine with the same Near Cache names.
 ** `store-initial-delay-seconds`: Specifies the delay in seconds until the keys of this Near Cache are stored for the first time. Its default value is `600` seconds.
 ** `store-interval-seconds`: Specifies the interval in seconds in which the keys of this Near Cache are stored. Its default value is `600` seconds.
 
@@ -870,11 +870,11 @@ If there are a lot of clients or many mutating operations, batching should remai
 Near Caches are invalidated by invalidation events. Invalidation events can be lost due to the fire-and-forget fashion of eventing system. If an event is lost, reads from Near Cache can indefinitely be stale.
 
 To solve this problem, starting with Hazelcast 3.8, Hazelcast provides eventually consistent behavior for IMap/JCache Near Caches by detecting invalidation losses.
-After detection of an invalidation loss, stale data will be made unreachable and Near Cache's `get` calls to that data will be directed to underlying IMap/JCache to fetch the fresh data.
+After detection of an invalidation loss, stale data is made unreachable and Near Cache's `get` calls to that data are directed to the underlying IMap/JCache to fetch the fresh data.
 
 You can configure eventual consistency with the system properties below (same properties are valid for both member and client side Near Caches):
 
-* `hazelcast.invalidation.max.tolerated.miss.count`: Default value is 10. If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
+* `hazelcast.invalidation.max.tolerated.miss.count`: Default value is 10. If missed invalidation count is bigger than this value, relevant cached data is made unreachable.
 * `hazelcast.invalidation.reconciliation.interval.seconds`: Default value is 60 seconds. This is a periodic task that scans cluster members periodically to compare generated invalidation events with the received ones from Near Cache.
 
 ===== Locally Initiated Changes
@@ -886,19 +886,19 @@ For local invalidations, when a record is updated/removed, future reads will see
 
 If you choose `INVALIDATE`, the entry is removed from the Near Cache after the update/remove occurs in the underlying data structure and before the operation (get) returns to the caller. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache.
 
-If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove occurs in the underlying data structure and before the operation (put/get) returns to the caller. If it is an update operation, it will remove the entry and the new value will be placed. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. Any threads reading the key after this point will read the new entry. If the mutative operation was a remove, the key will no longer exist in the Near Cache and the original copy in the member.
+If you choose `CACHE_ON_UPDATE`, the entry is updated after the update/remove occurs in the underlying data structure and before the operation (put/get) returns to the caller. If it is an update operation, it removes the entry and the new value is placed. Until the update/remove operation completes, the entry's old value can still be read from the Near Cache. Any threads reading the key after this point read the new entry. If the mutative operation was a remove, the key will no longer exist in the Near Cache and the original copy in the member.
 
 ==== Near Cache Preloader
 
 The Near Cache preloader is a functionality to store the keys from a Near Cache to provide a fast re-population of the previous hot data set after a Hazelcast Client has been restarted. It is available on IMap and JCache clients.
 
-The Near Cache preloader stores the keys (not the values) of Near Cache entries in regular intervals. You can define the initial delay via `store-initial-delay-seconds`, e.g., if you know that your hot data set will need some time to build up. You can configure the interval via `store-interval-seconds` which determines how often the key-set will be stored. The persistence will not run continuously. Whenever the storage is scheduled, it will be performed on the actual keys in the Near Cache.
+The Near Cache preloader stores the keys (not the values) of Near Cache entries in regular intervals. You can define the initial delay via `store-initial-delay-seconds`, e.g., if you know that your hot data set needs some time to build up. You can configure the interval via `store-interval-seconds` which determines how often the key-set is stored. The persistence does not run continuously. Whenever the storage is scheduled, it is performed on the actual keys in the Near Cache.
 
-The Near Cache preloader will be triggered on the first initialization of the data structure on the client, e.g., `client.getMap("myNearCacheMap")`. This schedules the preloader, which will work in the background, so your application is not blocked. The storage will be enabled after the loading is completed.
+The Near Cache preloader is triggered on the first initialization of the data structure on the client, e.g., `client.getMap("myNearCacheMap")`. This schedules the preloader, which works in the background, so your application is not blocked. The storage is enabled after the loading is completed.
 
-The configuration parameter `directory` is optional. If you omit it the base folder will be the user working directory (normally where the JVM was started or configured with the system property `user.dir`). The storage filenames will always be created from the Near Cache name. So even if you use a wildcard name in the Near Cache Configuration, the preloader filenames will be unique.
+The configuration parameter `directory` is optional. If you omit it, the base folder becomes the user working directory (normally where the JVM was started or configured with the system property `user.dir`). The storage filenames are always created from the Near Cache name. So even if you use a wildcard name in the Near Cache Configuration, the preloader filenames are unique.
 
-NOTE: If you run multiple Hazelcast clients with enabled Near Cache preloader on the same machine, you have to configure a unique storage filename for each client or run them from different user directories. If two clients would write into the same file, only the first client will succeed. The following clients will throw an exception as soon as the Near Cache preloader is triggered.
+NOTE: If you run multiple Hazelcast clients with enabled Near Cache preloader on the same machine, you have to configure a unique storage filename for each client or run them from different user directories. If two clients would write into the same file, only the first client succeeds. The following clients throw an exception as soon as the Near Cache preloader is triggered.
 
 === Caching Deserialized Values
 
@@ -917,10 +917,10 @@ There may be cases where you do not want to deserialize some values in your Haze
 </hazelcast>
 ----
 
-The element `cache-deserialized-values` controls the caching of deserialized values. Note that caching makes the query evaluation faster, but it will consume more memory. This element has the following values:
+The element `cache-deserialized-values` controls the caching of deserialized values. Note that caching makes the query evaluation faster, but it consumes more memory. This element has the following values:
 
-* NEVER: Deserialized values will never be cached.
-* INDEX-ONLY: Deserialized values will be cached only when they are inserted into an index.
-* ALWAYS: Deserialized values will always be cached.
+* NEVER: Deserialized values are never cached.
+* INDEX-ONLY: Deserialized values are cached only when they are inserted into an index.
+* ALWAYS: Deserialized values are always cached.
 
 If you are using portable serialization or your map's in-memory format is `OBJECT` or `NATIVE`, then `cache-deserialized-values` element does not have any effect.

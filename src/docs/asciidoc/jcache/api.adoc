@@ -8,7 +8,7 @@ a look at a couple of the standard API classes and see how these classes are use
 ==== JCache API Application Example 
 
 The code in this subsection creates a small account application by providing a caching layer over an imagined database abstraction. The
-database layer will be simulated using single demo data in a simple DAO interface. To show the difference between the "database"
+database layer is simulated using a single demo data in a simple DAO interface. To show the difference between the "database"
 access and retrieving values from the cache, a small waiting time is used in the DAO implementation to simulate network and
 database latency.
 
@@ -82,7 +82,7 @@ First, we set the expected types for the cache, which is already known from the 
 
 ====== Configuring Read-Through and Write-Through
 
-The next two lines configure the thread that will be read-through and write-through to the underlying backend resource that is configured
+The next two lines configure the thread that are read-through and write-through to the underlying backend resource that is configured
 over the next few lines. The JCache API offers `javax.cache.integration.CacheLoader` and `javax.cache.integration.CacheWriter` to
 implement adapter classes to any kind of backend resource, e.g., JPA, JDBC, or any other backend technology implementable in Java.
 The interface provides the typical CRUD operations like `create`, `get`, `update`, `delete` and some bulk operation versions of those
@@ -116,8 +116,8 @@ The SPI that is implemented to bridge between the JCache API and the implementat
 providers chosen as seen in the <<configuring-jcache-provider, Configuring JCache Provider section>> which enable the JCache API to
 interact with Hazelcast clusters.
 
-When a `javax.cache.spi.CachingProvider.getCacheManager()` overload is used that takes a `java.lang.ClassLoader` argument, this
-classloader will be part of the scope of the created `java.cache.Cache` and it is not possible to retrieve it on other members.
+When a `javax.cache.spi.CachingProvider.getCacheManager()` overload that takes a `java.lang.ClassLoader` argument is used, this
+classloader will be a part of the scope of the created `java.cache.Cache`, and it is not possible to retrieve it on other members.
 We advise not to use those overloads, as they are not meant to be used in distributed environments!
 
 **`javax.cache.CacheManager`**:

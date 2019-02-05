@@ -93,7 +93,7 @@ Although the example is simple, let's go through the code lines one by one.
 
 First of all, we retrieve the `javax.cache.spi.CachingProvider` using the static method from
 `javax.cache.Caching.getCachingManager()`, which automatically picks up Hazelcast as the underlying JCache implementation, if
-available in the classpath. This way, the Hazelcast implementation of a `CachingProvider` will automatically start a new Hazelcast
+available in the classpath. This way, the Hazelcast implementation of a `CachingProvider` automatically starts a new Hazelcast
 member or client (depending on the chosen provider type) and pick up the configuration from either the command line parameter
 or from the classpath. We will show how to use an existing `HazelcastInstance` later in this chapter; for now, we keep it simple.
 
@@ -183,8 +183,8 @@ Note that this section only describes the JCache provided standard properties. F
 * `cache-writer-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.integration.CacheWriter` instance to the cache.
 * `expiry-policy-factory#-class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.expiry.ExpiryPolicy` instance to the cache.
 * `cache-entry-listener`: A set of attributes and elements, explained below, to describe a `javax.cache.event.CacheEntryListener`.
-** `cache-entry-listener#old-value-required`: If set to true, previously assigned values for the affected keys will be sent to the `javax.cache.event.CacheEntryListener` implementation. Setting this attribute to true creates additional traffic. Its default value is false.
-** `cache-entry-listener#synchronous`: If set to true, the `javax.cache.event.CacheEntryListener` implementation will be called in a synchronous manner. Its default value is false.
+** `cache-entry-listener#old-value-required`: If set to true, previously assigned values for the affected keys are sent to the `javax.cache.event.CacheEntryListener` implementation. Setting this attribute to true creates additional traffic. Its default value is false.
+** `cache-entry-listener#synchronous`: If set to true, the `javax.cache.event.CacheEntryListener` implementation is called in a synchronous manner. Its default value is false.
 ** `cache-entry-listener/entry-listener-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.CacheEntryListener` instance.
 ** `cache-entry-listener/entry-event-filter-factory#class-name`: Fully qualified class name of the `javax.cache.configuration.Factory` implementation providing a `javax.cache.event.CacheEntryEventFilter` instance.
 

@@ -85,7 +85,7 @@ Hazelcast allows you to intercept every remote operation executed by the client.
 include::{javasource}/security/MapSecurityInterceptor.java[tag=mysi]
 ----
 
-The `before` method will be called before processing the request on the remote server. The `after` method will be called after the processing. Exceptions thrown while executing the `before` method will propagate to the client, but exceptions thrown while executing the `after` method will be suppressed.
+The `before` method is called before processing the request on the remote server. The `after` method is called after the processing. Exceptions thrown while executing the `before` method are propagated to the client, but exceptions thrown while executing the `after` method are suppressed.
 
 === Encryption
 
@@ -243,7 +243,7 @@ Please see the <<mutual-authentication, Mutual Authentication section>>.
 ** `TLSv1.2` (from Java 8)
 ** `TLSv1.3` (from Java 11)
 +
-For the `protocol` property, we recommend you to provide TLS with its version information, e.g., `TLSv1.2`. Note that if you write only `TLS`, your application will choose the TLS version according to your Java version.
+For the `protocol` property, we recommend you to provide TLS with its version information, e.g., `TLSv1.2`. Note that if you write only `TLS`, your application chooses the TLS version according to your Java version.
 
 ===== Other Property Configuration Options
 
@@ -336,7 +336,7 @@ clientSslProps.setProperty("keyStorePassword", "123456");
 
 The property `mutualAuthentication` has two options:
 
-* `REQUIRED`: Server asks for client certificate. If the client does not provide a keystore or the provided keys is not verified against member's truststore, the client will not be authenticated.
+* `REQUIRED`: Server asks for client certificate. If the client does not provide a keystore or the provided keystore is not verified against member's truststore, the client is not authenticated.
 * `OPTIONAL`: Server asks for client certificate, but client is not required to provide any valid certificate.
 
 NOTE: When a new client is introduced with a new keystore, the truststore at the member side should be updated accordingly to include new clients' information to be able to accept it.
@@ -356,7 +356,7 @@ config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setPrope
 HazelcastClient.newHazelcastClient(config);
 ----
 
-If the mutual authentication is not required, the Hazelcast members will accept all incoming TLS connections without verifying if the connecting side is trusted.
+If the mutual authentication is not required, the Hazelcast members accept all incoming TLS connections without verifying if the connecting side is trusted.
 Therefore it's recommended to require the mutual authentication in Hazelcast members configuration.
 
 ==== TLS/SSL Performance Improvements for Java
@@ -364,7 +364,7 @@ Therefore it's recommended to require the mutual authentication in Hazelcast mem
 TLS/SSL can have a significant impact on performance. There are a few ways to increase the performance.
 
 The first thing that can be done is making sure that AES intrensics are used. Modern CPUs (2010 or newer Westmere) have hardware support for AES encryption/decryption and if a Java 8 or newer JVM is
-used, the JIT will automatically make use of these AES instructions. They can also be explicitly enabled using `-XX:+UseAES -XX:+UseAESIntrinsics`,
+used, the JIT automatically makes use of these AES instructions. They can also be explicitly enabled using `-XX:+UseAES -XX:+UseAESIntrinsics`,
 or disabled using `-XX:-UseAES -XX:-UseAESIntrinsics`.
 
 A lot of encryption algorithms make use of padding because they encrypt/decrypt in fixed sized blocks. If not enough data is available
@@ -381,9 +381,9 @@ If this is a concern in your application, use `/dev/random` instead.
 Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client
 automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
 be changed using the `hazelcast.client.io.input.thread.count` and `hazelcast.client.io.input.thread.count` client system properties.
-By default it is 1 input thread and 1 output thread. If TLS/SSL is enabled, it will default to 3 input threads and 3 output threads.
-Having more client I/O threads than members in the cluster will not lead to an increased performance. So with a 2-member cluster,
-2 in and 2 out threads will give the best performance.
+By default it is 1 input thread and 1 output thread. If TLS/SSL is enabled, it defaults to 3 input threads and 3 output threads.
+Having more client I/O threads than members in the cluster does not lead to an increased performance. So with a 2-member cluster,
+2 in and 2 out threads give the best performance.
 
 ==== TLS/SSL Debugging
 
@@ -393,7 +393,7 @@ To assist with TLS/SSL issues, the following system property can be used:
 -Djavax.net.debug=all
 ```
 
-The property will provide a lot of logging output including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information please see http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html[Debugging TSL/SSL Connections].
+The property provides a lot of logging output including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information please see http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html[Debugging TSL/SSL Connections].
 
 ==== TLS/SSL for Hazelcast Management Center
 
@@ -558,7 +558,7 @@ Other supported properties are:
 ** `SSLv3` _(insecure!)_
 +
 All of the algorithms listed above support Java 6 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
-provide only `SSL` or `TLS` as a value for the `protocol` property, they will be converted to `SSLv3` and `TLSv1.2`, respectively. We strongly recommend to avoid SSL protocols.
+provide only `SSL` or `TLS` as a value for the `protocol` property, they are converted to `SSLv3` and `TLSv1.2`, respectively. We strongly recommend to avoid SSL protocols.
 
 ==== Configuring Cipher Suites
 
@@ -597,7 +597,7 @@ badly. So keep that in mind when configuring a client using regular SSL and a me
 Please check with your security expert to determine which cipher suites are appropriate and run performance tests to see which ones perform
 well in your environment.
 
-If you don't configure the cipher suites, then both client and/or member will determine a cipher suite by themselves during the TLS/SSL
+If you don't configure the cipher suites, then both client and/or member determine a cipher suite by themselves during the TLS/SSL
 handshake. This can lead to suboptimal performance and lower security than required.
 
 ==== Other Ways of Configuring Properties
@@ -678,7 +678,7 @@ public class UsernamePasswordCredentials extends Credentials {
 
 Hazelcast IMDG Enterprise offers a secret validation mechanism including a strength policy. The term "secret" here refers to the symmetric encryption password, salt and other passwords and keys.
 
-For this validation, Hazelcast IMDG Enterprise comes with the class DefaultSecretStrengthPolicy to identify all possible weaknesses of secrets and to display a warning in the system logger. Note that, by default, no matter how weak the secrets are, the cluster members will still start after logging this warning; however, this is configurable (please see the “Enforcing the Secret Strength Policy” section).
+For this validation, Hazelcast IMDG Enterprise comes with the class DefaultSecretStrengthPolicy to identify all possible weaknesses of secrets and to display a warning in the system logger. Note that, by default, no matter how weak the secrets are, the cluster members still start after logging this warning; however, this is configurable (please see the “Enforcing the Secret Strength Policy” section).
 
 Requirements (rules) for the secrets are as follows:
 
@@ -722,7 +722,7 @@ Example:
 
 ==== Enforcing the Secret Strength Policy
 
-By default, secret strength policy is NOT enforced. This means, if a weak secret is detected, an informative warning will be showed in the system logger and the members will continue to initialize. However, you can enforce the policy using the following system property so that the members will not be started until the weak secret errors are fixed:
+By default, secret strength policy is NOT enforced. This means, if a weak secret is detected, an informative warning is shown in the system logger and the members continue to initialize. However, you can enforce the policy using the following system property so that the members are not started until the weak secret errors are fixed:
 
 `hazelcast.security.secret.strength.policy.enforced`: Set to “true” to enforce the secret strength policy. The default is “false”. To enforce:
 
@@ -1027,7 +1027,7 @@ getClientPermissionConfigs()` when Hazelcast calls the method `configure(Securit
 
 The `IPermissionPolicy.getPermissions(Subject subject, Class<? extends Permission> type)` method is used to determine a client request that has been granted permission to perform a security-sensitive operation.
 
-Permission policy should return a `PermissionCollection` containing permissions of the given type for the given `Subject`. The Hazelcast access controller will call `PermissionCollection.implies(Permission)` on returning `PermissionCollection` and it will decide whether or not the current `Subject` has permission to access the requested resources.
+Permission policy should return a `PermissionCollection` containing permissions of the given type for the given `Subject`. The Hazelcast access controller calls `PermissionCollection.implies(Permission)` on returning `PermissionCollection` and it decides whether the current `Subject` has permission to access the requested resources.
 
 ==== Permissions
 

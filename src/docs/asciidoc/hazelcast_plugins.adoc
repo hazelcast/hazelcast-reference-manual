@@ -20,7 +20,7 @@ See Hazelcast jclouds® plugin's https://github.com/hazelcast/hazelcast-jclouds/
 
 https://aws.amazon.com/[AWS] is a comprehensive cloud computing platform provided by Amazon. Hazelcast supports discovering members within Amazon EC2 cloud using Hazelcast AWS cloud discovery plugin.
 
-You can easily configure your cluster to use EC2 discovery by adding `hazelcast-aws.jar` dependency to your project and enabling Hazelcast's Discovery SPI. This plugin does not depend on any other third party modules. Note that this plugin puts the zone information into the Hazelcast's member attributes map during the discovery process; you can use its `ZONE_AWARE` configuration to create backups in other Availability Zones (AZ). Each zone will be accepted as one partition group. Note that, when using the ZONE_AWARE partition grouping, a Hazelcast cluster spanning multiple AZs should have an equal number of members in each AZ. Otherwise, it will result in uneven partition distribution among the members.
+You can easily configure your cluster to use EC2 discovery by adding `hazelcast-aws.jar` dependency to your project and enabling Hazelcast's Discovery SPI. This plugin does not depend on any other third party modules. Note that this plugin puts the zone information into the Hazelcast's member attributes map during the discovery process; you can use its `ZONE_AWARE` configuration to create backups in other Availability Zones (AZ). Each zone is accepted as one partition group. Note that, when using the ZONE_AWARE partition grouping, a Hazelcast cluster spanning multiple AZs should have an equal number of members in each AZ. Otherwise, it results in an uneven partition distribution among the members.
 
 See Hazelcast AWS plugin's https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for more information.
 
@@ -36,7 +36,7 @@ See Hazelcast GCP plugin's https://github.com/hazelcast/hazelcast-gcp/blob/maste
 
 https://azure.microsoft.com/en-us/[Microsoft Azure] is a cloud computing service provided by Microsoft for managing applications through a global network of Microsoft-managed data centers. Hazelcast Azure plugin provides a discovery strategy for Hazelcast enabled applications running on Microsoft Azure. It provides all Hazelcast instances by returning VMs within your Azure resource group that are tagged with a specified value.
 
-To use this plugin in your Java project, simply add the Azure dependency to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Then you will need to configure a couple of properties at both Hazelcast and Azure sides.
+To use this plugin in your Java project, simply add the Azure dependency to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Then you need to configure a couple of properties at both Hazelcast and Azure sides.
 
 See Hazelcast Azure plugin's https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation] for more information.
 
@@ -62,7 +62,7 @@ See Hazelcast etcd plugin's https://github.com/bitsofinfo/hazelcast-etcd-discove
 
 https://github.com/Netflix/eureka/wiki[Eureka] is a REST based service that is primarily used in the AWS cloud to for load balancing and failover of middle-tier servers, and Hazelcast supports Eureka V1 discovery.
 
-To use this plugin, add the `hazelcast-eureka-one.jar` dependency to your project and enable Hazelcast's Discovery SPI. You will also need to specify the Eureka properties file.
+To use this plugin, add the `hazelcast-eureka-one.jar` dependency to your project and enable Hazelcast's Discovery SPI. You also need to specify the Eureka properties file.
 
 See Hazelcast Eureka plugin's https://github.com/hazelcast/hazelcast-eureka/blob/master/README.md[documentation] for more information.
 
@@ -94,7 +94,7 @@ See Hazelcast Heroku plugin's https://github.com/jkutner/hazelcast-heroku-discov
 
 https://github.com/kubernetes/kubernetes[Kubernetes] is an open source container orchestration system to automate deployment, scaling and management of containerized applications. This plugin looks up the IP addresses of Hazelcast members by resolving the requests against a Kubernetes Service Discovery system. It supports two different options of resolving against the discovery registry: a request to the REST API and DNS lookup against a given DNS service name.
 
-To use this plugin, add the `hazelcast-kubernetes` dependency to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. You will need to configure Hazelcast according to the option you want the plugin to use, i.e., REST API or DNS lookup.
+To use this plugin, add the `hazelcast-kubernetes` dependency to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. You need to configure Hazelcast according to the option you want the plugin to use, i.e., REST API or DNS lookup.
 
 See Hazelcast Kubernetes plugin's https://github.com/hazelcast/hazelcast-kubernetes[documentation] for more information.
 
@@ -102,7 +102,7 @@ See Hazelcast Kubernetes plugin's https://github.com/hazelcast/hazelcast-kuberne
 
 https://zookeeper.apache.org/[Zookeeper] by Apache is a centralized service to maintain configuration information, naming, and to provide distributed synchronization and group services. This plugin provides a service based discovery strategy for your Hazelcast applications by using Apache Curator to communicate with your Zookeeper server.
 
-To use this plugin, add the Curator dependencies to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Thereafter, you will need to configure properties such as the URL of Zookeeper server and cluster ID.
+To use this plugin, add the Curator dependencies to your Maven or Gradle configurations and enable Hazelcast's Discovery SPI. Thereafter, you need to configure properties such as the URL of Zookeeper server and cluster ID.
 
 See Hazelcast Zookeeper plugin's https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md[documentation] for more information.
 
@@ -135,7 +135,7 @@ See Spring Integration Extension for Hazelcast https://github.com/spring-project
 
 Hazelcast JCA Resource Adapter is a system-level software driver which can be used by a Java application to connect to an Hazelcast cluster. Using this adapter, you can integrate Hazelcast into Java EE containers. After a proper configuration, Hazelcast can participate in standard Java EE transactions.
 
-Deploying and configuring the Hazelcast JCA Resource Adapter is not different than configuring any other resource adapters since it is a standard JCA one. However, resource adapter installation and configuration is container-specific, so you will need to consult with your Java EE vendor documentation for details.
+Deploying and configuring the Hazelcast JCA Resource Adapter is not different than configuring any other resource adapters since it is a standard JCA one. However, resource adapter installation and configuration is container-specific, so you need to consult with your Java EE vendor documentation for details.
 
 See Hazelcast JCA Resource Adapter https://github.com/hazelcast/hazelcast-ra[documentation] for information on configuring the resource adapter, Glassfish applications and JBoss web applications.
 
@@ -157,7 +157,7 @@ See Hazelcast Grails plugin's https://github.com/hazelcast/hazelcast-grails[docu
 
 http://hibernate.org/[Hibernate] is an object-relational mapping tool for the Java programming language. It provides a framework for mapping an object-oriented domain model to a relational database and enables developers to more easily write applications whose data outlives the application process. This plugin provides Hazelcast's own distributed second level cache implementation for your Hibernate (versions 3, 4 and 5) entities, collections and queries.
 
-To use this plugin, add the Hazelcast Hibernate dependency into your classpath depending on your Hibernate version. Then you will need to specify various properties in your Hibernate configuration such as the `RegionFactory` and query cache properties.
+To use this plugin, add the Hazelcast Hibernate dependency into your classpath depending on your Hibernate version. Then you need to specify various properties in your Hibernate configuration such as the `RegionFactory` and query cache properties.
 
 See the documentation of this plugin for https://github.com/hazelcast/hazelcast-hibernate/blob/master/README.md[Hibernate 3.x, 4.x] and for https://github.com/hazelcast/hazelcast-hibernate5/blob/master/README.md[Hibernate 5.x].
 
@@ -197,7 +197,7 @@ Hazelcast offers the following plugins to allow you cluster your web sessions us
 
 ==== Filter Based Web Session Replication
 
-This plugin (a.k.a. Generic Web Session Replication) provides HTTP session replication capabilities across a Hazelcast cluster in order to handle failover cases. Assuming you have multiple web servers with load balancers; if one server goes down, your users on that server will be directed to one of the other live servers, but their sessions will be lost. Using this plugin backs up these HTTP sessions; it clusters them automatically. To use it, put the `hazelcast-wm` JAR file into your `WEB-INF/lib` folder and configure your `web.xml` file according to your needs.
+This plugin (a.k.a. Generic Web Session Replication) provides HTTP session replication capabilities across a Hazelcast cluster in order to handle failover cases. Assuming you have multiple web servers with load balancers; if one server goes down, your users on that server are directed to one of the other live servers, but their sessions are not lost. Using this plugin backs up these HTTP sessions; it clusters them automatically. To use it, put the `hazelcast-wm` JAR file into your `WEB-INF/lib` folder and configure your `web.xml` file according to your needs.
 
 See the plugin's https://github.com/hazelcast/hazelcast-wm/blob/master/README.md[documentation] for information on configuring and using it.
 
