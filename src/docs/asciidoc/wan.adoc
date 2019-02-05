@@ -67,7 +67,7 @@ Below is an example of declarative configuration of WAN Replication from New Yor
 The `wan-publisher` element is used to configure the target cluster, i.e., to define how WAN events are sent to a specific endpoint. As mentioned above just before the configuration example, the endpoint can be a different cluster defined by static IP's or discovered using a cloud discovery mechanism. The `wan-publisher` element has the following attributes:
 
 * `group-name`: Specifies the target cluster's group name for authentication on the target endpoint. It is mandatory to set this attribute.
-* `publisher-id`: Specifies the publisher ID used for identifying the publisher. Setting this ID may be useful when the target group names are not unique for all of the WAN replication publishers in a single WAN replication scheme. It is optional to set this attribute. If this ID is not specified, the `group-name` will be used as a publisher ID.
+* `publisher-id`: Specifies the publisher ID used for identifying the publisher. Setting this ID may be useful when the target group names are not unique for all of the WAN replication publishers in a single WAN replication scheme. It is optional to set this attribute. If this ID is not specified, the `group-name` is used as a publisher ID.
 
 And, the following are definitions of the configuration elements within `wan-publisher`:
 
@@ -86,7 +86,7 @@ And, the following are definitions of the configuration elements within `wan-pub
 Other relevant properties are:
 
 * `discovery.period`: Period in seconds in which WAN tries to reestablish connections to failed endpoints. Default is 10 seconds.
-* `executorThreadCount`: The number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If necessary you can manually define the number of threads that the executor will use. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order. It is important to determine which number of executor threads is a good value. Failure to do so can lead to performance issues - either contention on a too small number of threads or wasted threads that will not be performing any work.
+* `executorThreadCount`: The number of threads that the `WanBatchReplication` executor has. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this is the case. If necessary you can manually define the number of threads that the executor uses. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint go through a single executor thread, preserving event order. It is important to determine which number of executor threads is a good value. Failure to do so can lead to performance issues - either contention on a too small number of threads or wasted threads that are not performing any work.
 
 And the following is the equivalent programmatic configuration snippet:
 
@@ -95,7 +95,7 @@ And the following is the equivalent programmatic configuration snippet:
 include::{javasource}/wan/ExampleWANReplicationConfiguration.java[tag=wrc]
 ----
 
-Using this configuration, the cluster running in New York will replicate to Tokyo and London. The Tokyo and London clusters should
+Using this configuration, the cluster running in New York replicates to Tokyo and London. The Tokyo and London clusters should
 have similar configurations if you want to run in Active-Active mode.
 
 If the New York and London cluster configurations contain the `wan-replication` element and the Tokyo cluster does not, it means
@@ -103,9 +103,9 @@ New York and London are active endpoints and Tokyo is a passive endpoint.
 
 ===== Defining WAN Replication Using Discovery SPI
 
-In addition to defining target cluster endpoints with static IP addresses, you can configure WAN to work with the discovery SPI and determine the endpoint IP addresses at runtime. This allows you to use WAN with endpoints on various cloud infrastructures (such as Amazon EC2 or GCP Compute) where the IP address is not known in advance. Typically you will use a readily available discovery SPI plugin such as https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS EC2 discovery plugin], https://github.com/hazelcast/hazelcast-gcp[Hazelcast GCP discovery plugin], or similar. For more advanced cases, you can provide your own discovery SPI implementation with custom logic for determining the WAN target endpoints such as looking up the endpoints in some service registry or even reading the endpoint addresses from a file.
+In addition to defining target cluster endpoints with static IP addresses, you can configure WAN to work with the discovery SPI and determine the endpoint IP addresses at runtime. This allows you to use WAN with endpoints on various cloud infrastructures (such as Amazon EC2 or GCP Compute) where the IP address is not known in advance. Typically you use a readily available discovery SPI plugin such as https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS EC2 discovery plugin], https://github.com/hazelcast/hazelcast-gcp[Hazelcast GCP discovery plugin], or similar. For more advanced cases, you can provide your own discovery SPI implementation with custom logic for determining the WAN target endpoints such as looking up the endpoints in some service registry or even reading the endpoint addresses from a file.
 
-NOTE: When using the discovery SPI, WAN will always connect to the public address of the members returned by the discovery SPI implementation. This is opposite to the cluster membership mechanism using the discovery SPI where a member connects to a different member in the same cluster through its private address. Should you prefer for WAN to use the private address of the discovered member as well, please use the `discovery.useEndpointPrivateAddress` publisher property (see below).
+NOTE: When using the discovery SPI, WAN always connects to the public address of the members returned by the discovery SPI implementation. This is opposite to the cluster membership mechanism using the discovery SPI where a member connects to a different member in the same cluster through its private address. Should you prefer for WAN to use the private address of the discovered member as well, please use the `discovery.useEndpointPrivateAddress` publisher property (see below).
 
 
 Following is an example of setting up the WAN replication with the EC2 discovery plugin. You must have the https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS EC2 discovery plugin] on the classpath.
@@ -195,9 +195,9 @@ The other properties are the same as when using the `aws` element. In case of EC
 You can refer to the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. Following are the definitions of additional configuration properties:
 
 - `discovery.period`: Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 seconds.
-- `maxEndpoints`: Maximum number of endpoints that WAN will connect to when using a discovery mechanism to define endpoints. Default is `Integer.MAX_VALUE`. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
-- `executorThreadCount`: Number of threads that the `WanBatchReplication` executor will have. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this will be the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor will be sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that will not be performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint will go through a single executor thread, preserving event order.
-- `discovery.useEndpointPrivateAddress`: Determines whether the WAN connection manager should connect to the endpoint on the private address returned by the discovery SPI. By default this property is `false` which means the WAN connection manager will always use the public address.
+- `maxEndpoints`: Maximum number of endpoints that WAN connects to when using a discovery mechanism to define endpoints. Default is `Integer.MAX_VALUE`. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
+- `executorThreadCount`: Number of threads that the `WanBatchReplication` executor has. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this is the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor is sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that are not performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint go through a single executor thread, preserving event order.
+- `discovery.useEndpointPrivateAddress`: Determines whether the WAN connection manager should connect to the endpoint on the private address returned by the discovery SPI. By default this property is `false` which means the WAN connection manager always uses the public address.
 
 You can also define the WAN publisher with discovery SPI using the programmatic configuration:
 
@@ -609,7 +609,7 @@ You can also use the following URL in your REST call if you want to synchronize 
 `+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/allmaps+`
 ====
 
-NOTE: Synchronization for a target cluster operates only with the data residing in the memory. Therefore, evicted entries will not be
+NOTE: Synchronization for a target cluster operates only with the data residing in the memory. Therefore, evicted entries are not 
 synchronized, not even if `MapLoader` is configured.
 
 ==== Dynamically Adding WAN Publishers
@@ -897,21 +897,21 @@ The failure detection and recovery mechanisms in WAN handle failures during WAN 
 
 ===== WAN Target Endpoint List
 
-The WAN connection manager maintains a list of public addresses that it can replicate to at any moment. This list may change over time as failures are detected or as new addresses are discovered when using the discovery SPI. The connection manager does not eagerly create connections to these addresses as they are added to the list to avoid overloading the endpoint with connections from all members using the same configuration. It will try and connect to the endpoint just before WAN events are about to be transmitted. This means that if there are no updates on the map or cache using WAN replication, there will be no WAN events and the connection will not be established to the endpoint.
+The WAN connection manager maintains a list of public addresses that it can replicate to at any moment. This list may change over time as failures are detected or as new addresses are discovered when using the discovery SPI. The connection manager does not eagerly create connections to these addresses as they are added to the list to avoid overloading the endpoint with connections from all members using the same configuration. It tries to connect to the endpoint just before WAN events are about to be transmitted. This means that if there are no updates on the map or cache using WAN replication, there are no WAN events and the connection will not be established to the endpoint.
 
-When more than one endpoint is configured, traffic will be load balanced between them using the partition, so that the same partitions are always sent to the same target member, ensuring ordering by partition.
+When more than one endpoint is configured, traffic is load balanced between them using the partition, so that the same partitions are always sent to the same target member, ensuring ordering by partition.
 
 ===== WAN Failure Detection
 
-If using the Hazelcast IMDG Enterprise edition class `WanBatchReplication` (see the <<defining-wan-replication, Defining WAN replication section>>), the WAN replication will catch any exceptions when sending the WAN events to the endpoint. In the case of an exception, the endpoint will be removed from the endpoint list to which WAN replicates and the WAN events will be resent to a different address. The replication will be retried until it is successful.
+If using the Hazelcast IMDG Enterprise edition class `WanBatchReplication` (see the <<defining-wan-replication, Defining WAN replication section>>), the WAN replication catches any exceptions when sending the WAN events to the endpoint. In the case of an exception, the endpoint is removed from the endpoint list to which WAN replicates and the WAN events are resent to a different address. The replication is retried until it is successful.
 
 ===== WAN Endpoint Recovery
 
-Periodically the WAN connection manager will try and "rediscover" new endpoints. The period is 10 seconds by default but configurable with the `discovery.period` property (see the <<defining-wan-replication, Defining WAN replication section>>).
+The WAN connection manager tries to "rediscover" new endpoints periodically. The period is 10 seconds by default but configurable with the `discovery.period` property (see the <<defining-wan-replication, Defining WAN replication section>>).
 
 The discovered endpoints depend on the configuration used to define WAN replication. If using static WAN endpoints (by using the `endpoints` property), the discovered endpoints are always the same and are equal to the values defined in the configuration. If using discovery SPI with WAN, the discovered endpoints may be different each time.
 
-When the discovery returns a list of endpoints (addresses), the WAN target endpoint list is updated. Newly discovered endpoints are added and endpoints which are no longer in the discovered list are removed. Newly discovered endpoints may include addresses to which WAN replication has previously failed. This means that once a new WAN event is about to be sent, a connection will be reestablished to the previously failed endpoint and WAN replication will be retried. The endpoint can later be again removed from the target endpoint list if the replication again encounters failure.
+When the discovery returns a list of endpoints (addresses), the WAN target endpoint list is updated. Newly discovered endpoints are added and endpoints which are no longer in the discovered list are removed. Newly discovered endpoints may include addresses to which WAN replication has previously failed. This means that once a new WAN event is about to be sent, a connection is reestablished to the previously failed endpoint and WAN replication is retried. The endpoint can later be again removed from the target endpoint list if the replication again encounters failure.
 
 ==== WAN Replication Additional Information
 
@@ -971,8 +971,8 @@ Following is a declarative configuration example of the above:
 
 Here, the element `consistency-check-strategy` sets the strategy for checking the consistency of data between the source and target clusters. You must initiate the WAN synchronization (via Management Center or REST API as explained in <<synchronizing-wan-target-cluster, Synchronizing WAN clusters>>) to let this strategy reconcile the inconsistencies. The element `consistency-check-strategy` has currently two values:
 
-* `NONE`: Means that there will be no consistency checks. This is the default value.
-* `MERKLE_TREES`: Means that WAN synchronization will use Merkle tree structure.
+* `NONE`: Means that there are no consistency checks. This is the default value.
+* `MERKLE_TREES`: Means that WAN synchronization uses Merkle tree structure.
 
 ==== Configuring Delta WAN Synchronization
 
@@ -1296,7 +1296,7 @@ Descriptions of the properties are as follows:
 * `vpn.name`: Name of the Solace VPN. It is an optional property.
 * `username`: Username for the Solace host. It is a mandatory property.
 * `password`: Password for the Solace host. It is an optional property.
-* `topic.base.name`: Base topic name to use while publishing events to Solace appliance. If not defined, the members will publish to topics using the format "T/hz/[cluster-group-name]/partitionId". If defined, the format "[topic.base.name]/partitionId" will be used. It is an optional property.
+* `topic.base.name`: Base topic name to use while publishing events to Solace appliance. If not defined, the members publish to topics using the format "T/hz/[cluster-group-name]/partitionId". If defined, the format "[topic.base.name]/partitionId" is used. It is an optional property.
 * `queue.name`: Name of the queue to be used in topic-to-queue mapping. This property is only valid if the property `initial.queue.mapping.enabled` is set to "true". Default queue name is "Q/hz/[cluster-group-name].
 * `initial.queue.mapping.enabled`: Decides if a default topic-to-queue mapping should be performed on the publisher side. When enabled, it tries to provide a queue, whose name is defined by the property `queue.name`, and all topics that are generated by this instance is mapped to this queue. When disabled, you should perform this mapping manually. It is enabled by default.
 
@@ -1328,7 +1328,7 @@ Following is an example declarative configuration for the consumer side:
 Descriptions of the properties are as follows:
 
 * `class-name`: Full class name of Solace WAN consumer, i.e., `com.hazelcast.enterprise.wan.solace.SolaceWanConsumer`
-* `persist-wan-replicated-data`:  When true, an incoming event over WAN replication can be persisted to a data store, otherwise it will not be persisted. Default value is false.
+* `persist-wan-replicated-data`:  When true, an incoming event over WAN replication can be persisted to a data store, otherwise it is not persisted. Default value is false.
 * `host`: IP address of the Solace host machine. It can be in the format "IP address:Port number". It is a mandatory property.
 * `vpn.name`: Name of the Solace VPN. It is an optional property.
 * `username`: Username for the Solace host. It is a mandatory property.

@@ -179,7 +179,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.executionservice.taskscheduler.remove.oncancel`
 | false
 | bool
-| Controls whether the task scheduler removes tasks immediately upon cancellation. This is disabled by default, because it can cause severe delays on the other operations. By default all cancelled tasks will eventually get removed by the scheduler workers.
+| Controls whether the task scheduler removes tasks immediately upon cancellation. This is disabled by default, because it can cause severe delays on the other operations. By default all cancelled tasks are eventually get removed by the scheduler workers.
 
 |[[client-max-no]]`hazelcast.client.max.no.heartbeat.seconds`
 |300
@@ -189,7 +189,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.compatibility.3.6.client`
 |false
 |bool
-|When this property is true, if the server cannot determine the connected client version, it will assume that it has the version 3.6.x. This property is especially needed if you are using ICache (or JCache).
+|When this property is true, if the server cannot determine the connected client version, it assumes that it has the version 3.6.x. This property is especially needed if you are using ICache (or JCache).
 
 |`hazelcast.connect.all.wait.seconds`
 | 120
@@ -274,7 +274,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.icmp.echo.fail.fast.on.startup`|
  true
 | bool
-| Specifies whether ICMP Echo Request mode for ping detector is enforced. If OS is not supported, or not configured correctly, as explained in <<requirements-and-linuxunix-configuration, Requirements and Linux/Unix Configuration>>, Hazelcast will fail to start.
+| Specifies whether ICMP Echo Request mode for ping detector is enforced. If OS is not supported, or not configured correctly, as explained in <<requirements-and-linuxunix-configuration, Requirements and Linux/Unix Configuration>>, Hazelcast fails to start.
 
 |`hazelcast.icmp.enabled`
 | false
@@ -294,7 +294,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.icmp.parallel.mode`
 | true
 | bool
-| Specifies whether <<ping-failure-detector, Ping Failure Detector>> will work in parallel with the other detectors.
+| Specifies whether <<ping-failure-detector, Ping Failure Detector>> works in parallel with the other detectors.
 
 |`hazelcast.icmp.timeout`
 | 1000
@@ -339,7 +339,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.invalidation.max.tolerated.miss.count`
 |10
 |int
-|If missed invalidation count is bigger than this value, relevant cached data will be made unreachable.
+|If missed invalidation count is bigger than this value, relevant cached data is made unreachable.
 
 |`hazelcast.invalidation.reconciliation.interval.seconds`
 |60
@@ -379,7 +379,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.legacy.memberlist.format.enabled`
 | false
 | bool
-| Enables the legacy (for the releases before Hazelcast 3.9) member list format which is printed in the logs. The new format is introduced starting with Hazelcast 3.9 and includes member list version. Any change in the cluster, such as a member leaving or joining, will increment the member list version.<br>Please see the <<starting-the-member-and-client, Starting the Member and Client section>>.
+| Enables the legacy (for the releases before Hazelcast 3.9) member list format which is printed in the logs. The new format is introduced starting with Hazelcast 3.9 and includes member list version. Any change in the cluster, such as a member leaving or joining, increments the member list version.<br>Please see the <<starting-the-member-and-client, Starting the Member and Client section>>.
 
 |`hazelcast.local.localAddress`
 |
@@ -409,7 +409,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.map.expiry.delay.seconds`
 |10
 |int
-|Useful to deal with some possible edge cases. For example, when using EntryProcessor, without this delay, you may see an EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup. As a result of this, when backup promotes to owner, you will end up an unprocessed key.
+|Useful to deal with some possible edge cases. For example, when using EntryProcessor, without this delay, you may see an EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup. As a result of this, when backup promotes to owner, you may end up with an unprocessed key.
 
 |`hazelcast.map.invalidation.batchfrequency.seconds`
 | 10
@@ -434,7 +434,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.map.replica.wait.seconds.for.scheduled.tasks`
 | 10
 | int
-| Scheduler delay for map tasks those will be executed on backup members.
+| Scheduler delay for map tasks those are executed on backup members.
 
 |`hazelcast.map.write.behind.queue.capacity`
 |50000
@@ -454,7 +454,7 @@ NOTE: For detailed information on the diagnostic tool, along with this and the f
 |`hazelcast.mastership.claim.timeout.seconds`
 | 120
 | int
-| Timeout which defines when master candidate gives up waiting for response to its mastership claim. After timeout happens, non-responding member will be removed from the member list.
+| Timeout which defines when master candidate gives up waiting for response to its mastership claim. After timeout happens, non-responding member is removed from the member list.
 
 |`hazelcast.max.join.merge.target.seconds`
 |20
@@ -531,7 +531,7 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |`hazelcast.operation.backup.timeout.millis`
 |5000
 |int
-|Maximum time a caller to wait for backup responses of an operation. After this timeout, operation response will be returned to the caller even no backup response is received.
+|Maximum time a caller to wait for backup responses of an operation. After this timeout, operation response is returned to the caller even no backup response is received.
 
 |`hazelcast.operation.fail.on.indeterminate.state`
 | false
@@ -551,7 +551,7 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |`hazelcast.operation.responsequeue.idlestrategy`
 |block
 |string
-|Specifies whether the response thread for internal operations at the member side will be blocked or not. If you use `block` (the default value) the thread will be blocked and need to be notified which can cause a reduction in the performance. If you use `backoff` there will be no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this will increase CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
+|Specifies whether the response thread for internal operations at the member side are blocked or not. If you use `block` (the default value) the thread is blocked and need to be notified which can cause a reduction in the performance. If you use `backoff` there is no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this increases the CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
 
 |`hazelcast.operation.thread.count`
 | -1
@@ -676,7 +676,7 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |`hazelcast.slow.operation.detector.log.retention.seconds`
 |3600
 |int
-|Defines the retention time of invocations in slow operation logs. If an invocation is older than this value, it will be purged from the log to prevent unlimited memory usage. When all invocations are purged from a log, the log itself will be deleted.
+|Defines the retention time of invocations in slow operation logs. If an invocation is older than this value, it is purged from the log to prevent unlimited memory usage. When all invocations are purged from a log, the log itself is deleted.
 
 |`hazelcast.slow.operation.detector.stacktrace.logging.enabled`
 |false
@@ -706,7 +706,7 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |`hazelcast.socket.client.bind.any`
 | true
 | bool
-| Bind client-sockets to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
+| Bind client-sockets to any local interface. If not set, `hazelcast.socket.bind.any` is used as the default.
 
 |`hazelcast.socket.client.receive.buffer.size`
 |-1
@@ -721,7 +721,7 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |`hazelcast.socket.connect.timeout.seconds`
 |0
 |int
-|Socket connection timeout in seconds. `Socket.connect()` will be blocked until either connection is established or connection is refused or this timeout passes. Default is 0, means infinite.
+|Socket connection timeout in seconds. `Socket.connect()` is blocked until either connection is established or connection is refused or this timeout passes. Default is 0, means infinite.
 
 |`hazelcast.socket.keep.alive`
 | true
@@ -751,12 +751,12 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |`hazelcast.socket.server.bind.any`
 | true
 | bool
-| Bind server-socket to any local interface. If not set, `hazelcast.socket.bind.any` will be used as default.
+| Bind server-socket to any local interface. If not set, `hazelcast.socket.bind.any` is used as the default.
 
 |`hazelcast.tcp.join.port.try.count`
 |3
 |int
-|The number of incremental ports, starting with the port number defined in the network configuration, that will be used to connect to a host (which is defined without a port in TCP/IP member list while a member is searching for a cluster).
+|The number of incremental ports, starting with the port number defined in the network configuration, that is used to connect to a host (which is defined without a port in TCP/IP member list while a member is searching for a cluster).
 
 |`hazelcast.unsafe.mode`
 | auto
@@ -776,5 +776,5 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |`hazelcast.wan.map.useDeleteWhenProcessingRemoveEvents`
 | false
 | bool
-| Configures WAN replication for `IMap` on the PASSIVE cluster to remove entries using delete instead of remove and when using `com.hazelcast.enterprise.wan.replication.WanBatchReplication` as an endpoint implementation. The member which receives the event batch in the PASSIVE cluster dispatches WAN events to the partition owners as map merge and remove operations. When using remove operations, the old entry value is sent from the partition owner to the caller even though the caller does not use the old value. This can also lead to issues if the PASSIVE cluster does not contain the class definition for the entry value as the value will try to get deserialized, causing ``ClassNotFoundException``s. You can switch to using map remove instead on the PASSIVE cluster with this property. This will both save bandwidth and avoid the exception.
+| Configures WAN replication for `IMap` on the PASSIVE cluster to remove entries using delete instead of remove and when using `com.hazelcast.enterprise.wan.replication.WanBatchReplication` as an endpoint implementation. The member which receives the event batch in the PASSIVE cluster dispatches WAN events to the partition owners as map merge and remove operations. When using remove operations, the old entry value is sent from the partition owner to the caller even though the caller does not use the old value. This can also lead to issues if the PASSIVE cluster does not contain the class definition for the entry value as the value tries to get deserialized, causing ``ClassNotFoundException``s. You can switch to using map remove instead on the PASSIVE cluster with this property. This both saves the bandwidth and avoid the exceptions.
 |===

@@ -44,7 +44,7 @@ Also, you can configure its size, memory allocator type, minimum block size, pag
 *** For memory allocation, it tries to find the requested memory size inside the internal memory pools. If it cannot be found, then it interacts with the operating system.
 * **minimum block size:** Minimum size of the blocks in bytes to split and fragment a page block to assign to an allocation request. It is used only by the **POOLED** memory allocator. Its default value is **16 bytes**.
 * **page size:** Size of the page in bytes to allocate memory as a block. It is used only by the **POOLED** memory allocator. Its default value is `1 << 22` = **4194304 Bytes**, about **4 MB**.
-* **metadata space percentage:** Defines the percentage of the allocated native memory that is used for internal memory structures by the High-Density Memory for tracking the used and available memory blocks. It is used only by the **POOLED** memory allocator. Its default value is **12.5**. Please note that when the memory runs out, you will get a `NativeOutOfMemoryException`;  if your store has a big size of entries, you should consider increasing this percentage.
+* **metadata space percentage:** Defines the percentage of the allocated native memory that is used for internal memory structures by the High-Density Memory for tracking the used and available memory blocks. It is used only by the **POOLED** memory allocator. Its default value is **12.5**. Please note that when the memory runs out, you get a `NativeOutOfMemoryException`;  if your store has a big size of entries, you should consider increasing this percentage.
 
 The following is the programmatic configuration example.
 
@@ -75,7 +75,7 @@ NOTE: You can check whether there is enough free physical memory for the request
 
 Data in Hazelcast is both active data and backup data for high availability, so the total memory footprint is the size of active data plus the size of backup data. If you use a single backup, it means the total memory footprint is two times the active data (active data + backup data). If you use, for example, two backups, then the total memory footprint is three times the active data (active data + backup data + backup data).
 
-If you use only heap memory, each Hazelcast member with a 4 GB heap should accommodate a maximum of 3.5 GB of total data (active and backup). If you use the High-Density Memory Store, up to 75% of the configured physical memory footprint may be used for active and backup data, with headroom of 25% for normal memory fragmentation. In both cases, however, you should also keep some memory headroom available to handle any member failure or explicit member shutdown. When a member leaves the cluster, the data previously owned by the newly offline member will be distributed among the remaining members. For this reason, we recommend that you plan to use only 60% of available memory, with 40% headroom to handle member failure or shutdown.
+If you use only heap memory, each Hazelcast member with a 4 GB heap should accommodate a maximum of 3.5 GB of total data (active and backup). If you use the High-Density Memory Store, up to 75% of the configured physical memory footprint may be used for active and backup data, with headroom of 25% for normal memory fragmentation. In both cases, however, you should also keep some memory headroom available to handle any member failure or explicit member shutdown. When a member leaves the cluster, the data previously owned by the newly offline member is distributed among the remaining members. For this reason, we recommend that you plan to use only 60% of available memory, with 40% headroom to handle member failure or shutdown.
 
 === Hot Restart Persistence
 
@@ -96,18 +96,18 @@ The Hot Restart feature is supported for the following restart types:
 +
 You can shut down the cluster completely using the method `HazelcastInstance.getCluster().shutdown()` or you can manually change the cluster state to `PASSIVE` and then shut down each member one by one. When you send the command to shut the cluster down, i.e. `HazelcastInstance.getCluster().shutdown()`, the members that are not in the `PASSIVE` state temporarily change their states to `PASSIVE`. Then, each member shuts itself down by calling the method `HazelcastInstance.shutdown()`.
 +
-Difference between explicitly changing state to `PASSIVE` before shutdown and shutting down cluster directly via `HazelcastInstance.getCluster().shutdown()` is, on latter case when cluster is restarted, cluster state will be in the latest state before shutdown. That means if cluster is `ACTIVE` before shutdown, cluster state will automatically become `ACTIVE` after restart is completed.
+Difference between explicitly changing state to `PASSIVE` before shutdown and shutting down cluster directly via `HazelcastInstance.getCluster().shutdown()` is, on the latter case when cluster is restarted, the cluster state will be in the latest state before shutdown. That means if cluster is `ACTIVE` before shutdown, cluster state automatically becomes `ACTIVE` after restart is completed.
 +
 ** Rolling restart: The cluster is restarted intentionally member by member. For example, this could be done to install an operating system patch or new hardware.
 +
-To be able to shut down the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After the cluster state is changed to `FROZEN` or `PASSIVE`, you can manually shut down each member by calling the method `HazelcastInstance.shutdown()`. When that member is restarted, it will rejoin the running cluster. After all members are restarted, the cluster state can be changed back to `ACTIVE`.
+To be able to shut down the cluster member by member as part of a planned restart, each member in the cluster should be in the `FROZEN` or `PASSIVE` state. After the cluster state is changed to `FROZEN` or `PASSIVE`, you can manually shut down each member by calling the method `HazelcastInstance.shutdown()`. When that member is restarted, it rejoins the running cluster. After all members are restarted, the cluster state can be changed back to `ACTIVE`.
 * **Restart after a cluster crash**: The cluster is restarted after all its members crashed at the same time due to a power outage, networking interruptions, etc.
 
 ==== Restart Process
 
 During the restart process, each member waits to load data until all the members in the partition table are started. During this process, no operations are allowed. Once all cluster members are started, Hazelcast changes the cluster state to `PASSIVE` and starts to load data. When all data is loaded, Hazelcast changes the cluster state to its previous known state before shutdown and starts to accept the operations which are allowed by the restored cluster state.
 
-If a member fails to either start, join the cluster in time (within the timeout), or load its data, then that member will be terminated immediately. After the problems causing the failure are fixed, that member can be restarted. If the cluster start cannot be completed in time, then all members will fail to start. Please refer to the <<configuring-hot-restart, Configuring Hot Restart section>> for defining timeouts.
+If a member fails to either start, join the cluster in time (within the timeout), or load its data, then that member is terminated immediately. After the problems causing the failure are fixed, that member can be restarted. If the cluster start cannot be completed in time, then all members fail to start. Please refer to the <<configuring-hot-restart, Configuring Hot Restart section>> for defining timeouts.
 
 In the case of a restart after a cluster crash, the Hot Restart feature realizes that it was not a clean shutdown and Hazelcast tries to restart the cluster with the last saved data following the process explained above. In some cases, specifically when the cluster crashes while it has an ongoing partition migration process, currently it is not possible to restore the last saved state.
 
@@ -123,7 +123,7 @@ Since only a single member has failed, the cluster performed the standard High A
 
 Furthermore, when a member starts with existing Hot Restart data, it expects to find itself within a cluster that has been shut down as a whole and is now restarting as a whole. Since the reality is that the cluster has been running all along, member B's persisted cluster state does not match the actual state. Depending on the <<configuring-hot-restart, automatic removal of stale data (`auto-remove-stale-data`)>> configuration:
 
-* If `auto-remove-stale-data` is enabled, member B automatically deletes its Hot Restart directory inside the <<configuring-hot-restart, base directory>> (`base-dir`) and starts as a fresh, empty member. The cluster will assign some partitions to it, unrelated to the partitions it owned before going down.
+* If `auto-remove-stale-data` is enabled, member B automatically deletes its Hot Restart directory inside the <<configuring-hot-restart, base directory>> (`base-dir`) and starts as a fresh, empty member. The cluster assigns some partitions to it, unrelated to the partitions it owned before going down.
 * Otherwise, member B aborts the initialization and shuts down. To be able to join the cluster, Hot Restart directory previously used by member B inside the <<configuring-hot-restart, base directory>> (`base-dir`) must be deleted manually.
 
 ==== Force Start
@@ -150,9 +150,9 @@ Please refer to the https://docs.hazelcast.org/docs/management-center/latest/man
 
 ==== Partial Start
 
-When one or more members fail to start or have incorrect Hot Restart data (stale or corrupted data) or fail to load their Hot Restart data, cluster will become incomplete and restart mechanism cannot proceed. One solution is to use <<force-start, Force Start>> and make a fresh start with existing members. Another solution is to do a partial start.
+When one or more members fail to start or have incorrect Hot Restart data (stale or corrupted data) or fail to load their Hot Restart data, cluster becomes incomplete and restart mechanism cannot proceed. One solution is to use <<force-start, Force Start>> and make a fresh start with existing members. Another solution is to do a partial start.
 
-Partial start means that the cluster will start with an incomplete member set. Data belonging to those missing members will be assumed lost and Hazelcast will try to recover missing data using the restored backups. For example, if you have minimum two backups configured for all maps and caches, then a partial start up to two missing members will be safe against data loss. If there are more than two missing members or there are maps/caches with less than two backups, then data loss is expected.
+Partial start means that the cluster starts with an incomplete member set. Data belonging to those missing members is assumed lost and Hazelcast tries to recover missing data using the restored backups. For example, if you have minimum two backups configured for all maps and caches, then a partial start up to two missing members will be safe against data loss. If there are more than two missing members or there are maps/caches with less than two backups, then data loss is expected.
 
 Partial start is controlled by `cluster-data-recovery-policy` configuration parameter and is not allowed by default. To enable partial start, one of the configuration values `PARTIAL_RECOVERY_MOST_RECENT` or `PARTIAL_RECOVERY_MOST_COMPLETE` should be set. Please see <<configuring-hot-restart, Configuring Hot Restart section>> for details.
 
@@ -182,15 +182,15 @@ This is where you configure the Hot Restart feature itself using the `hot-restar
 +
 When a Hazelcast member starts, it tries to acquire the ownership of the first available Hot Restart directory inside the `base-dir`. If `base-dir` is empty or if the starting member fails to acquire the ownership of any directory (happens when all the directories are already acquired by other Hazelcast members), then it creates its own fresh directory.
 +
-NOTE: Previously, `base-dir` was being used only by a single Hazelcast member. If such an existing `base-dir` is configured for a Hazelcast member, Hot Restart will start in legacy mode and `base-dir` will be used only by a single member, without creating a unique sub-directory. Other members trying to use that `base-dir` fails during the startup.
-* `backup-dir`: Specifies the directory under which Hot Restart snapshots (Hot Backups) will be stored. Please see the <<hot-backup, Hot Backup section>> for more information.
-* `parallelism`: Level of parallelism in Hot Restart Persistence. There will be this many IO threads, each writing in parallel to its own files. During the Hot Restart procedure, this many IO threads will be reading the files and this many rebuilder threads will be rebuilding the Hot Restart metadata. The default value for this property is 1. This is a good default in most but not all cases. You should measure the raw IO throughput of your infrastructure and test with different values of parallelism. In some cases such as dedicated hardware higher parallelism can yield more throughput of Hot Restart. In other cases such as running on EC2, it can yield diminishing returns - more thread scheduling, more contention on IO and less efficient garbage collection.
+NOTE: Previously, `base-dir` was being used only by a single Hazelcast member. If such an existing `base-dir` is configured for a Hazelcast member, Hot Restart starts in legacy mode and `base-dir` is used only by a single member, without creating a unique sub-directory. Other members trying to use that `base-dir` fails during the startup.
+* `backup-dir`: Specifies the directory under which Hot Restart snapshots (Hot Backups) are stored. Please see the <<hot-backup, Hot Backup section>> for more information.
+* `parallelism`: Level of parallelism in Hot Restart Persistence. There are this many IO threads, each writing in parallel to its own files. During the Hot Restart procedure, this many IO threads are reading the files and this many rebuilder threads are rebuilding the Hot Restart metadata. The default value for this property is 1. This is a good default in most but not all cases. You should measure the raw IO throughput of your infrastructure and test with different values of parallelism. In some cases such as dedicated hardware higher parallelism can yield more throughput of Hot Restart. In other cases such as running on EC2, it can yield diminishing returns - more thread scheduling, more contention on IO and less efficient garbage collection.
 * `validation-timeout-seconds`: Validation timeout for the Hot Restart process when validating the cluster members expected to join and the partition table on the whole cluster.
 * `data-load-timeout-seconds`: Data load timeout for the Hot Restart process. All members in the cluster should finish restoring their local data before this timeout.
-* `cluster-data-recovery-policy`: Specifies the data recovery policy that will be respected during Hot Restart cluster start. Valid values are;
+* `cluster-data-recovery-policy`: Specifies the data recovery policy that is respected during the Hot Restart cluster start. Valid values are;
 ** `FULL_RECOVERY_ONLY`: Starts the cluster only when all expected members are present and correct. Otherwise, it fails. This is the default value.
-** `PARTIAL_RECOVERY_MOST_RECENT`: Starts the cluster with the members which have most up-to-date partition table and successfully restored their data. All other members will leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.
-** `PARTIAL_RECOVERY_MOST_COMPLETE`: Starts the cluster with the largest group of members which have the same partition table version and successfully restored their data. All other members will leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.
+** `PARTIAL_RECOVERY_MOST_RECENT`: Starts the cluster with the members which have most up-to-date partition table and successfully restored their data. All other members leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.
+** `PARTIAL_RECOVERY_MOST_COMPLETE`: Starts the cluster with the largest group of members which have the same partition table version and successfully restored their data. All other members leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.
 * `auto-remove-stale-data`: Enables automatic removal of the stale Hot Restart data. When a member terminates or crashes when the cluster state is `ACTIVE`, the remaining members redistribute the data among themselves and the data persisted on terminated member's storage becomes stale. That terminated member cannot rejoin the cluster without removing Hot Restart data. When auto-removal of stale Hot Restart data is enabled, while restarting that member, Hot Restart data is automatically removed and it joins the cluster as a completely new member. Otherwise, Hot Restart data should be removed manually.
 
 ===== Per Data Structure Hot Restart Configuration
@@ -198,7 +198,7 @@ NOTE: Previously, `base-dir` was being used only by a single Hazelcast member. I
 This is where you configure the data structures of your choice, so that they can have the Hot Restart feature. This is done using the `hot-restart` configuration element. As it is explained in the <<hot-restart-persistence, introduction>> paragraph, Hot Restart feature is currently supported by Hazelcast map data structure and JCache implementation (`map` and `cache`), each of which has the `hot-restart` configuration element. The following are the descriptions of this element's attribute and sub-element:
 
 * `enabled`: Attribute of the `hot-restart` element which specifies whether the Hot Restart feature is enabled for the related data structure. Its default value is `false`.
-* `fsync`: Turning on `fsync` guarantees that data is persisted to the disk device when a write operation returns successful response to the caller. By default, `fsync` is turned off (`false`). That means data will be persisted to the disk device eventually, instead of on every disk write. This generally provides a better performance.
+* `fsync`: Turning on `fsync` guarantees that data is persisted to the disk device when a write operation returns successful response to the caller. By default, `fsync` is turned off (`false`). That means data is persisted to the disk device eventually, instead of on every disk write. This generally provides a better performance.
 
 ===== Hot Restart Configuration Examples
 
@@ -254,7 +254,7 @@ This flexibility provides;
 * ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
 * ability to copy production data to test environment, so that a more functional test cluster can bet setup
 
-Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, will use a heuristic from the number of cores, e.g., `# of partition threads = # of CPU cores`. When Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads will change and that will make Hot Restart fail during startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see <<system-properties, System Properties appendix>>.
+Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, uses a heuristic from the number of cores, e.g., `# of partition threads = # of CPU cores`. When a Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads changes and that makes Hot Restart fail during the startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see <<system-properties, System Properties appendix>>.
 
 ==== Hot Restart Persistence Design Details
 
@@ -300,9 +300,9 @@ The Cost-Benefit factor of a chunk consists of two components multiplied togethe
 . The ratio of benefit (amount of garbage that can be collected) to I/O cost (amount of live data to be written).
 . The age of the data in the chunk, measured as the age of the youngest record it contains.
 
-The essence is in the second component: given equal amount of garbage in all chunks, it will make the young ones less attractive to the Collector. Assuming the generational garbage hypothesis, this will allow the young chunks to quickly accumulate more garbage. On the flip side, it will also ensure that even files with little garbage are eventually garbage collected. This removes garbage which would otherwise linger on, thinly spread across many chunk files.
+The essence is in the second component: given equal amount of garbage in all chunks, it makes the young ones less attractive to the Collector. Assuming the generational garbage hypothesis, this allows the young chunks to quickly accumulate more garbage. On the flip side, it also ensures that even files with little garbage are eventually garbage collected. This removes garbage which would otherwise linger on, thinly spread across many chunk files.
 
-Sorting records by age will group young records together in a single chunk and will do the same for older records. Therefore the chunks will either tend to keep their data live for a longer time, or quickly become full of garbage.
+Sorting records by age groups the young records together in a single chunk and does the same for older records. Therefore the chunks are either tend to keep their data live for a longer time, or quickly become full of garbage.
 
 ==== Hot Restart Performance Considerations
 
@@ -363,7 +363,7 @@ Simple file copying of a currently running cluster does not suffice and can prod
 
 To create snapshots you must first configure the Hot Restart backup directory. You can configure the directory programmatically or declaratively using the following configuration element:
 
-* `backup-dir`: This element is included in the `hot-restart-persistence` and denotes the destination under which backups will be stored. If this element is not defined, hot backup will be disabled. If a directory is defined which does not exist, it will be created on the first backup. To avoid clashing data on multiple backups, each backup has a unique sequence ID which determines the name of the directory which will contain all Hot Restart data. This unique directory is created as a subdirectory of the configured `backup-dir`.
+* `backup-dir`: This element is included in the `hot-restart-persistence` and denotes the destination under which backups are stored. If this element is not defined, hot backup is disabled. If a directory is defined which does not exist, it is created on the first backup. To avoid clashing data on multiple backups, each backup has a unique sequence ID which determines the name of the directory which contains all Hot Restart data. This unique directory is created as a subdirectory of the configured `backup-dir`.
 
 The following are examples configurations for Hot backup.
 
@@ -397,9 +397,9 @@ config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
 
 ===== Using Hot Backup
 
-Once configured, you can initiate a new backup via API or from the Management Center. The backup is started transactionally and cluster-wide. This means that either all or none of the members will start the same backup. The member which receives the backup request will determine a new backup sequence ID and send that information to all members. If all members respond that no other backup is currently in progress and that no other backup request has already been made, then the coordinating member will command the other members to start the actual backup process. This will create a directory under the configured `backup-dir` with the name `backup-<backupSeq>` and start copying the data from the original store.
+Once configured, you can initiate a new backup via API or from the Management Center. The backup is started transactionally and cluster-wide. This means that either all or none of the members start the same backup. The member which receives the backup request determines a new backup sequence ID and send that information to all members. If all members respond that no other backup is currently in progress and that no other backup request has already been made, then the coordinating member commands the other members to start the actual backup process. This creates a directory under the configured `backup-dir` with the name `backup-<backupSeq>` and start copying the data from the original store.
 
-The backup process is initiated nearly instantaneously on all members. Note that since there is no limitation as to when the backup process is initiated, it may be initiated during membership changes, partition table changes or during normal data update. Some of these operations may not be completed fully yet, which means that some members will backup some data while some members will backup a previous version of the same data. This will usually be solved by the anti-entropy mechanism on the new cluster which will reconcile different versions of the same data. Please check the <<achieving-high-consistency-of-backup-data, Achieving High Consistency of Backup Data section>> for more information.
+The backup process is initiated nearly instantaneously on all members. Note that since there is no limitation as to when the backup process is initiated, it may be initiated during membership changes, partition table changes or during normal data update. Some of these operations may not be completed fully yet, which means that some members will backup some data while some members will backup a previous version of the same data. This is usually solved by the anti-entropy mechanism on the new cluster which reconciles different versions of the same data. Please check the <<achieving-high-consistency-of-backup-data, Achieving High Consistency of Backup Data section>> for more information.
 
 The duration of the backup process and the disk data usage drastically depends on what is supported by the system and the configuration. Please check the <<achieving-high-performance-of-backup-process, Achieving high performance of backup process section>> for more information on achieving better resource usage of the backup process.
 
@@ -420,7 +420,7 @@ long backupSeq = ...
 service.backup(backupSeq);
 ----
 
-Keep in mind that the backup will fail if any member contains a backup directory with the name `backup-<backupSeq>`, where `backupSeq` is the given sequence.
+Keep in mind that the backup fails if any member contains a backup directory with the name `backup-<backupSeq>`, where `backupSeq` is the given sequence.
 
 ===== Starting the Cluster From a Hot Backup
 
@@ -464,21 +464,21 @@ And let's say you have a subdirectory named `backup-2018Oct24` under the backup 
 
 The backup is initiated nearly simultaneously on all members but you can encounter some inconsistencies in the data. This is because some members might have and some might not have received updated values yet from executed operations, because the system could be undergoing partition and membership changes or because there are some transactions which have not yet been committed.
 
-To achieve a high consistency of data on all members, the cluster should be put to `PASSIVE` state for the duration of the call to the backup method. See the <<cluster-member-states, Cluster Member States section>> on information on how to do this. The cluster does not need to be in `PASSIVE` state for the entire duration of the backup process, though. Because of the design, only partition metadata is copied synchronously during the invocation of the backup method. Once the backup method has returned all cluster metadata has been copied and the exact partition data which needs to be copied will have been marked. After that, the backup process continues asynchronously and you can return the cluster to the `ACTIVE` state and resume operations.
+To achieve a high consistency of data on all members, the cluster should be put to `PASSIVE` state for the duration of the call to the backup method. See the <<cluster-member-states, Cluster Member States section>> on information on how to do this. The cluster does not need to be in `PASSIVE` state for the entire duration of the backup process, though. Because of the design, only partition metadata is copied synchronously during the invocation of the backup method. Once the backup method has returned, all cluster metadata is copied and the exact partition data which needs to be copied is marked. After that, the backup process continues asynchronously and you can return the cluster to the `ACTIVE` state and resume operations.
 
 ===== Achieving High Performance of Backup Process
 
-Because of the design of Hot Restart Store, we can use hard links to achieve backups/snapshots of the store. The hot backup process will use hard links whenever possible because they provide big performance benefits and because the backups share disk usage.
+Because of the design of Hot Restart Store, we can use hard links to achieve backups/snapshots of the store. The hot backup process uses hard links whenever possible because they provide big performance benefits and because the backups share disk usage.
 
 The performance benefit comes from the fact that Hot Restart file contents are not being duplicated (thus using disk and IO resources) but rather a new file name is created for the same contents on disk (another pointer to the same inode). Since all backups and stores share the same inode, disk usage drops.
 
-The bigger the percentage of stable data in the Hot Restart Store (data not undergoing changes), the more files will each backup share with the operational Hot Restart Store and the less disk space it will be using. For the hot backup to use hard links, you must be running Hazelcast members on JDK 7 or higher and must satisfy all requirements for the https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#createLink(java.nio.file.Path,%20java.nio.file.Path)[`Files.createLink()` method] to be supported.
+The bigger the percentage of stable data in the Hot Restart Store (data not undergoing changes), the more files each backup shares with the operational Hot Restart Store and the less disk space it uses. For the hot backup to use hard links, you must be running Hazelcast members on JDK 7 or higher and must satisfy all requirements for the https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html#createLink(java.nio.file.Path,%20java.nio.file.Path)[`Files.createLink()` method] to be supported.
 
-The backup process will initially attempt to create a new hard link and if that fails for any reason it will continue by copying the data. Subsequent backups will also attempt to use hard links.
+The backup process initially attempts to create a new hard link and if that fails for any reason it continues by copying the data. Subsequent backups also attempt to use hard links.
 
 ===== Backup Process Progress and Completion
 
-Only cluster and distributed object metadata is copied synchronously during the invocation of the backup method. The rest of the Hot Restart Store containing partition data will be copied asynchronously after the method call has ended. You can track the progress by API or view it from the Management Center.
+Only cluster and distributed object metadata is copied synchronously during the invocation of the backup method. The rest of the Hot Restart Store containing partition data is copied asynchronously after the method call has ended. You can track the progress by API or view it from the Management Center.
 
 An example of how to track the progress via API is shown below:
 
@@ -497,7 +497,7 @@ The returned object contains local member backup status:
 
 The completed and total count can provide you a way to track the percentage of the copied data. Currently the count defines the number of copied and total local member Hot Restart Stores (defined by `HotRestartPersistenceConfig.setParallelism()`) but this can change at a later point to provide greater resolution.
 
-Besides tracking the Hot Restart status by API, you can view the status in the Management Center and you can inspect the on-disk files for each member. Each member creates an `inprogress` file which is created in each of the copied Hot Restart Stores. This means that the backup is currently in progress. As the backup task completes the backup operation, the file will be removed. If an error occurs during the backup task, the `inprogress` file will be renamed to `failure` and it will contain a stack trace of the exception.
+Besides tracking the Hot Restart status by API, you can view the status in the Management Center and you can inspect the on-disk files for each member. Each member creates an `inprogress` file which is created in each of the copied Hot Restart Stores. This means that the backup is currently in progress. When the backup task completes the backup operation, this file is removed. If an error occurs during the backup task, the `inprogress` file is renamed to `failure` which contains a stack trace of the exception.
 
 ===== Backup Task Interruption and Cancellation
 
@@ -514,7 +514,7 @@ service.interruptBackupTask();
 ...
 ----
 
-This method will send an interrupt to all members. The interrupt is ignored if the backup task is currently not in progress so you can safely call this method even though it has previously been called or when some members have already completed their local backup tasks.
+This method sends an interrupt to all members. The interrupt is ignored if the backup task is currently not in progress so you can safely call this method even though it has previously been called or when some members have already completed their local backup tasks.
 
 You can also interrupt the local member backup task as shown below:
 
@@ -525,7 +525,7 @@ service.interruptLocalBackupTask();
 ...
 ----
 
-The backup task will stop as soon as possible and it will not remove the disk contents of the backup directory meaning that you must remove it manually.
+The backup task stops as soon as possible and it does not remove the disk contents of the backup directory meaning that you must remove it manually.
 
 
 === Hazelcast Striim Hot Cache

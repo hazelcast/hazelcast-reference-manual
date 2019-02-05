@@ -13,7 +13,7 @@ This chapter describes the options to configure your Hazelcast applications and 
 [[configuring-declaratively]]
 === Configuring Declaratively
 
-This is the configuration option where you use an XML configuration file. When you download and unzip `hazelcast-<version>.zip`, you will see the following files present in `/bin` folder, which are standard XML-formatted configuration files:
+This is the configuration option where you use an XML configuration file. When you download and unzip `hazelcast-<version>.zip`, you see the following files present in the  `/bin` folder, which are standard XML-formatted configuration files:
 
 * `hazelcast.xml`: Default declarative configuration file for Hazelcast. The configuration in this XML file should be fine for most of the Hazelcast users. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
 * `hazelcast-full-example.xml`: Configuration file which includes all Hazelcast configuration elements and attributes with their descriptions. It is the "superset" of `hazelcast.xml`. You can use `hazelcast-full-example.xml` as a reference document to learn about any element or attribute, or you can change its name to `hazelcast.xml` and start to use it as your Hazelcast configuration file.
@@ -286,7 +286,7 @@ It is possible to dynamically add configuration for certain data structures at r
 include::{javasource}/DynamicConfiguration.java[tag=dynconf]
 ----
 
-Dynamic configuration elements must be fully configured before the invocation of `add*Config` method: at that point, the configuration object will be delivered to every member of the cluster and added to each member's dynamic configuration, so mutating the configuration object after the `add*Config` invocation will have no effect.
+Dynamic configuration elements must be fully configured before the invocation of `add*Config` method: at that point, the configuration object is delivered to every member of the cluster and added to each member's dynamic configuration, so mutating the configuration object after the `add*Config` invocation does not have an effect.
 
 As dynamically added data structure configuration is propagated across all cluster members, failures may occur due to conditions such as timeout and network partition. The configuration propagation mechanism internally retries adding the configuration whenever a membership change is detected. However if an exception is thrown from `add*Config` method, the configuration may have been partially propagated to some cluster members and adding the configuration should be retried by the user.
 
@@ -311,7 +311,7 @@ HazelcastClient.shutdownAll();
 [[handling-configuration-conflicts]]
 ==== Handling Configuration Conflicts
 
-Attempting to add a dynamic configuration, when a static configuration for the same element already exists, will throw `ConfigurationException`. For example, assuming we start a member with the following fragment in `hazelcast.xml` configuration:
+Attempting to add a dynamic configuration, when a static configuration for the same element already exists, throws `ConfigurationException`. For example, assuming we start a member with the following fragment in `hazelcast.xml` configuration:
 
 [source,xml]
 ----
@@ -324,7 +324,7 @@ Attempting to add a dynamic configuration, when a static configuration for the s
 </hazelcast>
 ----
 
-Then adding a dynamic configuration for a map with the name `sessions` will throw a `ConfigurationException`:
+Then adding a dynamic configuration for a map with the name `sessions` throws a `ConfigurationException`:
 
 [source,java]
 ----
@@ -336,7 +336,7 @@ MapConfig sessionsMapConfig = new MapConfig("sessions");
 instance.getConfig().addMapConfig(sessionsMapConfig);
 ----
 
-When attempting to add dynamic configuration for an element for which dynamic configuration has already been added, then if a configuration conflict is detected a `ConfigurationException` will be thrown. For example:
+When attempting to add dynamic configuration for an element for which dynamic configuration has already been added, then if a configuration conflict is detected a `ConfigurationException` is thrown. For example:
 
 [source,java]
 ----
