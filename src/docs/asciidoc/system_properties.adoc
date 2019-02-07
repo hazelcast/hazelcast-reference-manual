@@ -659,9 +659,10 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 | Enable <<rest-client, REST>> client request listener service.
 
 |[[permission-onjoin]]`hazelcast.security.permissions.operation.on-join`
-|false
+|RECEIVE
 |bool
-|It is used to specify whether a new member joining to a cluster will apply the <<permissions, client permissions>> stored in its own configuration, or use the ones configured in the cluster. Its default value is false, i.e., the joining member uses the client permissions defined in the cluster.
+|It is used to specify whether a new member joining to a cluster will apply the <<permissions, client permissions>> stored in its own configuration and send them to the cluster, or use the ones configured in the cluster. Its default value is RECEIVE, i.e., the joining member uses the client permissions defined in the cluster. Available other values are `SEND` and `NONE`. See the <<handling-permissions-when-a-new-member-joins, Handling Permissions When a New Member Joins section>>.
+
 
 |`hazelcast.shutdownhook.enabled`
 | true
