@@ -1031,6 +1031,8 @@ Permission policy should return a `PermissionCollection` containing permissions 
 
 ==== Permissions
 
+The following is the list of client permissions that can be configured on the member:
+
 * All Permission
 +
 [source,xml]
@@ -1294,3 +1296,75 @@ Actions: all, create, destroy, put, read, remove, listen
 Actions: all, deploy
 
 NOTE: The name provided in `cache-permission` must be the Hazelcast distributed object name corresponding to the `Cache` as described in <<jcache-hazelcast-instance-integration, JCache - Hazelcast Instance Integration>>.
+
+===== Handling Permissions When a New Member Joins
+
+By default, the set of permissions defined in the leader member of a cluster is distributed to the newly joining members, overriding their own permission configurations, if any. However, you can configure a new member to be joined, so that it keeps its own set of permissions and even send these to the existing members in the cluster. This can be done dynamically, i.e., without needing to restart the cluster, using either one of the following configuration options:
+
+* the `on-join-operation` configuration attribute
+* the `setOnJoinPermissionOperation()` method
+
+Using the above, you can choose whether a new member joining to a cluster will apply the client permissions stored in its own configuration, or use the ones defined in the cluster. The behaviors that you can specify with the configuration are `RECEIVE`, `SEND` and `NONE`, which are described after the examples below.
+
+The following are the examples for both approaches on how to use them:
+
+**Declarative Configuration:**
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <security enabled="true">
+        <client-permissions on-join-operation="SEND">
+            <!-- ... -->
+        </client-permissions>
+    </security>
+    ...
+</hazelcast>
+----
+
+**Programmatic Configuration:**
+
+[source,java]
+----
+Config config = new Config();
+config.getSecurityConfig()
+    .setEnabled(true)
+    .setOnJoinPermissionOperation(OnJoinPermissionOperation.SEND);
+----
+
+The behaviors are explained below.
+
+* `RECEIVE`: Applies the permissions from the leader member in the cluster before join. This is the default value.
+* `SEND`: Doesn't apply the permissions from the leader member before join. If the security is enabled, then it refreshes or replaces the cluster wide permissions with the ones in the new member after the join is complete. This option is suitable for the scenarios where you need to replace the cluster wide permissions without restarting the cluster.
+* `NONE`: Neither applies pre-join permissions, nor sends the local permissions to other members. It means that the new member does not send its own permission definitions to the cluster, but keeps them when it joins. However, after the join, when you update the permissions in the other cluster members, those updates are also sent to the newly joining member. Therefore, this option is suitable for the scenarios where you need to elevate privileges on a single member for a limited time period.
++
+The following is an example for a scenario where `NONE` is used:
++
+[source,java]
+----
+// temporary member, in the below case a lite member
+Config config = new Config().setLiteMember(true);
+PermissionConfig allPermission = new PermissionConfig(PermissionType.ALL, "*", null);
+config.getSecurityConfig()
+  .setEnabled(true)
+  .setOnJoinPermissionOperation(OnJoinPermissionOperation.NONE)
+  .addClientPermissionConfig(allPermission);
+HazelcastInstance hzLite = Hazelcast.newHazelcastInstance(config);
+
+// temporary client connecting only to the lite member
+String memberAddr = ...;
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.getNetworkConfig().setSmartRouting(false)
+  .addAddress(memberAddr);
+HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
+
+// do operations with escalated privileges:
+client.getMap("protectedConfig").put("master.resolution", "1920");
+
+// shutdown the client and lite member
+client.shutdown();
+hzLite.shutdown();
+----
+
+
