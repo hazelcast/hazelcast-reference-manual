@@ -1330,7 +1330,7 @@ The following are the examples for both approaches on how to use them:
 Config config = new Config();
 config.getSecurityConfig()
     .setEnabled(true)
-    .setOnJoinPermissionOperation(OnJoinPermissionOperation.SEND);
+    .setOnJoinPermissionOperation(OnJoinPermissionOperationName.SEND);
 ----
 
 The behaviors are explained below.
@@ -1348,7 +1348,7 @@ Config config = new Config().setLiteMember(true);
 PermissionConfig allPermission = new PermissionConfig(PermissionType.ALL, "*", null);
 config.getSecurityConfig()
   .setEnabled(true)
-  .setOnJoinPermissionOperation(OnJoinPermissionOperation.NONE)
+  .setOnJoinPermissionOperation(OnJoinPermissionOperationName.NONE)
   .addClientPermissionConfig(allPermission);
 HazelcastInstance hzLite = Hazelcast.newHazelcastInstance(config);
 
