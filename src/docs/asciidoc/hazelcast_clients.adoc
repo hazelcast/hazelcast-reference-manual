@@ -277,23 +277,23 @@ if(lifecycleService.isRunning()){
 lifecycleService.shutdown();
 ----
 
-===== Defining Client Attributes
+===== Defining Client Labels
 
-You can define attributes in your Java client, similar to the way it can be done for the <<defining-member-attributes, members>>. Through the client attributes, you can assign special roles for your clients and use these roles to perform some actions specific to those client connections.
+You can define labels in your Java client, similar to the way it can be done for the <<defining-member-attributes, members>>. Through the client labels, you can assign special roles for your clients and use these roles to perform some actions specific to those client connections.
 
-You can also group your clients using the client attributes. These client groups can be blacklisted in the Hazelcast Management Center so that they can be prevented from connecting to a cluster. See the related section in the Hazelcast Management Center Reference Manual for more information on this topic.
+You can also group your clients using the client labels. These client groups can be blacklisted in the Hazelcast Management Center so that they can be prevented from connecting to a cluster. See the related section in the Hazelcast Management Center Reference Manual for more information on this topic.
 
-Declaratively, you can define the client attributes using the `client-attributes` configuration element. See the below example.
+Declaratively, you can define the client labels using the `client-labels` configuration element. See the below example.
 
 [source,xml]
 ----
 <hazelcast-client>
     ...    
     <instance-name>barClient</instance-name>
-    <client-attributes>
-        <attribute name="role">user</attribute>
-        <attribute name="region">bar</attribute>
-    </client-attributes>
+    <client-labels>
+        <label>user</attribute>
+        <alabel>bar</attribute>
+    </client-labels>
     ....
 </hazelcast-client>
 ----
@@ -304,13 +304,13 @@ The equivalent programmatic approach is shown below.
 ----
 ClientConfig clientConfig = new ClientConfig();
 clientConfig.setInstanceName("ExampleClientName");
-clientConfig.setAttribute("role", "user");
-clientConfig.setAttribute("region", "bar");
+clientConfig.addLabel("user");
+clientConfig.addLabel("bar");
 
 HazelcastClient.newHazelcastClient(clientConfig);
 ----
 
-See the https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients/client-attributes[code sample] for the client attributes to see them in action.
+See the https://github.com/hazelcast/hazelcast-code-samples/tree/master/clients/client-labels[code sample] for the client attributes to see them in action.
 
 ===== Client Listeners
 
