@@ -369,21 +369,21 @@ The following is the Spring declarative configuration for the same example.
 
 NOTE: Non-primitive types to be indexed should implement *`Comparable`*.
 
-NOTE: Starting with Hazelcast 3.9, if you configure the data structure to use <<configuring-high-density-memory-store, High-Density Memory Store>> **and** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full garbage collections, when doing a lot of updates to index.
+NOTE: If you configure the data structure to use <<configuring-high-density-memory-store, High-Density Memory Store>> **and** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full garbage collections when doing a lot of updates to index.
 
 ===== Composite Indexes
 
-Composite indexes, also known as compound indexes, are special kind of indexes that are built on top of multiple map entry attributes and therefore may be used to significantly speed up queries involving those attributes simultaneously.
+Composite indexes, also known as compound indexes, are special kind of indexes that are built on top of the multiple map entry attributes and therefore may be used to significantly speed up the queries involving those attributes simultaneously.
 
 There are two distinct composite index types used for two different purposes: unordered composite indexes and ordered ones.
 
 ====== Unordered Composite Indexes
 
-Unordered indexes are used to perform equality queries, also known as point queries, e.g. `name = 'Alice'`. Unordered indexes are specifically optimized for equality queries and don't support other comparison operators like `>` or `+<=+`.
+The unordered indexes are used to perform equality queries, also known as the point queries, e.g., `name = 'Alice'`. These are specifically optimized for equality queries and don't support other comparison operators like `>` or `+<=+`.
 
-Additionally, _composite_ unordered indexes allow to speed up equality queries involving multiple attributes simultaneously, e.g. `name = 'Alice' and age = 33`. The latter query will result in a single composite index lookup operation which can be performed very efficiently.
+Additionally, the _composite_ unordered indexes allow speeding up the equality queries involving multiple attributes simultaneously, e.g., `name = 'Alice' and age = 33`. This example query results in a single composite index lookup operation which can be performed very efficiently.
 
-Unordered composite index on attributes `name` and `age` may be configured for a map as follows:
+The unordered composite index on the `name` and `age` attributes may be configured for a map as follows:
 
 [source,xml]
 ----
@@ -398,13 +398,13 @@ Unordered composite index on attributes `name` and `age` may be configured for a
 </hazelcast>
 ----
 
-Attributes indexed by _unordered_ composite indexes can't be matched partially: `name = 'Alice'` query can't utilize the composite index configured above.
+The attributes indexed by the _unordered_ composite indexes can't be matched partially: the `name = 'Alice'` query can't utilize the composite index configured above.
 
 ====== Ordered Composite Indexes
 
-Ordered indexes are specifically designed to perform efficient order comparison queries, also known as range queries, e.g. `age > 33`. Equality queries, like `age = 33`, are still supported by ordered indexes, but they are handled in a slightly less efficient manner comparing to unordered indexes.
+The ordered indexes are specifically designed to perform efficient order comparison queries, also known as the range queries, e.g., `age > 33`. The equality queries, like `age = 33`, are still supported by the ordered indexes, but they are handled in a slightly less efficient manner comparing to the unordered indexes.
 
-_Composite_ ordered indexes extend the concept by allowing multiple equality predicates and a single order comparison predicate to be combined into a single index query operation. For instance, `name = 'Alice' and age > 33` and `name = 'Bob' and age = 33 and balance > 0.0` queries are good candidates to be covered by an ordered composite index configured as follows:
+The _composite_ ordered indexes extend the concept by allowing multiple equality predicates and a single order comparison predicate to be combined into a single index query operation. For instance, the `name = 'Alice' and age > 33` and `name = 'Bob' and age = 33 and balance > 0.0` queries are good candidates to be covered by an ordered composite index configured as follows:
 
 [source,xml]
 ----
@@ -419,15 +419,15 @@ _Composite_ ordered indexes extend the concept by allowing multiple equality pre
 </hazelcast>
 ----
 
-In contrast to _unordered_ composite indexes, partial attribute prefixes may be matched for _ordered_ composite indexes. In general, a valid non-empty attribute prefix is formed as a sequence of zero or more equality predicates followed by a zero or exactly one order comparison predicate. Given the index definition above, the following queries may be served by the index: `name = 'Alice'`, `name > 'Alice'`, `name = 'Alice' and age > 33`, `name = 'Alice' and age = 33 and balance = 5.0`. The following queries can't be served the index: `age = 33`, `age > 33 and balance = 0.0`, `balance > 0.0`.
+Unlike the _unordered_ composite indexes, partial attribute prefixes may be matched for the _ordered_ composite indexes. In general, a valid non-empty attribute prefix is formed as a sequence of zero or more equality predicates followed by a zero or exactly one order comparison predicate. Given the index definition above, the following queries may be served by the index: `name = 'Alice'`, `name > 'Alice'`, `name = 'Alice' and age > 33`, `name = 'Alice' and age = 33 and balance = 5.0`. The following queries can't be served the index: `age = 33`, `age > 33 and balance = 0.0`, `balance > 0.0`.
 
-While matching ordered composite indexes, multiple order comparison predicates acting on the same attribute are treated as a single range predicate acting on that attribute. Given the index definition above, the following queries may be served by the index: `name > 'Alice' and name < 'Bob'`, `name = 'Alice' and age > 33 and age < 55`, `name = 'Alice' and age = 33 and balance > 0.0 and balance < 100.0`.
+While matching the ordered composite indexes, multiple order comparison predicates acting on the same attribute are treated as a single range predicate acting on that attribute. Given the index definition above, the following queries may be served by the index: `name > 'Alice' and name < 'Bob'`, `name = 'Alice' and age > 33 and age < 55`, `name = 'Alice' and age = 33 and balance > 0.0 and balance < 100.0`.
 
 ====== Composite Index Matching and Selection
 
 The order of attributes involved in a query plays no role in the selection of the matching composite index: `name = 'Alice' and age = 33` and `age = 33 and name = 'Alice'` queries are equivalent from the point of view of the index matching procedure.
 
-Attributes involved in a query can be matched partially by the composite index matcher: `name = 'Alice' and age = 33 and balance > 0.0` can be partially matched by `name, age` composite index, the `name = 'Alice' and age = 33` predicates will be served by the matched index, while the `balance > 0.0` predicate will be processed by other means.
+The attributes involved in a query can be matched partially by the composite index matcher: `name = 'Alice' and age = 33 and balance > 0.0` can be partially matched by the `name, age` composite index, the `name = 'Alice' and age = 33` predicates are served by the matched index, while the `balance > 0.0` predicate is processed by other means.
 
 ===== Copying Indexes
 
