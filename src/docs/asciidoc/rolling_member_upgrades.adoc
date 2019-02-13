@@ -56,13 +56,13 @@ At this point all members of the cluster have been upgraded to codebase version 
 [[upgrading-cluster-version]]
 === Upgrading Cluster Version
 
-There are three ways to accomplish this:
+You have the following options to upgrade the cluster version:
 
-* Use https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Management Center].
-* Use the command line <<using-the-script-cluster-sh, cluster.sh script>>.
-* Use system properties:
-* `hazelcast.cluster.version.auto.upgrade.enabled`: Default value is false. Set this property to true to enable cluster version auto upgrade.
-* `hazelcast.cluster.version.auto.upgrade.min.cluster.size`: Default value is 1. When this property is set greater than 1, auto upgrade waits to reach that cluster size to proceed.
+* Using https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Management Center].
+* Using the <<using-the-script-cluster-sh, cluster.sh>> script.
+* Using the following system properties:
+** `hazelcast.cluster.version.auto.upgrade.enabled`: Specifies whether the automatic cluster version upgrading is enabled. Its default value is `false` (disabled).
+** `hazelcast.cluster.version.auto.upgrade.min.cluster.size`: When this property is set to a value greater than 1, automatic upgrading waits to reach that cluster size to proceed. Its default value is `1`.
 
 NOTE: You need to upgrade your Management Center version *before* upgrading the member version if you want to
 change cluster version using Management Center. Management Center is compatible with the previous minor version of

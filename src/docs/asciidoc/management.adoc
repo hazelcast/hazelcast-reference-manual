@@ -700,7 +700,7 @@ The script `cluster.sh` needs the following parameters to operate according to y
 
 |`-v` or `--version`
 |None
-|Defines the cluster version to change to. To be used in conjunction with `change-cluster-version` operation.
+|Defines the cluster version to change to. It is used in conjunction with the `change-cluster-version` operation.
 |===
 
 The script `cluster.sh` is self-documented; you can see the parameter descriptions using the command `sh cluster.sh -h` or `sh cluster.sh --help`.
@@ -773,15 +773,15 @@ The following also gets the cluster state, using the alternative parameter names
 
 `sh cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --groupname test --password test`
 
-**Changing cluster version:**
+**Changing the cluster version:**
 
-Learn more about when you should change the cluster version in <<rolling-member-upgrades, Rolling Member Upgrades chapter>>.
+See the <<rolling-member-upgrades, Rolling Member Upgrades chapter>> to learn more about the cases when you should change the cluster version.
 
-To change the cluster version to `3.9`, use the following command:
+To change the cluster version to `X.Y`, use the following command:
 
-`sh cluster.sh -o change-cluster-version -v 3.9 -a 172.16.254.1 -p 5702 -g test -P test`
+`sh cluster.sh -o change-cluster-version -v X.Y -a 172.16.254.1 -p 5702 -g test -P test`
 
-Cluster version is always in `major.minor` format, using other formats results in a failure.
+The cluster version is always in the `major.minor` format, e.g., 3.12. Using other formats results in a failure.
 
 NOTE: Currently, this script is not supported on the Windows platforms.
 
