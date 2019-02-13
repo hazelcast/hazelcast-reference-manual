@@ -51,10 +51,18 @@ one at version `3.13.0`, includes the following steps which should be repeated f
 
 The version in brackets (`[3.13]`) still denotes the member's codebase version (running on the hypothetical `hazelcast-3.13.jar` binary). Once the member locates the existing cluster members, it sends its join request to the master. The master validates that the new member is allowed to join the cluster and lets the new member know that the cluster is currently operating at `3.12` cluster version. The new member sets `3.12` as its cluster version and starts operating normally.
 
-At this point all members of the cluster have been upgraded to codebase version `3.13.0` but the cluster still operates at cluster version `3.12`. In order to use `3.13` features the cluster version must be changed to `3.13`. There are two ways to accomplish this:
+At this point all members of the cluster have been upgraded to codebase version `3.13.0` but the cluster still operates at cluster version `3.12`. In order to use `3.13` features the cluster version must be changed to `3.13`.
+
+[[upgrading-cluster-version]]
+=== Upgrading Cluster Version
+
+There are three ways to accomplish this:
 
 * Use https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Management Center].
 * Use the command line <<using-the-script-cluster-sh, cluster.sh script>>.
+* Use system properties:
+* `hazelcast.cluster.version.auto.upgrade.enabled`: Default value is false. Set this property to true to enable cluster version auto upgrade.
+* `hazelcast.cluster.version.auto.upgrade.min.cluster.size`: Default value is 1. When this property is set greater than 1, auto upgrade waits to reach that cluster size to proceed.
 
 NOTE: You need to upgrade your Management Center version *before* upgrading the member version if you want to
 change cluster version using Management Center. Management Center is compatible with the previous minor version of
