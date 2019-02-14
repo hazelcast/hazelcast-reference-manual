@@ -794,6 +794,14 @@ Besides the Management Center's Hot Restart https://docs.hazelcast.org/docs/mana
 |===
 |**IMDG Open Source commands**
 
+* _Checking if a node is ready to use:_
++
+When a node is joined/formed a cluster and user can safely use it, the HTTP call below returns status code 200, otherwise it returns status code 503 to indicate node is not available yet.
++
+[source,plain]
+----
+curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/health/ready
+----
 * _Getting the cluster state:_
 +
 To get the state of the cluster, use the following command:
