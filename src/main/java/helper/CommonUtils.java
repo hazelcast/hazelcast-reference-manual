@@ -2,7 +2,7 @@ package com.hazelcast.examples.helper;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.HazelcastInstanceProxy;
-import com.hazelcast.nio.ConnectionManager;
+import com.hazelcast.nio.EndpointManager;
 import com.hazelcast.util.EmptyStatement;
 import com.hazelcast.util.ExceptionUtil;
 
@@ -145,8 +145,8 @@ public final class CommonUtils {
     public static void assertClusterSize(int expectedSize, HazelcastInstance instance) {
         int clusterSize = instance.getCluster().getMembers().size();
         if (expectedSize != clusterSize) {
-            ConnectionManager connectionManager = getNode(instance).getConnectionManager();
-            int activeConnectionCount = connectionManager.getActiveConnectionCount();
+            EndpointManager connectionManager = getNode(instance).getEndpointManager();
+            int activeConnectionCount = connectionManager.getActiveConnections().size();
             throw new AssertionError(String.format("Cluster size is not correct. Expected: %d Actual: %d %s",
                     expectedSize,
                     clusterSize,
