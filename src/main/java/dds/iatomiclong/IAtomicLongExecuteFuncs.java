@@ -7,7 +7,7 @@ public class IAtomicLongExecuteFuncs {
     public static void main( String[] args ) {
         //tag::ialef[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        IAtomicLong atomicLong = hazelcastInstance.getAtomicLong( "counter" );
+        IAtomicLong atomicLong = hazelcastInstance.getCPSubsystem().getAtomicLong( "counter" );
 
         atomicLong.set( 1 );
         long result = atomicLong.apply( new Add2Function() );
