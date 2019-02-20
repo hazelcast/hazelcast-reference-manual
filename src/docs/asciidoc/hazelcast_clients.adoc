@@ -1057,43 +1057,25 @@ Using the blue-green system, the clients can connect to another cluster automati
 
 ===== Blue-Green Mechanism
 
-The user will blacklist the client via the Management Center. Blacklisting is defined under different section here.
-When a client is disconnected, it will first try another member in the current cluster. This is because the client is not aware if this is a blacklisting or normal disconnect.
-Behavior, when disconnected, will change depending on RECONNECT-MODE as before.
+You can make your clients to connect to another cluster by blacklisting them in a cluster and using the blue-green mechanism. This is basically having two alive clusters, one of which is active (blue) and the other one is idle (green).
 
-When alternative clusters are listed,
-1. RECONNECT-MODE ON. changes cluster and block invocations while doing so.
-2. RECONNECT-MODE ASYNC
-changes cluster in the background and Throw ClientOfflineException to the user while doing so.
-3. RECONNECT-MODE OFF
-Does not change cluster. shuts down directly.
+When you blacklist a client in a cluster, the client which is disconnected from the cluster due to this blacklisting, first tries to connect to another member of the same cluster. This is because the client is not aware if this is a blacklisting or a normal disconnection.
 
-Here it could be the case that whole cluster restarted. In that case, the restarted server will reject the client since the client is trying to an old cluster. Then, we will continue from item 6. To achieve this, we would be sending cluster uuid on authentication request when multiple configs are provided. Client will return NOT_ALLOWED_IN_CLUSTER status as a response if it is restarted.
-When a client tries to authenticate to a cluster where it is blacklisted, it will get NOT_ALLOWED_IN_CLUSTER as the response of Authentication. See this for details.
-New NOT_ALLOWED_IN_CLUSTER means the client needs to search for a new cluster, if available. For the connect order, see this 
-When a failover started, we will not use current member-list disconnect all connections before attempting to connect to a new cluster. See this section for cleanups we do when switching clusters
-We will not fire Member ADDED or REMOVED events when disconnected from the old cluster. Instead, we will fire InitialMembershipListener#init(InitialMembershipEvent event); when we switch clusters.
-Also a new lifecycle event CLIENT_CHANGED_CLUSTER will be fired.
-When switching clusters client will reuse the client uuid. 
-ListenerService will re-register listeners to the new cluster. Technically this should not require new code. Listener service opens new connection to all members in current member-list and register listeners to each connection.
-Near caches and continuous query caches will be cleared if joining new cluster is successful.
-If in the new cluster partition size is different, the client will be rejected by the cluster. see this for details
+The client's behavior after this disconnection depends on its <<java-client-connection-strategy, `reconnect-mode`>>. Here are the options when you are using the blue-green mechanism (you have alternative clusters for your clients to connect):
+
+* If `reconnect-mode` is set to `ON`, the client changes the cluster and blocks the invocations while doing so.
+* If `reconnect-mode` is set to `ASYNC`, the client changes the cluster in the background and throws `ClientOfflineException` while doing so.
+* If `reconnect-mode` is set to `OFF`, the client does not change the cluster; it shuts down immediately.
+
 
 ===== Disaster Recovery Mechanism
 
-The cluster is gone. Owner connection is disconnected. 
-When a client is disconnected, it will first try another member in the current cluster disconnect.
-Behavior, when disconnected, will change depending on RECONNECT-MODE as before.
+When one of your clusters is gone due to a failure, the connection between your clients and owner member in that cluster is gone, too. 
+When a client is disconnected because of a failure in the cluster, it first tries to connect to another member of that same cluster.
 
-When alternative clusters are listed,
-1. RECONNECT-MODE ON. changes cluster and block invocations while doing so.
-2. RECONNECT-MODE ASYNC
-changes cluster in the background and Throw ClientOfflineException to the user while doing so.
-3. RECONNECT-MODE OFF
-Does not change cluster. shuts down directly.
+The client's behavior after this disconnection depends on its <<java-client-connection-strategy, `reconnect-mode`>>, and it has the same options that are described in the above section (Blue-Green Mechanism).
 
-Client will exhaust all related configuration (connection-attempt limit or exponential backoff strategy). 
-If alternative clusters are given, the client will try to connect to alternative clusters. For the connect order, see this section
+If you have provided alternative clusters for your clients to connect, the client tries to connect to those alternative clusters (depending on the `reconnect-mode`).
 
 When a failover started, we will not use current member-list disconnect all connections before attempting to connect to a new cluster. See this section for cleanups we do when switching clusters
 We will not fire Member ADDED or REMOVED events when disconnected from the old cluster. Instead, we will fire InitialMembershipListener#init(InitialMembershipEvent event); when we switch clusters.
@@ -1101,7 +1083,29 @@ Also a new lifecycle event CLIENT_CHANGED_CLUSTER will be fired.
 When switching clusters client will reuse the client uuid. 
 ListenerService will re-register listeners to the new cluster. Technically this should not require new code. Listener service opens new connection to all members in current member-list and register listeners to each connection.
 Near caches and continuous query caches will be cleared if joining a new cluster is successful.
-If in the new cluster partition size is different, the client will be rejected by the cluster. see this for details
+If in the new cluster partition size is different, the client will be rejected by the cluster. see this for details.
+
+===== Ordering of Clusters When Clients Try to Connect
+
+The order of the clusters, that the client will try to connect in a blue-green or disaster recovery scenario, is decided by the order of these cluster declarations as given in the client configuration.
+
+Each time the client is disconnected from a cluster and it cannot connect back to the same one, the configured list is iterated over. Count of these iterations before the client decides to shut down is provided using the `try-count` configuration element. See the following configuration related sections.
+
+We didn't go over the configuration yet (see the following configuration related sections), but for the sake of explaining the ordering, assume that you have `client-config1`, `client-config2` and `client-config3` in the given order as shown below. This means you have three alternative clusters.
+
+[source,xml]
+----
+<try-count>4</try-count>
+<clients>
+    <client>client-config1.xml</client>
+    <client>client-config2.xml</client>
+    <client>client-config3.xml</client>
+</clients>
+----
+
+And let's say the client is disconnected from the cluster whose configuration is given by `client-config2.xml`. Then, the client tries to connect to the next cluster in this list, whose configuration is given by `client-config3.xml`. When the end of the list is reached, which is so in this example, and the client could not connect to `client-config3`, then `try-count` is incremented and the client continues to try to connect starting with `client-config1`. 
+
+This iteration continues until the client connects to a cluster or `try-count` is reached to the configured value. When the iteration reaches this value and the client still could not connect to a cluster, it shuts down. Note that, if `try-count` was set to `1` in the above example, and the client could not connect to `client-config3`, it would shut down since it already tried once to connect to an alternative cluster.
 
 The following sections describe how you can configure the Java client for blue-green and disaster recovery scenarios.
 
