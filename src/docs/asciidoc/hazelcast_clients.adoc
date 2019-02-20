@@ -1050,14 +1050,12 @@ Note that, `TryConnect` above tries to connect to any member that the client kno
 
 [blue]*Hazelcast IMDG Enterprise*
 
-Hazelcast provides disaster recovery for the client-cluster connections and can use the well-known blue-green concept, so that a Java client is automatically diverted to another cluster on demand or when the intended cluster becomes unavailable.
+Hazelcast provides disaster recovery for the client-cluster connections and can use the well-known blue-green mechanism, so that a Java client is automatically diverted to another cluster on demand or when the intended cluster becomes unavailable.
 
 Using the blue-green system, the clients can connect to another cluster automatically when they are blacklisted from their currently connected cluster. See the Hazelcast Manager Center Reference Manual for information on blacklisting the clients.
 
 
 ===== Blue-Green Mechanism
-
-For the blue-green scenario
 
 The user will blacklist the client via the Management Center. Blacklisting is defined under different section here.
 When a client is disconnected, it will first try another member in the current cluster. This is because the client is not aware if this is a blacklisting or normal disconnect.
@@ -1187,13 +1185,15 @@ Let's describe the configuration with examples. Assume that you have two cluster
 . You should also configure your clients to forget DNS lookups using the https://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html[networkaddress.cache.ttl] JVM parameter.
 . Configure the addresses in your clients' configuration to resolve to hostnames of Cluster A via CNAME so that the clients will connect to Cluster A when it starts:
 + 
-production1.myproject→ clusterA.member1
-production2.myproject→ clusterA.member2
+`production1.myproject` → `clusterA.member1`
++
+`production2.myproject` → `clusterA.member2`
 +
 . When you want the clients to switch to the other cluster, change the mapping as follows:
 +
-production1.myproject→ clusterB.member1
-production2.myproject→ clusterB.member2
+`production1.myproject` → `clusterB.member1`
++
+`production2.myproject` → `clusterB.member2`
 +
 . Wait for the time you configured using the `networkaddress.cache.ttl` JVM parameter for the client JVM to forget the old mapping.
 . Blacklist the clients in Cluster A using the Hazelcast Management Center.
