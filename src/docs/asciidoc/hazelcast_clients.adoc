@@ -1067,6 +1067,15 @@ The client's behavior after this disconnection depends on its <<java-client-conn
 * If `reconnect-mode` is set to `ASYNC`, the client changes the cluster in the background and throws `ClientOfflineException` while doing so.
 * If `reconnect-mode` is set to `OFF`, the client does not change the cluster; it shuts down immediately.
 
+NOTE: Here it could be the case that the whole cluster is restarted. In this case, the owner member of the client connection in the restarted cluster rejects the client's connection request, since the client is trying to connect to the old cluster. So, the client needs to search for a new cluster, if available and according to the blue-green configuration (see the following configuration related sections in this section).
+
+Consider the following notes for the blue-green mechanism (also valid for the disaster recovery mechanism described in the next section):
+
+* When a client disconnects from a cluster and connects to a new one the `InitialMemberEvent` and `CLIENT_CHANGED_CLUSTER` events are fired.
+* When switching clusters, the client reuses its UUID. 
+* The client's listener service re-registers its listeners to the new cluster; the listener service opens a new connection to all members in the current <<client-network, member list>> and registers the listeners for each connection.
+* The client's Near Caches and Continuous Query Caches are cleared when the client joins a new cluster successfully.
+* If the new cluster's partition size is different, the client is rejected by the cluster. The client is not able to connect to a cluster with different partition count. 
 
 ===== Disaster Recovery Mechanism
 
@@ -1077,13 +1086,7 @@ The client's behavior after this disconnection depends on its <<java-client-conn
 
 If you have provided alternative clusters for your clients to connect, the client tries to connect to those alternative clusters (depending on the `reconnect-mode`).
 
-When a failover started, we will not use current member-list disconnect all connections before attempting to connect to a new cluster. See this section for cleanups we do when switching clusters
-We will not fire Member ADDED or REMOVED events when disconnected from the old cluster. Instead, we will fire InitialMembershipListener#init(InitialMembershipEvent event); when we switch clusters.
-Also a new lifecycle event CLIENT_CHANGED_CLUSTER will be fired.
-When switching clusters client will reuse the client uuid. 
-ListenerService will re-register listeners to the new cluster. Technically this should not require new code. Listener service opens new connection to all members in current member-list and register listeners to each connection.
-Near caches and continuous query caches will be cleared if joining a new cluster is successful.
-If in the new cluster partition size is different, the client will be rejected by the cluster. see this for details.
+When a failover starts, i.e., the client is disconnected and was configured to connect to alternative clusters, the current <<client-network, member list>> is not considered; the client cuts all the connections before attempting to connect to a new cluster and tries the clusters as configured. See the below configuration related sections.
 
 ===== Ordering of Clusters When Clients Try to Connect
 
@@ -1111,7 +1114,9 @@ The following sections describe how you can configure the Java client for blue-g
 
 ===== Configuring Using CNAME
 
-Let's describe the configuration with examples. Assume that you have two clusters, Cluster A and Cluster B, and two Java clients.
+Using CNAME, you can change the hostname resolutions and use them dynamically. Let's describe the configuration with examples. 
+
+Assume that you have two clusters, Cluster A and Cluster B, and two Java clients.
 
 . First configure the Cluster A members as shown below:
 +
@@ -1202,7 +1207,6 @@ Let's describe the configuration with examples. Assume that you have two cluster
 . Wait for the time you configured using the `networkaddress.cache.ttl` JVM parameter for the client JVM to forget the old mapping.
 . Blacklist the clients in Cluster A using the Hazelcast Management Center.
 
-
 ===== Configuring Without CNAME
 
 Let's first give example configurations and describe the configuration elements.
@@ -1219,6 +1223,29 @@ Let's first give example configurations and describe the configuration elements.
     </clients>
 </hazelcast-client-failover>
 ----
+
+Here are the descriptions for the configuration elements:
+
+* `try-count`: Count of connection retries by the client to the alternative clusters. When this value is reached and the client still could not connect to a cluster, the client shuts down.
+* `client`: Path to the client configuration that corresponds to an alternative cluster that the client will try to connect.
+
+[NOTE]
+====
+The client configurations must be exactly the same except the following configuration options:
+
+* `SecurityConfig`
+* `GroupConfig`
+* `NetworkConfig.Addresses`
+* `NetworkConfig.SocketInterceptorConfig`
+* `NetworkConfig.SSLConfig`
+* `NetworkConfig.AwsConfig`
+* `NetworkConfig.GcpConfig`
+* `NetworkConfig.azureConfig`
+* `NetworkConfig.KubernetesConfig`
+* `NetworkConfig.EurekaConfig`
+* `NetworkConfig.CloudConfig`
+* `NetworkConfig.DiscoveryConfig`
+====
 
 **Programmatic Configuration:**
 
@@ -1265,9 +1292,6 @@ You can also configure it within the Spring context, as shown below:
     </hz:client-failover>
 </beans>
 ----
-
-
-
 
 ==== Java Client Failure Detectors
 
