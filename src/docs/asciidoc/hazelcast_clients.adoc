@@ -900,7 +900,52 @@ You can add three types of event listeners.
 * MembershipListener
 * DistributedObjectListener
 
-===== Configuring Client Connection Strategy
+===== Other Configurations
+
+====== Configuring Client Near Cache
+
+The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Since the client always requests data from the cluster members, it can be helpful in some use cases to configure a Near Cache on the client side. Please refer to the <<near-cache, Near Cache section>> for a detailed explanation of the Near Cache feature and its configuration.
+
+
+====== Client Group Configuration
+
+Clients should provide a group name and password in order to connect to the cluster.
+You can configure them using `GroupConfig`, as shown below.
+
+```
+clientConfig.setGroupConfig(new GroupConfig("dev","dev-pass"));
+```
+
+====== Client Security Configuration
+
+In the cases where the security established with `GroupConfig` is not enough and you want your clients connecting securely to the cluster, you can use `ClientSecurityConfig`. This configuration has a `credentials` parameter to set the IP address and UID. Please see `ClientSecurityConfig.java` in our code.
+
+====== Client Serialization Configuration
+
+For the client side serialization, use Hazelcast configuration. Please refer to the <<serialization , Serialization chapter>>.
+
+====== ExecutorPoolSize
+
+Hazelcast has an internal executor service (different from the data structure *Executor Service*) that has threads and queues to perform internal operations such as handling responses. This parameter specifies the size of the pool of threads which perform these operations laying in the executor's queue. If not configured, this parameter has the value as **5 \* *core size of the client*** (i.e. it is 20 for a machine that has 4 cores).
+
+====== ClassLoader
+
+You can configure a custom `classLoader`. It is used by the serialization service and to load any class configured in configuration, such as event listeners or ProxyFactories.
+
+====== Configuring Reliable Topic at Client Side
+
+Normally when a client uses a Hazelcast data structure, that structure is configured at the member side and the client makes use of that configuration. For the Reliable Topic structure, this is not the case; since it is backed by Ringbuffer, you should configure it at the client side. The class used for this configuration is `ClientReliableTopicConfig`.
+
+Here is an example programmatic configuration snippet:
+
+[source,java]
+----
+include::{javasource}/clients/ExampleRTClient.java[tag=rtclient]
+----
+
+Note that, when you create a Reliable Topic structure at your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created at the member side, with its default configuration. Please see the <<ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
+
+==== Java Client Connection Strategy
 
 You can configure the client's starting mode as async or sync using the configuration element `async-start`. When it is set to `true` (async), Hazelcast creates the client without waiting a connection to the cluster. In this case, the client instance throws an exception until it connects to the cluster. If it is `false`, the client is not created until the cluster is ready to use clients and a connection with the cluster is established. Its default value is `false` (sync)
 
@@ -908,7 +953,6 @@ You can also configure how the client reconnects to the cluster after a disconne
 The option `ASYNC` enables reconnection in a non-blocking manner where all the waiting invocations receive a `HazelcastClientOfflineException`. Its default value is `ON`.
 
 The example declarative and programmatic configurations below show how to configure a Java client's starting and reconnecting modes.
-
 
 Declarative Configuration:
 
@@ -1001,50 +1045,225 @@ A pseudo-code is as follows:
 
 Note that, `TryConnect` above tries to connect to any member that the client knows, and for each connection we have a connection timeout; see the <<setting-connection-timeout, Setting Connection Timeout section>>.
 
-===== Other Configurations
 
-====== Configuring Client Near Cache
+==== Blue-Green Deployment and Disaster Recovery
 
-The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Since the client always requests data from the cluster members, it can be helpful in some use cases to configure a Near Cache on the client side. Please refer to the <<near-cache, Near Cache section>> for a detailed explanation of the Near Cache feature and its configuration.
+[blue]*Hazelcast IMDG Enterprise*
+
+Hazelcast provides disaster recovery for the client-cluster connections and can use the well-known blue-green concept, so that a Java client is automatically diverted to another cluster on demand or when the intended cluster becomes unavailable.
+
+Using the blue-green system, the clients can connect to another cluster automatically when they are blacklisted from their currently connected cluster. See the Hazelcast Manager Center Reference Manual for information on blacklisting the clients.
 
 
-====== Client Group Configuration
+===== Blue-Green Mechanism
 
-Clients should provide a group name and password in order to connect to the cluster.
-You can configure them using `GroupConfig`, as shown below.
+For the blue-green scenario
 
-```
-clientConfig.setGroupConfig(new GroupConfig("dev","dev-pass"));
-```
+The user will blacklist the client via the Management Center. Blacklisting is defined under different section here.
+When a client is disconnected, it will first try another member in the current cluster. This is because the client is not aware if this is a blacklisting or normal disconnect.
+Behavior, when disconnected, will change depending on RECONNECT-MODE as before.
 
-====== Client Security Configuration
+When alternative clusters are listed,
+1. RECONNECT-MODE ON. changes cluster and block invocations while doing so.
+2. RECONNECT-MODE ASYNC
+changes cluster in the background and Throw ClientOfflineException to the user while doing so.
+3. RECONNECT-MODE OFF
+Does not change cluster. shuts down directly.
 
-In the cases where the security established with `GroupConfig` is not enough and you want your clients connecting securely to the cluster, you can use `ClientSecurityConfig`. This configuration has a `credentials` parameter to set the IP address and UID. Please see `ClientSecurityConfig.java` in our code.
+Here it could be the case that whole cluster restarted. In that case, the restarted server will reject the client since the client is trying to an old cluster. Then, we will continue from item 6. To achieve this, we would be sending cluster uuid on authentication request when multiple configs are provided. Client will return NOT_ALLOWED_IN_CLUSTER status as a response if it is restarted.
+When a client tries to authenticate to a cluster where it is blacklisted, it will get NOT_ALLOWED_IN_CLUSTER as the response of Authentication. See this for details.
+New NOT_ALLOWED_IN_CLUSTER means the client needs to search for a new cluster, if available. For the connect order, see this 
+When a failover started, we will not use current member-list disconnect all connections before attempting to connect to a new cluster. See this section for cleanups we do when switching clusters
+We will not fire Member ADDED or REMOVED events when disconnected from the old cluster. Instead, we will fire InitialMembershipListener#init(InitialMembershipEvent event); when we switch clusters.
+Also a new lifecycle event CLIENT_CHANGED_CLUSTER will be fired.
+When switching clusters client will reuse the client uuid. 
+ListenerService will re-register listeners to the new cluster. Technically this should not require new code. Listener service opens new connection to all members in current member-list and register listeners to each connection.
+Near caches and continuous query caches will be cleared if joining new cluster is successful.
+If in the new cluster partition size is different, the client will be rejected by the cluster. see this for details
 
-====== Client Serialization Configuration
+===== Disaster Recovery Mechanism
 
-For the client side serialization, use Hazelcast configuration. Please refer to the <<serialization , Serialization chapter>>.
+The cluster is gone. Owner connection is disconnected. 
+When a client is disconnected, it will first try another member in the current cluster disconnect.
+Behavior, when disconnected, will change depending on RECONNECT-MODE as before.
 
-====== ExecutorPoolSize
+When alternative clusters are listed,
+1. RECONNECT-MODE ON. changes cluster and block invocations while doing so.
+2. RECONNECT-MODE ASYNC
+changes cluster in the background and Throw ClientOfflineException to the user while doing so.
+3. RECONNECT-MODE OFF
+Does not change cluster. shuts down directly.
 
-Hazelcast has an internal executor service (different from the data structure *Executor Service*) that has threads and queues to perform internal operations such as handling responses. This parameter specifies the size of the pool of threads which perform these operations laying in the executor's queue. If not configured, this parameter has the value as **5 \* *core size of the client*** (i.e. it is 20 for a machine that has 4 cores).
+Client will exhaust all related configuration (connection-attempt limit or exponential backoff strategy). 
+If alternative clusters are given, the client will try to connect to alternative clusters. For the connect order, see this section
 
-====== ClassLoader
+When a failover started, we will not use current member-list disconnect all connections before attempting to connect to a new cluster. See this section for cleanups we do when switching clusters
+We will not fire Member ADDED or REMOVED events when disconnected from the old cluster. Instead, we will fire InitialMembershipListener#init(InitialMembershipEvent event); when we switch clusters.
+Also a new lifecycle event CLIENT_CHANGED_CLUSTER will be fired.
+When switching clusters client will reuse the client uuid. 
+ListenerService will re-register listeners to the new cluster. Technically this should not require new code. Listener service opens new connection to all members in current member-list and register listeners to each connection.
+Near caches and continuous query caches will be cleared if joining a new cluster is successful.
+If in the new cluster partition size is different, the client will be rejected by the cluster. see this for details
 
-You can configure a custom `classLoader`. It is used by the serialization service and to load any class configured in configuration, such as event listeners or ProxyFactories.
+The following sections describe how you can configure the Java client for blue-green and disaster recovery scenarios.
 
-====== Configuring Reliable Topic at Client Side
+===== Configuring Using CNAME
 
-Normally when a client uses a Hazelcast data structure, that structure is configured at the member side and the client makes use of that configuration. For the Reliable Topic structure, this is not the case; since it is backed by Ringbuffer, you should configure it at the client side. The class used for this configuration is `ClientReliableTopicConfig`.
+Let's describe the configuration with examples. Assume that you have two clusters, Cluster A and Cluster B, and two Java clients.
 
-Here is an example programmatic configuration snippet:
+. First configure the Cluster A members as shown below:
++
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <join>
+            <tcp-ip enabled="true">
+                <member>clusterA.member1</member>
+                <member>clusterA.member2</member>
+            </tcp-ip>
+        </join>
+    </network>
+    ...
+</hazelcast>
+----
++
+. Then, configure the Cluster B members as shown below.
++
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <join>
+            <tcp-ip enabled="true">
+                <member>clusterB.member1</member>
+                <member>clusterB.member2</member>
+            </tcp-ip>
+        </join>
+    </network>
+    ...
+</hazelcast>
+----
++
+. Configure your two clients as shown below.
++
+
+[source,xml]
+----
+<hazelcast-client>
+    ...
+    <group>
+        <name>cluster-a</name>
+    </group>
+    <network>
+        <cluster-members>
+            <address>production1.myproject</address>
+            <address>production2.myproject</address>
+        </cluster-members>
+    </network>
+    ...
+</hazelcast-client>
+----
++
+[source,xml]
+----
+<hazelcast-client>
+    ...
+    <group>
+        <name>cluster-b</name>
+    </group>
+    <network>
+        <cluster-members>
+            <address>production1.myproject</address>
+            <address>production2.myproject</address>
+        </cluster-members>
+    </network>
+    ...
+</hazelcast-client>
+----
++
+. You should also configure your clients to forget DNS lookups using the https://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html[networkaddress.cache.ttl] JVM parameter.
+. Configure the addresses in your clients' configuration to resolve to hostnames of Cluster A via CNAME so that the clients will connect to Cluster A when it starts:
++ 
+production1.myproject→ clusterA.member1
+production2.myproject→ clusterA.member2
++
+. When you want the clients to switch to the other cluster, change the mapping as follows:
++
+production1.myproject→ clusterB.member1
+production2.myproject→ clusterB.member2
++
+. Wait for the time you configured using the `networkaddress.cache.ttl` JVM parameter for the client JVM to forget the old mapping.
+. Blacklist the clients in Cluster A using the Hazelcast Management Center.
+
+
+===== Configuring Without CNAME
+
+Let's first give example configurations and describe the configuration elements.
+
+**Declarative Configuration:**
+
+[source,xml]
+----
+<hazelcast-client-failover>
+    <try-count>4</try-count>
+    <clients>
+        <client>hazelcast-client-c1.xml</client>
+        <client>hazelcast-client-c2.xml</client>
+    </clients>
+</hazelcast-client-failover>
+----
+
+**Programmatic Configuration:**
 
 [source,java]
 ----
-include::{javasource}/clients/ExampleRTClient.java[tag=rtclient]
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.getGroupConfig().setName("cluster-a");
+ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
+networkConfig.addAddress("10.216.1.18", "10.216.1.19");
+ 
+ClientConfig clientConfig2 = new ClientConfig();
+clientConfig2.getGroupConfig().setName("cluster-b");
+ClientNetworkConfig networkConfig2 = clientConfig2.getNetworkConfig();
+networkConfig2.addAddress( "10.214.2.10", "10.214.2.11");
+ 
+ClientFailoverConfig clientFailoverConfig = new ClientFailoverConfig();
+clientFailoverConfig.addClientConfig(clientConfig).addClientConfig(clientConfig2).setTryCount(10)
+HazelcastInstance client = HazelcastClient.newHazelcastFailoverClient(clientFailoverConfig);
 ----
 
-Note that, when you create a Reliable Topic structure at your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created at the member side, with its default configuration. Please see the <<ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
+You can also configure it within the Spring context, as shown below:
+
+[source,xml]
+----
+
+<beans>
+    <hz:client-failover id="blueGreenClient" try-count="5">
+        <hz:client>
+            <hz:group name="dev"/>
+            <hz:network>
+                <hz:member>127.0.0.1:5700</hz:member>
+                <hz:member>127.0.0.1:5701</hz:member>
+            </hz:network>
+        </hz:client>
+ 
+        <hz:client>
+            <hz:group name="alternativeClusterName" />
+            <hz:network>
+                <hz:member>127.0.0.1:5702</hz:member>
+                <hz:member>127.0.0.1:5703</hz:member>
+            </hz:network>
+        </hz:client>
+ 
+    </hz:client-failover>
+</beans>
+----
+
+
+
 
 ==== Java Client Failure Detectors
 
