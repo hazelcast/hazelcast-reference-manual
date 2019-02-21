@@ -385,16 +385,6 @@ By default it is 1 input thread and 1 output thread. If TLS/SSL is enabled, it d
 Having more client I/O threads than members in the cluster does not lead to an increased performance. So with a 2-member cluster,
 2 in and 2 out threads give the best performance.
 
-==== TLS/SSL Debugging
-
-To assist with TLS/SSL issues, the following system property can be used:
-
-```
--Djavax.net.debug=all
-```
-
-The property provides a lot of logging output including the TLS/SSL handshake, that can be used to determine the cause of the problem. For more information please see http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html[Debugging TSL/SSL Connections].
-
 ==== TLS/SSL for Hazelcast Management Center
 
 In order to use secured communication between cluster and Management Center, you have to configure the cluster, see https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center].
@@ -1369,4 +1359,128 @@ client.shutdown();
 hzLite.shutdown();
 ----
 
+=== Java Security Debugging
 
+Java is able to print the debug information about using the security components. During the security troubleshooting, it's often helpful to print the additional information by using the following system property:
+
+```
+-Djava.security.debug=all
+```
+
+See the https://docs.oracle.com/javase/8/docs/technotes/guides/security/troubleshooting-security.html[Troubleshooting Security] Java guide for more information.
+
+==== TLS debugging
+
+To assist with the TLS/SSL issues, you can use the following system property:
+
+```
+-Djavax.net.debug=all
+```
+
+This property provides a lot of logging output including the TLS/SSL handshake, that can be used to determine the cause of the problem. See the http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html[Debugging TSL/SSL Connections] guide for more information.
+
+=== FIPS 140-2
+
+The Federal Information Processing Standard (FIPS) 140-2 is a US government computer security standard published by National Institute of Standards and Technology (NIST). It specifies the security requirements for cryptographic modules. FIPS 140-2 compliance is often a requirement of the software systems used by the US government agencies.
+
+The NIST manages a list of FIPS certified cryptographic modules. These modules are certified under the Cryptographic Module Validation Program. The list can be searched online: https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search.
+
+Hazelcast uses external modules for cryptographic tasks and it can be configured to use a FIPS 140-2 validated module. It means most of the configuration required for FIPS is out of the Hazelcast configuration. To run Hazelcast in the FIPS compliant mode you have to set the underlying Java runtime into the FIPS mode. It may also require switching the underlying Operating System into the FIPS mode. We consider using FIPS enabled OS as a recommended approach even in cases when it's not asked explicitly.
+
+Hazelcast is not an authority which should document switching different Java runtimes into the FIPS mode. Please consult the documentation for their Java version to learn how to enable the FIPS mode. Usually it means changing the list of security providers in the `java.security` JRE configuration file.
+
+Hazelcast is only responsible for enabling the OpenSSL native library into the FIPS mode (see <<integrating-openssl-boringssl, Integrating OpenSSL section>>). If the Hazelcast cluster configuration enables TLS communication using the native OpenSSL library, you have to enable its FIPS mode in the Hazelcast `OpenSSLEngineFactory` configuration.
+The FIPS mode is controlled by an optional `true`/`false` property called `fipsMode`. It is disabled by default.
+
+**Example OpenSSL configuration in the FIPS mode:**
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <ssl enabled="true">
+            <factory-class-name>com.hazelcast.nio.ssl.OpenSSLEngineFactory</factory-class-name>
+
+            <properties>
+                <property name="fipsMode">true</property>
+                <property name="protocol">TLSv1.2</property>
+                <property name="trustCertCollectionFile">trusted-certs.pem</property>
+                <property name="keyFile">privkey.pem</property>
+                <property name="keyCertChainFile">chain.pem</property>
+            </properties>
+        </ssl>
+    </network>
+    ...
+</hazelcast>
+----
+
+When the `fipsMode` property is set to `true`, the native OpenSSL engine is either set to the FIPS mode or an exception is thrown, e.g., in the cases when OpenSSL is compiled without the FIPS support.
+
+If there is more Hazelcast instances (members or clients) with TLS enabled employing the OpenSSL, then all of them must have the `fipsMode` property configured in the same way, either enabled or disabled.
+
+When the FIPS mode is successfully enabled, you will see the following `INFO` level message in the log files:
+
+```
+OpenSSL is enabled in FIPS mode.
+```
+
+NOTE: BoringSSL libraries don't support the FIPS mode.
+
+==== Example FIPS 140-2 environment
+
+The FIPS environment configuration steps depend on the used Operating System and Java version. You should consult with their documentation for the specific configurations.
+
+We will describe a sample configuration which uses Red Hat Enterprise Linux (RHEL) version 7 and IBM Java SDK 8. If you find any difference between the sample configuration described here and the documentation of the OS and Java vendors, use the vendor's up-to-date instructions instead.
+
+**Switching RHEL 7 into the FIPS mode**
+
+The steps on how to configure RHEL 7 in FIPS 140-2 mode are described in the https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-federal_standards_and_regulations[Security guide] on the Red Hat customer portal.
+
+Perform the following steps for the already installed systems:
+
+. Install the `dracut-fips` package using the YUM package manager.
+. Run the `dracut` command to regenerate the `initramfs` file.
+. Add the `fips=1` option to the kernel command line of the boot loader.
+. Disable prelinking (if it was enabled before.
+. Reboot the system.
+
+After finishing these steps, check if the FIPS mode is enabled by running the following command:
+
+[source,bash]
+----
+# Following command should print "crypto.fips_enabled = 1" (value 1 means the FIPS mode is enabled)
+sysctl crypto.fips_enabled
+----
+
+To automate the FIPS mode enablement on RHEL 7, you can check the script which is shared in the Red Hat discussion forum: https://access.redhat.com/discussions/3487481.
+
+**Switching IBM Java SDK into the FIPS mode**
+
+IBM Java 8 provides the FIPS mode itself without any third party dependencies.
+
+Details on how to enable the FIPS 140-2 validated configuration can be found in the https://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/security-overview.html[Security guide] in the Java 8 documentation.
+
+First, it's necessary to edit the `jre/lib/security/java.security` file and do the following changes:
+
+* Put `IBMJCEFIPS` as the first security provider. It will be the first provider to be selected when a JCA API call is made without specifying an explicit security provider.
++
+[source,plain]
+----
+security.provider.1=com.ibm.crypto.fips.provider.IBMJCEFIPS
+----
++
+And re-number the original set of security providers by increasing the priority of provider by one, i.e., the old `security.provider.1` becomes `security.provider.2` and so on.
+* Add the new security properties (related to handling TLS protected communication):
++
+[source,plain]
+----
+ssl.SocketFactory.provider=com.ibm.jsse2.SSLSocketFactoryImpl
+ssl.ServerSocketFactory.provider=com.ibm.jsse2.SSLServerSocketFactoryImpl
+----
++
+The Security provider covering the TLS implementation in IBM Java is `IBMJSSE2`. To instruct this provider about using the FIPS validated security primitives (from `IBMJCEFIPS`), use additional system properties.
++
+```
+-Dcom.ibm.jsse2.usefipsprovider=true -Dcom.ibm.jsse2.usefipsProviderName=IBMJCEFIPS
+```
