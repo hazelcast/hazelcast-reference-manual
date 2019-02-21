@@ -2430,10 +2430,9 @@ Reliable Topic configuration has the following elements.
 [[lock]]
 === Lock
 
-`FencedLock` is a linearizable & distributed implementation of `java.util.concurrent.locks.Lock`, meaning that if you lock using an FencedLock, the critical
-section that it guards is guaranteed to be executed by only one thread in the entire cluster. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
+`FencedLock` is a linearizable and distributed implementation of `java.util.concurrent.locks.Lock`, meaning that if you lock using a `FencedLock`, the critical section that it guards is guaranteed to be executed by only one thread in the entire cluster. Even though locks are great for synchronization, they can lead to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
 
-NOTE: In 3.12, `ILock` interface and implementation of `ILock` has been deprecated. To read about `ILock`, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#lock[Lock] section in 3.11. This section will introduce `FencedLock` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
+NOTE: `ILock` interface and implementation of `ILock` has been deprecated. To read about `ILock`, see the https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#lock[Lock] section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>> introduces `FencedLock` provided by the *CP Subsystem*.
 
 [[using-try-catch-blocks-with-locks]]
 ==== Using Try-Catch Blocks with Locks
@@ -2477,14 +2476,14 @@ locks are immediately available for live members.
 * Locks are not automatically removed. If a lock is not used anymore, Hazelcast does not automatically perform garbage collection in the lock.
 This can lead to an `OutOfMemoryError`. If you create locks on the fly, make sure they are destroyed.
 
-NOTE: For detailed information and configuration please refer to <<fencedlock, FencedLock>> under CP Subsystem section.
+NOTE: For detailed information and configuration, see the <<fencedlock, FencedLock section>> under the CP Subsystem chapter.
 
 [[iatomiclong]]
 === IAtomicLong
 
 Hazelcast `IAtomicLong` is the distributed implementation of `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`. Since IAtomicLong is a distributed implementation, these operations involve remote calls and thus their performances differ from AtomicLong.
 
-NOTE: In 3.12, the original implementation of IAtomicLong has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomiclong[IAtomicLong] section in 3.11. This section will introduce `IAtomicLong` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
+NOTE: The original implementation of `IAtomicLong` has been deprecated. To read about the previous implementation, see the https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomiclong[IAtomicLong] section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>> introduces `IAtomicLong` provided by the *CP Subsystem*.
 
 The following example code creates an instance, increments it by a million and prints the count.
 
@@ -2545,14 +2544,14 @@ The reason for using a function instead of a simple code line like `atomicLong.s
 
 Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.Semaphore`.
 
-NOTE: In 3.12, the original implementation of ISemaphore has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#isemaphore[ISemaphore] section in 3.11. This section will introduce `ISemaphore` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
+NOTE: The original implementation of `ISemaphore` has been deprecated. To read about the previous implementation, see the https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#isemaphore[ISemaphore] section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>> introduces `ISemaphore` provided by the *CP Subsystem*.
 
 [[controlling-thread-counts-with-permits]]
 ==== Controlling Thread Counts with Permits
 
 Semaphores offer **permit**s to control the thread counts when performing concurrent activities. To execute a concurrent activity, a thread grants a permit or waits until a permit becomes available. When the execution is completed, the permit is released.
 
-NOTE: ISemaphore with a single permit may be considered as a lock. Unlike the locks, when semaphores are used, any thread can release the permit depending on the configuration, and semaphores can have multiple permits. For more info please refer to <<semaphore-configuration, Semaphore Configuration>> section.
+NOTE: `ISemaphore` with a single permit may be considered as a lock. Unlike the locks, when semaphores are used, any thread can release the permit depending on the configuration, and semaphores can have multiple permits. For more information, see the <<semaphore-configuration, Semaphore Configuration section>>.
 
 NOTE: Hazelcast ISemaphore does not support fairness at all times. There are some edge cases where the fairness is not honored, e.g., when the permit becomes available at the time when an internal timeout occurs.
 
@@ -2591,7 +2590,7 @@ As you can see, the maximum count of concurrent threads is equal or smaller than
 
 The `IAtomicLong` is very useful if you need to deal with a long, but in some cases you need to deal with a reference. That is why Hazelcast also supports the `IAtomicReference` which is the distributed version of the `java.util.concurrent.atomic.AtomicReference`.
 
-NOTE: In 3.12, the original implementation of IAtomicReference has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomicreference[IAtomicReference] section in 3.11. This section will introduce `IAtomicReference` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
+NOTE: The original implementation of `IAtomicReference` has been deprecated. To read about the previous implementation, see the https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomicreference[IAtomicReference] section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>> introduces `IAtomicReference` provided by the *CP Subsystem*.
 
 Here is an IAtomicReference example.
 
@@ -2628,7 +2627,7 @@ Below are some considerations you need to know when you use IAtomicReference.
 
 Hazelcast `ICountDownLatch` is the distributed implementation of `java.util.concurrent.CountDownLatch`.
 
-NOTE: In 3.12, the original implementation of ICountDownLatch has been deprecated. To read about previous implementation, please refer to https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#icountdownlatch[ICountDownLatch] section in 3.11. This section will introduce `ICountDownLatch` provided by *CP Subsystem*. For more info see <<cp-subsystem, CP Subsystem>>.
+NOTE: The original implementation of `ICountDownLatch ` has been deprecated. To read about the previous implementation, see the https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#icountdownlatch[ICountDownLatch] section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>> introduces `ICountDownLatch ` provided by the *CP Subsystem*.
 
 [[gate-keeping-concurrent-activities]]
 ==== Gate-Keeping Concurrent Activities
