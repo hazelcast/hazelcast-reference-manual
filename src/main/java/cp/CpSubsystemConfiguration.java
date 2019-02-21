@@ -12,7 +12,7 @@ public class CpSubsystemConfiguration {
               .setGroupSize(3)
               .setSessionTimeToLiveSeconds(300)
               .setSessionHeartbeatIntervalSeconds(5)
-              .setMissingCPMemberAutoRemovalSeconds(0)
+              .setMissingCPMemberAutoRemovalSeconds(14400)
               .setFailOnIndeterminateOperationState(false);
         //end::cpconf[]
 
