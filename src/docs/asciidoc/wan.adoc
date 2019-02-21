@@ -59,6 +59,17 @@ Below is an example of declarative configuration of WAN Replication from New Yor
                 <property name="executorThreadCount">2</property>
             </properties>
         </wan-publisher>
+        <wan-consumer>
+            <class-name>com.hazelcast.enterprise.wan.replication.YourWanConsumer</class-name>
+            <persist-wan-replicated-data>false</persist-wan-replicated-data>
+            <properties>
+                <property name="host">192.168.2.66</property>
+                <property name="vpn.name">YOUR_VPN_NAME</property>
+                <property name="username">admin</property>
+                <property name="password">YOUR_PASSWORD</property>
+                <property name="queue.name">Q/hz/clusterA</property>
+            </properties>
+        </wan-consumer>
     </wan-replication>
     ...
 </hazelcast>
@@ -82,6 +93,11 @@ And, the following are definitions of the configuration elements within `wan-pub
 * `ack.type`: Acknowledgment type for each target cluster. Please see the <<acknowledgment-types, Acknowledgment Types section>>.
 * `endpoints`: IP addresses and ports of the cluster members for which the WAN replication is implemented. These endpoints are not necessarily the entire target cluster and WAN does not perform the discovery of other members in the target cluster. It only expects that these IP addresses (or at least some of them) are available.
 * `group.password`: Configures target cluster's group password.
+
+The `wan-consumer` is used to configure the processing of the WAN events received from a target cluster. You can configure certain behavior when processing the incoming WAN events or even configure your own implementation for a WAN consumer. A custom WAN consumer allows you to define a custom processing logic and is usually used in combination with a custom WAN publisher. A custom consumer is optional and you may simply omit defining it which will cause the default processing logic to be used. It has the following sub-elements:
+* `class-name`: Name of the class implementing a custom WAN consumer (`WanReplicationConsumer`). If you don't define a class name, the default processing logic for incoming WAN events is used.
+* `properties`: Properties for the custom WAN consumer. These properties are accessible when initializing the WAN consumer. You can define the host, username and password for the host, name of the queue to be polled by the consumer, etc.
+* `persist-wan-replicated-data`: When set to `true`, an incoming event over WAN replication can be persisted to a database for example, otherwise it is not persisted. Default value is `true`.
 
 Other relevant properties are:
 
@@ -1230,111 +1246,3 @@ Synchronization reports the
 * duration of the synchronization,
 * number of the entries synchronized,
 * average number of the entries per tree leaves in the synchronized leaves.
-
-=== Hazelcast WAN Replication with Solace
-
-image::Plugin_New.png[Solace Plugin, 84, 22]
-
-
-This section explains how you can integrate Hazelcast's WAN replication with http://www.solacesystems.com/[Solace] messaging platform. With this integration, you can publish and consume WAN replication events to/from Solace appliances.
-
-Solace combines with Hazelcast to drive efficiencies in the processing of global data workloads. This joint solution enables multi-cloud and hybrid-cloud replication of Hazelcast clusters. Please see https://hazelcast.com/partner/solace/[Hazelcast-Solace partnership] for more information.
-
-==== Enabling Integration
-
-To publish and consume WAN replication events on Solace appliances, Hazelcast WAN replication has the following classes:
-
-* `SolaceWanPublisher`
-* `SolaceWanConsumer`
-
-You can register these classes using the configuration elements `<wan-publisher>` and `<wan-consumer>` while configuring your WAN replication.
-`SolaceWanPublisher` and `SolaceWanConsumer` are included in the `hazelcast-solace` library which can be found in following Maven coordinates:
-
-[source,xml]
-----
-<dependency>
-    <groupId>com.hazelcast</groupId>
-    <artifactId>hazelcast-solace</artifactId>
-    <version>1.0.0</version>
-</dependency>
-----
-
-NOTE: The hazelcast-solace artifact is not available in central Maven repository, but in Hazelcast's repository on the CloudBees platform. Please refer to the <<installing-hazelcast-imdg-enterprise, Installing Hazelcast IMDG Enterprise section>> for information on how to configure this repository.
-
-See the following sections for configuration details.
-
-==== Configuring Publisher
-
-Following is an example declarative configuration for the publisher side:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <wan-replication name="AtoB">
-        <wan-publisher group-name="clusterB">
-            <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanPublisher</class-name>
-            <properties>
-                <property name="host">192.168.2.66</property>
-                <property name="vpn.name">YOUR_VPN_NAME</property>
-                <property name="username">admin</property>
-                <property name="password">YOUR_PASSWORD</property>
-                <property name="topic.base.name">BaseTopic</property>
-                <property name="queue.name">Q/hz/clusterA</property>
-                <property name="initial.queue.mapping.enabled">true</property>
-            </properties>
-        </wan-publisher>
-    </wan-replication>
-    ...
-</hazelcast>
-----
-
-Descriptions of the properties are as follows:
-
-* `class-name`: Full class name of Solace WAN publisher, i.e., `com.hazelcast.enterprise.wan.solace.SolaceWanPublisher`
-* `host`: IP address of the Solace host machine. It can be in the format "IP address:Port number". It is a mandatory property.
-* `vpn.name`: Name of the Solace VPN. It is an optional property.
-* `username`: Username for the Solace host. It is a mandatory property.
-* `password`: Password for the Solace host. It is an optional property.
-* `topic.base.name`: Base topic name to use while publishing events to Solace appliance. If not defined, the members publish to topics using the format "T/hz/[cluster-group-name]/partitionId". If defined, the format "[topic.base.name]/partitionId" is used. It is an optional property.
-* `queue.name`: Name of the queue to be used in topic-to-queue mapping. This property is only valid if the property `initial.queue.mapping.enabled` is set to "true". Default queue name is "Q/hz/[cluster-group-name].
-* `initial.queue.mapping.enabled`: Decides if a default topic-to-queue mapping should be performed on the publisher side. When enabled, it tries to provide a queue, whose name is defined by the property `queue.name`, and all topics that are generated by this instance is mapped to this queue. When disabled, you should perform this mapping manually. It is enabled by default.
-
-==== Configuring Consumer
-
-Following is an example declarative configuration for the consumer side:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <wan-replication name="AtoB">
-        <wan-consumer>
-            <class-name>com.hazelcast.enterprise.wan.solace.SolaceWanConsumer</class-name>
-            <persist-wan-replicated-data>false</persist-wan-replicated-data>
-            <properties>
-                <property name="host">192.168.2.66</property>
-                <property name="vpn.name">YOUR_VPN_NAME</property>
-                <property name="username">admin</property>
-                <property name="password">YOUR_PASSWORD</property>
-                <property name="queue.name">Q/hz/clusterA</property>
-            </properties>
-        </wan-consumer>
-    </wan-replication>
-    ...
-</hazelcast>
-----
-
-Descriptions of the properties are as follows:
-
-* `class-name`: Full class name of Solace WAN consumer, i.e., `com.hazelcast.enterprise.wan.solace.SolaceWanConsumer`
-* `persist-wan-replicated-data`:  When true, an incoming event over WAN replication can be persisted to a data store, otherwise it is not persisted. Default value is false.
-* `host`: IP address of the Solace host machine. It can be in the format "IP address:Port number". It is a mandatory property.
-* `vpn.name`: Name of the Solace VPN. It is an optional property.
-* `username`: Username for the Solace host. It is a mandatory property.
-* `password`: Password for the Solace host. It is an optional property.
-* `queue.name`: Name of the queue to be polled by the consumer. It is a mandatory property.
-
-You can find the Hazelcast Solace code samples https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/wan-replication/src/main/java/com/hazelcast/wan/solace[here].
-
-You can also download the white paper **Hazelcast WAN Replication with Solace** from https://hazelcast.com/resources/hazelcast-wan-replication-solace/[Hazelcast.com].
