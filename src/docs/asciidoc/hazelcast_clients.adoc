@@ -1833,7 +1833,37 @@ NOTE: Hazelcast Memcache Client only supports ASCII protocol. Binary Protocol is
 
 A Memcache client written in any language can talk directly to a Hazelcast cluster. No additional configuration is required.
 
-NOTE: Memcache client request listener service is not enabled by default. You should enable it on your cluster members to use Memcache client. It can be enabled using the system property `hazelcast.memcache.enabled`. Please refer to the <<system-properties, System Properties appendix>> for the definition of this property and how to set a system property.
+To be able to use a Memcache client, you must enable the Memcache client request listener service using either of the following configuration options:
+
+. Using the `network` configuration element:
++
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <memcache-protocol enabled="true"/>
+    </network>
+    ...
+</hazelcast>
+----
++
+. Using the `advanced-network` configuration element:
++
+[source,xml]
+----
+<hazelcast>
+    ...
+    <advanced-network>
+        <memcache-server-socket-endpoint-config name="memcache">
+            <port auto-increment="false" port-count="10">6000</port>
+        </memcache-server-socket-endpoint-config>
+    </advanced-network>
+    ...
+</hazelcast>
+----
+
+NOTE: Note that the usage of the `hazelcast.memcache.enabled` has been deprecated. Please use the either one of the above configuration to enable the Memcache client request listener service.
 
 ==== Memcache Client Code Examples
 
