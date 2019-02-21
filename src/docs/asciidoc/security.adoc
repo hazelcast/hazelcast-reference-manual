@@ -520,8 +520,9 @@ The configuration is similar to a regular TLS/SSL integration. The main differen
 * `keyPassword`: Password to access the key file when it's encrypted.
 * `keyCertChainFile`: Path to an X.509 certificate chain file in PEM format.
 * `trustCertCollectionFile`: Path to an X.509 certificate collection file in PEM format.
+* `fipsMode`: Boolean flag to switch OpenSSL into the FIPS mode. See the <<fips-140-2,FIPS 140-2 section>>.
 
-These new properties take precedence over keyStore and trustStore configurations.
+The key and certificate related properties take precedence over keyStore and trustStore configurations.
 Using keyStores and trustStores together with OpenSSL causes problems on some Java versions, therefor we recommend to use the OpenSSL native way.
 
 Other supported properties are:
