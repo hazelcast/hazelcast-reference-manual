@@ -37,18 +37,17 @@ See the <<cpsubsystem-configuration, CP Subsystem Configuration section>> for mo
 `FencedLock` is a linearizable & distributed & reentrant implementation of `j.u.c.locks.Lock`. `FencedLock` is accessed via `CPSubsystem.getLock(String)`. It is CP with respect to the CAP principle. It works on top of the Raft consensus algorithm. It offers linearizability during crash-stop failures and network partitions. If a network partition occurs, it remains available on at most one side of the partition.
 `FencedLock` works on top of CP sessions. Please see <<cp-sessions, CP Sessions>> section for more information about CP sessions.
 
-By default, `FencedLock` is reentrant. Once a caller acquires the lock, it can acquire the lock reentrantly as many times as it wants in a linearizable manner. Reentrancy behaviour can be configured via `FencedLockConfig`. For instance, reentrancy can be disabled and `FencedLock` can work as a non-reentrant mutex. One can also set a custom reentrancy limit. When reentrancy limit is exceeded, `FencedLock` does not block a lock call. Instead, it fails with `LockAcquireLimitExceededException` or a specified return value. Please check the locking methods to see details about the behavior and <<fencedlock-configuration, FencedLock Configuration>> section for the configuration.
+By default, `FencedLock` is reentrant. Once a caller acquires the lock, it can acquire the lock reentrantly as many times as it wants in a linearizable manner. You can configure the reentrancy behavior using `FencedLockConfig`. For instance, reentrancy can be disabled and `FencedLock` can work as a non-reentrant mutex. You can also set a custom reentrancy limit. When the reentrancy limit is exceeded, `FencedLock` does not block a lock call. Instead, it fails with `LockAcquireLimitExceededException` or a specified return value. Please check the locking methods to see details about the behavior and <<fencedlock-configuration, FencedLock Configuration section>> for the configuration.
 
-Distributed locks are unfortunately *not equivalent* to single-node mutexes because of the complexities in distributed systems, such as uncertain communication patterns and independent process failures. In an asynchronous network, no lock service can guarantee mutual exclusion, because there is no way to distinguish between a slow and a crashed process. Consider the following scenario, where a Hazelcast client acquires a `FencedLock`, then hits a long GC pause. Since it will not be able to commit session heartbeats while paused, its CP session will be eventually closed. After this moment, another Hazelcast client can acquire this lock. If the first client wakes up again, it may not immediately notice that it has lost ownership of the lock. In this case, multiple clients think they
-hold the lock. If they attempt to perform an operation on a shared resource, they can break the system. To prevent such situations, one may choose to use an infinite session timeout, but this time probably she is going to deal with liveliness issues. Even if the first client crashes, requests sent by 2 clients can be re-ordered in the network and hit the external resource in reverse order.
+Distributed locks are unfortunately *not equivalent* to single-node mutexes because of the complexities in distributed systems, such as uncertain communication patterns and independent process failures. In an asynchronous network, no lock service can guarantee mutual exclusion, because there is no way to distinguish between a slow and a crashed process. Consider the following scenario, where a Hazelcast client acquires a `FencedLock`, then hits a long GC pause. Since it will not be able to commit session heartbeats while paused, its CP session will be eventually closed. After this moment, another Hazelcast client can acquire this lock. If the first client wakes up again, it may not immediately notice that it has lost ownership of the lock. In this case, multiple clients think they hold the lock. If they attempt to perform an operation on a shared resource, they can break the system. To prevent such situations, you can choose to use an infinite session timeout, but this time probably you are going to deal with liveliness issues. Even if the first client crashes, the requests sent by two clients can be reordered in the network and hit the external resource in the reverse order.
 
-There is a simple solution for this problem. Lock holders are ordered by a monotonic fencing token, which increments each time the lock is assigned to a new owner. This fencing token can be passed to external services or resources to ensure sequential execution of side effects performed by lock holders.
+There is a simple solution for this problem. Lock holders are ordered by a monotonic fencing token, which increments each time the lock is assigned to a new owner. This fencing token can be passed to external services or resources to ensure sequential execution of the side effects performed by lock holders.
 
-The following figure illustrates the idea. In this figure, Client-1 acquires the lock first and receives 1 as its fencing token. Then, it passes this token to the external service, which is our shared resource in this scenario. Just after that, Client-1 hits a long GC pause and eventually loses ownership of the lock because it misses to commit CP session heartbeats. Then, Client-2 chimes in and acquires the lock. Similar to Client-1, Client-2 passes its fencing token to the external service. After that, once Client-1 comes back alive, its write request will be rejected by the external service, and only Client-2 will be able to safely talk it.
+The following figure illustrates the idea. In this figure, Client-1 acquires the lock first and receives `1` as its fencing token. Then, it passes this token to the external service, which is our shared resource in this scenario. Just after that, Client-1 hits a long GC pause and eventually loses ownership of the lock because it misses to commit CP session heartbeats. Then, Client-2 chimes in and acquires the lock. Similar to Client-1, Client-2 passes its fencing token to the external service. After that, once Client-1 comes back alive, its write request will be rejected by the external service, and only Client-2 will be able to safely talk to it.
 
 image::FencedLock.png[Fenced Lock]
 
-You can read more about the fencing token idea in Martin Kleppmann's https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html[How to do distributed locking] blog post and Google's https://ai.google/research/pubs/pub27897[Chubby paper]. `FencedLock` integrates this idea with the good old `j.u.c.locks.Lock` abstraction, exlucuding `j.u.c.locks.Condition`. `newCondition()` is not implemented and will throw `UnsupportedOperationException`.
+You can read more about the fencing token idea in Martin Kleppmann's https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html[How to do distributed locking] blog post and Google's https://ai.google/research/pubs/pub27897[Chubby paper]. `FencedLock` integrates this idea with the good old `j.u.c.locks.Lock` abstraction, exlucuding `j.u.c.locks.Condition`. `newCondition()` is not implemented and throws `UnsupportedOperationException`.
 
 All of the API methods in the new `FencedLock` abstraction offer the exactly-once execution semantics. For instance, even if a `lock()` call is internally retried because of a crashed CP member, the lock is acquired only once. The same rule also applies to the other methods in the API.
 
@@ -57,33 +56,33 @@ All of the API methods in the new `FencedLock` abstraction offer the exactly-onc
 
 ==== CPSubsystem Configuration
 
-- `cpMemberCount`: Number of `CPMember` s to initialize the `CPSubsystem`. It is `0` by default and the CP subsystem is disabled. The CP subsystem is enabled when a positive value is set. After the CP subsystem is initialized successfully, more CP members can be added at run-time and number of active CP members can go beyond the configured CP member count. Number of CP members can be smaller than total size of the Hazelcast cluster. For instance, one can run 5 CP members in a 20-member Hazelcast cluster.
+* `cp-member-count`: Number of ``CPMember``s to initialize the `CPSubsystem`. It is `0` by default, meaning that the CP subsystem is disabled. The CP subsystem is enabled when a positive value is set. After the CP subsystem is initialized successfully, more CP members can be added at runtime and the number of active CP members can go beyond the configured CP member count. The number of CP members can be smaller than the total size of the Hazelcast cluster. For instance, you can run 5 CP members in a 20-member Hazelcast cluster.
 +
-If set, must be greater than or equal to `groupSize`.
-
-- `groupSize`: Number of CP members for running CP groups. If set, it must be an odd number between `3` and `7`. Otherwise, `cpMemberCount` is respected.
+If set, must be greater than or equal to `group-size`.
++
+* `group-size`: Number of CP members to run CP groups. If set, it must be an odd number between `3` and `7`. Otherwise, `cp-member-count` is respected.
 +
 If set, must be smaller than or equal to `cpMemberCount`.
-
-- `sessionTimeToLiveSeconds`: Duration for a CP session to be kept alive after the last heartbeat it has received. The session will be closed if there is no new heartbeat during this duration. Session TTL must be decided wisely. If a very low value is set, CP session of a Hazelcast instance can be closed prematurely if the instance temporarily loses connectivity to the CP subsystem because of a network partition or a GC pause. In such an occasion, all CP resources of this Hazelcast instance, such as `FencedLock` or `ISemaphore`, are released. On the other hand, if a very large value is set, CP resources can remain assigned to an actually crashed Hazelcast instance for too long and liveliness problems can occur. The CP subsystem offers an API `CPSessionManagementService`, to deal with liveliness issues related to CP sessions. In order to prevent premature session expires, session TTL configuration can be set a relatively large value and `CPSessionManagementService.forceCloseSession(String, long)` can be manually called to close CP session of a crashed Hazelcast instance.
 +
-Must be greater than `sessionHeartbeatIntervalSeconds`, and smaller than or equal to `missingCPMemberAutoRemovalSeconds`. Default value is `300` seconds.
-
-- `sessionHeartbeatIntervalSeconds`: Interval for the periodically-committed CP session heartbeats. A CP session is started on a CP group with the first session-based request of a Hazelcast instance. After that moment, heartbeats are periodically committed to the CP group.
+* `session-time-to-live-seconds`: Duration for a CP session to be kept alive after the last heartbeat it has received. The session will be closed if there is no new heartbeat during this duration. Session TTL must be decided wisely. If a very low value is set, CP session of a Hazelcast instance can be closed prematurely if the instance temporarily loses connectivity to the CP subsystem because of a network partition or a GC pause. In such an occasion, all CP resources of this Hazelcast instance, such as `FencedLock` or `ISemaphore`, are released. On the other hand, if a very large value is set, CP resources can remain assigned to an actually crashed Hazelcast instance for too long and liveliness problems can occur. The CP subsystem offers an API `CPSessionManagementService`, to deal with liveliness issues related to CP sessions. In order to prevent premature session expires, session TTL configuration can be set a relatively large value and `CPSessionManagementService.forceCloseSession(String, long)` can be manually called to close CP session of a crashed Hazelcast instance.
 +
-Must be smaller than `sessionTimeToLiveSeconds`. Default value is `5` seconds.
-
-- `missingCPMemberAutoRemovalSeconds`: Duration to wait before automatically removing a missing CP member from the CP subsystem. It is `0` by default and disabled. When a CP member leaves the cluster, it is not automatically removed from the CP subsystem, since the missing CP member could be still alive and left the cluster because of a network partition. On the other hand, if a missing CP member is actually crashed, it creates a danger for its CP groups, because it will be still part of majority calculations. This situation could lead to losing majority of CP groups if multiple CP members leave the cluster over time.
+Must be greater than `session-heartbeat-interval-seconds`, and smaller than or equal to `missing-cp-member-auto-removal-seconds`. Default value is `300` seconds.
 +
-If this configuration is enabled, missing CP members will be automatically removed from the CP subsystem after some time. This feature is very useful in terms of fault tolerance when CP member count is also configured to be larger than group size. In this case, a missing CP member will be safely replaced in its CP groups with other available CP members in the CP subsystem. This configuration also implies that no network partition is expected to be longer than the configured duration.
+* `session-heartbeat-interval-seconds`: Interval for the periodically-committed CP session heartbeats. A CP session is started on a CP group with the first session based request of a Hazelcast instance. After that moment, heartbeats are periodically committed to the CP group.
 +
-Must be greater than or equal to `sessionTimeToLiveSeconds`. Default value is `0`.
-
-- `failOnIndeterminateOperationState`: Offers a choice between at-least-once and at-most-once execution of the operations on top of the Raft consensus algorithm. It is disabled by default and offers at-least-once execution guarantee. If enabled, it switches to at-most-once execution guarantee. When you invoke an API method on a CP data structure proxy, it replicates an internal operation to the corresponding CP group. After this operation is committed to majority of this CP group by the Raft leader node, it sends a response for the public API call. If a failure causes loss of the response, then the calling side cannot determine if the operation is committed on the CP group or not. In this case, if this configuration is disabled, the operation is replicated again to the CP group, and hence could be committed multiple times. If it is enabled, the public API call fails with `IndeterminateOperationStateException`.
+Must be smaller than `session-time-to-live-seconds`. Default value is `5` seconds.
++
+* `missing-cp-member-auto-removal-seconds`: Duration to wait before automatically removing a missing CP member from the CP subsystem. When a CP member leaves the cluster, it is not automatically removed from the CP subsystem, since it could be still alive and left the cluster because of a network partition. On the other hand, if a missing CP member is actually crashed, it creates a danger for its CP groups, because it will be still part of majority calculations. This situation could lead to losing majority of CP groups if multiple CP members leave the cluster over time.
++
+With the default configuration, missing CP members will be automatically removed from the CP subsystem after `4` hours. This feature is very useful in terms of fault tolerance when CP member count is also configured to be larger than group size. In this case, a missing CP member will be safely replaced in its CP groups with other available CP members in the CP subsystem. This configuration also implies that no network partition is expected to be longer than the configured duration.
++
+Must be greater than or equal to `session-time-to-live-seconds`. Default value is `14400` seconds (4 hours).
++
+* `fail-on-indeterminate-operation-state`: Offers a choice between at-least-once and at-most-once execution of the operations on top of the Raft consensus algorithm. It is disabled by default and offers at-least-once execution guarantee. If enabled, it switches to at-most-once execution guarantee. When you invoke an API method on a CP data structure proxy, it replicates an internal operation to the corresponding CP group. After this operation is committed to majority of this CP group by the Raft leader node, it sends a response for the public API call. If a failure causes loss of the response, then the calling side cannot determine if the operation is committed on the CP group or not. In this case, if this configuration is disabled, the operation is replicated again to the CP group, and hence could be committed multiple times. If it is enabled, the public API call fails with `IndeterminateOperationStateException`.
 +
 Default value is `false`.
 
-**Declarative Configuration**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -94,14 +93,14 @@ Default value is `false`.
         <group-size>3</group-size>
         <session-time-to-live-seconds>300</session-time-to-live-seconds>
         <session-heartbeat-interval-seconds>5</session-heartbeat-interval-seconds>
-        <missing-cp-member-auto-removal-seconds>0</missing-cp-member-auto-removal-seconds>
+        <missing-cp-member-auto-removal-seconds>14400</missing-cp-member-auto-removal-seconds>
         <fail-on-indeterminate-operation-state>false</fail-on-indeterminate-operation-state>
     </cp-subsystem>
     ...
 </hazelcast>
 ----
 
-**Programmatic Configuration**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -110,16 +109,16 @@ include::{javasource}/cp/CpSubsystemConfiguration.java[tag=cpconf]
 
 ==== FencedLock Configuration
 
-- `name`: Name of the FencedLock
-- `lockAcquireLimit`: Maximum number of reentrant lock acquires. Once a caller acquires the lock this many times, it will not be able to acquire the lock again, until it makes at least one `unlock()` call.
+* `name`: Name of the `FencedLock`.
+* `lock-acquire-limit`: Maximum number of reentrant lock acquires. Once a caller acquires the lock this many times, it will not be able to acquire the lock again, until it makes at least one `unlock()` call.
 +
-By default, no upper bound is set for the number of reentrant lock acquires, which means that once a caller acquires a `FencedLock`, all of its further `lock()` calls will succeed. However, for instance, if you set `lockAcquireLimit` to `2`, once a caller acquires the lock, it will be able to acquire it once more, but its third `lock()` call will not succeed.
+By default, no upper bound is set for the number of reentrant lock acquires, which means that once a caller acquires a `FencedLock`, all of its further `lock()` calls will succeed. However, for instance, if you set `lock-acquire-limit` to `2`, once a caller acquires the lock, it will be able to acquire it once more, but its third `lock()` call will not succeed.
 +
-If `lockAcquireLimit` is set to 1, then the lock becomes non-reentrant.
+If `lock-acquire-limit` is set to 1, then the lock becomes non-reentrant.
 +
-`0` means there is no upper bound for number of reentrant lock acquires. Default value is `0`.
+`0` means there is no upper bound for the number of reentrant lock acquires. Default value is `0`.
 
-**Declarative Configuration**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -146,7 +145,7 @@ If `lockAcquireLimit` is set to 1, then the lock becomes non-reentrant.
 </hazelcast>
 ----
 
-**Programmatic Configuration**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -155,12 +154,12 @@ include::{javasource}/cp/CpSubsystemConfiguration.java[tag=cplockconf]
 
 ==== Semaphore Configuration
 
-- `name`: Name of the CP semaphore
-- `jdkCompatible`: Enables / disables JDK compatibility of the CP `ISemaphore`. When it is JDK compatible, just as in the `j.u.c.Semaphore.release()` method, a permit can be released without acquiring it first, because acquired permits are not bound to threads. However, there is no auto-cleanup of acquired permits upon Hazelcast server/client failures. If a permit holder fails, its permits must be released manually. When JDK compatibility is disabled, a `HazelcastInstance` must acquire permits before releasing them and it cannot release a permit that it has not acquired. It means, you can acquire a permit from one thread and release it from another thread using the same `HazelcastInstance`, but not different instances of `HazelcastInstance`. In this mode, acquired permits are automatically released upon failure of the holder `HazelcastInstance`. So there is a minor behavioral difference to the `j.u.c.Semaphore.release()` method.
+* `name`: Name of the CP `ISemaphore`.
+* `jdk-compatible`: Enables/disables JDK compatibility of the CP `ISemaphore`. When it is JDK compatible, just as in the `j.u.c.Semaphore.release()` method, a permit can be released without acquiring it first, because acquired permits are not bound to threads. However, there is no auto-cleanup of the acquired permits upon Hazelcast member/client failures. If a permit holder fails, its permits must be released manually. When JDK compatibility is disabled, a `HazelcastInstance` must acquire permits before releasing them and it cannot release a permit that it has not acquired. It means, you can acquire a permit from one thread and release it from another thread using the same `HazelcastInstance`, but not different instances of `HazelcastInstance`. In this mode, acquired permits are automatically released upon failure of the holder `HazelcastInstance`. So there is a minor behavioral difference to the `j.u.c.Semaphore.release()` method.
 +
 JDK compatibility is disabled by default.
 
-**Declarative Configuration**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -183,7 +182,7 @@ JDK compatibility is disabled by default.
 </hazelcast>
 ----
 
-**Programmatic Configuration**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -192,17 +191,17 @@ include::{javasource}/cp/CpSubsystemConfiguration.java[tag=cpsemaconf]
 
 ==== Raft Algorithm Configuration
 
-WARNING: These parameters are to tune specific parameters of Hazelcast's Raft consensus algorithm implementation and only for power users.
+WARNING: These parameters tune specific parameters of the Hazelcast's Raft consensus algorithm implementation and are only for power users.
 
-- `leaderElectionTimeoutInMillis`: Leader election timeout in milliseconds. If a candidate cannot win majority of the votes in time, a new election round is initiated. Default value is `2000`.
-- `leaderHeartbeatPeriodInMillis`: Period for leader to send heartbeat messages to its followers. Default value is `5000`.
-- `maxMissedLeaderHeartbeatCount`: Max number of missed leader heartbeats to trigger a new leader election. Default value is `5`.
-- `appendRequestMaxEntryCount`: Max entry count that can be sent in a single batch of append entries request. Default value is `50`.
-- `commitIndexAdvanceCountToSnapshot`: Number of commits to initiate a new snapshot after the last snapshot's index. Default value is `1000`.
-- `uncommittedEntryCountToRejectNewAppends`: Max number of uncommitted entries in the leader's Raft log before temporarily rejecting new requests of callers. Default value is `100`.
-- `appendRequestBackoffTimeoutInMillis`: Timeout for append request backoff in millis. After the leader sends an append request to a follower, it will not send a subsequent append request until the responds to the former request or this timeout occurs. Default value is `100`.
+* `leader-election-timeout-in-millis`: Leader election timeout in milliseconds. If a candidate cannot win the majority of votes in time, a new election round is initiated. Default value is `2000` milliseconds.
+* `leader-heartbeat-period-in-millis`: Period in milliseconds for leader to send heartbeat messages to its followers. Default value is `5000` milliseconds.
+* `max-missed-leader-heartbeat-count`: Maximum number of missed leader heartbeats to trigger a new leader election. Default value is `5`.
+* `append-request-max-entry-count`: Maximum entry count that can be sent in a single batch of append entries request. Default value is `50`.
+* `commit-index-advance-count-to-snapshot`: Number of commits to initiate a new snapshot after the last snapshot's index. Default value is `1000`.
+* `uncommitted-entry-count-to-reject-new-appends`: Maximum number of uncommitted entries in the leader's Raft log before temporarily rejecting the new requests of callers. Default value is `100`.
+* `append-request-backoff-timeout-in-millis`: Timeout in milliseconds for appending the request backoff. After the leader sends an append request to a follower, it will not send a subsequent append request until the responds to the former request or this timeout occurs. Default value is `100` milliseconds.
 
-**Declarative Configuration**:
+**Declarative Configuration:**
 
 [source,xml]
 ----
@@ -225,7 +224,7 @@ WARNING: These parameters are to tune specific parameters of Hazelcast's Raft co
 </hazelcast>
 ----
 
-**Programmatic Configuration**:
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -235,73 +234,73 @@ include::{javasource}/cp/CpSubsystemConfiguration.java[tag=cpraftconf]
 
 === CP Subsystem Management
 
-Unlike dynamic nature of Hazelcast clusters, the CP subsystem requires manual intervention while expanding / shrinking its size, or when a CP member crashes or becomes unreachable. When a CP member becomes unreachable, it cannot be automatically removed from the CP subsystem because it could be still alive and partitioned away.
+Unlike the dynamic nature of Hazelcast clusters, the CP subsystem requires manual intervention while expanding/shrinking its size, or when a CP member crashes or becomes unreachable. When a CP member becomes unreachable, it cannot be automatically removed from the CP subsystem because it could be still alive and partitioned away.
 
-Moreover, the current CP subsystem implementation works only in memory without persisting any state to disk. It means that a crashed CP member will not be able to recover by reloading its previous state. Therefore, crashed CP members create a danger for gradually losing majority of CP groups and eventually total loss of availability of the CP subsystem. To prevent such kind of situations, `CPSubsystemManagementService` offers APIs for dynamic management of CP members.
+Moreover, the current CP subsystem implementation works only in memory without persisting any state to disk. It means that a crashed CP member will not be able to recover by reloading its previous state. Therefore, the crashed CP members create a danger for gradually losing the majority of CP groups and eventually total loss of availability of the CP subsystem. To prevent such situations, `CPSubsystemManagementService` offers APIs for dynamic management of the CP members.
 
-The CP subsystem relies on Hazelcast's failure detectors to test reachability of CP members. Before removing a CP member from the CP subsystem, please make sure that it is declared as unreachable by Hazelcast's failure detector and removed from Hazelcast's member list.
+The CP subsystem relies on Hazelcast's failure detectors to test the reachability of CP members. Before removing a CP member from the CP subsystem, please make sure that it is declared as unreachable by Hazelcast's failure detector and removed from the Hazelcast's member list.
 
-CP member additions and removals are internally handled by performing a single membership change at a time. When multiple CP members are shutting down concurrently, their shutdown process is executed serially. First, the Metadata CP group creates a membership change plan for CP groups. Then, scheduled changes are applied to CP groups one by one. After all removals are done, the shutting down CP member is removed the active CP members list and its shutdown process is completed.
+CP member additions and removals are internally handled by performing a single membership change at a time. When multiple CP members are shutting down concurrently, their shutdown process is executed serially. First, the Metadata CP group creates a membership change plan for CP groups. Then, the scheduled changes are applied to the CP groups one by one. After all removals are done, the shutting down CP member is removed from the active CP members list and its shutdown process is completed.
 
-When a CP member is being shut down, it is replaced with another available CP member in all of its CP groups, including the Metadata group, in order to not to decrease or more importantly not to lose majority of CP groups. If there is no available CP member to replace a shutting down CP member in a CP group, that group's size will be reduced by 1 and its majority value will be recalculated.
+When a CP member is being shut down, it is replaced with another available CP member in all of its CP groups, including the Metadata group, in order not to decrease or more importantly not to lose the majority of CP groups. If there is no available CP member to replace a shutting down CP member in a CP group, that group's size is reduced by 1 and its majority value is recalculated.
 
-A new CP member can be added to the CP subsystem to either increase number of available CP members for new CP groups or to fulfill missing slots in existing CP groups. After the initial Hazelcast cluster startup is done, an existing Hazelcast member can be be promoted to the CP member role. This new CP member will automatically join to CP groups that has missing members, and majority value of these CP groups will be recalculated.
+A new CP member can be added to the CP subsystem to either increase the number of available CP members for new CP groups or to fulfill the missing slots in the existing CP groups. After the initial Hazelcast cluster startup is done, an existing Hazelcast member can be be promoted to the CP member role. This new CP member automatically joins to CP groups that have missing members, and the majority value of these CP groups is recalculated.
 
-A CP member may crash due to hardware problems or a defect in user code, or it may become unreachable because of connection problems, such as network partitions, network hardware failures, etc. If a CP member is known to be alive but only has temporary communication issues, it will catch up the other CP members and continue to operate normally after its communication issues are resolved. If it is known to be crashed or communication issues cannot be resolved in a short time, it can be preferable to remove this CP member from the CP subsystem, hence from all its CP groups. In this case, the unreachable CP member should be terminated to prevent any accidental communication with the rest of the CP subsystem.
+A CP member may crash due to hardware problems or a defect in the user code, or it may become unreachable because of connection problems, such as network partitions, network hardware failures, etc. If a CP member is known to be alive but only has temporary communication issues, it will catch up the other CP members and continue to operate normally after its communication issues are resolved. If it is known to be crashed or communication issues cannot be resolved in a short time, it can be preferable to remove this CP member from the CP subsystem, hence from all its CP groups. In this case, the unreachable CP member should be terminated to prevent any accidental communication with the rest of the CP subsystem.
 
-When majority of a CP group is lost for any reason, that CP group cannot make progress anymore. Even a new CP member cannot join to this CP group, because all membership changes go through the Raft consensus algorithm. For this reason, the only option is to force-destroy the CP group via the `CPSubsystemManagementService.forceDestroyCPGroup()` API. When this API is used, the CP group is terminated non-gracefully, without the Raft algorithm mechanics. Then, all CP data structure proxies that talk to this CP group fail with `CPGroupDestroyedException`. However, if a new proxy is created afterwards, then this CP group will be re-created from scratch with a new set of CP members. Losing majority of a CP group can be likened to partition-loss scenario of AP Hazelcast.
+When the majority of a CP group is lost for any reason, that CP group cannot make progress anymore. Even a new CP member cannot join to this CP group, because all membership changes go through the Raft consensus algorithm. For this reason, the only option is to force-destroy the CP group via the `CPSubsystemManagementService.forceDestroyCPGroup()` API. When this API is used, the CP group is terminated non-gracefully, without the Raft algorithm mechanics. Then, all CP data structure proxies that talk to this CP group fail with `CPGroupDestroyedException`. However, if a new proxy is created afterwards, then this CP group will be recreated from the scratch with a new set of CP members. Losing the majority of a CP group can be likened to partition-loss scenario of AP Hazelcast.
 
-Please note that CP groups that have lost their majority must be force-destroyed immediately, because they can block the Metadata CP group to perform membership changes.
+Please note that the CP groups that have lost their majority must be force-destroyed immediately, because they can block the Metadata CP group to perform membership changes.
 
-Loss of majority of the Metadata CP group is the doomsday scenario for the CP subsystem. It is a fatal failure and the only solution is to reset the whole CP subsystem state via the `CPSubsystemManagementService.restart()` API. To be able to reset the CP subsystem, the initial size of the CP subsystem must be satisfied, which is defined by `CPSubsystemConfig.getCPMemberCount()`. For instance, `CPSubsystemConfig.getCPMemberCount()` is 5 and only 1 CP member is currently alive, when `CPSubsystemManagementService.restart()` is called, additional 4 regular Hazelcast members should exist in the cluster. New Hazelcast members can be started to satisfy `CPSubsystemConfig.getCPMemberCount()`.
+Loss of the majority of Metadata CP group is the doomsday scenario for the CP subsystem. It is a fatal failure and the only solution is to reset the whole CP subsystem state via the `CPSubsystemManagementService.restart()` API. To be able to reset the CP subsystem, the initial size of the CP subsystem must be satisfied, which is defined by `CPSubsystemConfig.getCPMemberCount()`. For instance, assuming that `CPSubsystemConfig.getCPMemberCount()` is 5 and only 1 CP member is currently alive, when `CPSubsystemManagementService.restart()` is called, additional 4 regular Hazelcast members should exist in the cluster. New Hazelcast members can be started to satisfy `CPSubsystemConfig.getCPMemberCount()`.
 
 ==== CP Subsystem Management API
 
-CP subsystem manamagent API can be accessed using Java API or REST interface. To communicate with REST interface there are two options; one is to access REST endpoint URL directly or using `cp-subsystem.sh` shell script, which comes with the Hazelcast package.
+You can access the CP subsystem management API using the Java API or REST interface. To communicate with the REST interface there are two options; one is to access REST endpoint URL directly or using the `cp-subsystem.sh` shell script, which comes with the Hazelcast package.
 
-NOTE: The script `cp-cluster.sh` uses `curl` command and `curl` must be installed to be able to use the script.
+NOTE: The `cp-cluster.sh` script uses `curl` command, and `curl` must be installed to be able to use the script.
 
 * **Get Local CP Member:**
 +
-Returns the local CP member if this Hazelcast member is part of CP subsystem.
-
+Returns the local CP member if this Hazelcast member is a part of the CP Subsystem.
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=localmember]
 ----
-
++
 .REST API
 [source,sh]
 ----
 > curl http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/members/local
 OR
 > sh cp-subsystem.sh -o get-local-member --address 127.0.0.1 --port 5701
-
++
 Sample Response:
 {
     "uuid": "6428d7fd-6079-48b2-902c-bdf6a376051e",
     "address": "[127.0.0.1]:5701"
 }
 ----
-
++
 * **Get CP Groups:**
 +
 Returns the list of active CP groups.
-
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=cpgroups]
 ----
-
++
 .REST API
 [source,sh]
 ----
 > curl http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/groups
 OR
 > sh cp-subsystem.sh -o get-groups --address 127.0.0.1 --port 5701
-
++
 Sample Response:
 [{
     "name": "METADATA",
@@ -314,24 +313,24 @@ Sample Response:
     "id": 14
 }]
 ----
-
++
 * **Get a single CP Group:**
 +
 Returns the active CP group with the given name. There can be at most one active CP group with a given name.
-
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=cpgroup]
 ----
-
++
 .REST API
 [source,sh]
 ----
 > curl http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/groups/${CPGROUP_NAME}
 OR
 > sh cp-subsystem.sh -o get-group --group ${CPGROUP_NAME} --address 127.0.0.1 --port 5701
-
++
 Sample Response:
 {
     "id": {
@@ -357,24 +356,24 @@ Sample Response:
     }]
 }
 ----
-
++
 * **Get CP Members:**
 +
 Returns the list of active CP members in the cluster.
-
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=cpmembers]
 ----
-
++
 .REST API
 [source,sh]
 ----
 > curl http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/members
 OR
 > sh cp-subsystem.sh -o get-members --address 127.0.0.1 --port 5701
-
++
 Sample Response:
 [{
     "uuid": "33f84b0f-46ba-4a41-9e0a-29ee284c1c2a",
@@ -393,19 +392,19 @@ Sample Response:
     "address": "[127.0.0.1]:5702"
 }]
 ----
-
++
 * **Force Destroy a CP Group:**
 +
-Unconditionally destroys the given active CP group without using the Raft algorithm mechanics. This method must be used only when a CP group loses its majority and cannot make progress anymore. Normally, membership changes in CP groups, such as CP member promotion or removal, are done via the Raft consensus algorithm mechanics. However, when a CP group loses its majority, it will not be able to commit any new operation. Therefore, this method ungracefully terminates remaining members of the given CP group. It also performs a Raft commit to the Metadata CP group to update status of the destroyed group. Once a CP group id is destroyed, all CP data structure proxies created before the destroy will fail with `CPGroupDestroyedException`.
+Unconditionally destroys the given active CP group without using the Raft algorithm mechanics. This method must be used only when a CP group loses its majority and cannot make progress anymore. Normally, the membership changes in CP groups, such as CP member promotion or removal, are done via the Raft consensus algorithm mechanics. However, when a CP group loses its majority, it will not be able to commit any new operation. Therefore, this method ungracefully terminates the remaining members of the given CP group. It also performs a Raft commit to the Metadata CP group to update the status of the destroyed group. Once a CP group ID is destroyed, all CP data structure proxies created before the destroy fails with `CPGroupDestroyedException`.
 +
 Once a CP group is destroyed, it can be created again with a new set of CP members. This method is idempotent. It has no effect if the given CP group is already destroyed.
-
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=destroygroup]
 ----
-
++
 .REST API
 [source,sh]
 ----
@@ -413,19 +412,19 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=destroygroup]
 OR
 > sh cp-subsystem.sh -o force-destroy-group --group ${CPGROUP_NAME} --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
 ----
-
++
 * **Remove a CP Member:**
 +
 Removes the given unreachable CP member from the active CP members list and all CP groups it belongs to. If any other active CP member is available, it will replace the removed CP member in its CP groups. Otherwise, CP groups which the removed CP member is a member of will shrink and their majority values will be recalculated.
 +
-WARNING: Before removing a CP member from the CP subsystem, please make sure that it is declared as unreachable by Hazelcast's failure detector and removed from Hazelcast's member list. The behaviour is undefined when a running CP member is removed from the CP subsystem.
-
+WARNING: Before removing a CP member from the CP subsystem, please make sure that it is declared as unreachable by the Hazelcast's failure detector and removed from the Hazelcast's member list. The behavior is undefined when a running CP member is removed from the CP subsystem.
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=removemember]
 ----
-
++
 .REST API
 [source,sh]
 ----
@@ -433,17 +432,17 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=removemember]
 OR
 > sh cp-subsystem.sh -o remove-member --member ${CPMEMBER_UUID} --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
 ----
-
++
 * **Promote Local Member to a CP Member**
 +
-Promotes the local Hazelcast member to a CP member. If the local member is already in the active CP members list, then this method will have no effect. When the current member is promoted to CP member, its member UUID is assigned as CP member UUID. The promoted CP member will be added to the CP groups that have missing members, i.e., whose size is smaller than `CPSubsystemConfig.getGroupSize()`.
-
+Promotes the local Hazelcast member to a CP member. If the local member is already in the active CP members list, then this method has no effect. When the current member is promoted to a CP member, its member UUID is assigned as CP member UUID. The promoted CP member will be added to the CP groups that have missing members, i.e., whose size is smaller than `CPSubsystemConfig.getGroupSize()`.
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=promotemember]
 ----
-
++
 .REST API
 [source,sh]
 ----
@@ -451,25 +450,25 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=promotemember]
 OR
 > sh cp-subsystem.sh -o promote-member --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
 ----
-
++
 * **Wipe and Restart CP Subsystem**
 +
-Wipes & resets the whole CP subsystem and initializes it as if the Hazelcast cluster is starting up initially. This method must be used only when the Metadata CP group loses its majority and cannot make progress anymore.
+Wipes and resets the whole CP subsystem and initializes it as if the Hazelcast cluster is starting up initially. This method must be used only when the Metadata CP group loses its majority and cannot make progress anymore.
 +
-After this method is called, all CP state and data will be wiped and CP members will start with empty state.
+After this method is called, all CP state and data are wiped and the CP members start with empty state.
 +
 This method can be invoked only from the Hazelcast master member. Moreover, the Hazelcast cluster must have at least `CPSubsystemConfig.getCPMemberCount()` members.
 +
 This method must not be called while there are membership changes in the cluster. Before calling this method, please make sure that there is no new member joining and all existing Hazelcast members have seen the same member list.
 +
 WARNING: This method is **NOT** idempotent and multiple invocations can break the whole system! After calling this API, you must observe the system to see if the restart process is successfully completed or failed before making another call.
-
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=restart]
 ----
-
++
 .REST API
 [source,sh]
 ----
@@ -485,20 +484,20 @@ There are two management API methods for session management.
 * **Get CP Group Sessions:**
 +
 Returns all CP sessions that are currently active in a CP group.
-
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=sessions]
 ----
-
++
 .REST API
 [source,sh]
 ----
 > curl http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/groups/${CPGROUP_NAME}/sessions
 OR
 > sh cp-subsystem.sh -o get-sessions --group ${CPGROUP_NAME} --address 127.0.0.1 --port 5701
-
++
 Sample Response:
 [{
     "id": 1,
@@ -518,17 +517,17 @@ Sample Response:
     "endpointName": "hz-member-2"
 }]
 ----
-
++
 * **Force Close a Session:**
 +
-If a Hazelcast instance that owns a CP session crashes, its CP session is not terminated immediately. Instead, the session will be closed after `CPSubsystemConfig.getSessionTimeToLiveSeconds()` passes. If it is known for sure that the session owner is not partitioned and definitely crashed, this method can be used for closing the session and releasing its resources immediately.
-
+If a Hazelcast instance that owns a CP session crashes, its CP session is not terminated immediately. Instead, the session is closed after `CPSubsystemConfig.getSessionTimeToLiveSeconds()` passes. If it is known for sure that the session owner is not partitioned and definitely crashed, this method can be used for closing the session and releasing its resources immediately.
++
 .Java API
 [source,java]
 ----
 include::{javasource}/cp/CpSubsystemAPI.java[tag=closesession]
 ----
-
++
 .REST API
 [source,sh]
 ----
