@@ -628,6 +628,38 @@ the equivalent configuration for `NATIVE` in-memory format would be similar to t
 
 NOTE: Please refer to the <<high-density-memory-store, High-Density Memory Store section>> for more information.
 
+==== Metadata Policy
+
+Hazelcast IMap offers automatic preprocessing of various data types on the update time to make queries faster. It is currently supported only by the <<querying-json-strings, HazelcastJsonValue>> type. When metadata creation is on, IMap creates additional metadata about the objects of supported types and uses this metadata during the querying. It does not affect the latency and throughput of the object of any type except the supported types.
+
+This feature is on by default. You can configure it using the `metadata-policy` configuration element.
+
+**Declarative Configuration:**
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="map-a">
+        <!--
+        valid values for metadata-policy are:
+          - OFF
+          - CREATE_ON_UPDATE (default)
+        -->
+        <metadata-policy>OFF</metadata-policy>
+    </map>
+    ...
+</hazelcast>
+----
+
+**Programmatic Configuration:**
+
+[source,java]
+----
+MapConfig mapConfig = new MapConfig();
+mapConfig.setMetadataPolicy(MetadataPolicy.OFF);
+----
+
 [[loading-and-storing-persistent-data]]
 ==== Loading and Storing Persistent Data
 
