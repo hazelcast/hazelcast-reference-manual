@@ -238,10 +238,10 @@ In this example, the code creates a collection with the entries whose keys start
 
 ==== Querying JSON Strings
 
-You can query JSON strings stored inside your Hazelcast clusters. In order to query a Json string,
-you first need to create a `HazelcastJsonValue` from the json string using `HazelcastJson.fromString(String)`
-method. You can use `HazelcastJsonValue`s as both key and value in distributed data structures. Then, it is
-possible to query these objects using Hazelcast query methods explained in this section.
+You can query JSON strings stored inside your Hazelcast clusters. To query a JSON string,
+you first need to create a `HazelcastJsonValue` from the JSON string using the `HazelcastJson.fromString(String)`
+method. You can use ``HazelcastJsonValue``s both as keys and values in the distributed data structures. Then, it is
+possible to query these objects using the Hazelcast query methods explained in this section.
 
 [source,java]
 ----
@@ -258,20 +258,20 @@ idPersonMap.put(3, HazelcastJson.fromString(person3));
 Collection<HazelcastJsonValue> peopleUnder21 = idPersonMap.values(Predicates.lessThan("age", 21));
 ----
 
-When running queries, Hazelcast treats values extracted from Json documents as Java types so they
-can be compared with query attribute. Json specification defines 5 primitive types to be used in json
-documents; "number", "string", "true", "false" and "null". "string", "true/false" and "null" are treated
-as "String", "boolean" and "null" respectively. We treat extracted "number" values as longs if they
-can be represented by a long. Otherwise, "number"s are treated as doubles.
+When running the queries, Hazelcast treats values extracted from the JSON documents as Java types so they
+can be compared with the query attribute. JSON specification defines five primitive types to be used in the JSON
+documents: `number`,`string`, `true`, `false` and `null`. The `string`, `true/false` and `null` types are treated
+as `String`, `boolean` and `null`, respectively. We treat the extracted `number` values as ``long``s if they
+can be represented by a `long`. Otherwise, ``number``s are treated as``double``s.
 
-It is possible to query nested attributes and arrays in Json documents. The query syntax is the same
-as querying other Hazelcast objects as explained in
-<<querying-in-collections-and-arrays, Querying in Collections and Arrays>>.
+It is possible to query nested attributes and arrays in JSON documents. The query syntax is the same
+as querying other Hazelcast objects as explained in the
+<<querying-in-collections-and-arrays, Querying in Collections and Arrays section>>.
 
 [source,java]
 ----
 /**
- * Sample json object
+ * Sample JSON object
  *
  * {
  *     "departmentId": 1,
@@ -291,26 +291,25 @@ as querying other Hazelcast objects as explained in
  * }
  *
  *
- * The following query will find all the departments that has a person named "Peter" working in them.
+ * The following query finds all the departments that have a person named "Peter" working in them.
  */
 Collection<HazelcastJsonValue> departmentWithPeter = departments.values(Predicates.equal("people[any].name", "Peter"));
 ----
 
-`HazelcastJsonValue` is a lightweight wrapper around your Json strings. It is used merely as a way to indicate
-that contained string should be treated as a valid Json value. Hazelcast does not check the validity of Json
-strings put into to maps. Putting an invalid json string in a map is permissible. However, in that case
-whether such entry is going to be returned or not returned from a query is not defined.
+`HazelcastJsonValue` is a lightweight wrapper around your JSON strings. It is used merely as a way to indicate
+that the contained string should be treated as a valid JSON value. Hazelcast does not check the validity of JSON
+strings put into to maps. Putting an invalid JSON string in a map is permissible. However, in that case
+whether such an entry is going to be returned or not from a query is not defined.
 
-===== Metadata Creation for Json Querying
+===== Metadata Creation for JSON Querying
 
 Hazelcast stores a metadata object per `HazelcastJsonValue` stored. This metadata object is created every time
-a `HazelcastJsonValue` is put into an IMap. Metadata is later used to speed up query operations. Metadata creation
-is on by default. Depending on you application's needs, you may want to turn off metadata creation in order
-to decrease put latency and increase throughput. This is configurable via <<metadata-policy, MetadataPolicy>>.
+a `HazelcastJsonValue` is put into an IMap. Metadata is later used to speed up the query operations. Metadata creation
+is on by default. Depending on your application's needs, you may want to turn off the metadata creation 
+to decrease the put latency and increase the throughput. You can configure this using <<metadata-policy, Metadata Policy>>.
 
-NOTE: Json metadata is stored on-heap even when you use NATIVE in-memory-format. If you are storing
-`HazelcastJsonValue`s in your NATIVE maps, there is a certain amount of on-heap cost per object. Metadata is not
- created unless you put `HazelcastJsonValue`s in your NATIVE maps even when metadata creation is on.
+NOTE: JSON metadata is stored on-heap even when you use the `NATIVE` in-memory format. If you are storing
+``HazelcastJsonValue``s in your `NATIVE` maps, there is a certain amount of on-heap cost per object. Metadata is not created unless you put ``HazelcastJsonValue``s in your `NATIVE` maps even when metadata creation is on.
 
 ==== Filtering with Paging Predicates
 
