@@ -44,15 +44,15 @@ public class AdvancedNetworkConfig {
                     .setSocketTcpNoDelay(true)
         );
         //end::memberServerSocket[]
-        //tag:restServerSocket[]
+        //tag::restServerSocket[]
         config.getAdvancedNetworkConfig().setRestEndpointConfig(
                 new RestServerEndpointConfig()
                     .setPort(8080)
                     .setPortAutoIncrement(false)
                     .enableGroups(WAN, CLUSTER_READ, HEALTH_CHECK)
         );
-        //end:restServerSocket[]
-        //tag:wanActiveEndpoint[]
+        //end::restServerSocket[]
+        //tag::wanActiveEndpoint[]
         config.getAdvancedNetworkConfig().addWanEndpointConfig(
                 new EndpointConfig().setName("tokyo")
                         .setSSLConfig(new SSLConfig()
@@ -69,8 +69,8 @@ public class AdvancedNetworkConfig {
         config.getMapConfig("customers").setWanReplicationRef(
                 new WanReplicationRef("replicate-to-tokyo", "com.company.MergePolicy", emptyList(), false)
         );
-        //end:wanActiveEndpoint[]
-        //tag:wanPassiveEndpoint[]
+        //end::wanActiveEndpoint[]
+        //tag::wanPassiveEndpoint[]
         config.getAdvancedNetworkConfig().addWanEndpointConfig(
                 new ServerSocketEndpointConfig()
                         .setName("tokyo")
@@ -81,7 +81,7 @@ public class AdvancedNetworkConfig {
                                 .setFactoryClassName("com.hazelcast.examples.MySSLContextFactory")
                                 .setProperty("foo", "bar")
                         ));
-        //end:wanPassiveEndpoint[]
+        //end::wanPassiveEndpoint[]
 
         HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
         System.out.println(instance.getCluster().getLocalMember().getAddressMap());
