@@ -1413,3 +1413,244 @@ Below is a summary table of all possible configuration combinations of the ping 
 | Not Supported
 | Not Supported - Requires root privileges
 |===
+
+=== Advanced Network Configuration
+
+Up to and including Hazelcast 3.11, Hazelcast members use a single server socket for all kinds of connections: cluster members, Hazelcast binary client protocol clients and HTTP protocol clients connect to a single server socket that handles all protocols.
+
+Starting with Hazelcast 3.12, it is possible to configure Hazelcast members with separate server sockets using different network configuration for different protocols. This configuration scheme allows for more flexibility when deploying Hazelcast as described in the following examples:
+
+ * for security, it is possible to bind the member protocol server socket on a protected internal network interface, while client connections can be established on another network interface accessible by Hazelcast clients
+ * different kinds of network connections can be established with different socket options, for example varying send/receive window size to optimize network usage, configure TLS for connections over WAN while member-to-member connections may remain unencrypted etc.
+
+In the following example we introduce the advanced network configuration for a member to listen for member-to-member connections on default port 5701 while listening for client connections on port 9090 like this:
+
+[source,java]
+----
+include::{javasource}/settingupclusters/AdvancedNetworkConfig.java[tag=advNetConf]
+----
+
+Running this example will print something similar to the following output indicating the server listens for the specified protocols on the respective configured ports:
+```
+{EndpointQualifier{type='CLIENT'}=[10.212.134.156]:9090, EndpointQualifier{type='MEMBER'}=[10.212.134.156]:5701}
+```
+
+This is the equivalent declarative configuration:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+  <advanced-network enabled="true">
+    <member-server-socket-endpoint-config>
+      <port>5701</port>
+    </member-server-socket-endpoint-config>
+    <client-server-socket-endpoint-config>
+      <port>9090</port>
+    </client-server-socket-endpoint-config>
+  </advanced-network>
+  ...
+</hazelcast>
+----
+
+==== Setting up cluster members for advanced network configuration
+
+Advanced network configuration and single-socket network config are mutually exclusive: either an enabled `AdvancedNetworkConfig` or the `NetworkConfig` object is used to configure a member's networking, including the joiner, discovery, failure detectors etc described above. It is an error to define both elements in declarative config; in programmatic config, an enabled `AdvancedNetworkConfig` will take precedence over `NetworkConfig`. By default `AdvancedNetworkConfig` is disabled, therefore the unisocket member configuration under `NetworkConfig` is used.
+
+When using advanced network configuration, the following configuration is defined member-wide:
+
+ * Joiner & cluster discovery (multicast, TCP/IP, AWS, Eureka etc)
+ * `MemberAddressProvider` configuration
+ * Failure detector configuration
+
+In addition to the above, advanced network configuration allows the configuration of multiple endpoints: each endpoint configuration applies for a specific protocol (e.g. `MEMBER`, `CLIENT`, ...). An additional optional identifier can be configured, to separate configuration of multiple `WAN` protocol endpoints.
+
+The supported protocols are:
+
+ * `MEMBER`: a member server socket is required for Hazelcast to operate. The default advanced network configuration defined a member endpoint configuration listening on port 5701 (same as the unisocket Hazelcast member configuration).
+ * `CLIENT`: a single server socket handling Hazelcast client binary protocol can be optionally configured. If no such endpoint is configured, then clients will not be able to connect to the Hazelcast member.
+ * `REST`: a REST server socket is optional.
+ * `MEMCACHE`: when accessing Hazelcast over memcache text protocol, an endpoint listening to `MEMCACHE` protocol must be defined.
+ * `WAN`: multiple WAN endpoint configurations can be defined to determine network settings of outgoing connections (from members of a source cluster to target WAN cluster members) or to establish server sockets on which a target WAN member can listen for incoming connections from the source cluster.
+
+==== Server socket endpoint configuration
+
+The server socket endpoint configuration is common for all protocols. The elements comprising a server socket endpoint configuration are identical to their unisocket network configuration counterparts. Here are all the common server socket endpoint configuration elements for declarative configuration:
+
+[source,xml]
+----
+<hazelcast>
+ ...
+<advanced-network enabled="true">
+<member-server-socket-endpoint-config>
+  <port auto-increment="true" port-count="100">5701</port>
+  <outbound-ports>
+    <ports>33000-35000</ports>
+    <ports>37000,37001,37002,37003</ports>
+    <ports>38000,38500-38600</ports>
+  </outbound-ports>
+  <interfaces enabled="true">
+    <interface>10.10.1.*</interface>
+  </interfaces>
+  <ssl enabled="true">
+    <factory-class-name>com.hazelcast.examples.MySSLContextFactory</factory-class-name>
+    <properties>
+      <property name="foo">bar</property>
+    </properties>
+  </ssl>
+  <symmetric-encryption>
+    <algorithm>ALGO</algorithm>
+    <salt>SALT</salt>
+    <password>PASS</password>
+    <iteration-count>10000</iteration-count>
+  </symmetric-encryption>
+  socket-interceptor enabled="true">
+    <class-name>com.hazelcast.examples.MySocketInterceptor</class-name>
+    <properties>
+        <property name="foo">bar</property>
+    </properties>
+  </socket-interceptor>
+  <socket-options>
+    <buffer-direct>true</buffer-direct>
+    <tcp-no-delay>true</tcp-no-delay>
+    <keep-alive>true</keep-alive>
+    <connect-timeout-seconds>64</connect-timeout-seconds>
+    <send-buffer-size-kb>25</send-buffer-size-kb>
+    <receive-buffer-size-kb>33</receive-buffer-size-kb>
+    <linger-seconds>99</linger-seconds>
+  </socket-options>
+  <public-address>dummy</public-address>
+  <reuse-address>true</reuse-address>
+</member-server-socket-endpoint-config>
+</advanced-network>
+...
+</hazelcast>
+----
+
+When using declarative configuration, specific element names introduce the server socket endpoint configuration for each protocol:
+
+ * `member-server-socket-endpoint-config` for `MEMBER` protocol
+ * `client-server-socket-endpoint-config` for `CLIENT` protocol
+ * `rest-server-socket-endpoint-config` for `REST` endpoint
+ * `memcache-server-socket-endpoint-config` for `MEMCACHE` endpoint
+ * `wan-server-socket-endpoint-config` for `WAN` endpoints
+
+With programmatic config, corresponding methods set the respective server socket endpoint config:
+
+[source,java]
+----
+include::{javasource}/settingupclusters/AdvancedNetworkConfig.java[tag=memberServerSocket]
+----
+
+==== Setting up REST server socket endpoint configuration
+
+In addition to the common server socket configuration described above, REST endpoint configuration includes certain additional attributes specific to configuration of which groups of REST functionality are enabled.
+
+[source,java]
+----
+include::{javasource}/settingupclusters/AdvancedNetworkConfig.java[tag=restServerSocket]
+----
+
+Similarly, these additional elements are available in declarative configuration under `rest-server-socket-endpoint-config` element:
+
+[source,xml]
+----
+<rest-server-socket-endpoint-config>
+<port auto-increment="false">8080</port>
+<endpoint-groups>
+  <endpoint-group name="WAN" enabled="true"/>
+  <endpoint-group name="CLUSTER_READ" enabled="true"/>
+  <endpoint-group name="HEALTH_CHECK" enabled="true"/>
+</endpoint-groups>
+</rest-server-socket-endpoint-config>
+----
+
+
+==== Setting up WAN endpoints configuration
+
+Multiple WAN endpoint configurations can be defined to configure outgoing connections and server sockets, depending on the role of the member in WAN replication. In the following sections configuration examples are provided for both active and passive side of WAN replication.
+
+===== Configuring the WAN active side
+
+Members on the active cluster initiate connections to target cluster members, so there is no need to create a server socket. A plain `EndpointConfig` is created that supplies configuration for client side of the connections that active members will create:
+
+[source,java]
+----
+include::{javasource}/settingupclusters/AdvancedNetworkConfig.java[tag=wanActiveEndpoint]
+----
+
+The same configuration as declarative:
+
+[source,xml]
+----
+<hazelcast>
+...
+<advanced-network enabled="true">
+   ...
+  <wan-endpoint-config name="tokyo">
+    <ssl enabled="true">
+      <factory-class-name>com.hazelcast.examples.MySSLContextFactory</factory-class-name>
+      <properties>
+        <property name="endpoints">tokyo.example.com:11010</property>
+      </properties>
+    </ssl>
+  </wan-endpoint-config>
+</advanced-network>
+
+<wan-replication name="replicate-to-tokyo">
+  <wan-publisher group-name="clusterB">
+    <class-name>...</class-name>
+    <endpoint>tokyo</endpoint>
+  </wan-publisher>
+</wan-replication>
+
+<map name="customer">
+  <wan-replication-ref name="replicate-to-tokyo">
+    <merge-policy>...</merge-policy>
+  </wan-replication-ref>
+</map>
+</hazelcast>
+----
+
+The endpoint configuration includes all
+
+===== Configuring the WAN passive side
+
+On the passive cluster, a server socket is configured on members to listen for incoming WAN connections, matching the network configuration (e.g. SSL configuration etc) configured on the active side of WAN replication.
+
+[source,java]
+----
+include::{javasource}/settingupclusters/AdvancedNetworkConfig.java[tag=wanPassiveEndpoint]
+----
+
+[source,xml]
+----
+<hazelcast>
+...
+<advanced-network enabled="true">
+   ...
+  <wan-server-socket-endpoint-config name="tokyo">
+    <port auto-increment="false">11010</port>
+    <ssl enabled="true">
+      <factory-class-name>com.hazelcast.examples.MySSLContextFactory</factory-class-name>
+      <properties>
+        <property name="foo">bar</property>
+      </properties>
+    </ssl>
+  </wan-server-socket-endpoint-config>
+</advanced-network>
+----
+
+==== Advanced Network Configuration FAQ
+
+Q: Can I multiplex protocols on a single advanced network endpoint? For example, can I use a single server socket to listen for `MEMBER` and `CLIENT` protocols?
+
+A: No, each endpoint configuration that defines a server socket must bind to a different socket address.
+
+Q: Can I mix unisocket and advanced network members in the same cluster?
+
+A: No, the results will be undefined.
+
+Q: Can I configure multiple server socket endpoints for the same protocol?
+
+A: You can only configure multiple server socket endpoints for `WAN` protocol. For other protocols (`MEMBER`, `CLIENT`, `REST`, `MEMCACHE`), a single server socket can be configured.
