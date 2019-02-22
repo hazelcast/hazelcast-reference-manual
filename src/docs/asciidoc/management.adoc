@@ -554,6 +554,150 @@ System.out.println("\nTotal entries on map " + mbsc.getAttribute(mapMBeanName, "
                 + mbsc.getAttribute(mapMBeanName, "localOwnedEntryCount"));
 ----
 
+=== Using the REST Endpoint Groups
+
+Hazelcast members exposes various REST endpoints and these are grouped. REST endpoint groups are as follows:
+
+* `CLUSTER_READ`
+* `CLUSTER_WRITE`
+* `HEALTH_CHECK`
+* `HOT_RESTART`
+* `WAN`
+* `DATA`
+
+And the following table lists all the endpoints along with the groups they belong to.
+
+.REST Endpoint Groups
+[cols="2a, 1, 5a"]
+|===
+| Endpoint Group | Default | Endpoints
+
+| `CLUSTER_READ`
+| Enabled
+| 
+
+* `/hazelcast/rest/cluster`
+* `/hazelcast/rest/management/cluster/state`
+* `/hazelcast/rest/license`
+* `/hazelcast/rest/management/cluster/version` (`GET`)
+* `/hazelcast/rest/management/cluster/nodes`
+
+| `CLUSTER_WRITE`
+| Disabled
+| 
+
+* `/hazelcast/rest/mancenter/changeurl`
+* `/hazelcast/rest/management/cluster/changeState`
+* `/hazelcast/rest/management/cluster/version` (`POST`)
+* `/hazelcast/rest/management/cluster/clusterShutdown`
+* `/hazelcast/rest/management/cluster/memberShutdown`
+* `/hazelcast/` (Other HTTP REST API operations)
+
+| `HEALTH_CHECK`
+| Enabled
+| 
+
+* `/hazelcast/health/node-state`
+* `/hazelcast/health/cluster-state`
+* `/hazelcast/health/cluster-safe`
+* `/hazelcast/health/migration-queue-size`
+* `/hazelcast/health/cluster-size`
+* `/hazelcast/health/ready`
+
+| `HOT_RESTART`
+| Disabled
+| 
+
+* `/hazelcast/rest/management/cluster/forceStart`
+* `/hazelcast/rest/management/cluster/partialStart`
+* `/hazelcast/rest/management/cluster/hotBackup`
+* `/hazelcast/rest/management/cluster/hotBackupInterrupt`
+
+| `WAN`
+| Disabled
+| 
+
+* `/hazelcast/rest/mancenter/wan/sync/map`
+* `/hazelcast/rest/mancenter/wan/sync/allmaps`
+* `/hazelcast/rest/mancenter/wan/clearWanQueues`
+* `/hazelcast/rest/mancenter/wan/addWanConfig`
+* `/hazelcast/rest/mancenter/wan/pausePublisher`
+* `/hazelcast/rest/mancenter/wan/stopPublisher`
+* `/hazelcast/rest/mancenter/wan/resumePublisher`
+* `/hazelcast/rest/mancenter/wan/consistencyCheck/map`
+* `/hazelcast/rest/wan/sync/map`
+* `/hazelcast/rest/wan/sync/allmaps`
+* `/hazelcast/rest/mancenter/clearWanQueues`
+* `/hazelcast/rest/wan/addWanConfig`
+
+| `DATA`
+| Disabled
+| 
+
+* `/hazelcast/rest/maps/`
+* `/hazelcast/rest/queues/QUEUE_NAME/size`
+* `/hazelcast/rest/queues/$QUEUE_NAME/$SECONDS`
+|===
+
+
+You can enable or disable any REST endpoint group using the following declarative configuration (`HEALTH_CHECK` group is used as an example):
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <rest-api enabled="true">
+            <endpoint-group name="HEALTH_CHECK" enabled="false"/>
+        </rest-api>
+    </network>
+    ...
+</hazelcast>
+----
+
+The following is the equivalent programmatic configuration:
+
+[source,java]
+----
+RestApiConfig restApiConfig = new RestApiConfig()
+        .setEnabled(false)
+        .enableGroups(RestEndpointGroup.HEALTH_CHECK);
+Config config = new Config();
+config.getNetworkConfig().setRestApiConfig(restApiConfig);
+----
+
+Alternatively, you can also use the `advanced-network` element for the same purpose:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <advanced-network enabled="true">
+        <rest-server-socket-endpoint-config>
+            <endpoint-groups>
+                <endpoint-group name="HEALTH_CHECK" enabled="false"/>
+            </endpoint-groups>
+        </rest-server-socket-endpoint-config>
+    </advanced-network>
+    ...
+</hazelcast>
+----
+
+And the following is the equivalent programmatic configuration:
+
+[source,java]
+----
+RestServerEndpointConfig restServerEndpointConfig = new RestServerEndpointConfig()
+        .setEnabled(false);
+        .enableGroups(RestEndpointGroup.HEALTH_CHECK);
+Config config = new Config();
+config.getAdvancedNetworkConfig().setRestEndpointConfig(restServerEndpointConfig);
+----
+
+NOTE: See the <<advanced-network-configuration, Advanced Network Configuration section>> for more information on the `advanced-network` element.
+
+When you enable or disable a REST endpoint group, all the endpoints in that group are enabled or disabled, respectively. For the examples above, we disabled the endpoints belonging to the `HEALTH_CHECK` endpoint group.
+
 === Cluster Utilities
 
 This section provides information on programmatic utilities you can use to listen to the cluster events, to change the state of your cluster, to check whether the cluster and/or members are safe before shutting down a member and to define the minimum number of cluster members required for the cluster to remain up and running. It also gives information on the Hazelcast Lite Member.
@@ -788,6 +932,8 @@ NOTE: Currently, this script is not supported on the Windows platforms.
 ==== Using REST API for Cluster Management
 
 Besides the Management Center's Hot Restart https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[tab] and the script <<using-the-script-cluster-sh, `cluster.sh`>>, you can also use REST API to manage your cluster's state. The following are the operations you can perform.
+
+NOTE: Some of the REST calls listed below need their REST endpoint groups to be enabled. See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> on how to enable them.
 
 [cols="5a"]
 .REST API calls
