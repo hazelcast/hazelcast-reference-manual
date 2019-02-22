@@ -1333,12 +1333,45 @@ The following shows an example of the output:
 
 Hazelcast provides the HTTP-based Health Check endpoint, Health Check script and Health Monitoring utility.
 
+To be able to benefit from the Health Check endpoint and script, you must enable the Health Check using either of the following configuration options:
+
+. Using the `network` configuration element:
++
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <rest-api enabled="true">
+            <endpoint-group name=“HEALTHCHECK” enabled=“true”/>
+        </rest-api>
+    </network>
+    ...
+</hazelcast>
+----
++
+. Using the `advanced-network` configuration element:
++
+[source,xml]
+----
+<hazelcast>
+    ...
+    <advanced-network>
+        <rest-server-socket-endpoint-config>
+            <endpoint-groups>
+                <endpoint-group name=“HEALTHCHECK” enabled=“true”/>
+            </endpoint-groups>
+        </rest-server-socket-endpoint-config>
+    </advanced-network>
+    ...
+</hazelcast>
+----
+
+NOTE: Note that the usage of the `hazelcast.http.healthcheck.enabled` has been deprecated. Please use the either one of the above configuration to enable the Health Check utility.
 
 ==== Health Check
 
 This is Hazelcast's HTTP based health check implementation which provides basic information about your cluster and member (on which it is launched).
-
-First, you need to enable the health check. To do this, set the `hazelcast.http.healthcheck.enabled` system property to `true`. By default, it is `false`.
 
 Now you retrieve information about your cluster's health status (member state, cluster state, cluster size, etc.) by launching `+http://<your member's host IP>:5701/hazelcast/health+` on your preferred browser.
 
@@ -1353,7 +1386,6 @@ Hazelcast::ClusterSize=2
 ```
 
 Please refer to the <<managing-cluster-and-member-states, Managing Cluster and Member States section>> to learn more about each state of a Hazelcast cluster and member.
-
 
 ==== Health Check Script
 
