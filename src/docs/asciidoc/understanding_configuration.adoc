@@ -147,7 +147,7 @@ To get your example Hazelcast declarative configuration out of the above two, us
 </hazelcast>
 ----
 
-The above example using YAML configuration files looks the following:
+The above example using the YAML configuration files looks like the following:
 
 `development-group-config.yaml`:
 
@@ -245,7 +245,7 @@ hazelcast-client:
       - 127.0.0.1:7000
 ----
 
-Composing a Hazelcast client declarative configuration by importing the above two examples, is shown below.
+Composing a Hazelcast client declarative configuration by importing the above two examples is shown below.
 
 [source,yaml]
 ----
@@ -260,7 +260,7 @@ NOTE: Use `<import/>` element on top level of the XML hierarchy.
 
 NOTE: Use the `import` mapping on top level of the YAML hierarchy.
 
-Resources from classpath and file system may also be used for composing declarative configuration:
+Resources from the classpath and file system may also be used to compose a declarative configuration:
 
 [source,xml]
 ----
@@ -303,16 +303,16 @@ NOTE: You can refer to the <<using-variables, Using Variables section>> to learn
 [[configuring-declaratively-yaml]]
 ==== Configuring Declaratively with YAML
 
-Starting with 3.12 Hazelcast members and Java clients can be configured declaratively with YAML configuration files in
+You can configure the Hazelcast members and Java clients declaratively with YAML configuration files in
 installations of Hazelcast running on Java runtime version 8 or above.
 
-The structure of the YAML configuration follows the structure of the XML configuration making rewriting existing XML
-configurations to YAML easier. There are some differences between the XML and the YAML languages that make the two declarative configurations to slightly derive as the the following examples show.
+The structure of the YAML configuration follows the structure of the XML configuration. Therefore, you can rewrite the existing XML
+configurations in YAML easily. There are some differences between the XML and YAML languages that make the two declarative configurations to slightly derive as the the following examples show.
 
-In the YAML declarative configuration mappings are used in which the name of the mapping node needs to be unique within
+In the YAML declarative configuration, mappings are used in which the name of the mapping node needs to be unique within
 its enclosing mapping. See the following example with configuring two maps in the same configuration file.
 
-In the XML configuration files we have two `<map>` elements as shown below.
+In the XML configuration files, we have two `<map>` elements as shown below.
 
 [source,xml]
 ----
@@ -328,7 +328,7 @@ In the XML configuration files we have two `<map>` elements as shown below.
 </hazelcast>
 ----
 
-In the YAML configuration the map can be configured under a mapping `map` as shown in the following example.
+In the YAML configuration, the map can be configured under a mapping `map` as shown in the following example.
 
 [source,yaml]
 ----
@@ -343,10 +343,10 @@ hazelcast:
 ----
 
 The XML and YAML configurations above define the same maps `map1` and `map2`. Please note that in the YAML configuration file
-there is no `name` node instead, the name of the map is used as the name of the mapping for configuring the given map.
+there is no `name` node, instead, the name of the map is used as the name of the mapping for configuring the given map.
 
 There are other configuration entries that have no unique names and are listed in the same enclosing entry. Examples to this
-kind of configurations is listing member addresses, interfaces in the networking configurations, defining listeners. The
+kind of configurations are listing the member addresses, interfaces in the networking configurations and defining listeners. The
 following example configures listeners to illustrate this.
 
 [source,xml]
@@ -363,7 +363,7 @@ following example configures listeners to illustrate this.
 </hazelcast>
 ----
 
-In the YAML configuraion the listeners are defined as a sequence.
+In the YAML configuration, the listeners are defined as a sequence.
 
 [source,yaml]
 ----
@@ -398,8 +398,8 @@ hazelcast:
 </hazelcast>
 ----
 
-In the identical YAML configuration the `enabled` attribute of the XML configuration is a scalar node on the same level with
-the other configuration of the multicast configuration.
+In the identical YAML configuration, the `enabled` attribute of the XML configuration is a scalar node on the same level with
+the other items of the multicast configuration.
 
 [source,yaml]
 ----
@@ -413,10 +413,6 @@ hazelcast:
         # other multicast configuration options
   ...
 ----
-
-
-[[configuring-declaratively-precedence]]
-==== Precedence of Declarative Configuration Files
 
 [[configuring-programmatically]]
 === Configuring Programmatically
@@ -463,7 +459,7 @@ NOTE: Hazelcast performs schema validation through the file `hazelcast-config-<v
 If you want to specify your own configuration file to create `Config`, Hazelcast supports several ways including filesystem,
 classpath, InputStream and URL.
 
-Building `Config` from XML declarative configuration.
+Building `Config` from the XML declarative configuration:
 
 * `Config cfg = new XmlConfigBuilder(xmlFileName).build();`
 * `Config cfg = new XmlConfigBuilder(inputStream).build();`
@@ -472,7 +468,7 @@ Building `Config` from XML declarative configuration.
 * `Config cfg = new UrlXmlConfig(url);`
 * `Config cfg = new InMemoryXmlConfig(xml);`
 
-Building `Config` from YAML declarative configuration.
+Building `Config` from the YAML declarative configuration:
 
 * `Config cfg = new YamlConfigBuilder(yamlFileName).build();`
 * `Config cfg = new YamlConfigBuilder(inputStream).build();`
@@ -644,7 +640,7 @@ When you start a Hazelcast member without passing a `Config` object, as explaine
 [NOTE]
 ====
 The suffix of the filename is used to determine the language of the configuration. If the suffix is `.xml` the
-configuration files is parsed as an
+configuration file is parsed as an
 XML configuration file. If it is `.yaml`, the configuration file is parsed as a YAML configuration file.
 ====
 +
@@ -757,7 +753,8 @@ For example, see the following command that sets two system properties.
 
 Let's get the values of these system properties in the declarative configuration of Hazelcast, as shown below.
 
-In XML configuration:
+In the XML configuration:
+
 [source,xml]
 ----
 <hazelcast>
@@ -767,7 +764,8 @@ In XML configuration:
 </hazelcast>
 ----
 
-In YAML configuration:
+In the YAML configuration:
+
 [source,yaml]
 ----
 hazelcast:
@@ -817,11 +815,12 @@ Variable replacers are used to replace custom strings during loading the configu
 Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured only
 declaratively: in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml`, `hazelcast.yaml` and `hazelcast-client
 .xml`, `hazelcast-client.yaml`. You can
-refer to `ConfigReplacer` s https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html[Javadoc] for basic information on how a replacer works.
+refer to ``ConfigReplacer``s https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html[Javadoc] for basic information on how a replacer works.
 
 Variable replacers are configured within the element `<config-replacers>` under `<hazelcast>`, as shown below.
 
-In XML configuration:
+In the XML configuration:
+
 [source,xml]
 ----
 <hazelcast>
@@ -839,7 +838,8 @@ In XML configuration:
 </hazelcast>
 ----
 
-In YAML configuration:
+In the YAML configuration:
+
 [source,yaml]
 ----
 hazelcast:
