@@ -548,7 +548,7 @@ Other supported properties are:
 ** `SSLv2` _(insecure!)_
 ** `SSLv3` _(insecure!)_
 +
-All of the algorithms listed above support Java 6 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
+All of the algorithms listed above support Java 8 and higher versions. For the `protocol` property, we recommend you to provide SSL or TLS with its version information, e.g., `TLSv1.2`. Note that if you
 provide only `SSL` or `TLS` as a value for the `protocol` property, they are converted to `SSLv3` and `TLSv1.2`, respectively. We strongly recommend to avoid SSL protocols.
 
 ==== Configuring Cipher Suites
@@ -1386,11 +1386,11 @@ The Federal Information Processing Standard (FIPS) 140-2 is a US government comp
 
 The NIST manages a list of FIPS certified cryptographic modules. These modules are certified under the Cryptographic Module Validation Program. The list can be searched online: https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search.
 
-Hazelcast uses external modules for cryptographic tasks and it can be configured to use a FIPS 140-2 validated module. It means most of the configuration required for FIPS is out of the Hazelcast configuration. To run Hazelcast in the FIPS compliant mode you have to set the underlying Java runtime into the FIPS mode. It may also require switching the underlying Operating System into the FIPS mode. We consider using FIPS enabled OS as a recommended approach even in cases when it's not asked explicitly.
+Hazelcast uses external modules for cryptographic tasks and it can be configured to use a FIPS 140-2 validated module. It means most of the configuration required for FIPS is outside of the Hazelcast configuration. To run Hazelcast in the FIPS compliant mode you have to set the underlying Java runtime into FIPS mode. It may also require switching the underlying Operating System into the FIPS mode. We consider using a FIPS enabled OS as a recommended approach even in cases when it's not asked for explicitly.
 
-Hazelcast is not an authority which should document switching different Java runtimes into the FIPS mode. Please consult the documentation for their Java version to learn how to enable the FIPS mode. Usually it means changing the list of security providers in the `java.security` JRE configuration file.
+Hazelcast is not an authority which should document switching different Java runtimes into the FIPS mode. Please consult the documentation of your Java version to learn how to enable the FIPS mode. Usually it means changing the list of security providers in the `java.security` JRE configuration file.
 
-Hazelcast is only responsible for enabling the OpenSSL native library into the FIPS mode (see <<integrating-openssl-boringssl, Integrating OpenSSL section>>). If the Hazelcast cluster configuration enables TLS communication using the native OpenSSL library, you have to enable its FIPS mode in the Hazelcast `OpenSSLEngineFactory` configuration.
+Hazelcast is only responsible for enabling the OpenSSL native library into FIPS mode (see <<integrating-openssl-boringssl, Integrating OpenSSL section>>). If the Hazelcast cluster configuration enables TLS communication using the native OpenSSL library, you have to enable its FIPS mode in the Hazelcast `OpenSSLEngineFactory` configuration.
 The FIPS mode is controlled by an optional `true`/`false` property called `fipsMode`. It is disabled by default.
 
 **Example OpenSSL configuration in the FIPS mode:**
