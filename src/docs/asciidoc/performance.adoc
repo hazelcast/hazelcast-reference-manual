@@ -5,19 +5,20 @@ This chapter provides information on the performance features of Hazelcast inclu
 
 === Pipelining
 
-From Hazelcast 3.12 there is a new feature called Pipelining. The idea of pipelining is that a single thread can send multiple
-requests in parallel and therefor can increase throughput. Example: imagine that the round trip time for a request/response
-is 1 milisecond. If synchronous requests are used (e.g. IMap.get) then the maximum throughput of doing IMap.get calls from
-a single thread is 1/0001=1000 operations/second. One way to solve this problem is to have  introduce multithreading to make
-requests in parallel. In the above case, if we would use 2 threads, then the maximum throughput doubles from 1000
-operation/second, to 2000 operations/second.
+With the pipelining, you can send multiple
+requests in parallel using a single thread  and therefore can increase throughput. 
+As an example, suppose that the round trip time for a request/response
+is 1 millisecond. If synchronous requests are used, e.g., `IMap.get()`, then the maximum throughput out of these requests from
+a single thread is 1/001 = 1000 operations/second. One way to solve this problem is to introduce multithreading to make
+the requests in parallel. For the same example, if we would use 2 threads, then the maximum throughput doubles from 1000
+operations/second, to 2000 operations/second.
 
-But introducing threads for the sake of executing request isn't always convenient and doesn't always lead to optimal
-performance. That is where the pipelining can be used. So instead of using multiple threads to have concurrent invocations,
-you can use asynchronous method calls like IMap.getAsync. If you would use 2 asynchronous calls from a single thread,
-then the maximum throughput is 2*(1/0001)=2000 operations/second. So to utilize pipelining, asynchronous calls need to
-be made from a single thread. The pipelining is a convenience implementation to provides back pressure (so controls
-the number of inflight operations) and provides a convenient way to wait for all the results.
+However, introducing threads for the sake of executing requests isn't always convenient and doesn't always lead to an optimal
+performance; this is where the pipelining can be used. Instead of using multiple threads to have concurrent invocations,
+you can use asynchronous method calls such as `IMap.getAsync()`. If you would use 2 asynchronous calls from a single thread,
+then the maximum throughput is 2*(1/001) = 2000 operations/second. Therefore, to benefit from the pipelining, asynchronous calls need to
+be made from a single thread. The pipelining is a convenience implementation to provide back pressure, i.e., controlling
+the number of inflight operations, and it provides a convenient way to wait for all the results.
 
 [source,java]
 ----
@@ -28,29 +29,27 @@ for (long k = 0; k < 100; k++) {
 }
 // wait for completion
 List<String> results = pipelining.results();
----
-In the above configuration we make 100 asynchronous map.getAsync calls, but the maximum number of inflight calls is 10.
+----
 
-By increasing the debt of the pipeline, throughput can be increased. Pipelining has its own back pressure. So you do not
-need to enable back pressure on client and or member to have back pressure on the pipeline. But beware if you have many
-pipelines, it could still be needed to enable client/member back pressure because it is possible to overwhelm the system
-with requests in that situation.
+In the above example, we make 100 asynchronous `map.getAsync()` calls, but the maximum number of inflight calls is 10.
 
-Pipelining can be used for both clients and members. No special configuration is needed, it works out of the box.
+By increasing the debt of the pipelining, throughput can be increased. The pipelining has its own back pressure, you do not
+need to enable the <<back-pressure, back pressure>> on the client or member to have this feature on the pipelining. However, if you have many
+pipelines, you may still need to enable the client/member back pressure because it is possible to overwhelm the system
+with requests in that situation. See the <<back-pressure, Back Pressure section>> to learn how to enable it on the client or member.
 
-Pipelining can be used for any asynchronous call. So you could use it for IMap asynchronous get/put, but can also be used for
-e.g. ICache, IAtomicLong etc.
+You can use the pipelining both on the clients and members. You do not need a special configuration, it works out-of-the-box.
 
-Pipelining can't be used as a transaction mechanism. So you can't do some calls and throw away the pipeline and expect that
-non of the request get executed. If you want to use atomic behavior, please check out transactions. Pipelining is just a performance
-optimization, not a mechanism for atomic behavior.
+The pipelining can be used for any asynchronous call. You can use it for IMap asynchronous get/put methods as well as for
+ICache, IAtomicLong, etc. It cannot be used as a transaction mechanism though. So you cannot do some calls and throw away the pipeline and expect that
+none of the requests are executed. If you want to use an atomic behavior, see the <<transactions, Transactions chapter>>. The pipelining is just a performance optimization, not a mechanism for atomic behavior.
 
-Pipelines are cheap and should frequently be replaced because they accumulate results. It is fine to have a few hundred or
-even a few thousand calls being processed with the pipeline, but all responses to all the request are stored in the pipeline
-as long as the pipeline is referenced. So if you want to process a huge number of request, then every few hundred or few
-thousand calls, wait for the pipeline results and just create a new instance.
+The pipelines are cheap and should frequently be replaced because they accumulate results. It is fine to have a few hundred or
+even a few thousand calls being processed with the pipelining. However, all the responses to all requests are stored in the pipeline
+as long as the pipeline is referenced. So if you want to process a huge number of requests, then every few hundred or few
+thousand calls wait for the pipelining results and just create a new instance.
 
-Pipelines are not threadsafe. They should be used by a single thread.
+Note that the pipelines are not thread-safe. They must be used by a single thread.
 
 === Data Affinity
 
