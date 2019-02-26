@@ -44,9 +44,9 @@ Each data structure to be protected should have the configuration added to it as
 
 Cluster Membership is established and maintained by heartbeats. A network partitioning presents some members as being unreachable. While configurable, it is normally seconds or tens of seconds before the cluster is adjusted to exclude unreachable members. The cluster size is based on the currently understood number of members.
 
-For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection, a time window to detect quorum is not satisfied anymore. Length of this window depends on the failure detector. Given guarantee is, every member eventually detects the failed members and rejects the operation on the data structure which requires the quorum.
+For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection. Length of this window depends on the failure detector. Given guarantee is, every member eventually detects the failed members and rejects the operation on the data structure which requires the quorum.
 
-Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box `QuorumFunction`s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.
+Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box ``QuorumFunction``s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
 
