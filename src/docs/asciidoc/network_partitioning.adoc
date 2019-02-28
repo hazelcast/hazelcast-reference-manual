@@ -89,31 +89,13 @@ include::{javasource}/networkpartitioning/MemberCountQuorum.java[tag=mcq]
 
 The probabilistic quorum function uses a private instance of <<phi-accrual-failure-detector, Phi Accrual Cluster Failure Detector>> which is updated with member heartbeats and its parameters can be fine-tuned to determine the count of live members in the cluster, independently of the cluster's membership manager.
 
-The probabilistic quorum function can be configured with the following parameters:
+The probabilistic quorum function has the following configuration elements:
 
-|===
-|Parameter | Default Value | Description
-
-|`acceptable-heartbeat-pause-millis`
-|60000
-|Duration in milliseconds corresponding to the number of potentially lost/delayed heartbeats that are accepted before considering it to be an anomaly. This margin is important to be able to survive sudden, occasional, pauses in heartbeat arrivals, due to for example garbage collection or network drops. Value must be in range \[heartbeat interval , maximum no heartbeat interval\], otherwise Hazelcast does not start.
-
-|`suspicion-threshold`
-|10
-|Threshold for suspicion (φ) level. A low threshold is prone to generate many wrong suspicions but ensures a quick detection in the event of a real crash. Conversely, a high threshold generates fewer mistakes but needs more time to detect actual crashes.
-
-|`max-sample-size`
-|200
-|Number of samples to use for calculation of mean and standard deviation of inter-arrival times.
-
-|`heartbeat-interval-millis`
-|5000
-|Bootstrap the stats with heartbeats that corresponds to this duration in milliseconds, with a rather high standard deviation (since environment is unknown in the beginning).
-
-|`min-std-deviation-millis`
-|100
-|Minimum standard deviation (in milliseconds) to use for the normal distribution used when calculating phi. Too low standard deviation might result in too much sensitivity for sudden, but normal, deviations in heartbeat inter arrival times.
-|===
+* `acceptable-heartbeat-pause-millis`: Duration in milliseconds corresponding to the number of potentially lost/delayed heartbeats that are accepted before considering it to be an anomaly. This margin is important to be able to survive sudden, occasional, pauses in heartbeat arrivals, due to for example garbage collection or network drops. The value must be in the [heartbeat interval , maximum no heartbeat interval] range, otherwise Hazelcast does not start. Its default value is `60000` milliseconds.
+* `suspicion-threshold`: Threshold for suspicion (φ) level. A low threshold is prone to generate many wrong suspicions but ensures a quick detection in the event of a real crash. Conversely, a high threshold generates fewer mistakes but needs more time to detect actual crashes. Its default value is `10`.
+* `max-sample-size`: Number of samples to use for calculation of mean and standard deviation of inter-arrival times. Its default value is `200`.
+* `heartbeat-interval-millis`: Bootstrap the stats with heartbeats that corresponds to this duration in milliseconds, with a rather high standard deviation (since environment is unknown in the beginning). Its default value is `5000` milliseconds.
+* `min-std-deviation-millis`: Minimum standard deviation (in milliseconds) to use for the normal distribution used when calculating phi. Too low standard deviation might result in too much sensitivity for sudden, but normal, deviations in heartbeat inter arrival times. Its default value is `100` milliseconds.
 
 **Declarative Configuration:**
 
