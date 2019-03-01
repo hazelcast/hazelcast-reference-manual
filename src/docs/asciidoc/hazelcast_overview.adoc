@@ -118,7 +118,6 @@ As shown in the feature list in the <<distributed-data-structures, Distributed D
 
 **Hazelcast's Distinctive Strengths**
 
-
 * Hazelcast is open source.
 * Hazelcast is only a JAR file. You do not need to install software.
 * Hazelcast is a library, it does not impose an architecture on Hazelcast users.
@@ -133,14 +132,14 @@ Finally, Hazelcast has a vibrant open source community enabling it to be continu
 
 Hazelcast is a fit when you need:
 
-* analytic applications requiring big data processing by partitioning the data.
-* to retain frequently accessed data in the grid.
-* a cache, particularly an open source JCache provider with elastic distributed scalability.
-* a primary data store for applications with utmost performance, scalability and low-latency requirements.
-* an In-Memory NoSQL Key Value Store.
-* publish/subscribe communication at highest speed and scalability between applications.
-* applications that need to scale elastically in distributed and cloud environments.
-* a highly available distributed cache for applications.
+* analytic applications requiring big data processing by partitioning the data
+* to retain frequently accessed data in the grid
+* a cache, particularly an open source JCache provider with elastic distributed scalability
+* a primary data store for applications with utmost performance, scalability and low-latency requirements
+* an In-Memory NoSQL Key Value Store
+* publish/subscribe communication at highest speed and scalability between applications
+* applications that need to scale elastically in distributed and cloud environments
+* a highly available distributed cache for applications
 * an alternative to Coherence and Terracotta.
 
 [[data-partitioning]]
@@ -181,7 +180,7 @@ Hazelcast distributes data entries into the partitions using a hashing algorithm
 
 * the key or name is serialized (converted into a byte array)
 * this byte array is hashed
-* the result of the hash is mod by the number of partitions
+* the result of the hash is mod by the number of partitions.
 
 The result of this modulo - *MOD(hash result, partition count)* -  is the partition in which the data will be stored, that is the **partition ID**. For ALL members you have in your cluster, the partition ID for a given key is always the same.
 
@@ -199,10 +198,7 @@ You can configure the frequency (how often) that the member sends the partition 
 [[repartitioning]]
 ==== Repartitioning
 
-Repartitioning is the process of redistribution of partition ownerships. Hazelcast performs the repartitioning in the following cases:
-
-* When a member joins to the cluster.
-* When a member leaves the cluster.
+Repartitioning is the process of redistribution of partition ownerships. Hazelcast performs the repartitioning when a member joins or leaves the cluster.
 
 In these cases, the partition table in the oldest member is updated with the new partition ownerships. Note that if a lite member joins or leaves a cluster, repartitioning is not triggered since lite members do not own any partitions.
 
@@ -211,19 +207,19 @@ In these cases, the partition table in the oldest member is updated with the new
 
 Hazelcast can be used:
 
-* to share server configuration/information to see how a cluster performs.
-* to cluster highly changing data with event notifications, e.g., user based events, and to queue and distribute background tasks.
-* as a simple Memcache with Near Cache.
-* as a cloud-wide scheduler of certain processes that need to be performed on some members.
-* to share information (user information, queues, maps, etc.) on the fly with multiple members in different installations under OSGI environments.
-* to share thousands of keys in a cluster where there is a web service interface on an application server and some validation.
-* as a distributed topic (publish/subscribe server) to build scalable chat servers for smartphones.
-* as a front layer for a Cassandra back-end.
-* to distribute user object states across the cluster, to pass messages between objects and to share system data structures (static initialization state, mirrored objects, object identity generators).
-* as a multi-tenancy cache where each tenant has its own map.
-* to share datasets, e.g., table-like data structure, to be used by applications.
-* to distribute the load and collect status from Amazon EC2 servers where the front-end is developed using, for example, Spring framework.
-* as a real-time streamer for performance detection.
+* to share server configuration/information to see how a cluster performs
+* to cluster highly changing data with event notifications, e.g., user based events, and to queue and distribute background tasks
+* as a simple Memcache with Near Cache
+* as a cloud-wide scheduler of certain processes that need to be performed on some members
+* to share information (user information, queues, maps, etc.) on the fly with multiple members in different installations under OSGI environments
+* to share thousands of keys in a cluster where there is a web service interface on an application server and some validation
+* as a distributed topic (publish/subscribe server) to build scalable chat servers for smartphones
+* as a front layer for a Cassandra back-end
+* to distribute user object states across the cluster, to pass messages between objects and to share system data structures (static initialization state, mirrored objects, object identity generators)
+* as a multi-tenancy cache where each tenant has its own map
+* to share datasets, e.g., table-like data structure, to be used by applications
+* to distribute the load and collect status from Amazon EC2 servers where the front-end is developed using, for example, Spring framework
+* as a real-time streamer for performance detection
 * as storage for session data in web applications (enables horizontal scalability of the web application).
 
 [[resources]]

@@ -28,7 +28,7 @@ In order to upgrade a 3.6.x cluster and clients to 3.7.3 (or later), you need to
 ** upgrade your clients from 3.6.x to 3.7.3, adding property `hazelcast.compatibility.3.6.server=true` to your Hazelcast client configuration. A 3.7.3 client started with this compatibility option is compatible with 3.6.x and 3.7.3+ cluster members but incompatible with 3.7, 3.7.1, 3.7.2 cluster members. Once your clients are upgraded, you may then proceed to upgrade your cluster members to version 3.7.3 or later.
 +
 You may use any of the supported ways as described in the <<system-properties, System Properties section>> to configure the compatibility option. When done upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration.
-
+* The `eviction-percentage` and `min-eviction-check-millis` elements are deprecated. They are ignored if configured, since the map eviction is based on the sampling of entries. See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 === Hazelcast IMDG 3.6.x
 

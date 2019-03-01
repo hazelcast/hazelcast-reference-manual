@@ -33,14 +33,14 @@ Hazelcast has two types of distributed objects in terms of their partitioning st
 . Data structures where each partition stores a part of the instance, namely partitioned data structures.
 . Data structures where a single partition stores the whole instance, namely non-partitioned data structures.
 
-Partitioned Hazelcast data structures are:
+The following are the partitioned Hazelcast data structures:
 
 * Map
 * MultiMap
 * Cache (Hazelcast JCache implementation)
 * Event Journal
 
-Non-partitioned Hazelcast data structures are:
+The following are the non-partitioned Hazelcast data structures:
 
 * Queue
 * Set
@@ -200,11 +200,6 @@ include::{javasource}/dds/map/BasicMapOperations.java[tag=bmo]
 
 All `ConcurrentMap` operations such as `put` and `remove` might wait if the key is locked by another thread in the local or remote JVM. But, they will eventually return with success. `ConcurrentMap` operations never throw a `java.util.ConcurrentModificationException`.
 
-Also see:
-
-* <<data-affinity, Data Affinity section>>.
-* <<using-wildcards, Map Configuration with wildcards>>.
-
 [[backing-up-maps]]
 ==== Backing Up Maps
 
@@ -305,14 +300,14 @@ The eviction process starts according to this calculated partition maximum size 
 
 Assume that you have the following figures as examples:
 
-* Partition count: 200
-* Entry count for each partition: 100
+* partition count: 200
+* entry count for each partition: 100
 * `max-size` (PER_NODE): 20000
 
-The total number of entries here is 20000 (partition count * entry count for each partition). This means you are at the eviction threshold since you set the `max-size` to 20000. When you try to put an entry
+The total number of entries here is 20000 (partition count * entry count for each partition). This means you are at the eviction threshold since you set the `max-size` to 20000. When you try to put an entry:
 
-. the entry goes to the relevant partition,
-. the partition checks whether the eviction threshold is reached (`max-size`),
+. the entry goes to the relevant partition
+. the partition checks whether the eviction threshold is reached (`max-size`)
 . only one entry will be evicted.
 
 As a result of this eviction process, when you check the size of your map, it is 19999. After this eviction, subsequent put operations do not trigger the next eviction until the map size is again close to the `max-size`.
@@ -338,7 +333,7 @@ The following is an example declarative configuration for map eviction.
 </hazelcast>
 ----
 
-Let's describe each element:
+The following are the configuration element descriptions:
 
 * `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map (TTL). It limits the lifetime of the entries relative to the time of the last write access performed on them. If it is not 0, the entries whose lifetime exceeds this period (without any write access performed on them during this period) are expired and evicted automatically. An individual entry may have its own lifetime limit by using one of the methods accepting a TTL; see <<evicting-specific-entries, Evicting Specific Entries section>>. If there is no TTL value provided for the individual entry, it inherits the value set for this element. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite (no expiration and eviction). If it is not 0, entries are evicted regardless of the set `eviction-policy` described below.
 * `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. It limits the lifetime of the entries relative to the time of the last read or write access performed on them. The entries whose idle period exceeds this limit are expired and evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite.
@@ -392,9 +387,6 @@ Apart from the above values, you can also develop and use your own eviction poli
 ** `FREE_NATIVE_MEMORY_PERCENTAGE`: ([navy]*Hazelcast IMDG Enterprise HD*) Minimum free native memory size percentage for each Hazelcast instance.
 +
 `<max-size policy="FREE_NATIVE_MEMORY_PERCENTAGE">5</max-size>`
-
-
-NOTE: As of Hazelcast 3.7, the elements `eviction-percentage` and `min-eviction-check-millis` are deprecated. They are ignored if configured since map eviction is based on the sampling of entries. Please see the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 To put it briefly, Hazelcast maps have no restrictions on the size and may grow arbitrarily large, by default. When it comes to reducing the size of a map, there are two concepts: expiration and eviction.
 
@@ -480,7 +472,7 @@ NOTE: Only EVICT_ALL event is fired for any registered listeners.
 
 Hazelcast may use forced eviction in the cases when the eviction explained in <<understanding-map-eviction, Understanding Map Eviction>> is not enough to free up your memory. Note that this is valid if you are using [blue]*Hazelcast IMDG Enterprise* and you set your in-memory format to `NATIVE`.
 
-Forced eviction mechanism is explained below as steps in the given order:
+The forced eviction mechanism is explained below as steps in the given order:
 
 * When the normal eviction is not enough, forced eviction is triggered and first it tries to evict approx. 20% of the entries from the current partition. It retries this five times.
 * If the result of above step is still not enough, forced eviction applies the above step to all maps. This time it might perform eviction from some other partitions too, provided that they are owned by the same thread.
@@ -533,7 +525,7 @@ If you Hazelcast with Spring, you can enable your policy as shown below.
 
 IMap (and a few other Hazelcast data structures, such as ICache) has an `in-memory-format` configuration option. By default, Hazelcast stores data into memory in binary (serialized) format. Sometimes it can be efficient to store the entries in their object form, especially in cases of local processing, such as entry processor and queries.
 
-To set how the data will be stored in memory, set `in-memory-format` in the configuration. You have the following format options:
+Specify the `in-memory-format` element in the configuration to set how the data will be stored in the memory. You have the following format options:
 
 * `BINARY` (default): The data (both the key and value) is stored in serialized binary format. You can use this option if you mostly perform regular map operations, such as `put` and `get`.
 * `OBJECT`: The data is stored in deserialized form. This configuration is good for maps where entry processing and queries form the majority of all operations and the objects are complex, making the serialization cost comparatively high. By storing objects, entry processing does not contain the deserialization cost. Note that when you use `OBJECT` as the in-memory format, the key is still stored in binary format and the value is stored in object format.
@@ -724,10 +716,10 @@ NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you r
 
 In write-behind mode, when the `map.put(key,value)` call returns:
 
-* In-Memory entry is updated.
-* In-Memory backup copies are successfully created on other cluster members (if `backup-count` is greater than 0).
-* The entry is marked as dirty so that after `write-delay-seconds`, it can be persisted with `MapStore.store(key,value)` call.
-* For fault tolerance, dirty entries are stored in a queue on the primary member and also on a back-up member.
+* in-memory entry is updated
+* in-memory backup copies are successfully created on the other cluster members (if `backup-count` is greater than 0)
+* the entry is marked as dirty so that after `write-delay-seconds`, it can be persisted with `MapStore.store(key,value)` call
+* and for fault tolerance, dirty entries are stored in a queue on the primary member and also on a back-up member.
 
 The same behavior goes for the `map.remove(key)`, the only difference is that  `MapStore.delete(key)` is called when the entry will be deleted.
 
@@ -998,7 +990,6 @@ An example of declarative configuration:
 
 Here the configured map uses the `map-lock-actions-quorum` quorum for map lock actions and the `map-actions-quorum` quorum for other map actions.
 
-
 [[accessing-entry-statistics]]
 ==== Accessing Map and Entry Statistics
 
@@ -1234,7 +1225,6 @@ Now, let's create a `Consumer` class to `take` a message from this queue, as sho
 include::{javasource}/dds/queue/ConsumerMember.java[tag=consumer]
 ----
 
-
 As seen in the above example code, `Consumer` waits five seconds before it consumes the next message. It stops once it receives **-1**. Also note that `Consumer` puts **-1** back on the queue before the loop is ended.
 
 When you first start `Producer` and then start `Consumer`, items produced on the queue will be consumed from the same queue.
@@ -1334,7 +1324,7 @@ include::{javasource}/dds/queue/TheQueueStore.java[tag=qs]
 </hazelcast>
 ----
 
-Let's explain the queue store properties.
+The following are the descriptions for each queue store property:
 
 * **Binary**: By default, Hazelcast stores the queue items in serialized form, and before it inserts the queue items into the queue store, it deserializes them. If you are not reaching the queue store from an external application, you might prefer that the items be inserted in binary form. Do this by setting the `binary` property to true: then you can get rid of the deserialization step, which is a performance optimization. The `binary` property is false by default.
 * **Memory Limit**: This is the number of items after which Hazelcast stores items only to the datastore. For example, if the memory limit is 1000, then the 1001st item is put only to the datastore. This feature is useful when you want to avoid out-of-memory conditions. If you want to always use memory, you can set it to `Integer.MAX_VALUE`. The default number for `memory-limit` is 1000.
@@ -1345,7 +1335,7 @@ Let's explain the queue store properties.
 
 Queues can be configured to check for a minimum number of available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+The following is a list of methods, grouped by the quorum type, that support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE
 ** `Collection.addAll()`
@@ -1408,7 +1398,7 @@ Hazelcast distributed queue has one synchronous backup by default. By having thi
 
 To set the maximum size of the queue, use the `max-size` element. To purge unused or empty queues after a period of time, use the `empty-queue-ttl` element. If you define a value (time in seconds) for the `empty-queue-ttl` element, then your queue will be destroyed if it stays empty or unused for the time in seconds that you give.
 
-The following is the full list of queue configuration elements with their descriptions.
+The following is the full list of queue configuration elements with their descriptions:
 
 * `max-size`: Maximum number of items in the queue. It is used to set an upper bound for the queue. You will not be able to put more items when the queue reaches to this maximum size whether you have a queue store configured or not.
 * `backup-count`: Number of synchronous backups. Queue is a non-partitioned data structure, so all entries of a queue reside in one partition. When this parameter is '1', it means there will be one backup of that queue in another member in the cluster. When it is '2', two members will have the backup.
@@ -1510,7 +1500,7 @@ placed on one other member. If it is 2, it will be placed on two other members.
 
 MultiMap & TransactionalMultiMap can be configured to check for a minimum number of available members before applying their operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+The following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
 
 MultiMap:
 
@@ -1535,7 +1525,6 @@ MultiMap:
 ** `valueCount`
 ** `values`
 
-
 TransactionalMultiMap:
 
 * WRITE, READ_WRITE:
@@ -1545,7 +1534,6 @@ TransactionalMultiMap:
 ** `size`
 ** `get`
 ** `valueCount`
-
 
 **Configuring Split-Brain Protection**
 
@@ -1567,7 +1555,7 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 [[set]]
 === Set
 
-Hazelcast Set (`ISet`) is a distributed and concurrent implementation of `java.util.Set`.
+Hazelcast Set (`ISet`) is a distributed and concurrent implementation of `java.util.Set`. It has the following features:
 
 * Hazelcast Set does not allow duplicate elements.
 * Hazelcast Set does not preserve the order of elements.
@@ -1623,7 +1611,6 @@ include::{javasource}/dds/set/SetConfiguration.java[tag=sc]
 
 Hazelcast Set configuration has the following elements:
 
-
 * `statistics-enabled`: True (default) if statistics gathering is enabled on the Set, false otherwise.
 * `backup-count`: Count of synchronous backups. Set is a non-partitioned data structure, so all entries of a Set reside in one partition. When this parameter is '1', it means there will be one backup of that Set in another member in the cluster. When it is '2', two members will have the backup.
 * `async-backup-count`: Count of asynchronous backups.
@@ -1636,7 +1623,7 @@ Hazelcast Set configuration has the following elements:
 
 ISet & TransactionalSet can be configured to check for a minimum number of available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
 
 ISet:
 
@@ -1666,7 +1653,7 @@ TransactionalSet:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for ISet can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SetConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for ISet can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SetConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. The following is an example declarative configuration:
 
 [source,xml]
 ----
@@ -1684,7 +1671,7 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 [[list]]
 === List
 
-Hazelcast List (`IList`) is similar to Hazelcast Set, but Hazelcast List also allows duplicate elements.
+Hazelcast List (`IList`) is similar to Hazelcast Set, but it also allows duplicate elements.
 
 * Besides allowing duplicate elements, Hazelcast List preserves the order of elements.
 * Hazelcast List is a non-partitioned data structure where values and each backup are represented by their own single partition.
@@ -1754,7 +1741,7 @@ Hazelcast List configuration has the following elements:
 
 IList & TransactionalList can be configured to check for a minimum number of available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
 
 IList:
 
@@ -1847,7 +1834,7 @@ very cheap way of generating unique IDs if you are already using Ringbuffer.
 ==== IQueue vs. Ringbuffer
 
 Hazelcast Ringbuffer can sometimes be a better alternative than an Hazelcast IQueue. Unlike IQueue, Ringbuffer does not remove the items, it only
-reads items using a certain position. There are many advantages to this approach:
+reads items using a certain position. There are many advantages to this approach as described below:
 
 * The same item can be read multiple times by the same thread. This is useful for realizing semantics of read-at-least-once or
 read-at-most-once.
@@ -1928,7 +1915,7 @@ In the example below, a Ringbuffer is configured with a time-to-live of 180 seco
 ==== Setting Ringbuffer Overflow Policy
 
 Using the overflow policy, you can determine what to do if the oldest item in the Ringbuffer is not old enough to expire when
- more items than the configured Ringbuffer capacity are being added. The below options are currently available.
+ more items than the configured Ringbuffer capacity are being added. The below options are currently available:
 
 * `OverflowPolicy.OVERWRITE`: The oldest item is overwritten.
 * `OverflowPolicy.FAIL`: The call is aborted. The methods that make use of the OverflowPolicy return `-1` to indicate that adding
@@ -1982,7 +1969,7 @@ include::{javasource}/dds/ringbuffer/TheRingbufferObjectStore.java[tag=rbstore]
 </hazelcast>
 ----
 
-Below are the explanations for the Ringbuffer store configuration elements:
+The following are the explanations for the Ringbuffer store configuration elements:
 
 * `class-name: Name of the class implementing the `RingbufferStore` interface.
 * `factory-class-name`: Name of the class implementing the `RingbufferStoreFactory` interface. This interface allows a factory class to be registered instead of a class implementing the `RingbufferStore` interface.
@@ -2025,7 +2012,7 @@ Ringbuffer can be configured to check for a minimum number of available members 
 </hazelcast>
 ----
 
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE:
 ** `add`
@@ -2079,7 +2066,7 @@ ICompletableFuture<ReadResultSet<E>> readManyAsync(
     IFunction<E, Boolean> filter);
 ----
 
-The meanings of the `readManyAsync` arguments are given below.
+The meanings of the `readManyAsync` arguments are given below:
 
 * `startSequence`: Sequence of the first item to read.
 * `minCount`: Minimum number of items to read. If you do not want to block, set it to 0. If you want to block for at least one item,
@@ -2151,7 +2138,7 @@ catch (InterruptedException | ExecutionException e) {
 Hazelcast Ringbuffer provides asynchronous methods for more powerful operations like batched writing or batched reading with filtering.
 To make these methods synchronous, just call the method `get()` on the returned future.
 
-Please see the following example code.
+See the following example code.
 
 [source,,java]
 ----
@@ -2305,8 +2292,8 @@ In `StripedExecutor`, there are as many threads as are specified in the property
 [[configuring-topic]]
 ==== Configuring Topic
 
-To configure a topic, set the topic name, decide on statistics and global ordering, and set message listeners.
-Default values are:
+To configure a topic, set the topic name, decide on statistics and global ordering, and set the message listeners.
+The following are the default values:
 
 * `global-ordering` is **false**, meaning that by default, there is no guarantee of global order.
 * `statistics` is **true**, meaning that by default, statistics are calculated.
@@ -2337,7 +2324,7 @@ You can see the example configuration snippets below.
 include::{javasource}/dds/topic/TopicConfiguration.java[tag=tc]
 ----
 
-Topic configuration has the following elements.
+Topic configuration has the following elements:
 
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your topic. If set to `false`, you cannot collect statistics in your implementation (using `getLocalTopicStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `global-ordering-enabled`: Default is `false`, meaning there is no global order guarantee.
@@ -2349,7 +2336,7 @@ Besides the above elements, there are the following system properties that are t
 * `hazelcast.event.queue.timeout.millis` with a default value of 250
 * `hazelcast.event.thread.count` with a default value of 5
 
-For a description of these parameters, please see the <<global-event-configuration, Global Event Configuration section>>.
+For the descriptions of these parameters, see the <<global-event-configuration, Global Event Configuration section>>.
 
 [[reliable-topic]]
 === Reliable Topic
@@ -2452,7 +2439,7 @@ rtConfig.setTopicOverloadPolicy( TopicOverloadPolicy.BLOCK )
     .setStatisticsEnabled( true );
 ----
 
-Reliable Topic configuration has the following elements.
+Reliable Topic configuration has the following elements:
 
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Reliable Topic. If set to `false`, you cannot collect statistics in your implementation and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-reliable-topics[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `message-listener`: Message listener class that listens to the messages when they are added or removed.
@@ -2539,7 +2526,7 @@ include::{javasource}/dds/iatomiclong/IAtomicLongExecuteFuncs.java[tag=add2func]
 [[executing-functions-on-iatomiclong]]
 ==== Executing Functions on IAtomicLong
 
-You can use the following methods to execute functions on IAtomicLong.
+You can use the following methods to execute functions on IAtomicLong:
 
 * `apply`: Applies the function to the value in IAtomicLong without changing the actual value and returning the result.
 * `alter`: Alters the value stored in the IAtomicLong by applying the function. It does not send back a result.
@@ -2646,7 +2633,7 @@ Just like `IAtomicLong`, `IAtomicReference` has methods that accept a 'function'
 [[using-iatomicreference]]
 ==== Using IAtomicReference
 
-Below are some considerations you need to know when you use IAtomicReference.
+The following are some considerations you need to know when you use IAtomicReference:
 
 * `IAtomicReference` works based on the byte-content and not on the object-reference. If you use the `compareAndSet` method, do not change to the original value because its serialized content will then be different. It is also important to know that if you rely on Java serialization, sometimes (especially with hashmaps) the same object can result in different binary content.
 * All methods returning an object return a private copy. You can modify the private copy, but the rest of the world is shielded from your changes. If you want these changes to be visible to the rest of the world, you need to write the change back to the `IAtomicReference`; but be careful about introducing a data-race.
@@ -2706,7 +2693,7 @@ Some examples of PN counter are:
 
 * counting the number of "likes" or "+1"
 * counting the number of logged in users
-* counting the number of page hits/views
+* counting the number of page hits/views.
 
 **How it works**
 
@@ -2747,6 +2734,8 @@ Following is an example declarative configuration snippet:
 </hazelcast>
 ----
 
+PN Counter has the following configuration elements:
+
 * `name`: Name of your PN Counter.
 * `replica-count`: Number of replicas on which state for this PN counter is kept. This number applies in quiescent state, if there are currently membership changes or clusters are merging, the state may be temporarily kept on more replicas. Its default value is Integer.MAX_VALUE. Generally, keeping the state on more replicas means that more Hazelcast members are able to perform updates locally but it also means that the PN counter state is kept on more replicas, increasing the network traffic, decreasing the speed at which replica states converge and increasing the size of the PN counter state kept on each replica.
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your PN Counter. If set to `false`, you cannot collect statistics in your implementation (using `getLocalPNCounterStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-pn-counters[Hazelcast Management Center] will not show them. Its default value is `true`.
@@ -2759,7 +2748,7 @@ include::{javasource}/dds/ExamplePNCounter.java[tag=pncc]
 ----
 
 [[configuring-the-crdt-replication-mechanism]]
-==== Configuring the CRDT replication mechanism
+==== Configuring the CRDT Replication Mechanism
 
 NOTE: Configuring the replication mechanism is for advanced use cases only - usually the default configuration works fine for most cases.
 
@@ -2777,6 +2766,8 @@ Hazelcast implements the state-based replication mechanism - the CRDT state for 
     ...
 </hazelcast>
 ----
+
+CRDT replication has the following configuration elements:
 
 * `max-concurrent-replication-targets`: The maximum number of target members that we replicate the CRDT states to in one period. A higher count leads to states being disseminated more rapidly at the expense of burst-like behavior - one update to a CRDT leads to a sudden burst in the number of replication messages in a short time interval. Its default value is 1 which means that each replica replicates state to only one other replica in each replication round.
 * `replication-period-millis`: The period between two replications of CRDT states in milliseconds. A lower value increases the speed at which changes are disseminated to other cluster members at the expense of burst-like behavior - less updates are batched together in one replication message, and one update to a CRDT may cause a sudden burst of replication messages in a short time interval. The value must be a positive non-null integer. Its default value is 1000 milliseconds which means that the changed CRDT state is replicated every 1 second.
@@ -2842,7 +2833,7 @@ NOTE: IdGenerator has one synchronous backup and no asynchronous backups. Its ba
 [[migrating-to-flakeidgenerator]]
 ==== Migrating to FlakeIdGenerator
 
-The Flake ID generator provides similar features with more safety guarantees during network splits. The two generators are completely different implementations, but both types of generator generate roughly ordered IDs. So in order to ensure uniqueness of the generated IDs, we can force the Flake ID generator to start at least where the old generator ended. This is likely the case, because the values from Flake generator are quite large compared to values from the old generator. Anyway, here are the steps you need to take:
+The Flake ID generator provides similar features with more safety guarantees during network splits. The two generators are completely different implementations, but both types of generator generate roughly ordered IDs. So in order to ensure uniqueness of the generated IDs, we can force the Flake ID generator to start at least where the old generator ended. This is likely the case, because the values from Flake ID generator are quite large compared to values from the old generator. Consider and perform the following:
 
 * Make sure the version of your Hazelcast cluster and of all clients is at least 3.10.
 * If the current ID from old `IdGenerator` is higher than the ID from `FlakeIdGenerator`, you need to configure ID offset. See https://github.com/hazelcast/hazelcast-code-samples/blob/master/distributed-primitives/flake-id-generator/src/main/java/FlakeIdMigrationSample.java[FlakeIdMigrationSample] for mor details.
@@ -2906,7 +2897,7 @@ Following is an example declarative configuration snippet:
 </hazelcast>
 ----
 
-Here are the descriptions of configuration elements and attributes:
+The following are the descriptions of configuration elements and attributes:
 
 * `name`: Name of your Flake ID Generator. It is a required attribute.
 * `prefetch-count`: Count of IDs which are pre-fetched on the background when one call to FlakeIdGenerator.newId() is made. Its value must be in the range 1 -100,000. Its default value is 100. This setting pertains only to `newId()` calls made on the member that configured it.
@@ -2918,7 +2909,9 @@ Here are the descriptions of configuration elements and attributes:
 [[replicated-map]]
 === Replicated Map
 
-A Replicated Map is a distributed key-value data structure where the data is replicated to all members in the cluster. It provides full replication of entries to all members for high speed access. The following are its features:
+A Replicated Map is a distributed key-value data structure where the data is replicated to all members in the cluster. It provides full replication of entries to all members for high speed access.
+
+The following are the features of Replicated Map:
 
 * When you have a Replicated Map in the  cluster, your clients can communicate with any cluster member.
 * All cluster members are able to perform write operations.
@@ -3022,6 +3015,8 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 </hazelcast>
 ----
 
+Replicated Map has the following configuration elements:
+
 * `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. Its default value is `OBJECT`.
 * `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. Its default value is `true`. If set to `false`, i.e., synchronous initial fill up, no exception is thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Replicated Map. If set to `false`, you cannot collect statistics in your implementation (using `getLocalReplicatedMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-replicated-maps[Hazelcast Management Center] will not show them. Its default value is `true`.
@@ -3046,7 +3041,7 @@ by transforming the tag names into getter or setter names.
 [[in-memory-format-on-replicated-map]]
 ===== In-Memory Format on Replicated Map
 
-Currently, two `in-memory-format` values are usable with the Replicated Map.
+Currently, you can use the following `in-memory-format` options with the Replicated Map:
 
 * `OBJECT` (default): The data is stored in deserialized form. This configuration is the default choice since
 the data replication is mostly used for high speed access. Please be aware that changing the values without a `Map.put()` is
@@ -3086,7 +3081,7 @@ include::{javasource}/dds/replicatedmap/ListeningMember.java[tag=lm]
 
 Replicated Map can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE:
 ** `clear`
@@ -3126,12 +3121,12 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 Hazelcast's cardinality estimator service is a data structure which implements Flajolet's HyperLogLog algorithm for estimating cardinalities of unique objects in theoretically huge data sets.
 The implementation offered by Hazelcast includes improvements from Google's version of the algorithm, i.e., HyperLogLog++.
 
-The cardinality estimator service does not provide any ways to configure its properties, but rather uses some well tested defaults.
+The cardinality estimator service does not provide any ways to configure its properties, but rather uses some well tested defaults:
 
-* `P`: Precision - 14, using the 14 LSB of the hash for the index.
+* `P`: Stands for precision with a default value of 14 (using the 14 LSB of the hash for the index)
 * `M`: 2 ^ P = 16384 (16K) registers
-* `P'`: Sparse Precision - 25
-* `Durability`: How many backups for each estimator, default 2
+* `P'`: Stands for sparse precision with a default value of 25
+* `Durability`: Count of backups for each estimator with a default value of 2
 
 NOTE: It is important to understand that this data structure is not 100% accurate, it is used to provide estimates. The error rate is typically a result of `1.04/sqrt(M)` which in our implementation is around 0.81% for high percentiles.
 
@@ -3159,7 +3154,7 @@ include::{javasource}/dds/ExampleCardinalityEstimator.java[tag=ces]
 
 Cardinality Estimator can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-Following is a list of methods that now support Split-Brain Protection checks. The list is grouped by quorum type.
+The following is a list of methods,grouped by quorum type, that support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE:
 ** `add`
@@ -3185,7 +3180,6 @@ Split-Brain protection for Cardinality Estimator can be configured programmatica
 
 The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
-
 **Configuring Merge Policy**
 
 While recovering from a Split-Brain syndrome, Cardinality Estimator in the small cluster merges into the bigger cluster based on a configured merge policy. When an estimator merges into the cluster, an estimator with the same name might already exist in the cluster.
@@ -3202,7 +3196,7 @@ So the merge policy resolves these kinds of conflicts with different out-of-the-
 </hazelcast>
 ----
 
-Following out-of-the-box merge policies are available:
+The following out-of-the-box merge policies are available:
 
 * `DiscardMergePolicy`: Estimator from the smaller cluster is discarded.
 * `HyperLogLogMergePolicy`: Estimator merges with the existing one, using the algorithmic merge for HyperLogLog. This is the default policy.

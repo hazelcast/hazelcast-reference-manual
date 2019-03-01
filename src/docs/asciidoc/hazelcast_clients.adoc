@@ -68,7 +68,7 @@ You can find Hazelcast Java client's code samples https://github.com/hazelcast/h
 
 ===== Client API
 
-The first step is configuration. You can configure the Java client declaratively or programmatically. We use the programmatic approach for this section, as shown below.
+The first step is the configuration. You can configure the Java client declaratively or programmatically. We use the programmatic approach for this section, as shown below.
 
 [source,java]
 ----
@@ -98,18 +98,19 @@ mapCustomers.put("2", new Customer("Ali", "Selam"));
 mapCustomers.put("3", new Customer("Avi", "Noyan"));
 ----
 
-As a final step, if you are done with your client, you can shut it down as shown below. This releases all the used resources and closes connections to the cluster.
+As the final step, if and when you are done with your client, you can shut it down as shown below:
 
 ```
 client.shutdown();
 ```
+
+The above code line releases all the used resources and closes connections to the cluster.
 
 ===== Java Client Operation Modes
 
 The client has two operation modes because of the distributed nature of the data and cluster.
 
 **Smart Client**: In the smart mode, the clients connect to each cluster member. Since each data partition uses the well known and consistent hashing algorithm, each client can send an operation to the relevant cluster member, which increases the overall throughput and efficiency. Smart mode is the default mode.
-
 
 **Unisocket Client**: For some cases, the clients can be required to connect to a single member instead of to each member in the cluster. Firewalls, security, or some custom networking issues can be the reason for these cases.
 
@@ -138,12 +139,12 @@ You can set a timeout for retrying the operations sent to a member. This can be 
 * Connection between the client and member is closed.
 * Client's heartbeat requests are timed out.
 
-Please see the <<client-system-properties, Client System Properties section>> for the description of the property `hazelcast.client.invocation.timeout.seconds`.
+See the <<client-system-properties, Client System Properties section>> for the description of the `hazelcast.client.invocation.timeout.seconds` property.
 
 When any failure happens between a client and member (such as an exception at the member side or connection issues), an operation is retried if:
 
-* it is certain that it has not run on the member yet, or
-* if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect.
+* it is certain that it has not run on the member yet
+* or if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect.
 
 If it is not certain whether the operation has run on the member, then the non-idempotent operations are not retried. However, as explained in the first paragraph of this section, you can force all client operations to be retried (`redoOperation`) when there is a failure between the client and member. But in this case, you should know that some operations may run multiple times causing conflicts. For example, assume that your client sent a `queue.offer` operation to the member and then the connection is lost. Since there will be no respond for this operation, you will not know whether it has run on the member or not. If you enabled `redoOperation`, that `queue.offer` operation may rerun and this causes the same objects to be offered twice in the member's queue.
 
@@ -258,12 +259,12 @@ Set<Partition> partitions = partitionService.getPartitions();
 
 ====== Handling Lifecycle
 
-Lifecycle handling performs the following:
+Lifecycle handling performs:
 
-* Check if the client is running.
-* Shut down the client gracefully.
-* Terminate the client ungracefully (forced shutdown).
-* Add/remove lifecycle listeners.
+* checking if the client is running
+* shutting down the client gracefully
+* terminating the client ungracefully (forced shutdown)
+* adding/removing lifecycle listeners.
 
 [source,java]
 ----
@@ -346,31 +347,31 @@ if (clientStateListener.awaitConnected()) {
 }
 ----
 
-Java client can also be configured to specify how it reconnects after a cluster disconnection. There are three options:
+The Java client can also be configured to specify how it reconnects after a cluster disconnection. The following are the options:
 
 * A client can reject to reconnect to the cluster and trigger the client shutdown process.
 * Client can open a connection to the cluster by blocking all waiting invocations.
 * Client can open a connection to the cluster without blocking the waiting invocations. All invocations receive `HazelcastClientOfflineException` during the establishment of cluster connection. If cluster connection is failed to connect, then client shutdown is triggered.
 
-You can refer to the <<configuring-client-connection-strategy, Configuring Client Connection Strategy section>> to learn how to configure these.
+See the <<configuring-client-connection-strategy, Configuring Client Connection Strategy section>> to learn how to configure these.
 
 ==== Configuring Java Client
 
 You can configure Hazelcast Java Client declaratively (XML), programmatically (API), or using client system properties.
 
-For declarative configuration, the Hazelcast client looks at the following places for the client configuration file.
+For declarative configuration, the Hazelcast client looks at the following places for the client configuration file:
 
 * **System property**: The client first checks if `hazelcast.client.config` system property is set to a file path, e.g., `-Dhazelcast.client.config=C:/myhazelcast.xml`.
 * **Classpath**: If config file is not set as a system property, the client checks the classpath for `hazelcast-client.xml` file.
 
 If the client does not find any configuration file, it starts with the default configuration (`hazelcast-client-default.xml`) located in the `hazelcast-client.jar` library. Before configuring the client, please try to work with the default configuration to see if it works for you. The default should be just fine for most users. If not, then consider custom configuration for your environment.
 
-If you want to specify your own configuration file to create a `Config` object, the Hazelcast client supports the following.
+If you want to specify your own configuration file to create a `Config` object, the Hazelcast client supports the following:
 
 * `Config cfg = new XmlClientConfigBuilder(xmlFileName).build();`
 * `Config cfg = new XmlClientConfigBuilder(inputStream).build();`
 
-For programmatic configuration of the Hazelcast Java Client, just instantiate a `ClientConfig` object and configure the desired aspects. An example is shown below.
+For programmatic configuration of the Hazelcast Java Client, just instantiate a `ClientConfig` object and configure the desired aspects. An example is shown below:
 
 [source,java]
 ----
@@ -728,7 +729,7 @@ NOTE: Please see the <<socket-interceptor, Socket Interceptor section>> for more
 
 ====== Configuring Network Socket Options
 
-You can configure the network socket options using `SocketOptions`. It has the following methods.
+You can configure the network socket options using `SocketOptions`. It has the following methods:
 
 * `socketOptions.setKeepAlive(x)`: Enables/disables the *SO_KEEPALIVE* socket option. Its default value is `true`.
 * `socketOptions.setTcpNoDelay(x)`: Enables/disables the *TCP_NODELAY* socket option. Its default value is `true`.
@@ -878,6 +879,7 @@ clientConfig.setLoadBalancer(yourLoadBalancer);
 ----
 
 ===== Configuring Client Listeners
+
 You can configure global event listeners using `ListenerConfig` as shown below.
 
 [source,java]
@@ -894,20 +896,18 @@ ListenerConfig listenerConfig = new ListenerConfig("com.hazelcast.example.Member
 clientConfig.addListenerConfig(listenerConfig);
 ----
 
-You can add three types of event listeners.
+You can add the following types of event listeners:
 
 * LifecycleListener
 * MembershipListener
 * DistributedObjectListener
 
-===== Other Configurations
-
-====== Configuring Client Near Cache
+===== Configuring Client Near Cache
 
 The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Since the client always requests data from the cluster members, it can be helpful in some use cases to configure a Near Cache on the client side. Please refer to the <<near-cache, Near Cache section>> for a detailed explanation of the Near Cache feature and its configuration.
 
-
-====== Client Group Configuration
+[[client-group-configuration]]
+===== Configuring Client Group
 
 Clients should provide a group name and password in order to connect to the cluster.
 You can configure them using `GroupConfig`, as shown below.
@@ -916,23 +916,27 @@ You can configure them using `GroupConfig`, as shown below.
 clientConfig.setGroupConfig(new GroupConfig("dev","dev-pass"));
 ```
 
-====== Client Security Configuration
+[[client-security-configuration]]
+===== Configuring Client Security
 
 In the cases where the security established with `GroupConfig` is not enough and you want your clients connecting securely to the cluster, you can use `ClientSecurityConfig`. This configuration has a `credentials` parameter to set the IP address and UID. Please see `ClientSecurityConfig.java` in our code.
 
-====== Client Serialization Configuration
+[[client-serialization-configuration]]
+===== Client Serialization Configuration
 
-For the client side serialization, use Hazelcast configuration. Please refer to the <<serialization , Serialization chapter>>.
+For the client side serialization, use the Hazelcast configuration. See the <<serialization , Serialization chapter>>.
 
-====== ExecutorPoolSize
+[[executorpoolsize]]
+===== Configuring Executor Pool Size
 
 Hazelcast has an internal executor service (different from the data structure *Executor Service*) that has threads and queues to perform internal operations such as handling responses. This parameter specifies the size of the pool of threads which perform these operations laying in the executor's queue. If not configured, this parameter has the value as **5 \* *core size of the client*** (i.e. it is 20 for a machine that has 4 cores).
 
-====== ClassLoader
+[[classloader]]
+===== Configuring ClassLoader
 
 You can configure a custom `classLoader`. It is used by the serialization service and to load any class configured in configuration, such as event listeners or ProxyFactories.
 
-====== Configuring Reliable Topic at Client Side
+===== Configuring Reliable Topic at Client Side
 
 Normally when a client uses a Hazelcast data structure, that structure is configured at the member side and the client makes use of that configuration. For the Reliable Topic structure, this is not the case; since it is backed by Ringbuffer, you should configure it at the client side. The class used for this configuration is `ClientReliableTopicConfig`.
 
@@ -1061,7 +1065,7 @@ You can make your clients to connect to another cluster by blacklisting them in 
 
 When you blacklist a client in a cluster, the client which is disconnected from the cluster due to this blacklisting, first tries to connect to another member of the same cluster. This is because the client is not aware if this is a blacklisting or a normal disconnection.
 
-The client's behavior after this disconnection depends on its <<java-client-connection-strategy, `reconnect-mode`>>. Here are the options when you are using the blue-green mechanism (you have alternative clusters for your clients to connect):
+The client's behavior after this disconnection depends on its <<java-client-connection-strategy, `reconnect-mode`>>. The following are the options when you are using the blue-green mechanism, i.e., you have alternative clusters for your clients to connect:
 
 * If `reconnect-mode` is set to `ON`, the client changes the cluster and blocks the invocations while doing so.
 * If `reconnect-mode` is set to `ASYNC`, the client changes the cluster in the background and throws `ClientOfflineException` while doing so.
@@ -1224,7 +1228,7 @@ Let's first give example configurations and describe the configuration elements.
 </hazelcast-client-failover>
 ----
 
-Here are the descriptions for the configuration elements:
+The following are the descriptions for the configuration elements:
 
 * `try-count`: Count of connection retries by the client to the alternative clusters. When this value is reached and the client still could not connect to a cluster, the client shuts down.
 * `client`: Path to the client configuration that corresponds to an alternative cluster that the client will try to connect.
@@ -1341,7 +1345,7 @@ When the JVM process has enough permissions to create RAW sockets, the implement
 
 If there are not enough permissions, it can be configured to fallback on attempting a TCP Echo on port 7. In the latter case, both a successful connection or an explicit rejection is treated as "Host is Reachable". Or, it can be forced to use only RAW sockets. This is not preferred as each call creates a heavy weight socket and moreover the Echo service is typically disabled.
 
-For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are some criteria that need to be met:
+For the Ping Failure Detector to rely **only** on the ICMP Echo requests, the following criteria need to be met:
 
 * Supported OS: as of Java 1.8 only Linux/Unix environments are supported.
 * The Java executable must have the `cap_net_raw` capability.
@@ -1386,6 +1390,8 @@ clientIcmpPingConfig.setIntervalMilliseconds(1000)
         .setEchoFailFastOnStartup(false)
         .setEnabled(true);
 ----
+
+The following are the descriptions of configuration elements and attributes:
 
 * `enabled`: Enables the legacy ICMP detection mode, works cooperatively with the existing failure detector and only kicks-in after a pre-defined period has passed with no heartbeats from a member. Its default value is `false`.
 * `timeout-milliseconds`: Number of milliseconds until a ping attempt is considered failed if there was no reply. Its default value is *1000* milliseconds.
@@ -1545,7 +1551,7 @@ You can configure this Near Cache to use Hazelcast's High-Density Memory Store b
 
 Please notice that when the in-memory format is NATIVE, i.e., High-Density Memory Store is enabled, the configuration element `<eviction>` is used to specify the eviction behavior of your client's Near Cache. In this case, the elements `<max-size>` and `<eviction-policy>` used in the configuration of a Near Cache without High-Density Memory Store do not have any impact.
 
-The element `<eviction>` has the following attributes:
+The `<eviction>` element has the following attributes:
 
 * `size`: Maximum size (entry count) of the Near Cache.
 * `max-size-policy`: Maximum size policy for eviction of the Near Cache. Available values are as follows:
@@ -1561,7 +1567,7 @@ The element `<eviction>` has the following attributes:
 
 Keep in mind that you should have already enabled the High-Density Memory Store usage for your client, using the `<native-memory>` element in the client's configuration.
 
-Please see the <<high-density-memory-store, High-Density Memory Store section>> for more information on Hazelcast's High-Density Memory Store feature.
+See the <<high-density-memory-store, High-Density Memory Store section>> for more information on Hazelcast's High-Density Memory Store feature.
 
 [[c-client]]
 === C++ Client

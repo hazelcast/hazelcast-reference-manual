@@ -23,7 +23,7 @@ include::{javasource}/management/ExampleLocalMapStats.java[tag=lms]
 
 NOTE: Since Hazelcast IMDG 3.8 `getOwnedEntryMemoryCost()` method is now supported for NATIVE in-memory format as well.
 
-The following are some of the metrics that you can access via the `LocalMapStats` object.
+The following are some of the metrics that you can access via the `LocalMapStats` object:
 
 * Number of entries owned by the member (`getOwnedEntryCount()`).
 * Number of backup entries held by the member (`getBackupEntryCount()`).
@@ -32,9 +32,9 @@ The following are some of the metrics that you can access via the `LocalMapStats
 * Creation time of the map on the member (`getCreationTime()`).
 * Number of hits (reads) of the locally owned entries (`getHits()`).
 * Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
-* Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`). May be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storage.
+* Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`) (it may be imprecise for queries involving partition predicates (`PartitionPredicate`) on the off-heap storage).
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc] to see all the metrics.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc] to see all the metrics.
 
 ==== Map Index Statistics
 
@@ -49,14 +49,14 @@ include::{javasource}/management/ExampleLocalIndexStats.java[tag=lis]
 
 The following are some of the metrics that you can obtain via the `LocalIndexStats` interface:
 
-* Number of queries and hits into an index (`getQueryCount()` and `getHitCount()`). Number of hits and queries may differ since a single query may hit the same index more than once.
-* Average index hit latency measured in nanoseconds (`getAverageHitLatency()`).
-* Average index hit selectivity (`getAverageHitSelectivity`). Returned values are in the range from 0.0 to 1.0. Values close to 1.0 indicate a high selectivity meaning the index is efficient; values close to 0.0 indicate a low selectivity meaning the index efficiency is approaching an efficiency of a simple full scan.
+* Number of queries and hits into an index (`getQueryCount()` and `getHitCount()`): Number of hits and queries may differ since a single query may hit the same index more than once.
+* Average index hit latency measured in nanoseconds (`getAverageHitLatency()`)
+* Average index hit selectivity (`getAverageHitSelectivity`): Returned values are in the range from 0.0 to 1.0. Values close to 1.0 indicate a high selectivity meaning the index is efficient; values close to 0.0 indicate a low selectivity meaning the index efficiency is approaching an efficiency of a simple full scan.
 * Number of index insert, update and remove operations (`getInsertCount()`, `getUpdateCount()` and `getRemoveCount()`).
-* Total latencies of insert, update and remove operations (`getTotalInsertLatency()`, `getTotalUpdateLatency()`, `getTotalRemoveLatency()`). To compute an average latency divide the returned value by the number of operations of a corresponding type.
-* Memory cost of an index (`getMemoryCost()`). For on-heap storages, this memory cost metric value is a best-effort approximation and doesn't indicate a precise on-heap memory usage of an index.
+* Total latencies of insert, update and remove operations (`getTotalInsertLatency()`, `getTotalUpdateLatency()`, `getTotalRemoveLatency()`): To compute an average latency divide the returned value by the number of operations of a corresponding type.
+* Memory cost of an index (`getMemoryCost()`): For on-heap storages, this memory cost metric value is a best-effort approximation and doesn't indicate a precise on-heap memory usage of an index.
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc] to see all the metrics.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc] to see all the metrics.
 
 To compute an aggregated value of `getAverageHitSelectivity()` for all cluster members, you can use a simple averaging computation as shown below:
 
@@ -76,9 +76,9 @@ Here, `s(i)` is an average hit selectivity on the member `i`, `h(i)` is a hit co
 
 Accuracy and reliability notes:
 
-* Values returned by `getAverageHitSelectivity()` have an accuracy of around 1% for on-heap storages.
-* Values returned by `getQueryCount()` and `getHitCount()` may be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storage.
-* Index statistics may be imprecise after a new cluster member addition or the existing member removal until enough fresh statistics is accumulated on a new owner of an index or its partition.
+* The values returned by `getAverageHitSelectivity()` have an accuracy of around 1% for on-heap storages.
+* The values returned by `getQueryCount()` and `getHitCount()` may be imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storage.
+* The index statistics may be imprecise after a new cluster member addition or the existing member removal until enough fresh statistics is accumulated on a new owner of an index or its partition.
 
 ==== Near Cache Statistics
 
@@ -92,15 +92,14 @@ Below is an example code where the `getNearCacheStats()` method and the `getRati
 include::{javasource}/management/ExampleNearCacheStats.java[tag=ncs]
 ----
 
-The following are some of the metrics that you can access via the `NearCacheStats` object.
-This behavior applies to both client and member Near Caches.
+The following are some of the metrics that you can access via the `NearCacheStats` object (applies to both client and member Near Caches):
 
-* Creation time of the Near Cache on the member (`getCreationTime()`).
-* Number of entries owned by the member (`getOwnedEntryCount()`).
-* Memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`).
-* Number of hits (reads) of the locally owned entries (`getHits()`).
+* creation time of the Near Cache on the member (`getCreationTime()`)
+* number of entries owned by the member (`getOwnedEntryCount()`)
+* memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`)
+* number of hits (reads) of the locally owned entries (`getHits()`)
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc] to see all the metrics.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc] to see all the metrics.
 
 ==== Multimap Statistics
 
@@ -114,17 +113,17 @@ Below is an example code where the `getLocalMultiMapStats()` method and the `get
 include::{javasource}/management/ExampleMultiMapStats.java[tag=mms]
 ----
 
-The following are some of the metrics that you can access via the `LocalMultiMapStats` object.
+The following are some of the metrics that you can access via the `LocalMultiMapStats` object:
 
-* Number of entries owned by the member (`getOwnedEntryCount()`).
-* Number of backup entries held by the member (`getBackupEntryCount()`).
-* Number of backups per entry (`getBackupCount()`).
-* Memory cost (number of bytes) of owned entries in the member (`getOwnedEntryMemoryCost()`).
-* Creation time of the multimap on the member (`getCreationTime()`).
-* Number of hits (reads) of the locally owned entries (`getHits()`).
-* Number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`).
+* number of entries owned by the member (`getOwnedEntryCount()`)
+* number of backup entries held by the member (`getBackupEntryCount()`)
+* number of backups per entry (`getBackupCount()`)
+* memory cost (number of bytes) of owned entries in the member (`getOwnedEntryMemoryCost()`)
+* creation time of the multimap on the member (`getCreationTime()`)
+* number of hits (reads) of the locally owned entries (`getHits()`)
+* number of get and put operations on the map (`getPutOperationCount()` and `getGetOperationCount()`)
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc] to see all the metrics.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc] to see all the metrics.
 
 ==== Queue Statistics
 
@@ -138,14 +137,14 @@ Below is an example code where the `getLocalQueueStats()` method and the `getAvg
 include::{javasource}/management/ExampleQueueStats.java[tag=qs]
 ----
 
-The following are some of the metrics that you can access via the `LocalQueueStats ` object.
+The following are some of the metrics that you can access via the `LocalQueueStats ` object:
 
-* Number of owned items in the member (`getOwnedItemCount()`).
-* Number of backup items in the member (`getBackupItemCount()`).
-* Minimum and maximum ages of the items in the member (`getMinAge()` and `getMaxAge()`).
-* Number of offer, put and add operations (`getOfferOperationCount()`).
+* number of owned items in the member (`getOwnedItemCount()`)
+* number of backup items in the member (`getBackupItemCount()`)
+* minimum and maximum ages of the items in the member (`getMinAge()` and `getMaxAge()`)
+* number of offer, put and add operations (`getOfferOperationCount()`)
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc] to see all the metrics.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc] to see all the metrics.
 
 ==== Topic Statistics
 
@@ -159,13 +158,13 @@ Below is an example code where the `getLocalTopicStats()` method and the `getPub
 include::{javasource}/management/ExampleTopicStats.java[tag=ts]
 ----
 
-The following are the metrics that you can access via the `LocalTopicStats ` object.
+The following are the metrics that you can access via the `LocalTopicStats ` object:
 
-* Creation time of the topic on the member (`getCreationTime()`).
-* Total number of published messages of the topic on the member (`getPublishOperationCount()`).
-* Total number of received messages of the topic on the member (`getReceiveOperationCount()`).
+* creation time of the topic on the member (`getCreationTime()`)
+* total number of published messages of the topic on the member (`getPublishOperationCount()`)
+* total number of received messages of the topic on the member (`getReceiveOperationCount()`)
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalTopicStats.html[`LocalTopicStats` Javadoc] to see all the metrics.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalTopicStats.html[`LocalTopicStats` Javadoc] to see all the metrics.
 
 ==== Executor Statistics
 
@@ -179,13 +178,13 @@ Below is an example code where the `getLocalExecutorStats()` method and the `get
 include::{javasource}/management/ExampleExecutorStats.java[tag=es]
 ----
 
-The following are some of the metrics that you can access via the `LocalExecutorStats ` object.
+The following are some of the metrics that you can access via the `LocalExecutorStats ` object:
 
-* Number of pending operations of the executor service (`getPendingTaskCount()`).
-* Number of started operations of the executor service (`getStartedTaskCount()`).
-* Number of completed operations of the executor service (`getCompletedTaskCount()`).
+* number of pending operations of the executor service (`getPendingTaskCount()`)
+* number of started operations of the executor service (`getStartedTaskCount()`)
+* number of completed operations of the executor service (`getCompletedTaskCount()`)
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc] to see all the metrics.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc] to see all the metrics.
 
 === JMX API per Member
 
@@ -477,7 +476,7 @@ To achieve this, first add the following system properties to enable http://down
 * `-Dcom.sun.management.jmxremote.authenticate=false` (to disable JMX auth) (*optional*)
 
 
-Then enable the Hazelcast property `hazelcast.jmx` (please refer to the <<system-properties, System Properties appendix>>) using one of the following ways:
+Then enable JMX by setting the property `hazelcast.jmx` property to `true` using one of the following ways:
 
 * By declarative configuration:
 +
@@ -791,7 +790,7 @@ public interface Cluster {
     void shutdown(TransactionOptions transactionOptions);
 ----
 
-Refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface Javadoc] for information on these methods.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface Javadoc] for information on these methods.
 
 ===== Cluster Member States
 
@@ -1086,10 +1085,10 @@ NOTE: A data member cannot be downgraded to a lite member back.
 
 You can define various member attributes on your Hazelcast members. You can use these member attributes to tag your members as may be required by your business logic.
 
-To define a member attribute on a member, you can either:
+To define a member attribute on a member, you can:
 
-* provide `MemberAttributeConfig` to your `Config` object, or
-* provide member attributes at runtime via attribute setter methods on the `Member` interface.
+* provide `MemberAttributeConfig` to your `Config` object
+* or provide the member attributes at runtime via attribute setter methods on the `Member` interface.
 
 For example, you can tag your members with their CPU characteristics and you can route CPU intensive tasks to those CPU-rich members. Here is how you can do it:
 
@@ -1616,7 +1615,6 @@ Following types of monitors can be used to track Hazelcast cluster members:
 - HTTP Monitor: A custom HTTP monitor enables you to send a command to Hazelcast’s Health Check API using HTTP requests. This is a good choice if SSL/TLS is not enabled in your cluster.
 - HTTPS Monitor: A custom HTTPS monitor enables you to verify the health of Hazelcast cluster members by sending a command to Hazelcast’s Health Check API using Secure Socket Layer (SSL) security. This is a good choice if SSL/TLS is enabled in your cluster.
 - TCP\_HALF\_OPEN Monitor: A TCP\_HALF\_OPEN monitor is a very basic monitor that only checks that the TCP port used by Hazelcast is open and responding to connection requests. It does not interact with the Hazelcast Health Check API. The TCP\_HALF\_OPEN monitor can be used with or without SSL/TLS.
-
 
 ===== Configuration
 

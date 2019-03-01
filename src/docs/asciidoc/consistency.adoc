@@ -7,10 +7,7 @@ Partitioning and replication are the two common techniques used together in dist
 
 One aspect of replication techniques is about where a replicated data set is accessed and updated. For instance, primary-copy systems first elect a replica, which can be called as primary, master, etc., and use that replica to access the data. Changes in the data on the primary replica are propagated to other replicas. This approach has different namings, such as _primary-copy_, _single-master_, _passive replication_. The primary-copy technique is a powerful model as it prevents conflicts, deadlocks among the replicas. However, primary replicas can become bottlenecks. On the other hand, we can have a different technique by eliminating the primary-copy and treating each replica as equal. These systems can achieve a higher level of availability as a data entry can be accessed and updated using any replica. However, it can become more difficult to keep the replicas in sync with each other.
 
-Replication techniques also differ in how updates are propagated among replicas.
-
-- One option is to update each replica as part of a single atomic transaction, called as _eager replication_ or _synchronous replication_. Consensus algorithms apply this approach to achieve strong consistency on a replicated data set. The main drawback is the amount of coordination and communication required while running the replication algorithm. CP systems implement consensus algorithms under the hood.
-- Another option is the _lazy replication_ technique, which is also called as _asynchronous replication_. Lazy replication algorithms execute updates on replicas with separate transactions. They generally work with best-effort. By this way, the amount of coordination among the replicas are degraded and data can be accessed in a more performant manner. Yet, it can happen that a particular update is executed on some replicas but not on others, which causes replicas to diverge. Such problems can be resolved with different approaches, such as _read-repair_, _write-repair_, _anti-entropy_. Lazy replication techniques are popular among AP systems.
+Replication techniques also differ in how updates are propagated among replicas. One option is to update each replica as part of a single atomic transaction, called as _eager replication_ or _synchronous replication_. Consensus algorithms apply this approach to achieve strong consistency on a replicated data set. The main drawback is the amount of coordination and communication required while running the replication algorithm. CP systems implement consensus algorithms under the hood. Another option is the _lazy replication_ technique, which is also called as _asynchronous replication_. Lazy replication algorithms execute updates on replicas with separate transactions. They generally work with best-effort. By this way, the amount of coordination among the replicas are degraded and data can be accessed in a more performant manner. Yet, it can happen that a particular update is executed on some replicas but not on others, which causes replicas to diverge. Such problems can be resolved with different approaches, such as _read-repair_, _write-repair_, _anti-entropy_. Lazy replication techniques are popular among AP systems.
 
 === Hazelcast's Replication Algorithm
 
@@ -30,12 +27,12 @@ Hazelcast's replication technique enables Hazelcast clusters to offer high throu
 
 Please note that CP systems can have similar problems as well. However, in a CP system, once a replica performs an update locally (i.e., _commits_ the update), the underlying consensus algorithm guarantees durability of the update for the rest of the execution.
 
-On the other hand, in AP systems like Hazelcast, a replica can perform an update locally, even if the update is not to be performed on other replicas. This is a fair trade-off to reduce amount of coordination among replicas and maintain high throughput & high availability of the system. These systems employ additional measurements to maintain consistency in a best-effort manner. In this regard, Hazelcast tries to minimize effect of such scenarios using an active anti-entropy solution as follows:
+On the other hand, in AP systems like Hazelcast, a replica can perform an update locally, even if the update is not to be performed on other replicas. This is a fair trade-off to reduce amount of coordination among replicas and maintain high throughput & high availability of the system. These systems employ additional measurements to maintain consistency in a best-effort manner. In this regard, Hazelcast tries to minimize the effect of such scenarios using an active anti-entropy solution as follows:
 
-- Each Hazelcast member runs a periodic task in the background.
-- For each primary replica it is assigned, it creates a summary information and sends it to the backups.
-- Then, each backup member compares the summary information with its own data to see if it is up-to-date with the primary.
-- If a backup member detects a missing update, it triggers the synchronization process with the primary.
+* Each Hazelcast member runs a periodic task in the background.
+* For each primary replica it is assigned, it creates a summary information and sends it to the backups.
+* Then, each backup member compares the summary information with its own data to see if it is up-to-date with the primary.
+* If a backup member detects a missing update, it triggers the synchronization process with the primary.
 
 === Invocation Lifecycle
 
@@ -55,13 +52,9 @@ In some cases, although the target member of an invocation is assumed to be aliv
 
 Hazelcast, as an AP product, does not provide the exactly-once guarantee. In general, Hazelcast tends to be an at-least-once solution.
 
-In the following failure case, exactly-once guarantee can be broken:
+In the following failure case, exactly-once guarantee can be broken: When the target member of a pending invocation leaves the cluster while the invocation is waiting for a response, that invocation is re-submitted to its new target due to the new partition table. It can be that, it has already been executed on the leaving member and backup updates are propagated to the backup replicas, but the response is not received by the caller. If that happens, the operation will be executed twice.
 
-* When the target member of a pending invocation leaves the cluster while the invocation is waiting for a response, that invocation is re-submitted to its new target due to the new partition table. It can be that, it has already been executed on the leaving member and backup updates are propagated to the backup replicas, but the response is not received by the caller. If that happens, the operation will be executed twice.
-
-In the following failure case, invocation state becomes indeterminate:
-
-* As explained above, when an invocation does not receive a response in time, invocation fails with an `OperationTimeoutException`. This exception does not say anything about outcome of the operation, that means operation may not be executed at all, it may be executed once or twice (due to member left case explained above).
+In the following failure case, invocation state becomes indeterminate: As explained above, when an invocation does not receive a response in time, invocation fails with an `OperationTimeoutException`. This exception does not say anything about outcome of the operation, that means operation may not be executed at all, it may be executed once or twice (due to member left case explained above).
 
 === IndeterminateOperationStateException
 

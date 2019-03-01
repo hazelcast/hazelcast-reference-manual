@@ -10,7 +10,7 @@ This chapter describes the security features of Hazelcast. These features allow 
 
 With Hazelcast's extensible, JAAS based security feature, you can:
 
-* authenticate both cluster members and clients,
+* authenticate both cluster members and clients
 * and perform access control checks on client operations. Access control can be done according to endpoint principal and/or endpoint address.
 
 You can enable security declaratively or programmatically, as shown below.
@@ -98,18 +98,18 @@ There are two different encryption features:
 * TLS protocol
 ** transport level encryption
 ** supported by members and clients
-** TCP-only (i.e. Multicast join messages are not encrypted)
-** Please see the <<tlsssl, TLS/SSL section>> for details.
+** TCP-only, i.e., Multicast join messages are not encrypted)
+** see the <<tlsssl, TLS/SSL section>> for details
 * Symmetric encryption for Hazelcast member protocol
-** only supported by members; communication with clients is not encrypted
-** Multicast join messages are encrypted too
+** only supported by the members; communication with clients is not encrypted
+** multicast join messages are encrypted, too
 
 The preferred and recommended feature is the TLS protocol as it's a
 standard way how to protect communication on transport level.
 
 Symmetric encryption for Hazelcast member protocol can be configured with cipher algorithms implemented by security providers and accessed through Java Cryptography Architecture.
 Check documentation of your Java version to learn about supported algorithm
-names. Some examples:
+names. The following are some examples:
 
 * `AES`
 * `PBEWithMD5AndDES`
@@ -217,7 +217,7 @@ Hazelcast provides a default SSLContextFactory, `com.hazelcast.nio.ssl.BasicSSLC
 </hazelcast>
 ----
 
-Here are the descriptions for the properties:
+The following are the descriptions of the properties:
 
 * `keyStore`: Path of your keystore file.
 * `keyStorePassword`: Password to access the key from your keystore file.
@@ -334,7 +334,7 @@ clientSslProps.setProperty("keyStore", "/opt/client.keystore");
 clientSslProps.setProperty("keyStorePassword", "123456");
 ----
 
-The property `mutualAuthentication` has two options:
+The property `mutualAuthentication` has the following options:
 
 * `REQUIRED`: Server asks for client certificate. If the client does not provide a keystore or the provided keystore is not verified against member's truststore, the client is not authenticated.
 * `OPTIONAL`: Server asks for client certificate, but client is not required to provide any valid certificate.
@@ -401,11 +401,11 @@ improvements. There are two supported native TLS/SSL libraries available through
 https://netty.io/wiki/forked-tomcat-native.html[netty-tcnative] libraries:
 
 * OpenSSL
-** dynamically linked;
-** prerequisites: `libapr`, `openssl` packages installed on your system;
+** dynamically linked
+** prerequisites: `libapr`, `openssl` packages installed on your system
 * BoringSSL - Google managed fork of the OpenSSL
-** statically linked;
-** easier to get started with;
+** statically linked
+** easier to get started with
 ** benefits: reduced code footprint, additional features
 
 The native TLS integration can be used on clients and/or members. For best performance, it is recommended to install on a client and member and
@@ -514,7 +514,7 @@ using OpenSSL:
 </hazelcast>
 ----
 
-The configuration is similar to a regular TLS/SSL integration. The main difference is the `OpenSSLEngineFactory` factory class and following new properties:
+The configuration is similar to a regular TLS/SSL integration. The main differences are the `OpenSSLEngineFactory` factory class and the following properties:
 
 * `keyFile`: Path of your PKCS#8 key file in PEM format.
 * `keyPassword`: Password to access the key file when it's encrypted.
@@ -525,7 +525,7 @@ The configuration is similar to a regular TLS/SSL integration. The main differen
 The key and certificate related properties take precedence over keyStore and trustStore configurations.
 Using keyStores and trustStores together with OpenSSL causes problems on some Java versions, therefor we recommend to use the OpenSSL native way.
 
-Other supported properties are:
+The following are the other supported properties:
 
 * `keyStore`: Path of your keystore file.
 ** _Using the `keyStore` property is not recommended, use `keyFile` and `keyCertChainFile` instead_
@@ -671,7 +671,7 @@ Hazelcast IMDG Enterprise offers a secret validation mechanism including a stren
 
 For this validation, Hazelcast IMDG Enterprise comes with the class DefaultSecretStrengthPolicy to identify all possible weaknesses of secrets and to display a warning in the system logger. Note that, by default, no matter how weak the secrets are, the cluster members still start after logging this warning; however, this is configurable (please see the “Enforcing the Secret Strength Policy” section).
 
-Requirements (rules) for the secrets are as follows:
+The following are the requirements (rules) for the secrets:
 
 * Minimum length of eight characters; and
 * Large keyspace use, ensuring the use of at least three of the following:
@@ -1324,7 +1324,7 @@ config.getSecurityConfig()
     .setOnJoinPermissionOperation(OnJoinPermissionOperationName.SEND);
 ----
 
-The behaviors are explained below.
+The behaviors are explained below:
 
 * `RECEIVE`: Applies the permissions from the leader member in the cluster before join. This is the default value.
 * `SEND`: Doesn't apply the permissions from the leader member before join. If the security is enabled, then it refreshes or replaces the cluster wide permissions with the ones in the new member after the join is complete. This option is suitable for the scenarios where you need to replace the cluster wide permissions without restarting the cluster.

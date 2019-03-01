@@ -12,7 +12,7 @@ Hazelcast provides its own distributed second level cache for your Hibernate ent
 
 Hazelcast can cluster your web sessions using Servlet Filter, Tomcat and Jetty based solutions.
 
-Follow the below links for more information on them:
+See the following for more information on them:
 
 * <<filter-based-web-session-replication, Filter Based Web Session Replication>>
 * <<tomcat-based-web-session-replication, Tomcat Based Web Session Replication>>
@@ -74,12 +74,9 @@ When the Spring Integration JARs are not correctly installed in the Java classpa
 org.xml.sax.SAXParseException; systemId: http://hazelcast.com/schema/spring/hazelcast-spring.xsd; lineNumber: 2; columnNumber: 35; s4s-elt-character: Non-whitespace characters are not allowed in schema elements other than 'xs:appinfo' and 'xs:documentation'. Saw '301 Moved Permanently'.
 ```
 
-
 ```
 org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: Unable to locate Spring NamespaceHandler for XML schema namespace [http://www.hazelcast.com/schema/spring]
 ```
-
-
 
 ```
 org.xml.sax.SAXParseException; lineNumber: 25; columnNumber: 33; schema_reference.4: Failed to read schema document 'http://www.hazelcast.com/schema/spring/hazelcast-spring.xsd', because 1) could not find the document; 2) the document could not be read; 3) the root element of the document is not <xsd:schema>.
@@ -275,14 +272,13 @@ For map-store, you should set either the *class-name* or the *implementation* at
 
 ==== Enabling SpringAware Objects
 
-You can mark Hazelcast Distributed Objects with @SpringAware if the object wants:
+You can mark Hazelcast Distributed Objects with @SpringAware if the object wants to apply:
 
-* to apply bean properties,
-* to apply factory callbacks such as `ApplicationContextAware`, `BeanNameAware`,
-* to apply bean post-processing annotations such as `InitializingBean`, `@PostConstruct`.
+* bean properties
+* factory callbacks such as `ApplicationContextAware`, `BeanNameAware`
+* bean post-processing annotations such as `InitializingBean`, `@PostConstruct`.
 
 Hazelcast Distributed `ExecutorService`, or more generally any Hazelcast managed object, can benefit from these features. To enable SpringAware objects, you must first configure `HazelcastInstance` using *hazelcast* namespace as explained in <<configuring-spring, Configuring Spring>> and add `<hz:spring-aware />` tag.
-
 
 ===== SpringAware Examples
 

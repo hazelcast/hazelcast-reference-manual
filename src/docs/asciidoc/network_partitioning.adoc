@@ -154,7 +154,7 @@ include::{javasource}/networkpartitioning/RecentlyActiveQuorum.java[tag=raq]
 
 ===== Quorum Configuration Reference
 
-Quorum configuration has the following elements:
+The quorum configuration has the following elements:
 
 * `quorum-size`: Minimum number of members required in a cluster for the cluster to remain in an operational state. If the number of members is below the defined minimum at any time, the operations are rejected and the rejected operations return a `QuorumException` to their callers.
 * `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
@@ -259,13 +259,13 @@ After the merging side is decided, the master member (the eldest one) of the mer
 
 While recovering from partitioning, Hazelcast uses merge policies for supported data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging data. Hazelcast provides an interface to be implemented and also a selection of out-of-the-box policies. Data structures without split-brain support discard the data from merging side.
 
-Each member of the merging cluster performs the following:
+Each member of the merging cluster:
 
-* Close all of its network connections (detach from its cluster).
-* Take a snapshot of local data structures which support split-brain recovery.
-* Discard all data structure data.
-* Join to the new cluster as lite member.
-* Send merge operations to the new cluster from local snapshots.
+* closes all of its network connections (detach from its cluster)
+* takes a snapshot of local data structures which support split-brain recovery
+* discards all data structure data
+* joins to the new cluster as lite member
+* sends merge operations to the new cluster from local snapshots.
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
 
@@ -273,14 +273,14 @@ For more information, please see the <<consistency-and-replication-model, Consis
 
 Since Hazelcast 3.10 all merge policies implement the unified interface `com.hazelcast.spi.SplitBrainMergePolicy`. We provide the following out-of-the-box implementations:
 
-* `DiscardMergePolicy`: the entry from the smaller cluster is discarded.
-* `ExpirationTimeMergePolicy`: the entry with the higher expiration time wins.
-* `HigherHitsMergePolicy`: the entry with the higher number of hits wins.
-* `HyperLogLogMergePolicy`: specialized merge policy for the `CardinalityEstimator`, which uses the default merge algorithm from HyperLogLog research, keeping the max register value of the two given instances.
-* `LatestAccessMergePolicy`: the entry with the latest access wins.
-* `LatestUpdateMergePolicy`: the entry with the latest update wins.
+* `DiscardMergePolicy`: The entry from the smaller cluster is discarded.
+* `ExpirationTimeMergePolicy`: The entry with the higher expiration time wins.
+* `HigherHitsMergePolicy`: The entry with the higher number of hits wins.
+* `HyperLogLogMergePolicy`: Specialized merge policy for the `CardinalityEstimator`, which uses the default merge algorithm from HyperLogLog research, keeping the max register value of the two given instances.
+* `LatestAccessMergePolicy`: The entry with the latest access wins.
+* `LatestUpdateMergePolicy`: The entry with the latest update wins.
 * `PassThroughMergePolicy`: the entry from the smaller cluster wins.
-* `PutIfAbsentMergePolicy`: the entry from the smaller cluster wins if it doesn't exist in the cluster.
+* `PutIfAbsentMergePolicy`: The entry from the smaller cluster wins if it doesn't exist in the cluster.
 
 Additionally you can develop a custom merge policy by implementing the `SplitBrainMergePolicy` interface, as explained in the <<custom-merge-policies, Custom Merge Policies section>>
 

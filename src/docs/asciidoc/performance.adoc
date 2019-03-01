@@ -207,11 +207,11 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
     }
 ----
 
-The benefits of doing the same operation with distributed `ExecutorService` based on the key are:
+The following are the benefits of doing the same operation with distributed `ExecutorService` based on the key:
 
-* Only one distributed execution (`executorService.submit(task)`), instead of four.
-* Less data is sent over the wire.
-* Since lock/update/unlock cycle is done locally (local to the customer data), lock duration for the `Customer` entry is much less, thus enabling higher concurrency.
+* only one distributed execution (`executorService.submit(task)`), instead of four
+* less data is sent over the wire
+* less lock duration, i.e., higher concurrency, for the `Customer` entry since lock/update/unlock cycle is done locally (local to the customer data)
 
 
 ==== PartitioningStrategy
@@ -280,25 +280,25 @@ You can also use other system property configuring options as explained in the <
 
 For the best performance of your Hazelcast on AWS EC2:
 
-* It is best to select the newest Linux AMIs.
-* HVM based instances give the best performance.
+* Select the newest Linux AMIs.
+* Select the HVM based instances.
 * Select at least a system with 8 vCPUs, e.g., c4.2xlarge. For an overview of all types of EC2 instances, please check https://www.ec2instances.info.
-* Consider setting a placement group. A placement group can have a significant impact on the performance.
+* Consider setting a placement group.
 
 === Back Pressure
 
 Hazelcast uses operations to make remote calls. For example, a `map.get` is an operation and a `map.put` is one operation for the primary
 and one operation for each of the backups, i.e., `map.put` is executed for the primary and also for each backup. In most cases, there is a natural balance between the number of threads performing operations
-and the number of operations being executed. However, there are two situations where this balance and operations
-can pile up and eventually lead to Out of Memory Exception (OOME):
+and the number of operations being executed. However, the following may pile up this balance and operations
+and eventually lead to `OutofMemoryException` (`OOME`):
 
 * Asynchronous calls: With async calls, the system may be flooded with the requests.
 * Asynchronous backups: The asynchronous backups may be piling up.
 
 To prevent the system from crashing, Hazelcast provides back pressure. Back pressure works by:
 
-* limiting the number of concurrent operation invocations,
-* periodically making an async backup sync.
+* limiting the number of concurrent operation invocations
+* and periodically making an async backup sync.
 
 ==== Member Side
 
@@ -356,9 +356,9 @@ Your application server has its own threads. Hazelcast does not use these; it ma
 
 Hazelcast uses a pool of threads for I/O. A single thread does not perform all the I/O. Instead, multiple threads perform the I/O. On each cluster member, the I/O threading is split up in 3 types of I/O threads:
 
-* I/O thread for the accept requests.
-* I/O threads to read data from other members/clients.
-* I/O threads to write data to other members/clients.
+* I/O thread for the accept requests
+* I/O threads to read data from other members/clients
+* I/O threads to write data to other members/clients
 
 You can configure the number of I/O threads using the `hazelcast.io.thread.count` system property. Its default value is 3 per member. If 3 is used, in total there are 7 I/O threads: 1 accept I/O thread, 3 read I/O threads and 3 write I/O threads. Each I/O thread has its own Selector instance and waits on the `Selector.select` if there is nothing to do.
 
@@ -380,8 +380,8 @@ Each cluster member has an array of event threads and each thread has its own wo
 either locally or remotely, an event thread is selected (depending on if there is a message ordering) and the event is placed
 in the work queue for that event thread.
 
-The following properties
-can be set to alter the behavior of the system.
+You can set the following properties
+to alter the system's behavior:
 
 * `hazelcast.event.thread.count`: Number of event-threads in this array. Its default value is 5.
 * `hazelcast.event.queue.capacity`: Capacity of the work queue. Its default value is 1000000.
@@ -410,10 +410,10 @@ You can configure the IExecutor using the `ExecutorConfig` (programmatic configu
 
 ==== Operation Threading
 
-There are 2 types of operations:
+The following are the operation types:
 
-* Operations that are aware of a certain partition, e.g., `IMap.get(key)`.
-* Operations that are not partition aware, such as the `IExecutorService.executeOnMember(command, member)` operation.
+* operations that are aware of a certain partition, e.g., `IMap.get(key)`
+* operations that are not partition aware, e.g., `IExecutorService.executeOnMember(command, member)`
 
 Each of these operation types has a different threading model explained in the following sections.
 
@@ -557,7 +557,7 @@ The purging removes each invocation whose retention time is exceeded. When all i
 
 Map or Cache entries in Hazelcast are partitioned across the cluster members. Hazelcast clients do not have local data at all. Suppose you read the key `k` a number of times from a Hazelcast client or `k` is owned by another member in your cluster. Then each `map.get(k)` or `cache.get(k)` will be a remote operation, which creates a lot of network trips. If you have a data structure that is mostly read, then you should consider creating a local Near Cache, so that reads are sped up and less network traffic is created.
 
-These benefits do not come for free, please consider the following trade-offs:
+These benefits do not come for free. See the following trade-offs:
 
 * Members with a Near Cache has to hold the extra cached data, which increases memory consumption.
 * If invalidation is enabled and entries are updated frequently, then invalidations will be costly.
@@ -683,7 +683,7 @@ include::{javasource}/performance/ExampleNearCacheConfiguration.java[tag=nearcac
 
 The class https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/NearCacheConfig.html[NearCacheConfig] is used for all supported Hazelcast data structures on members and clients.
 
-Following are the descriptions of all configuration elements:
+The following are the descriptions of all configuration elements and attributes:
 
 * `in-memory-format`: Specifies in which format data is stored in your Near Cache. Note that a map's in-memory format can be different from that of its Near Cache. Available values are as follows:
 ** `BINARY`: Data is stored in serialized binary format (default value).
@@ -890,9 +890,9 @@ Once the eviction is triggered the configured `eviction-policy` determines which
 Expiration means the eviction of expired records. A record is expired:
 
 * if it is not touched (accessed/read) for `max-idle-seconds`
-* `time-to-live-seconds` passed since it is put to Near Cache
+* `time-to-live-seconds` passed since it is put to Near Cache.
 
-The actual expiration is performed in two cases:
+The actual expiration is performed in the following cases:
 
 * When a record is accessed: it is checked if the record is expired or not. If it is expired, it is evicted and `null` is returned as the value to the caller.
 * In the background: there is an expiration task that periodically (currently 5 seconds) scans records and evicts the expired records.
@@ -927,7 +927,7 @@ You can configure eventual consistency with the system properties below (same pr
 
 ===== Locally Initiated Changes
 
-For local invalidations, when a record is updated/removed, future reads will see this update/remove to provide read-your-writes consistency. To achieve this consistency, Near Cache configuration provides two update policies:
+For local invalidations, when a record is updated/removed, future reads will see this update/remove to provide read-your-writes consistency. To achieve this consistency, Near Cache configuration provides the following update policies:
 
 * `INVALIDATE`
 * `CACHE_ON_UPDATE`
@@ -965,7 +965,7 @@ There may be cases where you do not want to deserialize some values in your Haze
 </hazelcast>
 ----
 
-The element `cache-deserialized-values` controls the caching of deserialized values. Note that caching makes the query evaluation faster, but it consumes more memory. This element has the following values:
+The `cache-deserialized-values` element controls the caching of deserialized values. Note that caching makes the query evaluation faster, but it consumes more memory. This element has the following values:
 
 * NEVER: Deserialized values are never cached.
 * INDEX-ONLY: Deserialized values are cached only when they are inserted into an index.

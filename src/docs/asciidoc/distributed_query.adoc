@@ -91,8 +91,8 @@ NOTE: Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` o
 
 ===== Predicates Class Operators
 
-The `Predicates` class offered by Hazelcast includes many operators for your query requirements. Some of them are
-explained below.
+The `Predicates` class includes many operators for your query requirements. The following are
+descriptions for some of them:
 
 * `equal`: Checks if the result of an expression is equal to a given value.
 * `notEqual`: Checks if the result of an expression is not equal to a given value.
@@ -109,7 +109,7 @@ characters,  (underscore) is placeholder for only one character.
 * `regex`: Checks if the result of an expression matches some regular expression.
 
 
-NOTE: Please see the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc] for all predicates provided.
+NOTE: See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc] for all predicates provided.
 
 
 ===== Combining Predicates with AND, OR, NOT
@@ -550,12 +550,12 @@ The special attribute `this` acts on the value of a map entry. Typically, you do
 
 You can change the size of thread pool dedicated to query operations using the `pool-size` property. Each query consumes a single thread from a Generic Operations ThreadPool on each Hazelcast member - let's call it the query-orchestrating thread.  That thread is blocked throughout the whole execution-span of a query on the member.
 
-The query-orchestrating thread used the threads from the query-thread pool in two cases:
+The query-orchestrating thread uses the threads from the query-thread pool in the following cases:
 
-* if you run a `PagingPredicate` - since each page is run as a separate task,
-* if you set the system property `hazelcast.query.predicate.parallel.evaluation` to true - since the predicates are evaluated in parallel.
+* if you run a `PagingPredicate` (since each page runs as a separate task)
+* if you set the system property `hazelcast.query.predicate.parallel.evaluation` to true (since the predicates are evaluated in parallel)
 
-Please see <<filtering-with-paging-predicates, Filtering with Paging Predicates>> and <<system-properties, System Properties>> sections for information on paging predicates and for description of the above system property.
+See the <<filtering-with-paging-predicates, Filtering with Paging Predicates section>> and <<parallel-predicates, System Properties appendix>> for information on paging predicates and for description of the above system property.
 
 Below is an example of that declarative configuration.
 
@@ -761,8 +761,8 @@ Looking at examples 4, 6 and 8, we can also easily notice that it is impossible 
 expression was null.
 If we execute the following query `wheels[1].name = null`, it may be evaluated to true because:
 
-* `wheels` collection/array is null.
-* `index == 1` is out of bound.
+* `wheels` collection/array is null
+* `index == 1` is out of bound
 * `name` attribute of the wheels[1] object is `null`.
 
 In order to make the query unambiguous, extra conditions would have to be added, e.g.,
@@ -923,7 +923,7 @@ You have likely heard about MapReduce ever since Google released its http://rese
 MapReduce is a software framework for processing large amounts of data in a distributed way. Therefore, the processing is normally spread over several machines. The basic idea behind MapReduce is that source data is mapped into a collection of key-value pairs and reducing those pairs, grouped by key, in a second
 step towards the final result.
 
-The main idea can be summarized with the following steps.
+The main idea can be summarized with the following steps:
 
 . Read the source data.
 . Map the data to one or multiple key-value pairs.
@@ -931,7 +931,7 @@ The main idea can be summarized with the following steps.
 
 **Use Cases**
 
-The best known examples for MapReduce algorithms are text processing tools, such as counting the word frequency in large texts or websites. Apart from that, there are more interesting examples of use cases listed below.
+The best known examples for MapReduce algorithms are text processing tools, such as counting the word frequency in large texts or websites. Apart from that, there are more interesting examples of use cases listed below:
 
 * Log Analysis
 * Data Querying
@@ -1366,6 +1366,8 @@ The following snippet shows a typical `JobTracker` configuration. The configurat
 </hazelcast>
 ----
 
+`JobTracker` has the following configuration elements:
+
 * `max-thread-size`: Maximum thread pool size of the JobTracker.
 * `queue-size`: Maximum number of tasks that are able to wait to be processed. A value of 0 means an unbounded queue. Very low numbers can prevent successful execution since the job might not be correctly scheduled or intermediate chunks might be lost.
 * `retry-count`: Currently not used. Reserved for later use where the framework will automatically try to restart/retry operations from an available save point.
@@ -1487,9 +1489,9 @@ It is not as flexible as a full-blown M/R system due to the 2nd phase being sing
 
 The benefits are:
 
-* Improved performance
-* Simplified API
-* Utilization of existing indexes
+* improved performance
+* simplified API
+* utilization of existing indexes.
 
 You can refer to <<fast-aggregations, Fast Aggregations>> for examples. If you need a more powerful tool like MapReduce, then there is Hazelcast Jet!
 
@@ -1499,7 +1501,7 @@ Hazelcast Jet is the new distributed computing framework build on top of Hazelca
 Conceptually speaking, the MapReduce model simply states that distributed computation on a large dataset can be boiled down to two kinds of computation steps - a map step and a reduce step. One pair of map and reduce does one level of aggregation over data. Complex computations typically require multiple such steps. Multiple M/R-steps essentially form a DAG of operations, so that a DAG execution model boils down to a generalization of the MapReduce model.
 Therefore it is always possible to rewrite a MapReduce application to Hazelcast Jet DAG or "pipeline of tasks" without conceptual changes.
 
-The benefits are:
+The benefits can be summarized as follows:
 
 * MapReduce steps are completely isolated (by definition). With the whole computation modeled as a DAG, the Jet scheduler can optimize the operation pipeline
 * Hazelcast Jet provides a convenient high-level API (distributed j.u.stream). The code stays compact but also offers a more concrete API to leverage the full power of DAGs.
@@ -1732,10 +1734,10 @@ This class already provides a few different static methods to achieve the most c
 accepts all incoming values and does not apply any data extraction or transformation upon them before supplying them to
 the aggregation function itself.
 
-For filtering data sets, you have two different options by default:
+For filtering data sets, you have two options by default:
 
-* You can either supply a `com.hazelcast.query.Predicate` if you want to filter on values and/or keys, or
-* You can supply a `com.hazelcast.mapreduce.KeyPredicate` if you can decide directly on the data
+* You can supply a `com.hazelcast.query.Predicate` if you want to filter on values and/or keys.
+* Alternatively, you can supply a `com.hazelcast.mapreduce.KeyPredicate` if you can decide directly on the data
 key without the need to deserialize the value.
 
 As mentioned above, all APIs are fully Java 8 and Lambda compatible. Let's have a look on how we can do basic filtering using
@@ -1866,7 +1868,7 @@ the chosen `Aggregation`. This interface can also be implemented with your aggre
 more information, refer to <<implementing-aggregations, Implementing Aggregations section>>.
 
 The `com.hazelcast.mapreduce.aggregation.Aggregations` class provides a common predefined set of aggregations. This class
-contains type safe aggregations of the following types:
+contains type-safe aggregations of the following types:
 
 * Average (Integer, Long, Double, BigInteger, BigDecimal)
 * Sum (Integer, Long, Double, BigInteger, BigDecimal)
@@ -1988,7 +1990,7 @@ class AgeExtractor implements PropertyExtractor<Person, Integer> {
 }
 ----
 
-In this example, we extract the value from the person's age attribute. The value type changes from Person to `Integer` which is reflected in the generics information to stay type safe.
+In this example, we extract the value from the person's age attribute. The value type changes from Person to `Integer` which is reflected in the generics information to stay type-safe.
 
 You can use ``PropertyExtractor``s for any kind of transformation of data. You might even want to have multiple
 transformation steps chained one after another.
@@ -2001,16 +2003,11 @@ to the aggregation call itself by passing it to either `IMap.aggregate()` or `Mu
 There is another way to implicitly configure the underlying used `JobTracker`. If no specific `JobTracker` was
 passed for the aggregation call, internally one is created using the following naming specifications:
 
-For `IMap` aggregation calls the naming specification is created as:
-* `hz::aggregation-map-` and the concatenated name of the map.
-
-For `MultiMap` it is very similar:
-
-* `hz::aggregation-multimap-` and the concatenated name of the MultiMap.
+For `IMap` aggregation calls, the naming specification is created as `hz::aggregation-map-` and the concatenated name of the map. For `MultiMap` it is very similar, i.e., `hz::aggregation-multimap-` and the concatenated name of the MultiMap.
 
 Knowing the specification of the name, we can configure the `JobTracker` as expected
-(as described in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>) using the naming spec we just learned. For more information on configuration of the
-`JobTracker`, please see <<configuring-jobtracker, Configuring Jobtracker>>.
+(as described in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>) using the naming spec we just learned. For more information on the configuration of
+`JobTracker`, see the <<configuring-jobtracker, Configuring Jobtracker section>>.
 
 To finish this section, let's have a quick example for the above naming specs:
 
@@ -2275,14 +2272,14 @@ NOTE: If the <<setting-in-memory-format in-memory format>> of your data is `NATI
 
 The Fast-Aggregation consists of three phases represented by three methods:
 
-* `accumulate()`,
-* `combine()`,
-* `aggregate()`.
+. `accumulate()`
+. `combine()`
+. `aggregate()`
 
-There are also two callbacks:
+There are also the following callbacks:
 
-* `onAccumulationFinished()` called when the accumulation phase finishes.
-* `onCombinationFinished()` called when the combination phase finishes.
+* `onAccumulationFinished()` called when the accumulation phase finishes
+* `onCombinationFinished()` called when the combination phase finishes
 
 These callbacks enable releasing the state that might have been initialized and stored in the Aggregator - to reduce the network traffic.
 
@@ -2327,8 +2324,8 @@ include::{javasource}/distributedquery/SimpleFastAggregationsDemo.java[tag=fadem
 
 As you can see:
 
-* the `accumulate()` method calculates the sum and the count of the elements.
-* the `combine()` method combines the results from all the accumulations.
+* the `accumulate()` method calculates the sum and count of the elements
+* the `combine()` method combines the results from all the accumulations
 * the `aggregate()` method calculates the final result.
 
 ==== Built-In Aggregations
@@ -2453,7 +2450,7 @@ include::{javasource}/distributedquery/CQCClient.java[tag=cqcclient]
 
 ==== Features of Continuous Query Cache
 
-The following features of continuous query cache are valid for both the member and client.
+The following features of continuous query cache are valid for both the member and client:
 
 * The initial query that is run on the existing `IMap` data during the continuous query cache construction can be enabled/disabled according to the supplied predicate via `QueryCacheConfig.setPopulate()`.
 * Continuous query cache allows you to run queries with indexes and perform event batching and coalescing.
@@ -2511,7 +2508,7 @@ The following is an example declarative configuration.
 </hazelcast>
 ----
 
-Here are the descriptions of configuration elements and attributes:
+Continuous query caches have the following configuration elements:
 
 * `name`: Name of your continuous query cache.
 * `include-value`: Specifies whether the value will be cached too. Its default value is true.

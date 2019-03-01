@@ -29,9 +29,9 @@ classpath (Maven does that for you). Just add the following lines to your `pom.x
 
 As an alternative, you can download and install Hazelcast IMDG yourself. You only need to:
 
-* Download the package `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz` from https://hazelcast.org/download[hazelcast.org].
-* Extract the downloaded `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz`.
-* Add the file `hazelcast-<version>.jar` to your classpath.
+* download the package `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz` from https://hazelcast.org/download[hazelcast.org]
+* extract the downloaded `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz`
+* and add the file `hazelcast-<version>.jar` to your classpath.
 
 [[installing-hazelcast-imdg-enterprise]]
 ==== Installing Hazelcast IMDG Enterprise
@@ -158,14 +158,14 @@ License information is available through the following Hazelcast APIs.
 
 ===== JMX
 
-The MBean `HazelcastInstance.LicenseInfo` holds all the relative license details and can be accessed through Hazelcast's JMX port (if enabled).
+The MBean `HazelcastInstance.LicenseInfo` holds all the relative license details and can be accessed through Hazelcast's JMX port (if enabled). The following parameters represent these details:
 
-- `maxNodeCountAllowed`: Maximum members allowed to form a cluster under the current license.
-- `expiryDate`: Expiration date of the current license.
-- `typeCode`: Type code of the current license.
-- `type`: Type of the current license.
-- `ownerEmail`: Email of the current license's owner.
-- `companyName`: Company name on the current license.
+* `maxNodeCountAllowed`: Maximum members allowed to form a cluster under the current license.
+* `expiryDate`: Expiration date of the current license.
+* `typeCode`: Type code of the current license.
+* `type`: Type of the current license.
+* `ownerEmail`: Email of the current license's owner.
+* `companyName`: Company name on the current license.
 
 Following is the list of license ``type``s and ``typeCode``s:
 
@@ -320,7 +320,7 @@ See the following sections for the details of Hazelcast IMDG supporting JDK 9 an
 [[running-in-modular-java]]
 === Running in Modular Java
 
-Java http://openjdk.java.net/projects/jigsaw/[project Jigsaw] brought a new Module System into Java 9 and newer. Hazelcast supports running in the modular environment. If you want to run your application with Hazelcast libraries on the modulepath, use following module names:
+Java http://openjdk.java.net/projects/jigsaw/[project Jigsaw] brought a new Module System into Java 9 and newer. Hazelcast supports running in the modular environment. If you want to run your application with Hazelcast libraries on the modulepath, use the following module names:
 
 * `com.hazelcast.core` for `hazelcast-<version>.jar` and `hazelcast-enterprise-<version>.jar`
 * `com.hazelcast.client` for `hazelcast-client-<version>.jar` and `hazelcast-enterprise-client-<version>.jar`
@@ -329,7 +329,7 @@ Don't use `hazelcast-all-<version>.jar` or `hazelcast-enterprise-all-<version>.j
 
 The Java Module System comes with stricter visibility rules. It affects Hazelcast which uses internal Java API to reach the best performance results.
 
-Hazelcast needs `java.se` module and access to the following Java packages for a proper work:
+Hazelcast needs the `java.se` module and access to the following Java packages for a proper work:
 
 * `java.base/jdk.internal.ref`
 * `java.base/java.nio` _(reflective access)_
@@ -376,7 +376,7 @@ _This example expects `hazelcast-<version>.jar` placed in the `lib` directory._
 
 Having installed Hazelcast, you can get started.
 
-In this short tutorial, you perform the following activities.
+In this short tutorial, you perform the following activities:
 
 . Create a simple Java application using the Hazelcast distributed map and queue.
 . Run our application twice to have a cluster with two members (JVMs).
@@ -460,8 +460,7 @@ The following are the names and descriptions of each script:
 
 * `start.sh` / `start.bat`: Starts a Hazelcast member with default configuration in the working directory.
 * `stop.sh` / `stop.bat`: Stops the Hazelcast member that was started in the current working directory.
-* `cluster.sh`: Provides basic functionalities for cluster management, such as getting and changing the cluster state, shutting down the cluster or forcing the cluster to clean its persisted data and make a fresh start. Please refer to the <<using-the-script-cluster-sh, Using the Script cluster.sh section>> to learn the usage of this script.
-
+* `cluster.sh`: Provides basic functionalities for cluster management, such as getting and changing the cluster state, shutting down the cluster or forcing the cluster to clean its persisted data and make a fresh start. See the <<using-the-script-cluster-sh, Using the Script cluster.sh section>> to learn the usage of this script.
 
 NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance per folder. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ package in a new folder.
 

@@ -32,7 +32,7 @@ NOTE: See the <<discovery-mechanisms, Discovery Mechanisms section>> for detaile
 '''
 **What happens when a member goes down?**
 
-Once a member is gone (crashes), the following happens since data in each member has a backup in other members.
+Once a member is gone (crashes), the following happens: 
 
 * First, the backups in other members are restored.
 * Then, data from these restored backups are recovered.
@@ -264,7 +264,7 @@ Client-server topology fits better if there are multiple applications sharing th
 '''
 **How can I shutdown a Hazelcast member?**
 
-Ways of shutting down a Hazelcast member:
+The following are the ways of shutting down a Hazelcast member:
 
 * You can call `kill -9 <PID>` in the terminal (which sends a SIGKILL signal). This results in the immediate shutdown which is not recommended for production systems. If you set the property `hazelcast.shutdownhook.enabled` to `false` and then kill the process using `kill -15 <PID>`, its result is the same (immediate shutdown).
 * You can call `kill -15 <PID>` in the terminal (which sends a SIGTERM signal), or you can call the method `HazelcastInstance.getLifecycleService().terminate()` programmatically, or you can use the script `stop.sh` located in your Hazelcast's `/bin` directory. All three of them terminate your member ungracefully. They do not wait for migration operations, they force the shutdown. But this is much better than `kill -9 <PID>` since it releases most of the used resources.
@@ -312,16 +312,16 @@ if (partitionService.isLocalMemberSafe()) {
 
 Please keep in mind that two code snippets shown above are inherently racy. If member failures occur in the cluster after the safety condition check passes, termination of the local member can lead to data loss. For safety of the data, graceful shutdown API is highly recommended.
 
-NOTE: Please refer to <<safety-checking-cluster-members, Safety Checking Cluster Members>> for more information.
+NOTE: See the <<safety-checking-cluster-members, Safety Checking Cluster Members section>> for more information.
 
 
 '''
 **When do I need Native Memory solutions?**
 
-Native Memory solutions can be preferred:
+Native Memory solutions can be preferred when:
 
-- when the amount of data per member is large enough to create significant garbage collection pauses.
-- when your application requires predictable latency.
+* the amount of data per member is large enough to create significant garbage collection pauses
+* your application requires predictable latency.
 
 
 '''
@@ -347,11 +347,7 @@ Hazelcast allows you to set some socket options such as `SO_KEEPALIVE`, `SO_SNDB
 
 In Hazelcast, socket connections are created with the `SO_KEEPALIVE` option enabled by default. In most operating systems, default keep-alive time is 2 hours. If you have a firewall between clients and servers which is configured to reset idle connections/sessions, make sure that the firewall's idle timeout is greater than the TCP keep-alive defined in the OS.
 
-For additional information please see:
-
- - http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html[Using TCP keepalive under Linux]
- - http://technet.microsoft.com/en-us/library/cc957549.aspx[Microsoft TechNet]
-
+See http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html[Using TCP keepalive under Linux] and http://technet.microsoft.com/en-us/library/cc957549.aspx[Microsoft TechNet] for additional information.
 
 '''
 **OOME: Unable to create new native thread?**

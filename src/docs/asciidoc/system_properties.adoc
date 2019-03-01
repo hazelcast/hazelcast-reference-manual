@@ -649,7 +649,7 @@ CAUTION: Setting this value too low may cause members to be evicted from the clu
 |String
 |Type of the query optimizer. For optimizations based on static rules, set the value to `RULES`. To disable the optimization, set the value to `NONE`.
 
-|`hazelcast.query.predicate.parallel.evaluation`
+|[[parallel-predicates]]`hazelcast.query.predicate.parallel.evaluation`
 |false
 |bool
 |Each Hazelcast member evaluates query predicates using a single thread by default. In most cases, the overhead of inter-thread communications overweight can benefit from parallel execution. When you have a large dataset and/or slow predicate, you may benefit from parallel predicate evaluations. Set to `true` if you are using slow predicates or have > 100,000s entries per member.
