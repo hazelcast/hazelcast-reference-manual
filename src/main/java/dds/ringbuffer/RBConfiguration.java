@@ -4,7 +4,7 @@ import com.hazelcast.config.RingbufferConfig;
 
 public class RBConfiguration {
     public static void main(String[] args) throws Exception{
- //tag::rbc[]
+        //tag::rbc[]
         Config config = new Config();
         RingbufferConfig rbConfig = config.getRingbufferConfig("myRB");
         rbConfig.setCapacity(10000)
@@ -13,6 +13,6 @@ public class RBConfiguration {
                 .setTimeToLiveSeconds(0)
                 .setInMemoryFormat(InMemoryFormat.BINARY)
                 .setQuorumName("quorumname");
-//end::rbc[]
+        //end::rbc[]
     }
 }

@@ -2,10 +2,9 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.MemberGroupConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 
-
 public class PartitionGrouping {
     public static void main(String[] args) {
-      //tag::partitiongrouping[]
+        //tag::partitiongrouping[]
         Config config = new Config();
         PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
         partitionGroupConfig.setEnabled( true )
@@ -21,6 +20,6 @@ public class PartitionGrouping {
 
         partitionGroupConfig.addMemberGroupConfig( memberGroupConfig );
         partitionGroupConfig.addMemberGroupConfig( memberGroupConfig2 );
-      //end::partitiongrouping[]
+        //end::partitiongrouping[]
     }
 }

@@ -16,7 +16,7 @@ import java.util.Properties;
  * Please have a look at {@link com.hazelcast.examples.helper.LicenseUtils} for details.
  */
 public class SocketInterceptorClient {
-//tag::sic[]
+    //tag::sic[]
     public static void main(String[] args) {
  
         Config config = createConfig();
@@ -46,7 +46,7 @@ public class SocketInterceptorClient {
         clientConfig.getNetworkConfig().setSocketInterceptorConfig(interceptorConfig);
         return clientConfig;
     }
-//end::sic[]
+    //end::sic[]
     /**
      * This class needs to be public, so it can be accessed via Hazelcast.
      */

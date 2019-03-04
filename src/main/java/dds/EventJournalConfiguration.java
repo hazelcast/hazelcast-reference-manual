@@ -1,10 +1,9 @@
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EventJournalConfig;
 
-
 public class EventJournalConfiguration {
     public static void main(String[] args) throws Exception{
-//tag::ejc[]
+        //tag::ejc[]
         EventJournalConfig myMapJournalConfig = new EventJournalConfig()
                 .setMapName("myMap")
                 .setEnabled(true)

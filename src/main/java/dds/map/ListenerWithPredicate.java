@@ -1,4 +1,3 @@
-
 import com.hazelcast.config.Config;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.Hazelcast;
@@ -40,7 +39,6 @@ public class ListenerWithPredicate {
         public void entryUpdated(EntryEvent<String, String> event) {
             System.out.println("Entry Updated:" + event);
         }
-
     }
 }
 //end::lwp[]

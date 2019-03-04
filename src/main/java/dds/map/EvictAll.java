@@ -4,7 +4,7 @@ import com.hazelcast.core.IMap;
 
 public class EvictAll {
     public static void main(String[] args) {
-      //tag::evictall[]
+        //tag::evictall[]
         final int numberOfKeysToLock = 4;
         final int numberOfEntriesToAdd = 1000;
 
@@ -26,6 +26,6 @@ public class EvictAll {
         System.out.printf("# After calling evictAll...\n");
         System.out.printf("# Expected map size\t: %d\n", numberOfKeysToLock);
         System.out.printf("# Actual map size\t: %d\n", map.size());
-      //end::evictall[]
+        //end::evictall[]
     }
 }

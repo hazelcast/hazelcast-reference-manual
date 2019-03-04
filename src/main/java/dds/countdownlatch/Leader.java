@@ -6,7 +6,7 @@ import com.hazelcast.core.ICountDownLatch;
 public class Leader {
     public static void main( String[] args ) throws Exception {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        ICountDownLatch latch = hazelcastInstance.getCountDownLatch( "countDownLatch" );
+        ICountDownLatch latch = hazelcastInstance.getCPSubsystem().getCountDownLatch( "countDownLatch" );
         System.out.println( "Starting" );
         latch.trySetCount( 1 );
         Thread.sleep( 30000 );

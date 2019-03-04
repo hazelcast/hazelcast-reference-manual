@@ -14,7 +14,7 @@ import java.io.FilenameFilter;
 public class XATransaction {
 
     public static void main(String[] args) throws Exception {
-//tag::xa[]
+        //tag::xa[]
         cleanAtomikosLogs();
 
         HazelcastInstance instance = Hazelcast.newHazelcastInstance();
@@ -38,7 +38,7 @@ public class XATransaction {
 
         cleanAtomikosLogs();
         Hazelcast.shutdownAll();
-//end::xa[]
+        //end::xa[]
     }
 
     private static void cleanAtomikosLogs() {

@@ -23,7 +23,7 @@ The Hazelcast IMDG Enterprise JAR package is also an OSGI bundle like the Hazelc
 
 === Configuring Hazelcast OSGI Support
 
-`HazelcastOSGiService` uses three configurations:
+`HazelcastOSGiService` uses the following configurations:
 
 - **`hazelcast.osgi.start`:** If this property is enabled (it is disabled by default), when an `HazelcastOSGiService` is activated, a default Hazelcast instance is created automatically.
 - **`hazelcast.osgi.register.disabled`:** If this property is disabled (it is disabled by default), when a Hazelcast instance is created by `HazelcastOSGiService`, the created `HazelcastOSGiInstance` is registered automatically as OSGI service with type of `HazelcastOSGiInstance` and it is deregistered automatically when the created `HazelcastOSGiInstance` is shutdown.
@@ -47,45 +47,47 @@ image::Design.png[OSGI Design]
 
 You can access all `HazelcastOSGiService` instances through `org.osgi.framework.BundleContext` for each Hazelcast bundle as follows:
 
-```
+[source,java]
+----
 for (ServiceReference serviceRef : context.getServiceReferences(HazelcastOSGiService.class.getName(), null)) {
     HazelcastOSGiService service = (HazelcastOSGiService) context.getService(serviceRef);
     String serviceId = service.getId();
     ...
-} 
-```
- 
+}
+----
+
 ==== Managing and Using Hazelcast instances
 
 You can use `HazelcastOSGiService` instance to create and shutdown Hazelcast instances on OSGI environments. The created Hazelcast instances are `HazelcastOSGiInstance` typed (which is sub-type of `HazelcastInstance`) and are just proxies to the underlying Hazelcast instance. There are several methods in `HazelcastOSGiService` to use Hazelcast instances on OSGI environments as shown below.
 
-```
+[source,java]
+----
 // Get the default Hazelcast instance owned by `hazelcastOsgiService`
 // Returns null if `HAZELCAST_OSGI_START` is not enabled
 HazelcastOSGiInstance defaultInstance = hazelcastOsgiService.getDefaultHazelcastInstance();
- 
- 
+
+
 // Creates a new Hazelcast instance with default configurations as owned by `hazelcastOsgiService`
 HazelcastOSGiInstance newInstance1 = hazelcastOsgiService.newHazelcastInstance();
- 
- 
+
+
 // Creates a new Hazelcast instance with specified configuration as owned by `hazelcastOsgiService`
 Config config = new Config();
 config.setInstanceName("OSGI-Instance");
 ...
 HazelcastOSGiInstance newInstance2 = hazelcastOsgiService.newHazelcastInstance(config);
-  
+
 // Gets the Hazelcast instance with the name `OSGI-Instance`, which is `newInstance2` created above
 HazelcastOSGiInstance instance = hazelcastOsgiService.getHazelcastInstanceByName("OSGI-Instance");
-  
+
 // Shuts down the Hazelcast instance with name `OSGI-Instance`, which is `newInstance2`
 hazelcastOsgiService.shutdownHazelcastInstance(instance);
-  
+
 // Print all active Hazelcast instances owned by `hazelcastOsgiService`
 for (HazelcastOSGiInstance instance : hazelcastOsgiService.getAllHazelcastInstances()) {
     System.out.println(instance);
 }
-  
+
 // Shuts down all Hazelcast instances owned by `hazelcastOsgiService`
 hazelcastOsgiService.shutdownAll();
-```
+----

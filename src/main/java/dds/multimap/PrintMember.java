@@ -7,7 +7,7 @@ import java.util.Collection;
 public class PrintMember {
 
     public static void main(String[] args) {
-//tag::pm[]
+        //tag::pm[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         MultiMap<String, String> map = hazelcastInstance.getMultiMap("map");
 
@@ -20,6 +20,6 @@ public class PrintMember {
             Collection<String> values = map.get(key);
             System.out.printf("%s -> %s\n", key, values);
         }
-//end::pm[]
+        //end::pm[]
     }
 }

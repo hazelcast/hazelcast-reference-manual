@@ -3,7 +3,7 @@ import com.hazelcast.config.UserCodeDeploymentConfig;
 
 public class MemberUCD {
     public static void main(String[] args) {
-      //tag::ucd[]
+        //tag::ucd[]
         Config config = new Config();
         UserCodeDeploymentConfig distCLConfig = config.getUserCodeDeploymentConfig();
         distCLConfig.setEnabled( true )
@@ -12,6 +12,6 @@ public class MemberUCD {
                 .setBlacklistedPrefixes( "com.foo" )
                 .setWhitelistedPrefixes( "com.bar.MyClass" )
                 .setProviderFilter( "HAS_ATTRIBUTE:lite" );
-      //end::ucd[]
+        //end::ucd[]
     }
 }

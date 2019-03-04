@@ -38,7 +38,7 @@ public class SocketInterceptorMember {
 
         return config;
     }
-//tag::msi[]
+    //tag::msi[]
     public static class MySocketInterceptor implements MemberSocketInterceptor {
 
         private String memberId;
@@ -72,6 +72,6 @@ public class SocketInterceptorMember {
                 throw new RuntimeException("Not a known member!!!");
             }
         }
-//end::msi[]
+    //end::msi[]
     }
 }

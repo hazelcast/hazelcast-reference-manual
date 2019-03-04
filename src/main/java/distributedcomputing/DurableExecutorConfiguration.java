@@ -3,10 +3,9 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.durableexecutor.DurableExecutorService;
 
-
 public class DurableExecutorConfiguration {
     public static void main(String[] args) throws Exception{
-//tag::dec[]
+        //tag::dec[]
         Config config = new Config();
         config.getDurableExecutorConfig( "myDurableExecSvc" )
                 .setPoolSize ( 8 )
@@ -16,6 +15,6 @@ public class DurableExecutorConfiguration {
 
         HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
         DurableExecutorService durableExecSvc = hazelcast.getDurableExecutorService("myDurableExecSvc");
-//end::dec[]
+        //end::dec[]
     }
 }

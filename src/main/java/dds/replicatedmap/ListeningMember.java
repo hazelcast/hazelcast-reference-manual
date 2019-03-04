@@ -8,7 +8,7 @@ import com.hazelcast.core.ReplicatedMap;
 public class ListeningMember {
 
     public static void main(String[] args) {
-//tag::lm[]
+        //tag::lm[]
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
         ReplicatedMap<String, String> map = hz.getReplicatedMap("somemap");
         map.addEntryListener(new MyEntryListener());
@@ -47,6 +47,6 @@ public class ListeningMember {
         public void mapCleared(MapEvent event) {
             System.out.println("mapCleared: " + event);
         }
-//end::lm[]
+        //end::lm[]
     }
 }

@@ -3,7 +3,7 @@
 
 === Split-Brain Syndrome
 
-In general, network partitioning is a network failure that causes the members to split into multiple groups such that a member in a group cannot communicate with members in other groups. In a partition scenario, all sides of the original cluster will operate independently assuming members in other sides are failed. Network partitioning is also called as _Split-Brain Syndrome_.
+In general, network partitioning is a network failure that causes the members to split into multiple groups such that a member in a group cannot communicate with members in other groups. In a partition scenario, all sides of the original cluster operate independently assuming members in other sides are failed. Network partitioning is also called as _Split-Brain Syndrome_.
 
 Even though this communication failure is called as _network partitioning_, in practice a process or an entire OS that's suspending/pausing very long can cause communication interruptions. If these interruptions take long enough time to assume that the other side is crashed, the cluster splits into multiple partitions and they start operating independently. That's why any communication failure/interruption long enough can be classified as network partitioning.
 
@@ -13,7 +13,7 @@ Moreover, communication failures don't have to be symmetrical. A network failure
 
 Hazelcast handles network partitions using the following solutions:
 
-* Split-Brain Protection (Quorums): Split-Brain Protection could be used when consistency is the major concern on a network partitioning. It requires a minimum cluster size to keep a particular data structure available. When cluster size is below the defined quorum size, then subsequent operations will be rejected with a `QuorumException`. See <<split-brain-protection, Split-Brain Protection section>>.
+* Split-Brain Protection (Quorums): Split-Brain Protection could be used when consistency is the major concern on a network partitioning. It requires a minimum cluster size to keep a particular data structure available. When cluster size is below the defined quorum size, then subsequent operations are rejected with a `QuorumException`. See <<split-brain-protection, Split-Brain Protection section>>.
 * Split-Brain Recovery (Merge Policies): Split-Brain Recovery is to make data structures available and operational on both sides of a network partition, and merge their data once the network partitioning problem is resolved. See <<split-brain-recovery, Split-Brain Recovery section>>.
 
 
@@ -25,9 +25,9 @@ NOTE: The term "quorum" used in this section simply refers to the count of membe
 
 How to respond to a split-brain scenario depends on whether consistency of data or availability of your application is of primary concern. In either case, because a split-brain scenario is caused by a network failure, you must initiate an effort to identify and correct the network failure. Your cluster cannot be brought back to steady state operation until the underlying network failure is fixed. If consistency is your primary concern, you can use Hazelcast's  Split-Brain Protection feature.
 
-Hazelcast's Split-Brain Protection enables you to specify the minimum cluster size required for operations to occur. This is achieved by defining and configuring a Split-Brain Protection Cluster Quorum. If the cluster size is below the defined quorum, the operations are rejected and the rejected operations return a `QuorumException` to their callers. Additionally, it is possible to configure a quorum with a user-defined `QuorumFunction` which will be consulted to determine presence of quorum on each cluster membership change.
+Hazelcast's Split-Brain Protection enables you to specify the minimum cluster size required for operations to occur. This is achieved by defining and configuring a Split-Brain Protection Cluster Quorum. If the cluster size is below the defined quorum, the operations are rejected and the rejected operations return a `QuorumException` to their callers. Additionally, it is possible to configure a quorum with a user-defined `QuorumFunction` which is consulted to determine presence of quorum on each cluster membership change.
 
-Your application continues its operations on the remaining operating cluster. Any application instances connected to the cluster with sizes below the defined quorum will be receiving exceptions which, depending on the programming and monitoring setup, should generate alerts. The key point is that rather than applications continuing in error with stale data, they are prevented from doing so.
+Your application continues its operations on the remaining operating cluster. Any application instances connected to the cluster with sizes below the defined quorum receive exceptions which, depending on the programming and monitoring setup, should generate alerts. The key point is that rather than applications continuing in error with stale data, they are prevented from doing so.
 
 Split-Brain Protection is supported for the following Hazelcast data structures:
 
@@ -42,45 +42,43 @@ Each data structure to be protected should have the configuration added to it as
 
 ==== Time Window for Split-Brain Protection
 
-Cluster Membership is established and maintained by heartbeats. A network partitioning will present some members as being unreachable. While configurable, it is normally seconds or tens of seconds before the cluster is adjusted to exclude unreachable members. The cluster size is based on the currently understood number of members.
+Cluster Membership is established and maintained by heartbeats. A network partitioning presents some members as being unreachable. While configurable, it is normally seconds or tens of seconds before the cluster is adjusted to exclude unreachable members. The cluster size is based on the currently understood number of members.
 
-For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection, a time window to detect quorum is not satisfied anymore. Length of this window depends on the failure detector. Given guarantee is, every member will eventually detect the failed members and will reject the operation on the data structure which requires the quorum.
+For this reason, there will be a time window between the network partitioning and the application of Split-Brain Protection. Length of this window depends on the failure detector. Given guarantee is, every member eventually detects the failed members and rejects the operation on the data structure which requires the quorum.
 
-Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box `QuorumFunction`s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.  
+Starting with Hazelcast 3.10, Split-Brain Protection can be configured with new out-of-the-box ``QuorumFunction``s which determine presence of quorum independently of the cluster membership manager, taking advantage of heartbeat and other failure-detector information configured on Hazelcast members.
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
-
 
 ==== Configuring Split-Brain Protection
 
 You can set up Split-Brain Protection Cluster Quorum using either declarative or programmatic configuration.
 
-Assume that you have a 7-member Hazelcast Cluster and you want to set the minimum number of four members for the cluster to continue operating. In this case, if a split-brain happens, the sub-clusters of sizes 1, 2 and 3 will be prevented from being used. Only the sub-cluster of four members will be allowed to be used.
+Assume that you have a 7-member Hazelcast Cluster and you want to set the minimum number of four members for the cluster to continue operating. In this case, if a split-brain happens, the sub-clusters of sizes 1, 2 and 3 are prevented from being used. Only the sub-cluster of four members is allowed to be used.
 
 NOTE: It is preferable to have an odd-sized initial cluster size to prevent a single network partitioning (split-brain) from creating two equal sized clusters.
-
 
 ===== Member Count Quorum
 
 This type of quorum function determines the presence of quorum based on the count of members in the cluster, as observed by the local member's cluster membership manager and is available since Hazelcast 3.5. The following are map configurations for the example 7-member cluster scenario described above:
 
-**Declarative configuration:**
+**Declarative Configuration:**
 
-```
+[source,xml]
+----
 <hazelcast>
-....
-<quorum name="quorumRuleWithFourMembers" enabled="true">
-  <quorum-size>4</quorum-size>
-</quorum>
-
-<map name="default">
-  <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
-</map>
-....
+    ...
+    <quorum name="quorumRuleWithFourMembers" enabled="true">
+        <quorum-size>4</quorum-size>
+    </quorum>
+    <map name="default">
+        <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
+    </map>
+    ...
 </hazelcast>
-```
+----
 
-**Programmatic configuration:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -91,99 +89,84 @@ include::{javasource}/networkpartitioning/MemberCountQuorum.java[tag=mcq]
 
 The probabilistic quorum function uses a private instance of <<phi-accrual-failure-detector, Phi Accrual Cluster Failure Detector>> which is updated with member heartbeats and its parameters can be fine-tuned to determine the count of live members in the cluster, independently of the cluster's membership manager.
 
-The probabilistic quorum function can be configured with the following parameters:
+The probabilistic quorum function has the following configuration elements:
 
-|===
-|Parameter | Default Value | Description
+* `acceptable-heartbeat-pause-millis`: Duration in milliseconds corresponding to the number of potentially lost/delayed heartbeats that are accepted before considering it to be an anomaly. This margin is important to be able to survive sudden, occasional, pauses in heartbeat arrivals, due to for example garbage collection or network drops. The value must be in the [heartbeat interval , maximum no heartbeat interval] range, otherwise Hazelcast does not start. Its default value is `60000` milliseconds.
+* `suspicion-threshold`: Threshold for suspicion (φ) level. A low threshold is prone to generate many wrong suspicions but ensures a quick detection in the event of a real crash. Conversely, a high threshold generates fewer mistakes but needs more time to detect actual crashes. Its default value is `10`.
+* `max-sample-size`: Number of samples to use for calculation of mean and standard deviation of inter-arrival times. Its default value is `200`.
+* `heartbeat-interval-millis`: Bootstrap the stats with heartbeats that corresponds to this duration in milliseconds, with a rather high standard deviation (since environment is unknown in the beginning). Its default value is `5000` milliseconds.
+* `min-std-deviation-millis`: Minimum standard deviation (in milliseconds) to use for the normal distribution used when calculating phi. Too low standard deviation might result in too much sensitivity for sudden, but normal, deviations in heartbeat inter arrival times. Its default value is `100` milliseconds.
 
-|`acceptable-heartbeat-pause-millis`
-|60000
-|Duration in milliseconds corresponding to number of potentially lost/delayed heartbeats that will be accepted before considering it to be an anomaly. This margin is important to be able to survive sudden, occasional, pauses in heartbeat arrivals, due to for example garbage collection or network drops. Value must be in range \[heartbeat interval , maximum no heartbeat interval\], otherwise Hazelcast will not start.
+**Declarative Configuration:**
 
-|`suspicion-threshold`
-|10
-|Threshold for suspicion (φ) level. A low threshold is prone to generate many wrong suspicions but ensures a quick detection in the event of a real crash. Conversely, a high threshold generates fewer mistakes but needs more time to detect actual crashes.
-
-|`max-sample-size`
-|200
-|Number of samples to use for calculation of mean and standard deviation of inter-arrival times.
-
-|`heartbeat-interval-millis`
-|5000
-|Bootstrap the stats with heartbeats that corresponds to this duration in milliseconds, with a rather high standard deviation (since environment is unknown in the beginning).
-
-|`min-std-deviation-millis`
-|100
-|Minimum standard deviation (in milliseconds) to use for the normal distribution used when calculating phi. Too low standard deviation might result in too much sensitivity for sudden, but normal, deviations in heartbeat inter arrival times.
-|===
-
-**Declarative configuration**
-
-```
+[source,xml]
+----
 <hazelcast>
-  ...
-  <quorum enabled="true" name="probabilistic-quorum">
-    <quorum-size>3</quorum-size>
-    <quorum-type>READ_WRITE</quorum-type>
-    <probabilistic-quorum acceptable-heartbeat-pause-millis="5000"
+    ...
+    <quorum enabled="true" name="probabilistic-quorum">
+        <quorum-size>3</quorum-size>
+        <quorum-type>READ_WRITE</quorum-type>
+        <probabilistic-quorum acceptable-heartbeat-pause-millis="5000"
                 max-sample-size="500" suspicion-threshold="10" />
-  </quorum>
-  <set name="split-brain-protected-set">
-    <quorum-ref>probabilistic-quorum</quorum-ref>
-  </set>
+    </quorum>
+    <set name="split-brain-protected-set">
+        <quorum-ref>probabilistic-quorum</quorum-ref>
+    </set>
+    ...
 </hazelcast>
-```
+----
 
-**Programmatic configuration**
+**Programmatic Configuration:**
 
 [source,java]
 ----
 include::{javasource}/networkpartitioning/ProbabilisticQuorum.java[tag=pq]
 ----
 
-
 ===== Recently-Active Quorum Function
 
 A quorum with a recently-active quorum function can be used to implement more conservative split-brain protection by requiring that a heartbeat has been received from each member within a configurable time window since now.
 
-**Declarative configuration**
+**Declarative Configuration:**
 
-```
+[source,xml]
+----
 <hazelcast>
-  ...
-  <quorum enabled="true" name="recently-active-quorum">
-    <quorum-size>4</quorum-size>
-    <quorum-type>READ_WRITE</quorum-type>
-    <recently-active-quorum heartbeat-tolerance-millis="60000" />
-  </quorum>
-  <set name="split-brain-protected-set">
-    <quorum-ref>recently-active-quorum</quorum-ref>
-  </set>
+    ...
+    <quorum enabled="true" name="recently-active-quorum">
+        <quorum-size>4</quorum-size>
+        <quorum-type>READ_WRITE</quorum-type>
+        <recently-active-quorum heartbeat-tolerance-millis="60000" />
+    </quorum>
+    <set name="split-brain-protected-set">
+        <quorum-ref>recently-active-quorum</quorum-ref>
+    </set>
+    ...
 </hazelcast>
-```
+----
 
-**Programmatic configuration**
+**Programmatic Configuration:**
 
 [source,java]
 ----
 include::{javasource}/networkpartitioning/RecentlyActiveQuorum.java[tag=raq]
 ----
 
-
 ===== Quorum Configuration Reference
 
-Quorum configuration has the following elements:
+The quorum configuration has the following elements:
 
 * `quorum-size`: Minimum number of members required in a cluster for the cluster to remain in an operational state. If the number of members is below the defined minimum at any time, the operations are rejected and the rejected operations return a `QuorumException` to their callers.
 * `quorum-type`: Type of the cluster quorum. Available values are READ, WRITE and READ_WRITE.
 * `quorum-function-class-name`: Class name of a `QuorumFunction` implementation, allows to configure Split-Brain Protection with a custom quorum function. It cannot be used in conjunction with `probabilistic-quorum` or `recently-active-quorum`.
 * `quorum-listeners`: Declaration of quorum listeners which are notified on quorum status changes.
-8 `probabilistic-quorum`: Configures the quorum with a probabilistic quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `recently-active-quorum`. 
+8 `probabilistic-quorum`: Configures the quorum with a probabilistic quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `recently-active-quorum`.
 * `recently-active-quorum`: Configures the quorum with a recently-active quorum function. It cannot be used in conjunction with `quorum-function-class-name` or `probabilistic-quorum`.
 
-**Sample configuration with custom QuorumFunction implementation**
+**Example configuration with custom QuorumFunction implementation**
 
-```
+[source,java]
+----
 package my.domain;
 
 public class CustomQuorumFunction implements QuorumFunction {
@@ -192,17 +175,20 @@ public class CustomQuorumFunction implements QuorumFunction {
             // implement quorum detection logic here
         }
     }
-```
+----
 
-```xml
-<quorum enabled="true" name="member-count-quorum">
-   <quorum-type>READ_WRITE</quorum-type>
-   <quorum-size>3</quorum-size>
-   <quorum-function-class-name>my.domain.CustomQuorumFunction</quorum-function-class-name>
-</quorum>
-```
-
-
+[source,xml]
+----
+<hazelcast>
+    ... 
+    <quorum enabled="true" name="member-count-quorum">
+        <quorum-type>READ_WRITE</quorum-type>
+        <quorum-size>3</quorum-size>
+        <quorum-function-class-name>my.domain.CustomQuorumFunction</quorum-function-class-name>
+    </quorum>
+    ...
+</hazelcast>    
+----
 
 ==== Configuring Quorum Listeners
 
@@ -210,26 +196,26 @@ You can register quorum listeners to be notified about quorum results. Quorum li
 
 Quorum listeners can be configured via declarative or programmatic configuration. The following examples are such configurations.
 
-**Declarative:**
+**Declarative Configuration:**
 
-```
+[source,xml]
+----
 <hazelcast>
-....
-<quorum name="quorumRuleWithFourMembers" enabled="true">
-  <quorum-size>4</quorum-size>
-  <quorum-listeners>
-    <quorum-listener>com.company.quorum.FourMemberQuorumListener</quorum-listener>
-  </quorum-listeners>
-</quorum>
-
-<map name="default">
-  <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
-</map>
-....
+    ...
+    <quorum name="quorumRuleWithFourMembers" enabled="true">
+        <quorum-size>4</quorum-size>
+        <quorum-listeners>
+            <quorum-listener>com.company.quorum.FourMemberQuorumListener</quorum-listener>
+        </quorum-listeners>
+    </quorum>
+    <map name="default">
+        <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
+    </map>
+    ...
 </hazelcast>
-```
+----
 
-**Programmatic:**
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -243,7 +229,8 @@ Split-Brain Protection Quorum service gives you the ability to query quorum resu
 
 Here is a Quorum interface that you can interact with.
 
-```
+[source,java]
+----
 /**
  * {@link Quorum} provides access to the current status of a quorum.
  */
@@ -255,7 +242,8 @@ public interface Quorum {
      */
     boolean isPresent();
 }
-```
+----
+
 You can retrieve the quorum instance for a particular quorum over the quorum service, as in the following example.
 
 [source,java]
@@ -263,47 +251,45 @@ You can retrieve the quorum instance for a particular quorum over the quorum ser
 include::{javasource}/networkpartitioning/QuorumQuery.java[tag=qq]
 ----
 
-
 === Split-Brain Recovery
 
-Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will going to initiate the merge process is decided. This decision is based on the cluster size; the smaller cluster will merge into the bigger one. If they have an equal number of members, then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
+Hazelcast deploys a background task that periodically searches for split clusters. When a split is detected, the side that will initiate the merge process is decided. This decision is based on the cluster size; the smaller cluster, by member count, merges into the bigger one. If they have an equal number of members, then a hashing algorithm determines the merging cluster. When deciding the merging side, both sides ensure that there's no intersection in their member lists.
 
-After the merging side is decided, the master member (the eldest one) of the merging cluster initiates the cluster merge process by sending merge instructions to the members in its cluster.
+After the merging side is decided, the master member (the eldest one) of the merging side initiates the cluster merge process by sending merge instructions to the members in its cluster.
 
-While recovering from partitioning, Hazelcast uses merge policies for supported data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging data. Hazelcast provides an interface to be implemented and also a couple of out-of-the-box policies. Data structures without split-brain support discard the data from merging side.
+While recovering from partitioning, Hazelcast uses merge policies for supported data structures to resolve data conflicts between split clusters. A merge policy is a callback function to resolve conflicts between the existing and merging data. Hazelcast provides an interface to be implemented and also a selection of out-of-the-box policies. Data structures without split-brain support discard the data from merging side.
 
-Each member of the merging cluster will do the following:
+Each member of the merging cluster:
 
-
-- Close all of its network connections (detach from its cluster).
-- Take a snapshot of local data structures which support split-brain recovery.
-- Discard all data structure data.
-- Join to the new cluster as lite member.
-- Send merge operations to the new cluster from local snapshots.
+* closes all of its network connections (detach from its cluster)
+* takes a snapshot of local data structures which support split-brain recovery
+* discards all data structure data
+* joins to the new cluster as lite member
+* sends merge operations to the new cluster from local snapshots.
 
 For more information, please see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
 
 ==== Merge Policies
 
-Since Hazelcast 3.10 all merge policies are implementing the unified interface `com.hazelcast.spi.SplitBrainMergePolicy`. We provide the following out-of-the-box implementations:
+Since Hazelcast 3.10 all merge policies implement the unified interface `com.hazelcast.spi.SplitBrainMergePolicy`. We provide the following out-of-the-box implementations:
 
-* `DiscardMergePolicy`: the entry from the smaller cluster will be discarded.
-* `ExpirationTimeMergePolicy`: the entry with the higher expiration time wins.
-* `HigherHitsMergePolicy`: the entry with the higher number of hits wins.
-* `HyperLogLogMergePolicy`: specialized merge policy for the `CardinalityEstimator`, which uses the default merge algorithm from HyperLogLog research, keeping the max register value of the two given instances.
-* `LatestAccessMergePolicy`: the entry with the latest access wins.
-* `LatestUpdateMergePolicy`: the entry with the latest update wins.
+* `DiscardMergePolicy`: The entry from the smaller cluster is discarded.
+* `ExpirationTimeMergePolicy`: The entry with the higher expiration time wins.
+* `HigherHitsMergePolicy`: The entry with the higher number of hits wins.
+* `HyperLogLogMergePolicy`: Specialized merge policy for the `CardinalityEstimator`, which uses the default merge algorithm from HyperLogLog research, keeping the max register value of the two given instances.
+* `LatestAccessMergePolicy`: The entry with the latest access wins.
+* `LatestUpdateMergePolicy`: The entry with the latest update wins.
 * `PassThroughMergePolicy`: the entry from the smaller cluster wins.
-* `PutIfAbsentMergePolicy`: the entry from the smaller cluster wins if it doesn't exist in the cluster.
+* `PutIfAbsentMergePolicy`: The entry from the smaller cluster wins if it doesn't exist in the cluster.
 
-Additionally you can develop a custom merge policy by implementing the `SplitBrainMergePolicy` interface.
+Additionally you can develop a custom merge policy by implementing the `SplitBrainMergePolicy` interface, as explained in the <<custom-merge-policies, Custom Merge Policies section>>
 
 ==== Supported Data Structures
 
 The following data structures support split-brain recovery:
 
-* `IMap` (including also High-Density Memory Store backed IMap)
-* `ICache` (including also High-Density Memory Store backed IMap)
+* `IMap` (including High-Density Memory Store backed IMap)
+* `ICache` (including High-Density Memory Store backed IMap)
 * `ReplicatedMap`
 * `MultiMap`
 * `IAtomicLong`
@@ -311,13 +297,15 @@ The following data structures support split-brain recovery:
 * `IQueue`
 * `IList`
 * `ISet`
-* `Ringbuffer`
+* `RingBuffer`
 * `CardinalityEstimator`
 * `ScheduledExecutorService`
 
-The statistic based out-of-the-box merge policies are just supported by `IMap`, `ICache`, `ReplicatedMap` and `MultiMap`. The `HyperLogLogMergePolicy` is just supported by the `CardinalityEstimator`.
+The statistic based out-of-the-box merge policies are only supported by `IMap`, `ICache`, `ReplicatedMap` and `MultiMap`. The `HyperLogLogMergePolicy` is supported by the `CardinalityEstimator`.
 
-Please have a look at `com.hazelcast.spi.merge.SplitBrainMergeTypes` for a complete overview of supported merge types of each data structure. There is a config validation which checks these constraints to provide fail-fast behavior for invalid configurations.
+IMPORTANT: Except the `CardinalityEstimator` data structure, the default merge policy for all the Hazelcast data structures that support split-brain recovery (listed above) is `PutIfAbsentMergePolicy`. For the `CardinalityEstimator` data structure, the default merge policy is `HyperLogLogMergePolicy`.
+
+See also the <<merge-types, Merge Types section>> for a complete overview of supported merge types of each data structure. There is a config validation which checks these constraints to provide fail-fast behavior for invalid configurations.
 
 NOTE: For the other data structures, e.g., `ISemaphore`, `ICountdownLatch` and `ILock`, the instance from the smaller cluster is discarded during the split-brain recovery.
 
@@ -325,54 +313,51 @@ NOTE: For the other data structures, e.g., `ISemaphore`, `ICountdownLatch` and `
 
 The merge policies are configured via a `MergePolicyConfig`, which can be set for all supported data structures. The only exception is `ICache`, which just accepts the merge policy classname (due to compatibility reasons with older Hazelcast clients). For `ICache`, all other configurable merge parameters are the default values from `MergePolicyConfig`.
 
-For your custom merge policy you should set the full class name of your implementation to the `merge-policy` configuration. For the out-of-the-box merge policies the simple classname is enough.
+For custom merge policies you should set the full class name of your implementation as the `merge-policy` configuration. For the out-of-the-box merge policies the simple classname is enough.
 
 ===== Declarative Configuration
 
 Here are examples how merge policies can be specified for various data structures:
 
-```
+[source,xml]
+----
 <hazelcast>
-  ...
-  <map name="default">
-     ...
-     <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>     
-  </map>
+    ...
+    <map name="default">
+        <merge-policy batch-size="100">LatestUpdateMergePolicy</merge-policy>
+    </map>
 
-  <replicatedmap name="default">
-    ...
-    <merge-policy batch-size="100">org.example.merge.MyMergePolicy</merge-policy>
-  </replicatedmap>
+    <replicatedmap name="default">
+        <merge-policy batch-size="100">org.example.merge.MyMergePolicy</merge-policy>
+    </replicatedmap>
 
-  <multimap name="default">
-    ...
-    <merge-policy batch-size="50">HigherHitsMergePolicy</merge-policy>
-  </multimap>
+    <multimap name="default">
+        <merge-policy batch-size="50">HigherHitsMergePolicy</merge-policy>
+    </multimap>
 
-  <list name="default">
+    <list name="default">
+        <merge-policy batch-size="500">org.example.merge.MyMergePolicy</merge-policy>
+    </list>
+
+    <atomic-long name="default">
+        <merge-policy>PutIfAbsentMergePolicy</merge-policy>
+    </atomic-long>
     ...
-    <merge-policy batch-size="500">org.example.merge.MyMergePolicy</merge-policy>
-  </list>
-  
-  <atomic-long name="default">
-    ...
-    <merge-policy>PutIfAbsentMergePolicy</merge-policy>
-  </atomic-long>
-  ...
 </hazelcast>
-```
+----
 
 Here is how merge policies are specified for `ICache` (it is the same configuration tag, but lacks the support for additional attributes like `batch-size`):
 
-```
+[source,xml]
+----
 <hazelcast>
-   ...
-   <cache name="default">
-      ...
-      <merge-policy>org.example.merge.MyMergePolicy</merge-policy>        
-   </cache>
-</hazelcast>    
-```
+    ...
+    <cache name="default">
+        <merge-policy>org.example.merge.MyMergePolicy</merge-policy>
+    </cache>
+    ...
+</hazelcast>
+----
 
 ===== Programmatic Configuration
 
@@ -385,26 +370,28 @@ include::{javasource}/networkpartitioning/MergePolicy.java[tag=mp]
 
 Here is how merge policies are specified for `ICache` (you can only set the merge policy classname):
 
-```
+[source,java]
+----
 CacheConfig mapConfig = new CacheConfig()
   .setName("default")
   .setMergePolicy("org.example.merge.MyMergePolicy");
 
 Config config = new Config()
   .addMapConfig(mapConfig);
-```
+----
 
 ==== Custom Merge Policies
 
 To implement a custom merge policy you have to implement `com.hazelcast.spi.SplitBrainMergePolicy`:
 
-```
+[source,java]
+----
 public interface SplitBrainMergePolicy<V, T extends MergingValue<V>>
     extends DataSerializable {
 
   V merge(T mergingValue, T existingValue);
 }
-```
+----
 
 `MergingValue` is an interface which describes a merge type.
 
@@ -416,38 +403,42 @@ A merge type defines an attribute which is required by a merge policy and provid
 
 `MergingValue` is the base type, which is required by all merge policies and provided by all data structures. It contains the value of the merged data in raw and deserialized format:
 
-```
+[source,java]
+----
 public interface MergingValue<V> {
 
   V getValue();
 
   <DV> DV getDeserializedValue();
 }
-```
+----
 
 The most common extension is `MergingEntry`, which additionally provides the key in raw and deserialized format (used by all key-based data structures like `IMap` or `ICache`):
 
-```
+[source,java]
+----
 public interface MergingEntry<K, V> extends MergingValue<V> {
 
   K getKey();
 
   <DK> DK getDeserializedKey();
 }
-```
+----
 
-In addition we have a bunch of specialized merge types, e.g. for provided statistics. An example is `MergingHits`, which provides the hit counter of the merge data:
+In addition we have a bunch of specialized merge types, e.g., for provided statistics. An example is `MergingHits`, which provides the hit counter of the merge data:
 
-```
+[source,java]
+----
 public interface MergingHits<V> extends MergingValue<V> {
 
   long getHits();
 }
-```
+----
 
 The class `com.hazelcast.spi.merge.SplitBrainMergeTypes` contains composed interfaces, which show the provided merge types and required merge policy return type for each data structure:
 
-```
+[source,java]
+----
 public interface ReplicatedMapMergeTypes extends MergingEntry<Object, Object>,
     MergingCreationTime<Object>, MergingHits<Object>, MergingLastAccessTime<Object>,
     MergingLastUpdateTime<Object>, MergingTTL<Object> {
@@ -455,21 +446,102 @@ public interface ReplicatedMapMergeTypes extends MergingEntry<Object, Object>,
 
 public interface QueueMergeTypes extends MergingValue<Collection<Object>> {
 }
-```
+----
 
 The `ReplicatedMap` provides key/value merge data, with the creation time, access hits, last access time, last update time and TTL. The return type of the merge policy is `Object`.
 
 The `IQueue` just provides a collection of values. The return type is also a `Collection<Object>`.
 
-The following sections will show various examples how to implement this interface for all data structures, specific merge types or a specific data structure.
+The following is the full list of merge types:
+
+* `MergingValue`: Represents the value of the merged data.
+* `MergingEntry`: Represents the key and value of the merged data.
+* `MergingCreationTime`: Represents the creation time of the merging process.
+* `MergingHits`: Represents the access hits of the merged data.
+* `MergingLastAccessTime`: Represents the last time when the merged data is accessed.
+* `MergingLastUpdateTime`: Represents the last time when the merged data is updated.
+* `MergingTTL`: Represents the time-to-live value of the merged data.
+* `MergingMaxIdle`: Represents the maximum idle timeout value of the merged data.
+* `MergingCost`: Represents the memory costs for the merging process after a split-brain.
+* `MergingVersion`: Represents the version of the merged data.
+* `MergingExpirationTime`: Represents the expiration time of the merged data.
+* `MergingLastStoredTime`: Represents the last stored time of the merged data.
+
+And the following table shows the merge types provided by each data structure:
+
+.Merge Types
+[cols="1,3a"]
+|===
+|Data Structure |Merge Type
+
+| `IMap`
+| 
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+* `MergingMaxIdle`
+* `MergingCosts`
+* `MergingVersion`
+* `MergingExpirationTime`
+* `MergingLastStoredTime`
+| `ICache`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+| `ReplicatedMap`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+* `MergingTTL`
+| `MultiMap`
+|
+
+* `MergingEntry`
+* `MergingCreationTime`
+* `MergingHits`
+* `MergingLastAccessTime`
+* `MergingLastUpdateTime`
+| `IQueue`, `ISet`, `IList`, `Ringbuffer`
+|
+
+* `MergingValue`
+| `IAtomicLong`, `IAtomicReference`
+|
+
+* `MergingValue`
+| `CardinalityEstimator`
+|
+
+* `MergingEntry`
+| `ScheduledExecutorService`
+|
+
+* `MergingEntry`
+|===
+
+
+The following sections show various examples on how to implement merge type interfaces for all data structures, specific merge types or a specific data structure.
 
 ===== Accessing Deserialized Values
 
 `MergingValue.getValue()` and `MergingEntry.getKey()` always return the data in the in-memory format of the data structure. For some data structure like `IMap` this depends on your configuration. Other data structure like `ISet` or `IList` always use the `BINARY` in-memory format. So it is very likely, that you will receive a `Data` instance as key or value from those methods.
 
-If you need the deserialized key or value, you have to call `MergingValue.getDeserializedValue()` or `MergingEntry.getDeserializedKey()`. The deserialization is done lazily on that method call, since it's quite expensive and should be avoided if the result is not needed. This will also require the deserialized classes to be on the classpath of the server. Otherwise a `ClassNotFoundException` will be thrown.
+If you need the deserialized key or value, you have to call `MergingValue.getDeserializedValue()` or `MergingEntry.getDeserializedKey()`. The deserialization is done lazily on that method call, since it's quite expensive and should be avoided if the result is not needed. This also requires the deserialized classes to be on the classpath of the server. Otherwise a `ClassNotFoundException` is thrown.
 
-This is an example which checks if the (deserialized) value of the `mergingValue` or `existingValue` is an `Integer`. If so it will be merged, otherwise `null` is returned (which will remove the entry):
+This is an example which checks if the (deserialized) value of the `mergingValue` or `existingValue` is an `Integer`. If so it is merged, otherwise `null` is returned (which  removes the entry):
 
 
 [source,java]
@@ -508,10 +580,10 @@ If you need access to external references in your merge policy, you can use the 
 include::{javasource}/networkpartitioning/UserContextMergePolicy.java[tag=ucmp]
 ----
 
-
 The `UserContext` can be setup like this:
 
-```
+[source,java]
+----
 MergePolicyConfig mergePolicyConfig = new MergePolicyConfig()
   .setPolicy(UserContextMergePolicy.class.getName());
 
@@ -524,17 +596,16 @@ userContext.put(TruthProvider.TRUTH_PROVIDER_ID, new ExampleTruthProvider());
 Config config = new Config()
   .addMapConfig(mapConfig)
   .setUserContext(userContext);
-  
+
 Hazelcast.newHazelcastInstance(config);
-```
+----
 
 [IMPORTANT]
 ====
-The merge operations are executed on the partition threads. Database accesses are slow compared to in-memory operations. The `SplitBrainMergePolicy.merge()` method will be called for every key-value pair or every collection from your smaller cluster, which has a merge policy defined. So there can be millions of database accesses due to a merge policy, which implements this. Be aware that this can block your cluster for a long time or overload your database due to the high amount of queries.
+The merge operations are executed on the partition threads. Database accesses are slow compared to in-memory operations. The `SplitBrainMergePolicy.merge()` method is called for every key-value pair or every collection from your smaller cluster, which has a merge policy defined. So there can be millions of database accesses due to a merge policy, which implements this. Be aware that this can block your cluster for a long time or overload your database due to the high amount of queries.
 
-Also the `com.hazelcast.core.LifeCycleEvent.MERGED` will be thrown after a timeout (we don't wait forever for merge operations to continue). At the moment this timeout is 500 milliseconds per merged item or entry, but at least 5 seconds. If your database is slow, you might get the `LifeCycleEvent` while there are still merge operations in progress.
+Also the `com.hazelcast.core.LifeCycleEvent.MERGED` is thrown after a timeout (we don't wait forever for merge operations to continue). At the moment this timeout is 500 milliseconds per merged item or entry, but at least 5 seconds. If your database is slow, you might get the `LifeCycleEvent` while there are still merge operations in progress.
 ====
-
 
 ===== Merge Policies With Multiple Merge Types
 
@@ -545,8 +616,7 @@ You can also write a merge policy, which requires multiple merge types. This mer
 include::{javasource}/networkpartitioning/ComposedHitsAndCreationTimeMergePolicy.java[tag=ch]
 ----
 
-
-If you configure this merge policy on a data structures, which does not provide these merge types, you will get an `InvalidConfigurationException` with a message like:
+If you configure this merge policy on a data structures, which does not provide these merge types, you get an `InvalidConfigurationException` with a message like:
 
 ```
 The merge policy org.example.merge.ComposedHitsAndCreationTimeMergePolicy
@@ -557,7 +627,7 @@ See SplitBrainMergingTypes for supported merging types.
 
 ===== Merge Policies For Specific Data Structures
 
-It's also possible to restrict a merge policy to a specific data structure. This merge policy will only work on `IMap`:
+It's also possible to restrict a merge policy to a specific data structure. This merge policy, for example, only works on `IMap`:
 
 [source,java]
 ----
@@ -565,7 +635,7 @@ include::{javasource}/networkpartitioning/MapEntryCostsMergePolicy.java[tag=me]
 ----
 
 
-If you configure it on other data structures, you will get an `InvalidConfigurationException` with a message like:
+If you configure it on other data structures, you get an `InvalidConfigurationException` with a message like:
 
 ```
 The merge policy org.example.merge.MapEntryCostsMergePolicy
@@ -574,7 +644,7 @@ com.hazelcast.spi.merge.SplitBrainMergeTypes$MapMergeTypes.
 See SplitBrainMergingTypes for supported merging types.
 ```
 
-This is another example for a merge policy, which will only work on the `IAtomicReference` and uses a named type parameter `T`:
+This is another example for a merge policy, which only works on the `IAtomicReference` and uses a named type parameter `T`:
 
 [source,java]
 ----
@@ -597,4 +667,4 @@ Here are some best practices when implementing your own merge policy
 
 * Only call `MergingValue.getDeserializedValue()` and `MergingEntry.getDeserializedKey()` when you really need the deserialized value to save costs (CPU and memory) and avoid `ClassNotFoundException`.
 * If you want to return one of the given values (merging or existing), it's best to return `mergingValue.getValue()` or `existingValue.getValue()`, since they are already in the correct in-memory format of the data structure. If you return a deserialized value, it might need to be serialized again, which are avoidable costs.
-* Be careful with slow operations in the merge policy (like database accesses), since they will block your partition threads. Also the `LifeCycleEvent.MERGED` or `LifeCycleEvent.MERGE_FAILED` may be thrown too early, if the merge operations take too long to finish.
+* Be careful with slow operations in the merge policy (like database accesses), since they block your partition threads. Also the `LifeCycleEvent.MERGED` or `LifeCycleEvent.MERGE_FAILED` may be thrown too early, if the merge operations take too long to finish.

@@ -11,7 +11,7 @@ import java.util.Map;
 public class CQCClient {
 
     public static void main(String[] args) throws Exception{
-//tag::cqcclient[]
+        //tag::cqcclient[]
         QueryCacheConfig queryCacheConfig = new QueryCacheConfig("cache-name");
         queryCacheConfig.getPredicateConfig().setImplementation(new OddKeysPredicate());
 
@@ -22,7 +22,7 @@ public class CQCClient {
         IMap<Integer, Integer> clientMap = (IMap) client.getMap("map-name");
 
         QueryCache<Integer, Integer> cache = clientMap.getQueryCache("cache-name");
-//end::cqcclient[]
+        //end::cqcclient[]
     }
 
     private static class OddKeysPredicate implements Predicate<Integer, Integer> {

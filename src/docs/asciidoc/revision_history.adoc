@@ -5,73 +5,87 @@
 
 This chapter lists the changes made to this document from the previous release.
 
-NOTE: Please refer to the http://docs.hazelcast.org/docs/rn/[Release Notes] for the new features, enhancements and fixes performed for each Hazelcast release.*
+NOTE: Please refer to the https://docs.hazelcast.org/docs/rn/[Release Notes] for the new features, enhancements and fixes performed for each Hazelcast release.
 
 
 .Revision History
+[cols="2,5a"]
 |===
 
-|Chapter|Section|Description
+|Chapter|Description
+
+| <<getting-started, Getting Started>>
+| The "Upgrading from 2.x and 3.x" sections in this chapter have been moved to the <<migration-guides, Migration Guides appendix>>.
+
+|
+| Added <<deploying-using-hazelcast-cloud-beta, Deploying using Hazelcast Cloud>> as a new section.
+
+| <<understanding-configuration, Understanding Configuration>>
+| Added <<configuring-declaratively-yaml, Configuring Declaratively with YAML>> as a new section along with the YAML mentions in the whole chapter.
+
+| <<setting-up-clusters, Setting Up Clusters>>
+| Added <<advanced-network-configuration, Advanced Network Configuration>> as a new section.
 
 | <<distributed-data-structures, Distributed Data Structures>>
-| <<reliable-topic, Reliable Topic>>
-| Enhanced the content to clarify the relation between Reliable Topic and Ringbuffer data structures.
+| Added a filtering example for Ringbuffer to the <<reading-batched-items, Reading Batched Items section>>.
+
+|
+| Added <<metadata-policy, Metadata Policy section>> as a new section.
 
 | <<distributed-query, Distributed Query>>
-|
-| Added <<using-this-as-an-attribute, Using "this" as an Attribute>> as a new section to explain how you can use the keyword "this" in your queries.
-
-| <<hazelcast-jcache, Hazelcast JCache>>
-| <<defining-a-custom-expirypolicy, Defining a Custom ExpiryPolicy>>
-| Updated the content to mention about the method `setExpiryPolicy` which associates certain keys with custom expiry policies.
+| Added <<composite-indexes, Composite Indexes>> as a new section.
 
 |
-| <<jcache-api, JCache API>>
-| Added content related to eager expiration.
+| Added <<querying-json-strings, Querying JSON Strings>> as a new section.
+
+| <<cp-subsystem, CP Subsystem>>
+| Added as a new chapter.
+
+| <<storage, Storage>>
+| Added content related to the option for removing Hot Restart data automatically, i.e., `auto-remove-stale-data`, to the <<restart-of-a-member-in-running-cluster, Restart of a Member in Running Cluster section>>.
+
+|
+| Added content related to sharing the base directory for the Hot Restart feature. See the <<configuring-hot-restart, Configuring Hot Restart section>>.
 
 | <<hazelcast-clients, Hazelcast Clients>>
-| <<java-client, Java Client>>
-| Added <<configuring-client-connection-retry, Configuring Client Connection Retry>> as a new section.
+| Added <<defining-client-labels, Defining Client Labels>> as a new section to explain how you can configure and use the client labels.
 
-| <<serialization, Serialization>>
 |
-| Added <<untrusted-deserialization-protection, Untrusted Deserialization Protection>> as a new section.
+| Added the <<configuring-hazelcast-cloud, Configuring Hazelcast Cloud section>> to explain how you can connect your Java clients to a cluster deployed on Hazelcast Cloud.
 
 | <<management, Management>>
-|
-| Added <<map-index-statistics, Map Index Statistics>> as a new section describing how to access map index statistics.
+| Added <<toggle-scripting-support, Toggle Scripting Support>> as a new section.
 
 |
-| <<diagnostics, Diagnostics>>
-| Added content for the new <<operationthreadsamples, OperationThreadSamples>> plugin.
+| Added the description for the new HTTP call: `http://127.0.0.1:${PORT}/hazelcast/health/ready`. It checks if a member is ready to be used.
+
+|
+| Added <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups>> as a new section.
 
 | <<security, Security>>
-| <<tlsssl, TLS/SSL>>
-| Performed a full review and updated the content to include the new properties `keyStoreType` and `trustStoreType`.
+| Added <<handling-permissions-when-a-new-member-joins, Handling Permissions When a New Member Joins>> as a new section.
 
 |
-|
-| Added <<using-boringssl, Using BoringSSL>> as a new section.
+| Added <<fips-140-2, FIPS 140-2>> as a new section to explain the Hazelcast's security configurations in the FIPS mode.
 
-| <<wan-replication, WAN Replication>>
-|
-| Added URL information to synchronize all the maps in source and target clusters.
+| <<performance, Performance>>
+| Added <<pipelining, Pipelining>> as a new section.
 
-|
-| <<configuring-consumer, Configuring Consumer>> and <<event-filtering-api, Event Filtering API>>
-| Added content related to the new event type `LOADED` and configuration element `persist-wan-replicated-data`.
+| <<wan, WAN>>
+| Added <<dynamically-adding-wan-publishers, Dynamically Adding WAN Publishers>> as a new section.
 
 |
-|
-| Added the REST URL for clearing the event queues. See the <<queue-capacity, Queue Capacity section>>.
+| Added <<tune-wr, Tuning WAN Replication For Lower Latencies and Higher Throughput>> as a new section.
 
-| <<hazelcast-plugins, Hazelcast Plugins>>
 |
-| Added as a new chapter to describe the plugins using which you can extend Hazelcast IMDG’s functionalities.
+| Added description for the `publisher-id` configuration attribute.
+
+|<<network-partitioning, Network Partitioning>>
+|Enhanced the <<merge-types, Merge Types section>> by adding the descriptions of all merge types.
 
 |<<system-properties, System Properties>>
-|
-|Added definitions for the following system properties:
+|Added the descriptions for the following new system properties:
 
-* hazelcast.socket.buffer.direct
+* `hazelcast.cluster.version.auto.upgrade.enabled`
+* `hazelcast.cluster.version.auto.upgrade.min.cluster.size`
 |===

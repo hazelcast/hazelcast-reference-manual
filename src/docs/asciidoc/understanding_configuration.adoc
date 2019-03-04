@@ -2,7 +2,7 @@
 [[understanding-configuration]]
 == Understanding Configuration
 
-This chapter describes the options to configure your Hazelcast applications and explains the utilities which you can make use of while configuring. You can configure Hazelcast using one or mix of the following options: 
+This chapter describes the options to configure your Hazelcast applications and explains the utilities which you can make use of while configuring. You can configure Hazelcast using one or mix of the following options:
 
 * Declarative way
 * Programmatic way
@@ -13,61 +13,110 @@ This chapter describes the options to configure your Hazelcast applications and 
 [[configuring-declaratively]]
 === Configuring Declaratively
 
-This is the configuration option where you use an XML configuration file. When you download and unzip `hazelcast-<version>.zip`, you will see the following files present in `/bin` folder, which are standard XML-formatted configuration files:
+This is the configuration option where you use an XML or a YAML configuration file. When you download and unzip `hazelcast-<version>
+.zip`, you see the following files present in the  `/bin` folder, which are standard configuration files:
 
-* `hazelcast.xml`: Default declarative configuration file for Hazelcast. The configuration in this XML file should be fine for most of the Hazelcast users. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties.
+* `hazelcast.xml`: Default declarative XML configuration file for Hazelcast. The configuration for the distributed data structures
+ in this XML file should be fine for most of the Hazelcast users. If not, you can tailor this XML file according to your needs by adding/removing/modifying properties. Also, see the <<setting-up-clusters, Setting Up Clusters chapter>> for the network related configurations.
+* `hazelcast.yaml`: Default YAML configuration file identical to `hazelcast.xml` in content.
 * `hazelcast-full-example.xml`: Configuration file which includes all Hazelcast configuration elements and attributes with their descriptions. It is the "superset" of `hazelcast.xml`. You can use `hazelcast-full-example.xml` as a reference document to learn about any element or attribute, or you can change its name to `hazelcast.xml` and start to use it as your Hazelcast configuration file.
+* `hazelcast-full-example.yaml`: YAML configuration file identical to `hazelcast-full-example.xml` in content.
 
 A part of `hazelcast.xml` is shown as an example below.
 
 [source,xml]
 ----
-<group>
-    <name>dev</name>
-</group>
-<management-center enabled="false">http://localhost:8080/mancenter</management-center>
-<network>
-     <port auto-increment="true" port-count="100">5701</port>
-     <outbound-ports>
-     <!--
-     Allowed port range when connecting to other members.
-     0 or * means the port provided by the system.
-     -->
-         <ports>0</ports>
-     </outbound-ports>
-     <join>
-         <multicast enabled="true">
-	     <multicast-group>224.2.2.3</multicast-group>
-	     <multicast-port>54327</multicast-port>
-	 </multicast>
-	 <tcp-ip enabled="false">
-	     <interface>127.0.0.1</interface>
-	     <member-list>
-	         <member>127.0.0.1</member>
-	     </member-list>
-	 </tcp-ip>
-    </join>
-</network>
-<map name="default">
-    <time-to-live-seconds>0</time-to-live-seconds>
-</map>
+<hazelcast>
+    ...
+    <group>
+        <name>dev</name>
+    </group>
+    <management-center enabled="false">http://localhost:8080/mancenter</management-center>
+    <network>
+        <port auto-increment="true" port-count="100">5701</port>
+        <outbound-ports>
+        <!--
+        Allowed port range when connecting to other members.
+        0 or * means the port provided by the system.
+        -->
+            <ports>0</ports>
+        </outbound-ports>
+        <join>
+            <multicast enabled="true">
+                <multicast-group>224.2.2.3</multicast-group>
+                <multicast-port>54327</multicast-port>
+	    </multicast>
+	    <tcp-ip enabled="false">
+	        <interface>127.0.0.1</interface>
+                <member-list>
+                    <member>127.0.0.1</member>
+                </member-list>
+            </tcp-ip>
+        </join>
+    </network>
+    <map name="default">
+        <time-to-live-seconds>0</time-to-live-seconds>
+    </map>
+    ...
+</hazelcast>
 ----
+
+The identical part of the configuration extracted from `hazelcast.yaml` is shown as below.
+
+[source,yaml]
+----
+hazelcast:
+  ...
+  group:
+    name: dev
+    password: dev-pass
+  management-center:
+    enabled: false
+    url: http://localhost:8080/hazelcast-mancenter
+  network:
+    port:
+      auto-increment: true
+      port-count: 100
+      port: 5701
+    outbound-ports:
+      # Allowed port range when connecting to other nodes.
+      # 0 or * means use system provided port.
+      - 0
+    join:
+      multicast:
+        enabled: true
+        multicast-group: 224.2.2.3
+        multicast-port: 54327
+      tcp-ip:
+        enabled: false
+        interface: 127.0.0.1
+        member-list:
+          - 127.0.0.1
+  map:
+    default:
+      time-to-live-seconds: 0
+    ...
+----
+
 
 [[composing-declarative-configuration]]
 ==== Composing Declarative Configuration
 
-You can compose the declarative configuration of your Hazelcast member or Hazelcast client from multiple declarative configuration snippets. In order to compose a declarative configuration, you can use the `<import/>` element to load different declarative configuration files.
+You can compose the declarative configuration of your Hazelcast member or Hazelcast client from multiple declarative
+configuration snippets. In order to compose a declarative configuration, you can `import` different
+declarative configuration files. Composing configuration files is supported both in XML and YAML configurations with the
+limitation that only configuration files written in the same language can be composed.
 
-Let's say you want to compose the declarative configuration for Hazelcast out of two configurations: `development-group-config.xml` and `development-network-config.xml`. These two configurations are shown below.
+Let's say you want to compose the declarative configuration for Hazelcast out of two XML configurations: `development-group-config.xml` and `development-network-config.xml`. These two configurations are shown below.
 
 `development-group-config.xml`:
 
 [source,xml]
 ----
 <hazelcast>
-  <group>
-      <name>dev</name>
-  </group>
+    <group>
+        <name>dev</name>
+    </group>
 </hazelcast>
 ----
 
@@ -76,15 +125,15 @@ Let's say you want to compose the declarative configuration for Hazelcast out of
 [source,xml]
 ----
 <hazelcast>
-  <network>
-    <port auto-increment="true" port-count="100">5701</port>
-    <join>
-        <multicast enabled="true">
-            <multicast-group>224.2.2.3</multicast-group>
-            <multicast-port>54327</multicast-port>
-        </multicast>
-    </join>
-  </network>
+    <network>
+        <port auto-increment="true" port-count="100">5701</port>
+        <join>
+            <multicast enabled="true">
+                <multicast-group>224.2.2.3</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+        </join>
+    </network>
 </hazelcast>
 ----
 
@@ -93,10 +142,49 @@ To get your example Hazelcast declarative configuration out of the above two, us
 [source,xml]
 ----
 <hazelcast>
-  <import resource="development-group-config.xml"/>
-  <import resource="development-network-config.xml"/>
+    <import resource="development-group-config.xml"/>
+    <import resource="development-network-config.xml"/>
 </hazelcast>
 ----
+
+The above example using the YAML configuration files looks like the following:
+
+`development-group-config.yaml`:
+
+[source,yaml]
+----
+hazelcast:
+  group:
+    name: dev
+----
+
+`development-network-config.yaml`:
+
+[source,yaml]
+----
+hazelcast:
+  network:
+    port:
+      auto-increment: true
+      port-count: 100
+      port: 5701
+    join:
+      multicast:
+        enabled: true
+        multicast-group: 224.2.2.3
+        multicast-port: 54327
+----
+
+Composing the above two YAML configuration files needs them to be imported as shown below.
+
+[source,yaml]
+----
+hazelcast:
+  import:
+    - development-group-config.yaml
+    - development-network-config.yaml
+----
+
 
 This feature also applies to the declarative configuration of Hazelcast client. Please see the following examples.
 
@@ -106,9 +194,9 @@ This feature also applies to the declarative configuration of Hazelcast client. 
 [source,xml]
 ----
 <hazelcast-client>
-  <group>
-      <name>dev</name>
-  </group>
+    <group>
+        <name>dev</name>
+    </group>
 </hazelcast-client>
 ----
 
@@ -130,34 +218,201 @@ To get a Hazelcast client declarative configuration from the above two examples,
 [source,xml]
 ----
 <hazelcast-client>
-  <import resource="client-group-config.xml"/>
-  <import resource="client-network-config.xml"/>
+    <import resource="client-group-config.xml"/>
+    <import resource="client-network-config.xml"/>
 </hazelcast>
 ----
+
+The same client configuration using the YAML language is shown below.
+
+
+`client-group-config.yaml`:
+
+[source,yaml]
+----
+hazelcast-client:
+  group:
+    name: dev
+----
+
+`client-network-config.yaml`:
+
+[source,yaml]
+----
+hazelcast-client:
+  network:
+    cluster-members:
+      - 127.0.0.1:7000
+----
+
+Composing a Hazelcast client declarative configuration by importing the above two examples is shown below.
+
+[source,yaml]
+----
+hazelcast-client:
+  import:
+    - client-group-config.yaml
+    - client-network-config.yaml
+----
+
 
 NOTE: Use `<import/>` element on top level of the XML hierarchy.
 
-Using the element `<import>`, you can also load XML resources from classpath and file system:
+NOTE: Use the `import` mapping on top level of the YAML hierarchy.
+
+Resources from the classpath and file system may also be used to compose a declarative configuration:
 
 [source,xml]
 ----
 <hazelcast>
-  <import resource="file:///etc/hazelcast/development-group-config.xml"/> <!-- loaded from filesystem -->
-  <import resource="classpath:development-network-config.xml"/>  <!-- loaded from classpath -->
+    <import resource="file:///etc/hazelcast/development-group-config.xml"/> <!-- loaded from filesystem -->
+    <import resource="classpath:development-network-config.xml"/>  <!-- loaded from classpath -->
 </hazelcast>
 ----
 
-The element `<import>` supports variables too. Please see the following example snippet:
+[source,yaml]
+----
+hazelcast:
+  import:
+    # loaded from filesystem
+    - file:///etc/hazelcast/development-group-config.yaml
+    # loaded from classpath
+    - classpath:development-network-config.yaml
+----
+
+Importing resources with variables in their names is also supported. Please see the following example snippets:
 
 [source,xml]
 ----
 <hazelcast>
-  <import resource="${environment}-group-config.xml"/>
-  <import resource="${environment}-network-config.xml"/>
+    <import resource="${environment}-group-config.xml"/>
+    <import resource="${environment}-network-config.xml"/>
 </hazelcast>
+----
+
+[source,yaml]
+----
+hazelcast:
+  import:
+    - ${environment}-group-config.yaml
+    - ${environment}-network-config.yaml
 ----
 
 NOTE: You can refer to the <<using-variables, Using Variables section>> to learn how you can set the configuration elements with variables.
+
+[[configuring-declaratively-yaml]]
+==== Configuring Declaratively with YAML
+
+You can configure the Hazelcast members and Java clients declaratively with YAML configuration files in
+installations of Hazelcast running on Java runtime version 8 or above.
+
+The structure of the YAML configuration follows the structure of the XML configuration. Therefore, you can rewrite the existing XML
+configurations in YAML easily. There are some differences between the XML and YAML languages that make the two declarative configurations to slightly derive as the the following examples show.
+
+In the YAML declarative configuration, mappings are used in which the name of the mapping node needs to be unique within
+its enclosing mapping. See the following example with configuring two maps in the same configuration file.
+
+In the XML configuration files, we have two `<map>` elements as shown below.
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="map1">
+        <!-- map1 configuration -->
+    </map>
+    <map name="map2">
+        <!-- map2 configuration -->
+    </map>
+    ...
+</hazelcast>
+----
+
+In the YAML configuration, the map can be configured under a mapping `map` as shown in the following example.
+
+[source,yaml]
+----
+hazelcast:
+    ...
+    map:
+        map1:
+          # map1 configuration
+        map2:
+          # map2 configuration
+    ...
+----
+
+The XML and YAML configurations above define the same maps `map1` and `map2`. Please note that in the YAML configuration file
+there is no `name` node, instead, the name of the map is used as the name of the mapping for configuring the given map.
+
+There are other configuration entries that have no unique names and are listed in the same enclosing entry. Examples to this
+kind of configurations are listing the member addresses, interfaces in the networking configurations and defining listeners. The
+following example configures listeners to illustrate this.
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <listeners>
+        <listener>com.hazelcast.examples.MembershipListener</listener>
+        <listener>com.hazelcast.examples.InstanceListener</listener>
+        <listener>com.hazelcast.examples.MigrationListener</listener>
+        <listener>com.hazelcast.examples.PartitionLostListener</listener>
+    </listeners>
+    ...
+</hazelcast>
+----
+
+In the YAML configuration, the listeners are defined as a sequence.
+
+[source,yaml]
+----
+hazelcast:
+  ...
+  listeners:
+    - com.hazelcast.examples.MembershipListener
+    - com.hazelcast.examples.InstanceListener
+    - com.hazelcast.examples.MigrationListener
+    - com.hazelcast.examples.PartitionLostListener
+  ...
+----
+
+Another notable difference between XML and YAML is the lack of the attributes in the case of YAML. Everything that can be
+configured with an attribute in the XML configuration is a scalar node in the YAML configuration with the same name. See the
+following example.
+
+[source,xml]
+----
+hazelcast:
+<hazelcast>
+    ...
+    <network>
+        <join>
+            <multicast enabled="true">
+                <multicast-group>1.2.3.4</multicast-group>
+                <!-- other multicast configuration options -->
+            </multicast>
+        </join>
+    </network>
+    ...
+</hazelcast>
+----
+
+In the identical YAML configuration, the `enabled` attribute of the XML configuration is a scalar node on the same level with
+the other items of the multicast configuration.
+
+[source,yaml]
+----
+hazelcast:
+  ...
+  network:
+    join:
+      multicast:
+        enabled: true
+        multicast-group: 1.2.3.4
+        # other multicast configuration options
+  ...
+----
 
 [[configuring-programmatically]]
 === Configuring Programmatically
@@ -187,7 +442,7 @@ Hazelcast.newHazelcastInstance( config );
 ----
 
 To retrieve an existing Hazelcast member by its name, use the following:
-    
+
 ```
 Hazelcast.getHazelcastInstanceByName( "my-instance" );
 ```
@@ -201,7 +456,10 @@ Hazelcast.getAllHazelcastInstances();
 NOTE: Hazelcast performs schema validation through the file `hazelcast-config-<version>.xsd` which comes with your Hazelcast libraries. Hazelcast throws a meaningful exception if there is an error in the declarative or programmatic configuration.
 
 
-If you want to specify your own configuration file to create `Config`, Hazelcast supports several ways including filesystem, classpath, InputStream and URL:
+If you want to specify your own configuration file to create `Config`, Hazelcast supports several ways including filesystem,
+classpath, InputStream and URL.
+
+Building `Config` from the XML declarative configuration:
 
 * `Config cfg = new XmlConfigBuilder(xmlFileName).build();`
 * `Config cfg = new XmlConfigBuilder(inputStream).build();`
@@ -210,24 +468,43 @@ If you want to specify your own configuration file to create `Config`, Hazelcast
 * `Config cfg = new UrlXmlConfig(url);`
 * `Config cfg = new InMemoryXmlConfig(xml);`
 
+Building `Config` from the YAML declarative configuration:
+
+* `Config cfg = new YamlConfigBuilder(yamlFileName).build();`
+* `Config cfg = new YamlConfigBuilder(inputStream).build();`
+* `Config cfg = new ClasspathYamlConfig(yamlFileName);`
+* `Config cfg = new FileSystemYamlConfig(configFilename);`
+* `Config cfg = new UrlYamlConfig(url);`
+* `Config cfg = new InMemoryYamlConfig(yaml);`
+
 [[configuring-with-system-properties]]
 === Configuring with System Properties
 
 You can use system properties to configure some aspects of Hazelcast. You set these properties as name and value pairs through declarative configuration, programmatic configuration or JVM system property. Following are examples for each option.
 
-**Declaratively:**
+**Declarative Configuration:**
 
 [source,xml]
 ----
-  ....
-  <properties>
-    <property name="hazelcast.property.foo">value</property>
-    ....
-  </properties>
+<hazelcast>
+    ...
+    <properties>
+        <property name="hazelcast.property.foo">value</property>
+    </properties>
+    ...
 </hazelcast>
 ----
 
-**Programmatically:**
+[source,yaml]
+----
+hazelcast:
+    ...
+    properties:
+      hazelcast.property.foo: value
+    ...
+----
+
+**Programmatic Configuration:**
 
 [source,java]
 ----
@@ -250,37 +527,38 @@ You will see Hazelcast system properties mentioned throughout this Reference Man
 
 If you use Hazelcast with https://spring.io/[Spring] you can declare beans using the namespace `hazelcast`. When you add the namespace declaration to the element `beans` in the Spring context file, you can start to use the namespace shortcut `hz` to be used as a bean declaration. Following is an example Hazelcast configuration when integrated with Spring:
 
-```
+[source,xml]
+----
 <hz:hazelcast id="instance">
-  <hz:config>
-    <hz:group name="dev"/>
-    <hz:network port="5701" port-auto-increment="false">
-      <hz:join>
-        <hz:multicast enabled="false"/>
-        <hz:tcp-ip enabled="true">
-          <hz:members>10.10.1.2, 10.10.1.3</hz:members>
-        </hz:tcp-ip>
-      </hz:join>
-    </hz:network>
-  </hz:config>
+    <hz:config>
+        <hz:group name="dev"/>
+        <hz:network port="5701" port-auto-increment="false">
+            <hz:join>
+                <hz:multicast enabled="false"/>
+                <hz:tcp-ip enabled="true">
+                    <hz:members>10.10.1.2, 10.10.1.3</hz:members>
+                </hz:tcp-ip>
+            </hz:join>
+        </hz:network>
+    </hz:config>
 </hz:hazelcast>
-```
+----
 
-Please see the <<spring-integration, Spring Integration section>> for more information on Hazelcast-Spring integration.
+Please see the <<integration-with-spring, Integration with Spring section>> for more information on Hazelcast-Spring integration.
 
 [[dynamically-adding-data-structure-configuration-on-a-cluster]]
 === Dynamically Adding Data Structure Configuration on a Cluster
 
-As described above, Hazelcast can be configured in a declarative or programmatic way; configuration must be completed before starting a Hazelcast member and this configuration cannot be altered at runtime, thus we refer to this as _static_ configuration. 
+As described above, Hazelcast can be configured in a declarative or programmatic way; configuration must be completed before starting a Hazelcast member and this configuration cannot be altered at runtime, thus we refer to this as _static_ configuration.
 
-Starting with Hazelcast 3.9, it is possible to dynamically add configuration for certain data structures at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
- 
+It is possible to dynamically add configuration for certain data structures at runtime; these can be added by invoking one of the `Config.add*Config` methods on the `Config` object obtained from a running member's `HazelcastInstance.getConfig()` method. For example:
+
 [source,java]
 ----
 include::{javasource}/DynamicConfiguration.java[tag=dynconf]
 ----
 
-Dynamic configuration elements must be fully configured before the invocation of `add*Config` method: at that point, the configuration object will be delivered to every member of the cluster and added to each member's dynamic configuration, so mutating the configuration object after the `add*Config` invocation will have no effect.
+Dynamic configuration elements must be fully configured before the invocation of `add*Config` method: at that point, the configuration object is delivered to every member of the cluster and added to each member's dynamic configuration, so mutating the configuration object after the `add*Config` invocation does not have an effect.
 
 As dynamically added data structure configuration is propagated across all cluster members, failures may occur due to conditions such as timeout and network partition. The configuration propagation mechanism internally retries adding the configuration whenever a membership change is detected. However if an exception is thrown from `add*Config` method, the configuration may have been partially propagated to some cluster members and adding the configuration should be retried by the user.
 
@@ -291,31 +569,49 @@ Adding new dynamic configuration is supported for all `add*Config` methods excep
 * `WanReplicationConfig`: new WAN replication configuration cannot be dynamically added, however existing static ones can be referenced from other configurations, e.g., a new dynamic `MapConfig` may include a `WanReplicationRef` to a statically configured WAN replication config.
 * `ListenerConfig`: listeners can be instead added at runtime via other API such as `HazelcastInstance.getCluster().addMembershipListener` and `HazelcastInstance.getPartitionService().addMigrationListener`.
 
+Keep in mind that this feature also works for Hazelcast Java clients. See the following example:
+
+[source,java]
+----
+HazelcastInstance client = HazelcastClient.newHazelcastClient();
+MapConfig mCfg = new MapConfig("test");
+mCfg.setTimeToLiveSeconds(15);
+client.getConfig().addMapConfig(mCfg);
+HazelcastClient.shutdownAll();
+---- 
+
 [[handling-configuration-conflicts]]
 ==== Handling Configuration Conflicts
- 
-Attempting to add a dynamic configuration, when a static configuration for the same element already exists, will throw `ConfigurationException`. For example, assuming we start a member with the following fragment in `hazelcast.xml` configuration:
 
-```
-  <map name="sessions">
-     ...
-  </map>
-```
+Attempting to add a dynamic configuration, when a static configuration for the same element already exists, throws `ConfigurationException`. For example, assuming we start a member with the following fragment in `hazelcast.xml` configuration:
 
-Then adding a dynamic configuration for a map with the name `sessions` will throw a `ConfigurationException`:
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="sessions">
+        ...
+    </map>
+    ...
+</hazelcast>
+----
 
-```
+Then adding a dynamic configuration for a map with the name `sessions` throws a `ConfigurationException`:
+
+[source,java]
+----
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 
 MapConfig sessionsMapConfig = new MapConfig("sessions");
 
 // this will throw ConfigurationException:
 instance.getConfig().addMapConfig(sessionsMapConfig);
-```
+----
 
-When attempting to add dynamic configuration for an element for which dynamic configuration has already been added, then if a configuration conflict is detected a `ConfigurationException` will be thrown. For example:
+When attempting to add dynamic configuration for an element for which dynamic configuration has already been added, then if a configuration conflict is detected a `ConfigurationException` is thrown. For example:
 
-```
+[source,java]
+----
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 
 MapConfig sessionsMapConfig = new MapConfig("sessions").setBackupCount(0);
@@ -328,7 +624,7 @@ instance.getConfig().addMapConfig(sessionsWithBackup);
 MapConfig sessionsWithoutBackup = new MapConfig("sessions").setBackupCount(0);
 // does not throw exception: new dynamic config is equal to existing dynamic config of same name
 instance.getConfig().addMapConfig(sessionsWithoutBackup);
-```
+----
 
 [[checking-configuration]]
 === Checking Configuration
@@ -338,12 +634,21 @@ When you start a Hazelcast member without passing a `Config` object, as explaine
 * First, it looks for the `hazelcast.config` system property. If it is set, its value is used as the path. This is useful if you want to be able to change your Hazelcast configuration; you can do this because it is not embedded within the application. You can set the `config` option with the following command:
 +
 ```
--Dhazelcast.config=`*`<path to the hazelcast.xml>
+-Dhazelcast.config=`*`<path to the hazelcast.xml or hazelcast.yaml>
 ```
-+	
++
+[NOTE]
+====
+The suffix of the filename is used to determine the language of the configuration. If the suffix is `.xml` the
+configuration file is parsed as an
+XML configuration file. If it is `.yaml`, the configuration file is parsed as a YAML configuration file.
+====
++
 The path can be a regular one or a classpath reference with the prefix `classpath:`.
 * If the above system property is not set, Hazelcast then checks whether there is a `hazelcast.xml` file in the working directory.
 * If not, it then checks whether `hazelcast.xml` exists on the classpath.
+* If not, it then checks whether `hazelcast.yaml` exists in the working directory.
+* If not, it then checks whether `hazelcast.yaml` exists on the classpath.
 * If none of the above works, Hazelcast loads the default configuration (`hazelcast.xml`) that comes with your Hazelcast package.
 
 Before configuring Hazelcast, please try to work with the default configuration to see if it works for you. This default configuration should be fine for most of the users. If not, you can consider to modify the configuration to be more suitable for your environment.
@@ -372,49 +677,68 @@ include::{javasource}/ExampleConfigPatternMatcher.java[tag=patternmatcher]
 [[using-wildcards]]
 === Using Wildcards
 
-Hazelcast supports wildcard configuration for all distributed data structures that can be configured using `Config`, that is, for all except `IAtomicLong`, `IAtomicReference`. Using an asterisk (\*) character in the name, different instances of maps, queues, topics, semaphores, etc. can be configured by a single configuration.
+Hazelcast supports wildcard configuration for all distributed data structures that can be configured using `Config`, that is, for all except `IAtomicLong`, `IAtomicReference`. Using an asterisk (*) character in the name, different instances of maps, queues, topics, semaphores, etc. can be configured by a single configuration.
 
-A single asterisk (\*) can be placed anywhere inside the configuration name.
+A single asterisk (*) can be placed anywhere inside the configuration name.
 
-For instance, a map named `com.hazelcast.test.mymap` can be configured using one of the following configurations.
+For instance, a map named `com.hazelcast.test.mymap` can be configured using one of the following configurations:
 
-```xml
-<map name="com.hazelcast.test.*">
-...
-</map>
-```
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="com.hazelcast.test.*">
+        ...
+    </map>
 
-```xml
-<map name="com.hazel*">
-...
-</map>
-```
+    <!-- OR -->
 
-```xml
-<map name="*.test.mymap">
-...
-</map>
-```
+    <map name="com.hazel*">
+        ...
+    </map>
 
-```xml
-<map name="com.*test.mymap">
-...
-</map>
-```
+    <!-- OR -->
 
-Or a queue `com.hazelcast.test.myqueue`:
+    <map name="*.test.mymap">
+        ...
+    </map>
 
-```xml
-<queue name="*hazelcast.test.myqueue">
-...
-</queue>
-```
+    <!-- OR -->
 
-```xml
-<queue name="com.hazelcast.*.myqueue">
-...
-</queue>
-```
+    <map name="com.*test.mymap">
+        ...
+    </map>
+    ...
+</hazelcast>
+----
+
+A queue named `com.hazelcast.test.myqueue` can be configured using one of the following configurations:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <queue name="*hazelcast.test.myqueue">
+        ...
+    </queue>
+
+    <!-- OR -->
+
+    <queue name="com.hazelcast.*.myqueue">
+        ...
+    </queue>
+    ...
+</hazelcast>
+----
+
+[NOTE]
+====
+
+* You can use only a single asterisk as a wildcard for each data structure configuration.
+* If you have matching wildcard configurations for a data structure, the most specific (longest) one is used when configuring it. Let's say you have a map named `mymap.customer.name` and you have map configurations `mymap.\*` and `mymap.customer.*`. Hazelcast uses `mymap.customer.*` to configure this map.
++
+As another example, assume that you have a map named `mymap.customer.name` and you have map configurations `mymap.\*.name` and `mymap.customer.*`. Hazelcast uses `mymap.customer.*` to configure this map. As you see, the longest character length before the asterisk makes it the most specific, so it wins the configuration.
+====
 
 [[using-variables]]
 === Using Variables
@@ -429,25 +753,46 @@ For example, see the following command that sets two system properties.
 
 Let's get the values of these system properties in the declarative configuration of Hazelcast, as shown below.
 
-```xml
+In the XML configuration:
+
+[source,xml]
+----
 <hazelcast>
-  <group>
-    <name>${group.name}</name>
-  </group>
+    <group>
+        <name>${group.name}</name>
+    </group>
 </hazelcast>
-```
+----
 
-This also applies to the declarative configuration of Hazelcast Client, as shown below.
+In the YAML configuration:
 
-```xml
+[source,yaml]
+----
+hazelcast:
+  group:
+    name: ${group.name}
+----
+
+This also applies to the declarative configuration of Hazelcast Java Client, as shown below.
+
+[source,xml]
+----
 <hazelcast-client>
-  <group>
-    <name>${group.name}</name>
-  </group>
+    <group>
+        <name>${group.name}</name>
+    </group>
 </hazelcast-client>
-```
+----
 
-If you do not want to rely on the system properties, you can use the `XmlConfigBuilder` and explicitly set a `Properties` instance, as shown below.
+[source,yaml]
+----
+hazelcast-client:
+  group:
+    name: ${group.name}
+----
+
+If you do not want to rely on the system properties, you can use the `XmlConfigBuilder` or `YamlConfigBuilder` and explicitly
+set a `Properties` instance, as shown below.
 
 [source,java]
 ----
@@ -467,11 +812,17 @@ HazelcastInstance hz = Hazelcast.newHazelcastInstance(config);
 
 Variable replacers are used to replace custom strings during loading the configuration, e.g., they can be used to mask sensitive information such as usernames and passwords. Of course their usage is not limited to security related information.
 
-Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured only declaratively: in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml` and `hazelcast-client.xml`. You can refer to `ConfigReplacer` s http://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html[Javadoc] for basic information on how a replacer works.
+Variable replacers implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer` and they are configured only
+declaratively: in the Hazelcast's declarative configuration files, i.e., `hazelcast.xml`, `hazelcast.yaml` and `hazelcast-client
+.xml`, `hazelcast-client.yaml`. You can
+refer to ``ConfigReplacer``s https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/replacer/spi/ConfigReplacer.html[Javadoc] for basic information on how a replacer works.
 
 Variable replacers are configured within the element `<config-replacers>` under `<hazelcast>`, as shown below.
 
-```
+In the XML configuration:
+
+[source,xml]
+----
 <hazelcast>
     ...
     <config-replacers fail-if-value-missing="false">
@@ -485,7 +836,24 @@ Variable replacers are configured within the element `<config-replacers>` under 
     </config-replacers>
     ...
 </hazelcast>
-```
+----
+
+In the YAML configuration:
+
+[source,yaml]
+----
+hazelcast:
+    ...
+    config-replacers:
+      fail-if-value-missing: false
+      replacers:
+        - class-name: com.acme.MyReplacer
+          properties:
+            propName: value
+            ...
+        - class-name: example.AnotherReplacer
+    ...
+----
 
 As you can see, `<config-replacers>` is the parent element for your replacers, which are declared using the `<replacer>` sub-elements. You can define multiple replacers under the `<config-replacers>.` Here are the descriptions of elements and attributes used for the replacer configuration:
 
@@ -546,7 +914,8 @@ $ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
 
 3 - Configure the replacer and put the encrypted variables into the configuration:
 
-```
+[source,xml]
+----
 <hazelcast>
     <config-replacers>
         <replacer class-name="com.hazelcast.config.replacer.EncryptionReplacer">
@@ -561,7 +930,7 @@ $ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
         <password>$ENC{wJxe1vfHTgg=:531:WkAEdSi/YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}</password>
     </group>
 </hazelcast>
-```
+----
 
 4 - Check if the decryption works:
 
@@ -586,10 +955,11 @@ Its full class name is `com.hazelcast.config.replacer.PropertyReplacer` and the 
 
 You can also provide your own replacer implementations. All replacers have to implement the interface `com.hazelcast.config.replacer.spi.ConfigReplacer`. A simple snippet is shown below.
 
-```
+[source,java]
+----
 public interface ConfigReplacer {
     void init(Properties properties);
     String getPrefix();
     String getReplacement(String maskedValue);
 }
-```
+----

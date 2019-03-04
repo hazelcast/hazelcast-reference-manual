@@ -5,21 +5,13 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
 import com.hazelcast.core.ISemaphore;
 
-
 public class SemaphoreMember {
     public static void main( String[] args ) throws Exception{
-//tag::sc[]
-        Config config = new Config();
-        SemaphoreConfig semaphoreConfig = config.getSemaphoreConfig("MySemaphore");
-        semaphoreConfig.setName( "semaphore" ).setBackupCount( 1 )
-                .setInitialPermits( 3 )
-                .setQuorumName( "quorumname" );
-//end::sc[]
 
-//tag::sm[]
+        //tag::sm[]
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        ISemaphore semaphore = hazelcastInstance.getSemaphore( "semaphore" );
-        IAtomicLong resource = hazelcastInstance.getAtomicLong( "resource" );
+        ISemaphore semaphore = hazelcastInstance.getCPSubsystem().getSemaphore( "semaphore" );
+        IAtomicLong resource = hazelcastInstance.getCPSubsystem().getAtomicLong( "resource" );
         for ( int k = 0 ; k < 1000 ; k++ ) {
             System.out.println( "At iteration: " + k + ", Active Threads: " + resource.get() );
             semaphore.acquire();
@@ -32,6 +24,6 @@ public class SemaphoreMember {
             }
         }
         System.out.println("Finished");
-//end::sm[]
+        //end::sm[]
     }
 }
