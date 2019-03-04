@@ -972,3 +972,41 @@ The `cache-deserialized-values` element controls the caching of deserialized val
 * ALWAYS: Deserialized values are always cached.
 
 If you are using portable serialization or your map's in-memory format is `OBJECT` or `NATIVE`, then `cache-deserialized-values` element does not have any effect.
+
+==== Performance Anti Patterns
+
+=== Single member per machine
+
+Do not run multiple Hazelcast members per machine. A Hazelcast member assumes it is alone on a machine. Having multiple
+members on a machine are likely going to give worse performance compared to running a single member. There will be more
+context switching, less batching etc. So unless it is proven that running multiple members per machine does give better
+performance/behavior in your particular setup, it is best to run a single member per machine.
+
+=== Don't use more operation threads than cores.
+
+By default Hazelcast uses the core-count of the machine to determine the number of operation threads. Creating more
+operation threads than cores is highly unlikely going to lead improved performance because there will be more context
+switching, more thread notification etc.
+
+Sometimes it is even better to use a lower threadcount than the number of cores.
+This is especially true for systems doing simple operations like puts/gets. The reason behind behind increased performance
+by reducing the core count is that operations executed on the operation threads normally execute very fast and there can
+be a very significant amount of overhead caused by thread parking and unparking. If there are less threads, a thread needs
+do do more work and therefor will block less and therefor needs to be notified less.
+
+=== Don't make changes at random.
+
+Tweaking can be very rewarding because often very significant performance improvements are possible. Hazelcast tries
+by default to behave best for all situation, but this doesn't always lead to best performance. So if you know what
+you are doing and what to look for, it can be very rewarding to tweak. However it is also important that tweaking should
+be done with proper testing so that it is obvious that there is actually an improvement. Tweaking without proper benchmarking
+is likely going to lead to confusion and could cause all kinds of problems. In case of doubt, don't tweak.
+
+=== Benchmark environment should reflect production
+
+When benchmarking it is very important that the benchmark reflects production environment. Sometimes with calculated
+guess a representative smaller environment can be set up; but if you want to use the benchmark statistics to inference
+how your production system is going to behave, you need to make sure that you get as close as your production setup as
+possible. Otherwise you are at risk of spotting issues to late, or focusing on the things which are not relevant.
+
+
