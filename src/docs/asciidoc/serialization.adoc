@@ -18,7 +18,7 @@ Serialization is used in the following cases:
 
 Hazelcast optimizes the serialization for the basic types and their array types. You cannot override this behavior.
 
-**Default Types**;
+The following are the default types:
 
 * `Byte`, `Boolean`, `Character`, `Short`, `Integer`, `Long`, `Float`, `Double`, `String`
 * `byte[]`, `boolean[]`, `char[]`, `short[]`, `int[]`, `long[]`, `float[]`, `double[]`, `String[]`
@@ -28,15 +28,15 @@ Hazelcast optimizes all of the above object types. You do not need to worry abou
 
 === Serialization Interface Types
 
-For complex objects, use the following interfaces for serialization and deserialization.
+For complex objects, use the following interfaces for serialization and deserialization:
 
-* `java.io.Serializable`: Please see the <<implementing-java-serializable-and-externalizable, Implementing Java Serializable and Externalizable section>>.
-* `java.io.Externalizable`: Please see the <<implementing-java-externalizable, Implementing Java Externalizable section>>.
-* `com.hazelcast.nio.serialization.DataSerializable`: Please see the <<implementing-dataserializable, Implementing DataSerializable section>>.
-* `com.hazelcast.nio.serialization.IdentifiedDataSerializable`: Please see the <<identifieddataserializable , IdentifiedDataSerializable section>>.
-* `com.hazelcast.nio.serialization.Portable`: Please see the <<implementing-portable-serialization, Implementing Portable Serialization section>>.
+* `java.io.Serializable`: See the <<implementing-java-serializable-and-externalizable, Implementing Java Serializable and Externalizable section>>.
+* `java.io.Externalizable`: See the <<implementing-java-externalizable, Implementing Java Externalizable section>>.
+* `com.hazelcast.nio.serialization.DataSerializable`: See the <<implementing-dataserializable, Implementing DataSerializable section>>.
+* `com.hazelcast.nio.serialization.IdentifiedDataSerializable`: See the <<identifieddataserializable , IdentifiedDataSerializable section>>.
+* `com.hazelcast.nio.serialization.Portable`: See the <<implementing-portable-serialization, Implementing Portable Serialization section>>.
 * Custom Serialization (using <<implementing-streamserializer, StreamSerializer>> and <<implementing-bytearrayserializer, ByteArraySerializer>>).
-* Global Serializer: Please see the <<global-serializer, Global Serializer section>> for details.
+* Global Serializer: See the <<global-serializer, Global Serializer section>> for details.
 
 When Hazelcast serializes an object into `Data`:
 
@@ -229,7 +229,7 @@ public class Employee implements DataSerializable {
 
 As you can see, since the `address` field itself is `DataSerializable`, it calls `address.writeData(out)` when writing and `address.readData(in)` when reading. Also note that you should have writing and reading of the fields occur in the same order. While Hazelcast serializes a `DataSerializable`, it writes the `className` first. When Hazelcast deserializes it, `className` is used to instantiate the object using reflection.
 
-NOTE: Since Hazelcast needs to create an instance during deserialization,`DataSerializable` class has a no-arg constructor.
+NOTE: Since Hazelcast needs to create an instance during the deserialization,`DataSerializable` class has a no-arg constructor.
 
 NOTE: `DataSerializable` is a good option if serialization is only needed for in-cluster communication.
 
@@ -243,7 +243,7 @@ For a faster serialization of objects, avoiding reflection and long class names,
 
 ===== getID and getFactoryId Methods
 
-`IdentifiedDataSerializable` extends `DataSerializable` and introduces two new methods.
+`IdentifiedDataSerializable` extends `DataSerializable` and introduces the following methods:
 
 * `int getId();`
 * `int getFactoryId();`
@@ -345,9 +345,9 @@ NOTE: See the <<serialization-configuration-wrap-up, Serialization Configuration
 
 As an alternative to the existing serialization methods, Hazelcast offers a language/platform independent Portable serialization that has the following advantages:
 
-* Supports multi-version of the same object type.
-* Fetches individual fields without having to rely on reflection.
-* Queries and indexing support without deserialization and/or reflection.
+* support for multi-version of the same object type
+* fetching individual fields without having to rely on reflection
+* queries and indexing support without deserialization and/or reflection
 
 In order to support these features, a serialized Portable object contains meta information like the version and the concrete location of the each field in the binary data. This way, Hazelcast navigates in the `byte[]` and deserializes only the required field without actually deserializing the whole object. This improves the Query performance.
 
@@ -385,7 +385,6 @@ public class MyPortableFactory implements PortableFactory {
 ==== Registering the Portable Factory
 
 The last step is to register the `Factory` to the `SerializationConfig`. Below are the programmatic and declarative configurations for this step.
-
 
 [source,java]
 ----
@@ -438,7 +437,7 @@ You can declare Version in the configuration file `hazelcast.xml` using the `por
 
 You can also use the interface https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/nio/serialization/VersionedPortable.html[VersionedPortable] which enables to upgrade the version per class, instead of global versioning. If you need to update only one class, you can use this interface. In this case, your class should implement `VersionedPortable` instead of `Portable`, and you can give the desired version using the method `VersionedPortable.getClassVersion()`.
 
-You should consider the following when you perform versioning.
+You should consider the following when you perform versioning:
 
 * It is important to change the version whenever an update is performed in the serialized fields of a class, for example by incrementing the version.
 * If a client performs a Portable deserialization on a field and then that Portable is updated by removing that field on the cluster side, this may lead to a problem.
@@ -451,7 +450,7 @@ Assume that a new member joins to the cluster with a class that has been modifie
 
 * If you modified the class by adding a new field, the new member's `put` operations include that new field. If this new member tries to get an object that was put from the older members, it gets `null` for the newly added field.
 * If you modified the class by removing a field, the old members get `null` for the objects that are put by the new member.
-* If you modified the class by changing the type of a field, the error `IncompatibleClassChangeError` is generated unless the change was made on a built-in type or the byte size of the new type is less than or equal to the old one. The following are example allowed type conversions:
+* If you modified the class by changing the type of a field, the error `IncompatibleClassChangeError` is generated unless the change was made on a built-in type or the byte size of the new type is less than or equal to the old one. The following are examples of allowed type conversions:
 ** `long` -> `int`, `byte`, `char`, `short`
 ** `int`-> `byte`, `char`, `short`
 
@@ -637,15 +636,15 @@ By default, the global serializer does not handle `java.io.Serializable` and `ja
 
 A custom serializer should be registered for a specific class type. The global serializer handles all class types if all the steps in searching for a serializer fail as described in <<serialization-interface-types, Serialization Interface Types>>.
 
-**Use cases:**
+The following are some use cases:
 
 * Third party serialization frameworks can be integrated using the global serializer.
 * For your custom objects, you can implement a single serializer to handle all of them.
 * You can replace the internal Java serialization by enabling the `overrideJavaSerialization` option of the global serializer configuration.
 
-Any custom serializer can be used as the global serializer. Please refer to the <<custom-serialization, Custom Serialization section>> for implementation details.
+Any custom serializer can be used as the global serializer. See the <<custom-serialization, Custom Serialization section>> for implementation details.
 
-NOTE: To function properly, Hazelcast needs the Java serializable objects to be handled correctly. If the global serializer is configured to handle the Java serialization, the global serializer must properly serialize/deserialize the `java.io.Serializable` instances. Otherwise, it causes Hazelcast to malfunction.*
+NOTE: To function properly, Hazelcast needs the Java serializable objects to be handled correctly. If the global serializer is configured to handle the Java serialization, the global serializer must properly serialize/deserialize the `java.io.Serializable` instances. Otherwise, it causes Hazelcast to malfunction.
 
 [[sample-global-serializer]]
 ==== Example Global Serializer
@@ -768,14 +767,14 @@ The protection uses a whitelist as the default configuration. When this list is 
 
 If you do not want to use the default whitelist prefixes, you must set the `defaults-disabled` attribute to true.
 
-Once the protection is enabled, the following filtering rules are used when objects are deserialized.
+Once the protection is enabled, the following filtering rules are used when the objects are deserialized:
 
 * When whitelist is not provided:
-** if the deserialized object's `getClass().getName()` is blacklisted or `getClass().getPackage().getName()` is blacklisted, then deserialization fails;
+** if the deserialized object's `getClass().getName()` is blacklisted or `getClass().getPackage().getName()` is blacklisted, then deserialization fails
 ** deserialization is allowed otherwise.
 * When whitelist is provided:
-** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is blacklisted, then deserialization fails;
-** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is whitelisted, then deserialization is allowed;
+** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is blacklisted, then deserialization fails
+** if the deserialized object's `getClass().getName()` or `getClass().getPackage().getName()` is whitelisted, then deserialization is allowed
 ** deserialization fails otherwise.
 
 When deserialization fails, a `SecurityException` is thrown.

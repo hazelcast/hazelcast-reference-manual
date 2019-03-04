@@ -22,11 +22,14 @@ High-Density Memory Store is currently provided for the following Hazelcast feat
 * <<using-high-density-memory-store-with-java-client, Java Client>>, when using the Near Cache for client
 * https://github.com/hazelcast/hazelcast-wm#using-high-density-memory-store[Web Session Replications]
 * https://github.com/hazelcast/hazelcast-hibernate[Hibernate 2nd Level Caching]
+* Paging and Partition Predicates
 
 ==== Configuring High-Density Memory Store
 
 To use the High-Density memory storage, the native memory usage must be enabled using the programmatic or declarative configuration.
 Also, you can configure its size, memory allocator type, minimum block size, page size and metadata space percentage.
+
+The following are the configuration element descriptions:
 
 * **size:** Size of the total native memory to allocate in megabytes. Its default value is **512 MB**.
 * **allocator type**: Type of the memory allocator. Available values are as follows:
@@ -146,7 +149,7 @@ You can trigger the force start process using the Management Center, REST API an
 
 Please note that force start is a destructive process, which results in deletion of persisted Hot Restart data.
 
-Please refer to the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart functionality] of the Management Center section to learn how you can perform a force start using the Management Center.
+See the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart functionality] of the Management Center section to learn how you can perform a force start using the Management Center.
 
 ==== Partial Start
 
@@ -168,8 +171,8 @@ Please note that partial start is a destructive process. Once it is completed, i
 
 You can configure Hot Restart feature programmatically or declaratively. There are two steps of configuration:
 
-1. Enabling and configuring the Hot Restart feature globally in your Hazelcast configuration: This is done using the configuration element `hot-restart-persistence`. Please see the <<global-hot-restart-configuration, Global Hot Restart Configuration section>> below.
-2. Enabling and configuring the Hazelcast data structures to use the Hot Restart feature: This is done using the configuration element `hot-restart`. Please see the <<per-data-structure-hot-restart-configuration, Per Data Structure Hot Restart Configuration section>> below.
+. Enabling and configuring the Hot Restart feature globally in your Hazelcast configuration: This is done using the configuration element `hot-restart-persistence`. See the <<global-hot-restart-configuration, Global Hot Restart Configuration section>> below.
+. Enabling and configuring the Hazelcast data structures to use the Hot Restart feature: This is done using the configuration element `hot-restart`. See the <<per-data-structure-hot-restart-configuration, Per Data Structure Hot Restart Configuration section>> below.
 
 ===== Global Hot Restart Configuration
 
@@ -249,10 +252,11 @@ include::{javasource}/storage/SampleHotRestartConfiguration.java[tag=hrconf]
 
 After Hazelcast member owning the Hot Restart data is shutdown, Hot Restart `base-dir` can be copied/moved to a different server (which may have different IP address and/or different number of CPU cores) and Hazelcast member can be restarted using the existing Hot Restart data on that new server. Having a new IP address does not affect Hot Restart, since it does not rely on the IP address of the server but instead uses `Member` UUID as a unique identifier.
 
-This flexibility provides;
-* ability to replace one or more faulty servers with new ones easily without touching remaining cluster
-* ability to use Hot Restart on cloud environments easily. Sometimes cloud providers do not preserve IP addresses on restart or after shutdown. Also it is possible to startup whole cluster on a different set of machines.
-* ability to copy production data to test environment, so that a more functional test cluster can bet setup
+This flexibility provides the following abilities:
+
+* Replacing one or more faulty servers with the new ones easily without touching remaining cluster.
+* Using Hot Restart on the cloud environments easily. Sometimes cloud providers do not preserve the IP addresses on restart or after shutdown. Also it is possible to startup the whole cluster on a different set of machines.
+* Copying production data to the test environment, so that a more functional test cluster can bet setup.
 
 Unfortunately having different number of CPU cores is not that straightforward. Hazelcast partition threads, by default, uses a heuristic from the number of cores, e.g., `# of partition threads = # of CPU cores`. When a Hazelcast member is started on a server with a different CPU core count, number of Hazelcast partition threads changes and that makes Hot Restart fail during the startup. Solution is to explicitly set number of Hazelcast partition threads (`hazelcast.operation.thread.count` system property) and Hot Restart `parallelism` configuration and use the same parameters on the new server. For setting system properties see <<system-properties, System Properties appendix>>.
 
@@ -276,9 +280,9 @@ In order to maintain the lowest possible footprint in the update operation laten
 * On each update there is metadata to be maintained; this is done asynchronously by the Collector thread. The Mutator enqueues update events to the Collector's work queue.
 * The Collector keeps draining its work queue at all times, including the time it goes through the GC cycle. Updates are taken into account at each stage in the GC cycle, preventing the copying of already dead records into compacted files.
 * All GC-induced I/O competes for the same resources as the Mutator's update operations. Therefore, measures are taken to minimize the impact of I/O done during GC:
-** data is never read from files, but from RAM;
-** a heuristic scheme is employed which minimizes the number of bytes written to disk for each kilobyte of reclaimed garbage;
-** measures are also taken to achieve a good interleaving of Collector and Mutator operations, minimizing latency outliers perceived by the Mutator.
+** data is never read from files, but from RAM
+** a heuristic scheme is employed which minimizes the number of bytes written to the disk for each kilobyte of the reclaimed garbage
+** measures are also taken to achieve a good interleaving of Collector and Mutator operations, minimizing latency outliers perceived by the Mutator
 
 ===== I/O Minimization Scheme
 
@@ -310,10 +314,7 @@ In this section you can find performance test summaries which are results of ben
 
 ===== Performance on a Physical Server
 
-The member has the following:
-
-* An IMap data structure with High-Density Memory Store.
-* Its data size is changed for each test, started from 10 GB to 500 GB (each map entry has a value of 1 KB).
+We have tested a member which has an IMap with High-Density Data Store. Its data size is changed for each test, started from 10 GB to 500 GB (each map entry has a value of 1 KB).
 
 The tests investigate the write and read performance of Hot Restart Persistence and are performed on HP ProLiant servers with RHEL 7 operating system using Hazelcast Simulator.
 
@@ -333,10 +334,9 @@ image::HotRestartPerf.png[Hot Restart Perf]
 
 ===== Performance on AWS R3
 
-The member has the following:
+We have tested a member which has an IMap with High-Density Data Store:
 
-* An IMap data structure with High-Density Memory Store.
-* IMap has 40 million distinct keys, each map entry is 1 KB.
+* This map has 40 million distinct keys, each map entry is 1 KB.
 * High-Density Memory Store is 59 GiB whose 19% is metadata.
 * Hot Restart is configured with `fsync` turned off.
 * Data size reloaded on restart is 38 GB.
@@ -345,9 +345,9 @@ The tests investigate the write and read performance of Hot Restart Persistence 
 
 The following are the AWS storage types used for the test:
 
-* Elastic Block Storage (EBS) General Purpose SSD (GP2).
-* Elastic Block Storage with Provisioned IOPS (IO1). Provisioned 10,000 IOPS on a 340 GiB volume, enabled EBS-optimized on instance.
-* SSD-backed instance store.
+* Elastic Block Storage (EBS) General Purpose SSD (GP2)
+* Elastic Block Storage with Provisioned IOPS (IO1) (Provisioned 10,000 IOPS on a 340 GiB volume, enabled EBS-optimized on instance)
+* SSD-backed instance store
 
 The below table shows the test results.
 
@@ -365,7 +365,7 @@ To create snapshots you must first configure the Hot Restart backup directory. Y
 
 * `backup-dir`: This element is included in the `hot-restart-persistence` and denotes the destination under which backups are stored. If this element is not defined, hot backup is disabled. If a directory is defined which does not exist, it is created on the first backup. To avoid clashing data on multiple backups, each backup has a unique sequence ID which determines the name of the directory which contains all Hot Restart data. This unique directory is created as a subdirectory of the configured `backup-dir`.
 
-The following are examples configurations for Hot backup.
+The following are the example configurations for Hot backup.
 
 **Declarative Configuration**:
 
@@ -489,7 +489,7 @@ BackupTaskStatus status = service.getBackupTaskStatus();
 ...
 ----
 
-The returned object contains local member backup status:
+The returned object contains the local member's backup status:
 
 * the backup state (NOT_STARTED, IN_PROGRESS, FAILURE, SUCCESS)
 * the completed count
@@ -526,7 +526,6 @@ service.interruptLocalBackupTask();
 ----
 
 The backup task stops as soon as possible and it does not remove the disk contents of the backup directory meaning that you must remove it manually.
-
 
 === Hazelcast Striim Hot Cache
 

@@ -39,6 +39,7 @@ You may use any of the supported ways as described in the <<system-properties, S
 ** `hazelcast.enterprise.wanrep.queue.capacity`, see the <<queue-capacity, Queue Capacity section>>.
 * **Removal of deprecated `getId()` method**: The method `getId()` in the interface `DistributedObject` has been removed. Please use the `getName()` method instead.
 * **Change in the Custom Serialization in the C++ Client Distribution**: Before, the method `getTypeId()` was used to retrieve the ID of the object to be serialized. With this release, the method `getHazelcastTypeId()` is used and you give your object as a parameter to this new method. Also, `getTypeId()` was used in your custom serializer class; it has been renamed to `getHazelcastTypeId()`, too.
+* The `LOCAL` transaction type has been deprecated. Use `ONE_PHASE` for the Hazelcast IMDG releases 3.6 and higher.
 
 === Hazelcast IMDG 3.5.x
 

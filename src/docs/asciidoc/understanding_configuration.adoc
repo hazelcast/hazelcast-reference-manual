@@ -8,7 +8,7 @@ This chapter describes the options to configure your Hazelcast applications and 
 * Programmatic way
 * Using Hazelcast system properties
 * Within the Spring context
-* Dynamically adding configuration on a running cluster (starting with Hazelcast 3.9)
+* Dynamically adding configuration on a running cluster
 
 [[configuring-declaratively]]
 === Configuring Declaratively
@@ -562,7 +562,7 @@ Dynamic configuration elements must be fully configured before the invocation of
 
 As dynamically added data structure configuration is propagated across all cluster members, failures may occur due to conditions such as timeout and network partition. The configuration propagation mechanism internally retries adding the configuration whenever a membership change is detected. However if an exception is thrown from `add*Config` method, the configuration may have been partially propagated to some cluster members and adding the configuration should be retried by the user.
 
-Adding new dynamic configuration is supported for all `add*Config` methods except:
+Adding a new dynamic configuration is supported for all `add*Config` methods except:
 
 * `JobTracker` which has been deprecated since Hazelcast 3.8
 * `QuorumConfig`: new quorum configuration cannot be dynamically added but other configuration can reference quorums configured in the existing static configuration
@@ -868,14 +868,13 @@ The following replacer classes are provided by Hazelcast as example implementati
 
 NOTE: There is also a `ExecReplacer` which runs an external command and uses its standard output as the value for the variable. Please refer to its https://github.com/hazelcast/hazelcast-code-samples/blob/master/variable-replacers/src/main/java/com/hazelcast/sample/replacer/ExecReplacer.java[code sample].
 
-
 Each example replacer is explained in the below sections.
 
 ==== EncryptionReplacer
 
 This example `EncryptionReplacer` replaces encrypted variables by its plain form. The secret key for encryption/decryption is generated from a password which can be a value in a file and/or environment specific values, such as MAC address and actual user data.
 
-Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and the replacer prefix is `ENC`. Here are the properties used to configure this example replacer:
+Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and the replacer prefix is `ENC`. The following are the properties used to configure this example replacer:
 
 * `cipherAlgorithm`: Cipher algorithm used for the encryption/decryption. Its default value is AES.
 * `keyLengthBits`: Length of the secret key to be generated in bits. Its default value is 128 bits.
@@ -890,12 +889,11 @@ Its full class name is `com.hazelcast.config.replacer.EncryptionReplacer` and th
 NOTE: Older Java versions may not support all the algorithms used as defaults. Please use the property values supported your Java version.
 
 
-As a usage example, let's create a password file and generate the encrypted strings out of this file.
+As a usage example, let's create a password file and generate the encrypted strings out of this file as instructed below:
 
-1 -  Create the password file: `echo '/Za-uG3dDfpd,5.-' > /opt/master-password`
-
-2 -  Define the encrypted variables:
-
+. Create the password file: `echo '/Za-uG3dDfpd,5.-' > /opt/master-password`
+. Define the encrypted variables:
++
 ```
 java -cp hazelcast-*.jar \
     -DpasswordFile=/opt/master-password \
@@ -911,9 +909,9 @@ java -cp hazelcast-*.jar \
     "aPasswordToEncrypt"
 $ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
 ```
-
-3 - Configure the replacer and put the encrypted variables into the configuration:
-
++
+. Configure the replacer and put the encrypted variables into the configuration:
++
 [source,xml]
 ----
 <hazelcast>
@@ -931,9 +929,9 @@ $ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
     </group>
 </hazelcast>
 ----
-
-4 - Check if the decryption works:
-
++
+. Check if the decryption works:
++
 ```
 java -jar hazelcast-*.jar
 Apr 06, 2018 10:15:43 AM com.hazelcast.config.XmlConfigLocator

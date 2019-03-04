@@ -209,12 +209,12 @@ The other properties are the same as when using the `aws` element. In case of EC
 </hazelcast>
 ----
 
-You can refer to the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. Following are the definitions of additional configuration properties:
+You can refer to the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. The following are the definitions of additional configuration properties:
 
-- `discovery.period`: Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 seconds.
-- `maxEndpoints`: Maximum number of endpoints that WAN connects to when using a discovery mechanism to define endpoints. Default is `Integer.MAX_VALUE`. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
-- `executorThreadCount`: Number of threads that the `WanBatchReplication` executor has. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this is the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor is sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that are not performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint go through a single executor thread, preserving event order.
-- `discovery.useEndpointPrivateAddress`: Determines whether the WAN connection manager should connect to the endpoint on the private address returned by the discovery SPI. By default this property is `false` which means the WAN connection manager always uses the public address.
+* `discovery.period`: Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 seconds.
+* `maxEndpoints`: Maximum number of endpoints that WAN connects to when using a discovery mechanism to define endpoints. Default is `Integer.MAX_VALUE`. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
+* `executorThreadCount`: Number of threads that the `WanBatchReplication` executor has. The executor is used to send WAN events to the endpoints and ideally you want to have one thread per endpoint. If this property is omitted and you have specified the `endpoints` property, this is the case. If, on the other hand, you are using WAN with the discovery SPI and you have not specified this property, the executor is sized to the initial number of discovered endpoints. This can lead to performance issues if the number of endpoints changes in the future - either contention on a too small number of threads or wasted threads that are not performing any work. To prevent this you can manually define the executor thread count. Once the executor has been initialized there is thread affinity between the discovered endpoints and the executor threads - all events for a single endpoint go through a single executor thread, preserving event order.
+* `discovery.useEndpointPrivateAddress`: Determines whether the WAN connection manager should connect to the endpoint on the private address returned by the discovery SPI. By default this property is `false` which means the WAN connection manager always uses the public address.
 
 You can also define the WAN publisher with discovery SPI using the programmatic configuration:
 
@@ -222,7 +222,6 @@ You can also define the WAN publisher with discovery SPI using the programmatic 
 ----
 include::{javasource}/wan/ExampleWANReplicationDiscoveryConfiguration.java[tag=wrdc]
 ----
-
 
 ==== WanBatchReplication Implementation
 
@@ -232,11 +231,10 @@ As you see in the above configuration examples, this implementation is configure
 
 The implementation `WanBatchReplication` waits until:
 
-- a pre-defined number of replication events are generated, (please refer to the <<batch-size, Batch Size section>>).
-- or a pre-defined amount of time is passed (please refer to the <<batch-maximum-delay, Batch Maximum Delay section>>).
+* a pre-defined number of replication events are generated, (see the <<batch-size, Batch Size section>>)
+* or a pre-defined amount of time is passed (see the <<batch-maximum-delay, Batch Maximum Delay section>>).
 
 NOTE: `WanNoDelayReplication` implementation has been removed. You can still achieve this behavior by setting the batch size to `1` while configuring your WAN replication.
-
 
 ==== Configuring WAN Replication for IMap and ICache
 
@@ -482,7 +480,7 @@ This may be useful, for instance, to release the consumed heap if you know that 
 In the previous Hazelcast releases, WAN replication was dropping the new events if WAN replication event queues are full.
 This behavior is configurable starting with Hazelcast 3.6.
 
-There are following supported behaviors:
+The following behaviors are supported:
 
 * `DISCARD_AFTER_MUTATION`: If you select this option, the new WAN events generated by the member are dropped and not replicated to the target cluster
 when the WAN event queues are full.
@@ -551,7 +549,7 @@ You can choose from 2 different ACK type depending on your consistency requireme
 * `ACK_ON_RECEIPT`: A batch of replication events is considered successful as soon as it is received by the target cluster. This option does not guarantee that the received event is actually applied but it is faster.
 * `ACK_ON_OPERATION_COMPLETE`: This option guarantees that the event is received by the target cluster and it is applied. It is more time consuming. But it is the best way if you have strong consistency requirements.
 
-Following is an example configuration:
+The following is an example configuration:
 
 [source,xml]
 ----
@@ -938,7 +936,7 @@ Starting with Hazelcast IMDG 3.12, we have redesigned the WAN replication mechan
 * `batch.size`
 * `batch.max.delay.millis`
 * `replication.idle.minParkNs`
-* `replication.idle.maxParkNs`.
+* `replication.idle.maxParkNs`
 
 To understand the implications of these properties, let's first dive into how WAN replication works.
 
@@ -1022,7 +1020,6 @@ An example WAN replication configuration using the default values of the aforeme
 ----
 
 Finally, as we've mentioned, the exact values which will give you the optimal performance depend on your environment and use case. Please benchmark and try out different values to find out the right values for you.
-
 
 ==== WAN Replication Additional Information
 
@@ -1332,14 +1329,14 @@ NOTE: Consistency check can be triggered only for one map.
 The consistency check and the synchronization both write statistics into the diagnostics subsystem and send it
  to the Management Center. The following reported fields can be used to reason about the efficiency of the configuration.
 
-Consistency check reports the number of the
+Consistency check reports the number of the:
 
-* Merkle tree nodes checked,
-* Merkle tree nodes found to be different,
-* entries needed to be synchronized to make the clusters consistent.
+* Merkle tree nodes checked
+* Merkle tree nodes found to be different
+* and entries needed to be synchronized to make the clusters consistent.
 
-Synchronization reports the
+Synchronization reports the:
 
-* duration of the synchronization,
-* number of the entries synchronized,
+* duration of the synchronization
+* number of the entries synchronized
 * average number of the entries per tree leaves in the synchronized leaves.
