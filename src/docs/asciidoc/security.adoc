@@ -646,8 +646,8 @@ Here is the snippet from the abstract implementation of `Credentials` (see its h
 
 [source,java]
 ----
-public abstract class AbstractCredentials implements Credentials, DataSerializable {
-    private transient String endpoint;
+public abstract class AbstractCredentials implements Credentials, Portable {
+    private String endpoint;
     private String principal;
     ...
 }
@@ -657,7 +657,7 @@ public abstract class AbstractCredentials implements Credentials, DataSerializab
 
 [source,java]
 ----
-public class UsernamePasswordCredentials extends Credentials {
+public class UsernamePasswordCredentials extends AbstractCredentials {
     private byte[] password;
     ...
 }
