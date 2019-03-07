@@ -5,7 +5,7 @@ The CP subsystem is a component of a Hazelcast cluster that builds an in-memory 
 
 Currently, the CP subsystem contains only the implementations of Hazelcast's concurrency APIs. These APIs do not maintain large states. For this reason, all members of a Hazelcast cluster do not take part in the CP subsystem. The number of members that take part in the CP subsystem is specified with `CPSubsystemConfig.setCPMemberCount(int)`. Let's suppose the number of CP members is configured as **C**. Then, when Hazelcast cluster starts, the first **C** members form the CP subsystem. These members are called the CP members and they can also contain data for the other regular Hazelcast data structures, such as `IMap`, `ISet`.
 
-Data structures in the CP subsystem run in ``CPGroup``s. A _CP group_ consists of an odd number of ``CPMember``s between 3 and 7. Each CP group independently runs the https://raft.github.io/[Raft consensus algorithm]. Operations are committed and executed only after they are successfully replicated to the majority of the CP members in a CP group. For instance, in a CP group of 5 CP members, operations are committed when they are replicated to at least 3 CP members. The size of CP groups is specified via `CPSubsystemConfig.setGroupSize(int)` and each CP group contains the same number of CP members. See the <<cpsubsystem-configuration, CP Subsystem Configuration section>> for configuration details.
+Data structures in the CP subsystem run in ``CPGroup``s. A _CP group_ consists of an odd number of ``CPMember``s between 3 and 7. Each CP group independently runs the https://raft.github.io/[Raft consensus algorithm]. Operations are committed and executed only after they are successfully replicated to the majority of the CP members in a CP group. For instance, in a CP group of 5 CP members, operations are committed when they are replicated to at least 3 CP members. The size of CP groups is specified via `CPSubsystemConfig.setGroupSize(int)` and each CP group contains the same number of CP members. See the <<cp-subsystem-configuration, CP Subsystem Configuration section>> for configuration details.
 
 Please note that the size of CP groups does not have to be same with the CP member count. Namely, the number of CP members in the CP subsystem can be larger than the configured CP group size. In this case, CP groups are formed by selecting the CP members randomly. Also note that the current CP subsystem implementation works only in memory, without persisting any state to disk. It means that a crashed CP member is not able to recover by reloading its previous state. Therefore, crashed CP members create a danger for gradually losing the majority of CP groups and eventually cause the total loss of availability of the CP subsystem. To prevent such situations, failed CP members can be removed from the CP subsystem and replaced in CP groups with other available CP members. This flexibility provides a good degree of fault tolerance at run-time. See the <<cp-subsystem-management, CP Subsystem Management section>> for more details.
 
@@ -22,15 +22,26 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=apisample]
 
 WARNING: The CP data structure proxies differ from the other data structure proxies in one aspect: if you call the `DistributedObject.destroy()` method on a CP data structure proxy, that data structure is terminated on the underlying CP group and cannot be reinitialized on the same CP group until the CP group is force-destroyed. For this reason, please make sure that you are completely done with a CP data structure before destroying its proxy.
 
+=== CP Subsystem Discovery
+
+The CP subsystem runs a discovery process in the background on cluster startup. When you enable it by setting a positive value to `CPSubsystemConfig.setCPMemberCount(int)`, say `N`, the first `N` members in the cluster member list initiate the discovery process. Other Hazelcast members skip this step. The CP subsystem discovery process runs out of the box on top of Hazelcast's cluster member list without requiring any custom configuration for different environments. It is completed when each one of the first `N` Hazelcast members initializes its local CP member list and commits it to the Metadata CP group. The Metadata CP group is initialized among those CP members as well. *A soon-to-be CP member terminates itself if any of the following conditions occur before the CP discovery process is completed:*
+
+- Any Hazelcast member leaves the cluster,
+- The local Hazelcast member commits a CP member list which is different from other members' committed CP member lists,
+- The local Hazelcast member list fails to commit its discovered CP member list for any reason.
+
+When the CP subsystem is restarted via `CPSubsystemManagementService.restart()`, the CP subsystem discovery process is triggered again. However, it does not terminate
+Hazelcast members if the discovery fails for the aforementioned reasons, because Hazelcast members are likely to contain data for AP data structures and termination can cause data loss. Hence, you need to observe the cluster and check if the discovery process completes successfully on CP subsystem restart. See <<cp-subsystem-management-apis, CP Subsystem Management APIs section>> for more details.
+
 === CP Sessions
 
 For CP data structures which are performing ownership management of the resources, such as Lock or Semaphore, a session is required to keep track of the liveliness of the caller. In this context, the caller means an entity that uses the CP subsystem APIs. It can be either a Hazelcast member or a client. A caller initially creates a session before sending its very first session based request to the CP group, such as a Lock / Semaphore acquire. After creating a session on the CP group, the caller stores its session ID locally and sends it alongside its session based operations. A single session is used for all lock and semaphore proxies of the caller. When a CP group receives a session based operation, it checks the validity of the session using the session ID information available in the operation. A session is valid if it is still open in the CP group. An operation with a valid session ID is accepted as a new session heartbeat. While a caller is idle, in other words, it does not send any session based operation to the CP group for a while, it commits periodic heartbeats to the CP group in the background in order to keep its session alive. This interval is specified in `CPSubsystemConfig.getSessionHeartbeatIntervalSeconds()`.
 
-A session is closed when the caller does not touch the session during a predefined duration. In this case, the caller is assumed to be crashed and all its resources are released automatically. This duration is specified in `CPSubsystemConfig.getSessionTimeToLiveSeconds()`. See the <<cpsubsystem-configuration, CP Subsystem Configuration section>> to learn the recommendations for choosing a reasonable session time-to-live duration.
+A session is closed when the caller does not touch the session during a predefined duration. In this case, the caller is assumed to be crashed and all its resources are released automatically. This duration is specified in `CPSubsystemConfig.getSessionTimeToLiveSeconds()`. See the <<cp-subsystem-configuration, CP Subsystem Configuration section>> to learn the recommendations for choosing a reasonable session time-to-live duration.
 
 Sessions offer a trade-off between liveliness and safety. If you set a very small value using `CPSubsystemConfig.setSessionTimeToLiveSeconds(int)`, then a session owner could be considered crashed very quickly and its resources can be released prematurely. On the other hand, if you set a large value, a session could be kept alive for an unnecessarily long duration even if its owner actually crashes.
 
-See the <<cpsubsystem-configuration, CP Subsystem Configuration section>> for more details.
+See the <<cp-subsystem-configuration, CP Subsystem Configuration section>> for more details.
 
 === FencedLock
 
@@ -54,7 +65,7 @@ All of the API methods in the new `FencedLock` abstraction offer exactly-once ex
 
 === Configuration
 
-==== CPSubsystem Configuration
+==== CP Subsystem Configuration
 
 * `cp-member-count`: Number of ``CPMember``s to initialize the `CPSubsystem`. It is `0` by default, meaning that the CP subsystem is disabled. The CP subsystem is enabled when a positive value is set. After the CP subsystem is initialized successfully, more CP members can be added at run-time and the number of active CP members can go beyond the configured CP member count. The number of CP members can be smaller than the total size of the Hazelcast cluster. For instance, you can run 5 CP members in a 20-member Hazelcast cluster.
 +
