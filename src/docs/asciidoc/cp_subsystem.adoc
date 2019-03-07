@@ -209,8 +209,8 @@ WARNING: These parameters tune specific parameters of Hazelcast's Raft consensus
 * `leader-election-timeout-in-millis`: Leader election timeout in milliseconds. If a candidate cannot win the majority of votes in time, a new election round is initiated. Default value is `2000` milliseconds.
 * `leader-heartbeat-period-in-millis`: Period in milliseconds for a leader to send heartbeat messages to its followers. Default value is `5000` milliseconds.
 * `max-missed-leader-heartbeat-count`: Maximum number of missed leader heartbeats to trigger a new leader election. Default value is `5`.
-* `append-request-max-entry-count`: Maximum entry count that can be sent in a single batch of append entries request. Default value is `50`.
-* `commit-index-advance-count-to-snapshot`: Number of new commits to initiate a new snapshot after the last snapshot. Default value is `1000`.
+* `append-request-max-entry-count`: Maximum entry count that can be sent in a single batch of append entries request. Default value is `100`.
+* `commit-index-advance-count-to-snapshot`: Number of new commits to initiate a new snapshot after the last snapshot. Default value is `10000`.
 * `uncommitted-entry-count-to-reject-new-appends`: Maximum number of uncommitted entries in the leader's Raft log before temporarily rejecting the new requests of callers. Default value is `100`.
 * `append-request-backoff-timeout-in-millis`: Timeout in milliseconds for append request backoff. After the leader sends an append request to a follower, it will not send a subsequent append request until the follower responds to the former request or this timeout occurs. Default value is `100` milliseconds.
 
@@ -226,8 +226,8 @@ WARNING: These parameters tune specific parameters of Hazelcast's Raft consensus
             <leader-election-timeout-in-millis>2000</leader-election-timeout-in-millis>
             <leader-heartbeat-period-in-millis>5000</leader-heartbeat-period-in-millis>
             <max-missed-leader-heartbeat-count>5</max-missed-leader-heartbeat-count>
-            <append-request-max-entry-count>50</append-request-max-entry-count>
-            <commit-index-advance-count-to-snapshot>1000</commit-index-advance-count-to-snapshot>
+            <append-request-max-entry-count>100</append-request-max-entry-count>
+            <commit-index-advance-count-to-snapshot>10000</commit-index-advance-count-to-snapshot>
             <uncommitted-entry-count-to-reject-new-appends>200</uncommitted-entry-count-to-reject-new-appends>
             <append-request-backoff-timeout-in-millis>250</append-request-backoff-timeout-in-millis>
         </raft-algorithm>
