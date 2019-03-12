@@ -20,7 +20,13 @@ The current set of CP data structures have quite low memory overheads. Moreover,
 include::{javasource}/cp/CpSubsystemAPI.java[tag=apisample]
 ----
 
-WARNING: The CP data structure proxies differ from the other data structure proxies in two aspects. First, each time you fetch a proxy via one of the methods in this interface, internally a commit is performed on the Metadata CP group. Hence, callers should cache returned proxies. Second, if you call the `DistributedObject.destroy()` method on a CP data structure proxy, that data structure is terminated on the underlying CP group and cannot be reinitialized until the CP group is force-destroyed. For this reason, please make sure that you are completely done with a CP data structure before destroying its proxy.
+[WARNING]
+====
+The CP data structure proxies differ from the other data structure proxies in two aspects:
+
+* Each time you fetch a proxy via one of the methods in this interface, internally a commit is performed on the Metadata CP group. Hence, the callers should cache  the returned proxies. 
+* If you call the `DistributedObject.destroy()` method on a CP data structure proxy, that data structure is terminated on the underlying CP group and cannot be reinitialized until the CP group is force-destroyed. For this reason, please make sure that you are completely done with a CP data structure before destroying its proxy.
+====
 
 === CP Subsystem Discovery
 
