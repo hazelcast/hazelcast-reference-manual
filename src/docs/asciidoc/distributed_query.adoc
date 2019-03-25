@@ -2,18 +2,32 @@
 
 == Distributed Query
 
-Distributed queries access data from multiple data sources stored on either the same or different members.
+Distributed queries access data from multiple data sources stored on
+either the same or different members.
 
-Hazelcast partitions your data and spreads it across cluster of members. You can iterate over the map entries and look for certain entries (specified by predicates) you are interested in. However, this is not very efficient because you have to bring the entire entry set and iterate locally. Instead, Hazelcast allows you to run distributed queries on your distributed map.
+Hazelcast partitions your data and spreads it across cluster of members. 
+You can iterate over the map entries and look for certain entries
+(specified by predicates) you are interested in. However, this is not
+very efficient because you have to bring the entire entry set and iterate
+locally. Instead, Hazelcast allows you to run distributed queries on your
+distributed map.
 
 
 === How Distributed Query Works
 
 . The requested predicate is sent to each member in the cluster.
-. Each member looks at its own local entries and filters them according to the predicate. At this stage, key/value pairs of the entries are deserialized and then passed to the predicate.
-. The predicate requester merges all the results coming from each member into a single set.
+. Each member looks at its own local entries and filters them according
+to the predicate. At this stage, key/value pairs of the entries are
+deserialized and then passed to the predicate.
+. The predicate requester merges all the results coming from each
+member into a single set.
 
-Distributed query is highly scalable. If you add new members to the cluster, the partition count for each member is reduced and thus the time spent by each member on iterating its entries is reduced. In addition, the pool of partition threads evaluates the entries concurrently in each member and the network traffic is also reduced since only filtered data is sent to the requester.
+Distributed query is highly scalable. If you add new members to the
+cluster, the partition count for each member is reduced and thus the
+time spent by each member on iterating its entries is reduced. In addition,
+the pool of partition threads evaluates the entries concurrently in each
+member and the network traffic is also reduced since only filtered data
+is sent to the requester.
 
 Hazelcast offers the following APIs for distributed query purposes:
 
@@ -23,7 +37,8 @@ Hazelcast offers the following APIs for distributed query purposes:
 
 ==== Employee Map Query Example
 
-Assume that you have an "employee" map containing values of `Employee` objects, as coded below.
+Assume that you have an "employee" map containing values of
+`Employee` objects, as coded below.
 
 [source,java]
 ----
@@ -61,16 +76,23 @@ public class Employee implements Serializable {
 }
 ----
 
-Now let's look for the employees who are active and have an age less than 30 using the aforementioned APIs (Criteria API and Distributed SQL Query). The following subsections describe each query mechanism for this example.
+Now let's look for the employees who are active and have an age less
+than 30 using the aforementioned APIs (Criteria API and Distributed
+SQL Query). The following subsections describe each query mechanism
+for this example.
 
-NOTE: When using Portable objects, if one field of an object exists on one member but does not exist on another one, Hazelcast does not throw an unknown field exception.
-Instead, Hazelcast treats that predicate, which tries to perform a query on an unknown field, as an always false predicate.
+NOTE: When using Portable objects, if one field of an object exists
+on one member but does not exist on another one, Hazelcast does not
+throw an unknown field exception.
+Instead, Hazelcast treats that predicate, which tries to perform a
+query on an unknown field, as an always false predicate.
 
 
 ==== Querying with Criteria API
 
-Criteria API is a programming interface offered by Hazelcast that is similar to the Java Persistence Query Language (JPQL). Below is the code
-for the <<employee-map-query-example, above example query>>.
+Criteria API is a programming interface offered by Hazelcast that
+is similar to the Java Persistence Query Language (JPQL). Below
+is the code for the <<employee-map-query-example, above example query>>.
 
 [source,java]
 ----
@@ -82,39 +104,54 @@ Predicate predicate = e.is( "active" ).and( e.get( "age" ).lessThan( 30 ) );
 Collection<Employee> employees = map.values( predicate );
 ----
 
-In the above example code, `predicate` verifies whether the entry is active and its `age` value is less than 30. This `predicate` is
-applied to the `employee` map using the `map.values(predicate)` method. This method sends the predicate to all cluster members
-and merges the results coming from them. Since the predicate is communicated between the members, it needs to
+In the above example code, `predicate` verifies whether the entry is
+active and its `age` value is less than 30. This `predicate` is
+applied to the `employee` map using the `map.values(predicate)` method.
+This method sends the predicate to all cluster members
+and merges the results coming from them. Since the predicate is
+communicated between the members, it needs to
 be serializable.
 
-NOTE: Predicates can also be applied to `keySet`, `entrySet` and `localKeySet` of the Hazelcast distributed map.
+NOTE: Predicates can also be applied to `keySet`, `entrySet` and
+`localKeySet` of the Hazelcast distributed map.
 
 ===== Predicates Class Operators
 
-The `Predicates` class includes many operators for your query requirements. The following are
-descriptions for some of them:
+The `Predicates` class includes many operators for your query requirements.
+The following are descriptions for some of them:
 
 * `equal`: Checks if the result of an expression is equal to a given value.
 * `notEqual`: Checks if the result of an expression is not equal to a given value.
 * `instanceOf`: Checks if the result of an expression has a certain type.
-* `like`: Checks if the result of an expression matches some string pattern. % (percentage sign) is the placeholder for many
-characters,  (underscore) is placeholder for only one character.
-* `greaterThan`: Checks if the result of an expression is greater than a certain value.
-* `greaterEqual`: Checks if the result of an expression is greater than or equal to a certain value.
-* `lessThan`: Checks if the result of an expression is less than a certain value.
-* `lessEqual`: Checks if the result of an expression is less than or equal to a certain value.
-* `between`: Checks if the result of an expression is between two values (this is inclusive).
-* `in`: Checks if the result of an expression is an element of a certain collection.
+* `like`: Checks if the result of an expression matches some string pattern. %
+(percentage sign) is the placeholder for many characters,  (underscore) is 
+placeholder for only one character.
+* `greaterThan`: Checks if the result of an expression is greater than a
+certain value.
+* `greaterEqual`: Checks if the result of an expression is greater than or
+equal to a certain value.
+* `lessThan`: Checks if the result of an expression is less than a certain
+value.
+* `lessEqual`: Checks if the result of an expression is less than or equal
+to a certain value.
+* `between`: Checks if the result of an expression is between two values
+(this is inclusive).
+* `in`: Checks if the result of an expression is an element of a certain
+collection.
 * `isNot`: Checks if the result of an expression is false.
-* `regex`: Checks if the result of an expression matches some regular expression.
+* `regex`: Checks if the result of an expression matches some regular
+expression.
 
 
-NOTE: See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc] for all predicates provided.
+NOTE: See the
+https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/Predicates.html[Predicates Javadoc]
+for all predicates provided.
 
 
 ===== Combining Predicates with AND, OR, NOT
 
-You can combine predicates using the `and`, `or` and `not` operators, as shown in the below examples.
+You can combine predicates using the `and`, `or` and `not` operators,
+as shown in the below examples.
 
 [source,java]
 ----
@@ -147,7 +184,8 @@ public Collection<Employee> getNotWithName( String name ) {
 
 ===== Simplifying with PredicateBuilder
 
-You can simplify predicate usage with the `PredicateBuilder` class, which offers simpler predicate building. Please see the
+You can simplify predicate usage with the `PredicateBuilder` class,
+which offers simpler predicate building. Please see the
 below example code which selects all people with a certain name and age.
 
 [source,java]
@@ -162,7 +200,8 @@ public Collection<Employee> getWithNameAndAgeSimplified( String name, int age ) 
 
 ==== Querying with SQL
 
-`com.hazelcast.query.SqlPredicate` takes the regular SQL `where` clause. Here is an example:
+`com.hazelcast.query.SqlPredicate` takes the regular SQL `where` clause.
+Here is an example:
 
 [source,java]
 ----
@@ -200,7 +239,8 @@ Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) 
 
 **LIKE:** `<attribute> [NOT] LIKE "expression"`
 
-The `%` (percentage sign) is placeholder for multiple characters, an `_` (underscore) is placeholder for only one character.
+The `%` (percentage sign) is placeholder for multiple characters,
+an `_` (underscore) is placeholder for only one character.
 
 * `name LIKE 'Jo%'` (true for 'Joe', 'Josh', 'Joseph' etc.)
 * `name LIKE 'Jo_'` (true for 'Joe'; false for 'Josh')
@@ -221,7 +261,8 @@ Similar to LIKE predicate but in a case-insensitive manner.
 
 ===== Querying Entry Keys with Predicates
 
-You can use `__key` attribute to perform a predicated search for entry keys. Please see the following example:
+You can use `__key` attribute to perform a predicated search for entry
+keys. Please see the following example:
 
 [source,java]
 ----
@@ -234,13 +275,18 @@ Predicate predicate = new SqlPredicate("__key like A%");
 Collection<Person> startingWithA = personMap.values(predicate);
 ----
 
-In this example, the code creates a collection with the entries whose keys start with the letter "A”.
+In this example, the code creates a collection with the entries whose
+keys start with the letter "A”.
 
 ==== Querying JSON Strings
 
-You can query JSON strings stored inside your Hazelcast clusters. To query a JSON string,
-you first need to create a `HazelcastJsonValue` from the JSON string. You can use ``HazelcastJsonValue``s both as keys and values in the distributed data structures. Then, it is
-possible to query these objects using the Hazelcast query methods explained in this section.
+You can query JSON strings stored inside your Hazelcast clusters. To
+query a JSON string,
+you first need to create a `HazelcastJsonValue` from the JSON string.
+You can use ``HazelcastJsonValue``s both as keys and values in the
+distributed data structures. Then, it is
+possible to query these objects using the Hazelcast query methods
+explained in this section.
 
 [source,java]
 ----
@@ -257,13 +303,19 @@ idPersonMap.put(3, new HazelcastJsonValue(person3));
 Collection<HazelcastJsonValue> peopleUnder21 = idPersonMap.values(Predicates.lessThan("age", 21));
 ----
 
-When running the queries, Hazelcast treats values extracted from the JSON documents as Java types so they
-can be compared with the query attribute. JSON specification defines five primitive types to be used in the JSON
-documents: `number`,`string`, `true`, `false` and `null`. The `string`, `true/false` and `null` types are treated
-as `String`, `boolean` and `null`, respectively. We treat the extracted `number` values as ``long``s if they
-can be represented by a `long`. Otherwise, ``number``s are treated as``double``s.
+When running the queries, Hazelcast treats values extracted from
+the JSON documents as Java types so they
+can be compared with the query attribute. JSON specification
+defines five primitive types to be used in the JSON
+documents: `number`,`string`, `true`, `false` and `null`. The `string`,
+`true/false` and `null` types are treated
+as `String`, `boolean` and `null`, respectively. We treat the extracted
+`number` values as ``long``s if they
+can be represented by a `long`. Otherwise, ``number``s are treated
+as ``double``s.
 
-It is possible to query nested attributes and arrays in JSON documents. The query syntax is the same
+It is possible to query nested attributes and arrays in JSON documents.
+The query syntax is the same
 as querying other Hazelcast objects as explained in the
 <<querying-in-collections-and-arrays, Querying in Collections and Arrays section>>.
 
@@ -295,35 +347,52 @@ as querying other Hazelcast objects as explained in the
 Collection<HazelcastJsonValue> departmentWithPeter = departments.values(Predicates.equal("people[any].name", "Peter"));
 ----
 
-`HazelcastJsonValue` is a lightweight wrapper around your JSON strings. It is used merely as a way to indicate
-that the contained string should be treated as a valid JSON value. Hazelcast does not check the validity of JSON
-strings put into to maps. Putting an invalid JSON string in a map is permissible. However, in that case
+`HazelcastJsonValue` is a lightweight wrapper around your JSON strings.
+It is used merely as a way to indicate
+that the contained string should be treated as a valid JSON value.
+Hazelcast does not check the validity of JSON
+strings put into to maps. Putting an invalid JSON string in a map is
+permissible. However, in that case
 whether such an entry is going to be returned or not from a query is not defined.
 
 ===== Metadata Creation for JSON Querying
 
-Hazelcast stores a metadata object per `HazelcastJsonValue` stored. This metadata object is created every time
-a `HazelcastJsonValue` is put into an IMap. Metadata is later used to speed up the query operations. Metadata creation
-is on by default. Depending on your application's needs, you may want to turn off the metadata creation 
-to decrease the put latency and increase the throughput. You can configure this using <<metadata-policy, Metadata Policy>>.
+Hazelcast stores a metadata object per `HazelcastJsonValue` stored.
+This metadata object is created every time
+a `HazelcastJsonValue` is put into an IMap. Metadata is later used
+to speed up the query operations. Metadata creation
+is on by default. Depending on your application's needs, you may want
+to turn off the metadata creation 
+to decrease the put latency and increase the throughput. You can configure
+this using <<metadata-policy, Metadata Policy>>.
 
-NOTE: JSON metadata is stored on-heap even when you use the `NATIVE` in-memory format. If you are storing
-``HazelcastJsonValue``s in your `NATIVE` maps, there is a certain amount of on-heap cost per object. Metadata is not created unless you put ``HazelcastJsonValue``s in your `NATIVE` maps even when metadata creation is on.
+NOTE: JSON metadata is stored on-heap even when you use the `NATIVE`
+in-memory format. If you are storing
+``HazelcastJsonValue``s in your `NATIVE` maps, there is a certain
+amount of on-heap cost per object. Metadata is not created unless you
+put ``HazelcastJsonValue``s in your `NATIVE` maps even when metadata
+creation is on.
 
 ==== Filtering with Paging Predicates
 
-Hazelcast provides paging for defined predicates. With its `PagingPredicate` class, you can
-get a collection of keys, values, or entries page by page by filtering them with predicates and giving the size of the pages. Also, you
-can sort the entries by specifying comparators.
+Hazelcast provides paging for defined predicates. With its `PagingPredicate`
+class, you can
+get a collection of keys, values, or entries page by page by filtering
+them with predicates and giving the size of the pages. Also, you
+can sort the entries by specifying comparators. In this case, the comparator
+should be `Serializable`.
 
 In the example code below:
 
-* The `greaterEqual` predicate gets values from the "students" map. This predicate has a filter
+* The `greaterEqual` predicate gets values from the "students" map. This
+predicate has a filter
 to retrieve the objects with an "age" greater than or equal to 18.
-* Then a `PagingPredicate` is constructed in which the page size is 5, so that there are five objects in each page.
+* Then a `PagingPredicate` is constructed in which the page size is 5,
+so that there are five objects in each page.
 The first time the values are called creates the first page.
 * It gets subsequent pages with the `nextPage()`
-method of `PagingPredicate` and querying the map again with the updated `PagingPredicate`.
+method of `PagingPredicate` and querying the map again with the
+updated `PagingPredicate`.
 
 [source,java]
 ----
@@ -340,17 +409,29 @@ values = map.values( pagingPredicate );
 ...
 ----
 
-If a comparator is not specified for `PagingPredicate`, but you want to get a collection of keys or values page by page, this collection must be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`). Otherwise, the `java.lang.IllegalArgument` exception is thrown.
+If a comparator is not specified for `PagingPredicate`, but you want
+to get a collection of keys or values page by page, this collection must
+be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`).
+Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
-Starting with Hazelcast 3.6, you can also access a specific page more easily with the help of the `setPage()` method. This way, if you make a query for the hundredth page, for example, it gets all 100 pages at once instead of reaching the hundredth page one by one using the `nextPage()` method. Please note that this feature tires the memory and refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
+Starting with Hazelcast 3.6, you can also access a specific page more
+easily with the help of the `setPage()` method. This way, if you make
+a query for the hundredth page, for example, it gets all 100 pages at
+once instead of reaching the hundredth page one by one using the `nextPage()` method.
+Please note that this feature tires the memory and refer to the
+https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
 
-Paging Predicate, also known as Order & Limit, is not supported in Transactional Context.
+Paging Predicate, also known as Order & Limit, is not supported in
+Transactional Context.
 
 ==== Filtering with Partition Predicate
 
-You can run queries on a single partition in your cluster using the partition predicate (`PartitionPredicate`).
+You can run queries on a single partition in your cluster using
+the partition predicate (`PartitionPredicate`).
 
-It takes a predicate and partition key as parameters, gets the partition ID using the key and  runs that predicate only on the partition where that key belongs.
+It takes a predicate and partition key as parameters, gets the
+partition ID using the key and  runs that predicate only on the partition
+where that key belongs.
 
 Please see the following code snippet:
 
@@ -364,30 +445,47 @@ Collection<String> keys = map.keySet(predicate);
 ...
 ----
 
-By default there are 271 partitions, and using a regular predicate, each partition needs to be accessed. However, if the
-partition predicate only accesses a single partition, this can lead to a big performance gain.
+By default there are 271 partitions, and using a regular predicate,
+each partition needs to be accessed. However, if the
+partition predicate only accesses a single partition, this can lead
+to a big performance gain.
 
-For the partition predicate to work correctly, you need to know which partition your data belongs to so that you can send the
-request to the correct partition. One of the ways of doing it is to make use of the `PartitionAware` interface when data is
-inserted, thereby controlling the owning partition. Please see the <<partitionaware , PartitionAware section>> for more information and examples.
+For the partition predicate to work correctly, you need to know which
+partition your data belongs to so that you can send the
+request to the correct partition. One of the ways of doing it is to
+make use of the `PartitionAware` interface when data is
+inserted, thereby controlling the owning partition. Please see the
+<<partitionaware , PartitionAware section>> for more information and examples.
 
-A concrete example may be a webshop that sells phones and accessories. To find all the accessories of a phone,
-a query could be executed that selects all accessories for that phone. This query is executed on all members in the cluster and
-therefore could generate quite a lot of load. However, if we would store the accessories in the same partition as the phone, the
-partition predicate could use the `partitionKey` of the phone to select the right partition and then it queries for
-the accessories for that phone; and this reduces the load on the system and get faster query results.
+A concrete example may be a webshop that sells phones and accessories.
+To find all the accessories of a phone,
+a query could be executed that selects all accessories for that phone.
+This query is executed on all members in the cluster and
+therefore could generate quite a lot of load. However, if we would store
+the accessories in the same partition as the phone, the
+partition predicate could use the `partitionKey` of the phone to select
+the right partition and then it queries for
+the accessories for that phone; and this reduces the load on the system
+and get faster query results.
 
 ==== Indexing Queries
 
-Hazelcast distributed queries run on each member in parallel and return only the results to the caller.
+Hazelcast distributed queries run on each member in parallel and return
+only the results to the caller.
 Then, on the caller side, the results are merged.
 
 When a query runs on a
-member, Hazelcast iterates through all the owned entries and find the matching ones. This can be made faster by indexing
-the mostly queried fields, just like you would do for your database. Indexing adds overhead for each `write`
-operation but queries will be a lot faster. If you query your map a lot, make sure to add indexes for the most frequently
-queried fields. For example, if you do an `active and age < 30` query, make sure you add an index for the `active` and
-`age` fields. The following example code does that by getting the map from the Hazelcast instance and adding indexes to the map with the IMap `addIndex` method.
+member, Hazelcast iterates through all the owned entries and find the
+matching ones. This can be made faster by indexing
+the mostly queried fields, just like you would do for your database.
+Indexing adds overhead for each `write`
+operation but queries will be a lot faster. If you query your map a
+lot, make sure to add indexes for the most frequently
+queried fields. For example, if you do an `active and age < 30` query,
+make sure you add an index for the `active` and
+`age` fields. The following example code does that by getting the map
+from the Hazelcast instance and adding indexes to the map with the
+IMap `addIndex` method.
 
 [source,java]
 ----
@@ -400,12 +498,15 @@ map.addIndex( "active", false );
 
 ===== Indexing Ranged Queries
 
-`IMap.addIndex(fieldName, ordered)` is used for adding index. For each indexed field, if you have ranged queries such as `age>30`,
-`age BETWEEN 40 AND 60`, then you should set the `ordered` parameter to `true`. Otherwise, set it to `false`.
+`IMap.addIndex(fieldName, ordered)` is used for adding index. For
+each indexed field, if you have ranged queries such as `age>30`,
+`age BETWEEN 40 AND 60`, then you should set the `ordered` parameter
+to `true`. Otherwise, set it to `false`.
 
 ===== Configuring IMap Indexes
 
-Also, you can define `IMap` indexes in configuration. An example is shown below.
+Also, you can define `IMap` indexes in configuration. An example is
+shown below.
 
 [source,xml]
 ----
@@ -421,7 +522,8 @@ Also, you can define `IMap` indexes in configuration. An example is shown below.
 </hazelcast>
 ----
 
-You can also define `IMap` indexes using programmatic configuration, as in the example below.
+You can also define `IMap` indexes using programmatic configuration,
+as in the example below.
 
 [source,java]
 ----
@@ -429,7 +531,8 @@ mapConfig.addMapIndexConfig( new MapIndexConfig( "name", false ) );
 mapConfig.addMapIndexConfig( new MapIndexConfig( "age", true ) );
 ----
 
-The following is the Spring declarative configuration for the same example.
+The following is the Spring declarative configuration for the same
+example.
 
 [source,xml]
 ----
@@ -443,21 +546,36 @@ The following is the Spring declarative configuration for the same example.
 
 NOTE: Non-primitive types to be indexed should implement *`Comparable`*.
 
-NOTE: If you configure the data structure to use <<configuring-high-density-memory-store, High-Density Memory Store>> **and** indexes, the indexes are automatically stored in the High-Density Memory Store as well. This prevents from running into full garbage collections when doing a lot of updates to index.
+NOTE: If you configure the data structure to use
+<<configuring-high-density-memory-store, High-Density Memory Store>> **and**
+indexes, the indexes are automatically stored in the High-Density Memory Store
+as well. This prevents from running into full garbage collections when doing
+a lot of updates to index.
 
 ===== Composite Indexes
 
-Composite indexes, also known as compound indexes, are special kind of indexes that are built on top of the multiple map entry attributes and therefore may be used to significantly speed up the queries involving those attributes simultaneously.
+Composite indexes, also known as compound indexes, are special kind of
+indexes that are built on top of the multiple map entry attributes and
+therefore may be used to significantly speed up the queries involving
+those attributes simultaneously.
 
-There are two distinct composite index types used for two different purposes: unordered composite indexes and ordered ones.
+There are two distinct composite index types used for two different
+purposes: unordered composite indexes and ordered ones.
 
 ====== Unordered Composite Indexes
 
-The unordered indexes are used to perform equality queries, also known as the point queries, e.g., `name = 'Alice'`. These are specifically optimized for equality queries and don't support other comparison operators like `>` or `+<=+`.
+The unordered indexes are used to perform equality queries, also known
+as the point queries, e.g., `name = 'Alice'`. These are specifically
+optimized for equality queries and don't support other comparison operators
+like `>` or `+<=+`.
 
-Additionally, the _composite_ unordered indexes allow speeding up the equality queries involving multiple attributes simultaneously, e.g., `name = 'Alice' and age = 33`. This example query results in a single composite index lookup operation which can be performed very efficiently.
+Additionally, the _composite_ unordered indexes allow speeding up the equality
+queries involving multiple attributes simultaneously, e.g., `name = 'Alice'
+and age = 33`. This example query results in a single composite index lookup
+operation which can be performed very efficiently.
 
-The unordered composite index on the `name` and `age` attributes may be configured for a map as follows:
+The unordered composite index on the `name` and `age` attributes may be
+configured for a map as follows:
 
 [source,xml]
 ----
@@ -472,13 +590,23 @@ The unordered composite index on the `name` and `age` attributes may be configur
 </hazelcast>
 ----
 
-The attributes indexed by the _unordered_ composite indexes can't be matched partially: the `name = 'Alice'` query can't utilize the composite index configured above.
+The attributes indexed by the _unordered_ composite indexes can't be
+matched partially: the `name = 'Alice'` query can't utilize the composite
+index configured above.
 
 ====== Ordered Composite Indexes
 
-The ordered indexes are specifically designed to perform efficient order comparison queries, also known as the range queries, e.g., `age > 33`. The equality queries, like `age = 33`, are still supported by the ordered indexes, but they are handled in a slightly less efficient manner comparing to the unordered indexes.
+The ordered indexes are specifically designed to perform efficient order
+comparison queries, also known as the range queries, e.g., `age > 33`. The
+equality queries, like `age = 33`, are still supported by the ordered indexes,
+but they are handled in a slightly less efficient manner comparing to the
+unordered indexes.
 
-The _composite_ ordered indexes extend the concept by allowing multiple equality predicates and a single order comparison predicate to be combined into a single index query operation. For instance, the `name = 'Alice' and age > 33` and `name = 'Bob' and age = 33 and balance > 0.0` queries are good candidates to be covered by an ordered composite index configured as follows:
+The _composite_ ordered indexes extend the concept by allowing multiple
+equality predicates and a single order comparison predicate to be combined
+into a single index query operation. For instance, the `name = 'Alice' and
+age > 33` and `name = 'Bob' and age = 33 and balance > 0.0` queries are good
+candidates to be covered by an ordered composite index configured as follows:
 
 [source,xml]
 ----
@@ -493,41 +621,87 @@ The _composite_ ordered indexes extend the concept by allowing multiple equality
 </hazelcast>
 ----
 
-Unlike the _unordered_ composite indexes, partial attribute prefixes may be matched for the _ordered_ composite indexes. In general, a valid non-empty attribute prefix is formed as a sequence of zero or more equality predicates followed by a zero or exactly one order comparison predicate. Given the index definition above, the following queries may be served by the index: `name = 'Alice'`, `name > 'Alice'`, `name = 'Alice' and age > 33`, `name = 'Alice' and age = 33 and balance = 5.0`. The following queries can't be served the index: `age = 33`, `age > 33 and balance = 0.0`, `balance > 0.0`.
+Unlike the _unordered_ composite indexes, partial attribute prefixes may be
+matched for the _ordered_ composite indexes. In general, a valid non-empty
+attribute prefix is formed as a sequence of zero or more equality predicates
+followed by a zero or exactly one order comparison predicate. Given the index
+definition above, the following queries may be served by the index: `name = 'Alice'`,
+`name > 'Alice'`, `name = 'Alice' and age > 33`, `name = 'Alice' and age = 33 and
+balance = 5.0`. The following queries can't be served the index: `age = 33`,
+`age > 33 and balance = 0.0`, `balance > 0.0`.
 
-While matching the ordered composite indexes, multiple order comparison predicates acting on the same attribute are treated as a single range predicate acting on that attribute. Given the index definition above, the following queries may be served by the index: `name > 'Alice' and name < 'Bob'`, `name = 'Alice' and age > 33 and age < 55`, `name = 'Alice' and age = 33 and balance > 0.0 and balance < 100.0`.
+While matching the ordered composite indexes, multiple order comparison
+predicates acting on the same attribute are treated as a single range
+predicate acting on that attribute. Given the index definition above, the
+following queries may be served by the index: `name > 'Alice' and name < 'Bob'`,
+`name = 'Alice' and age > 33 and age < 55`, `name = 'Alice' and age = 33 and
+balance > 0.0 and balance < 100.0`.
 
 ====== Composite Index Matching and Selection
 
-The order of attributes involved in a query plays no role in the selection of the matching composite index: `name = 'Alice' and age = 33` and `age = 33 and name = 'Alice'` queries are equivalent from the point of view of the index matching procedure.
+The order of attributes involved in a query plays no role in the selection
+of the matching composite index: `name = 'Alice' and age = 33` and
+`age = 33 and name = 'Alice'` queries are equivalent from the point of
+view of the index matching procedure.
 
-The attributes involved in a query can be matched partially by the composite index matcher: `name = 'Alice' and age = 33 and balance > 0.0` can be partially matched by the `name, age` composite index, the `name = 'Alice' and age = 33` predicates are served by the matched index, while the `balance > 0.0` predicate is processed by other means.
+The attributes involved in a query can be matched partially by the composite
+index matcher: `name = 'Alice' and age = 33 and balance > 0.0` can be
+partially matched by the `name, age` composite index, the `name = 'Alice'
+and age = 33` predicates are served by the matched index, while the
+`balance > 0.0` predicate is processed by other means.
 
 ===== Copying Indexes
 
-The underlying data structures used by the indexes need to copy the query results to make sure that the results are correct. This copying process is performed either when reading the index from the data structure (on-read) or writing to it (on-write).
+The underlying data structures used by the indexes need to copy the
+query results to make sure that the results are correct. This copying
+process is performed either when reading the index from the data
+structure (on-read) or writing to it (on-write).
 
-On-read copying means that, for each index-read operation, the result of the query is copied before it is sent to the caller. Depending on the query result's size, this type of index copying may be slower since the result is stored in a map, i.e., all entries need to have the hash calculated before being stored. Unlike the index-read operations, each index-write operation is fast, since there is no copying. So, this option can be preferred in index-write intensive cases.
+On-read copying means that, for each index-read operation, the result
+of the query is copied before it is sent to the caller. Depending on
+the query result's size, this type of index copying may be slower since
+the result is stored in a map, i.e., all entries need to have the hash
+calculated before being stored. Unlike the index-read operations, each
+index-write operation is fast, since there is no copying. So, this
+option can be preferred in index-write intensive cases.
 
-On-write copying means that each index-write operation completely copies the underlying map to provide the copy-on-write semantics and this may be a slow operation depending on the index size. Unlike index-write operations, each index-read operation is fast since the operation only includes accessing the map that stores the results and returning them to the caller.
+On-write copying means that each index-write operation completely copies
+the underlying map to provide the copy-on-write semantics and this may
+be a slow operation depending on the index size. Unlike index-write operations,
+each index-read operation is fast since the operation only includes accessing
+the map that stores the results and returning them to the caller.
 
-Another option is never copying the results of a query to a separate map. This means the results backed by the underlying index-map can change after the query has been executed (such as an entry might have been added or removed from an index, or it might have been remapped). This option can be preferred if you expect "mostly correct" results, i.e., if it is not a problem when some entries returned in the query result set do not match the initial query criteria. This is the fastest option since there is no copying.
+Another option is never copying the results of a query to a separate map.
+This means the results backed by the underlying index-map can change after
+the query has been executed (such as an entry might have been added or removed
+from an index, or it might have been remapped). This option can be preferred
+if you expect "mostly correct" results, i.e., if it is not a problem when
+some entries returned in the query result set do not match the initial query
+criteria. This is the fastest option since there is no copying.
 
-You can set one these options using the system property `hazelcast.index.copy.behavior`. The following values, which are explained in the above paragraphs, can be set:
+You can set one these options using the system property
+`hazelcast.index.copy.behavior`. The following values, which are explained
+in the above paragraphs, can be set:
 
 * `COPY_ON_READ` (the default value)
 * `COPY_ON_WRITE`
 * `NEVER`
 
-NOTE: Usage of this system property is supported for BINARY and OBJECT in-memory formats. Only in Hazelcast 3.8.7, it is also supported for NATIVE in-memory format.
+NOTE: Usage of this system property is supported for BINARY and OBJECT
+in-memory formats. Only in Hazelcast 3.8.7, it is also supported for
+NATIVE in-memory format.
 
 ===== Indexing Attributes with ValueExtractor
 
-You can also define custom attributes that may be referenced in predicates, queries and indexes. Custom attributes can be defined by implementing a `ValueExtractor`. Please see the <<custom-attributes, Custom Attributes section>> for details.
+You can also define custom attributes that may be referenced in predicates,
+queries and indexes. Custom attributes can be defined by implementing a
+`ValueExtractor`. Please see the <<custom-attributes, Custom Attributes section>>
+for details.
 
 ===== Using "this" as an Attribute
 
-You can use the keyword `this` as an attribute name while adding an index or creating a predicate. A basic usage is shown below.
+You can use the keyword `this` as an attribute name while adding an
+index or creating a predicate. A basic usage is shown below.
 
 [source,java]
 ----
@@ -543,18 +717,29 @@ new SqlPredicate("this = 'jones'")
 new SqlPredicate("this.age > 33")
 ----
 
-The special attribute `this` acts on the value of a map entry. Typically, you do not need to specify it while accessing a property of an entry's value, since its presence is implicitly assumed if the special attribute <<querying-entry-keys-with-predicates, __key>> is not specified.
+The special attribute `this` acts on the value of a map entry. Typically,
+you do not need to specify it while accessing a property of an entry's
+value, since its presence is implicitly assumed if the special attribute
+<<querying-entry-keys-with-predicates, __key>> is not specified.
 
 ==== Configuring Query Thread Pool
 
-You can change the size of thread pool dedicated to query operations using the `pool-size` property. Each query consumes a single thread from a Generic Operations ThreadPool on each Hazelcast member - let's call it the query-orchestrating thread.  That thread is blocked throughout the whole execution-span of a query on the member.
+You can change the size of thread pool dedicated to query operations
+using the `pool-size` property. Each query consumes a single thread
+from a Generic Operations ThreadPool on each Hazelcast member - let's
+call it the query-orchestrating thread.  That thread is blocked throughout
+the whole execution-span of a query on the member.
 
-The query-orchestrating thread uses the threads from the query-thread pool in the following cases:
+The query-orchestrating thread uses the threads from the query-thread
+pool in the following cases:
 
 * if you run a `PagingPredicate` (since each page runs as a separate task)
-* if you set the system property `hazelcast.query.predicate.parallel.evaluation` to true (since the predicates are evaluated in parallel)
+* if you set the system property `hazelcast.query.predicate.parallel.evaluation`
+to true (since the predicates are evaluated in parallel)
 
-See the <<filtering-with-paging-predicates, Filtering with Paging Predicates section>> and <<parallel-predicates, System Properties appendix>> for information on paging predicates and for description of the above system property.
+See the <<filtering-with-paging-predicates, Filtering with Paging Predicates section>>
+and <<parallel-predicates, System Properties appendix>> for information on paging
+predicates and for description of the above system property.
 
 Below is an example of that declarative configuration.
 
@@ -579,17 +764,28 @@ cfg.getExecutorConfig("hz:query").setPoolSize(100);
 
 ===== Query Requests from Clients
 
-When dealing with the query requests coming from the clients to your members, Hazelcast offers the following system properties to tune your thread pools:
+When dealing with the query requests coming from the clients to your
+members, Hazelcast offers the following system properties to tune your
+thread pools:
 
-* `hazelcast.clientengine.thread.count` which is the number of threads to process non-partition-aware client requests, like `map.size()` and executor tasks. Its default value is the number of cores multiplied by 20.
-* `hazelcast.clientengine.query.thread.count` which is the number of threads to process query requests coming from the clients. Its default value is the number of cores.
+* `hazelcast.clientengine.thread.count` which is the number of threads
+to process non-partition-aware client requests, like `map.size()` and
+executor tasks. Its default value is the number of cores multiplied by 20.
+* `hazelcast.clientengine.query.thread.count` which is the number of
+threads to process query requests coming from the clients. Its default
+value is the number of cores.
 
-If there are a lot of query request from the clients, you may want to increase the value of `hazelcast.clientengine.query.thread.count`. In addition to this tuning, you may also consider increasing the value of `hazelcast.clientengine.thread.count` if the CPU load in your system is not high and there is plenty of free memory.
+If there are a lot of query request from the clients, you may want to
+increase the value of `hazelcast.clientengine.query.thread.count`. In
+addition to this tuning, you may also consider increasing the value of
+`hazelcast.clientengine.thread.count` if the CPU load in your system is
+not high and there is plenty of free memory.
 
 === Querying in Collections and Arrays
 
 Hazelcast allows querying in collections and arrays.
-Querying in collections and arrays is compatible with all Hazelcast serialization methods, including the Portable serialization.
+Querying in collections and arrays is compatible with all Hazelcast
+serialization methods, including the Portable serialization.
 
 
 Let's have a look at the following data structure expressed in pseudo-code:
@@ -636,21 +832,29 @@ Collection<Motorbike> result = map.values(p);
 
 [NOTE]
 ====
-Hazelcast requires all elements of a collection to have the same type. Considering and expanding the above example:
+Hazelcast requires all elements of a collection to have the same type. Considering
+and expanding the above example:
 
-* If you have a `wheels` collection attribute, all of its elements must be of the `Wheel` type, subclasses of `Wheel` are not allowed.
-* Let’s say you have added a `seats` collection attribute, which is a `Seat` object.  Then all of its elements must of this concrete `Seat` type.
+* If you have a `wheels` collection attribute, all of its elements must be of
+the `Wheel` type, subclasses of `Wheel` are not allowed.
+* Let’s say you have added a `seats` collection attribute, which is a `Seat`
+object.  Then all of its elements must of this concrete `Seat` type.
 
-So, you may have collections of different types in your map. However, each collection’s elements must be of the same concrete type within that collection attribute.
+So, you may have collections of different types in your map. However, each
+collection’s elements must be of the same concrete type within that collection
+attribute.
 
-Consider custom attribute extractors if it is impossible or undesirable to reduce the variety of types to a single type. See the <<custom-attributes, Custom Attributes section>> for information on them.
+Consider custom attribute extractors if it is impossible or undesirable to reduce
+the variety of types to a single type. See the <<custom-attributes, Custom Attributes section>>
+for information on them.
 ====
 
 ==== Indexing in Collections and Arrays
 
 You can also create an index using a query in collections and arrays.
 
-Please note that in order to leverage the index, the attribute name used in the query has to be the same as the one used
+Please note that in order to leverage the index, the attribute name used
+in the query has to be the same as the one used
 in the index definition.
 
 Let's assume you have the following index definition:
@@ -673,7 +877,8 @@ The following query uses the index:
 Predicate p = Predicates.equal("wheels[any].name", "front-wheel");
 ----
 
-The following query, however, does NOT leverage the index, since it does not use exactly the same attribute name that
+The following query, however, does NOT leverage the index, since it does
+not use exactly the same attribute name that
 was used in the index:
 
 [source,java]
@@ -681,7 +886,8 @@ was used in the index:
 Predicates.equal("wheels[0].name", "front-wheel")
 ----
 
-In order to use the index in the case mentioned above, you have to create another index, as shown below:
+In order to use the index in the case mentioned above, you have to create
+another index, as shown below:
 
 [source,xml]
 ----
@@ -696,10 +902,12 @@ In order to use the index in the case mentioned above, you have to create anothe
 
 ==== Corner cases
 
-Handling of corner cases may be a bit different than in a programming language like `Java`.
+Handling of corner cases may be a bit different than in a programming
+language like `Java`.
 
 Let's have a look at the following examples in order to understand the differences.
-To make the analysis simpler, let's assume that there is only one `Motorbike` object stored in a Hazelcast Map.
+To make the analysis simpler, let's assume that there is only one `Motorbike`
+object stored in a Hazelcast Map.
 
 [cols="1,5,3,1,1"]
 |===
@@ -753,12 +961,15 @@ To make the analysis simpler, let's assume that there is only one `Motorbike` ob
 | Yes
 |===
 
-As you can see, **no** ``NullPointerException``s or ``IndexOutOfBoundException``s are thrown in the extraction process, even
+As you can see, **no** ``NullPointerException``s or ``IndexOutOfBoundException``s
+are thrown in the extraction process, even
 though parts of the expression are `null`.
 
-Looking at examples 4, 6 and 8, we can also easily notice that it is impossible to distinguish which part of the
+Looking at examples 4, 6 and 8, we can also easily notice that it is impossible to
+distinguish which part of the
 expression was null.
-If we execute the following query `wheels[1].name = null`, it may be evaluated to true because:
+If we execute the following query `wheels[1].name = null`, it may be evaluated to
+true because:
 
 * `wheels` collection/array is null
 * `index == 1` is out of bound
@@ -769,40 +980,57 @@ In order to make the query unambiguous, extra conditions would have to be added,
 
 === Custom Attributes
 
-It is possible to define a custom attribute that may be referenced in predicates, queries and indexes.
+It is possible to define a custom attribute that may be referenced in predicates,
+queries and indexes.
 
-A custom attribute is a "synthetic" attribute that does not exist as a `field` or a `getter` in the object that it is extracted from.
-Thus, it is necessary to define the policy on how the attribute is supposed to be extracted.
-Currently the only way to extract a custom attribute is to implement a `com.hazelcast.query.extractor.ValueExtractor`
+A custom attribute is a "synthetic" attribute that does not exist as a `field` or
+a `getter` in the object that it is extracted from.
+Thus, it is necessary to define the policy on how the attribute is supposed to be
+extracted.
+Currently the only way to extract a custom attribute is to implement a
+`com.hazelcast.query.extractor.ValueExtractor`
 that encompasses the extraction logic.
 
-Custom Attributes are compatible with all Hazelcast serialization methods, including the Portable serialization.
+Custom Attributes are compatible with all Hazelcast serialization methods,
+including the Portable serialization.
 
 ==== Implementing a ValueExtractor
 
-In order to implement a `ValueExtractor`, extend the abstract `com.hazelcast.query.extractor.ValueExtractor` class
-and implement the `extract()` method. This method does not return any values since the extracted value is collected by the `ValueCollector`.
-In order to return multiple results from a single extraction, invoke the `ValueCollector.collect()` method
+In order to implement a `ValueExtractor`, extend the abstract
+`com.hazelcast.query.extractor.ValueExtractor` class
+and implement the `extract()` method. This method does not return any values
+since the extracted value is collected by the `ValueCollector`.
+In order to return multiple results from a single extraction, invoke the
+`ValueCollector.collect()` method
 multiple times, so that the collector collects all results.
 
-Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html[`ValueCollector`] Javadocs.
+Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and
+https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html[`ValueCollector`] Javadocs.
 
 ===== ValueExtractor with Portable Serialization
 
-Portable serialization is a special kind of serialization where there is no need to have the class of the serialized object on the
-classpath in order to read its attributes. That is the reason why the target object passed to the `ValueExtractor.extract()`
-method is not of the exact type that has been stored. Instead, an instance of a `com.hazelcast.query.extractor.ValueReader` is passed.
-`ValueReader` enables reading the attributes of a Portable object in a generic and type-agnostic way.
+Portable serialization is a special kind of serialization where there
+is no need to have the class of the serialized object on the
+classpath in order to read its attributes. That is the reason why the
+target object passed to the `ValueExtractor.extract()`
+method is not of the exact type that has been stored. Instead, an instance
+of a `com.hazelcast.query.extractor.ValueReader` is passed.
+`ValueReader` enables reading the attributes of a Portable object in a
+generic and type-agnostic way.
 It contains two methods:
 
-* `read(String path, ValueCollector<T> collector)` - enables passing all results directly to the `ValueCollector`.
-* `read(String path, ValueCallback<T> callback)` - enables filtering, transforming and grouping the result of the read operation and manually passing it to the `ValueCollector`.
+* `read(String path, ValueCollector<T> collector)` - enables passing all
+results directly to the `ValueCollector`.
+* `read(String path, ValueCallback<T> callback)` - enables filtering, transforming
+and grouping the result of the read operation and manually passing it to the
+`ValueCollector`.
 
 Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html[`ValueReader`] Javadoc.
 
 ===== Returning Multiple Values from a Single Extraction
 
-It sounds counter-intuitive, but a single extraction may return multiple values when arrays or collections are
+It sounds counter-intuitive, but a single extraction may return multiple
+values when arrays or collections are
 involved.
 Let's have a look at the following data structure in pseudo-code:
 
@@ -817,34 +1045,48 @@ class Wheel {
 }
 ----
 
-Let's assume that we want to extract the names of all wheels from a single motorbike object. Each motorbike has two
-wheels so there are two names for each bike. In order to return both values from the extraction operation, collect them
-separately using the `ValueCollector`. Collecting multiple values in this way allows you to operate on these multiple
+Let's assume that we want to extract the names of all wheels from a
+single motorbike object. Each motorbike has two
+wheels so there are two names for each bike. In order to return both
+values from the extraction operation, collect them
+separately using the `ValueCollector`. Collecting multiple values in
+this way allows you to operate on these multiple
 values as if they were single values during the evaluation of the predicates.
 
-Let's assume that we registered a custom extractor with the name `wheelName` and executed the following query:
+Let's assume that we registered a custom extractor with the name `wheelName`
+and executed the following query:
 `wheelName = front-wheel`.
 
-The extraction may return up to two wheel names for each `Motorbike` since each `Motorbike` has up to two wheels.
-In such a case, it is enough if a single value evaluates the predicate's condition to true to return a match, so
+The extraction may return up to two wheel names for each `Motorbike` since
+each `Motorbike` has up to two wheels.
+In such a case, it is enough if a single value evaluates the predicate's
+condition to true to return a match, so
 it returns a `Motorbike` if "any" of the wheels matches the expression.
 
 ==== Extraction Arguments
 
 A `ValueExtractor` may use a custom argument if it is specified in the query.
-The custom argument may be passed within the square brackets located after the name of the custom attribute,
+The custom argument may be passed within the square brackets located after the
+name of the custom attribute,
 e.g., `customAttribute[argument]`.
 
 Let's have a look at the following query: `currency[incoming] == EUR`
-The `currency` is a custom attribute that uses a `com.test.CurrencyExtractor` for extraction.
+The `currency` is a custom attribute that uses a `com.test.CurrencyExtractor`
+for extraction.
 
-The string `incoming` is an argument that is passed to the `ArgumentParser` during the extraction.
-The parser parses the string according to its custom logic and it returns a parsed object.
-The parsed object may be a single object, array, collection, or any arbitrary object.
-It is up to the `ValueExtractor`'s implementor to understand the semantics of the parsed argument object.
+The string `incoming` is an argument that is passed to the `ArgumentParser`
+during the extraction.
+The parser parses the string according to its custom logic and it returns a
+parsed object.
+The parsed object may be a single object, array, collection, or any arbitrary
+object.
+It is up to the `ValueExtractor`'s implementor to understand the semantics of
+the parsed argument object.
 
-For now it is **not** possible to register a custom `ArgumentParser`, thus a default parser is used.
-It follows a `pass-through` semantic, which means that the string located in the square brackets is passed "as is" to
+For now it is **not** possible to register a custom `ArgumentParser`, thus a
+default parser is used.
+It follows a `pass-through` semantic, which means that the string located in
+the square brackets is passed "as is" to
 the `ValueExtractor.extract()` method.
 
 Please note that using square brackets within the argument string is not allowed.
@@ -863,14 +1105,16 @@ MapConfig mapConfig = new MapConfig();
 mapConfig.addMapAttributeConfig(attributeConfig);
 ----
 
-`currency` is the name of the custom attribute that will be extracted using the `CurrencyExtractor` class.
+`currency` is the name of the custom attribute that will be extracted using
+the `CurrencyExtractor` class.
 
 Keep in mind that an extractor may not be added after the map has been instantiated.
 All extractors have to be defined upfront in the map's initial configuration.
 
 ==== Configuring a Custom Attribute Declaratively
 
-The following snippet demonstrates how to define a custom attribute in the Hazelcast XML Configuration.
+The following snippet demonstrates how to define a custom attribute in the
+Hazelcast XML Configuration.
 
 [source,xml]
 ----
@@ -885,19 +1129,23 @@ The following snippet demonstrates how to define a custom attribute in the Hazel
 </hazelcast>
 ----
 
-Analogous to the example above, `currency` is the name of the custom attribute that will be extracted using the
+Analogous to the example above, `currency` is the name of the custom attribute
+that will be extracted using the
 `CurrencyExtractor` class.
 
-Please note that an attribute name may begin with an ASCII letter [A-Za-z] or digit [0-9] and may contain
+Please note that an attribute name may begin with an ASCII letter [A-Za-z] or
+digit [0-9] and may contain
 ASCII letters [A-Za-z], digits [0-9] or underscores later on.
 
 ==== Indexing Custom Attributes
 
 You can create an index using a custom attribute.
 
-The name of the attribute used in the index definition has to match the one used in the attributes configuration.
+The name of the attribute used in the index definition has to match the one
+used in the attributes configuration.
 
-Defining indexes with extraction arguments is allowed, as shown in the example below:
+Defining indexes with extraction arguments is allowed, as shown in the example
+below:
 
 [source,xml]
 ----
@@ -915,11 +1163,21 @@ Defining indexes with extraction arguments is allowed, as shown in the example b
 
 === MapReduce
 
-NOTE: MapReduce is deprecated since Hazelcast 3.8. You can use <<fast-aggregations, Fast-Aggregations>> and https://jet.hazelcast.org/[Hazelcast Jet] for map aggregations and general data processing, respectively. Please see the <<mapreduce-deprecation, MapReduce Deprecation section>> for more details.
+NOTE: MapReduce is deprecated since Hazelcast 3.8. You can use
+<<fast-aggregations, Fast-Aggregations>> and https://jet.hazelcast.org/[Hazelcast Jet]
+for map aggregations and general data processing, respectively. Please see the
+<<mapreduce-deprecation, MapReduce Deprecation section>> for more details.
 
-You have likely heard about MapReduce ever since Google released its http://research.google.com/archive/mapreduce.html[research white paper]  on this concept. With Hadoop as the most common and well known implementation, MapReduce gained a broad audience and made it into all kinds of business applications dominated by data warehouses.
+You have likely heard about MapReduce ever since Google released its
+http://research.google.com/archive/mapreduce.html[research white paper] on this
+concept. With Hadoop as the most common and well known implementation, MapReduce
+gained a broad audience and made it into all kinds of business applications dominated
+by data warehouses.
 
-MapReduce is a software framework for processing large amounts of data in a distributed way. Therefore, the processing is normally spread over several machines. The basic idea behind MapReduce is that source data is mapped into a collection of key-value pairs and reducing those pairs, grouped by key, in a second
+MapReduce is a software framework for processing large amounts of data in a distributed
+way. Therefore, the processing is normally spread over several machines. The basic idea
+behind MapReduce is that source data is mapped into a collection of key-value pairs and
+reducing those pairs, grouped by key, in a second
 step towards the final result.
 
 The main idea can be summarized with the following steps:
@@ -930,7 +1188,9 @@ The main idea can be summarized with the following steps:
 
 **Use Cases**
 
-The best known examples for MapReduce algorithms are text processing tools, such as counting the word frequency in large texts or websites. Apart from that, there are more interesting examples of use cases listed below:
+The best known examples for MapReduce algorithms are text processing tools, such as
+counting the word frequency in large texts or websites. Apart from that, there are
+more interesting examples of use cases listed below:
 
 * Log Analysis
 * Data Querying
@@ -943,18 +1203,28 @@ The best known examples for MapReduce algorithms are text processing tools, such
 
 ==== Understanding MapReduce
 
-This section gives a deeper insight into the MapReduce pattern and helps you understand the semantics behind the different MapReduce phases and how they are implemented in Hazelcast.
+This section gives a deeper insight into the MapReduce pattern and helps you understand
+the semantics behind the different MapReduce phases and how they are implemented in Hazelcast.
 
-In addition to this, the following sections compare Hadoop and Hazelcast MapReduce implementations to help adopters with Hadoop backgrounds quickly get familiar with Hazelcast MapReduce.
+In addition to this, the following sections compare Hadoop and Hazelcast MapReduce
+implementations to help adopters with Hadoop backgrounds quickly get familiar with Hazelcast MapReduce.
 
 ===== MapReduce Workflow Example
 
-The flowchart below demonstrates the basic workflow of the word count example (distributed occurrences analysis) mentioned in the <<mapreduce, MapReduce section>> introduction. From left to right, it iterates over all the entries of a data structure (in this case an IMap). In the mapping phase, it splits the sentence into single words and emits a key-value pair per word: the word is the key, 1 is the value. In the next phase, values are collected (grouped) and transported to their
-corresponding reducers, where they are eventually reduced to a single key-value pair, the value being the number of occurrences of the word. At the last step, the different reducer results are grouped up to the final result and returned to the requester.
+The flowchart below demonstrates the basic workflow of the word count example (distributed
+occurrences analysis) mentioned in the <<mapreduce, MapReduce section>> introduction.
+From left to right, it iterates over all the entries of a data structure (in this case an IMap).
+In the mapping phase, it splits the sentence into single words and emits a key-value pair
+per word: the word is the key, 1 is the value. In the next phase, values are collected
+(grouped) and transported to their
+corresponding reducers, where they are eventually reduced to a single key-value pair,
+the value being the number of occurrences of the word. At the last step, the different
+reducer results are grouped up to the final result and returned to the requester.
 
 image::MapReduceWorkflow.png[MapReduce Workflow Example]
 
-In pseudo code, the corresponding map and reduce function would look like the following. A Hazelcast code example is shown in the next section.
+In pseudo code, the corresponding map and reduce function would look like the following. A
+Hazelcast code example is shown in the next section.
 
 [source,plain]
 ----
@@ -968,7 +1238,10 @@ reduce( word:String, counts:List[Int] ):Int ->
 
 ===== MapReduce Phases
 
-As seen in the workflow example, a MapReduce process consists of multiple phases. The original MapReduce pattern describes two phases (map, reduce) and one optional phase (combine). In Hazelcast, these phases either only exist virtually to explain the data flow, or are executed in parallel during the real operation while the general idea is still persisting.
+As seen in the workflow example, a MapReduce process consists of multiple phases. The original
+MapReduce pattern describes two phases (map, reduce) and one optional phase (combine). In
+Hazelcast, these phases either only exist virtually to explain the data flow, or are executed
+in parallel during the real operation while the general idea is still persisting.
 
 (K x V)\* -> (L x W)*
 
@@ -976,7 +1249,8 @@ As seen in the workflow example, a MapReduce process consists of multiple phases
 
 **Mapping Phase**
 
-The mapping phase iterates all key-value pairs of any kind of legal input source. The mapper then analyzes the input pairs and emits zero or more new key-value pairs.
+The mapping phase iterates all key-value pairs of any kind of legal input source. The mapper
+then analyzes the input pairs and emits zero or more new key-value pairs.
 
 K x V -> (L x W)*
 
@@ -984,9 +1258,14 @@ K x V -> (L x W)*
 
 **Combine Phase**
 
-In the combine phase, multiple key-value pairs with the same key are collected and combined to an intermediate result before being sent to the reducers. **Combine phase is also optional in Hazelcast, but is highly recommended to lower the traffic.**
+In the combine phase, multiple key-value pairs with the same key are collected and combined
+to an intermediate result before being sent to the reducers. **Combine phase is also
+optional in Hazelcast, but is highly recommended to lower the traffic.**
 
-In terms of the word count example, this can be explained using the sentences "Saturn is a planet but the Earth is a planet, too". As shown above, we would send two key-value pairs (planet, 1). The registered combiner now collects those two pairs and combines them into an intermediate result of (planet, 2). Instead of two key-value
+In terms of the word count example, this can be explained using the sentences "Saturn
+is a planet but the Earth is a planet, too". As shown above, we would send two key-value
+pairs (planet, 1). The registered combiner now collects those two pairs and combines them
+into an intermediate result of (planet, 2). Instead of two key-value
 pairs sent through the wire, there is now only one for the key "planet".
 
 The pseudo code for a combiner is similar to the reducer.
@@ -999,11 +1278,15 @@ combine( word:String, counts:List[Int] ):Void ->
 
 **Grouping / Shuffling Phase**
 
-The grouping or shuffling phase only exists virtually in Hazelcast since it is not a real phase; emitted key-value pairs with the same key are always transferred to the same reducer in the same job. They are grouped together, which is equivalent to the shuffling phase.
+The grouping or shuffling phase only exists virtually in Hazelcast since it is not a real
+phase; emitted key-value pairs with the same key are always transferred to the same reducer
+in the same job. They are grouped together, which is equivalent to the shuffling phase.
 
 **Reducing Phase**
 
-In the reducing phase, the collected intermediate key-value pairs are reduced by their keys to build the final by-key result. This value can be a sum of all the emitted values of the same key, an average value, or something completely different, depending on the use case.
+In the reducing phase, the collected intermediate key-value pairs are reduced by their keys
+to build the final by-key result. This value can be a sum of all the emitted values of the
+same key, an average value, or something completely different, depending on the use case.
 
 Here is a reduced representation of this phase.
 
@@ -1013,11 +1296,17 @@ L x W\* -> X*
 
 **Producing the Final Result**
 
-This is not a real MapReduce phase, but it is the final step in Hazelcast after all reducers are notified that reducing has finished. The original job initiator then requests all reduced results and builds the final result.
+This is not a real MapReduce phase, but it is the final step in Hazelcast after all reducers
+are notified that reducing has finished. The original job initiator then requests all
+reduced results and builds the final result.
 
 ===== Additional MapReduce Resources
 
-The Internet is full of useful resources for finding deeper information on MapReduce. Below is a short collection of more introduction material. In addition, there are books written about all kinds of MapReduce patterns and how to write a MapReduce function for your use case. To name them all is out of the scope of this documentation, but here are some resources:
+The Internet is full of useful resources for finding deeper information on MapReduce.
+Below is a short collection of more introduction material. In addition, there are books
+written about all kinds of MapReduce patterns and how to write a MapReduce function for
+your use case. To name them all is out of the scope of this documentation, but here are
+some resources:
 
 * http://research.google.com/archive/mapreduce.html[http://research.google.com/archive/mapreduce.html]
 * http://en.wikipedia.org/wiki/MapReduce[http://en.wikipedia.org/wiki/MapReduce]
@@ -1027,47 +1316,82 @@ The Internet is full of useful resources for finding deeper information on MapRe
 
 ==== Using the MapReduce API
 
-This section explains the basics of the Hazelcast MapReduce framework. While walking through the different API classes, we will build the <<understanding-mapreduce, word count example that was discussed earlier>> and create it step by step.
+This section explains the basics of the Hazelcast MapReduce framework. While walking through
+the different API classes, we will build the <<understanding-mapreduce, word count example
+that was discussed earlier>> and create it step by step.
 
-The Hazelcast API for MapReduce operations consists of a fluent DSL-like configuration syntax to build and submit jobs. `JobTracker` is the basic entry point to all MapReduce operations and is retrieved from `com.hazelcast.core.HazelcastInstance` by calling `getJobTracker` and supplying the name of the required `JobTracker` configuration. The configuration for ``JobTracker``s will be discussed later; for now we focus on the API itself.
-In addition, the complete submission part of the API is built to support a fully reactive way of programming.
+The Hazelcast API for MapReduce operations consists of a fluent DSL-like configuration
+syntax to build and submit jobs. `JobTracker` is the basic entry point to all MapReduce
+operations and is retrieved from `com.hazelcast.core.HazelcastInstance` by calling `getJobTracker`
+and supplying the name of the required `JobTracker` configuration. The configuration for
+``JobTracker``s will be discussed later; for now we focus on the API itself.
+In addition, the complete submission part of the API is built to support a fully reactive
+way of programming.
 
-To give an easy introduction to people used to Hadoop, we created the class names to be as familiar as possible to their counterparts on Hadoop. That means while most users recognize a lot of similar sounding classes, the way to configure the jobs is more fluent due to the DSL-like styled API.
+To give an easy introduction to people used to Hadoop, we created the class names to be as
+familiar as possible to their counterparts on Hadoop. That means while most users recognize
+a lot of similar sounding classes, the way to configure the jobs is more fluent due to the
+DSL-like styled API.
 
-While building the example, we will go through as many options as possible, e.g., we will create a specialized `JobTracker` configuration (at the end). Special `JobTracker` configuration is not required, because for all other Hazelcast features you can use "default" as the configuration name. However, special configurations offer better options to predict behavior of the framework execution.
+While building the example, we will go through as many options as possible, e.g., we will
+create a specialized `JobTracker` configuration (at the end). Special `JobTracker` configuration
+is not required, because for all other Hazelcast features you can use "default" as the
+configuration name. However, special configurations offer better options to predict behavior
+of the framework execution.
 
-The full example is available http://github.com/noctarius/hz-map-reduce[here] as a ready to run Maven project.
+The full example is available http://github.com/noctarius/hz-map-reduce[here] as a ready to
+run Maven project.
 
 ===== Retrieving a JobTracker Instance
 
-`JobTracker` creates Job instances, whereas every instance of `com.hazelcast.mapreduce.Job` defines a single MapReduce configuration. The same Job can be submitted multiple times regardless of whether it is executed in parallel or after the previous execution is finished.
+`JobTracker` creates Job instances, whereas every instance of `com.hazelcast.mapreduce.Job`
+defines a single MapReduce configuration. The same Job can be submitted multiple times regardless
+of whether it is executed in parallel or after the previous execution is finished.
 
-NOTE: After retrieving the `JobTracker`, be aware that it should only be used with data structures derived from the same HazelcastInstance. Otherwise, you can get unexpected behavior.
+NOTE: After retrieving the `JobTracker`, be aware that it should only be used with data structures
+derived from the same HazelcastInstance. Otherwise, you can get unexpected behavior.
 
-To retrieve a `JobTracker` from Hazelcast, we start by using the "default" configuration for convenience reasons to show the basic way.
+To retrieve a `JobTracker` from Hazelcast, we start by using the "default" configuration for
+convenience reasons to show the basic way.
 
 [source,java]
 ----
 JobTracker jobTracker = hazelcastInstance.getJobTracker( "default" );
 ----
 
-`JobTracker` is retrieved using the same kind of entry point as most other Hazelcast features. After building the cluster connection, you use the created HazelcastInstance to request the configured (or default) `JobTracker` from Hazelcast.
+`JobTracker` is retrieved using the same kind of entry point as most other Hazelcast features.
+After building the cluster connection, you use the created HazelcastInstance to request the
+configured (or default) `JobTracker` from Hazelcast.
 
-The next step is creating a new `Job` and configuring it to execute our first MapReduce request against cluster data.
+The next step is creating a new `Job` and configuring it to execute our first MapReduce request
+against cluster data.
 
 ===== Creating a Job
 
-As mentioned in the previous section, you create a Job using the retrieved `JobTracker` instance. A Job defines exactly one configuration of a MapReduce task. Mapper, combiner and reducers are defined per job. However, since the Job instance is only a configuration, it can be submitted multiple times, regardless of whether executions happen in parallel or one after the other.
+As mentioned in the previous section, you create a Job using the retrieved `JobTracker` instance.
+A Job defines exactly one configuration of a MapReduce task. Mapper, combiner and reducers are
+defined per job. However, since the Job instance is only a configuration, it can be submitted
+multiple times, regardless of whether executions happen in parallel or one after the other.
 
-A submitted job is always identified using a unique combination of the `JobTracker`'s name and a jobId generated on submit-time. The way to retrieve the `jobId` is shown in one of the later sections.
+A submitted job is always identified using a unique combination of the `JobTracker`'s name and a
+jobId generated on submit-time. The way to retrieve the `jobId` is shown in one of the later
+sections.
 
-To create a Job, a second class `com.hazelcast.mapreduce.KeyValueSource` is necessary. We will have a deeper look at the `KeyValueSource` class in the next section. `KeyValueSource` is used to wrap any kind of data or data structure into a well defined set of key-value pairs.
+To create a Job, a second class `com.hazelcast.mapreduce.KeyValueSource` is necessary. We will
+have a deeper look at the `KeyValueSource` class in the next section. `KeyValueSource` is used
+to wrap any kind of data or data structure into a well defined set of key-value pairs.
 
-The example code below is a direct follow up to the example in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>. It reuses the already created HazelcastInstance and `JobTracker` instances.
+The example code below is a direct follow up to the example in <<retrieving-a-jobtracker-instance,
+Retrieving a JobTracker Instance>>. It reuses the already created HazelcastInstance and `JobTracker`
+instances.
 
-The example starts by retrieving an instance of our data map and then it creates the Job instance. Implementations used to configure the Job are discussed while walking further through the API documentation.
+The example starts by retrieving an instance of our data map and then it creates the Job instance.
+Implementations used to configure the Job are discussed while walking further through the API documentation.
 
-NOTE: Since the Job class is highly dependent upon generics to support type safety, the generics change over time and may not be assignment compatible to old variable types. To make use of the full potential of the fluent API, we recommend you use fluent method chaining as shown in this example to prevent the need for too many variables.
+NOTE: Since the Job class is highly dependent upon generics to support type safety, the generics
+change over time and may not be assignment compatible to old variable types. To make use
+of the full potential of the fluent API, we recommend you use fluent method chaining as
+shown in this example to prevent the need for too many variables.
 
 [source,java]
 ----
@@ -1088,17 +1412,36 @@ future.andThen( buildCallback() );
 Map<String, Long> result = future.get();
 ----
 
-As seen above, we create the Job instance and define a mapper, combiner and reducer. Then we submit the request to the cluster. The `submit` method returns an ICompletableFuture that can be used to attach our callbacks or to wait for the result to be processed in a blocking fashion.
+As seen above, we create the Job instance and define a mapper, combiner and reducer. Then
+we submit the request to the cluster. The `submit` method returns an ICompletableFuture
+that can be used to attach our callbacks or to wait for the result to be processed in a
+blocking fashion.
 
-There are more options available for job configurations, such as defining a general chunk size or on what keys the operation will operate. For more information, please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
+There are more options available for job configurations, such as defining a general chunk
+size or on what keys the operation will operate. For more information, please refer to
+the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
 
 ===== Creating Key-Value Input Sources with KeyValueSource
 
-`KeyValueSource` can either wrap Hazelcast data structures (like IMap, MultiMap, IList, ISet) into key-value pair input sources, or build your own custom key-value input source. The latter option makes it possible to feed Hazelcast MapReduce with all kinds of data, such as just-in-time downloaded web page contents or data files. People familiar with Hadoop will recognize similarities with the Input class.
+`KeyValueSource` can either wrap Hazelcast data structures (like IMap, MultiMap, IList, ISet)
+into key-value pair input sources, or build your own custom key-value input source. The
+latter option makes it possible to feed Hazelcast MapReduce with all kinds of data, such
+as just-in-time downloaded web page contents or data files. People familiar with Hadoop
+will recognize similarities with the Input class.
 
-You can imagine a `KeyValueSource` as a bigger `java.util.Iterator` implementation. Whereas most methods must be implemented, implementing the `getAllKeys` method is optional. If implementation is able to gather all keys upfront, it should be implemented and `isAllKeysSupported` must return `true`. That way, Job configured KeyPredicates are able to evaluate keys upfront before sending them to the cluster. Otherwise they are serialized and transferred as well, to be evaluated at execution time.
+You can imagine a `KeyValueSource` as a bigger `java.util.Iterator` implementation. Whereas
+most methods must be implemented, implementing the `getAllKeys` method is optional.
+If implementation is able to gather all keys upfront, it should be implemented and
+`isAllKeysSupported` must return `true`. That way, Job configured KeyPredicates are
+able to evaluate keys upfront before sending them to the cluster. Otherwise they are
+serialized and transferred as well, to be evaluated at execution time.
 
-As shown in the example above, the abstract `KeyValueSource` class provides a number of static methods to easily wrap Hazelcast data structures into `KeyValueSource` implementations already provided by Hazelcast. The data structures' generics are inherited by the resulting `KeyValueSource` instance. For data structures like IList or ISet, the key type is always String. While mapping, the key is the data structure's name, whereas
+As shown in the example above, the abstract `KeyValueSource` class provides a number of
+static methods to easily wrap Hazelcast data structures into `KeyValueSource`
+implementations already provided by Hazelcast. The data structures' generics are
+inherited by the resulting `KeyValueSource` instance. For data structures like IList or
+ISet, the key type is always String. While mapping, the key is the data structure's name,
+whereas
 the value type and value itself are inherited from the IList or ISet itself.
 
 [source,java]
@@ -1131,16 +1474,31 @@ KeyValueSource<String, String> source = KeyValueSource.fromSet( set );
 
 **PartitionIdAware**
 
-The `com.hazelcast.mapreduce.PartitionIdAware` interface can be implemented by the `KeyValueSource` implementation if the underlying data set is aware of the Hazelcast partitioning schema (as it is for all internal data structures). If this interface is implemented, the same `KeyValueSource` instance is reused multiple times for all partitions on the cluster member. As a consequence, the `close` and `open` methods are also executed
+The `com.hazelcast.mapreduce.PartitionIdAware` interface can be implemented by the
+`KeyValueSource` implementation if the underlying data set is aware of the Hazelcast
+partitioning schema (as it is for all internal data structures). If this interface is
+implemented, the same `KeyValueSource` instance is reused multiple times for all partitions
+on the cluster member. As a consequence, the `close` and `open` methods are also executed
 multiple times but once per partitionId.
 
 ===== Implementing Mapping Logic with Mapper
 
-You implement the mapping logic using the `Mapper` interface. Mappers can transform, split, calculate and aggregate data from data sources. In Hazelcast you can also integrate data from more than the KeyValueSource data source by implementing `com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps, list and/or sets.
+You implement the mapping logic using the `Mapper` interface. Mappers can transform,
+split, calculate and aggregate data from data sources. In Hazelcast you can also integrate
+data from more than the KeyValueSource data source by implementing
+`com.hazelcast.core.HazelcastInstanceAware` and requesting additional maps, multimaps,
+list and/or sets.
 
-The mappers `map` function is called once per available entry in the data structure. If you work on distributed data structures that operate in a partition-based fashion, multiple mappers work in parallel on the different cluster members on the members' assigned partitions. Mappers then prepare and maybe transform the input key-value pair and emit zero or more key-value pairs for the reducing phase.
+The mappers `map` function is called once per available entry in the data structure. If
+you work on distributed data structures that operate in a partition-based fashion, multiple
+mappers work in parallel on the different cluster members on the members' assigned partitions.
+Mappers then prepare and maybe transform the input key-value pair and emit zero or more
+key-value pairs for the reducing phase.
 
-For our word count example, we retrieve an input document (a text document) and we transform it by splitting the text into the available words. After that, as discussed in the <<mapreduce-workflow-example, pseudo code>>, we emit every single word with a key-value pair with the word as the key and 1 as the value.
+For our word count example, we retrieve an input document (a text document) and we transform
+it by splitting the text into the available words. After that, as discussed in the
+<<mapreduce-workflow-example, pseudo code>>, we emit every single word with a key-value
+pair with the word as the key and 1 as the value.
 
 A common implementation of that `Mapper` might look like the following example:
 
@@ -1159,25 +1517,41 @@ public class TokenizerMapper implements Mapper<String, String, String, Long> {
 }
 ----
 
-This code splits the mapped texts into their tokens, iterates over the tokenizer as long as there are more tokens and emits a pair per word. Note that we're not yet collecting multiple occurrences of the same word, we just fire every word on its own.
+This code splits the mapped texts into their tokens, iterates over the tokenizer as long as
+there are more tokens and emits a pair per word. Note that we're not yet collecting multiple
+occurrences of the same word, we just fire every word on its own.
 
 **LifecycleMapper / LifecycleMapperAdapter**
 
-The LifecycleMapper interface or its adapter class LifecycleMapperAdapter can be used to make the Mapper implementation lifecycle aware. That means it will be notified when mapping of a partition or set of data begins and when the last entry was mapped.
+The LifecycleMapper interface or its adapter class LifecycleMapperAdapter can be used to make
+the Mapper implementation lifecycle aware. That means it will be notified when mapping of a
+partition or set of data begins and when the last entry was mapped.
 
-Only special algorithms might need those additional lifecycle events to prepare, clean up, or emit additional values.
+Only special algorithms might need those additional lifecycle events to prepare, clean up, or
+emit additional values.
 
 ===== Minimizing Cluster Traffic with Combiner
 
-As stated in the introduction, a Combiner is used to minimize traffic between the different cluster members when transmitting mapped values from mappers to the reducers. It does this by aggregating multiple values for the same emitted key. This is a fully optional operation, but using it is highly recommended.
+As stated in the introduction, a Combiner is used to minimize traffic between the different
+cluster members when transmitting mapped values from mappers to the reducers. It does this
+by aggregating multiple values for the same emitted key. This is a fully optional operation,
+but using it is highly recommended.
 
-Combiners can be seen as an intermediate reducer. The calculated value is always assigned back to the key for which the combiner initially was created. Since combiners are created per emitted key, the Combiner implementation itself is not defined in the jobs configuration; instead, a CombinerFactory that is able to create the expected Combiner instance is created.
+Combiners can be seen as an intermediate reducer. The calculated value is always assigned
+back to the key for which the combiner initially was created. Since combiners are created
+per emitted key, the Combiner implementation itself is not defined in the jobs configuration;
+instead, a CombinerFactory that is able to create the expected Combiner instance is created.
 
-Because Hazelcast MapReduce is executing the mapping and reducing phases in parallel, the Combiner implementation must be able to deal with chunked data. Therefore, you must reset its internal state whenever you call `finalizeChunk`. Calling the `finalizeChunk` method creates a chunk of intermediate data to be grouped (shuffled) and sent to the reducers.
+Because Hazelcast MapReduce is executing the mapping and reducing phases in parallel, the
+Combiner implementation must be able to deal with chunked data. Therefore, you must reset
+its internal state whenever you call `finalizeChunk`. Calling the `finalizeChunk` method
+creates a chunk of intermediate data to be grouped (shuffled) and sent to the reducers.
 
-Combiners can override `beginCombine` and `finalizeCombine` to perform preparation or cleanup work.
+Combiners can override `beginCombine` and `finalizeCombine` to perform preparation or
+cleanup work.
 
-For our word count example, we are going to have a simple CombinerFactory and Combiner implementation similar to the following example.
+For our word count example, we are going to have a simple CombinerFactory and Combiner
+implementation similar to the following example.
 
 [source,java]
 ----
@@ -1210,19 +1584,27 @@ public class WordCountCombinerFactory
 }
 ----
 
-The Combiner must be able to return its current value as a chunk and reset the internal state by setting `sum` back to 0. Since combiners are always called from a single thread, no synchronization or volatility of the variables is necessary.
+The Combiner must be able to return its current value as a chunk and reset the internal
+state by setting `sum` back to 0. Since combiners are always called from a single thread,
+no synchronization or volatility of the variables is necessary.
 
 ===== Doing Algorithm Work with Reducer
 
-Reducers do the last bit of algorithm work. This can be aggregating values, calculating averages, or any other work that is expected from the algorithm.
+Reducers do the last bit of algorithm work. This can be aggregating values, calculating
+averages, or any other work that is expected from the algorithm.
 
-Since values arrive in chunks, the `reduce` method is called multiple times for every emitted value of the creation key. This also can happen multiple times per chunk if no Combiner implementation was configured for a job configuration.
+Since values arrive in chunks, the `reduce` method is called multiple times for every
+emitted value of the creation key. This also can happen multiple times per chunk if no
+Combiner implementation was configured for a job configuration.
 
-Unlike combiners, a reducer's `finalizeReduce` method is only called once per reducer (which means once per key). Therefore, a reducer does not need to reset its internal state at any time.
+Unlike combiners, a reducer's `finalizeReduce` method is only called once per reducer
+(which means once per key). Therefore, a reducer does not need to reset its internal
+state at any time.
 
 Reducers can override `beginReduce` to perform preparation work.
 
-For our word count example, the implementation looks similar to the following code example.
+For our word count example, the implementation looks similar to the following code
+example.
 
 [source,java]
 ----
@@ -1251,13 +1633,22 @@ public class WordCountReducerFactory implements ReducerFactory<String, Long, Lon
 
 ====== Reducers Switching Threads
 
-Unlike combiners, reducers tend to switch threads if running out of data to prevent blocking threads from the `JobTracker` configuration. They are rescheduled at a later point when new data to be processed arrives, but are unlikely to be executed on the same thread as before. As of Hazelcast version 3.3.3 the guarantee for memory visibility on the new thread is ensured by the framework. This means the previous requirement for making fields volatile is dropped.
+Unlike combiners, reducers tend to switch threads if running out of data to prevent
+blocking threads from the `JobTracker` configuration. They are rescheduled at a later
+point when new data to be processed arrives, but are unlikely to be executed on the same
+thread as before. As of Hazelcast version 3.3.3 the guarantee for memory visibility on the
+new thread is ensured by the framework. This means the previous requirement for making
+fields volatile is dropped.
 
 ===== Modifying the Result with Collator
 
-A Collator is an optional operation that is executed on the job emitting member and is able to modify the finally reduced result before returned to the user's codebase. Only special use cases are likely to use collators.
+A Collator is an optional operation that is executed on the job emitting member and is
+able to modify the finally reduced result before returned to the user's codebase. Only
+special use cases are likely to use collators.
 
-For an imaginary use case, we might want to know how many words were all over in the documents we analyzed. For this case, a Collator implementation can be given to the `submit` method of the Job instance.
+For an imaginary use case, we might want to know how many words were all over in the
+documents we analyzed. For this case, a Collator implementation can be given to the
+`submit` method of the Job instance.
 
 A collator would look like the following snippet:
 
@@ -1277,15 +1668,23 @@ public class WordCountCollator implements Collator<Map.Entry<String, Long>, Long
 }
 ----
 
-The definition of the input type is a bit strange, but because Combiner and Reducer implementations are optional, the input type heavily depends on the state of the data. As stated above, collators are non-typical use cases and the generics of the framework always help in finding the correct signature.
+The definition of the input type is a bit strange, but because Combiner and Reducer
+implementations are optional, the input type heavily depends on the state of the data.
+As stated above, collators are non-typical use cases and the generics of the framework
+always help in finding the correct signature.
 
 ===== Preselecting Keys with KeyPredicate
 
-You can use `KeyPredicate` to pre-select whether or not a key should be selected for mapping in the mapping phase. If the `KeyValueSource` implementation is able to know all keys prior to execution, the keys are filtered before the operations are divided among the different cluster members.
+You can use `KeyPredicate` to pre-select whether or not a key should be selected for
+mapping in the mapping phase. If the `KeyValueSource` implementation is able to know
+all keys prior to execution, the keys are filtered before the operations are divided
+among the different cluster members.
 
-A `KeyPredicate` can also be used to select only a special range of data, e.g., a time frame, or in similar use cases.
+A `KeyPredicate` can also be used to select only a special range of data, e.g., a
+time frame, or in similar use cases.
 
-A basic `KeyPredicate` implementation that only maps keys containing the word "hazelcast" might look like the following code example:
+A basic `KeyPredicate` implementation that only maps keys containing the word
+"hazelcast" might look like the following code example:
 
 [source,java]
 ----
@@ -1300,11 +1699,19 @@ public class WordCountKeyPredicate implements KeyPredicate<String> {
 
 ===== Job Monitoring with TrackableJob
 
-You can retrieve a `TrackableJob` instance after submitting a job. It is requested from the `JobTracker` using the unique jobId (per `JobTracker`). You can use it get runtime statistics of the job. The information available is limited to the number of processed (mapped) records and the processing state of the different partitions or members (if `KeyValueSource` is not PartitionIdAware).
+You can retrieve a `TrackableJob` instance after submitting a job. It is requested
+from the `JobTracker` using the unique jobId (per `JobTracker`). You can use it get
+runtime statistics of the job. The information available is limited to the number of
+processed (mapped) records and the processing state of the different partitions or
+members (if `KeyValueSource` is not PartitionIdAware).
 
-To retrieve the jobId after submission of the job, use `com.hazelcast.mapreduce.JobCompletableFuture` instead of the `com.hazelcast.core.ICompletableFuture` as the variable type for the returned future.
+To retrieve the jobId after submission of the job, use `com.hazelcast.mapreduce.JobCompletableFuture`
+instead of the `com.hazelcast.core.ICompletableFuture` as the variable type for
+the returned future.
 
-The example code below gives a quick introduction on how to retrieve the instance and the runtime data. For more information, please have a look at the Javadoc corresponding your running Hazelcast version.
+The example code below gives a quick introduction on how to retrieve the instance
+and the runtime data. For more information, please have a look at the Javadoc
+corresponding your running Hazelcast version.
 
 The example performs the following steps to get the job instance.
 
@@ -1338,15 +1745,22 @@ for ( JobPartitionState partitionState : partitionStates ) {
 }
 ----
 
-NOTE: Caching of the JobProcessInformation does not work on Java native clients since current values are retrieved while retrieving the instance to minimize traffic between executing member and client.
+NOTE: Caching of the JobProcessInformation does not work on Java native clients
+since current values are retrieved while retrieving the instance to minimize
+traffic between executing member and client.
 
 ===== Configuring JobTracker
 
-You configure `JobTracker` configuration to set up behavior of the Hazelcast MapReduce framework.
+You configure `JobTracker` configuration to set up behavior of the Hazelcast
+MapReduce framework.
 
-Every `JobTracker` is capable of running multiple MapReduce jobs at once; one configuration is meant as a shared resource for all jobs created by the same `JobTracker`. The configuration gives full control over the expected load behavior and thread counts to be used.
+Every `JobTracker` is capable of running multiple MapReduce jobs at once; one
+configuration is meant as a shared resource for all jobs created by the same
+`JobTracker`. The configuration gives full control over the expected load behavior
+and thread counts to be used.
 
-The following snippet shows a typical `JobTracker` configuration. The configuration properties are discussed below the example.
+The following snippet shows a typical `JobTracker` configuration. The configuration
+properties are discussed below the example.
 
 [source,xml]
 ----
@@ -1368,24 +1782,50 @@ The following snippet shows a typical `JobTracker` configuration. The configurat
 `JobTracker` has the following configuration elements:
 
 * `max-thread-size`: Maximum thread pool size of the JobTracker.
-* `queue-size`: Maximum number of tasks that are able to wait to be processed. A value of 0 means an unbounded queue. Very low numbers can prevent successful execution since the job might not be correctly scheduled or intermediate chunks might be lost.
-* `retry-count`: Currently not used. Reserved for later use where the framework will automatically try to restart/retry operations from an available save point.
-* `chunk-size`: Number of emitted values before a chunk is sent to the reducers. If your emitted values are big or you want to better balance your work, you might want to change this to a lower or higher value. A value of 0 means immediate transmission, but remember that low values mean higher traffic costs. A very high value might cause an OutOfMemoryError to occur if the emitted values do not fit into heap memory before
-being sent to the reducers. To prevent this, you might want to use a combiner to pre-reduce values on mapping members.
-* `communicate-stats`: Specifies whether the statistics (for example, statistics about processed entries) are transmitted to the job emitter. This can show progress to a user inside of an UI system, but it produces additional traffic. If not needed, you might want to deactivate this.
-* `topology-changed-strategy`: Specifies how the MapReduce framework reacts on topology changes while executing a job. Currently, only CANCEL_RUNNING_OPERATION is fully supported, which throws an exception to the job emitter (throws `com.hazelcast.mapreduce.TopologyChangedException`).
+* `queue-size`: Maximum number of tasks that are able to wait to be processed.
+A value of 0 means an unbounded queue. Very low numbers can prevent successful
+execution since the job might not be correctly scheduled or intermediate chunks
+might be lost.
+* `retry-count`: Currently not used. Reserved for later use where the framework
+will automatically try to restart/retry operations from an available save point.
+* `chunk-size`: Number of emitted values before a chunk is sent to the reducers.
+If your emitted values are big or you want to better balance your work, you might
+want to change this to a lower or higher value. A value of 0 means immediate
+transmission, but remember that low values mean higher traffic costs. A very high
+value might cause an OutOfMemoryError to occur if the emitted values do not fit
+into heap memory before
+being sent to the reducers. To prevent this, you might want to use a combiner to
+pre-reduce values on mapping members.
+* `communicate-stats`: Specifies whether the statistics (for example, statistics
+about processed entries) are transmitted to the job emitter. This can show progress
+to a user inside of an UI system, but it produces additional traffic. If not needed,
+you might want to deactivate this.
+* `topology-changed-strategy`: Specifies how the MapReduce framework reacts on
+topology changes while executing a job. Currently, only CANCEL_RUNNING_OPERATION
+is fully supported, which throws an exception to the job emitter (throws
+`com.hazelcast.mapreduce.TopologyChangedException`).
 
 ==== Hazelcast MapReduce Architecture
 
-This section explains some of the internals of the MapReduce framework. This is more advanced information. If you're not interested in how it works internally, you might want to skip this section.
+This section explains some of the internals of the MapReduce framework. This is
+more advanced information. If you're not interested in how it works internally,
+you might want to skip this section.
 
 ===== Member Interoperation Example
 
-To understand the following technical internals, we first have a short look at what happens in terms of an example workflow.
+To understand the following technical internals, we first have a short look at
+what happens in terms of an example workflow.
 
-As a simple example, think of an `IMap<String, Integer>` and emitted keys having the same types. Imagine you have a cluster with three members and you initiate the MapReduce job on the first member. After you requested the JobTracker from your running/connected Hazelcast, we submit the task and retrieve the ICompletableFuture, which gives us a chance to wait for the result to be calculated or to add a callback (and being more reactive).
+As a simple example, think of an `IMap<String, Integer>` and emitted keys
+having the same types. Imagine you have a cluster with three members and you
+initiate the MapReduce job on the first member. After you requested the JobTracker
+from your running/connected Hazelcast, we submit the task and retrieve the
+ICompletableFuture, which gives us a chance to wait for the result to be calculated
+or to add a callback (and being more reactive).
 
-The example expects that the chunk size is 0 or 1, so an emitted value is directly sent to the reducers. Internally, the job is prepared, started and executed on all members as shown below. The first member acts as the job owner (job emitter).
+The example expects that the chunk size is 0 or 1, so an emitted value is directly
+sent to the reducers. Internally, the job is prepared, started and executed on all
+members as shown below. The first member acts as the job owner (job emitter).
 
 ```
 Member1 starts MapReduce job
@@ -1429,62 +1869,127 @@ Member1 sees all partitions processed and requests reducing from all members
 Member1 merges all reduced results together in a final structure and returns it
 ```
 
-The flow is quite complex but extremely powerful since everything is executed in parallel. Reducers do not wait until all values are emitted, but they immediately begin to reduce (when the first chunk for an emitted key arrives).
+The flow is quite complex but extremely powerful since everything is executed in
+parallel. Reducers do not wait until all values are emitted, but they immediately
+begin to reduce (when the first chunk for an emitted key arrives).
 
 ===== Internal MapReduce Packages
 
-Beginning with the package level, there is one basic package: `com.hazelcast.mapreduce`. This includes the external API and the **impl** package, which itself contains the internal implementation.
+Beginning with the package level, there is one basic package: `com.hazelcast.mapreduce`.
+This includes the external API and the **impl** package, which itself contains the
+internal implementation.
 
-* The **impl** package contains all the default `KeyValueSource` implementations and abstract base and support classes for the exposed API.
-* The **client** package contains all classes that are needed on the client and member sides when a client offers a MapReduce job.
-* The **notification** package contains all "notification" or event classes that notify other members about progress on operations.
-* The **operation** package contains all operations that are used by the workers or job owner to coordinate work and sync partition or reducer processing.
-* The **task** package contains all classes that execute the actual MapReduce operation. It features the supervisor, mapping phase implementation and mapping/reducing tasks.
+* The **impl** package contains all the default `KeyValueSource` implementations and
+abstract base and support classes for the exposed API.
+* The **client** package contains all classes that are needed on the client and
+member sides when a client offers a MapReduce job.
+* The **notification** package contains all "notification" or event classes that
+notify other members about progress on operations.
+* The **operation** package contains all operations that are used by the workers
+or job owner to coordinate work and sync partition or reducer processing.
+* The **task** package contains all classes that execute the actual MapReduce
+operation. It features the supervisor, mapping phase implementation and mapping/reducing tasks.
 
 ===== MapReduce Job Walk-Through
 
-Now to the technical walk-through: A MapReduce Job is always retrieved from a named `JobTracker`, which is implemented in `NodeJobTracker` (extends `AbstractJobTracker`) and is configured using the configuration DSL. All of the internal implementation is completely ICompletableFuture-driven and mostly non-blocking in design.
+Now to the technical walk-through: A MapReduce Job is always retrieved from a
+named `JobTracker`, which is implemented in `NodeJobTracker` (extends `AbstractJobTracker`)
+and is configured using the configuration DSL. All of the internal implementation is
+completely ICompletableFuture-driven and mostly non-blocking in design.
 
-On submit, the Job creates a unique UUID which afterwards acts as a jobId and is combined with the JobTracker's name to be uniquely identifiable inside the cluster. Then, the preparation is sent around the cluster and every member prepares its execution by creating a JobSupervisor, MapCombineTask and ReducerTask. The job-emitting JobSupervisor gains special capabilities to synchronize and control JobSupervisors on other members for the same job.
+On submit, the Job creates a unique UUID which afterwards acts as a jobId and is
+combined with the JobTracker's name to be uniquely identifiable inside the cluster.
+Then, the preparation is sent around the cluster and every member prepares its
+execution by creating a JobSupervisor, MapCombineTask and ReducerTask. The
+job-emitting JobSupervisor gains special capabilities to synchronize and control
+JobSupervisors on other members for the same job.
 
-If preparation is finished on all members, the job itself is started by executing a StartProcessingJobOperation on every member. This initiates a MappingPhase implementation (defaults to KeyValueSourceMappingPhase) and starts the actual mapping on the members.
+If preparation is finished on all members, the job itself is started by executing
+a StartProcessingJobOperation on every member. This initiates a MappingPhase
+implementation (defaults to KeyValueSourceMappingPhase) and starts the actual
+mapping on the members.
 
-The mapping process is currently a single threaded operation per member, but will be extended to run in parallel on multiple partitions (configurable per Job) in future versions. The Mapper is now called on every available value on the partition and eventually emits values. For every emitted value, either a configured CombinerFactory is called to create a Combiner or a cached one is used (or the default CollectingCombinerFactory is used to create Combiners). When the chunk limit is reached on a member, a IntermediateChunkNotification is prepared by collecting emitted keys to their corresponding members. This is either done by asking the job owner to assign members or by an already cached assignment. In later versions, a PartitionStrategy might also be configurable.
+The mapping process is currently a single threaded operation per member, but will
+be extended to run in parallel on multiple partitions (configurable per Job) in
+future versions. The Mapper is now called on every available value on the partition
+and eventually emits values. For every emitted value, either a configured
+CombinerFactory is called to create a Combiner or a cached one is used (or the
+default CollectingCombinerFactory is used to create Combiners). When the chunk limit is
+reached on a member, a IntermediateChunkNotification is prepared by collecting emitted
+keys to their corresponding members. This is either done by asking the job owner to
+assign members or by an already cached assignment. In later versions, a PartitionStrategy
+might also be configurable.
 
-The IntermediateChunkNotification is then sent to the reducers (containing only values for this member) and is offered to the ReducerTask. On every offer, the ReducerTask checks if it is already running and if not, it submits itself to the configured ExecutorService (from the JobTracker configuration).
+The IntermediateChunkNotification is then sent to the reducers (containing only values for
+this member) and is offered to the ReducerTask. On every offer, the ReducerTask checks if
+it is already running and if not, it submits itself to the configured ExecutorService
+(from the JobTracker configuration).
 
-If reducer queue runs out of work, the ReducerTask is removed from the ExecutorService to not block threads but eventually will be resubmitted on next chunk of work.
+If reducer queue runs out of work, the ReducerTask is removed from the ExecutorService
+to not block threads but eventually will be resubmitted on next chunk of work.
 
-On every phase, the partition state is changed to keep track of the currently running operations. A JobPartitionState can be in one of the following states with self-explanatory titles: `[WAITING, MAPPING, REDUCING, PROCESSED, CANCELLED]`. If you have a deeper interest of these states, look at the Javadoc.
+On every phase, the partition state is changed to keep track of the currently running
+operations. A JobPartitionState can be in one of the following states with self-explanatory
+titles: `[WAITING, MAPPING, REDUCING, PROCESSED, CANCELLED]`. If you have a deeper
+interest of these states, look at the Javadoc.
 
 * Member asks for new partition to process: WAITING => MAPPING
 * Member emits first chunk to a reducer: MAPPING => REDUCING
-* All members signal that they finished mapping phase and reducing is finished, too: REDUCING => PROCESSED
+* All members signal that they finished mapping phase and reducing is finished,
+too: REDUCING => PROCESSED
 
-Eventually, all JobPartitionStates reach the state of PROCESSED. Then, the job emitter's JobSupervisor asks all members for their reduced results and executes a potentially offered Collator. With this Collator, the overall result is calculated before it removes itself from the JobTracker, doing some final cleanup and returning the result to the requester (using the internal TrackableJobFuture).
+Eventually, all JobPartitionStates reach the state of PROCESSED. Then, the job
+emitter's JobSupervisor asks all members for their reduced results and executes a
+potentially offered Collator. With this Collator, the overall result is calculated
+before it removes itself from the JobTracker, doing some final cleanup and returning
+the result to the requester (using the internal TrackableJobFuture).
 
-If a job is cancelled while execution, all partitions are immediately set to the CANCELLED state and a CancelJobSupervisorOperation is executed on all members to kill the running processes.
+If a job is cancelled while execution, all partitions are immediately set to the
+CANCELLED state and a CancelJobSupervisorOperation is executed on all members to
+kill the running processes.
 
-While the operation is running in addition to the default operations, some more operations like
-ProcessStatsUpdateOperation (updates processed records statistics) or NotifyRemoteExceptionOperation (notifies the members that the sending member encountered an unrecoverable situation and the Job needs to
-be cancelled, e.g., NullPointerException inside of a Mapper, are executed against the job owner to keep track of the process.
+While the operation is running in addition to the default operations, some more
+operations like
+ProcessStatsUpdateOperation (updates processed records statistics) or
+NotifyRemoteExceptionOperation (notifies the members that the sending member
+encountered an unrecoverable situation and the Job needs to
+be cancelled, e.g., NullPointerException inside of a Mapper, are executed against
+the job owner to keep track of the process.
 
 ==== MapReduce Deprecation
 
-This section informs Hazelcast users about the MapReduce deprecation, it's motivation and replacements.
+This section informs Hazelcast users about the MapReduce deprecation, it's
+motivation and replacements.
 
 ===== Motivation
 
-We've decided to deprecate the MapReduce framework in Hazelcast IMDG 3.8. The MapReduce framework provided the distributed computing model and it was used to back the old Aggregations system. Unfortunately the implementation didn't live up to the expectations and adoption wasn't high, so it never got out of Beta status. Apart from that the current shift in development away from M/R-like processing to a more near-realtime, streaming approach left us with the decision to deprecate and finally remove the MapReduce framework from Hazelcast IMDG. With that said, we want to introduce the successors and replacements; Fast Aggregations on top of Query infrastructure and the Hazelcast Jet distributed computing platform.
+We've decided to deprecate the MapReduce framework in Hazelcast IMDG 3.8. The
+MapReduce framework provided the distributed computing model and it was used
+to back the old Aggregations system. Unfortunately the implementation didn't
+live up to the expectations and adoption wasn't high, so it never got out of
+Beta status. Apart from that the current shift in development away from M/R-like
+processing to a more near-realtime, streaming approach left us with the decision
+to deprecate and finally remove the MapReduce framework from Hazelcast IMDG. With
+that said, we want to introduce the successors and replacements; Fast Aggregations
+on top of Query infrastructure and the Hazelcast Jet distributed computing platform.
 
 ===== Built-In Aggregations
 
-MapReduce is a very powerful tool, however it's demanding in terms of space, time and bandwidth. We realized that we don't need so much power when we simply want to find out a simple metric such as the number of entries matching a predicate. Therefore, the built-in aggregations were rebuilt on top of the existing Query infrastructure (count, sum, min, max, mean, variance) which automatically leverages any matching query index. The aggregations are computed in tho phases:
+MapReduce is a very powerful tool, however it's demanding in terms of space, time
+and bandwidth. We realized that we don't need so much power when we simply want
+to find out a simple metric such as the number of entries matching a predicate.
+Therefore, the built-in aggregations were rebuilt on top of the existing Query
+infrastructure (count, sum, min, max, mean, variance) which automatically leverages
+any matching query index. The aggregations are computed in tho phases:
 
 * 1st phase: on each member (scatter)
 * 2nd phase: one member aggregates responses from members (gather)
 
-It is not as flexible as a full-blown M/R system due to the 2nd phase being single-member and the input can be massive in some use cases. The member doing the 2nd step needs enough capacity to hold all intermediate results from all members from the 1st step, but in practice it is sufficient for many aggregation tasks like "find average" or "find highest" and other common examples.
+It is not as flexible as a full-blown M/R system due to the 2nd phase being
+single-member and the input can be massive in some use cases. The member doing
+the 2nd step needs enough capacity to hold all intermediate results from all
+members from the 1st step, but in practice it is sufficient for many aggregation
+tasks like "find average" or "find highest" and other common examples.
 
 The benefits are:
 
@@ -1492,24 +1997,42 @@ The benefits are:
 * simplified API
 * utilization of existing indexes.
 
-You can refer to <<fast-aggregations, Fast Aggregations>> for examples. If you need a more powerful tool like MapReduce, then there is Hazelcast Jet!
+You can refer to <<fast-aggregations, Fast Aggregations>> for examples. If you
+need a more powerful tool like MapReduce, then there is Hazelcast Jet!
 
 ===== Distributed Computation with Jet
 
-Hazelcast Jet is the new distributed computing framework build on top of Hazelcast IMDG. It uses directed acyclic graphs (DAG) to model relationships between individual steps in the data processing pipeline.
-Conceptually speaking, the MapReduce model simply states that distributed computation on a large dataset can be boiled down to two kinds of computation steps - a map step and a reduce step. One pair of map and reduce does one level of aggregation over data. Complex computations typically require multiple such steps. Multiple M/R-steps essentially form a DAG of operations, so that a DAG execution model boils down to a generalization of the MapReduce model.
-Therefore it is always possible to rewrite a MapReduce application to Hazelcast Jet DAG or "pipeline of tasks" without conceptual changes.
+Hazelcast Jet is the new distributed computing framework build on top of
+Hazelcast IMDG. It uses directed acyclic graphs (DAG) to model relationships
+between individual steps in the data processing pipeline.
+Conceptually speaking, the MapReduce model simply states that distributed
+computation on a large dataset can be boiled down to two kinds of computation
+steps - a map step and a reduce step. One pair of map and reduce does one level
+of aggregation over data. Complex computations typically require multiple such
+steps. Multiple M/R-steps essentially form a DAG of operations, so that a DAG
+execution model boils down to a generalization of the MapReduce model.
+Therefore it is always possible to rewrite a MapReduce application to Hazelcast
+Jet DAG or "pipeline of tasks" without conceptual changes.
 
 The benefits can be summarized as follows:
 
-* MapReduce steps are completely isolated (by definition). With the whole computation modeled as a DAG, the Jet scheduler can optimize the operation pipeline
-* Hazelcast Jet provides a convenient high-level API (distributed j.u.stream). The code stays compact but also offers a more concrete API to leverage the full power of DAGs.
+* MapReduce steps are completely isolated (by definition). With the whole
+computation modeled as a DAG, the Jet scheduler can optimize the operation
+pipeline
+* Hazelcast Jet provides a convenient high-level API (distributed j.u.stream).
+The code stays compact but also offers a more concrete API to leverage the full
+power of DAGs.
 
 ====== Moving MapReduce Tasks to Hazelcast Jet
 
-We'll use the example of the word count application which summarizes a set of documents into a mapping from each word to the total number of its occurrences in the documents. This involves both a mapping stage where one document is transformed into a stream of words and a reducing stage that performs a COUNT DISTINCT operation on the stream and populates a Hazelcast IMap with the results.
+We'll use the example of the word count application which summarizes a set of
+documents into a mapping from each word to the total number of its occurrences
+in the documents. This involves both a mapping stage where one document is
+transformed into a stream of words and a reducing stage that performs a COUNT
+DISTINCT operation on the stream and populates a Hazelcast IMap with the results.
 
-This is the word count code in MapReduce (also available on https://github.com/hazelcast/hazelcast-jet-code-samples/blob/v0.4/batch/mapreduce-migration/src/main/java/WordCountCoreApi.java[Hazelcast Jet Code Samples]):
+This is the word count code in MapReduce (also available on
+https://github.com/hazelcast/hazelcast-jet-code-samples/blob/v0.4/batch/mapreduce-migration/src/main/java/WordCountCoreApi.java[Hazelcast Jet Code Samples]):
 
 [source,java]
 ----
@@ -1528,8 +2051,13 @@ Map<String, Long> counts =
          .get();
 ----
 
-Jet's Core API is strictly lower-level than MapReduce's because it can be used to build the entire infrastructure that can drive MapReduce's mapper, combiner and reducer, fully preserving the semantics of the MapReduce job. However, this approach to migrating your code to Jet is not a good option because the MapReduce API enforces a quite suboptimal computation model.
-The simplest approach is implementing the job in terms of Jet's `java.util.stream` support (Jet JUS for short):
+Jet's Core API is strictly lower-level than MapReduce's because it can
+be used to build the entire infrastructure that can drive MapReduce's
+mapper, combiner and reducer, fully preserving the semantics of the MapReduce
+job. However, this approach to migrating your code to Jet is not a good option
+because the MapReduce API enforces a quite suboptimal computation model.
+The simplest approach is implementing the job in terms of Jet's
+`java.util.stream` support (Jet JUS for short):
 
 [source,java]
 ----
@@ -1541,13 +2069,33 @@ IMap<String, Long> counts = documents
         .collect(DistributedCollectors.toIMap(w -> w, w -> 1L, (left, right) -> left + right));
 ----
 
-This can be taken as a general template to express a MapReduce job in terms of Jet JUS: the logic of the mapper is inside `flatMap` and the logic of both the combiner and the reducer is inside collect. Jet automatically applies the optimization where the data stream is first "combined" locally on each member, then the partial results "reduced" in the final step, after sending across the network.
+This can be taken as a general template to express a MapReduce job in terms
+of Jet JUS: the logic of the mapper is inside `flatMap` and the logic of
+both the combiner and the reducer is inside collect. Jet automatically applies
+the optimization where the data stream is first "combined" locally on each member,
+then the partial results "reduced" in the final step, after sending across the network.
 
-Keep in mind that MapReduce and JUS use the same terminology, but with quite different meaning: in JUS the final step is called "combine" (MapReduce calls it "reduce") and the middle step is called "reduce" (MapReduce calls this one "combine"). MapReduce's "combine" collapses the stream in fixed-size batches, whereas in Jet JUS "reduce" collapses the complete local dataset and sends just a single item per distinct key to the final step. In Jet JUS, the final "combine" step combines just one partial result per member into the total result, whereas in MapReduce the final step "reduces" all the one-per-batch items to the final result. Therefore, in Jet there are only O (distinct-key-count) items sent over the network whereas in MapReduce it is still O (total-item-count) with just a linear scaling factor equal to the configured batch size.
+Keep in mind that MapReduce and JUS use the same terminology, but with quite
+different meaning: in JUS the final step is called "combine" (MapReduce calls
+it "reduce") and the middle step is called "reduce" (MapReduce calls this one "combine").
+MapReduce's "combine" collapses the stream in fixed-size batches, whereas in
+Jet JUS "reduce" collapses the complete local dataset and sends just a single
+item per distinct key to the final step. In Jet JUS, the final "combine" step
+combines just one partial result per member into the total result, whereas in
+MapReduce the final step "reduces" all the one-per-batch items to the final result.
+Therefore, in Jet there are only O (distinct-key-count) items sent over the network
+whereas in MapReduce it is still O (total-item-count) with just a linear scaling
+factor equal to the configured batch size.
 
-A complete example of the word count done with the Streams API can be found in the https://github.com/hazelcast/hazelcast-jet-code-samples/tree/v0.4/batch/wordcount-j.u.s[Hazelcast Jet Code Samples]. A minor difference is that the code on GitHub stores the documents line by line, with the effect of a finer-grained distribution across the cluster.
+A complete example of the word count done with the Streams API can be found in the
+https://github.com/hazelcast/hazelcast-jet-code-samples/tree/v0.4/batch/wordcount-j.u.s[Hazelcast Jet Code Samples]
+ A minor difference is that the code on GitHub stores the documents line by line,
+with the effect of a finer-grained distribution across the cluster.
 
-To better understand how the JUS pipeline is executed by Jet, take a look at the file `WordCount.java` in the `core/wordcount` module, which builds the same DAG as the Jet JUS implementation, but using the Jet Core API. Here is a somewhat simplified DAG from this example:
+To better understand how the JUS pipeline is executed by Jet, take a look at the file
+`WordCount.java` in the `core/wordcount` module, which builds the same DAG as the Jet
+JUS implementation, but using the Jet Core API. Here is a somewhat simplified DAG from
+this example:
 
 [source,java]
 ----
@@ -1572,20 +2120,44 @@ dag.edge(between(source, map))
    .edge(between(combine, sink));
 ----
 
-It is a simple cascade of vertices: source -> map -> reduce -> combine -> sink and matches quite closely the workflow of a MapReduce job. On each member, a distinct slice of data (IMap partitions stored locally) is ingested by the source vertex and sent to map on the local member. The output of map are words and they travel over a partitioned edge to reduce. Note that, as opposed to MapReduce, a single instance of a processor doesn't count occurrences of just one word, but is responsible for entire partitions. There are only as many processors as configured by the `localParallelism` property. This is one of several examples where Jet's DAG exposes performance-critical attributes of the computation to the user.
+It is a simple cascade of vertices: source -> map -> reduce -> combine -> sink and
+matches quite closely the workflow of a MapReduce job. On each member, a distinct
+slice of data (IMap partitions stored locally) is ingested by the source vertex
+and sent to map on the local member. The output of map are words and they travel
+over a partitioned edge to reduce. Note that, as opposed to MapReduce, a single
+instance of a processor doesn't count occurrences of just one word, but is responsible
+for entire partitions. There are only as many processors as configured by the
+`localParallelism` property. This is one of several examples where Jet's DAG
+exposes performance-critical attributes of the computation to the user.
 
-Another example of this can be seen in arguments passed to `partitioned(wholeItem(), HASH_CODE)`. The user has a precise control over the partitioning key as well as the algorithm used to map the key to a partition ID. In this case we use the whole item (the word) as the key and apply the fast `HASH_CODE` strategy, which derives the partition ID from the object's `hashCode()`.
+Another example of this can be seen in arguments passed to `partitioned(wholeItem(), HASH_CODE)`.
+The user has a precise control over the partitioning key as well as the algorithm used
+to map the key to a partition ID. In this case we use the whole item (the word) as the
+key and apply the fast `HASH_CODE` strategy, which derives the partition ID from the
+object's `hashCode()`.
 
-The reduce -> combine edge is both partitioned and distributed. Whereas each cluster member has its own reduce processor for any given word, there is only one combine processor in the entire cluster for a given word. This is where network traffic happens: reduce sends its local results for a word to that one combine processor in the cluster. Note that here we didn't specify `HASH_CODE`; it is not guaranteed to be safe on a distributed edge because on the target member the hashcode can come out differently. For many value classes (like `String` and `Integer`) it is guaranteed to work, though, because their hashcode explicitly specifies the function used. By default Jet applies the slower but safer Hazelcast strategy: first serialize and then compute the MurmurHash3 of the resulting blob. It is up to the user to ensure that the faster strategy is safe, or to provide a custom strategy.
+The reduce -> combine edge is both partitioned and distributed. Whereas each cluster
+member has its own reduce processor for any given word, there is only one combine
+processor in the entire cluster for a given word. This is where network traffic happens:
+reduce sends its local results for a word to that one combine processor in the cluster.
+Note that here we didn't specify `HASH_CODE`; it is not guaranteed to be safe on a
+distributed edge because on the target member the hashcode can come out differently.
+For many value classes (like `String` and `Integer`) it is guaranteed to work, though,
+because their hashcode explicitly specifies the function used. By default Jet applies the
+slower but safer Hazelcast strategy: first serialize and then compute the MurmurHash3 of
+the resulting blob. It is up to the user to ensure that the faster strategy is safe, or to
+provide a custom strategy.
 
 In the above example we can see many out-of-the-box processors being used:
 
 * `readMap` to ingest the data from an IMap
-* `flatMap` to perform a flat-map operation on incoming items (closely corresponds to MapReduce's mapper)
+* `flatMap` to perform a flat-map operation on incoming items (closely corresponds
+to MapReduce's mapper)
 * `groupAndAccumulate` to perform the reduction and combining
 
 There are some more in the `Processors` class.
-For even more flexibility we'll now show how you can implement a processor on your own (also available in the Hazelcast Jet Code Samples repository):
+For even more flexibility we'll now show how you can implement a processor on your
+own (also available in the Hazelcast Jet Code Samples repository):
 
 [source,java]
 ----
@@ -1674,77 +2246,122 @@ public class MapReduce {
 }
 ----
 
-One of the challenges of implementing a custom processor is cooperativeness: it must back off as soon as there is no more room in the output buffer (the outbox). This example shows how to make use of another line of convenience provided at this lower level, which takes care of almost all the mechanics involved. One gotcha is that a simple `for` loop must be converted to a stateful iterator-style object, like `WordTraverser` in the above code. To make this conversion as painless as possible we chose to not require a Java Iterator, but defined our own `Traverser` interface with just a single method to implement. This means that `Traverser` is a functional interface and can often be implemented with a one-liner lambda.
+One of the challenges of implementing a custom processor is cooperativeness: it must
+back off as soon as there is no more room in the output buffer (the outbox). This
+example shows how to make use of another line of convenience provided at this lower
+level, which takes care of almost all the mechanics involved. One gotcha is that a
+simple `for` loop must be converted to a stateful iterator-style object, like
+`WordTraverser` in the above code. To make this conversion as painless as possible we
+chose to not require a Java Iterator, but defined our own `Traverser` interface with
+just a single method to implement. This means that `Traverser` is a functional
+interface and can often be implemented with a one-liner lambda.
 
 ===== Jet Compared with New Aggregations
 
-Hazelcast has native support for aggregation operations on the contents of its distributed data structures. They operate on the assumption that the aggregating function is commutative and associative, which allows the two-tiered approach where first the local data is aggregated, then all the local subresults sent to one member, where they are combined and returned to the user. This approach works quite well as long as the result is of manageable size. Many interesting aggregations produce an O(1) result and for those, the native aggregations are a good match.
+Hazelcast has native support for aggregation operations on the contents of its
+distributed data structures. They operate on the assumption that the aggregating
+function is commutative and associative, which allows the two-tiered approach where
+first the local data is aggregated, then all the local subresults sent to one member,
+where they are combined and returned to the user. This approach works quite well as
+long as the result is of manageable size. Many interesting aggregations produce an O(1)
+result and for those, the native aggregations are a good match.
 
-The main area where native aggregations may not be sufficient are the operations that group the data by key and produce results of size O (`keyCount`). The architecture of Hazelcast aggregations is not well adapted to this use case, although it still works even for moderately-sized results (up to 100 MB, as a ballpark figure). Beyond these numbers, and whenever something more than a single aggregation step is needed, Jet becomes the preferred choice. In the mentioned use case Jet helps because it doesn't send the entire hashtables in serialized form and materialize all the results on the user's machine, but rather streams the key-value pairs directly into a target IMap. Since it is a distributed structure, it doesn't focus its load on a single member.
+The main area where native aggregations may not be sufficient are the operations that
+group the data by key and produce results of size O (`keyCount`). The architecture of
+Hazelcast aggregations is not well adapted to this use case, although it still works
+even for moderately-sized results (up to 100 MB, as a ballpark figure). Beyond these
+numbers, and whenever something more than a single aggregation step is needed, Jet
+becomes the preferred choice. In the mentioned use case Jet helps because it doesn't
+send the entire hashtables in serialized form and materialize all the results on the
+user's machine, but rather streams the key-value pairs directly into a target IMap.
+Since it is a distributed structure, it doesn't focus its load on a single member.
 
-Jet's DAG paradigm offers much more than the basic map-reduce-combine cascade. Among other setups, it can compose several such cascades and also perform co-grouping, joining and many other operations in complex combinations.
+Jet's DAG paradigm offers much more than the basic map-reduce-combine cascade. Among
+other setups, it can compose several such cascades and also perform co-grouping,
+joining and many other operations in complex combinations.
 
 === Aggregators
 
-NOTE: This feature has been deprecated. Please use the <<fast-aggregations, Fast-Aggregations>> instead.
+NOTE: This feature has been deprecated. Please use the <<fast-aggregations, Fast-Aggregations>>
+instead.
 
-Based on the Hazelcast MapReduce framework, Aggregators are ready-to-use data aggregations. These are typical operations like
-sum up values, finding minimum or maximum values, calculating averages and other operations that you would expect
+Based on the Hazelcast MapReduce framework, Aggregators are ready-to-use data
+aggregations. These are typical operations like
+sum up values, finding minimum or maximum values, calculating averages and
+other operations that you would expect
 in the relational database world.
 
-Aggregation operations are implemented, as mentioned above, on top of the MapReduce framework. All operations can be
-achieved using pure MapReduce calls. However, using the Aggregation feature is more convenient for a big set of standard operations.
+Aggregation operations are implemented, as mentioned above, on top of the
+MapReduce framework. All operations can be
+achieved using pure MapReduce calls. However, using the Aggregation feature
+is more convenient for a big set of standard operations.
 
 ==== Aggregations Basics
 
-This section quickly guides you through the basics of the Aggregations framework and some of its available classes.
+This section quickly guides you through the basics of the Aggregations
+framework and some of its available classes.
 We also implement a first base example in this section.
 
 ===== Aggregations and Map Interfaces
 
-Aggregations are available on both types of map interfaces, `com.hazelcast.core.IMap` and `com.hazelcast
+Aggregations are available on both types of map interfaces,
+`com.hazelcast.core.IMap` and `com.hazelcast
 .core.MultiMap`, using
-the `aggregate` methods. Two overloaded methods are available that customize resource management of the
+the `aggregate` methods. Two overloaded methods are available that
+customize resource management of the
 underlying MapReduce framework by supplying a custom configured
 `com.hazelcast.mapreduce.JobTracker` instance. To find out how to
-configure the MapReduce framework, please see <<configuring-jobtracker, Configuring JobTracker>>. We will
-later see another way to configure the automatically used MapReduce framework if no special `JobTracker` is supplied.
+configure the MapReduce framework, please see <<configuring-jobtracker, Configuring JobTracker>>.
+We will
+later see another way to configure the automatically used MapReduce framework
+if no special `JobTracker` is supplied.
 
 ===== Aggregations and the MapReduce Framework
 
-As mentioned before, the Aggregations implementation is based on the Hazelcast MapReduce framework and therefore you might find
-overlaps in their APIs. One overload of the `aggregate` method can be supplied with
+As mentioned before, the Aggregations implementation is based on the Hazelcast
+MapReduce framework and therefore you might find
+overlaps in their APIs. One overload of the `aggregate` method can be
+supplied with
 a `JobTracker`, which is part of the MapReduce framework.
 
-If you implement your own aggregations, you will use a mixture of the Aggregations and
+If you implement your own aggregations, you will use a mixture of the
+Aggregations and
 the MapReduce API. If you do so, e.g., to make the life of colleagues easier,
 please read the <<implementing-aggregations, Implementing Aggregations section>>.
 
 ==== Using the Aggregations API
 
 We now look into what can be achieved using the
-Aggregations API. To work on some deeper examples, let's quickly have a look at the available classes and interfaces and
+Aggregations API. To work on some deeper examples, let's quickly have a
+look at the available classes and interfaces and
 discuss their usage.
 
 ===== Supplier
 
-The `com.hazelcast.mapreduce.aggregation.Supplier` provides filtering and data extraction to the aggregation operation.
-This class already provides a few different static methods to achieve the most common cases. `Supplier.all()`
-accepts all incoming values and does not apply any data extraction or transformation upon them before supplying them to
+The `com.hazelcast.mapreduce.aggregation.Supplier` provides filtering and
+data extraction to the aggregation operation.
+This class already provides a few different static methods to achieve the
+most common cases. `Supplier.all()`
+accepts all incoming values and does not apply any data extraction or
+transformation upon them before supplying them to
 the aggregation function itself.
 
 For filtering data sets, you have two options by default:
 
-* You can supply a `com.hazelcast.query.Predicate` if you want to filter on values and/or keys.
-* Alternatively, you can supply a `com.hazelcast.mapreduce.KeyPredicate` if you can decide directly on the data
+* You can supply a `com.hazelcast.query.Predicate` if you want to filter
+on values and/or keys.
+* Alternatively, you can supply a `com.hazelcast.mapreduce.KeyPredicate`
+if you can decide directly on the data
 key without the need to deserialize the value.
 
-As mentioned above, all APIs are fully Java 8 and Lambda compatible. Let's have a look on how we can do basic filtering using
+As mentioned above, all APIs are fully Java 8 and Lambda compatible. Let's
+have a look on how we can do basic filtering using
 those two options.
 
 ====== Basic Filtering with KeyPredicate
 
-First, we have a look at a `KeyPredicate` and only accept people whose last name is "Jones".
+First, we have a look at a `KeyPredicate` and only accept people whose last
+name is "Jones".
 
 [source,java]
 ----
@@ -1764,7 +2381,8 @@ class JonesKeyPredicate implements KeyPredicate<String> {
 
 ====== Filtering on Values with Predicate
 
-Using the standard Hazelcast `Predicate` interface, we can also filter based on the value of a data entry. In the following example, you can
+Using the standard Hazelcast `Predicate` interface, we can also filter
+based on the value of a data entry. In the following example, you can
 only select values that are divisible by 4 without a remainder.
 
 [source,java]
@@ -1785,8 +2403,10 @@ class DivisiblePredicate implements Predicate<String, Integer> {
 
 ====== Extracting and Transforming Data
 
-As well as filtering, `Supplier` can also extract or transform data before providing it
-to the aggregation operation itself. The following example shows how to transform an input value to a string.
+As well as filtering, `Supplier` can also extract or transform data
+before providing it
+to the aggregation operation itself. The following example shows how
+to transform an input value to a string.
 
 [source,java]
 ----
@@ -1797,12 +2417,15 @@ Supplier<String, Integer, String> supplier = Supplier.all(
 
 You can see a Java 6/7 example in the <<aggregations-examples, Aggregations Examples section>>.
 
-Apart from the fact we transformed the input value of type `int` (or `Integer`) to a string, we can see that the generic information
-of the resulting `Supplier` has changed as well. This indicates that we now have an aggregation working on string values.
+Apart from the fact we transformed the input value of type `int` (or `Integer`)
+to a string, we can see that the generic information
+of the resulting `Supplier` has changed as well. This indicates that we now
+have an aggregation working on string values.
 
 ====== Chaining Multiple Filtering Rules
 
-Another feature of `Supplier` is its ability to chain multiple filtering rules. Let's combine all of the
+Another feature of `Supplier` is its ability to chain multiple filtering rules.
+Let's combine all of the
 above examples into one rule set:
 
 [source,java]
@@ -1820,9 +2443,11 @@ Supplier<String, Integer, String> supplier =
 ====== Implementing Supplier with Special Requirements
 
 You might prefer or need to implement your `Supplier` based on special
-requirements. This is a very basic task. The `Supplier` abstract class has just one method: the `apply` method.
+requirements. This is a very basic task. The `Supplier` abstract class has
+just one method: the `apply` method.
 
-NOTE: Due to a limitation of the Java Lambda API, you cannot implement abstract classes using Lambdas. Instead it is
+NOTE: Due to a limitation of the Java Lambda API, you cannot implement
+abstract classes using Lambdas. Instead it is
 recommended that you create a standard named class.
 
 [source,java]
@@ -1838,11 +2463,14 @@ class MyCustomSupplier extends Supplier<String, Integer, String> {
 }
 ----
 
-The `Supplier` `apply` methods are expected to return null whenever the input value should not be mapped to the aggregation
-process. This can be used, as in the example above, to implement filter rules directly. Implementing filters using the
+The `Supplier` `apply` methods are expected to return null whenever the
+input value should not be mapped to the aggregation
+process. This can be used, as in the example above, to implement filter
+rules directly. Implementing filters using the
 `KeyPredicate` and `Predicate` interfaces might be more convenient.
 
-To use your own `Supplier`, just pass it to the aggregate method or use it in combination with other ``Supplier``s.
+To use your own `Supplier`, just pass it to the aggregate method or use
+it in combination with other ``Supplier``s.
 
 [source,java]
 ----
@@ -1861,12 +2489,17 @@ int sum = personAgeMapping.aggregate( supplier, Aggregations.count() );
 
 ===== Defining the Aggregation Operation
 
-The `com.hazelcast.mapreduce.aggregation.Aggregation` interface defines the aggregation operation itself. It contains a set of
-MapReduce API implementations like `Mapper`, `Combiner`, `Reducer` and `Collator`. These implementations are normally unique to
-the chosen `Aggregation`. This interface can also be implemented with your aggregation operations based on MapReduce calls. For
-more information, refer to <<implementing-aggregations, Implementing Aggregations section>>.
+The `com.hazelcast.mapreduce.aggregation.Aggregation` interface defines
+the aggregation operation itself. It contains a set of
+MapReduce API implementations like `Mapper`, `Combiner`, `Reducer` and
+`Collator`. These implementations are normally unique to
+the chosen `Aggregation`. This interface can also be implemented with
+your aggregation operations based on MapReduce calls. For
+more information, refer to the
+<<implementing-aggregations, Implementing Aggregations section>>.
 
-The `com.hazelcast.mapreduce.aggregation.Aggregations` class provides a common predefined set of aggregations. This class
+The `com.hazelcast.mapreduce.aggregation.Aggregations` class provides
+a common predefined set of aggregations. This class
 contains type-safe aggregations of the following types:
 
 * Average (Integer, Long, Double, BigInteger, BigDecimal)
@@ -1876,7 +2509,8 @@ contains type-safe aggregations of the following types:
 * DistinctValues
 * Count
 
-Those aggregations are similar to their counterparts on relational databases and can be equated to SQL statements as set out
+Those aggregations are similar to their counterparts on relational
+databases and can be equated to SQL statements as set out
 below.
 
 **Average:**
@@ -1964,8 +2598,11 @@ SELECT COUNT(*) FROM person;
 
 ===== Extracting Attribute Values with PropertyExtractor
 
-We used the `com.hazelcast.mapreduce.aggregation.PropertyExtractor` interface before when we had a look at the example
-on how to use a `Supplier` to <<extracting-and-transforming-data, transform a value to another type>>. It can also be used to extract attributes from values.
+We used the `com.hazelcast.mapreduce.aggregation.PropertyExtractor` interface
+before when we had a look at the example
+on how to use a `Supplier` to
+<<extracting-and-transforming-data, transform a value to another type>>. It can
+also be used to extract attributes from values.
 
 [source,java]
 ----
@@ -1989,23 +2626,33 @@ class AgeExtractor implements PropertyExtractor<Person, Integer> {
 }
 ----
 
-In this example, we extract the value from the person's age attribute. The value type changes from Person to `Integer` which is reflected in the generics information to stay type-safe.
+In this example, we extract the value from the person's age attribute. The value
+type changes from Person to `Integer` which is reflected in the generics information
+to stay type-safe.
 
-You can use ``PropertyExtractor``s for any kind of transformation of data. You might even want to have multiple
+You can use ``PropertyExtractor``s for any kind of transformation of data. You
+might even want to have multiple
 transformation steps chained one after another.
 
 ===== Configuring Aggregations
 
-As stated before, the easiest way to configure the resources used by the underlying MapReduce framework is to supply a `JobTracker`
-to the aggregation call itself by passing it to either `IMap.aggregate()` or `MultiMap.aggregate()`.
+As stated before, the easiest way to configure the resources used by the underlying
+MapReduce framework is to supply a `JobTracker`
+to the aggregation call itself by passing it to either `IMap.aggregate()` or
+`MultiMap.aggregate()`.
 
-There is another way to implicitly configure the underlying used `JobTracker`. If no specific `JobTracker` was
-passed for the aggregation call, internally one is created using the following naming specifications:
+There is another way to implicitly configure the underlying used `JobTracker`.
+If no specific `JobTracker` was
+passed for the aggregation call, internally one is created using the following
+naming specifications:
 
-For `IMap` aggregation calls, the naming specification is created as `hz::aggregation-map-` and the concatenated name of the map. For `MultiMap` it is very similar, i.e., `hz::aggregation-multimap-` and the concatenated name of the MultiMap.
+For `IMap` aggregation calls, the naming specification is created as `hz::aggregation-map-`
+and the concatenated name of the map. For `MultiMap` it is very similar, i.e.,
+`hz::aggregation-multimap-` and the concatenated name of the MultiMap.
 
 Knowing the specification of the name, we can configure the `JobTracker` as expected
-(as described in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>) using the naming spec we just learned. For more information on the configuration of
+(as described in <<retrieving-a-jobtracker-instance, Retrieving a JobTracker Instance>>)
+using the naming spec we just learned. For more information on the configuration of
 `JobTracker`, see the <<configuring-jobtracker, Configuring Jobtracker section>>.
 
 To finish this section, let's have a quick example for the above naming specs:
@@ -2028,8 +2675,10 @@ multimap.aggregate( ... );
 
 ==== Aggregations Examples
 
-For the final example, imagine you are working for an international company and you have an employee database stored in Hazelcast
-`IMap` with all employees worldwide and a `MultiMap` for assigning employees to their certain locations or offices. In addition,
+For the final example, imagine you are working for an international company and you
+have an employee database stored in Hazelcast
+`IMap` with all employees worldwide and a `MultiMap` for assigning employees to
+their certain locations or offices. In addition,
 there is another `IMap` that holds the salary per employee.
 
 ===== Setting up the Data Model
@@ -2079,7 +2728,8 @@ class SalaryYear implements Serializable {
 }
 ----
 
-The two ``IMap``s and the `MultiMap` are keyed by the string of email. They are defined as follows:
+The two ``IMap``s and the `MultiMap` are keyed by the string of email. They are
+defined as follows:
 
 [source,java]
 ----
@@ -2088,12 +2738,15 @@ IMap<String, SalaryYear> salaries = hz.getMap( "salaries" );
 MultiMap<String, String> officeAssignment = hz.getMultiMap( "office-employee" );
 ----
 
-So far, we know all the important information to work out some example aggregations. We will look into some deeper implementation
-details and how we can work around some current limitations that will be eliminated in future versions of the API.
+So far, we know all the important information to work out some example aggregations.
+We will look into some deeper implementation
+details and how we can work around some current limitations that will be eliminated
+in future versions of the API.
 
 ===== Average Aggregation Example
 
-Let's start with a very basic example. We want to know the average salary of all of our employees. To do this,
+Let's start with a very basic example. We want to know the average salary of all of
+our employees. To do this,
 we need a `PropertyExtractor` and the average aggregation for type `Integer`.
 
 [source,java]
@@ -2105,14 +2758,19 @@ int avgSalary = salaries.aggregate( Supplier.all( extractor ),
                                     Aggregations.integerAvg() );
 ----
 
-That's it. Internally, we created a MapReduce task based on the predefined aggregation and fired it up immediately. Currently all
-aggregation calls are blocking operations, so it is not yet possible to execute the aggregation in a reactive way (using
-`com.hazelcast.core.ICompletableFuture`), but this will be part of an upcoming version.
+That's it. Internally, we created a MapReduce task based on the predefined
+aggregation and fired it up immediately. Currently all
+aggregation calls are blocking operations, so it is not yet possible to execute
+the aggregation in a reactive way (using
+`com.hazelcast.core.ICompletableFuture`), but this will be part of an upcoming
+version.
 
 ===== Map Join Example
 
-The following example is a little more complex. We only want to have our US-based employees selected into the average
-salary calculation, so we need to execute a join operation between the employees and salaries maps.
+The following example is a little more complex. We only want to have our US-based
+employees selected into the average
+salary calculation, so we need to execute a join operation between the employees
+and salaries maps.
 
 [source,java]
 ----
@@ -2131,8 +2789,10 @@ class USEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAware {
 }
 ----
 
-Using the `HazelcastInstanceAware` interface, we get the current instance of Hazelcast injected into our filter and we can perform data
-joins on other data structures of the cluster. We now only select employees that work as part of our US offices into the
+Using the `HazelcastInstanceAware` interface, we get the current instance of
+Hazelcast injected into our filter and we can perform data
+joins on other data structures of the cluster. We now only select employees
+that work as part of our US offices into the
 aggregation.
 
 [source,java]
@@ -2147,15 +2807,19 @@ int avgSalary = salaries.aggregate( Supplier.fromKeyPredicate(
 
 ===== Grouping Example
 
-For our next example, we do some grouping based on the different worldwide offices. Currently, a group aggregator is not yet
-available, so we need a small workaround to achieve this goal. (In later versions of the Aggregations API this will not be
+For our next example, we do some grouping based on the different worldwide offices.
+Currently, a group aggregator is not yet
+available, so we need a small workaround to achieve this goal. (In later versions of
+the Aggregations API this will not be
 required because it will be available out-of-the-box in a much more convenient way.)
 
-Again, let's start with our filter. This time, we want to filter based on an office name and we need to do some data joins
+Again, let's start with our filter. This time, we want to filter based on an office
+name and we need to do some data joins
 to achieve this kind of filtering.
 
 **A short tip:** to minimize the data transmission on the aggregation we can use
-<<data-affinity, Data Affinity>> rules to influence the partitioning of data. Be aware that this is an expert feature of Hazelcast.
+<<data-affinity, Data Affinity>> rules to influence the partitioning of data.
+Be aware that this is an expert feature of Hazelcast.
 
 [source,java]
 ----
@@ -2184,7 +2848,8 @@ class OfficeEmployeeFilter implements KeyPredicate<String>, HazelcastInstanceAwa
 }
 ----
 
-Now we can execute our aggregations. As mentioned before, we currently need to do the grouping on our own by executing multiple
+Now we can execute our aggregations. As mentioned before, we currently need
+to do the grouping on our own by executing multiple
 aggregations in a row.
 
 [source,java]
@@ -2210,7 +2875,8 @@ for ( String office : officeAssignment.keySet() ) {
 ===== Simple Count Example
 
 We want to end this section by executing one final and easy aggregation. We
-want to know how many employees we currently have on a worldwide basis. Before reading the next lines of example code, you
+want to know how many employees we currently have on a worldwide basis. Before
+reading the next lines of example code, you
 can try to do it on your own to see if you understood how to execute aggregations.
 
 [source,java]
@@ -2219,7 +2885,8 @@ IMap<String, Employee> employees = hazelcastInstance.getMap( "employees" );
 int count = employees.size();
 ----
 
-After the quick joke of the previous two code lines, we look at the real two code lines:
+After the quick joke of the previous two code lines, we look at the real two
+code lines:
 
 [source,java]
 ----
@@ -2227,22 +2894,28 @@ IMap<String, Employee> employees = hazelcastInstance.getMap( "employees" );
 int count = employees.aggregate( Supplier.all(), Aggregations.count() );
 ----
 
-We now have an overview of how to use aggregations in real life situations. If you want to do your colleagues a favor, you
-might want to write your own additional set of aggregations. If so, then read the next section, <<implementing-aggregations, Implementing Aggregations>>.
+We now have an overview of how to use aggregations in real life situations.
+If you want to do your colleagues a favor, you
+might want to write your own additional set of aggregations. If so, then read
+the next section, <<implementing-aggregations, Implementing Aggregations>>.
 
 ==== Implementing Aggregations
 
-This section explains how to implement your own aggregations in your own application. It
-is an advanced section, so if you do not intend to implement your own aggregation, you might want to
+This section explains how to implement your own aggregations in your own application.
+It is an advanced section, so if you do not intend to implement your own aggregation,
+you might want to
 stop reading here and come back later when you need to know how to implement your own
 aggregation.
 
-An `Aggregation` implementation is defining a MapReduce task, but with a small difference: the `Mapper`
-is always expected to work on a `Supplier` that filters and/or transforms the mapped input value to some output value.
+An `Aggregation` implementation is defining a MapReduce task, but with a small
+difference: the `Mapper`
+is always expected to work on a `Supplier` that filters and/or transforms the mapped
+input value to some output value.
 
 ===== Aggregation Methods
 
-The main interface for making your own aggregation is `com.hazelcast.mapreduce.aggregation.Aggregation`. It consists of four
+The main interface for making your own aggregation is `com.hazelcast.mapreduce.aggregation.Aggregation`.
+It consists of four
 methods.
 
 [source,java]
@@ -2255,17 +2928,24 @@ interface Aggregation<Key, Supplied, Result> {
 }
 ----
 
-The `getMapper` and `getReducerFactory` methods should return non-null values. `getCombinerFactory` and `getCollator` are
-optional operations and you do not need to implement them. You can decide to implement them depending on the use case you want
+The `getMapper` and `getReducerFactory` methods should return non-null values.
+`getCombinerFactory` and `getCollator` are
+optional operations and you do not need to implement them. You can decide to
+implement them depending on the use case you want
 to achieve.
 
 === Fast-Aggregations
 
 Fast-Aggregations functionality is the successor of the <<aggregators, Aggregators>>.
-They are equivalent to the MapReduce Aggregators in most of the use cases, but instead of running on the MapReduce engine they run on the Query infrastructure.
-Their performance is tens to hundreds times better since they run in parallel for each partition and are highly optimized for speed and low memory consumption.
+They are equivalent to the MapReduce Aggregators in most of the use cases, but instead
+of running on the MapReduce engine they run on the Query infrastructure.
+Their performance is tens to hundreds times better since they run in parallel for each
+partition and are highly optimized for speed and low memory consumption.
 
-NOTE: If the <<setting-in-memory-format in-memory format>> of your data is `NATIVE`, Fast-Aggregations always run on the partition threads. If the data is of type `BINARY` or `OBJECT`, they also mostly run on the partition threads, however, they may run on the separate query threads to avoid blocking partition threads (if there are no ongoing migrations).
+NOTE: If the <<setting-in-memory-format in-memory format>> of your data is `NATIVE`,
+Fast-Aggregations always run on the partition threads. If the data is of type `BINARY`
+or `OBJECT`, they also mostly run on the partition threads, however, they may run on
+the separate query threads to avoid blocking partition threads (if there are no ongoing migrations).
 
 ==== Aggregator API
 
@@ -2280,14 +2960,19 @@ There are also the following callbacks:
 * `onAccumulationFinished()` called when the accumulation phase finishes
 * `onCombinationFinished()` called when the combination phase finishes
 
-These callbacks enable releasing the state that might have been initialized and stored in the Aggregator - to reduce the network traffic.
+These callbacks enable releasing the state that might have been initialized and
+stored in the Aggregator - to reduce the network traffic.
 
-Each phase is described below and you can also refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc] for the API's details.
+Each phase is described below and you can also refer to the
+https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc]
+for the API's details.
 
 **Accumulation:**
 
-During the accumulation phase each Aggregator accumulates all entries passed to it by the query engine.
-It accumulates only those pieces of information that are required to calculate the aggregation result in the last phase - that's implementation specific.
+During the accumulation phase each Aggregator accumulates all entries passed
+to it by the query engine.
+It accumulates only those pieces of information that are required to calculate
+the aggregation result in the last phase - that's implementation specific.
 
 In case of the `DoubleAverage` aggregation the Aggregator would accumulate:
 
@@ -2296,20 +2981,29 @@ In case of the `DoubleAverage` aggregation the Aggregator would accumulate:
 
 **Combination:**
 
-Since Fast-Aggregation is executed in parallel on each partition of the cluster, the results need to be combined after the accumulation phase in order to be able to calculate the final result.
+Since Fast-Aggregation is executed in parallel on each partition of the cluster,
+the results need to be combined after the accumulation phase in order to be able
+to calculate the final result.
 
-In case of the `DoubleAverage` aggregation, the aggregator would sum up all the sums of the elements and all the counts.
+In case of the `DoubleAverage` aggregation, the aggregator would sum up all
+the sums of the elements and all the counts.
 
 
 **Aggregation:**
 
-Aggregation is the last phase that calculates the final result from the results accumulated and combined in the preceding phases.
+Aggregation is the last phase that calculates the final result from the
+results accumulated and combined in the preceding phases.
 
-In case of the `DoubleAverage` aggregation, the Aggregator would just divide the sum of the elements by their count (if non-zero).
+In case of the `DoubleAverage` aggregation, the Aggregator would just
+divide the sum of the elements by their count (if non-zero).
 
 ==== Fast-Aggregations and Map Interfaces
 
-Fast-Aggregations are available on `com.hazelcast.core.IMap` only. IMap offers the method `aggregate` to apply the aggregation logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-[Javadoc] to see the method details.
+Fast-Aggregations are available on `com.hazelcast.core.IMap` only.
+IMap offers the method `aggregate` to apply the aggregation logic on
+the map entries. This method can be called with or without a predicate. You can refer
+to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#aggregate-com.hazelcast.aggregation.Aggregator-[Javadoc]
+to see the method details.
 
 
 ==== Example Implementation
@@ -2343,32 +3037,53 @@ The full list is presented below:
 * `comparable` `min`/`max`
 * `fixedPointSum`, `floatingPointSum`
 
-To use the any of these Aggregators, instantiate them using the `Aggregators` factory class.
+To use the any of these Aggregators, instantiate them using the `Aggregators`
+factory class.
 
-Each built-in Aggregator can also navigate to an attribute of the object passed to the `accumulate()` method (via reflection). For example, `Aggregators.distinct("address.city")` extracts the `address.city` attribute from the object passed to the Aggregator and accumulate the extracted value.
+Each built-in Aggregator can also navigate to an attribute of the object passed
+to the `accumulate()` method (via reflection). For example, `Aggregators.distinct("address.city")`
+extracts the `address.city` attribute from the object passed to the Aggregator and
+accumulate the extracted value.
 
 ==== Configuration Options
 
-On each partition, after the entries have been passed to the aggregator, the accumulation runs in parallel.
-It means that each aggregator is cloned and receives a sub-set of the entries received from a partition.
-Then, it runs the accumulation phase in all of the cloned aggregators - at the end, the result is combined into a single accumulation result.
-It speeds up the processing by at least the factor of two - even in case of simple aggregations. If the accumulation logic is more "heavy", the speed-up may be more significant.
+On each partition, after the entries have been passed to the aggregator, the
+accumulation runs in parallel.
+It means that each aggregator is cloned and receives a sub-set of the entries
+received from a partition.
+Then, it runs the accumulation phase in all of the cloned aggregators - at the
+end, the result is combined into a single accumulation result.
+It speeds up the processing by at least the factor of two - even in case of simple
+aggregations. If the accumulation logic is more "heavy", the speed-up may be more significant.
 
-In order to switch the accumulation into a sequential mode just set the `hazelcast.aggregation.accumulation.parallel.evaluation` property to `false` (it's set to `true` by default).
+In order to switch the accumulation into a sequential mode just set the
+`hazelcast.aggregation.accumulation.parallel.evaluation` property to `false`
+(it's set to `true` by default).
 
 === Projections
 
-There are cases where instead of sending all the data returned by a query from a member, you want to transform (strip down) each result object in order to avoid redundant network traffic.
+There are cases where instead of sending all the data returned by a query from
+a member, you want to transform (strip down) each result object in order to avoid
+redundant network traffic.
 
-For example, you select all employees based on some criteria, but you just want to return their name instead of the whole Employee object. It is easily doable with the Projection API.
+For example, you select all employees based on some criteria, but you just want to
+return their name instead of the whole Employee object. It is easily doable with the
+Projection API.
 
 ==== Projection API
 
-The Projection API provides the method `transform()` which is called on each result object. Its result is then gathered as the final query result entity. You can refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/projection/Projection.html[Projection Javadoc] for the API's details.
+The Projection API provides the method `transform()` which is called on each result
+object. Its result is then gathered as the final query result entity. You can refer
+to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/projection/Projection.html[Projection Javadoc]
+for the API's details.
 
 ===== Projections and Map Interfaces
 
-Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method `project` to apply the projection logic on the map entries. This method can be called with or without a predicate. You can refer to its https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc] to see the method details.
+Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method
+`project` to apply the projection logic on the map entries. This method can be called
+with or without a predicate. You can refer to its
+https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc]
+to see the method details.
 
 
 ==== Example implementation
@@ -2410,26 +3125,37 @@ Collection<String> names = employees.project(new Projection<Map.Entry<String, Em
 
 ==== Built-In Projections
 
-The `com.hazelcast.projection.Projections` class provides two built-in Projections:
+The `com.hazelcast.projection.Projections` class provides two built-in
+Projections:
 
 * `singleAttribute`
 * `multiAttribute`
 
-The `singleAttribute` Projection enables extracting a single attribute from an object (via reflection). For example, `Projection.singleAttribute("address.city")` extracts the `address.city` attribute from the object passed to the Projection.
+The `singleAttribute` Projection enables extracting a single attribute
+from an object (via reflection). For example, `Projection.singleAttribute("address.city")`
+extracts the `address.city` attribute from the object passed to the Projection.
 
-The `multiAttribute` Projection enables extracting multiples attributes from an object (via reflection). For example, `Projection.multiAttribute("address.city", "postalAddress.city")` extracts both attributes from the object passed to the Projection and return them in an `Object[]` array.
+The `multiAttribute` Projection enables extracting multiples attributes from an
+object (via reflection). For example, `Projection.multiAttribute("address.city", "postalAddress.city")`
+extracts both attributes from the object passed to the Projection and return them in an `Object[]` array.
 
 === Continuous Query Cache
 
-A continuous query cache is used to cache the result of a continuous query. After the construction of a continuous query cache, all changes on IMap are asynchronously reflected to this cache via events. This makes this cache as an asynchronously updated view of IMap. You can create a continuous query cache either on the client or member.
+A continuous query cache is used to cache the result of a continuous query. After
+the construction of a continuous query cache, all changes on IMap are asynchronously
+reflected to this cache via events. This makes this cache as an asynchronously updated
+view of IMap. You can create a continuous query cache either on the client or member.
 
 ==== Keeping Query Results Local and Ready
 
-A continuous query cache is beneficial when you need to query the distributed `IMap` data in a very frequent and fast way. By using a continuous query cache, the result of the query will always be ready and local to the application.
+A continuous query cache is beneficial when you need to query the distributed
+`IMap` data in a very frequent and fast way. By using a continuous query cache,
+the result of the query will always be ready and local to the application.
 
 ==== Accessing Continuous Query Cache from Member
 
-The following code snippet shows how you can access a continuous query cache from a member.
+The following code snippet shows how you can access a continuous query cache
+from a member.
 
 [source,java]
 ----
@@ -2438,8 +3164,10 @@ include::{javasource}/distributedquery/CQC.java[tag=cqc]
 
 ==== Accessing Continuous Query Cache from Client Side
 
-The following code snippet shows how you can access a continuous query cache from the client side.
-The difference in this code from the member side code above is that you configure and instantiate
+The following code snippet shows how you can access a continuous query cache
+from the client side.
+The difference in this code from the member side code above is that you configure
+and instantiate
 a client instance instead of a member instance.
 
 [source,java]
@@ -2449,14 +3177,29 @@ include::{javasource}/distributedquery/CQCClient.java[tag=cqcclient]
 
 ==== Features of Continuous Query Cache
 
-The following features of continuous query cache are valid for both the member and client:
+The following features of continuous query cache are valid for both
+the member and client:
 
-* The initial query that is run on the existing `IMap` data during the continuous query cache construction can be enabled/disabled according to the supplied predicate via `QueryCacheConfig.setPopulate()`.
-* Continuous query cache allows you to run queries with indexes and perform event batching and coalescing.
-* A continuous query cache is evictable. Note that a continuous query cache has a default maximum capacity of 10000. If you need a non-evictable cache, you should configure the eviction via `QueryCacheConfig.setEvictionConfig()`.
+* The initial query that is run on the existing `IMap` data during the
+continuous query cache construction can be enabled/disabled according to
+the supplied predicate via `QueryCacheConfig.setPopulate()`.
+* Continuous query cache allows you to run queries with indexes and perform
+event batching and coalescing.
+* A continuous query cache is evictable. Note that a continuous query cache
+has a default maximum capacity of 10000. If you need a non-evictable cache, you
+should configure the eviction via `QueryCacheConfig.setEvictionConfig()`.
 * A listener can be added to a continuous query cache using `QueryCache.addEntryListener()`.
-* `IMap` events are reflected in continuous query cache in the same order as they were generated on map entries. Since events are created on entries stored in partitions, ordering of events is maintained based on the ordering within the partition. You can add listeners to capture lost events using `EventLostListener` and you can recover lost events with the method `QueryCache.tryRecover()`.
-Recovery of lost events largely depends on the size of the buffer on Hazelcast members. Default buffer size is 16 per partition, i.e., 16 events per partition can be maintained in the buffer. If the event generation is high, setting the buffer size to a higher number provides better chances of recovering lost events. You can set buffer size with `QueryCacheConfig.setBufferSize()`. You can use the following example code for a recovery case.
+* `IMap` events are reflected in continuous query cache in the same order as
+they were generated on map entries. Since events are created on entries stored
+in partitions, ordering of events is maintained based on the ordering within
+the partition. You can add listeners to capture lost events using `EventLostListener`
+and you can recover lost events with the method `QueryCache.tryRecover()`.
+Recovery of lost events largely depends on the size of the buffer on Hazelcast members.
+Default buffer size is 16 per partition, i.e., 16 events per partition can be maintained
+in the buffer. If the event generation is high, setting the buffer size to a higher
+number provides better chances of recovering lost events. You can set buffer size
+with `QueryCacheConfig.setBufferSize()`. You can use the following example code for a
+recovery case.
 +
 [source,java]
 ----
@@ -2469,11 +3212,17 @@ public void eventLost(EventLostEvent event) {
 }, false);
 ----
 +
-* You can populate a continuous query cache with only the keys of its entries and retrieve the subsequent values directly via `QueryCache.get()` from the underlying `IMap`. This helps to decrease the initial population time when the values are very large.
+* You can populate a continuous query cache with only the keys of its entries and
+retrieve the subsequent values directly via `QueryCache.get()` from the underlying
+`IMap`. This helps to decrease the initial population time when the values are very
+large.
 
 ==== Configuring Continuous Query Cache
 
-You can configure continuous query cache declaratively or programmatically; the latter is mostly explained in the previous section. The parent configuration element is `<query-caches>` which should be placed within your `<map>` configuration. You can create your query caches using the  `<query-cache>` sub-element under `<query-caches>`.
+You can configure continuous query cache declaratively or programmatically; the
+latter is mostly explained in the previous section. The parent configuration element
+is `<query-caches>` which should be placed within your `<map>` configuration. You can
+create your query caches using the  `<query-cache>` sub-element under `<query-caches>`.
 
 The following is an example declarative configuration.
 
@@ -2510,24 +3259,41 @@ The following is an example declarative configuration.
 Continuous query caches have the following configuration elements:
 
 * `name`: Name of your continuous query cache.
-* `include-value`: Specifies whether the value will be cached too. Its default value is true.
+* `include-value`: Specifies whether the value will be cached too. Its default
+value is true.
 * `predicate`: Predicate to filter events which are applied to the query cache.
-* `entry-listeners`: Adds listeners (listener classes) for your query cache entries. Please see the <<registering-map-listeners, Registering Map Listeners section>>.
-* `in-memory-format`: Type of the data to be stored in your query cache. Please see the <<setting-in-memory-format, Setting In-Memory Format section>>. Its default value is BINARY.
-* `populate`: Specifies whether the initial population of your query cache is enabled. Its default value is true.
-* `coalesce`: Specifies whether the coalescing of your query cache is enabled. Its default value is false.
-* `delay-seconds`: Minimum time in seconds that an event waits in the member's buffer. Its default value is 0.
-* `batch-size`: Batch size used to determine the number of events sent in a batch to your query cache. Its default value is 1.
-* `buffer-size`: Maximum number of events which can be stored in a partition buffer. Its default value is 16.
-* `eviction`: Configuration for the eviction of your query cache. Please see the <<configuring-map-eviction, Configuring Map Eviction section>>.
-* `indexes`: Indexes for your query cache defined by using this element's `<index>` sub-elements. Please see the <<configuring-imap-indexes, Configuring IMap Indexes section>>.
+* `entry-listeners`: Adds listeners (listener classes) for your query cache entries.
+Please see the <<registering-map-listeners, Registering Map Listeners section>>.
+* `in-memory-format`: Type of the data to be stored in your query cache.
+Please see the <<setting-in-memory-format, Setting In-Memory Format section>>.
+Its default value is BINARY.
+* `populate`: Specifies whether the initial population of your query cache is
+enabled. Its default value is true.
+* `coalesce`: Specifies whether the coalescing of your query cache is enabled.
+Its default value is false.
+* `delay-seconds`: Minimum time in seconds that an event waits in the member's
+buffer. Its default value is 0.
+* `batch-size`: Batch size used to determine the number of events sent in a
+batch to your query cache. Its default value is 1.
+* `buffer-size`: Maximum number of events which can be stored in a partition
+buffer. Its default value is 16.
+* `eviction`: Configuration for the eviction of your query cache. Please see the
+<<configuring-map-eviction, Configuring Map Eviction section>>.
+* `indexes`: Indexes for your query cache defined by using this element's `<index>`
+sub-elements. Please see the <<configuring-imap-indexes, Configuring IMap Indexes section>>.
 
 Please take the following configuration considerations and publishing logic into account:
 
-If  `delay-seconds` is equal to or smaller than **0**, then `batch-size` loses its function. Each time there is an event, all the entries in the buffer are pushed to the subscriber.
+If  `delay-seconds` is equal to or smaller than **0**, then `batch-size` loses its
+function. Each time there is an event, all the entries in the buffer are pushed to the subscriber.
 
 If `delay-seconds` is bigger than **0**, the following logic applies:
 
-* If `coalesce` is set to **true**, the buffer is checked for an event with the same key; if so, it is overridden by the current event. Then:
-** The current size of the buffer is checked: if the current size of the buffer is equal to or larger than `batch-size`, then the events counted as much as the `batch-size` are pushed to the subscriber. Otherwise, no events are sent.
-** After finishing with checking `batch-size`, the `delay-seconds` is checked. The buffer is scanned from the oldest to youngest entries; all the entries that are older than `delay-seconds` are pushed to the subscriber.
+* If `coalesce` is set to **true**, the buffer is checked for an event with the
+same key; if so, it is overridden by the current event. Then:
+** The current size of the buffer is checked: if the current size of the buffer
+is equal to or larger than `batch-size`, then the events counted as much as the
+`batch-size` are pushed to the subscriber. Otherwise, no events are sent.
+** After finishing with checking `batch-size`, the `delay-seconds` is checked.
+The buffer is scanned from the oldest to youngest entries; all the entries that are
+older than `delay-seconds` are pushed to the subscriber.
