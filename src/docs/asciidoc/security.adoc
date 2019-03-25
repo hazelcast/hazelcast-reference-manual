@@ -326,7 +326,7 @@ cfg.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(true).setProperti
 Hazelcast.newHazelcastInstance(cfg);
 ----
 
-And at the client side, you need to set client identity by providing the keystore:
+And on the client side, you need to set client identity by providing the keystore:
 
 [source,java]
 ----
@@ -339,9 +339,9 @@ The property `mutualAuthentication` has the following options:
 * `REQUIRED`: Server asks for client certificate. If the client does not provide a keystore or the provided keystore is not verified against member's truststore, the client is not authenticated.
 * `OPTIONAL`: Server asks for client certificate, but client is not required to provide any valid certificate.
 
-NOTE: When a new client is introduced with a new keystore, the truststore at the member side should be updated accordingly to include new clients' information to be able to accept it.
+NOTE: When a new client is introduced with a new keystore, the truststore on the member side should be updated accordingly to include new clients' information to be able to accept it.
 
-See the below example snippet to see the full configuration at the client side:
+See the below example snippet to see the full configuration on the client side:
 
 [source,java]
 ----

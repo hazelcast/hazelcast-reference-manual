@@ -337,13 +337,13 @@ invocations.
 
 ==== Client Side
 
-To prevent the system at the client side from overloading, you can apply a constraint on the number of concurrent invocations. You can use the following system property at the client side for this purpose:
+To prevent the system on the client side from overloading, you can apply a constraint on the number of concurrent invocations. You can use the following system property on the client side for this purpose:
 
 `hazelcast.client.max.concurrent.invocations`
 
 This property defines the maximum allowed number of concurrent invocations. When it is not explicitly set, it has the value `Integer.MAX_VALUE` by default, which means infinite. When you set it and if the maximum number of concurrent invocations is exceeded this value, Hazelcast throws `HazelcastOverloadException` when a new invocation comes in.
 
-Please note that back off timeout and controlling the number of pending async backups (sync window) is not supported at the client side.
+Please note that back off timeout and controlling the number of pending async backups (sync window) is not supported on the client side.
 
 
 NOTE: Please refer to the <<system-properties, System Properties appendix>> to learn how to configure the system properties.

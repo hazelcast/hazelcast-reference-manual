@@ -141,7 +141,7 @@ You can set a timeout for retrying the operations sent to a member. This can be 
 
 See the <<client-system-properties, Client System Properties section>> for the description of the `hazelcast.client.invocation.timeout.seconds` property.
 
-When any failure happens between a client and member (such as an exception at the member side or connection issues), an operation is retried if:
+When any failure happens between a client and member (such as an exception on the member side or connection issues), an operation is retried if:
 
 * it is certain that it has not run on the member yet
 * or if it is idempotent such as a read-only operation, i.e., retrying does not have a side effect.
@@ -938,7 +938,7 @@ You can configure a custom `classLoader`. It is used by the serialization servic
 
 ===== Configuring Reliable Topic at Client Side
 
-Normally when a client uses a Hazelcast data structure, that structure is configured at the member side and the client makes use of that configuration. For the Reliable Topic structure, this is not the case; since it is backed by Ringbuffer, you should configure it at the client side. The class used for this configuration is `ClientReliableTopicConfig`.
+Normally when a client uses a Hazelcast data structure, that structure is configured on the member side and the client makes use of that configuration. For the Reliable Topic structure, this is not the case; since it is backed by Ringbuffer, you should configure it on the client side. The class used for this configuration is `ClientReliableTopicConfig`.
 
 Here is an example programmatic configuration snippet:
 
@@ -947,7 +947,7 @@ Here is an example programmatic configuration snippet:
 include::{javasource}/clients/ExampleRTClient.java[tag=rtclient]
 ----
 
-Note that, when you create a Reliable Topic structure at your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created at the member side, with its default configuration. Please see the <<ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
+Note that, when you create a Reliable Topic structure at your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created on the member side, with its default configuration. Please see the <<ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
 
 ==== Java Client Connection Strategy
 
@@ -1312,7 +1312,7 @@ _Deadline Failure Detector_ has two configuration properties:
 * `hazelcast.client.heartbeat.interval`: This is the interval at which client sends heartbeat messages to members.
 * `hazelcast.client.heartbeat.timeout`: This is the timeout which defines when a cluster member is suspected, because it has not sent any response back to client requests.
 
-NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than that of `hazelcast.client.heartbeat.timeout`. In addition, the value of system property <<client-max-no, hazelcast.client.max.no.heartbeat.seconds>>, which is set at the member side, should be larger than that of `hazelcast.client.heartbeat.interval`.
+NOTE: The value of `hazelcast.client.heartbeat.interval` should be smaller than that of `hazelcast.client.heartbeat.timeout`. In addition, the value of system property <<client-max-no, hazelcast.client.max.no.heartbeat.seconds>>, which is set on the member side, should be larger than that of `hazelcast.client.heartbeat.interval`.
 
 The following is a declarative example showing how you can configure the Deadline Failure Detector for your client (in the client's configuration XML file, e.g., `hazelcast-client.xml`):
 
@@ -1506,7 +1506,7 @@ The table below lists the client configuration properties with their description
 |`hazelcast.client.responsequeue.idlestrategy`
 |block
 |string
-|Specifies whether the response thread for internal operations at the client side is blocked or not. If you use `block` (the default value), the thread is blocked and needs to be notified which can cause a reduction in the performance. If you use `backoff` there is no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this increases the CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
+|Specifies whether the response thread for internal operations on the client side is blocked or not. If you use `block` (the default value), the thread is blocked and needs to be notified which can cause a reduction in the performance. If you use `backoff` there is no blocking. By enabling the backoff mode and depending on your use case, you can get a 5-10% performance improvement. However, keep in mind that this increases the CPU utilization. We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
 |===
 
 ==== Using High-Density Memory Store with Java Client
