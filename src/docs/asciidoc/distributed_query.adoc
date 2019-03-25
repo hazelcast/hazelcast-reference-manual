@@ -380,7 +380,17 @@ class, you can
 get a collection of keys, values, or entries page by page by filtering
 them with predicates and giving the size of the pages. Also, you
 can sort the entries by specifying comparators. In this case, the comparator
-should be `Serializable`.
+should be `Serializable` and the serialization factory implementations you use,
+e.g., `PortableFactory` and `DataSerializableFactory`, should be registered.
+See the <<serialization, Serialization chapter>> on how to register these
+factories.
+
+Paging predicates require the objects to be deserialized both on the calling
+side (either a member or client) and the member side from which the collection
+is retrieved. Therefore, you need to register the serialization factories
+you use on all the members and clients on which the paging predicates are used.
+See the <<serialization, Serialization chapter>> on how to register these
+factories.
 
 In the example code below:
 
@@ -414,7 +424,7 @@ to get a collection of keys or values page by page, this collection must
 be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`).
 Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
-Starting with Hazelcast 3.6, you can also access a specific page more
+You can also access a specific page more
 easily with the help of the `setPage()` method. This way, if you make
 a query for the hundredth page, for example, it gets all 100 pages at
 once instead of reaching the hundredth page one by one using the `nextPage()` method.
