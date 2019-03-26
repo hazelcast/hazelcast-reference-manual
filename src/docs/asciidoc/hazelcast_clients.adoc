@@ -936,7 +936,8 @@ Hazelcast has an internal executor service (different from the data structure *E
 
 You can configure a custom `classLoader`. It is used by the serialization service and to load any class configured in configuration, such as event listeners or ProxyFactories.
 
-===== Configuring Reliable Topic at Client Side
+[[configuring-reliable-topic-at-client-side]]
+===== Configuring Reliable Topic on the Client Side
 
 Normally when a client uses a Hazelcast data structure, that structure is configured on the member side and the client makes use of that configuration. For the Reliable Topic structure, this is not the case; since it is backed by Ringbuffer, you should configure it on the client side. The class used for this configuration is `ClientReliableTopicConfig`.
 
@@ -947,7 +948,25 @@ Here is an example programmatic configuration snippet:
 include::{javasource}/clients/ExampleRTClient.java[tag=rtclient]
 ----
 
-Note that, when you create a Reliable Topic structure at your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created on the member side, with its default configuration. Please see the <<ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
+Note that, when you create a Reliable Topic structure on your client, a Ringbuffer (with the same name as the Reliable Topic) is automatically created on the member side, with its default configuration. Please see the <<ringbuffer, Configuring Ringbuffer section>> for the defaults. You can edit that configuration according to your needs.
+
+You can configure a Reliable Topic structure on the client side also declaratively. The following is the declarative configuration equivalent to the above example:
+
+[source,xml]
+----
+<hazelcast-client>
+    ...
+    <ringbuffer name="default">
+        <capacity>10000000</capacity>
+        <time-to-live-seconds>5</time-to-live-seconds>
+    </ringbuffer>
+    <reliable-topic name="default">
+        <topic-overload-policy>BLOCK</topic-overload-policy>
+        <read-batch-size>10</read-batch-size>
+    </reliable-topic>
+    ...
+</hazelcast-client>
+----
 
 ==== Java Client Connection Strategy
 
