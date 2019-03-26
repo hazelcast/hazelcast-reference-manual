@@ -335,8 +335,29 @@ The following is an example declarative configuration for map eviction.
 
 The following are the configuration element descriptions:
 
-* `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map (TTL). It limits the lifetime of the entries relative to the time of the last write access performed on them. If it is not 0, the entries whose lifetime exceeds this period (without any write access performed on them during this period) are expired and evicted automatically. An individual entry may have its own lifetime limit by using one of the methods accepting a TTL; see <<evicting-specific-entries, Evicting Specific Entries section>>. If there is no TTL value provided for the individual entry, it inherits the value set for this element. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite (no expiration and eviction). If it is not 0, entries are evicted regardless of the set `eviction-policy` described below.
-* `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in the map. It limits the lifetime of the entries relative to the time of the last read or write access performed on them. The entries whose idle period exceeds this limit are expired and evicted automatically. An entry is idle if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on it. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite.
+* `time-to-live-seconds`: Maximum time in seconds for each entry to stay in the map (TTL).
+It limits the lifetime of the entries relative to the time of the last write access
+performed on them. If it is not 0, the entries whose lifetime exceeds this period
+(without any write access performed on them during this period) are expired and
+evicted automatically. An individual entry may have its own lifetime limit by
+using one of the methods accepting a TTL; see <<evicting-specific-entries, Evicting Specific Entries section>>.
+If there is no TTL value provided for the individual entry, it inherits the value
+set for this element. Valid values are integers between 0 and `Integer.MAX VALUE`.
+Its default value is 0, which means infinite (no expiration and eviction). If it is not 0, entries are evicted regardless of the set `eviction-policy` described below.
+* `max-idle-seconds`: Maximum time in seconds for each entry to stay idle in
+the map. It limits the lifetime of the entries relative to the time of the
+last read or write access performed on them. The entries whose idle period
+exceeds this limit are expired and evicted automatically. An entry is idle
+if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on
+it. Valid values are integers between 0 and `Integer.MAX VALUE`.
+Its default value is 0, which means infinite.
++
+NOTE: Setting this property to 1 second expires the entry after 1 second, regardless of 
+the operations done on that entry in-between, due to the loss of millisecond
+resolution on the entry timestamps. Assume that you create a record at time = 1 second
+(1000 milliseconds) and access it at wall clock time 1100 milliseconds and
+then again at 1400 milliseconds. In this case, the entry is deemed as not touched.
+So, setting this property to 1 second is not supported.
 +
 NOTE: Both `time-to-live-seconds` and `max-idle-seconds` may be used simultaneously on the map entries. In that case, the entry is considered expired if at least one of the policies marks it as expired.
 +
