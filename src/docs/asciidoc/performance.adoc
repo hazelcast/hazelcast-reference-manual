@@ -118,7 +118,7 @@ public static int removeOrder( long customerId, long orderId ) throws Exception 
     IMap mapOrders = hazelcastInstance.getMap( "orders" );
 
     mapCustomers.lock( customerId );
-    mapOrders.remove( orderId );
+    mapOrders.remove( new OrderKey(orderId, customerId) );
     Set orders = orderMap.keySet(Predicates.equal( "customerId", customerId ));
     mapCustomers.unlock( customerId );
 
