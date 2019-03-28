@@ -13,10 +13,6 @@ final class OrderKey implements PartitionAware, Serializable {
         this.customerId = customerId;
     }
 
-    long getOrderId() {
-        return orderId;
-    }
-
     @Override
     public Object getPartitionKey() {
         return customerId;
