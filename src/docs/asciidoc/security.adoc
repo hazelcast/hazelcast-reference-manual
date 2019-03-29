@@ -764,7 +764,7 @@ at com.hazelcast.core.Hazelcast.newHazelcastInstance(Hazelcast.java:58)
 
 [blue]*Hazelcast IMDG Enterprise Feature*
 
-All security attributes are carried in the `Credentials` object. `Credentials` is used by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule]s during the authentication process. User supplied attributes from ``LoginModule``s are accessed by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html[CallbackHandler]s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.
+All security attributes are carried in the `Credentials` object. `Credentials` is used by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule]s during the authentication process. The user supplied attributes from ``LoginModule``s are accessed by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html[CallbackHandler]s. To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`. During initialization of `LoginModules`, Hazelcast passes this special `CallbackHandler` into the `LoginModule.initialize()` method.
 
 Your implementation of `LoginModule` should create an instance of `com.hazelcast.security.CredentialsCallback` and call the `handle(Callback[] callbacks)` method of `CallbackHandler` during the login process.
 
