@@ -903,6 +903,83 @@ include::{javasource}/dds/map/YourMapStoreImplementation.java[tag=ymsi]
 
 See the full example https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/mongodb[here].
 
+[[map-mapstore]]
+===== MapStore and MapLoader Methods Triggered by IMap Operations
+
+As it is explained in the above sections, you can configure Hazelcast maps to be backed
+by a map store to persist the entries. In this case many of the IMap methods call
+MapLoader or MapStore methods to load, store or remove data. This section summarizes
+these methods. Here are the Hazelcast IMap operations that may trigger the MapStore or MapLoader methods:
+
+[cols="1a,5a"]
+|===
+|IMap Method|Impact on the MapStore/MapLoader
+
+|`flush()`
+|If the map has a MapStore, this method flushes all the local dirty
+entries. It calls the `MapStore.storeAll(Map)` or
+`MapStore.deleteAll(Collection)` methods with the elements marked as dirty.
+
+|* `put()`
+* `putAll()`
+* `putAsync()`
+* `tryPut()`
+* `putIfAbsent()`
+|These methods are used to put entries to the map. They call the 
+`MapLoader.load(Object)` method for each entry not found in the memory
+to load the value from the map store backing the map. They also call the
+`MapStore.store(Object, Object)` method for each entry, if write-through
+persistence mode is configured before the entry is added into the memory.
+
+|* `set()`
+* `setAsync()`
+|These methods put an entry into the map without returning the old value.
+They call the `MapStore.store(Object, Object)` method if write-through
+persistence mode is configured before the entry is added into the memory,
+to write the value into the map store.
+
+|`remove()`
+|Removes the mapping for a key from the map if it is present. It calls the
+`MapLoader.load(Object)` method if no value is found with key in the memory,
+to load the value from the map store backing the map. It also calls the
+`MapStore.delete(Object)` method if write-through persistence mode is
+configured before the value is removed from the memory, to remove the value
+from the map store.
+
+|* `removeAll()`
+* `delete()`
+* `removeAsync()`
+* `tryRemove()`
+|These methods are used to remove entries from the map for various conditions.
+They call the `MapStore.delete(Object)` method if write-through persistence mode
+is configured before the value is removed from the memory, to remove the value
+from the map store.
+
+|`clear()`
+|It clears the map and deletes the items from the backing map store. It calls
+the `MapStore.deleteAll(Collection)` method on each partition with the keys that the
+given partition stores.
+
+|`replace()`
+|It replaces the entry for a key only if currently mapped to a given value.
+It calls the `MapStore.store(Object, Object)` method if write-through persistence
+mode is configured before the value is stored in the memory, to write the value into
+the map store. 
+
+|* `executeOnKey()`
+* `executeOnKeys()`
+* `submitToKey()`
+* `executeOnAllEntries()`
+|These methods apply the user defined entry processors to the entry or entries.
+They call the `MapLoader.load(Object)` method if the value with key is not found in the
+memory, to load the value from the map store backing the map. If the entry processor
+updates the entry and write-through persistence mode is configured, before the value is
+stored in memory, they call the `MapStore.store(Object, Object)` method to write the value
+into the map store. If the entry processor updates the entry's value to null value and write-through
+persistence mode is configured, before the value is removed from the memory, they call the
+`MapStore.delete(Object)` method to delete the value from the map store.
+|===
+
 [[creating-near-cache-for-map]]
 ==== Creating Near Cache for Map
 
