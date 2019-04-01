@@ -335,6 +335,7 @@ Hazelcast needs the `java.se` module and access to the following Java packages f
 * `java.base/java.nio` _(reflective access)_
 * `java.base/sun.nio.ch` _(reflective access)_
 * `java.base/java.lang` _(reflective access)_
+* `jdk.management/com.ibm.lang.management.internal` _(reflective access)_
 * `jdk.management/com.sun.management.internal` _(reflective access)_
 * `java.management/sun.management` _(reflective access)_
 
@@ -350,6 +351,7 @@ java --add-modules java.se \
   --add-opens java.base/java.nio=ALL-UNNAMED \
   --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
   --add-opens java.management/sun.management=ALL-UNNAMED \
+  --add-opens jdk.management/com.ibm.lang.management.internal=ALL-UNNAMED \
   --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED \
   -jar hazelcast-<version>.jar
 ----
@@ -364,6 +366,7 @@ java --add-modules java.se \
   --add-opens java.base/java.nio=com.hazelcast.core \
   --add-opens java.base/sun.nio.ch=com.hazelcast.core \
   --add-opens java.management/sun.management=com.hazelcast.core \
+  --add-opens jdk.management/com.ibm.lang.management.internal=com.hazelcast.core \
   --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
   --module-path lib \
   --module com.hazelcast.core/com.hazelcast.core.server.StartServer
