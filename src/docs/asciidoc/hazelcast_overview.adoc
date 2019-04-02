@@ -59,7 +59,7 @@ and mod it with the number of partitions to find the partition which the key bel
 distributed equally among the members of the cluster. Hazelcast also creates the backups of partitions and distributes
 them among members for redundancy.
 
-NOTE: Please refer to the <<data-partitioning, Data Partitioning section>> for more information on how Hazelcast partitions
+NOTE: See the <<data-partitioning, Data Partitioning section>> for more information on how Hazelcast partitions
 your data.
 
 [[hazelcast-topology]]
@@ -89,7 +89,7 @@ When you need to scale in this deployment type, just add more Hazelcast server m
 
 Note that Hazelcast **member** libraries are available only in Java. Therefore, embedding a member to a business service, it is only possible with Java. Applications written in other languages (.NET, C++, Node.js, etc.) can use Hazelcast client libraries to access the cluster. See the <<hazelcast-clients, Hazelcast Clients chapter>> for information on the clients and other language implementations. 
 
-If you want low-latency data access, as in the Embedded deployment, and you also want the scalability advantages of the Client/Server deployment, you can consider defining Near Caches for your clients. This enables the frequently used data to be kept in the client's local memory. Please refer to the <<configuring-client-near-cache, Configuring Client Near Cache section>>.
+If you want low-latency data access, as in the Embedded deployment, and you also want the scalability advantages of the Client/Server deployment, you can consider defining Near Caches for your clients. This enables the frequently used data to be kept in the client's local memory. See the <<configuring-client-near-cache, Configuring Client Near Cache section>>.
 
 [[why-hazelcast]]
 === Why Hazelcast?
@@ -166,12 +166,12 @@ image::4NodeCluster.jpg[Cluster with Four Members]
 
 Hazelcast distributes partitions' primary and backup replicas equally among the members of the cluster. Backup replicas of the partitions are maintained for redundancy.
 
-NOTE: Your data can have multiple copies on partition primaries and backups, depending on your backup count. Please see the <<backing-up-maps, Backing Up Maps section>>.
+NOTE: Your data can have multiple copies on partition primaries and backups, depending on your backup count. See the <<backing-up-maps, Backing Up Maps section>>.
 
-Starting with Hazelcast 3.6, lite members are introduced. Lite members are a new type of members that do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
+Hazelcast also offers lite members. These members do not own any partition. Lite members are intended for use in computationally-heavy task executions and listener registrations. Although they do not own any partitions,
 they can access partitions that are owned by other members in the cluster.
 
-NOTE: Please refer to the <<enabling-lite-members, Enabling Lite Members section>>.
+NOTE: See the <<enabling-lite-members, Enabling Lite Members section>>.
 
 [[how-the-data-is-partitioned]]
 ==== How the Data is Partitioned

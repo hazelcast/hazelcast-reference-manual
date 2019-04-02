@@ -13,7 +13,7 @@ As mentioned in the <<hazelcast-overview, Overview section>>, Hazelcast offers d
 ** <<multimap, Multimap>> is a specialized Hazelcast map. It is a distributed data structure where you can store multiple values for a single key.
 ** <<replicated-map, Replicated Map>> does not partition data. It does not spread data to different cluster members. Instead, it replicates the data to all members.
 ** <<cardinality-estimator, Cardinality Estimator>> is a data structure which implements Flajolet's HyperLogLog algorithm.
-* **Topic** is the distributed mechanism for publishing messages that are delivered to multiple subscribers. It is also known as the publish/subscribe (pub/sub) messaging model. Please see the <<topic, Topic section>> for more information. Hazelcast also has a structure called Reliable Topic which uses the same interface of Hazelcast Topic. The difference is that it is backed up by the Ringbuffer data structure. Please see the <<reliable-topic, Reliable Topic section>>.
+* **Topic** is the distributed mechanism for publishing messages that are delivered to multiple subscribers. It is also known as the publish/subscribe (pub/sub) messaging model. See the <<topic, Topic section>> for more information. Hazelcast also has a structure called Reliable Topic which uses the same interface of Hazelcast Topic. The difference is that it is backed up by the Ringbuffer data structure. See the <<reliable-topic, Reliable Topic section>>.
 * **Concurrency utilities**
 ** <<lock, Lock>> is the distributed implementation of `java.util.concurrent.locks.Lock`. When you use lock, the critical section that Hazelcast Lock guards is guaranteed to be executed by only one thread in the entire cluster.
 ** <<isemaphore, ISemaphore>> is the distributed implementation of `java.util.concurrent.Semaphore`. When performing concurrent activities, semaphores offer permits to control the thread counts.
@@ -68,13 +68,13 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 Map<Integer, String> customers = hazelcastInstance.getMap( "customers" );
 ----
 
-As to the configuration of distributed object, Hazelcast uses the default settings from the file `hazelcast.xml` that comes with your Hazelcast download. Of course, you can provide an explicit configuration in this XML or programmatically according to your needs. Please see the <<understanding-configuration, Understanding Configuration section>>.
+As to the configuration of distributed object, Hazelcast uses the default settings from the file `hazelcast.xml` that comes with your Hazelcast download. Of course, you can provide an explicit configuration in this XML or programmatically according to your needs. See the <<understanding-configuration, Understanding Configuration section>>.
 
 Note that, most of Hazelcast's distributed objects are created lazily, i.e., a distributed object is created once the first operation accesses it.
 
 If you want to use an object you loaded in other places, you can safely reload it using its reference without creating a new Hazelcast instance (`customers` in the above example).
 
-To destroy a Hazelcast distributed object, you can use the method `destroy`. This method clears and releases all resources of the object. Therefore, you must use it with care since a reload with the same object reference after the object is destroyed creates a new data structure without an error. Please see the following example code where one of the queues are destroyed and the other one is accessed.
+To destroy a Hazelcast distributed object, you can use the method `destroy`. This method clears and releases all resources of the object. Therefore, you must use it with care since a reload with the same object reference after the object is destroyed creates a new data structure without an error. See the following example code where one of the queues are destroyed and the other one is accessed.
 
 [source,java]
 ----
@@ -114,7 +114,7 @@ ISemaphore s1 = hazelcastInstance.getSemaphore("s1@foo");
 ISemaphore s2 = hazelcastInstance.getSemaphore("s2@foo");
 ----
 
-Now, these two semaphores will be put into the same partition whose partition key is `foo`. Note that you can use the method `getPartitionKey` to learn the partition key of a distributed object. It may be useful when you want to create an object in the same partition of an existing object. Please see its usage as shown below:
+Now, these two semaphores will be put into the same partition whose partition key is `foo`. Note that you can use the method `getPartitionKey` to learn the partition key of a distributed object. It may be useful when you want to create an object in the same partition of an existing object. See its usage as shown below:
 
 [source,java]
 ----
@@ -144,7 +144,7 @@ include::{javasource}/ExampleDOL.java[tag=sampledol]
 Hazelcast Map (`IMap`) extends the interface `java.util.concurrent.ConcurrentMap` and hence `java.util.Map`. It is the distributed implementation of Java map. You can perform operations like reading and writing from/to a Hazelcast map with the well known get and put methods.
 
 '''
-NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. Please also see https://docs.hazelcast.org/docs/jet/latest/manual/#connector-imdg[here] in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
+NOTE: IMap data structure can also be used by https://jet.hazelcast.org/[Hazelcast Jet] for Real-Time Stream Processing (by enabling the Event Journal on your map) and Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink (writes data to IMap). See the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet. See also https://docs.hazelcast.org/docs/jet/latest/manual/#connector-imdg[here] in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
 
 
 [[getting-a-map-and-putting-an-entry]]
@@ -177,7 +177,7 @@ When you run this code, a cluster member is created with a map whose entries are
 
 image::1Node.png[Map Entries in a Single Member]
 
-NOTE: Please note that some of the partitions do not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. Please see the <<system-properties, System Properties appendix>>.
+NOTE: Please note that some of the partitions do not contain any data entries since we only have 120 objects and the partition count is 271 by default. This count is configurable and can be changed using the system property `hazelcast.partition.count`. See the <<system-properties, System Properties appendix>>.
 
 [[creating-a-member-for-map-backup]]
 ==== Creating A Member for Map Backup
@@ -281,14 +281,14 @@ Please note that if you are performing a read from a backup, you should take int
 [[map-eviction]]
 ==== Map Eviction
 
-NOTE: Starting with Hazelcast 3.7, Hazelcast Map uses a new eviction mechanism which is based on the sampling of entries. Please see the <<eviction-algorithm, Eviction Algorithm section>> for details.
+NOTE: Starting with Hazelcast 3.7, Hazelcast Map uses a new eviction mechanism which is based on the sampling of entries. See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 Unless you delete the map entries manually or use an eviction policy, they will remain in the map. Hazelcast supports policy-based eviction for distributed maps. Currently supported policies are LRU (Least Recently Used) and LFU (Least Frequently Used).
 
 [[understanding-map-eviction]]
 ===== Understanding Map Eviction
 
-Hazelcast Map performs eviction based on partitions. For example, when you specify a size using the `PER_NODE` attribute for `max-size` (please see <<configuring-map-eviction, Configuring Map Eviction>>), Hazelcast internally calculates the maximum size for every partition. Hazelcast uses the following equation to calculate the maximum size of a partition:
+Hazelcast Map performs eviction based on partitions. For example, when you specify a size using the `PER_NODE` attribute for `max-size` (see the <<configuring-map-eviction, Configuring Map Eviction section>>), Hazelcast internally calculates the maximum size for every partition. Hazelcast uses the following equation to calculate the maximum size of a partition:
 
 ```
 partition-maximum-size = max-size * member-count / partition-count
@@ -366,7 +366,7 @@ NOTE: Both `time-to-live-seconds` and `max-idle-seconds` may be used simultaneou
 ** LRU: Least Recently Used.
 ** LFU: Least Frequently Used.
 +
-Apart from the above values, you can also develop and use your own eviction policy. Please see the <<custom-eviction-policy, Custom Eviction Policy section>>.
+Apart from the above values, you can also develop and use your own eviction policy. See the <<custom-eviction-policy, Custom Eviction Policy section>>.
 +
 * `max-size`: Maximum size of the map. When maximum size is reached, the map is evicted based on the policy defined. Valid values are integers between 0 and `Integer.MAX VALUE`. Its default value is 0, which means infinite. If you want `max-size` to work, set the `eviction-policy` property to a value other than NONE. Its attributes are described below.
 ** `PER_NODE`: Maximum number of map entries in each cluster member. This is the default policy.
@@ -580,7 +580,7 @@ To overcome this challenge, Hazelcast offers High-Density Memory Store for your 
 </hazelcast>
 ----
 
-Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>>.
+Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. See the <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>>.
 
 [[required-configuration-changes-when-using-native]]
 ===== Required configuration changes when using NATIVE
@@ -639,7 +639,7 @@ the equivalent configuration for `NATIVE` in-memory format would be similar to t
 * Near Cache eviction policy `ENTRY_COUNT` cannot be used for `max-size-policy`.
 
 
-NOTE: Please refer to the <<high-density-memory-store, High-Density Memory Store section>> for more information.
+NOTE: See the <<high-density-memory-store, High-Density Memory Store section>> for more information.
 
 ==== Metadata Policy
 
@@ -701,7 +701,7 @@ include::{javasource}/dds/map/PersonMapStore.java[tag=personms]
 NOTE: During the initial loading process, MapStore uses a thread different from the partition threads that are used by the ExecutorService. After the initialization is completed, the `map.get` method looks up any nonexistent value from the database in a partition thread, or the `map.put` method looks up the database to return the previously associated value for a key also in a partition thread.
 
 
-NOTE: For more MapStore/MapLoader code samples, please see https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java[here].
+NOTE: For more MapStore/MapLoader code samples, see https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java[here].
 
 Hazelcast supports read-through, write-through and write-behind persistence modes, which are explained in the subsections below.
 
@@ -732,7 +732,7 @@ You can configure `MapStore` as write-behind by setting the `write-delay-seconds
 
 NOTE: In write-behind mode, Hazelcast coalesces updates on a specific key by default, which means it applies only the last update on that key. However, you can set `MapStoreConfig.setWriteCoalescing()` to `FALSE` and you can store all updates performed on a key to the data store.
 
-NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception is thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. Please refer to the <<system-properties, System Properties section>> for information on this property and how to set the system properties.
+NOTE: When you set `MapStoreConfig.setWriteCoalescing()` to `FALSE`, after you reached per-node maximum write-behind-queue capacity, subsequent put operations will fail with `ReachedMaxSizeException`. This exception is thrown to prevent uncontrolled grow of write-behind queues. You can set per-node maximum capacity using the system property `hazelcast.map.write.behind.queue.capacity`. See the <<system-properties, System Properties appendix>> for information on this property and how to set the system properties.
 
 
 In write-behind mode, when the `map.put(key,value)` call returns:
@@ -777,7 +777,7 @@ The following are the descriptions of MapStore configuration elements and attrib
 * `write-batch-size`: Used to create batch chunks when writing map store. In default mode, all map entries are tried to be written in one go. To create batch chunks, the minimum meaningful value for write-batch-size is 2. For values smaller than 2, it works as in default mode.
 * `write-coalescing`: In write-behind mode, Hazelcast coalesces updates on a specific key by default; it applies only the last update on it. You can set this element to `false` to store all updates performed on a key to the data store.
 * `enabled`: True to enable this map-store, false to disable. Its default value is true.
-* `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded. Please see the <<initializing-map-on-startup, Initializing Map on Startup section>> for more details.
+* `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where load is asynchronous. EAGER means load is blocked till all partitions are loaded. See the <<initializing-map-on-startup, Initializing Map on Startup section>> for more details.
 
 [[storing-entries-to-multiple-maps]]
 ===== Storing Entries to Multiple Maps
@@ -839,7 +839,7 @@ Hazelcast iterates over the `Iterable` and, while doing so, sends out the keys t
 [[forcing-all-keys-to-be-loaded]]
 ===== Forcing All Keys To Be Loaded
 
-The method `loadAll` loads some or all keys into a data store in order to optimize the multiple load operations. The method has two signatures; the same method can take two different parameter lists. One signature loads the given keys and the other loads all keys. Please see the example code below.
+The method `loadAll` loads some or all keys into a data store in order to optimize the multiple load operations. The method has two signatures; the same method can take two different parameter lists. One signature loads the given keys and the other loads all keys. See the example code below.
 
 [source,java]
 ----
@@ -983,7 +983,7 @@ persistence mode is configured, before the value is removed from the memory, th
 [[creating-near-cache-for-map]]
 ==== Creating Near Cache for Map
 
-The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. Please refer to the <<near-cache, Near Cache section>> for a detailed explanation of the Near Cache feature and its configuration.
+The Hazelcast distributed map supports a local Near Cache for remotely stored entries to increase the performance of local read operations. See the <<near-cache, Near Cache section>> for a detailed explanation of the Near Cache feature and its configuration.
 
 [[locking-maps]]
 ==== Locking Maps
@@ -1128,12 +1128,12 @@ System.out.println ( "value           : " + entry.getValue() );
 [[map-listener]]
 ==== Map Listener
 
-Please refer to the <<listening-for-map-events, Listening for Map Events section>>.
+See the <<listening-for-map-events, Listening for Map Events section>>.
 
 [[listening-to-map-entries-with-predicates]]
 ==== Listening to Map Entries with Predicates
 
-You can listen to the modifications performed on specific map entries. You can think of it as an entry listener with predicates. Please see the <<listening-for-map-events, Listening for Map Events section>> for information on how to add entry listeners to a map.
+You can listen to the modifications performed on specific map entries. You can think of it as an entry listener with predicates. See the <<listening-for-map-events, Listening for Map Events section>> for information on how to add entry listeners to a map.
 
 NOTE: The default backwards-compatible event publishing strategy only publishes
 `UPDATED` events when map entries are updated to a value that matches the predicate with which the listener was registered.
@@ -1197,7 +1197,7 @@ entryAdded:EntryEvent {Address[192.168.178.10]:5702} key=1,oldValue=null,
 value=Person{name= smith }, event=ADDED, by Member [192.168.178.10]:5702
 ```
 
-NOTE: Please refer to <<continuous-query-cache, Continuous Query Cache>> for more information.
+NOTE: See the <<continuous-query-cache, Continuous Query Cache section>> for more information.
 
 [[removing-map-entries-in-bulk-with-predicates]]
 ==== Removing Map Entries in Bulk with Predicates
@@ -1223,7 +1223,7 @@ Interceptors are different from listeners. With listeners, you take an action af
 
 Map interceptors are chained, so adding the same interceptor multiple times to the same map can result in duplicate effects. This can easily happen when the interceptor is added to the map at member initialization, so that each member adds the same interceptor. When you add the interceptor in this way, be sure to implement the `hashCode()` method to return the same value for every instance of the interceptor. It is not strictly necessary, but it is a good idea to also implement `equals()` as this ensures that the map interceptor can be removed reliably.
 
-The IMap API has two methods for adding and removing an interceptor to the map: `addInterceptor` and `removeInterceptor`. Please also refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/MapInterceptor.html[`MapInterceptor` interface] to see the methods used to intercept the changes in a map.
+The IMap API has two methods for adding and removing an interceptor to the map: `addInterceptor` and `removeInterceptor`. See also the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/MapInterceptor.html[`MapInterceptor` interface] to see the methods used to intercept the changes in a map.
 
 The following is an example usage.
 
@@ -1272,7 +1272,7 @@ The query result size limit is configured via the following system properties.
 * `hazelcast.query.result.size.limit`: Result size limit for query operations on maps. This value defines the maximum number of returned elements for a single query result. If a query exceeds this number of elements, a QueryResultSizeExceededException is thrown.
 * `hazelcast.query.max.local.partition.limit.for.precheck`: Maximum value of local partitions to trigger local pre-check for TruePredicate query operations on maps.
 
-Please refer to the <<system-properties, System Properties appendix>> to see the full descriptions of these properties and how to set them.
+See the <<system-properties, System Properties appendix>> to see the full descriptions of these properties and how to set them.
 
 [[queue]]
 === Queue
@@ -1293,7 +1293,7 @@ FIFO ordering applies to all queue operations across the cluster. The user objec
 
 Hazelcast distributed queue performs no batching while iterating over the queue. All items are copied locally and iteration occurs locally.
 
-Hazelcast distributed queue uses `ItemListener` to listen to the events that occur when items are added to and removed from the queue. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
+Hazelcast distributed queue uses `ItemListener` to listen to the events that occur when items are added to and removed from the queue. See the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
 
 [[creating-an-example-queue]]
 ==== Creating an Example Queue
@@ -1503,7 +1503,7 @@ The following is the full list of queue configuration elements with their descri
 * `async-backup-count`: Number of asynchronous backups.
 * `empty-queue-ttl`: Used to purge unused or empty queues. If you define a value (time in seconds) for this element, then your queue will be destroyed if it stays empty or unused for that time.
 * `item-listeners`: Adds listeners (listener classes) for the queue items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values. You can set `local` to `true` if you want to listen to the items on the local member.
-* `queue-store`: Includes the queue store factory class name and the properties  *binary*, *memory limit* and *bulk load*. Please refer to <<queueing-with-persistent-datastore, Queueing with Persistent Datastore>>.
+* `queue-store`: Includes the queue store factory class name and the properties  *binary*, *memory limit* and *bulk load*. See the <<queueing-with-persistent-datastore, Queueing with Persistent Datastore section>>.
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your queue. If set to `false`, you cannot collect statistics in your implementation (using `getLocalQueueStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-queues[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `quorum-ref` : Name of quorum configuration that you want this queue to use.
 
@@ -1539,7 +1539,7 @@ After you run `ExampleMultiMap`, run `PrintMember`. You will see the key **`a`**
 
 `a -> [2, 1]`
 
-Hazelcast MultiMap uses `EntryListener` to listen to events which occur when entries are added to, updated in or removed from the MultiMap. Please refer to the <<listening-for-multimap-events, Listening for MultiMap Events section>> for information on how to create an entry listener class and register it.
+Hazelcast MultiMap uses `EntryListener` to listen to events which occur when entries are added to, updated in or removed from the MultiMap. See the <<listening-for-multimap-events, Listening for MultiMap Events section>> for information on how to create an entry listener class and register it.
 
 [[configuring-multimap]]
 ==== Configuring MultiMap
@@ -1591,7 +1591,7 @@ placed on one other member. If it is 2, it will be placed on two other members.
 * `entry-listeners`: Lets you add listeners (listener classes) for the map entries. You can also set the attribute
 `include-value` to `true` if you want the item event to contain the entry values. You can set
 `local` to `true` if you want to listen to the entries on the local member.
-* `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. Please see the <<split-brain-protection-for-multimap-and-transactionalmultimap, Split-Brain Protection for MultiMap and TransactionalMultiMap section>>.
+* `quorum-ref`: Name of quorum configuration that you want this MultiMap to use. See the <<split-brain-protection-for-multimap-and-transactionalmultimap, Split-Brain Protection for MultiMap and TransactionalMultiMap section>>.
 
 [[split-brain-protection-for-multimap-and-transactionalmultimap]]
 ==== Split-Brain Protection for MultiMap and TransactionalMultiMap
@@ -1673,7 +1673,7 @@ Use the ``HazelcastInstance``s `getSet` method to get the Set, then use the `add
 include::{javasource}/dds/set/ExampleSet.java[tag=set]
 ----
 
-Hazelcast Set uses `ItemListener` to listen to events that occur when items are added to and removed from the Set. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
+Hazelcast Set uses `ItemListener` to listen to events that occur when items are added to and removed from the Set. See the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
 
 [[configuring-set]]
 ==== Configuring Set
@@ -1714,7 +1714,7 @@ Hazelcast Set configuration has the following elements:
 * `async-backup-count`: Count of asynchronous backups.
 * `max-size`: The maximum number of entries for this Set. It can be any number between 0 and Integer.MAX_VALUE. Its default value is 0, meaning there is no capacity constraint.
 * `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attributes `include-value` to `true` if you want the item event to contain the item values. You can set `local` to `true` if you want to listen to the items on the local member.
-* `quorum-ref`: Name of quorum configuration that you want this Set to use. Please refer to the <<split-brain-protection-for-iset-and-transactionalset, Split-Brain Protection for ISet and TransactionalSet section>>.
+* `quorum-ref`: Name of quorum configuration that you want this Set to use. See the <<split-brain-protection-for-iset-and-transactionalset, Split-Brain Protection for ISet and TransactionalSet section>>.
 
 [[split-brain-protection-for-iset-and-transactionalset]]
 ==== Split-Brain Protection for ISet and TransactionalSet
@@ -1778,7 +1778,7 @@ Hazelcast List (`IList`) is similar to Hazelcast Set, but it also allows duplica
 
 
 '''
-NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. Please see https://docs.hazelcast.org/docs/jet/latest/manual/#imdg-list[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job and drain the results to another IList. Please also see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
+NOTE: While IMap and ICache are the recommended data structures to be used by https://jet.hazelcast.org/[Hazelcast Jet], IList can also be used by it for unit testing or similar non-production situations. See https://docs.hazelcast.org/docs/jet/latest/manual/#imdg-list[here] in the Hazelcast Jet Reference Manual to learn how Jet can use IList, e.g., how it can fill IList with data, consume it in a Jet job and drain the results to another IList. See also the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
 
 [[getting-a-list-and-putting-items]]
 ==== Getting a List and Putting Items
@@ -1790,7 +1790,7 @@ Use the ``HazelcastInstance``s `getList` method to get the List, then use the `a
 include::{javasource}/dds/list/ExampleList.java[tag=list]
 ----
 
-Hazelcast List uses `ItemListener` to listen to events that occur when items are added to and removed from the List. Please refer to the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
+Hazelcast List uses `ItemListener` to listen to events that occur when items are added to and removed from the List. See the <<listening-for-item-events, Listening for Item Events section>> for information on how to create an item listener class and register it.
 
 [[configuring-list]]
 ==== Configuring List
@@ -1832,7 +1832,7 @@ Hazelcast List configuration has the following elements:
 * `async-backup-count`: Number of asynchronous backups.
 * `max-size`: The maximum number of entries for this List.
 * `item-listeners`: Lets you add listeners (listener classes) for the list items. You can also set the attribute `include-value` to `true` if you want the item event to contain the item values. You can set the attribute `local` to `true` if you want to listen the items on the local member.
-* `quorum-ref`: Name of quorum configuration that you want this List to use. Please see the <<split-brain-protection-for-ilist-and-transactionallist, Split-Brain Protection for IList and TransactionalList section>>.
+* `quorum-ref`: Name of quorum configuration that you want this List to use. See the <<split-brain-protection-for-ilist-and-transactionallist, Split-Brain Protection for IList and TransactionalList section>>.
 
 [[split-brain-protection-for-ilist-and-transactionallist]]
 ==== Split-Brain Protection for IList and TransactionalList
@@ -2132,7 +2132,7 @@ In the previous examples, the method `ringBuffer.add()` is used to add an item t
 are that it always overwrites and that it does not support batching. Batching can have a huge
 impact on the performance. You can use the method `addAllAsync` to support batching.
 
-Please see the following example code.
+See the following example code.
 
 [source,java]
 ----
@@ -2141,7 +2141,7 @@ ICompletableFuture<Long> f = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
 f.get();
 ----
 
-In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. Please see the <<setting-ringbuffer-overflow-policy, Overflow Policy section>> for more information.
+In the above case, three strings are added to the Ringbuffer using the policy `OverflowPolicy.OVERWRITE`. See the <<setting-ringbuffer-overflow-policy, Overflow Policy section>> for more information.
 
 [[reading-batched-items]]
 ==== Reading Batched Items
@@ -2153,7 +2153,7 @@ In the previous example, the `readOne` method read items from the Ringbuffer. `r
 
 The method `readManyAsync` can read a batch of items and can filter items at the source.
 
-Please see the following example code.
+See the following example code.
 
 [source,java]
 ----
@@ -2246,7 +2246,7 @@ f.get();
 
 However, you can also use `ICompletableFuture` to get notified when the operation has completed. The advantage of `ICompletableFuture` is that the thread used for the call is not blocked till the response is returned.
 
-Please see the below code as an example of when you want to
+See the below code as an example of when you want to
 get notified when a batch of reads has completed.
 
 [source,java]
@@ -2323,7 +2323,7 @@ And here is an example subscriber:
 include::{javasource}/dds/topic/TopicSubscriber.java[tag=tsub]
 ----
 
-Hazelcast Topic uses the `MessageListener` interface to listen for events that occur when a message is received. Please refer to the <<listening-for-topic-messages, Listening for Topic Messages section>> for information on how to create a message listener class and register it.
+Hazelcast Topic uses the `MessageListener` interface to listen for events that occur when a message is received. See the <<listening-for-topic-messages, Listening for Topic Messages section>> for information on how to create a message listener class and register it.
 
 [[getting-topic-statistics]]
 ==== Getting Topic Statistics
@@ -2337,9 +2337,9 @@ include::{javasource}/dds/topic/TopicStats.java[tag=ts]
 
 `getPublishOperationCount` and `getReceiveOperationCount` returns the total number of published and received messages since the start of this member, respectively. Note that these values are not backed up, so if the member goes down, these values will be lost.
 
-You can disable this feature with topic configuration. Please see the <<configuring-topic, Configuring Topic section>>.
+You can disable this feature with topic configuration. See the <<configuring-topic, Configuring Topic section>>.
 
-NOTE: These statistics values can be also viewed in Management Center. Please see the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Monitoring Topics section] in Hazelcast Management Center Reference Manual.
+NOTE: These statistics values can be also viewed in Management Center. See the https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-topics[Monitoring Topics section] in Hazelcast Management Center Reference Manual.
 
 [[understanding-topic-behavior]]
 ==== Understanding Topic Behavior
@@ -2385,7 +2385,7 @@ This way we guarantee that all members see the events in the same order.
 
 In both cases, there is a `StripedExecutor` in EventService that is responsible for dispatching the received message. For all events in Hazelcast, the order that events are generated and the order they are published to the user are guaranteed to be the same via this `StripedExecutor`.
 
-In `StripedExecutor`, there are as many threads as are specified in the property  `hazelcast.event.thread.count` (default is five). For a specific event source (for a particular topic name), *hash of that source's name % 5* gives the ID of the responsible thread. Note that there can be another event source (entry listener of a map, item listener of a collection, etc.) corresponding to the same thread. In order not to make other messages to block, heavy processing should not be done in this thread. If there is time-consuming work that needs to be done, the work should be handed over to another thread. Please see the <<getting-a-topic-and-publishing-messages, Getting a Topic and Publishing Messages section>>.
+In `StripedExecutor`, there are as many threads as are specified in the property  `hazelcast.event.thread.count` (default is five). For a specific event source (for a particular topic name), *hash of that source's name % 5* gives the ID of the responsible thread. Note that there can be another event source (entry listener of a map, item listener of a collection, etc.) corresponding to the same thread. In order not to make other messages to block, heavy processing should not be done in this thread. If there is time-consuming work that needs to be done, the work should be handed over to another thread. See the <<getting-a-topic-and-publishing-messages, Getting a Topic and Publishing Messages section>>.
 
 [[configuring-topic]]
 ==== Configuring Topic
@@ -2481,7 +2481,7 @@ By default, a Ringbuffer does not have any TTL (time-to-live) and it has a limit
 </hazelcast>
 ----
 
-Please see the <<configuring-reliable-topic, Configuring Reliable Topic section>> below for the descriptions of all Reliable Topic configuration elements.
+See the <<configuring-reliable-topic, Configuring Reliable Topic section>> below for the descriptions of all Reliable Topic configuration elements.
 
 By default, the Reliable `ITopic` uses a shared thread pool. If you need a better isolation, you can configure a custom executor on the
 `ReliableTopicConfig`.
@@ -2882,7 +2882,7 @@ include::{javasource}/dds/CRDTReplication.java[tag=crdt]
 
 Hazelcast IdGenerator is used to generate cluster-wide unique identifiers. Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
 
-NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs in case of a network split, even with split-brain protection enabled (during short window while split-brain is detected). Please use <<flakeidgenerator, FlakeIdGenerator>> for an alternative implementation which does not suffer from the issue. Also see the <<migrating-to-flakeidgenerator, Migration guide>> at the end of this section.
+NOTE: ***Feature is deprecated.*** The implementation can produce duplicate IDs in case of a network split, even with split-brain protection enabled (during short window while split-brain is detected). Please use <<flakeidgenerator, FlakeIdGenerator>> for an alternative implementation which does not suffer from the issue. See also the <<migrating-to-flakeidgenerator, Migration guide>> at the end of this section.
 
 [[generating-cluster-wide-ids]]
 ==== Generating Cluster-Wide IDs
@@ -2945,7 +2945,7 @@ Hazelcast Flake ID Generator is used to generate cluster-wide unique identifiers
 [[generating-cluster-wide-flake-ids]]
 ==== Generating Cluster-Wide IDs
 
-The IDs contain timestamp component and a node ID component, which is assigned when the member joins the cluster. This allows the IDs to be ordered and unique without any coordination between the members, which makes the generator safe even in split-brain scenarios (for limitations in this case, please see the <<node-id-assignment, Node ID assignment section>> below).
+The IDs contain timestamp component and a node ID component, which is assigned when the member joins the cluster. This allows the IDs to be ordered and unique without any coordination between the members, which makes the generator safe even in split-brain scenarios (for limitations in this case, see the <<node-id-assignment, Node ID assignment section>> below).
 
 Timestamp component is in milliseconds since 1.1.2018, 0:00 UTC and has 41 bits. This caps the useful lifespan of the generator to little less than 70 years (until ~2088). The sequence component is 6 bits. If more than 64 IDs are requested in single millisecond, IDs gracefully overflow to the next millisecond and uniqueness is guaranteed in this case. The implementation does not allow overflowing by more than 15 seconds, if IDs are requested at higher rate, the call blocks. Note, however, that clients are able to generate even faster because each call goes to a different (random) member and the 64 IDs/ms limit is for single member.
 
@@ -3017,7 +3017,7 @@ The following are the features of Replicated Map:
 * It supports automatic initial fill up when a new member is started.
 * It provides statistics for entry access, write and update so that you can monitor it using Hazelcast Management Center.
 * New members joining to the cluster pull all the data from the existing members.
-* You can listen to entry events using listeners. Please refer to <<using-entrylistener-on-replicated-map, Using EntryListener on Replicated Map>>.
+* You can listen to entry events using listeners. See the <<using-entrylistener-on-replicated-map, Using EntryListener on Replicated Map section>>.
 
 [[replicating-instead-of-partitioning]]
 ==== Replicating Instead of Partitioning
@@ -3056,7 +3056,7 @@ The `com.hazelcast.core.ReplicatedMap` interface has some additional methods for
 
 If you have a large cluster or very high occurrences of updates, the Replicated Map may not scale linearly as expected since it has to replicate update operations to all members in the cluster.
 
-Since the replication of updates is performed in an asynchronous manner, we recommend you enable back pressure in case your system has high occurrences of updates. Please refer to the <<back-pressure, Back Pressure>> section to learn how to enable it.
+Since the replication of updates is performed in an asynchronous manner, we recommend you enable back pressure in case your system has high occurrences of updates. See the <<back-pressure, Back Pressure section>> to learn how to enable it.
 
 Replicated Map has an anti-entropy system that converges values to a common one if some of the members are missing replication updates.
 
@@ -3092,7 +3092,7 @@ Replicated Map can be configured programmatically or declaratively.
 
 **Declarative Configuration:**
 
-You can declare your Replicated Map configuration in the Hazelcast configuration file `hazelcast.xml`. Please see the following example.
+You can declare your Replicated Map configuration in the Hazelcast configuration file `hazelcast.xml`. See the following example:
 
 [source,xml]
 ----
@@ -3115,13 +3115,13 @@ You can declare your Replicated Map configuration in the Hazelcast configuration
 
 Replicated Map has the following configuration elements:
 
-* `in-memory-format`: Internal storage format.  Please see the <<in-memory-format-on-replicated-map, In-Memory Format section>>. Its default value is `OBJECT`.
+* `in-memory-format`: Internal storage format.  See the <<in-memory-format-on-replicated-map, In-Memory Format section>>. Its default value is `OBJECT`.
 * `async-fillup`: Specifies whether the Replicated Map is available for reads before the initial replication is completed. Its default value is `true`. If set to `false`, i.e., synchronous initial fill up, no exception is thrown when the Replicated Map is not yet ready, but `null` values can be seen until the initial replication is completed.
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Replicated Map. If set to `false`, you cannot collect statistics in your implementation (using `getLocalReplicatedMapStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-replicated-maps[Hazelcast Management Center] will not show them. Its default value is `true`.
 * `entry-listener`: Full canonical classname of the `EntryListener` implementation.
 ** `entry-listener#include-value`: Specifies whether the event includes the value or not. Sometimes the key is enough to react on an event. In those situations, setting this value to `false` saves a deserialization cycle. Its default value is `true`.
 ** `entry-listener#local`: Not used for Replicated Map since listeners are always local.
-* `quorum-ref`: Name of quorum configuration that you want this Replicated Map to use. Please see the <<split-brain-protection-for-replicated-map, Split-Brain Protection for Replicated Map section>>.
+* `quorum-ref`: Name of quorum configuration that you want this Replicated Map to use. See the <<split-brain-protection-for-replicated-map, Split-Brain Protection for Replicated Map section>>.
 
 **Programmatic Configuration:**
 
@@ -3238,7 +3238,7 @@ NOTE: Objects must be serializable in a form that Hazelcast understands.
 +
 . Compute the estimate of the set so far `estimator.estimate()`.
 
-Please see the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cardinality/CardinalityEstimator.html[cardinality estimator Javadoc] for more information on its API.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cardinality/CardinalityEstimator.html[cardinality estimator Javadoc] for more information on its API.
 
 The following is an example code.
 

@@ -173,18 +173,18 @@ Yes. Hazelcast performed a successful test on Amazon EC2 with 200 members.
 
 Yes. However, there are some points you should consider. The environment should be LAN with a high stability and the network speed should be 10 Gbps or higher. If the number of members is high, the client type should be selected as Unisocket, not Smart Client. In the case of Smart Clients, since each client opens a connection to the members, these members should be powerful enough (for example, more cores) to handle hundreds or thousands of connections and client requests. Also, you should consider using Near Caches in clients to lower the network traffic. And you should use the Hazelcast releases with the NIO implementation (which starts with Hazelcast 3.2).
 
-Also, you should configure the clients attentively. Please refer to the <<hazelcast-clients, Clients section>> section for configuration notes.
+Also, you should configure the clients attentively. See the <<hazelcast-clients, Clients section>> for configuration notes.
 
 '''
 **Difference between Lite Member and Smart Client?**
 
 Lite member supports task execution (distributed executor service), smart client does not. Also, Lite Member is highly coupled with cluster, smart client is not.
-Starting with Hazelcast 3.9, you can also promote lite members to data members. Please refer to the <<enabling-lite-members, Lite Members section>> for more information.
+Starting with Hazelcast 3.9, you can also promote lite members to data members. See the <<enabling-lite-members, Lite Members section>> for more information.
 
 '''
 **How do you give support?**
 
-We have two support services: community and commercial support. Community support is provided through our https://groups.google.com/forum/#!forum/hazelcast[Mail Group] and http://stackoverflow.com/[StackOverflow] web site. For information on support subscriptions, please see https://hazelcast.com/pricing/[Hazelcast.com].
+We have two support services: community and commercial support. Community support is provided through our https://groups.google.com/forum/#!forum/hazelcast[Mail Group] and http://stackoverflow.com/[StackOverflow] web site. For information on support subscriptions, see https://hazelcast.com/pricing/[Hazelcast.com].
 
 '''
 **Does Hazelcast persist?**
@@ -201,14 +201,14 @@ Yes. But please note that Hazelcast's main design focus is multi-member clusters
 
 https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[Hazelcast Management Center] is what you use to monitor and manage the members running Hazelcast. In addition to monitoring the overall state of a cluster, you can analyze and browse data structures in detail, you can update map configurations and you can take thread dumps from members.
 
-You can also use Hazelcast's HTTP based health check implementation and health monitoring utility. Please see the <<health-check-and-monitoring, Health Check and Monitoring section>>. There is also a <<diagnostics, diagnostocs tool>> where you can see detailed logs enhanced with diagnostic plugins.
+You can also use Hazelcast's HTTP based health check implementation and health monitoring utility. See the <<health-check-and-monitoring, Health Check and Monitoring section>>. There is also a <<diagnostics, diagnostocs tool>> where you can see detailed logs enhanced with diagnostic plugins.
 
-Moreover, JMX monitoring is also provided. Please see the <<monitoring-with-jmx, Monitoring with JMX section>> for details.
+Moreover, JMX monitoring is also provided. See the <<monitoring-with-jmx, Monitoring with JMX section>> for details.
 
 '''
 **How can I see debug level logs?**
 
-By changing the log level to "Debug". Below are example lines for **log4j** logging framework. Please see the <<logging-configuration, Logging Configuration section>> to learn how to set logging types.
+By changing the log level to "Debug". Below are example lines for **log4j** logging framework. See the <<logging-configuration, Logging Configuration section>> to learn how to set logging types.
 
 First, set the logging type as follows.
 
@@ -333,13 +333,13 @@ The only disadvantage when using Near Cache is that it may cause stale reads.
 '''
 **Is Hazelcast secure?**
 
-Hazelcast supports symmetric encryption, transport layer security/secure sockets layer (TLS/SSL) and Java Authentication and Authorization Service (JAAS). Please see the <<security, Security chapter>> for more information.
+Hazelcast supports symmetric encryption, transport layer security/secure sockets layer (TLS/SSL) and Java Authentication and Authorization Service (JAAS). See the <<security, Security chapter>> for more information.
 
 
 '''
 **How can I set socket options?**
 
-Hazelcast allows you to set some socket options such as `SO_KEEPALIVE`, `SO_SNDBUF` and `SO_RCVBUF` using Hazelcast configuration properties. Please see `hazelcast.socket.*` properties explained in the <<system-properties, System Properties appendix>>.
+Hazelcast allows you to set some socket options such as `SO_KEEPALIVE`, `SO_SNDBUF` and `SO_RCVBUF` using Hazelcast configuration properties. See the `hazelcast.socket.*` properties explained in the <<system-properties, System Properties appendix>>.
 
 
 '''

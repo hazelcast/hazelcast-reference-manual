@@ -13,7 +13,7 @@ The default implementation of this framework (`ThreadPoolExecutor`) is designed 
 
 
 '''
-NOTE: Note that you may want to use https://jet.hazelcast.org/[Hazelcast Jet] if you want to process batch or real-time streaming data. Please see the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
+NOTE: Note that you may want to use https://jet.hazelcast.org/[Hazelcast Jet] if you want to process batch or real-time streaming data. See the https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing] and https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing] use cases for Hazelcast Jet.
 
 With `IExecutorService`, you can execute tasks asynchronously and perform other useful tasks. If your task execution takes longer than expected, you can cancel the task execution. Tasks should be `Serializable` since they are distributed.
 
@@ -65,7 +65,7 @@ include::{javasource}/distributedcomputing/MasterMember.java[tag=mm]
 
 Please note that the `Echo` callable in the above example also implements a Serializable interface, since it may be sent to another member to be processed.
 
-NOTE: When a task is deserialized, HazelcastInstance needs to be accessed. To do this, the task should implement `HazelcastInstanceAware` interface. Please see the <<implementing-hazelcastinstanceaware, HazelcastInstanceAware Interface section>> for more information.
+NOTE: When a task is deserialized, HazelcastInstance needs to be accessed. To do this, the task should implement `HazelcastInstanceAware` interface. See the <<implementing-hazelcastinstanceaware, HazelcastInstanceAware Interface section>> for more information.
 
 ==== Implementing a Runnable Task
 
@@ -274,7 +274,7 @@ Executor service configuration has the following elements:
 * `pool-size`: The number of executor threads per Member for the Executor. By default, Executor is configured to have 16 threads in the pool. You can change that with this element.
 * `queue-capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Executor Service. If set to `false`, you cannot collect statistics in your implementation (using `getLocalExecutorStats()`) and also https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-executors[Hazelcast Management Center] will not show them. Its default value is `true`.
-* `quorum-ref`: Name of quorum configuration that you want this Executor Service to use. Please see the <<split-brain-protection-for-iexecutorservice, Split-Brain Protection for IExecutorService section>>.
+* `quorum-ref`: Name of quorum configuration that you want this Executor Service to use. See the <<split-brain-protection-for-iexecutorservice, Split-Brain Protection for IExecutorService section>>.
 
 ==== Split-Brain Protection for IExecutorService
 
@@ -363,7 +363,7 @@ The following are the descriptions of each configuration element and attribute:
 * `pool-size`: Number of executor threads per member for the executor.
 * `durability`: Number of backups in the cluster for the submitted task. Its default value is 1.
 * `capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
-* `quorum-ref`: Name of quorum configuration that you want this Durable Executor Service to use. Please see the <<split-brain-protection-for-durable-executor-service, Split-Brain Protection for Durable Executor Service section>>.
+* `quorum-ref`: Name of quorum configuration that you want this Durable Executor Service to use. See the <<split-brain-protection-for-durable-executor-service, Split-Brain Protection for Durable Executor Service section>>.
 
 ==== Split-Brain Protection for Durable Executor Service
 
@@ -426,7 +426,7 @@ The name of the task can be user-defined if it needs to be, by implementing the 
 
 Upon scheduling, the service returns an `IScheduledFuture`, which on top of the `java.util.concurrent.ScheduledFuture` functionality, provides an API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
 
-Futures associated with a scheduled task, in order to be aware of lost partitions and/or members, act as listeners on the local member/client. Therefore, they are always strongly referenced, on the member/client side. In order to clean up their resources, once completed, you can use the method `dispose()`. This method will also cancel further executions of the task if scheduled at fixed rate. You can refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledFuture.html[IScheduledFuture Javadoc] for its API details.
+Futures associated with a scheduled task, in order to be aware of lost partitions and/or members, act as listeners on the local member/client. Therefore, they are always strongly referenced, on the member/client side. In order to clean up their resources, once completed, you can use the method `dispose()`. This method also cancels further executions of the task if scheduled at a fixed rate. See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledFuture.html[IScheduledFuture Javadoc] for its API details.
 
 The task handler is a descriptor class holding information for the scheduled future, which is used to pinpoint the actual task in the cluster. It contains the name of the task, the owner (member or partition) and the scheduler name.
 
@@ -471,7 +471,7 @@ The following are the descriptions of each configuration element and attribute:
 * `pool-size`: Number of executor threads per member for the executor.
 * `capacity`: Maximum number of tasks that a scheduler can have per partition. Attempt to schedule more results in `RejectedExecutionException`. To free up the capacity, tasks should get disposed by the user.
 * `durability`: Durability of the executor.
-* `quorum-ref`: Name of quorum configuration that you want this Scheduled Executor Service to use. Please see the <<split-brain-protection-for-ischeduled-executor-service, Split-Brain Protection for IScheduled Executor Service section>>.
+* `quorum-ref`: Name of quorum configuration that you want this Scheduled Executor Service to use. See the <<split-brain-protection-for-ischeduled-executor-service, Split-Brain Protection for IScheduled Executor Service section>>.
 
 [[scheduled-exec-srv-examples]]
 ==== Examples
@@ -555,7 +555,7 @@ If you are doing the process described above, you should consider using entry pr
 
 NOTE: Entry processor is meant to process a single entry per call. Processing multiple entries and data structures in an entry processor is not supported as it may result in deadlocks.
 
-NOTE: Note that Hazelcast Jet is a good fit when you want to perform processing that involves multiple entries (aggregations, joins, etc.), or involves multiple computing steps to be made parallel. Hazelcast Jet contains an Entry Processor Sink to allow you to update Hazelcast IMDG data as a result of your Hazelcast Jet computation. Please refer to https://docs.hazelcast.org/docs/jet/latest/manual/index.html#connector-imdg[Hazelcast Jet's Reference Manual].
+NOTE: Note that Hazelcast Jet is a good fit when you want to perform processing that involves multiple entries (aggregations, joins, etc.), or involves multiple computing steps to be made parallel. Hazelcast Jet contains an Entry Processor Sink to allow you to update Hazelcast IMDG data as a result of your Hazelcast Jet computation. See the https://docs.hazelcast.org/docs/jet/latest/manual/index.html#connector-imdg[Hazelcast Jet Reference Manual].
 
 ==== Performing Fast In-Memory Map Operations
 
@@ -718,7 +718,7 @@ An example of an Offloadable called "OffloadedInventoryEntryProcessor" would be 
 </hazelcast>
 ----
 
-Remember to set the `pool-size` (count of executor threads per member) according to your execution needs. Please refer to the <<configuring-executor-service, Configuring Executor Service section>> for the configuration details.
+Remember to set the `pool-size` (count of executor threads per member) according to your execution needs. See the <<configuring-executor-service, Configuring Executor Service section>> for the configuration details.
 
 ===== ReadOnly Entry Processor
 

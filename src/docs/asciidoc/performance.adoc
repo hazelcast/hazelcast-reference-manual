@@ -346,7 +346,7 @@ This property defines the maximum allowed number of concurrent invocations. When
 Please note that back off timeout and controlling the number of pending async backups (sync window) is not supported on the client side.
 
 
-NOTE: Please refer to the <<system-properties, System Properties appendix>> to learn how to configure the system properties.
+NOTE: See the <<system-properties, System Properties appendix>> to learn how to configure the system properties.
 
 === Threading Model
 
@@ -362,15 +362,15 @@ Hazelcast uses a pool of threads for I/O. A single thread does not perform all t
 
 You can configure the number of I/O threads using the `hazelcast.io.thread.count` system property. Its default value is 3 per member. If 3 is used, in total there are 7 I/O threads: 1 accept I/O thread, 3 read I/O threads and 3 write I/O threads. Each I/O thread has its own Selector instance and waits on the `Selector.select` if there is nothing to do.
 
-NOTE: You can also specify counts for input and output threads separately. There are `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count` properties for this purpose. Please refer to the <<system-properties, System Properties section>> for information on these properties and how to set them.
+NOTE: You can also specify counts for input and output threads separately. There are `hazelcast.io.input.thread.count` and `hazelcast.io.output.thread.count` properties for this purpose. See the <<system-properties, System Properties appendix>> for information on these properties and how to set them.
 
 
 Hazelcast periodically scans utilization of each I/O thread and can decide to migrate a connection to a new thread if the existing thread is servicing a disproportionate number of I/O events. You can customize the scanning interval by configuring the `hazelcast.io.balancer.interval.seconds` system property; its default interval is 20 seconds. You can disable the balancing process by setting this property to a negative value.
 
 In case of the read I/O thread, when sufficient bytes for a packet have been received, the `Packet` object is created. This `Packet` object is
 then sent to the system where it is de-multiplexed. If the `Packet` header signals that it is an operation/response, the `Packet` is handed
-over to the operation service (please see the <<operation-threading, Operation Threading section>>). If the `Packet` is an event, it is handed
-over to the event service (please see the <<event-threading, Event Threading section>>).
+over to the operation service (see the <<operation-threading, Operation Threading section>>). If the `Packet` is an event, it is handed
+over to the event service (see the <<event-threading, Event Threading section>>).
 
 ==== Event Threading
 
@@ -406,7 +406,7 @@ has no capacity and messages for B are dropped.
 Executor threading is straight forward. When a task is received to be executed on Executor E, then E will have its
 own `ThreadPoolExecutor` instance and the work is placed in the work queue of this executor. Thus, Executors are fully isolated, but still share the same underlying hardware - most importantly the CPUs.
 
-You can configure the IExecutor using the `ExecutorConfig` (programmatic configuration) or using `<executor>` (declarative configuration). Please also see the <<configuring-executor-service, Configuring Executor Service section>>.
+You can configure the IExecutor using the `ExecutorConfig` (programmatic configuration) or using `<executor>` (declarative configuration). See also the <<configuring-executor-service, Configuring Executor Service section>>.
 
 ==== Operation Threading
 
@@ -488,7 +488,7 @@ only triggers the worker to wake up and check the priority queue.
 
 ===== Operation-response and Invocation-future
 
-When an Operation is invoked, a `Future` is returned. Please see the example code below.
+When an Operation is invoked, a `Future` is returned. See the example code below.
 
 [source,java]
 ----
@@ -526,7 +526,7 @@ The `SlowOperationDetector` is configured via the following system properties.
 * `hazelcast.slow.operation.detector.stacktrace.logging.enabled`
 * `hazelcast.slow.operation.detector.threshold.millis`
 
-Refer to the <<system-properties, System Properties appendix>> for explanations of these properties.
+See the <<system-properties, System Properties appendix>> for explanations of these properties.
 
 ==== Logging of Slow Operations
 
@@ -873,7 +873,7 @@ config.getMapConfig("mostlyReadMapWithHighDensityNearCache")
   .setNearCacheConfig(nearCacheConfig);
 ----
 
-Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. Please see the <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>>.
+Keep in mind that you should have already enabled the High-Density Memory Store usage for your cluster. See the <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>>.
 
 Note that a map and its Near Cache can independently use High-Density Memory Store. For example, if your map does not use High-Density Memory Store, its Near Cache can still use it.
 

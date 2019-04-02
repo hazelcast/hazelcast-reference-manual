@@ -8,12 +8,12 @@ specific behavior and bindings and provide the different JCache required feature
 Hazelcast has two types of providers. Depending on your application setup and the cluster topology,
 you can use the Client Provider (used by Hazelcast clients) or the Server Provider (used by cluster members).
 
-For more information on cluster topologies and Hazelcast clients, please see the <<hazelcast-topology, Hazelcast Topology section>>.
+For more information on cluster topologies and Hazelcast clients, see the <<hazelcast-topology, Hazelcast Topology section>>.
 
 ==== Configuring JCache Provider
 
 Configure the JCache `javax.cache.spi.CachingProvider` by either specifying the provider at the command line or by declaring the provider inside the Hazelcast configuration XML file. For more information on setting properties in this XML
-configuration file, please see the <<jcache-declarative-configuration, JCache Declarative Configuration section>>.
+configuration file, see the <<jcache-declarative-configuration, JCache Declarative Configuration section>>.
 
 Hazelcast implements a delegating `CachingProvider` that can automatically be configured for either client or member mode and that
 delegates to the real underlying implementation based on the user's choice. Hazelcast recommends that you use this `CachingProvider`
@@ -46,7 +46,7 @@ For cluster topologies where Hazelcast light clients are used to connect to a re
 The Client Provider provides the same features as the Server Provider. However, it does not hold data on its own but instead delegates requests and calls to the remotely connected cluster.
 
 The Client Provider can connect to multiple clusters at the same time. This can be achieved by scoping the client side
-`CacheManager` with different Hazelcast configuration files. For more information, please see
+`CacheManager` with different Hazelcast configuration files. For more information, see
 <<scoping-to-join-clusters, Scoping to Join Clusters>>.
 
 To request this `CachingProvider` using `Caching.getCachingProvider( String )` or
@@ -66,7 +66,7 @@ The Server Provider provides the same features as the Client provider, but it ke
 non-owned keys to other direct cluster members.
 
 Like the Client Provider, the Server Provider can connect to multiple clusters at the same time. This can be achieved by scoping the client side `CacheManager` with different Hazelcast configuration files. For more
-information please see <<scoping-to-join-clusters, Scoping to Join Clusters>>.
+information, see <<scoping-to-join-clusters, Scoping to Join Clusters>>.
 
 To request this `CachingProvider` using `Caching.getCachingProvider( String )` or
 `Caching.getCachingProvider( String, ClassLoader )`, use the following fully qualified class name:

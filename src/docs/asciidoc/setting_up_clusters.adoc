@@ -13,59 +13,59 @@ Please note that, after a cluster is formed, communication between cluster membe
 
 Hazelcast uses the following discovery mechanisms.
 
-NOTE: You can refer to the https://hazelcast.com/resources/hazelcast-deployment-operations-guide/[Hazelcast IMDG Deployment and Operations Guide] for advice on the best discovery mechanism to use.
+NOTE: See the https://hazelcast.com/resources/hazelcast-deployment-operations-guide/[Hazelcast IMDG Deployment and Operations Guide] for advices on the best discovery mechanism to use.
 
 [[tcp]]
 ==== TCP
 
-You can configure Hazelcast to be a full TCP/IP cluster. Please see the <<discovering-members-by-tcp, Discovering Members by TCP>> section for configuration details.
+You can configure Hazelcast to be a full TCP/IP cluster. See the <<discovering-members-by-tcp, Discovering Members by TCP section>> for configuration details.
 
 [[multicast]]
 ==== Multicast
 
 Multicast mechanism is not recommended for production since UDP is often blocked in production environments and other discovery mechanisms are more definite.
 
-With this mechanism, Hazelcast allows cluster members to find each other using multicast communication. Please see the <<discovering-members-by-multicast, Discovering Members by Multicast>> section.
+With this mechanism, Hazelcast allows cluster members to find each other using multicast communication. See the <<discovering-members-by-multicast, Discovering Members by Multicast section>>.
 
 [[aws-cloud-discovery]]
 ==== AWS Cloud Discovery
 
-Hazelcast supports EC2 auto-discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for information on configuring and using it.
+Hazelcast supports EC2 auto-discovery. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation] for information on configuring and using it.
 
 [[gcp-cloud-discovery]]
 ==== GCP Cloud Discovery
 
-Hazelcast supports discovering members in the https://cloud.google.com/compute/[GCP Compute Engine] environment. You can easily configure Hazelcast members discovery, WAN replication, and Hazelcast Client to work seamlessly on the native GCP VM Instances. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-gcp/blob/master/README.md[documentation] for information on configuring and using it.
+Hazelcast supports discovering members in the https://cloud.google.com/compute/[GCP Compute Engine] environment. You can easily configure Hazelcast members discovery, WAN replication, and Hazelcast Client to work seamlessly on the native GCP VM Instances. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/hazelcast/hazelcast-gcp/blob/master/README.md[documentation] for information on configuring and using it.
 
 [[apache-jclous-cloud-discovery]]
 ==== Apache jclouds® Cloud Discovery
 
-Hazelcast members and native clients support jclouds® for discovery. This mechanism allows applications to be deployed in various cloud infrastructure ecosystems in an infrastructure-agnostic way. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-jclouds/blob/master/README.md[documentation] for information on configuring and using it.
+Hazelcast members and native clients support jclouds® for discovery. This mechanism allows applications to be deployed in various cloud infrastructure ecosystems in an infrastructure-agnostic way. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/hazelcast/hazelcast-jclouds/blob/master/README.md[documentation] for information on configuring and using it.
 
 [[azure-cloud-discovery]]
 ==== Azure Cloud Discovery
 
-Hazelcast offers a discovery strategy for your Hazelcast applications running on Azure. This strategy provides all of your Hazelcast instances by returning the virtual machines within your Azure resource group that are tagged with a specified value. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation] for information on configuring and using it.
+Hazelcast offers a discovery strategy for your Hazelcast applications running on Azure. This strategy provides all of your Hazelcast instances by returning the virtual machines within your Azure resource group that are tagged with a specified value. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation] for information on configuring and using it.
 
 [[zookeeper-cloud-discovery]]
 ==== Zookeeper Cloud Discovery
 
-This discovery mechanism provides a service based discovery strategy by using Apache Curator to communicate with your Zookeeper server. You can use this plugin with <<discovery-spi, Discovery SPI>> enabled applications. This is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md[documentation] for information on configuring and using it.
+This discovery mechanism provides a service based discovery strategy by using Apache Curator to communicate with your Zookeeper server. You can use this plugin with <<discovery-spi, Discovery SPI>> enabled applications. This is provided as a Hazelcast plugin. See its https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md[documentation] for information on configuring and using it.
 
 [[condul-cloud-discovery]]
 ==== Consul Cloud Discovery
 
-Consul is a highly available and distributed service discovery and key-value store designed with support for the modern data center to make distributed systems and configuration easy. This mechanism provides a Consul based discovery strategy for Hazelcast enabled applications and enables Hazelcast members to dynamically discover one another via Consul. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/bitsofinfo/hazelcast-consul-discovery-spi[documentation] for information on configuring and using it.
+Consul is a highly available and distributed service discovery and key-value store designed with support for the modern data center to make distributed systems and configuration easy. This mechanism provides a Consul based discovery strategy for Hazelcast enabled applications and enables Hazelcast members to dynamically discover one another via Consul. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/bitsofinfo/hazelcast-consul-discovery-spi[documentation] for information on configuring and using it.
 
 [[etcd-cloud-discovery]]
 ==== etcd Cloud Discovery
 
-This mechanism provides an https://coreos.com/etcd/[etcd] based discovery strategy for Hazelcast enabled applications. This is an easy to configure plug-and-play Hazelcast discovery strategy that optionally registers each of your Hazelcast members with etcd and enables Hazelcast members to dynamically discover one another via etcd. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/bitsofinfo/hazelcast-etcd-discovery-spi/blob/master/README.md[documentation] for information on configuring and using it.
+This mechanism provides an https://coreos.com/etcd/[etcd] based discovery strategy for Hazelcast enabled applications. This is an easy to configure plug-and-play Hazelcast discovery strategy that optionally registers each of your Hazelcast members with etcd and enables Hazelcast members to dynamically discover one another via etcd. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/bitsofinfo/hazelcast-etcd-discovery-spi/blob/master/README.md[documentation] for information on configuring and using it.
 
 [[hazelcast-for-pcf]]
 ==== Hazelcast for PCF
 
-Using a clickable Hazelcast Tile for Pivotal Cloud Foundry (PCF), you can deploy your Hazelcast cluster on PCF. This feature is provided as a Hazelcast plugin. Please see its https://docs.pivotal.io/partners/hazelcast/index.html[documentation] on how to install, configure and use the plugin Hazelcast for PCF.
+Using a clickable Hazelcast Tile for Pivotal Cloud Foundry (PCF), you can deploy your Hazelcast cluster on PCF. This feature is provided as a Hazelcast plugin. See its https://docs.pivotal.io/partners/hazelcast/index.html[documentation] on how to install, configure and use the plugin Hazelcast for PCF.
 
 [[hazelcast-openshift-integration]]
 ==== Hazelcast OpenShift Integration
@@ -75,22 +75,22 @@ Hazelcast can run inside OpenShift benefiting from its cluster management softwa
 * https://github.com/hazelcast/hazelcast-openshift[Hazelcast IMDG and Hazelcast IMDG Enterprise]
 * https://github.com/hazelcast/management-center-openshift[Management Center]
 
-Please also see the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift[Hazelcast for OpenShift] guide, which presents how to set up the local OpenShift environment, start a Hazelcast cluster, configure the Management Center and finally run a sample client application.
+See also the https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift[Hazelcast for OpenShift] guide, which presents how to set up the local OpenShift environment, start a Hazelcast cluster, configure the Management Center and finally run a sample client application.
 
 [[eureka-cloud-discovery]]
 ==== Eureka Cloud Discovery
 
-Eureka is a REST based service that is primarily used in the AWS cloud for locating services for the purpose of load balancing and failover of middle-tier servers. Hazelcast supports Eureka V1 discovery; Hazelcast members within EC2 Virtual Private Cloud can discover each other using this mechanism. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-eureka[documentation].
+Eureka is a REST based service that is primarily used in the AWS cloud for locating services for the purpose of load balancing and failover of middle-tier servers. Hazelcast supports Eureka V1 discovery; Hazelcast members within EC2 Virtual Private Cloud can discover each other using this mechanism. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/hazelcast/hazelcast-eureka[documentation].
 
 [[heroku-cloud-discovery]]
 ==== Heroku Cloud Discovery
 
-Heroku is a platform as a service (PaaS) with which you can build, run and operate applications entirely in the cloud. It is a cloud platform based on a managed container system, with integrated data services and a powerful ecosystem. Hazelcast offers a discovery plugin that looks for IP addresses of other members by resolving service names against the Heroku DNS Discovery in Heroku Private Spaces. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/jkutner/hazelcast-heroku-discovery/blob/master/README.md[documentation].
+Heroku is a platform as a service (PaaS) with which you can build, run and operate applications entirely in the cloud. It is a cloud platform based on a managed container system, with integrated data services and a powerful ecosystem. Hazelcast offers a discovery plugin that looks for IP addresses of other members by resolving service names against the Heroku DNS Discovery in Heroku Private Spaces. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/jkutner/hazelcast-heroku-discovery/blob/master/README.md[documentation].
 
 [[kubernetes-cloud-discovery]]
 ==== Kubernetes Cloud Discovery
 
-Kubernetes is an open source system for automating deployment, scaling and management of containerized applications. Hazelcast provides Kubernetes discovery mechanism that looks for IP addresses of other members by resolving the requests against a Kubernetes Service Discovery system. It supports two different options of resolving against the discovery registry: (i) a request to the REST API, (ii) DNS Lookup against a given DNS service name. This discovery feature is provided as a Hazelcast plugin. Please see its https://github.com/hazelcast/hazelcast-kubernetes[documentation] for information on configuring and using it.
+Kubernetes is an open source system for automating deployment, scaling and management of containerized applications. Hazelcast provides Kubernetes discovery mechanism that looks for IP addresses of other members by resolving the requests against a Kubernetes Service Discovery system. It supports two different options of resolving against the discovery registry: (i) a request to the REST API, (ii) DNS Lookup against a given DNS service name. This discovery feature is provided as a Hazelcast plugin. See its https://github.com/hazelcast/hazelcast-kubernetes[documentation] for information on configuring and using it.
 
 [[discovering-members-by-tcp]]
 === Discovering Members by TCP
@@ -135,14 +135,14 @@ Instead of providing members line-by-line as shown above, you also have the opti
 
 If you do not provide ports for the members, Hazelcast automatically tries the ports 5701, 5702 and so on.
 
-By default, Hazelcast binds to all local network interfaces to accept incoming traffic. You can change this behavior using the system property `hazelcast.socket.bind.any`. If you set this property to `false`, Hazelcast uses the interfaces specified in the `interfaces` element (please refer to the <<interfaces, Interfaces Configuration section>>). If no interfaces are provided, then it tries to resolve one interface to bind from the `member` elements.
+By default, Hazelcast binds to all local network interfaces to accept incoming traffic. You can change this behavior using the system property `hazelcast.socket.bind.any`. If you set this property to `false`, Hazelcast uses the interfaces specified in the `interfaces` element (see the <<interfaces, Interfaces Configuration section>>). If no interfaces are provided, then it tries to resolve one interface to bind from the `member` elements.
 
 [[discovering-members-by-multicast]]
 === Discovering Members by Multicast
 
 With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication. The cluster members do not need to know the concrete addresses of the other members, as they just multicast to all the other members for listening. Whether multicast is possible or allowed depends on your environment.
 
-To set your Hazelcast to multicast auto-discovery, set the following configuration elements. Please refer to the <<multicast-element, multicast element section>> for the full description of the multicast discovery configuration elements.
+To set your Hazelcast to multicast auto-discovery, set the following configuration elements. See the <<multicast-element, multicast element section>> for the full description of the multicast discovery configuration elements.
 
 * Set the `enabled` attribute of the `multicast` element to "true".
 * Set `multicast-group`, `multicast-port`, `multicast-time-to-live`, etc. to your multicast values.
@@ -177,7 +177,7 @@ The following is an example declarative configuration.
 
 Pay attention to the `multicast-timeout-seconds` element. `multicast-timeout-seconds` specifies the time in seconds that a member should wait for a valid multicast response from another member running in the network before declaring itself the leader member (the first member joined to the cluster) and creating its own cluster. This only applies to the startup of members where no leader has been assigned yet. If you specify a high value to `multicast-timeout-seconds`, such as 60 seconds, it means that until a leader is selected, each member waits 60 seconds before moving on. Be careful when providing a high value. Also, be careful not to set the value too low, or the members might give up too early and create their own cluster.
 
-NOTE: Multicast auto-discovery is not supported for Hazelcast native clients yet. However, we offer Multicast Discovery Plugin for this purpose. Please refer to the <<discovering-native-clients, Discovering Native Clients section>>.
+NOTE: Multicast auto-discovery is not supported for Hazelcast native clients yet. However, we offer Multicast Discovery Plugin for this purpose. See the <<discovering-native-clients, Discovering Native Clients section>>.
 
 [[discovering-native-clients]]
 === Discovering Native Clients
@@ -281,7 +281,7 @@ control the classes to be served to other members and create blacklists or white
 The following is the brief working mechanism of the User Code Deployment feature:
 
 . Dynamic class loader first checks the local classes, i.e., your classpath, for your custom class. If it is there, Hazelcast does not try to load it from the remote class repository.
-. Then, it checks the cache of classes loaded from the remote class repository (for this, caching should have been enabled in your local, please refer to <<configuring-user-code-deployment, Configuring User Code Deployment section>>). If your class is found here, again, Hazelcast does not try to load it from the remote class repository.
+. Then, it checks the cache of classes loaded from the remote class repository (for this, caching should have been enabled in your local, see the <<configuring-user-code-deployment, Configuring User Code Deployment section>>). If your class is found here, again, Hazelcast does not try to load it from the remote class repository.
 . Finally, dynamic class loader checks the remote class repository. If a member in this repository returns the class, it means your class is found and to be used. You can also put this class into your local class cache as mentioned in the previous step.
 
 [[configuring-user-code-deployment]]
@@ -329,12 +329,12 @@ User Code Deployment has the following configuration elements and attributes:
 ** `sun.`
 ** `com.hazelcast.`
 * `<whitelist-prefixes>`: Comma separated name prefixes of classes/packages only from which the classes are allowed to be loaded. It allows to quickly configure remote loading only for classes from selected packages. It can be used together with blacklisting. For example, you can whitelist the prefix "com.foo" and blacklist the prefix "com.foo.secret".
-* `<provider-filter>`: Filter to constraint members to be used for a class loading request when a class is not available locally. The value is in the format "HAS_ATTRIBUTE:foo". When it is set as "HAS_ATTRIBUTE:foo", the class loading request is only sent to the members which have "foo" as a <<defining-member-attributes, member attribute>>. Setting this to null allows to load classes from all members. Please see an example in the below section.
+* `<provider-filter>`: Filter to constraint members to be used for a class loading request when a class is not available locally. The value is in the format "HAS_ATTRIBUTE:foo". When it is set as "HAS_ATTRIBUTE:foo", the class loading request is only sent to the members which have "foo" as a <<defining-member-attributes, member attribute>>. Setting this to null allows to load classes from all members. See an example in the below section.
 
 [[example-for-filtering-members]]
 ==== Example for Filtering Members
 
-As described above, the configuration element `provider-filter` is used to constrain a member to load classes only from a subset of all cluster members. The value of the `provider-filter` must be set as a member attribute in the desired members from which the classes are to be loaded. Please see the following example usage provided as programmatic configurations.
+As described above, the configuration element `provider-filter` is used to constrain a member to load classes only from a subset of all cluster members. The value of the `provider-filter` must be set as a member attribute in the desired members from which the classes are to be loaded. See the following example usages provided as programmatic configurations.
 
 The below example configuration allows the Hazelcast member to load classes only from the members with the `class-provider` attribute set. It does not ask any other member to provide a locally unavailable class:
 
@@ -369,7 +369,7 @@ You can also deploy your codes from the client side for the following situations
 When this feature is enabled, the clients deploy these classes to the members. By this way, when a client adds a new class, the members do not require restarts to include the new classes in classpath.
 
 
-You can also use the client permission policy to specify which clients are permitted to use User Code Deployment. Please see the <<permissions, Permissions>>.
+You can also use the client permission policy to specify which clients are permitted to use User Code Deployment. See the <<permissions, Permissions section>>.
 
 [[configuring-client-user-code-deployment]]
 ==== Configuring Client User Code Deployment
@@ -420,7 +420,7 @@ UserCodeDeploymentConfig userCodeDeploymentConfig = config.getUserCodeDeployment
 userCodeDeploymentConfig.setEnabled( true );
 ----
 
-Please refer to the <<member-user-code-deployment-beta, Member User Code Deployment section>> for more information on enabling it on the member side and its configuration properties.
+See the <<member-user-code-deployment-beta, Member User Code Deployment section>> for more information on enabling it on the member side and its configuration properties.
 
 For the property `class-cache-mode`, Client User Code Deployment supports only the `ETERNAL` mode, regardless of the configuration set on the member side (which can be `ETERNAL` and `OFF`).
 
@@ -467,7 +467,7 @@ Then, you can start your Hazelcast member by using the start scripts (`start.sh`
 [[partition-group-configuration]]
 === Partition Group Configuration
 
-Hazelcast distributes key objects into partitions using the consistent hashing algorithm. Multiple replicas are created for each partition and those partition replicas are distributed among Hazelcast members. An entry is stored in the members that own replicas of the partition to which the entry's key is assigned. The total partition count is 271 by default; you can change it with the configuration property `hazelcast.partition.count`. Please see the <<system-properties, System Properties appendix>>.
+Hazelcast distributes key objects into partitions using the consistent hashing algorithm. Multiple replicas are created for each partition and those partition replicas are distributed among Hazelcast members. An entry is stored in the members that own replicas of the partition to which the entry's key is assigned. The total partition count is 271 by default; you can change it with the configuration property `hazelcast.partition.count`. See the <<system-properties, System Properties appendix>>.
 
 Hazelcast member that owns the primary replica of a partition is called as partition owner. Other replicas are called backups. Based on the configuration, a key object can be kept in multiple replicas of a partition. A member can hold at most one replica of a partition (ownership or backup).
 
@@ -1017,7 +1017,7 @@ The `tcp-ip` element includes parameters to fine tune the TCP/IP join mechanism.
 * `required-member`: IP address of the required member. Cluster is only formed if the member with this IP address is found.
 * `member`: IP address(es) of one or more well known members. Once members are connected to these well known ones, all member addresses are communicated with each other. You can also give comma separated IP addresses using the `members` element.
 +
-NOTE: `tcp-ip` element also accepts the `interface` parameter. Please refer to the <<interfaces, Interfaces element description>>.
+NOTE: `tcp-ip` element also accepts the `interface` parameter. See the <<interfaces, Interfaces element description>>.
 +
 * `connection-timeout-seconds`: Defines the connection timeout in seconds. This is the maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. Setting it to a too low value could mean that a member is not able to connect to a cluster. Setting it to a too high value means that member startup could slow down because of longer timeouts, for example when a well known member is not up. Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5 seconds.
 
@@ -1040,7 +1040,7 @@ If you are using a cloud provider other than AWS, you can use the programmatic c
 [[discovery-strategies-element]]
 ===== discovery-strategies element
 
-The `discovery-strategies` element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. For further information, please refer to the <<discovery-spi, Discovery SPI section>> and the vendor documentation of the used discovery strategy.
+The `discovery-strategies` element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. For further information, see the <<discovery-spi, Discovery SPI section>> and the vendor documentation of the used discovery strategy.
 
 [[awsclient-configuration]]
 ==== AWSClient Configuration
@@ -1106,7 +1106,7 @@ interfaceConfig.setEnabled( true )
 [[ipv6-support]]
 ==== IPv6 Support
 
-Hazelcast supports IPv6 addresses seamlessly (This support is switched off by default, please see the note at the end of this section).
+Hazelcast supports IPv6 addresses seamlessly (This support is switched off by default, see the note at the end of this section).
 
 All you need is to define IPv6 addresses or interfaces in the network configuration. The only current limitation is that you cannot define wildcard IPv6 addresses in the TCP/IP join configuration (`tcp-ip` element). <<interfaces, Interfaces>> configuration does not have this limitation, you can configure wildcard IPv6 interfaces in the same way as IPv4 interfaces.
 
@@ -1141,16 +1141,16 @@ All you need is to define IPv6 addresses or interfaces in the network configurat
 
 JVM has two system properties for setting the preferred protocol stack (IPv4 or IPv6) as well as the preferred address family types (inet4 or inet6). On a dual stack machine, IPv6 stack is preferred by default, you can change this through the `java.net.preferIPv4Stack=<true|false>` system property. When querying name services, JVM prefers IPv4 addresses over IPv6 addresses and returns an IPv4 address if possible. You can change this through `java.net.preferIPv6Addresses=<true|false>` system property.
 
-Also see additional http://docs.oracle.com/javase/1.5.0/docs/guide/net/ipv6_guide/[details on IPv6 support in Java].
+See also additional http://docs.oracle.com/javase/1.5.0/docs/guide/net/ipv6_guide/[details on IPv6 support in Java].
 
-NOTE: IPv6 support has been switched off by default, since some platforms have issues using the IPv6 stack. Some other platforms such as Amazon AWS have no support at all. To enable IPv6 support, just set configuration property `hazelcast.prefer.ipv4.stack` to *false*. Please refer to the <<system-properties, System Properties appendix>> for details.
+NOTE: IPv6 support has been switched off by default, since some platforms have issues using the IPv6 stack. Some other platforms such as Amazon AWS have no support at all. To enable IPv6 support, just set configuration property `hazelcast.prefer.ipv4.stack` to *false*. See the <<system-properties, System Properties appendix>> for details.
 
 [[member-address-provides-spi]]
 ==== Member Address Provider SPI
 
-NOTE: This SPI is not intended to provide addresses of other cluster members with which the Hazelcast instance forms a cluster. To do that, refer to the other network configuration sections above.
+NOTE: This SPI is not intended to provide addresses of other cluster members with which the Hazelcast instance forms a cluster. To do that, see the <<other-network-configurations, previous sections>> above.
 
-By default, Hazelcast chooses the public and bind address. You can influence on the choice by defining a `public-address` in the configuration or by using other properties mentioned above. In some cases, though, these properties are not enough and the default address picking strategy chooses wrong addresses. This may be the case when deploying Hazelcast in some cloud environments, such as AWS, when using Docker or when the instance is deployed behind a NAT and the `public-address` property is not enough (please see the <<public-address, Public Address section>>).
+By default, Hazelcast chooses the public and bind address. You can influence on the choice by defining a `public-address` in the configuration or by using other properties mentioned above. In some cases, though, these properties are not enough and the default address picking strategy chooses wrong addresses. This may be the case when deploying Hazelcast in some cloud environments, such as AWS, when using Docker or when the instance is deployed behind a NAT and the `public-address` property is not enough (see the <<public-address, Public Address section>>).
 
 In these cases, it is possible to configure the bind and public address in a more advanced way. You can provide an implementation of the `com.hazelcast.spi.MemberAddressProvider` interface which provides the bind and public address. The implementation may then choose these addresses in any way - it may read from a system property or file or even invoke a web service to retrieve the public and private address.
 
@@ -1228,7 +1228,7 @@ Hazelcast has the following built-in failure detectors: Deadline Failure Detecto
 There is also a Ping Failure Detector, that, if enabled, works in parallel with the above ones, but identifies
 the failures on OSI Layer 3 (Network Layer). This detector is by default disabled.
 
-Note that, Hazelcast also offers failure detectors for its Java client. Please refer to the <<java-client-failure-detectors, Client Failure Detectors section>> for more information.
+Note that, Hazelcast also offers failure detectors for its Java client. See the <<java-client-failure-detectors, Client Failure Detectors section>> for more information.
 
 ==== Deadline Failure Detector
 
@@ -1328,9 +1328,9 @@ For the Ping Failure Detector to rely **only** on ICMP Echo requests, there are 
 [[requirements-and-linuxunix-configuration]]
 ===== Requirements and Linux/Unix Configuration
 
-* **Supported OS: as of Java 1.8 only Linux/Unix environments are supported**. This detector relies on ICMP, i.e., the protocol behind the `ping` command. It tries to issue the ping attempts periodically, and their responses are used to determine the reachability of the remote member. However, you cannot simply create an ICMP Echo Request because these type of packets do not rely on any of the preexisting transport protocols such as TCP. In order to create such a request, you must have the privileges to create RAW sockets (please see https://linux.die.net/man/7/raw[https://linux.die.net/man/7/raw]). Most operating systems allow this to the root users, however Unix based ones are more flexible and allow the use of custom privileges per process
+* **Supported OS: as of Java 1.8 only Linux/Unix environments are supported**. This detector relies on ICMP, i.e., the protocol behind the `ping` command. It tries to issue the ping attempts periodically, and their responses are used to determine the reachability of the remote member. However, you cannot simply create an ICMP Echo Request because these type of packets do not rely on any of the preexisting transport protocols such as TCP. In order to create such a request, you must have the privileges to create RAW sockets (see https://linux.die.net/man/7/raw[https://linux.die.net/man/7/raw]). Most operating systems allow this to the root users, however Unix based ones are more flexible and allow the use of custom privileges per process
 instead of requiring root access. Therefore, this detector is supported only on Linux.
-* **The Java executable must have the `cap_net_raw` capability.** As described in the above requirement, on Linux, you have the ability to define extra capabilities to a single process, which would allow the process to interact with the RAW sockets. This interaction is achieved via the capability `cap_net_raw` (please see https://linux.die.net/man/7/capabilities[https://linux.die.net/man/7/capabilities]). To enable this capability run the following command:
+* **The Java executable must have the `cap_net_raw` capability.** As described in the above requirement, on Linux, you have the ability to define extra capabilities to a single process, which would allow the process to interact with the RAW sockets. This interaction is achieved via the capability `cap_net_raw` (see https://linux.die.net/man/7/capabilities[https://linux.die.net/man/7/capabilities]). To enable this capability run the following command:
 +
 `sudo setcap cap_net_raw=+ep <JDK_HOME>/jre/bin/java`
 +

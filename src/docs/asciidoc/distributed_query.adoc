@@ -185,7 +185,7 @@ public Collection<Employee> getNotWithName( String name ) {
 ===== Simplifying with PredicateBuilder
 
 You can simplify predicate usage with the `PredicateBuilder` class,
-which offers simpler predicate building. Please see the
+which offers simpler predicate building. See the
 below example code which selects all people with a certain name and age.
 
 [source,java]
@@ -262,7 +262,7 @@ Similar to LIKE predicate but in a case-insensitive manner.
 ===== Querying Entry Keys with Predicates
 
 You can use `__key` attribute to perform a predicated search for entry
-keys. Please see the following example:
+keys. See the following example:
 
 [source,java]
 ----
@@ -428,7 +428,7 @@ You can also access a specific page more
 easily with the help of the `setPage()` method. This way, if you make
 a query for the hundredth page, for example, it gets all 100 pages at
 once instead of reaching the hundredth page one by one using the `nextPage()` method.
-Please note that this feature tires the memory and refer to the
+Note that this feature tires the memory and see the
 https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc].
 
 Paging Predicate, also known as Order & Limit, is not supported in
@@ -443,7 +443,7 @@ It takes a predicate and partition key as parameters, gets the
 partition ID using the key and  runs that predicate only on the partition
 where that key belongs.
 
-Please see the following code snippet:
+See the following code snippet:
 
 [source,java]
 ----
@@ -464,7 +464,7 @@ For the partition predicate to work correctly, you need to know which
 partition your data belongs to so that you can send the
 request to the correct partition. One of the ways of doing it is to
 make use of the `PartitionAware` interface when data is
-inserted, thereby controlling the owning partition. Please see the
+inserted, thereby controlling the owning partition. See the
 <<partitionaware , PartitionAware section>> for more information and examples.
 
 A concrete example may be a webshop that sells phones and accessories.
@@ -705,7 +705,7 @@ NATIVE in-memory format.
 
 You can also define custom attributes that may be referenced in predicates,
 queries and indexes. Custom attributes can be defined by implementing a
-`ValueExtractor`. Please see the <<custom-attributes, Custom Attributes section>>
+`ValueExtractor`. See the <<custom-attributes, Custom Attributes section>>
 for details.
 
 ===== Using "this" as an Attribute
@@ -1014,7 +1014,7 @@ In order to return multiple results from a single extraction, invoke the
 `ValueCollector.collect()` method
 multiple times, so that the collector collects all results.
 
-Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[`ValueExtractor`] and
 https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueCollector.html[`ValueCollector`] Javadocs.
 
 ===== ValueExtractor with Portable Serialization
@@ -1035,7 +1035,7 @@ results directly to the `ValueCollector`.
 and grouping the result of the read operation and manually passing it to the
 `ValueCollector`.
 
-Please refer to the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html[`ValueReader`] Javadoc.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/query/extractor/ValueReader.html[`ValueReader`] Javadoc.
 
 ===== Returning Multiple Values from a Single Extraction
 
@@ -1175,7 +1175,7 @@ below:
 
 NOTE: MapReduce is deprecated since Hazelcast 3.8. You can use
 <<fast-aggregations, Fast-Aggregations>> and https://jet.hazelcast.org/[Hazelcast Jet]
-for map aggregations and general data processing, respectively. Please see the
+for map aggregations and general data processing, respectively. See the
 <<mapreduce-deprecation, MapReduce Deprecation section>> for more details.
 
 You have likely heard about MapReduce ever since Google released its
@@ -1428,8 +1428,8 @@ that can be used to attach our callbacks or to wait for the result to be process
 blocking fashion.
 
 There are more options available for job configurations, such as defining a general chunk
-size or on what keys the operation will operate. For more information, please refer to
-the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Hazelcast source code for Job.java].
+size or on what keys the operation will operate. See Hazelcast source code for
+the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/mapreduce/Job.html[Job.java] for more information.
 
 ===== Creating Key-Value Input Sources with KeyValueSource
 
@@ -2007,7 +2007,7 @@ The benefits are:
 * simplified API
 * utilization of existing indexes.
 
-You can refer to <<fast-aggregations, Fast Aggregations>> for examples. If you
+See the <<fast-aggregations, Fast Aggregations section>> for examples. If you
 need a more powerful tool like MapReduce, then there is Hazelcast Jet!
 
 ===== Distributed Computation with Jet
@@ -2321,7 +2321,7 @@ the `aggregate` methods. Two overloaded methods are available that
 customize resource management of the
 underlying MapReduce framework by supplying a custom configured
 `com.hazelcast.mapreduce.JobTracker` instance. To find out how to
-configure the MapReduce framework, please see <<configuring-jobtracker, Configuring JobTracker>>.
+configure the MapReduce framework, see the <<configuring-jobtracker, Configuring JobTracker section>>.
 We will
 later see another way to configure the automatically used MapReduce framework
 if no special `JobTracker` is supplied.
@@ -2504,9 +2504,9 @@ the aggregation operation itself. It contains a set of
 MapReduce API implementations like `Mapper`, `Combiner`, `Reducer` and
 `Collator`. These implementations are normally unique to
 the chosen `Aggregation`. This interface can also be implemented with
-your aggregation operations based on MapReduce calls. For
-more information, refer to the
-<<implementing-aggregations, Implementing Aggregations section>>.
+your aggregation operations based on MapReduce calls. See the
+<<implementing-aggregations, Implementing Aggregations section>> for more
+information.
 
 The `com.hazelcast.mapreduce.aggregation.Aggregations` class provides
 a common predefined set of aggregations. This class
@@ -2973,7 +2973,7 @@ There are also the following callbacks:
 These callbacks enable releasing the state that might have been initialized and
 stored in the Aggregator - to reduce the network traffic.
 
-Each phase is described below and you can also refer to the
+Each phase is described below. See also the
 https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/aggregation/Aggregator.html[Aggregator Javadoc]
 for the API's details.
 
@@ -3091,7 +3091,7 @@ for the API's details.
 
 Projections are available on `com.hazelcast.core.IMap` only. IMap offers the method
 `project` to apply the projection logic on the map entries. This method can be called
-with or without a predicate. You can refer to its
+with or without a predicate. See its
 https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html#project-com.hazelcast.projection.Projection-[Javadoc]
 to see the method details.
 
@@ -3273,9 +3273,9 @@ Continuous query caches have the following configuration elements:
 value is true.
 * `predicate`: Predicate to filter events which are applied to the query cache.
 * `entry-listeners`: Adds listeners (listener classes) for your query cache entries.
-Please see the <<registering-map-listeners, Registering Map Listeners section>>.
+See the <<registering-map-listeners, Registering Map Listeners section>>.
 * `in-memory-format`: Type of the data to be stored in your query cache.
-Please see the <<setting-in-memory-format, Setting In-Memory Format section>>.
+See the <<setting-in-memory-format, Setting In-Memory Format section>>.
 Its default value is BINARY.
 * `populate`: Specifies whether the initial population of your query cache is
 enabled. Its default value is true.
@@ -3287,10 +3287,10 @@ buffer. Its default value is 0.
 batch to your query cache. Its default value is 1.
 * `buffer-size`: Maximum number of events which can be stored in a partition
 buffer. Its default value is 16.
-* `eviction`: Configuration for the eviction of your query cache. Please see the
+* `eviction`: Configuration for the eviction of your query cache. See the
 <<configuring-map-eviction, Configuring Map Eviction section>>.
 * `indexes`: Indexes for your query cache defined by using this element's `<index>`
-sub-elements. Please see the <<configuring-imap-indexes, Configuring IMap Indexes section>>.
+sub-elements. See the <<configuring-imap-indexes, Configuring IMap Indexes section>>.
 
 Please take the following configuration considerations and publishing logic into account:
 

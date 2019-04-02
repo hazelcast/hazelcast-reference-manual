@@ -85,13 +85,13 @@ And, the following are definitions of the configuration elements within `wan-pub
 
 * `name`: Name of your WAN Replication. This name is referenced in IMap or ICache configuration when you add WAN Replication for these data structures (using the element `wan-replication-ref` in the configuration of IMap or ICache).
 * `class-name`: Name of the class implementation for the WAN replication.
-* `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full. Please see the <<queue-full-behavior, Queue Full Behavior section>>.
-* `queue-capacity`: Size of the queue of events. Its default value is 10000. Please see the <<queue-capacity, Queue Capacity section>>.
-* `batch.size`: Maximum size of events that are sent to the target cluster in a single batch. Its default value is 500. Please see the <<batch-size, Batch Size section>>.
-* `batch.max.delay.millis`: Maximum amount of time, in milliseconds, to be waited before sending a batch of events in case `batch.size` is not reached. Its default value is 1000 milliseconds. Please see the <<batch-maximum-delay, Batch Maximum Delay section>>.
+* `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full. See the <<queue-full-behavior, Queue Full Behavior section>>.
+* `queue-capacity`: Size of the queue of events. Its default value is 10000. See the <<queue-capacity, Queue Capacity section>>.
+* `batch.size`: Maximum size of events that are sent to the target cluster in a single batch. Its default value is 500. See the <<batch-size, Batch Size section>>.
+* `batch.max.delay.millis`: Maximum amount of time, in milliseconds, to be waited before sending a batch of events in case `batch.size` is not reached. Its default value is 1000 milliseconds. See the <<batch-maximum-delay, Batch Maximum Delay section>>.
 * `snapshot.enabled`: When set to `true`, only the latest events (based on key) are selected and sent in a batch. Its default value is `false`.
-* `response.timeout.millis`: Time, in milliseconds, to be waited for the acknowledgment of a sent WAN event to target cluster. Its default value is 60000 milliseconds. Please see the <<response-timeout, Response Timeout section>>.
-* `ack.type`: Acknowledgment type for each target cluster. Please see the <<acknowledgment-types, Acknowledgment Types section>>.
+* `response.timeout.millis`: Time, in milliseconds, to be waited for the acknowledgment of a sent WAN event to target cluster. Its default value is 60000 milliseconds. See the <<response-timeout, Response Timeout section>>.
+* `ack.type`: Acknowledgment type for each target cluster. See the <<acknowledgment-types, Acknowledgment Types section>>.
 * `endpoints`: IP addresses and ports of the cluster members for which the WAN replication is implemented. These endpoints are not necessarily the entire target cluster and WAN does not perform the discovery of other members in the target cluster. It only expects that these IP addresses (or at least some of them) are available.
 * `group.password`: Configures target cluster's group password.
 
@@ -209,7 +209,7 @@ The other properties are the same as when using the `aws` element. In case of EC
 </hazelcast>
 ----
 
-You can refer to the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. The following are the definitions of additional configuration properties:
+See the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>> sections for the descriptions of above AWS configuration elements. The following are the definitions of additional configuration properties:
 
 * `discovery.period`: Period in seconds in which WAN tries to discover new endpoints and reestablish connections to failed endpoints. Default is 10 seconds.
 * `maxEndpoints`: Maximum number of endpoints that WAN connects to when using a discovery mechanism to define endpoints. Default is `Integer.MAX_VALUE`. This property has no effect when static endpoint IPs are defined using the `endpoints` property.
@@ -977,7 +977,7 @@ The next property you might lower is the `batch.max.delay.millis`. If you have a
 
 When tuning for lower latencies, configuring the `batch.size` usually has little effect, especially at lower mutation rates. At a low number of operations per second,  the event batches will usually be very small since the WAN replication thread will not be able to collect the full batch and respect the required latencies for replication. The `batch.size` property might have more effect at higher mutation rates. Here, you will probably want to use bigger batches to avoid paying for the latencies when sending lots of smaller batches, so try increasing the batch size and benchmarking at high load.
 
-There are a couple of other configuration values that you might try changing but it depends on your use case. The first one is adding a separate configuration for a WAN replication executor. Collecting of WAN event batches and processing the responses from the target endpoints are done on a shared executor. This executor is shared between the other parts of the Hazelcast system and all of the WAN replication publishers will use the same executor. In some cases, you might want to create a dedicated executor for all WAN replication publishers. The name of this executor is `hz:wan`. Below is an example of a concrete, dedicated executor for WAN replication. Please see the <<configuring-executor-service, Configuring Executor Service section>> for more information on the configuration options of the executor.
+There are a couple of other configuration values that you might try changing but it depends on your use case. The first one is adding a separate configuration for a WAN replication executor. Collecting of WAN event batches and processing the responses from the target endpoints are done on a shared executor. This executor is shared between the other parts of the Hazelcast system and all of the WAN replication publishers will use the same executor. In some cases, you might want to create a dedicated executor for all WAN replication publishers. The name of this executor is `hz:wan`. Below is an example of a concrete, dedicated executor for WAN replication. See the <<configuring-executor-service, Configuring Executor Service section>> for more information on the configuration options of the executor.
 
 [source,xml]
 ----
