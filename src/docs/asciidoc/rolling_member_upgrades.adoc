@@ -37,7 +37,7 @@ Let's assume a cluster with four members running on codebase version `3.12.0` wi
 `3.13.0` and cluster version `3.13`. The rolling upgrade process for this cluster, i.e., replacing existing `3.12.0` members one by one with an upgraded
 one at version `3.13.0`, includes the following steps which should be repeated for each member:
 
-* Shutdown gracefully an existing `3.12.0` member.
+* Gracefully shut down an existing `3.12.0` member.
 * Wait until all partition migrations are completed; during migrations, membership changes (member joins or removals) are not allowed.
 * Update the member with the new `3.13.0` Hazelcast binaries.
 * Start the member and wait until it joins the cluster. You should see something like the following in your logs:
@@ -60,14 +60,30 @@ You have the following options to upgrade the cluster version:
 
 * Using https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Management Center].
 * Using the <<using-the-script-cluster-sh, cluster.sh>> script.
-* Using the following system properties:
-** `hazelcast.cluster.version.auto.upgrade.enabled`: Specifies whether the automatic cluster version upgrading is enabled. Its default value is `false` (disabled).
-** `hazelcast.cluster.version.auto.upgrade.min.cluster.size`: When this property is set to a value greater than 1, automatic upgrading waits to reach that cluster size to proceed. Its default value is `1`.
+* Allow the cluster to auto-upgrade.
 
 NOTE: You need to upgrade your Management Center version *before* upgrading the member version if you want to
 change cluster version using Management Center. Management Center is compatible with the previous minor version of
 Hazelcast, starting with version 3.9. For example, Management Center 3.9 works with both Hazelcast IMDG
 3.8 and 3.9. To change your cluster version to 3.9, you need Management Center 3.9.
+
+=== Enable Auto-Upgrading
+
+The cluster can automatically upgrade its version. As soon as it detects 
+that all its members have a version higher than the current cluster 
+version, it will upgrade the cluster version to match it. This feature is
+disabled by default and to enable it, set the system property 
+`hazelcast.cluster.version.auto.upgrade.enabled` to `true`.
+
+There is one tricky detail here: as you're shutting down and upgrading 
+the members one by one, when you shut down the last one, all the members 
+in the remaining cluster have the newer version, but you don't want the 
+auto-upgrade to kick in before you have successfully upgraded the last
+member as well. To avoid this we provide another system property: 
+`hazelcast.cluster.version.auto.upgrade.min.cluster.size`. You should 
+set it to the size of your cluster, and then Hazelcast will wait for the
+last member to join before it can proceed with the auto-upgrade.
+
 
 [[network-partitions-and-rolling-upgrades]]
 === Network Partitions and Rolling Upgrades
