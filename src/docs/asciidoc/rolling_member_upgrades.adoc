@@ -67,23 +67,23 @@ change cluster version using Management Center. Management Center is compatible 
 Hazelcast, starting with version 3.9. For example, Management Center 3.9 works with both Hazelcast IMDG
 3.8 and 3.9. To change your cluster version to 3.9, you need Management Center 3.9.
 
-=== Enable Auto-Upgrading
+=== Enabling Auto-Upgrading
 
 The cluster can automatically upgrade its version. As soon as it detects 
 that all its members have a version higher than the current cluster 
-version, it will upgrade the cluster version to match it. This feature is
-disabled by default and to enable it, set the system property 
+version, it upgrades the cluster version to match it. This feature is
+disabled by default. To enable it, set the system property 
 `hazelcast.cluster.version.auto.upgrade.enabled` to `true`.
 
-There is one tricky detail here: as you're shutting down and upgrading 
+There is one tricky detail here: as you are shutting down and upgrading 
 the members one by one, when you shut down the last one, all the members 
 in the remaining cluster have the newer version, but you don't want the 
 auto-upgrade to kick in before you have successfully upgraded the last
-member as well. To avoid this we provide another system property: 
-`hazelcast.cluster.version.auto.upgrade.min.cluster.size`. You should 
+member as well. To avoid this, you can use the 
+`hazelcast.cluster.version.auto.upgrade.min.cluster.size` system
+property. You should 
 set it to the size of your cluster, and then Hazelcast will wait for the
 last member to join before it can proceed with the auto-upgrade.
-
 
 [[network-partitions-and-rolling-upgrades]]
 === Network Partitions and Rolling Upgrades
