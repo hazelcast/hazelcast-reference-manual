@@ -491,16 +491,35 @@ NOTE: Only EVICT_ALL event is fired for any registered listeners.
 
 [blue]*Hazelcast IMDG Enterprise*
 
-Hazelcast may use forced eviction in the cases when the eviction explained in <<understanding-map-eviction, Understanding Map Eviction>> is not enough to free up your memory. Note that this is valid if you are using [blue]*Hazelcast IMDG Enterprise* and you set your in-memory format to `NATIVE`.
+Hazelcast may use forced eviction in the cases when the eviction
+explained in <<understanding-map-eviction, Understanding Map Eviction>>
+is not enough to free up your memory. Note that this is valid if
+you are using [blue]*Hazelcast IMDG Enterprise* and you set your
+in-memory format to `NATIVE`.
 
-The forced eviction mechanism is explained below as steps in the given order:
+The forced eviction mechanism is explained below as steps in the
+given order:
 
-* When the normal eviction is not enough, forced eviction is triggered and first it tries to evict approx. 20% of the entries from the current partition. It retries this five times.
-* If the result of above step is still not enough, forced eviction applies the above step to all maps. This time it might perform eviction from some other partitions too, provided that they are owned by the same thread.
-* If that is still not enough to free up your memory, it evicts not the 20% but all the entries from the current partition.
-* If that is not enough, it will evict all the entries from the other data structures; from the partitions owned by the local thread.
+* When the normal eviction is not enough, forced eviction is
+triggered and first it tries to evict approx. 20% of the entries
+from the current partition. It retries this five times.
+* If the result of above step is still not enough, forced eviction
+applies the above step to all maps. This time it might perform eviction
+from some other partitions too, provided that they are owned by the same
+thread.
+* If that is still not enough to free up your memory, it evicts not the
+20% but all the entries from the current partition.
+* If that is not enough, it will evict all the entries from the other
+data structures; from the partitions owned by the local thread.
 
-Finally, when all the above steps are not enough, Hazelcast throws a  Native Out of Memory Exception.
+Finally, when all the above steps are not enough, Hazelcast throws
+a native `OutOfMemoryException`.
+
+When you have an evictable cache/map, you should safely put
+entries to it without facing with any memory shortages.
+Forced eviction helps to achieve this. Regular eviction 
+removes one entry at a time while forced eviction can remove
+multiple entries, which can even be owned by another caches/maps.
 
 [[custom-eviction-policy]]
 ===== Custom Eviction Policy
