@@ -453,12 +453,13 @@ See the <<starting-the-member-and-client, Starting the Member and Client section
 |`hazelcast.master.confirmation.interval.seconds`
 | 30
 | int
-| Interval at which members send master confirmation. This property is deprecated as of this (3.10) release.
+| Interval at which confirmations are sent to the oldest member
+by the other cluster member. This property is deprecated as of Hazelcast IMDG 3.10.
 
 |`hazelcast.mastership.claim.member.list.version.increment`
 |25
 |int
-| Hazelcast master member (oldewst in the cluster) increments the member list version for each joining member. Then, these member list versions are used to identify the joined members with unique integers. For this algorithm to work under network partitioning scenarios, without generating duplicate member list join versions for different members, a mastership-claiming member increments the member list version as specified by this parameter, multiplied by its position in the member list. The value of the parameter must be bigger than the cluster size.
+| The oldest member in the Hazelcast cluster increments the member list version for each joining member. Then, these member list versions are used to identify the joined members with unique integers. For this algorithm to work under network partitioning scenarios, without generating duplicate member list join versions for different members, a mastership-claiming member increments the member list version as specified by this parameter, multiplied by its position in the member list. The value of the parameter must be bigger than the cluster size.
 
 |`hazelcast.mastership.claim.timeout.seconds`
 | 120

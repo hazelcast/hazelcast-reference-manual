@@ -1155,9 +1155,9 @@ You can also define your member attributes through declarative configuration and
 
 To prevent data loss when shutting down a cluster member, Hazelcast provides a graceful shutdown feature. You perform this shutdown by calling the method `HazelcastInstance.shutdown()`.
 
-Starting with Hazelcast 3.7, the master member migrates all of the replicas owned by the shutdown-requesting member to the other running (not initiated shutdown) cluster members. After these migrations are completed, the shutting down member will not be the owner or a backup of any partition anymore. It means that you can shutdown any number of Hazelcast members in a cluster concurrently with no data loss.
+The oldest cluster member migrates all of the replicas owned by the shutdown-requesting member to the other running (not initiated shutdown) cluster members. After these migrations are completed, the shutting down member will not be the owner or a backup of any partition anymore. It means that you can shutdown any number of Hazelcast members in a cluster concurrently with no data loss.
 
-Please note that the process of shutting down members waits for a predefined amount of time for the master to migrate their partition replicas. You can specify this graceful shutdown timeout duration using the property `hazelcast.graceful.shutdown.max.wait`. Its default value is 10 minutes. If migrations are not completed within this duration, shutdown may continue non-gracefully and lead to data loss. Therefore, you should choose your own timeout duration considering the size of data in your cluster.
+Please note that the process of shutting down members waits for a predefined amount of time for the oldest member to migrate their partition replicas. You can specify this graceful shutdown timeout duration using the property `hazelcast.graceful.shutdown.max.wait`. Its default value is 10 minutes. If migrations are not completed within this duration, shutdown may continue non-gracefully and lead to data loss. Therefore, you should choose your own timeout duration considering the size of data in your cluster.
 
 ===== Ensuring Safe State with PartitionService
 
@@ -1295,7 +1295,7 @@ It shows the slow operations and invocations, See the <<slowoperationdetector , 
 
 ===== Invocations
 
-It shows all kinds of statistics about current and past invocations including current pending invocations, history of invocations and slow history, i.e., all samples where the invocation took more than the defined threshold.  Slow history does not only include the invocations where the operations took a lot of time, but it also includes any other invocations that have been obstructed.
+It shows all kinds of statistics about current and past invocations including current pending invocations, history of invocations and slow history, i.e., all samples where the invocation took more than the defined threshold. Slow history does not only include the invocations where the operations took a lot of time, but it also includes any other invocations that have been obstructed.
 
 Using the following properties, you can configure the frequency of scanning all pending invocations and the threshold that makes an invocation to be considered as slow:
 
@@ -1304,7 +1304,7 @@ Using the following properties, you can configure the frequency of scanning all 
 
 ===== HazelcastInstance
 
-It shows the basic state of your Hazelcast cluster including the count and addresses of current members and the address of master member. It is useful to get a fast impression of the cluster without needing to analyze a lot of data.
+It shows the basic state of your Hazelcast cluster including the count and addresses of current members and the address of oldest cluster member. It is useful to get a fast impression of the cluster without needing to analyze a lot of data.
 
 You can configure the frequency at which the cluster information is dumped to the log file using the following property:
 

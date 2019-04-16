@@ -480,7 +480,7 @@ Wipes and resets the whole CP subsystem and initializes it as if the Hazelcast c
 +
 After this method is called, all CP state and data are wiped and the CP members start with empty state.
 +
-This method can be invoked only from the Hazelcast master member. Moreover, the Hazelcast cluster must have at least `CPSubsystemConfig.getCPMemberCount()` members.
+This method can be invoked only from the oldest member in the Hazelcast cluster. Moreover, the Hazelcast cluster must have at least `CPSubsystemConfig.getCPMemberCount()` members.
 +
 This method must not be called while there are membership changes in the cluster. Before calling this method, please make sure that there is no new member joining and all existing Hazelcast members have seen the same member list.
 +
