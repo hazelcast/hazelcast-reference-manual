@@ -727,7 +727,18 @@ Hazelcast supports read-through, write-through and write-behind persistence mode
 [[using-read-through-persistence]]
 ===== Using Read-Through Persistence
 
-If an entry does not exist in memory when an application asks for it, Hazelcast asks the loader implementation to load that entry from the data store.  If the entry exists there, the loader implementation gets it, hands it to Hazelcast, and Hazelcast puts it into memory. This is read-through persistence mode.
+If an entry does not exist in memory when an application asks for it,
+Hazelcast asks the loader implementation to load that entry from the
+data store.  If the entry exists there, the loader implementation gets it,
+hands it to Hazelcast, and Hazelcast puts it into memory. This is read-through
+persistence mode.
+
+As you can remember from the introduction of this section, the `IMap.get()` method
+triggers the `load()` method in your MapLoader implementation if an entry does not
+exist in the memory. In this case, note that the `IMap.get()` method does not create
+backup copies for such entries, when the mode is read-through persistence: there is no
+need for backups for these entries since if the primary entry is lost, then a read for
+the key triggers the `load()` method and loads the entry from the persistence layer.
 
 [[setting-write-through-persistence]]
 ===== Setting Write-Through Persistence
