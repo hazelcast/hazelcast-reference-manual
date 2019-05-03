@@ -380,7 +380,7 @@ If this is a concern in your application, use `/dev/random` instead.
 
 Another way to increase performance for the Java smart client is to make use of Hazelcast 3.8. In Hazelcast 3.8, the Java smart client
 automatically makes use of extra I/O threads for encryption/decryption and this have a significant impact on the performance. This can
-be changed using the `hazelcast.client.io.input.thread.count` and `hazelcast.client.io.input.thread.count` client system properties.
+be changed using the `hazelcast.client.io.input.thread.count` and `hazelcast.client.io.output.thread.count` client system properties.
 By default it is 1 input thread and 1 output thread. If TLS/SSL is enabled, it defaults to 3 input threads and 3 output threads.
 Having more client I/O threads than members in the cluster does not lead to an increased performance. So with a 2-member cluster,
 2 in and 2 out threads give the best performance.
