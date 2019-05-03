@@ -69,7 +69,7 @@ public class HostsDiscoveryStrategy extends AbstractDiscoveryStrategy {
             String address = sliceAddress(assignment);
             String hostname = sliceHostname(assignment);
 
-            Map<String, Object> attributes = Collections.<String, Object>singletonMap("hostname", hostname);
+            Map<String, String> attributes = Collections.singletonMap("hostname", hostname);
 
             InetAddress inetAddress = mapToInetAddress(address);
             Address addr = new Address(inetAddress, NetworkConfig.DEFAULT_PORT);
