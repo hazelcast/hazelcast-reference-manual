@@ -33,7 +33,7 @@ List<String> results = pipelining.results();
 
 In the above example, we make 100 asynchronous `map.getAsync()` calls, but the maximum number of inflight calls is 10.
 
-By increasing the debt of the pipelining, throughput can be increased. The pipelining has its own back pressure, you do not
+By increasing the depth of the pipelining, throughput can be increased. The pipelining has its own back pressure, you do not
 need to enable the <<back-pressure, back pressure>> on the client or member to have this feature on the pipelining. However, if you have many
 pipelines, you may still need to enable the client/member back pressure because it is possible to overwhelm the system
 with requests in that situation. See the <<back-pressure, Back Pressure section>> to learn how to enable it on the client or member.
