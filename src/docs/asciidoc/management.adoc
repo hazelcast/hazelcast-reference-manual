@@ -1098,11 +1098,11 @@ public class ExampleMemberAttributes {
 
     public static void main(String[] args) {
         MemberAttributeConfig fourCore = new MemberAttributeConfig();
-        memberAttributeConfig.setIntAttribute( "CPU_CORE_COUNT", 4 );
+        memberAttributeConfig.setAttribute( "CPU_CORE_COUNT", "4" );
         MemberAttributeConfig twelveCore = new MemberAttributeConfig();
-        memberAttributeConfig.setIntAttribute( "CPU_CORE_COUNT", 12 );
+        memberAttributeConfig.setAttribute( "CPU_CORE_COUNT", "12" );
         MemberAttributeConfig twentyFourCore = new MemberAttributeConfig();
-        memberAttributeConfig.setIntAttribute( "CPU_CORE_COUNT", 24 );
+        memberAttributeConfig.setAttribute( "CPU_CORE_COUNT", "24" );
 
         Config member1Config = new Config();
         config.setMemberAttributeConfig( fourCore );
@@ -1120,7 +1120,7 @@ public class ExampleMemberAttributes {
         executorService.execute( new CPUIntensiveTask(), new MemberSelector() {
             @Override
             public boolean select(Member member) {
-                int coreCount = (int) member.getIntAttribute( "CPU_CORE_COUNT" );
+                int coreCount = Integer.parseInt(member.getAttribute( "CPU_CORE_COUNT" ));
                 // Task will be executed at either member2 or member3
                 if ( coreCount > 8 ) {
                     return true;
@@ -1131,7 +1131,7 @@ public class ExampleMemberAttributes {
 
         HazelcastInstance member4 = Hazelcast.newHazelcastInstance();
         // We can also set member attributes at runtime.
-        member4.setIntAttribute( "CPU_CORE_COUNT", 2 );
+        member4.setAttribute( "CPU_CORE_COUNT", "2" );
     }
 }
 ----
