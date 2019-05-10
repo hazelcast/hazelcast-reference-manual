@@ -2,9 +2,11 @@
 [appendix]
 == Migration Guides
 
-This appendix provides information on compatibility related changes for Hazelcast IMDG releases.
+This appendix provides guidelines when upgrading to a new Hazelcast IMDG version.
+See also the https://docs.hazelcast.org/docs/rn/index.html[release notes] documents
+for any changes to the features.
 
-=== Hazelcast IMDG 3.8.x
+=== Upgrading to Hazelcast IMDG 3.8.x
 
 * **Introducing <wan-publisher> element**: The configuration element `<target-cluster>` has been replaced with the element `<wan-publisher>` in WAN replication configuration.
 * **WaitNotifyService** interface has been renamed as **OperationParker**.
@@ -13,7 +15,7 @@ This appendix provides information on compatibility related changes for Hazelcas
 * **`JCache usage`:** Due to a compatibility problem, `CacheConfig` serialization may not work if your member is 3.8.x where x < 5. You need to use the 3.8.5 or higher versions where the problem is fixed.
 
 
-=== Hazelcast IMDG 3.7.x
+=== Upgrading to Hazelcast IMDG 3.7.x
 
 * **Important note about Hazelcast System Properties:** Even Hazelcast has not been recommending the usage of `GroupProperties.java` class while benefiting from system properties, there has been a change to inform to the users who have been using this class: the class `GroupProperties.java` has been replaced by `GroupProperty.java`.
 In this new class, system properties are instances of the newly introduced `HazelcastProperty` object. You can access the names of these properties by calling the `getName()` method of `HazelcastProperty`.
@@ -30,7 +32,7 @@ In order to upgrade a 3.6.x cluster and clients to 3.7.3 (or later), you need to
 You may use any of the supported ways as described in the <<system-properties, System Properties section>> to configure the compatibility option. When done upgrading your cluster and clients, you may remove the compatibility property from your Hazelcast member configuration.
 * The `eviction-percentage` and `min-eviction-check-millis` elements are deprecated. They are ignored if configured, since the map eviction is based on the sampling of entries. See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
-=== Hazelcast IMDG 3.6.x
+=== Upgrading to Hazelcast IMDG 3.6.x
 
 * **Introducing new configuration options for WAN replication:** WAN replication related system properties, which are configured on a per member basis, can now be configured per target cluster. The following system properties are no longer valid.
 ** `hazelcast.enterprise.wanrep.batch.size`, see the <<batch-size, Batch Size section>>.
@@ -41,12 +43,12 @@ You may use any of the supported ways as described in the <<system-properties, S
 * **Change in the Custom Serialization in the C++ Client Distribution**: Before, the method `getTypeId()` was used to retrieve the ID of the object to be serialized. With this release, the method `getHazelcastTypeId()` is used and you give your object as a parameter to this new method. Also, `getTypeId()` was used in your custom serializer class; it has been renamed to `getHazelcastTypeId()`, too.
 * The `LOCAL` transaction type has been deprecated. Use `ONE_PHASE` for the Hazelcast IMDG releases 3.6 and higher.
 
-=== Hazelcast IMDG 3.5.x
+=== Upgrading to Hazelcast IMDG 3.5.x
 
 * **Introducing the `spring-aware` element:** Hazelcast used `SpringManagedContext` to scan `SpringAware` annotations by default. This was causing some performance overhead for the users who do not use `SpringAware`. With this release, `SpringAware` annotations are disabled by default. By introducing the `spring-aware` element, it is possible to enable it by adding the `<hz:spring-aware />` tag to the configuration. See the <<integration-with-spring, Spring Integration section>>.
 
 
-=== Hazelcast IMDG 3.0.x
+=== Upgrading to Hazelcast IMDG 3.0.x
 
 * **Removal of deprecated static methods:** The static methods of Hazelcast class reaching Hazelcast data components have been removed. The functionality of these methods can be reached from the `HazelcastInstance` interface. You should replace the following:
 +
