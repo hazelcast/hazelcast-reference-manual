@@ -17,22 +17,27 @@ the specification document (which is also the main documentation for functionali
 
 ==== Supported JCache Versions
 
-Two versions of the JCache specification have been released:
+Three versions of the JCache specification have been released:
 
-* The original release, version 1.0.0, was released in March 2014. Hazelcast versions 3.3.1 up to 3.9.2 (included) implement version 1.0.0 of the JCache specification. 
+* The original release, version 1.0.0, was released in March 2014. Hazelcast versions 3.3.1 up to 3.9.2 (included) implement version 1.0.0 of the JCache specification.
 * A maintenance release, version 1.1.0 was released in December 2017. Hazelcast version 3.9.3 and higher implement JCache specification version 1.1.0.
- 
-JCache 1.1.0 is backwards compatible with JCache 1.0.0. As a maintenance release, it introduces clarifications and bug fixes in the specification, reference implementation
-and TCK, without introducing any additional features. 
- 
+* A bug-fix patch release, version 1.1.1 was released in May 2019. Hazelcast version 3.12.1 and higher implement JCache 1.1.1.
+
+JCache 1.1.x versions are backwards compatible with JCache 1.0.0. As maintenance releases, JCache 1.1.x versions introduce clarifications and bug fixes in the specification, reference implementation
+and TCK, without introducing any additional features.
+
+==== Upgrading from JCache 1.1.0 to 1.1.1
+
+JCache 1.1.1 is a bug fix only release. There are no behavioral differences between JCache 1.1.0 and JCache 1.1.1 specification.
+
 ==== Upgrading from JCache 1.0.0 to 1.1.0
- 
+
 When upgrading from a Hazelcast version which implements JCache 1.0.0 to a version that implements version 1.1.0 of the specification, some behavioral differences must be taken into account:
 
 * Invoking `CacheManager.getCacheNames` on a closed `CacheManager` returns an empty iterator under JCache 1.0.0. While under JCache 1.1.0, it throws `IllegalStateException`.
 * Runtime type checking is removed from `CacheManager.getCache(String)`, so when using JCache 1.1.0 one may obtain a `Cache` by name even when its configured key/value types are not known.
 * Statistics effects of `Cache.putIfAbsent` on misses and hits are properly applied when using JCache 1.1.0, while under JCache 1.0.0 misses and hits were not updated.
- 
-Note that these behavioral differences apply on the Hazelcast member that executes the operation. Thus when performing a rolling member upgrade from a JCache 1.0.0-compliant Hazelcast version to a newer Hazelcast version that supports JCache 1.1.0, operations executed on the new members exhibit JCache 1.1.0 behavior while those executed on old members implement JCache 1.0.0 behavior.  
+
+Note that these behavioral differences apply on the Hazelcast member that executes the operation. Thus when performing a rolling member upgrade from a JCache 1.0.0-compliant Hazelcast version to a newer Hazelcast version that supports JCache 1.1.0, operations executed on the new members exhibit JCache 1.1.0 behavior while those executed on old members implement JCache 1.0.0 behavior.
 
 The complete list of issues addressed in JCache specification version 1.1.0 is https://github.com/jsr107/jsr107spec/milestone/2?closed=1[available on Github].
