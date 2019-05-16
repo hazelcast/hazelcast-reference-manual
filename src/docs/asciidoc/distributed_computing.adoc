@@ -583,7 +583,7 @@ The link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.
 * `executeOnEntries` processes all entries in a map.
 * `executeOnEntries` can also process all entries in a map with a defined predicate.
 
-When using the `executeOnEntries` method, if the number of entries is high and you need the results, then returning null with the `process()` method is a good practice. This method is offered by the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface^]. By returning null, results of the processing is not stored in the map and thus out of memory errors are eliminated.
+When using the `executeOnEntries` method, if the number of entries is high and you do not need the results, then returning null with the `process()` method is a good practice. This method is offered by the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface^]. By returning null, results of the processing is not stored in the map and thus out of memory errors are eliminated.
 
 If you want to execute a task on a single key, you can also use `executeOnKeyOwner` provided by link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IExecutorService.html#executeOnKeyOwner-java.lang.Runnable-java.lang.Object-[IExecutorService^]. However, in this case you need to perform a lock and serialization.
 
