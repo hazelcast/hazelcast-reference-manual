@@ -230,8 +230,61 @@ Its output is similar to the following:
 < Content-Type: text/plain
 < Content-Length: 187
 <
-licenseInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,"companyName":"ExampleCompany","ownerEmail":"info@example.com","keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="}
+licenseInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,
+"companyName":"ExampleCompany","ownerEmail":"info@example.com",
+"keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="}
 ```
+
+[[rest-update-license]]To update the license of a running cluster, you can issue a `POST`
+request through the REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using
+the REST Endpoint Groups section>>) on the `/license` as shown below:
+
+```
+curl --data "${CLUSTERNAME}&${PASSWORD}&${LICENSE}" http://localhost:5001/hazelcast/rest/license
+```
+
+NOTE: The request parameters must be properly URL-encoded as described in the <<rest-client, REST Client section>>.
+
+The above command updates the license on all running Hazelcast members of the cluster.
+If successful, the response looks as follows:
+
+```
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 5001 (#0)
+> POST /hazelcast/rest/license HTTP/1.1
+> Host: 127.0.0.1:5001
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Length: 164
+> Content-Type: application/x-www-form-urlencoded
+>
+* upload completely sent off: 164 out of 164 bytes
+< HTTP/1.1 200 OK
+< Content-Type: application/javascript
+< Content-Length: 364
+<
+* Connection #0 to host 127.0.0.1 left intact
+{"status":"success","licenseInfo":{"expiryDate":1560380399161,"maxNodeCount":10,
+"type":-1,"companyName":"ExampleCompany","ownerEmail":"info@example.com",
+"keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="},
+"message":"License updated at run time - please make sure to update the license
+in the persistent configuration to avoid losing the changes on restart."}
+```
+
+As the message in the above example indicates, the license is updated only at runtime.
+The persistent configuration of each member needs to be updated manually to ensure that
+the license change is not lost on restart. The same message is logged as a warning in
+each member's log.
+
+It is only possible to update to a license that expires at the same time or after
+the current license. The new license must allow the exact same list of features and
+the same number of members.
+
+If, for any reason, updating the license fails on some member (member does not respond,
+license is not compatible, etc.), the whole operation fails, leaving the cluster in
+a potentially inconsistent state (some members have been switched to the new license
+while some have not). It is up to you to resolve this situation manually.
 
 ===== Logs
 
@@ -547,7 +600,7 @@ to learn the usage of this script.
 * `cp-subsystem.sh`: Provides access to the CP subsystem management APIs
 using the REST interface.
 See the <<cp-subsystem-management-apis, CP Subsystem Management APIs section>>.
-* `healthcheck.sh`: Provides basic information about your clusters 
+* `healthcheck.sh`: Provides basic information about your clusters
 such as the state and size.
 See the <<health-check-script, Using the healthcheck.sh Script section>>.
 
