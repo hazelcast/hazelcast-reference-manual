@@ -203,13 +203,15 @@ Its output is similar to the following:
 licenseInfo{"expiryDate":1560380399161,"maxNodeCount":10,"type":-1,"companyName":"ExampleCompany","ownerEmail":"info@example.com","keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="}
 ```
 
-To update the license of a running cluster, you can issue a `POST` request through the REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups>> section) on the `/license` (note that the request parameters must be properly URL-encoded as described in <<rest-client, REST Client>>):
+[[rest-update-license]]To update the license of a running cluster, you can issue a `POST` request through the REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>>) on the `/license` as shown below:
 
 ```
 curl --data "${GROUPNAME}&${PASSWORD}&${LICENSE}" http://localhost:5001/hazelcast/rest/license
 ```
 
-This command will update the license on all running Hazelcast members of the cluster. If successful, the response will look as follows:
+NOTE: The request parameters must be properly URL-encoded as described in the <<rest-client, REST Client section>>.
+
+The above command updates the license on all running Hazelcast members of the cluster. If successful, the response looks as follows:
 
 ```
 *   Trying 127.0.0.1...
@@ -233,9 +235,10 @@ This command will update the license on all running Hazelcast members of the clu
 
 As the message in the above example indicates, the license is updated only at runtime. The persistent configuration of each member needs to be updated manually to ensure that the license change is not lost on restart. The same message is logged as a warning in each member's log.
 
-It is only possible to update to a license that expires at the same time or after the current license. The new license must allow the exact same list of features and the same number of nodes.
+It is only possible to update a license that expires at the same time or after the current license. The new license must allow the exact same list of features and the same number of members.
 
-If, for any reason, updating the license fails on some member (member does not respond, license not compatible, etc.), the whole operation will fail, leaving the cluster in a potentially inconsistent state (some members have been switched to the new license while some have not). It is up to the user to resolve this situation manually.
+If, for any reason, updating the license fails on some member (member does not respond, license is not compatible, etc.), the whole operation
+fails, leaving the cluster in a potentially inconsistent state (some members have been switched to the new license while some have not). It is up to you to resolve this situation manually.
 
 ===== Logs
 
