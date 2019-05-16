@@ -2,13 +2,25 @@
 [[distributed-events]]
 == Distributed Events
 
-You can register for Hazelcast entry events so you are notified when those events occur. Event listeners are cluster-wide: when a listener is registered in one member of cluster, it is actually registered for the events that originated at any member in the cluster. When a new member joins, events originated at the new member are also delivered.
+You can register for Hazelcast entry events so you are notified
+when those events occur. Event listeners are cluster-wide: when a
+listener is registered in one member of cluster, it is actually
+registered for the events that originated at any member in the cluster.
+When a new member joins, events originated at the new member are also delivered.
 
-An event is created only if you registered an event listener. If no listener is registered, then no event is created. If you provided a predicate when you registered the event listener, pass the predicate before sending the event to the listener (member/client).
+An event is created only if you registered an event listener. If no listener
+is registered, then no event is created. If you provided a predicate
+when you registered the event listener, pass the predicate before sending
+the event to the listener (member/client).
 
-As a rule of thumb, your event listener should not implement heavy processes in its event methods that block the thread for a long time. If needed, you can use `ExecutorService` to transfer long running processes to another thread and thus offload the current listener thread.
+As a rule of thumb, your event listener should not implement heavy processes
+in its event methods that block the thread for a long time. If needed, you can
+use `ExecutorService` to transfer long running processes to another thread and
+thus offload the current listener thread.
 
-NOTE: In a failover scenario, events are not highly available and may get lost. However, you can perform workarounds such as configuring the event queue capacity as explained in the <<global-event-configuration, Global Event Configuration section>>.
+NOTE: In a failover scenario, events are not highly available and may get lost.
+However, you can perform workarounds such as configuring the event queue capacity
+as explained in the <<global-event-configuration, Global Event Configuration section>>.
 
 
 Hazelcast offers the following event listeners.
@@ -46,13 +58,17 @@ For Hazelcast clients:
 [[listening-for-member-events]]
 ==== Listening for Member Events
 
-The Membership Listener interface has methods that are invoked for the following events:
+The Membership Listener interface has methods that are invoked
+for the following events:
 
 * `memberAdded`: A new member is added to the cluster.
 * `memberRemoved`: An existing member leaves the cluster.
-* `memberAttributeChanged`: An attribute of a member is changed. See the <<defining-member-attributes, Defining Member Attributes section>> to learn about member attributes.
+* `memberAttributeChanged`: An attribute of a member is changed.
+See the <<defining-member-attributes, Defining Member Attributes section>>
+to learn about member attributes.
 
-To write a Membership Listener class, you implement the MembershipListener interface and its methods.
+To write a Membership Listener class, you implement the MembershipListener
+interface and its methods.
 
 The following is an example Membership Listener class.
 
@@ -61,12 +77,15 @@ The following is an example Membership Listener class.
 include::{javasource}/distributedevents/ClusterMembershipListener.java[tag=cml]
 ----
 
-When a respective event is fired, the membership listener outputs the addresses of the members that joined and left, and also which attribute changed on which member.
+When a respective event is fired, the membership listener outputs the
+addresses of the members that joined and left, and also which attribute
+changed on which member.
 
 [[registering-membership-listeners]]
 ===== Registering Membership Listeners
 
-After you create your class, you can configure your cluster to include the membership listener. Below is an example using the method `addMembershipListener`.
+After you create your class, you can configure your cluster to include the
+membership listener. Below is an example using the method `addMembershipListener`.
 
 [source,java]
 ----
@@ -74,7 +93,11 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getCluster().addMembershipListener( new ClusterMembershipListener() );
 ----
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events
+between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register
+listeners in the configuration. You can register listeners using declarative,
+programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -114,7 +137,10 @@ The following is an example of the equivalent Spring configuration.
 [[listening-for-distributed-object-events]]
 ==== Listening for Distributed Object Events
 
-The Distributed Object Listener methods `distributedObjectCreated` and `distributedObjectDestroyed` are invoked when a distributed object is created and destroyed throughout the cluster. To write a Distributed Object Listener class, you implement the DistributedObjectListener interface and its methods.
+The Distributed Object Listener methods `distributedObjectCreated` and
+`distributedObjectDestroyed` are invoked when a distributed object is
+created and destroyed throughout the cluster. To write a Distributed Object
+Listener class, you implement the DistributedObjectListener interface and its methods.
 
 The following is an example Distributed Object Listener class.
 
@@ -123,12 +149,17 @@ The following is an example Distributed Object Listener class.
 include::{javasource}/distributedevents/ExampleDistObjListener.java[tag=distobjlistener]
 ----
 
-When a respective event is fired, the distributed object listener outputs the event type, the object name and a service name (for example, for a Map object the service name is `"hz:impl:mapService"`).
+When a respective event is fired, the distributed object listener
+outputs the event type, the object name and a service name
+(for example, for a Map object the service name is `"hz:impl:mapService"`).
 
 [[registering-distributed-object-listeners]]
 ===== Registering Distributed Object Listeners
 
-After you create your class, you can configure your cluster to include distributed object listeners. Below is an example using the method `addDistributedObjectListener`. You can also see this portion in the above class creation.
+After you create your class, you can configure your cluster to
+include distributed object listeners. Below is an example using
+the method `addDistributedObjectListener`. You can also see this
+portion in the above class creation.
 
 [source,java]
 ----
@@ -138,7 +169,11 @@ ExampleDistObjListener example = new ExampleDistObjListener();
 hazelcastInstance.addDistributedObjectListener( example );
 ----
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events
+between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register
+the listeners in the configuration. You can register listeners using
+declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -177,13 +212,15 @@ The following is an example of the equivalent Spring configuration.
 [[listening-for-migration-events]]
 ==== Listening for Migration Events
 
-The Migration Listener interface has methods that are invoked for the following events:
+The Migration Listener interface has methods that are invoked
+for the following events:
 
 * `migrationStarted`: A partition migration is started.
 * `migrationCompleted`: A partition migration is completed.
 * `migrationFailed`: A partition migration failed.
 
-To write a Migration Listener class, you implement the MigrationListener interface and its methods.
+To write a Migration Listener class, you implement the MigrationListener
+interface and its methods.
 
 The following is an example Migration Listener class.
 
@@ -193,7 +230,9 @@ include::{javasource}/distributedevents/ClusterMigrationListener.java[tag=clstrm
 ----
 
 
-When a respective event is fired, the migration listener outputs the partition ID, status of the migration, the old member and the new member. The following is an example output.
+When a respective event is fired, the migration listener outputs
+the partition ID, status of the migration, the old member and the
+new member. The following is an example output.
 
 ```
 Started: MigrationEvent{partitionId=98, oldOwner=Member [127.0.0.1]:5701,
@@ -202,7 +241,8 @@ newOwner=Member [127.0.0.1]:5702 this}
 
 ===== Registering Migration Listeners
 
-After you create your class, you can configure your cluster to include migration listeners. Below is an example using the method `addMigrationListener`.
+After you create your class, you can configure your cluster to include
+migration listeners. Below is an example using the method `addMigrationListener`.
 
 [source,java]
 ----
@@ -212,7 +252,11 @@ PartitionService partitionService = hazelcastInstance.getPartitionService();
 partitionService.addMigrationListener( new ClusterMigrationListener() );
 ----
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events
+between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register
+the listeners in the configuration. You can register listeners using
+declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -251,19 +295,36 @@ The following is an example of the equivalent Spring configuration.
 [[listening-for-partition-lost-events]]
 ==== Listening for Partition Lost Events
 
-Hazelcast provides fault-tolerance by keeping multiple copies of your data. For each partition, one of your cluster members becomes the owner and some of the other members become replica members, based on your configuration. Nevertheless, data loss may occur if a few members crash simultaneously.
+Hazelcast provides fault-tolerance by keeping multiple copies of your data.
+For each partition, one of your cluster members becomes the owner and
+some of the other members become replica members, based on your configuration.
+Nevertheless, data loss may occur if a few members crash simultaneously.
 
-Let's consider the following example with three members: N1, N2, N3 for a given partition-0. N1 is owner of partition-0. N2 and N3 are the first and second replicas respectively. If N1 and N2 crash simultaneously, partition-0 loses its data that is configured with less than two backups.
-For instance, if we configure a map with one backup, that map loses its data in partition-0 since both owner and first replica of partition-0 have crashed. However, if we configure our map with two backups, it does not lose any data since a copy of partition-0's data for the given map
+Let's consider the following example with three members: N1, N2, N3 for
+a given partition-0. N1 is owner of partition-0. N2 and N3 are the first
+and second replicas respectively. If N1 and N2 crash simultaneously,
+partition-0 loses its data that is configured with less than two backups.
+For instance, if we configure a map with one backup, that map loses its
+data in partition-0 since both owner and first replica of partition-0 have
+crashed. However, if we configure our map with two backups, it does not
+lose any data since a copy of partition-0's data for the given map
 also resides in N3.
 
-The Partition Lost Listener notifies for possible data loss occurrences with the information of how many replicas are lost for a partition. It listens to `PartitionLostEvent` instances. Partition lost events are dispatched per partition.
+The Partition Lost Listener notifies for possible data loss occurrences
+with the information of how many replicas are lost for a partition. It
+listens to `PartitionLostEvent` instances. Partition lost events are
+dispatched per partition.
 
-Partition loss detection is done after a member crash is detected by the other members and the crashed member is removed from the cluster. Please note that false-positive `PartitionLostEvent` instances may be fired on the network split errors.
+Partition loss detection is done after a member crash is detected by the
+other members and the crashed member is removed from the cluster.
+Please note that false-positive `PartitionLostEvent` instances may be
+fired on the network split errors.
 
 ===== Writing a Partition Lost Listener Class
 
-To write a Partition Lost Listener, you implement the PartitionLostListener interface and its `partitionLost` method, which is invoked when a partition loses its owner and all backups.
+To write a Partition Lost Listener, you implement the PartitionLostListener
+interface and its `partitionLost` method, which is invoked when a partition
+loses its owner and all backups.
 
 The following is an example Partition Lost Listener class.
 
@@ -277,7 +338,9 @@ public class ConsoleLoggingPartitionLostListener implements PartitionLostListene
 }
 ----
 
-When a `PartitionLostEvent` is fired, the partition lost listener given above outputs the partition ID, the replica index that is lost and the member that has detected the partition loss. The following is an example output.
+When a `PartitionLostEvent` is fired, the partition lost listener given
+above outputs the partition ID, the replica index that is lost and the
+member that has detected the partition loss. The following is an example output.
 
 ```
 com.hazelcast.partition.PartitionLostEvent{partitionId=242, lostBackupCount=0,
@@ -286,7 +349,9 @@ eventSource=Address[192.168.2.49]:5701}
 
 ===== Registering Partition Lost Listeners
 
-After you create your class, you can configure your cluster programmatically or declaratively to include the partition lost listener. Below is an example of its programmatic configuration.
+After you create your class, you can configure your cluster programmatically
+or declaratively to include the partition lost listener. Below is an example
+of its programmatic configuration.
 
 [source,java]
 ----
@@ -335,11 +400,15 @@ public class NodeLifecycleListener implements LifecycleListener {
 }
 ----
 
-This listener is local to an individual member. It notifies the application that uses Hazelcast about the events mentioned above for a particular member.
+This listener is local to an individual member. It notifies the
+application that uses Hazelcast about the events mentioned above
+for a particular member.
 
 ===== Registering Lifecycle Listeners
 
-After you create your class, you can configure your cluster to include lifecycle listeners. Below is an example using the method `addLifecycleListener`.
+After you create your class, you can configure your cluster to
+include lifecycle listeners. Below is an example using the method
+`addLifecycleListener`.
 
 [source,java]
 ----
@@ -347,7 +416,11 @@ HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
 hazelcastInstance.getLifecycleService().addLifecycleListener( new NodeLifecycleListener() );
 ----
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register the listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events
+between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register
+the listeners in the configuration. You can register listeners using
+declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -386,10 +459,14 @@ The following is an example of the equivalent Spring configuration.
 [[listening-for-clients]]
 ==== Listening for Clients
 
-The Client Listener is used by the Hazelcast cluster members. It notifies the cluster members when a client is connected to or disconnected from the cluster.
+The Client Listener is used by the Hazelcast cluster members.
+It notifies the cluster members when a client is connected to or
+disconnected from the cluster.
 
-To write a client listener class, you implement the `ClientListener` interface and its methods `clientConnected` and `clientDisconnected`,
-which are invoked when a client is connected to or disconnected from the cluster. You can add your client listener as shown below.
+To write a client listener class, you implement the `ClientListener`
+interface and its methods `clientConnected` and `clientDisconnected`,
+which are invoked when a client is connected to or disconnected from the
+cluster. You can add your client listener as shown below.
 
 [source,java]
 ----
@@ -421,14 +498,18 @@ The following is the equivalent configuration in the Spring context.
 </hz:listeners>
 ----
 
-NOTE: You can also add event listeners to a Hazelcast client. See the <<configuring-client-listeners, Client Listenerconfig section>> for the related information.
+NOTE: You can also add event listeners to a Hazelcast client. See the
+<<configuring-client-listeners, Client Listenerconfig section>> for the
+related information.
 
 [[distributed-object-events]]
 === Distributed Object Events
 
 ==== Listening for Map Events
 
-You can listen to map-wide or entry-based events using the listeners provided by the Hazelcast's eventing framework. To listen to these events, implement a `MapListener` sub-interface.
+You can listen to map-wide or entry-based events using the listeners
+provided by the Hazelcast's eventing framework. To listen to these events,
+implement a `MapListener` sub-interface.
 
 A map-wide event is fired as a result of a map-wide operation. For
 example, `IMap.clear()` or `IMap.evictAll()`.
@@ -479,7 +560,8 @@ Entry Removed:EntryEvent{entryEventType=REMOVED, member=Member [192.168.1.100]]:
  oldValue=null, value=null, mergingValue=null}
 ```
 
-NOTE: Please note that the method `IMap.clear()` does not fire an "EntryRemoved" event, but fires a "MapCleared" event.
+NOTE: Please note that the method `IMap.clear()` does not fire an
+"EntryRemoved" event, but fires a "MapCleared" event.
 
 NOTE: Listeners have to offload all blocking operations to another thread (pool).
 
@@ -509,7 +591,10 @@ information about partition lost detection and partition lost events.
 
 ===== Registering Map Listeners
 
-After you create your listener class, you can configure your cluster to include map listeners using the method `addEntryListener` (as you can see in the example `Listen` class above). Below is the related portion from this code, showing how to register a map listener.
+After you create your listener class, you can configure your cluster
+to include map listeners using the method `addEntryListener` (as you
+can see in the example `Listen` class above). Below is the related portion
+from this code, showing how to register a map listener.
 
 [source,java]
 ----
@@ -518,7 +603,11 @@ IMap<String, String> map = hz.getMap( "somemap" );
 map.addEntryListener( new MyEntryListener(), true );
 ----
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events
+between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register
+listeners in configuration. You can register listeners using declarative,
+programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -562,13 +651,19 @@ The following is an example of the equivalent Spring configuration.
 
 ===== Map Listener Attributes
 
-As you see, there are attributes of the map listeners in the above examples: `include-value` and `local`. The attribute `include-value` is a boolean attribute that is optional, and if you set it to `true`, the map event contains the map value. Its default value is `true`.
+As you see, there are attributes of the map listeners in the above
+examples: `include-value` and `local`. The attribute `include-value`
+is a boolean attribute that is optional, and if you set it to `true`,
+the map event contains the map value. Its default value is `true`.
 
-The attribute `local` is also a boolean attribute that is optional, and if you set it to `true`, you can listen to the map on the local member. Its default value is `false`.
+The attribute `local` is also a boolean attribute that is optional, and
+if you set it to `true`, you can listen to the map on the local member.
+Its default value is `false`.
 
 ==== Listening for MultiMap Events
 
-You can listen to entry-based events in the MultiMap using `EntryListener`. The following is an example entry listener implementation for MultiMap.
+You can listen to entry-based events in the MultiMap using `EntryListener`.
+The following is an example entry listener implementation for MultiMap.
 
 [source,java]
 ----
@@ -577,7 +672,9 @@ include::{javasource}/distributedevents/ExampleEntryListener.java[tag=mm]
 
 ===== Registering MultiMap Listeners
 
-After you create your listener class, you can configure your cluster to include MultiMap listeners using the method `addEntryListener`. Below is the related portion from a code, showing how to register a map listener.
+After you create your listener class, you can configure your cluster to
+include MultiMap listeners using the method `addEntryListener`. Below
+is the related portion from a code, showing how to register a map listener.
 
 [source,java]
 ----
@@ -586,7 +683,11 @@ MultiMap<String, String> map = hz.getMultiMap( "somemap" );
 map.addEntryListener( new ExampleEntryListener(), true );
 ----
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events
+between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register
+listeners in the configuration. You can register listeners using declarative,
+programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -632,16 +733,22 @@ The following is an example of the equivalent Spring configuration.
 
 ===== MultiMap Listener Attributes
 
-As you see, there are attributes of the MultiMap listeners in the above examples: `include-value` and `local`. The attribute `include-value` is a boolean attribute that is optional, and if you set it to `true`, the MultiMap event contains the map value. Its default value is `true`.
+As you see, there are attributes of the MultiMap listeners in the above
+examples: `include-value` and `local`. The attribute `include-value` is
+a boolean attribute that is optional, and if you set it to `true`, the
+MultiMap event contains the map value. Its default value is `true`.
 
-The attribute `local` is also a boolean attribute that is optional, and if you set it to `true`, you can listen to the MultiMap on the local member. Its default value is `false`.
+The attribute `local` is also a boolean attribute that is optional, and
+if you set it to `true`, you can listen to the MultiMap on the local member.
+Its default value is `false`.
 
 
 ==== Listening for Item Events
 
 The Item Listener is used by the Hazelcast `IQueue`, `ISet` and `IList` interfaces.
 
-To write an Item Listener class, you implement the ItemListener interface and its methods `itemAdded` and `itemRemoved`. These methods
+To write an Item Listener class, you implement the ItemListener
+interface and its methods `itemAdded` and `itemRemoved`. These methods
 are invoked when an item is added or removed.
 
 The following is an example Item Listener class for an `ISet` structure.
@@ -662,11 +769,16 @@ public class ExampleItemListener implements ItemListener<Price> {
 }
 ----
 
-NOTE: You can use `ICollection` when creating any of the collection (queue, set and list) data structures, as shown above. You can also use `IQueue`, `ISet` or `IList` instead of `ICollection`.
+NOTE: You can use `ICollection` when creating any of the collection
+(queue, set and list) data structures, as shown above. You can also
+use `IQueue`, `ISet` or `IList` instead of `ICollection`.
 
 ===== Registering Item Listeners
 
-After you create your class, you can configure your cluster to include item listeners. Below is an example using the method `addItemListener` for `ISet` (it applies also to `IQueue` and `IList`). You can also see this portion in the above class creation.
+After you create your class, you can configure your cluster to include
+item listeners. Below is an example using the method `addItemListener`
+for `ISet` (it applies also to `IQueue` and `IList`). You can also see
+this portion in the above class creation.
 
 [source,java]
 ----
@@ -677,7 +789,11 @@ ICollection<Price> set = hazelcastInstance.getSet( "default" );
 set.addItemListener( new ExampleItemListener(), true );
 ----
 
-With the above approach, there is the possibility of missing events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register listeners in the configuration. You can register listeners using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing events
+between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register
+listeners in the configuration. You can register listeners using
+declarative, programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -719,16 +835,23 @@ The following is an example of the equivalent Spring configuration.
 
 ===== Item Listener Attributes
 
-As you see, there is an attribute in the above examples: `include-value`. It is a boolean attribute that is optional, and if you set it to `true`, the item event contains the item value. Its default value is `true`.
+As you see, there is an attribute in the above examples: `include-value`.
+It is a boolean attribute that is optional, and if you set it to `true`,
+the item event contains the item value. Its default value is `true`.
 
-There is also another attribute called `local`, which is not shown in the above examples. It is also a boolean attribute that is optional, and if you set it to `true`, you can listen to the items on the local member. Its default value is `false`.
+There is also another attribute called `local`, which is not shown in the
+above examples. It is also a boolean attribute that is optional, and
+if you set it to `true`, you can listen to the items on the local member.
+Its default value is `false`.
 
 
 ==== Listening for Topic Messages
 
-The Message Listener is used by the `ITopic` interface. It notifies when a message is received for the registered topic.
+The Message Listener is used by the `ITopic` interface. It notifies
+when a message is received for the registered topic.
 
-To write a Message Listener class, you implement the MessageListener interface and its method `onMessage`, which is invoked
+To write a Message Listener class, you implement the MessageListener
+interface and its method `onMessage`, which is invoked
 when a message is received for the registered topic.
 
 The following is an example Message Listener class.
@@ -746,7 +869,8 @@ public class ExampleMessageListener implements MessageListener<MyEvent> {
 
 ===== Registering Message Listeners
 
-After you create your class, you can configure your cluster to include message listeners. Below is an example using the method `addMessageListener`.
+After you create your class, you can configure your cluster to include
+message listeners. Below is an example using the method `addMessageListener`.
 
 [source,java]
 ----
@@ -756,7 +880,11 @@ ITopic topic = hazelcastInstance.getTopic( "default" );
 topic.addMessageListener( new ExampleMessageListener() );
 ----
 
-With the above approach, there is the possibility of missing messaging events between the creation of the instance and registering the listener. To overcome this race condition, Hazelcast allows you to register this listener in the configuration. You can register it using declarative, programmatic, or Spring configuration, as shown below.
+With the above approach, there is the possibility of missing messaging
+events between the creation of the instance and registering the listener.
+To overcome this race condition, Hazelcast allows you to register this
+listener in the configuration. You can register it using declarative,
+programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
@@ -798,13 +926,22 @@ The following is an example of the equivalent Spring configuration.
 
 === Event Listeners for Hazelcast Clients
 
-You can add event listeners to a Hazelcast Java client. You can configure the following listeners to listen to the events on the client side. See the respective content under the <<cluster-events, Cluster Events section>> for example codes.
+You can add event listeners to a Hazelcast Java client.
+You can configure the following listeners to listen to the events
+on the client side. See the respective content under the <<cluster-events, Cluster Events section>>
+for example codes.
 
-* <<listening-for-lifecycle-events, Lifecycle Listener>>: Notifies when the client is starting, started, shutting down and shutdown.
-* <<listening-for-member-events, Membership Listener>>: Notifies when a member joins to/leaves the cluster to which the client is connected, or when an attribute is changed in a member.
-* <<listening-for-distributed-object-events, DistributedObject Listener>>: Notifies when a distributed object is created or destroyed throughout the cluster to which the client is connected.
+* <<listening-for-lifecycle-events, Lifecycle Listener>>: Notifies
+when the client is starting, started, shutting down and shutdown.
+* <<listening-for-member-events, Membership Listener>>: Notifies when
+a member joins to/leaves the cluster to which the client is connected,
+or when an attribute is changed in a member.
+* <<listening-for-distributed-object-events, DistributedObject Listener>>:
+Notifies when a distributed object is created or destroyed throughout
+the cluster to which the client is connected.
 
-NOTE: See the <<configuring-client-listeners, Configuring Client Listeners section>> for more information.
+NOTE: See the <<configuring-client-listeners, Configuring Client
+Listeners section>> for more information.
 
 === Global Event Configuration
 
@@ -812,10 +949,29 @@ NOTE: See the <<configuring-client-listeners, Configuring Client Listeners secti
 * `hazelcast.event.queue.timeout.millis`: default value is 250
 * `hazelcast.event.thread.count`: default value is 5
 
-A striped executor in each cluster member controls and dispatches the received events. This striped executor also guarantees the event order. For all events in Hazelcast, the order in which events are generated and the order in which they are published are guaranteed for given keys. For map and multimap, the order is preserved for the operations on the same key of the entry. For list, set, topic and queue, the order is preserved for events on that instance of the distributed data structure.
+A striped executor in each cluster member controls and dispatches
+the received events. This striped executor also guarantees the event
+order. For all events in Hazelcast, the order in which events are
+generated and the order in which they are published are guaranteed
+for given keys. For map and multimap, the order is preserved for the
+operations on the same key of the entry. For list, set, topic and queue,
+the order is preserved for events on that instance of the distributed
+data structure.
 
-To achieve the order guarantee, you make only one thread responsible for a particular set of events (entry events of a key in a map, item events of a collection, etc.) in `StripedExecutor` (within `com.hazelcast.util.executor`).
+To achieve the order guarantee, you make only one thread responsible
+for a particular set of events (entry events of a key in a map, item
+events of a collection, etc.) in `StripedExecutor` (within `com.hazelcast.util.executor`).
 
-If the event queue reaches its capacity (`hazelcast.event.queue.capacity`) and the last item cannot be put into the event queue for the period specified in `hazelcast.event.queue.timeout.millis`, these events are dropped with a warning message, such as "EventQueue overloaded".
+If the event queue reaches its capacity (`hazelcast.event.queue.capacity`)
+and the last item cannot be put into the event queue for the period
+specified in `hazelcast.event.queue.timeout.millis`, these events are
+dropped with a warning message, such as "EventQueue overloaded".
 
-If event listeners perform a computation that takes a long time, the event queue can reach its maximum capacity and lose events. For map and multimap, you can configure `hazelcast.event.thread.count` to a higher value so that fewer collisions occur for keys, and therefore worker threads do not block each other in `StripedExecutor`. For list, set, topic and queue, you should offload heavy work to another thread. To preserve order guarantee, you should implement similar logic with `StripedExecutor` in the offloaded thread pool.
+If event listeners perform a computation that takes a long time, the
+event queue can reach its maximum capacity and lose events. For map
+and multimap, you can configure `hazelcast.event.thread.count` to a
+higher value so that fewer collisions occur for keys, and therefore
+worker threads do not block each other in `StripedExecutor`. For list, set,
+topic and queue, you should offload heavy work to another thread.
+To preserve order guarantee, you should implement similar logic with
+`StripedExecutor` in the offloaded thread pool.
