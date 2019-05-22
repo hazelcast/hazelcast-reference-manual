@@ -115,7 +115,7 @@ are suppressed.
 
 Hazelcast offers features which allow to reach a required privacy on
 communication level by enabling encryption. Encryption is based on
-http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture].
+link:http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture^].
 
 There are two different encryption features:
 
@@ -494,7 +494,7 @@ an increased performance. So with a 2-member cluster,
 
 In order to use a secured communication between the Hazelcast cluster and Management Center,
 you have to configure the cluster as explained in the
-https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center section] in the Hazelcast
+link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center section^] in the Hazelcast
 Management Center Reference Manual.
 
 === Integrating OpenSSL / BoringSSL
@@ -509,7 +509,7 @@ significant; even with AES intrinsics
 enabled. If you are using a x86_64 system (Linux, Mac, Windows), Hazelcast supports native
 integration for TLS/SSL which can provide significant performance
 improvements. There are two supported native TLS/SSL libraries available through
-https://netty.io/wiki/forked-tomcat-native.html[netty-tcnative] libraries:
+link:https://netty.io/wiki/forked-tomcat-native.html[netty-tcnative^] libraries:
 
 * OpenSSL
 ** dynamically linked
@@ -523,12 +523,12 @@ The native TLS integration can be used on clients and/or members. For best perfo
 is recommended to install on a client and member and
 configure the appropriate cipher suite(s).
 
-Check https://netty.io/wiki/forked-tomcat-native.html[netty-tcnative] page
+Check link:https://netty.io/wiki/forked-tomcat-native.html[netty-tcnative^] page
 for installation details.
 
 ==== Netty Libraries
 
-For the native TLS/SSL integration in Java, the https://netty.io/[Netty] library is used.
+For the native TLS/SSL integration in Java, the link:https://netty.io/[Netty^] library is used.
 
 Make sure the following libraries from the Netty framework are on the classpath:
 
@@ -540,7 +540,7 @@ Make sure the following libraries from the Netty framework are on the classpath:
 NOTE: It is very important that the version of Netty JAR(s) corresponds to
 a very specific version of `netty-tcnative`. In case of doubt, the
 simplest thing to do is to download the `netty-<version>.tar.bz2` file
-from the https://netty.io/downloads.html[Netty] website and check which
+from the link:https://netty.io/downloads.html[Netty^] website and check which
 `netty-tcnative` version is used for that Netty release.
 
 ==== Using BoringSSL
@@ -570,8 +570,8 @@ Example Maven dependencies:
 
 . Install OpenSSL. Make sure that you are installing 1.0.1 or newer release.
 See its documentation at
-https://github.com/openssl/openssl/blob/master/INSTALL[github.com/openssl].
-. Install Apache Portable Runtime (APR) library. See https://apr.apache.org/download.cgi[apr.apache.org].
+link:https://github.com/openssl/openssl/blob/master/INSTALL[github.com/openssl^].
+. Install Apache Portable Runtime (APR) library. See link:https://apr.apache.org/download.cgi[apr.apache.org^].
 +
 For RHEL: `sudo yum -y install apr openssl`
 +
@@ -680,7 +680,7 @@ SSL protocols.
 
 ==== Configuring Cipher Suites
 
-To get the best performance, the correct https://en.wikipedia.org/wiki/Cipher_suite[cipher suites]
+To get the best performance, the correct link:https://en.wikipedia.org/wiki/Cipher_suite[cipher suites^]
 need to be configured.
 Each cipher suite has different performance and security characteristics and depending on the
 hardware and selected cipher suite, the overhead of TLS can range from dramatic to almost
@@ -778,7 +778,7 @@ of `Credentials`.
 Hazelcast calls the `Credentials.setEndpoint()` method when an authentication request
 arrives at the member before authentication takes place. Here are the methods of the
 `Credentials` interface (see its
-https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/security/Credentials.html[Javadoc]):
+link:https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/security/Credentials.html[Javadoc^]):
 
 [source,java]
 ----
@@ -790,7 +790,7 @@ public interface Credentials extends Serializable {
 ----
 
 Here is the snippet from the abstract implementation of `Credentials` (see its
-https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/security/AbstractCredentials.html[Javadoc]):
+link:https://docs.hazelcast.org/docs/3.11/javadoc/com/hazelcast/security/AbstractCredentials.html[Javadoc^]):
 
 [source,java]
 ----
@@ -936,9 +936,9 @@ at com.hazelcast.core.Hazelcast.newHazelcastInstance(Hazelcast.java:58)
 [blue]*Hazelcast IMDG Enterprise Feature*
 
 All security attributes are carried in the `Credentials` object. `Credentials`
-is used by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule]s
+is used by link:http://docs.oracle.com/javase/7/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule^]s
 during the authentication process. The user supplied attributes from ``LoginModule``s
-are accessed by http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html[CallbackHandler]s.
+are accessed by link:http://docs.oracle.com/javase/7/docs/api/javax/security/auth/callback/CallbackHandler.html[CallbackHandler^]s.
 To access the `Credentials` object, Hazelcast uses its own specialized `CallbackHandler`.
 During the initialization of `LoginModules`, Hazelcast passes this special
 `CallbackHandler` into the `LoginModule.initialize()` method.
@@ -993,7 +993,7 @@ public abstract class ClusterLoginModule implements LoginModule {
 
 Using the above API, you can implement a `LoginModule` that performs
 authentication against the Security System of your choice, such as an
-LDAP store like https://directory.apache.org/[Apache Directory] or some
+LDAP store like link:https://directory.apache.org/[Apache Directory^] or some
 other corporate standard you might have. For example, you may wish to have
 your clients send an identification token in the `Credentials` object.
 This token can then be sent to your back-end security system via the
@@ -1003,7 +1003,7 @@ Additionally, the same system may authenticate the user and also then
 return the roles that are attributed to the user. These roles can then
 be used for data structure authorization.
 
-NOTE: See the http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html[JAAS Reference Guide]
+NOTE: See the link:http://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html[JAAS Reference Guide^]
 for further information.
 
 === Cluster Member Security
@@ -1137,7 +1137,7 @@ HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 ----
 
 NOTE: See an implementation and configuration example
-https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/client-custom-credentials[here].
+link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/enterprise/client-custom-credentials[here^].
 
 ==== Authorization
 
@@ -1623,7 +1623,7 @@ information by using the following system property:
 ```
 
 See the
-https://docs.oracle.com/javase/8/docs/technotes/guides/security/troubleshooting-security.html[Troubleshooting Security]
+link:https://docs.oracle.com/javase/8/docs/technotes/guides/security/troubleshooting-security.html[Troubleshooting Security^]
 Java guide for more information.
 
 ==== TLS debugging
@@ -1637,7 +1637,7 @@ system property:
 
 This property provides a lot of logging output including the TLS/SSL
 handshake, that can be used to determine the cause of the problem. See the
-http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html[Debugging TSL/SSL Connections]
+link:http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html[Debugging TSL/SSL Connections^]
 guide for more information.
 
 === FIPS 140-2
@@ -1650,7 +1650,7 @@ used by the US government agencies.
 
 The NIST manages a list of FIPS certified cryptographic modules. These modules
 are certified under the Cryptographic Module Validation Program. The list can
-be searched online: https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search.
+be searched online link:https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search[here^].
 
 Hazelcast uses external modules for cryptographic tasks and it can be configured
 to use a FIPS 140-2 validated module. It means most of the configuration
@@ -1726,7 +1726,7 @@ vendors, use the vendor's up-to-date instructions instead.
 **Switching RHEL 7 into the FIPS mode**
 
 The steps on how to configure RHEL 7 in FIPS 140-2 mode are described in the
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-federal_standards_and_regulations[Security guide] on the Red Hat customer portal.
+link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-federal_standards_and_regulations[Security guide^] on the Red Hat customer portal.
 
 Perform the following steps for the already installed systems:
 
@@ -1746,7 +1746,7 @@ sysctl crypto.fips_enabled
 ----
 
 To automate the FIPS mode enablement on RHEL 7, you can check the script
-which is shared in the Red Hat discussion forum: https://access.redhat.com/discussions/3487481.
+which is shared in the link:https://access.redhat.com/discussions/3487481[Red Hat discussion forum^].
 
 **Switching IBM Java SDK into the FIPS mode**
 
@@ -1754,7 +1754,7 @@ IBM Java 8 provides the FIPS mode itself without any third party
 dependencies.
 
 Details on how to enable the FIPS 140-2 validated configuration can be
-found in the https://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/security-overview.html[Security guide] in the Java 8 documentation.
+found in the link:https://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/security-overview.html[Security guide^] in the Java 8 documentation.
 
 First, it's necessary to edit the `jre/lib/security/java.security` file and
 do the following changes:
