@@ -1,29 +1,45 @@
-
-
 === JCache - Hazelcast Instance Integration
 
-You can retrieve `javax.cache.Cache` instances using the interface `ICacheManager` of `HazelcastInstance`. This interface has the method `getCache(String name)` where `name` is the prefixed cache name. The prefixes in the cache name are URI and classloader prefixes, which are optional.
+You can retrieve `javax.cache.Cache` instances using the
+interface `ICacheManager` of `HazelcastInstance`. This
+interface has the method `getCache(String name)` where `name`
+is the prefixed cache name. The prefixes in the cache name are
+URI and classloader prefixes, which are optional.
 
-If you create a cache through a `ICacheManager` which has its own specified URI scope (and/or specified classloader), 
-it must be prepended to the pure cache name as a prefix while retrieving the cache through `getCache(String name)`. 
+If you create a cache through a `ICacheManager` which has its own
+specified URI scope (and/or specified classloader), 
+it must be prepended to the pure cache name as a prefix while
+retrieving the cache through `getCache(String name)`. 
 Prefix generation for full cache name is exposed through 
-`com.hazelcast.cache.CacheUtil.getPrefixedCacheName(String name, java.net.URI uri, ClassLoader classloader)`. 
-If the URI scope and classloader is not specified, the pure cache name can be used directly while retrieving cache over `ICacheManager`.
+`com.hazelcast.cache.CacheUtil.getPrefixedCacheName(String name,
+java.net.URI uri, ClassLoader classloader)`. 
+If the URI scope and classloader is not specified, the pure cache
+name can be used directly while retrieving cache over `ICacheManager`.
 
-If you have a cache which is not created, but is defined/exists (cache is specified in Hazelcast configuration but not created yet), you can retrieve this cache by its name.  This also triggers cache creation before retrieving it. This retrieval is supported through `HazelcastInstance`. However, `HazelcastInstance` ***does not*** support creating a cache by specifying configuration; this is supported by Hazelcast's `ICacheManager` as it is.
+If you have a cache which is not created, but is defined/exists
+(cache is specified in Hazelcast configuration but not created yet),
+you can retrieve this cache by its name.  This also triggers cache
+creation before retrieving it. This retrieval is supported through
+`HazelcastInstance`. However, `HazelcastInstance` ***does not*** support
+creating a cache by specifying configuration; this is supported by
+Hazelcast's `ICacheManager` as it is.
 
-NOTE: If a valid (rather than *1.0.0-PFD* or *0.x* versions) JCache library does not exist on the classpath, `IllegalStateException` is thrown.
+NOTE: If a valid (rather than *1.0.0-PFD* or *0.x* versions)
+JCache library does not exist on the classpath, `IllegalStateException`
+is thrown.
 
 ==== JCache and Hazelcast Instance Awareness
 
-`HazelcastInstance` is injected into the following cache API interfaces (provided by `javax.cache.Cache` and `com.hazelcast.cache.ICache`)  if they implement `HazelcastInstanceAware` interface:
+`HazelcastInstance` is injected into the following cache API interfaces
+(provided by `javax.cache.Cache` and `com.hazelcast.cache.ICache`)
+if they implement `HazelcastInstanceAware` interface:
 
 * `ExpiryPolicyFactory` and `ExpiryPolicy` [provided by `javax.cache.Cache`]
 * `CacheLoaderFactory` and `CacheLoader` [provided by `javax.cache.Cache`]
 * `CacheWriteFactory` and `CacheWriter` [provided by `javax.cache.Cache`]
 * `EntryProcessor` [provided by `javax.cache.Cache`]
-* `CacheEntryListener` (`CacheEntryCreatedListener`, `CacheEntryUpdatedListener`, `CacheEntryRemovedListener`, `CacheEntryExpiredListener`) [provided by `javax.cache.Cache`]
+* `CacheEntryListener` (`CacheEntryCreatedListener`, `CacheEntryUpdatedListener`,
+`CacheEntryRemovedListener`, `CacheEntryExpiredListener`) [provided by `javax.cache.Cache`]
 * `CacheEntryEventFilter` [provided by `javax.cache.Cache`]
 * `CompletionListener` [provided by `javax.cache.Cache`]
 * `CachePartitionLostListener` [provided by `com.hazelcast.cache.ICache`]
-
