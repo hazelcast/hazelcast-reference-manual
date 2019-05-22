@@ -1,5 +1,5 @@
-import com.hazelcast.core.MigrationEvent;
-import com.hazelcast.core.MigrationListener;
+import com.hazelcast.partition.MigrationEvent;
+import com.hazelcast.partition.MigrationListener;
 
 //tag::clstrmigrationlistener[]
 public class ClusterMigrationListener implements MigrationListener {
