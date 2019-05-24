@@ -607,6 +607,13 @@ for more information on enabling it on the member side and the configuration pro
 Classes deployed from clients are always cached on the members, no matter
 whether `ETERNAL` or `OFF` is configured on the members.
 
+===== Performance Considerations
+
+The member always uploads all added classes and jars to one of the members,
+whether it has them or not. So avoid adding large jar files for each connection
+- if configured properly, the member will have the class the next time the
+client connects.
+
 ===== Two Versions of a Class
 
 If the clients uploads a class and the member already has that class, an
