@@ -393,35 +393,38 @@ during the cluster join process. Starting with 3.11, members no longer
 perform a password check when a client connects to the cluster.
 
 [[member-user-code-deployment-beta]]
-=== Deploying User Codes on the Member
+=== Deploying User Code on the Member
 
-Hazelcast can dynamically load your custom classes or domain classes from
-a remote class repository, which typically includes <<enabling-lite-members, lite members>>.
-For this purpose Hazelcast offers a distributed  dynamic class loader.
+Hazelcast can dynamically load your custom classes or domain classes from other
+members. A <<enabling-lite-members, lite member>> can be designated as a _class
+repository_, but any member can _provide_ classes to other members. For this
+purpose Hazelcast offers a distributed dynamic class loader.
 
-Using this dynamic class loader, you can control the local caching of the classes
-loaded from other members,
-control the classes to be served to other members and create blacklists or whitelists
-of classes and packages. When you enable this feature, you don't need to deploy your
-classes to all cluster members.
+The following is a brief working mechanism of the User Code Deployment feature:
 
-The following is the brief working mechanism of the User Code Deployment feature:
-
-. Dynamic class loader first checks the local classes, i.e., your classpath, for your
-custom class. If it is there, Hazelcast does not try to load it from the remote class repository.
-. Then, it checks the cache of classes loaded from the remote class repository (for this,
-caching should have been enabled in your local, see the <<configuring-user-code-deployment,
-Configuring User Code Deployment section>>). If your class is found here, again, Hazelcast
-does not try to load it from the remote class repository.
-. Finally, dynamic class loader checks the remote class repository. If a member in this
-repository returns the class, it means your class is found and to be used. You can also
-put this class into your local class cache as mentioned in the previous step.
+. A new dynamic class loader is created to handle each operation.
+. It first checks locally available classes, i.e. the member's classpath. If
+the class is found, it is used.
+. Then it checks the _cache_ of classes loaded from remote members or clients
+(if caching is enabled on your local member, see the
+<<configuring-user-code-deployment>> section). If your class is found there, it
+is used.
+. Finally, the dynamic class loader checks configured remote members, one by
+one. If some member returns the class, it will be used. It can also put this
+class into the local class cache as mentioned in the previous step.
+. If the class is not found, `ClassNotFoundException` is thrown.
+. The dynamic class loader is released after the operation is handled. A next
+operation will load the class from the cache or re-fetch it.
 
 [[configuring-user-code-deployment]]
 ==== Configuring User Code Deployment
 
-User Code Deployment feature is not enabled by default. You can configure this
-feature declaratively or programmatically. Following are example configuration snippets:
+User Code Deployment feature is not enabled by default. You can control local
+caching of the classes loaded from other members, control classes to be
+provided to other members and create blacklists and whitelists of classes and
+packages.
+
+Following are example configuration snippets:
 
 **Declarative Configuration:**
 
@@ -431,8 +434,8 @@ feature declaratively or programmatically. Following are example configuration s
     ...
     <user-code-deployment enabled="true">
         <class-cache-mode>ETERNAL</class-cache-mode>
-        <provider-mode>LOCAL_CLASSES_ONLY</provider-mode>
-        <blacklist-prefixes>com.foo</blacklist-prefixes>
+        <provider-mode>LOCAL_AND_CACHED_CLASSES</provider-mode>
+        <blacklist-prefixes>com.foo,com.bar</blacklist-prefixes>
         <whitelist-prefixes>com.bar.MyClass</whitelist-prefixes>
         <provider-filter>HAS_ATTRIBUTE:lite</provider-filter>
     </user-code-deployment>
@@ -447,29 +450,32 @@ feature declaratively or programmatically. Following are example configuration s
 include::{javasource}/MemberUCD.java[tag=ucd]
 ----
 
-User Code Deployment has the following configuration elements and attributes:
+User Code Deployment on the member has the following configuration:
 
 * `enabled`: Specifies whether dynamic class loading is enabled or not. Its
-default value is "false" and it is a mandatory attribute.
+default value is "false" and it's a mandatory attribute. If feature is
+disabled, the member will never load classes from other members or clients.
 * `<class-cache-mode>`: Controls the local caching behavior for the classes
-loaded from the remote class repository. Available values are as follows:
+loaded from remote members (classes loaded from clients are always cached).
+Available values are:
 ** `ETERNAL`: Cache the loaded classes locally. This is the default value and
 suitable when you load long-living objects, such as domain objects stored in a map.
 ** `OFF`: Do not cache the loaded classes locally. It is suitable for loading
 runnables, callables, entry processors, etc.
-* `<provider-mode>`: Controls how the classes are served to the other cluster
-members. Available values are as follows:
+* `<provider-mode>`: Controls which classes are served to other cluster
+members. Available values are:
 ** `LOCAL_AND_CACHED_CLASSES`: Serve classes loaded from both local classpath
 and from other members. This is the default value.
 ** `LOCAL_CLASSES_ONLY`: Serve classes from the local classpath only. Classes
 loaded from other members are used locally, but they are not served to other members.
 ** `OFF`: Never serve classes to other members.
-* `<blacklist-prefixes>`: Comma separated name prefixes of classes/packages to
-be prevented from dynamic class loading. For example, if you set it as "com.foo",
-remote loading of all classes from the "com.foo" package is prevented, including
-the classes from all its sub-packages. If you set it as "com.foo.Class", then the
-"Class" and all classes having the "Class" as prefix in the "com.foo" package
-are blacklisted. There are some built-in prefixes which are blacklisted by default.
+* `<blacklist-prefixes>`: Comma separated class/package name prefixes that
+the member will never attempt to load from other members and that the client
+won't be allowed to upload. For example, if you set it to "com.foo", remote
+loading of all classes from the "com.foo" package is prevented, including the
+classes from all its sub-packages. If you set it to "com.foo.Class", then
+"Class" and all classes starting with "Class" in the "com.foo" package are
+blacklisted. There are built-in prefixes which are always blacklisted.
 These are as follows:
 ** `javax.`
 ** `java.`
@@ -479,64 +485,55 @@ These are as follows:
 only from which the classes are allowed to be loaded. It allows to quickly
 configure remote loading only for classes from selected packages. It can be
 used together with blacklisting. For example, you can whitelist the prefix
-"com.foo" and blacklist the prefix "com.foo.secret".
-* `<provider-filter>`: Filter to constraint members to be used for a class
+"com.foo" and blacklist the prefix "com.foo.secret". If the list is empty, all
+classes are allowed.
+* `<provider-filter>`: Filter to constrain members that can be used for a class
 loading request when a class is not available locally. The value is in the
-format "HAS_ATTRIBUTE:foo". When it is set as "HAS_ATTRIBUTE:foo", the class
+format "HAS_ATTRIBUTE:foo". When it is set to "HAS_ATTRIBUTE:foo", the class
 loading request is only sent to the members which have "foo" as a
 <<defining-member-attributes, member attribute>>. Setting this to null allows
-to load classes from all members. See an example in the below section.
+loading of classes from all members. See an example in the next section.
 
 [[example-for-filtering-members]]
-==== Example for Filtering Members
+==== Example for Filtering of Members
 
 As described above, the configuration element `provider-filter` is used to
-constrain a member to load classes only from a subset of all cluster members.
-The value of the `provider-filter` must be set as a member attribute in the
-desired members from which the classes are to be loaded. See the following
-example usages provided as programmatic configurations.
+limit members that can be used to load classes. The attribute required in the
+`provider-filter` must be set as a member attribute on the members from which
+the classes are to be loaded. See the following examples provided as
+programmatic configurations.
 
-The below example configuration allows the Hazelcast member to load classes
-only from the members with the `class-provider` attribute set. It does not
-ask any other member to provide a locally unavailable class:
-
-[source,java]
-----
-Config hazelcastConfig = new Config();
-DistributedClassloadingConfig distributedClassloadingConfig = hazelcastConfig.getDistributedClassloadingConfig();
-distributedClassloadingConfig.setProviderFilter("HAS_ATTRIBUTE:class-provider");
-
-HazelcastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
-----
-
-And the below example configuration sets the attribute `class-provider`
-for a member. So, the above member loads classes from the members who have
-the attribute `class-provider`:
+The example configuration below allows the Hazelcast member to load classes
+only from members with the `class-provider` attribute set. It prevents from
+asking any other member to provide a locally unavailable class:
 
 [source,java]
 ----
-Config hazelcastConfig = new Config();
-MemberAttributeConfig memberAttributes = hazelcastConfig.getMemberAttributeConfig();
-memberAttributes.setAttribute("class-provider", "true");
+include::{javasource}/MemberUCD.java[tag=hasAttributeConfig]
+----
 
-HazecastInstance instance = Hazelcast.newHazelcastInstance(hazelcastConfig);
+The example configuration below sets the attribute `class-provider` for a
+member. Therefore the above member will be able to load classes from this
+member:
+
+[source,java]
+----
+include::{javasource}/MemberUCD.java[tag=memberAttributeConfig]
 ----
 
 [[client-user-code-deployment-beta]]
-=== Deploying User Codes on Clients
+=== Deploying User Code from Clients
 
-You can also deploy your codes from the client side for the
-following situations:
+You can also deploy your code from the client side for the following
+situations:
 
 . You have objects that run on the cluster via the clients such as
-`Runnable`, `Callable` and Entry Processors.
-. You have new or amended user domain objects (in-memory format of the
-IMap set to `Object`) which need to be deployed into the cluster.
+`Runnable`, `Callable` and `EntryProcessor`.
+. You have new user domain objects which need to be deployed into the cluster.
 
-When this feature is enabled, the clients deploy these classes to the
-members. By this way, when a client adds a new class, the members do
-not require restarts to include the new classes in classpath.
-
+When this feature is enabled on the client, the client will deploy the classes
+to the members when connecting. This way, when a client adds a new class, the
+members do not require a restart to include it in their classpath.
 
 You can also use the client permission policy to specify which clients
 are permitted to use User Code Deployment. See the <<permissions, Permissions section>>.
@@ -564,7 +561,7 @@ In your `hazelcast-client.xml`:
             <jarPath>file://Users/example/example.jar</jarPath>
         </jarPaths>
         <classNames>
-            <!-- for the classes available in client class path -->
+            <!-- for classes available in client's class path -->
             <className>example.ClassName</className>
             <className>example.ClassName2</className>
         </classNames>
@@ -583,32 +580,39 @@ include::{javasource}/ClientUCD.java[tag=clientucd]
 [[client-user-code-deployment-note]]
 ===== Important to Know
 
-Note that User Code Deployment should also be enabled on the
-members to use this feature.
+The members have to be configured in a specific way for the feature to work
+correctly:
+
+* User Code Deployment must be enabled on the members. Otherwise, the classes
+from the client will be ignored. Also blacklisted and non-whitelisted classes
+will be ignored.
+* All members must be providers, `provider-mode` must be set to
+`LOCAL_AND_CACHED_CLASSES` on all members.
+* No `provider-filter` must be configured.
+
+The client uploads the classes only to one member. If the members don't load
+classes from each other, other members won't see the class.
+
+Here's a programmatic configuration of the members that will work with client
+user code deployment:
 
 [source,java]
 ----
-Config config = new Config();
-UserCodeDeploymentConfig userCodeDeploymentConfig = config.getUserCodeDeploymentConfig();
-userCodeDeploymentConfig.setEnabled( true );
+include::{javasource}/ClientUCD.java[tag=configureMemberForClientUcd]
 ----
 
 See the <<member-user-code-deployment-beta, Member User Code Deployment section>>
-for more information on enabling it on the member side and its configuration properties.
+for more information on enabling it on the member side and the configuration properties.
 
-For the property `class-cache-mode`, Client User Code Deployment supports only the
-`ETERNAL` mode, regardless of the configuration set on the member side
-(which can be `ETERNAL` and `OFF`).
+Classes deployed from clients are always cached on the members, no matter
+whether `ETERNAL` or `OFF` is configured on the members.
 
-For the property, `provider-mode`, Client User Code Deployment supports only
-the `LOCAL_AND_CACHED_CLASSES` mode, regardless of the configuration set on the
-member side (which can be `LOCAL_AND_CACHED_CLASSES`, `LOCAL_CLASSES_ONLY` and `OFF`).
+===== Two Versions of a Class
 
-The remaining properties, which are `blacklist-prefixes`, `whitelist-prefixes`
-and `provider-filter` configured on the member side, effect the client user code
-deployment's behavior too. For example, assuming that you provide `com.foo` as a
-blacklist prefix on the member side, the member discards the classes with the prefix
-`com.foo` loaded by the client.
+If the clients uploads a class and the member already has that class, an
+exception is thrown if the byte code is different. If byte code is same, it is
+ignored. Therefore classes uploaded from the client can't be updated with a new
+version.
 
 ==== Adding User Library to CLASSPATH
 
