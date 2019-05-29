@@ -362,19 +362,20 @@ See the <<copying-indexes, Copying Indexes section>>.
 | Initial time in seconds to wait before member to start completely.
 
 |`hazelcast.internal.map.expiration.cleanup.operation.count`
-|3
+|N/A
 |int
-|This is a property which is used internally and subject to change in the future releases.
+|Count of scannable partitions in each run of the background expiration task. No default value exists. It is
+dynamically calculated against the partition count or partition thread count.
 
 |`hazelcast.internal.map.expiration.cleanup.percentage`
 |10
 |int
-|This is a property which is used internally and subject to change in the future releases.
+|Scannable percentage of the entries in the maps' partitions in each run of the background expiration task.
 
 |`hazelcast.internal.map.expiration.task.period.seconds`
 |5
 |int
-|This is a property which is used internally and subject to change in the future releases.
+|Interval, in seconds, at which the background expiration task is going to run.
 
 |`hazelcast.invalidation.max.tolerated.miss.count`
 |10
