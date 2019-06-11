@@ -1,20 +1,17 @@
-import com.hazelcast.map.EntryBackupProcessor;
 import com.hazelcast.map.EntryProcessor;
 
-import java.io.Serializable;
 import java.util.Map;
 
 //tag::iep[]
-public class IncrementingEntryProcessor
-        implements EntryProcessor<Integer, Integer>, EntryBackupProcessor<Integer, Integer>, Serializable {
+public class IncrementingEntryProcessor implements EntryProcessor<Integer, Integer, Integer> {
 
-    public Object process( Map.Entry<Integer, Integer> entry ) {
+    public Integer process( Map.Entry<Integer, Integer> entry ) {
         Integer value = entry.getValue();
         entry.setValue( value + 1 );
         return value + 1;
     }
 
-    public EntryBackupProcessor<Integer, Integer> getBackupProcessor() {
+    public EntryProcessor<Integer, Integer, Integer> getBackupProcessor() {
         return IncrementingEntryProcessor.this;
     }
 

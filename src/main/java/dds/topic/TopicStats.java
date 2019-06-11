@@ -1,6 +1,6 @@
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
+import com.hazelcast.topic.ITopic;
 
 public class TopicStats {
     public static void main(String[] args) throws Exception{

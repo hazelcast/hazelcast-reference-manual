@@ -1,7 +1,7 @@
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicReference;
+import com.hazelcast.cp.IAtomicReference;
 
 public class ExampleIAtomicReference {
     public static void main(String[] args){

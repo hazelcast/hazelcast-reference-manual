@@ -1,6 +1,9 @@
 import com.hazelcast.core.*;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
+import com.hazelcast.transaction.TransactionalMap;
+import com.hazelcast.transaction.TransactionalQueue;
+import com.hazelcast.transaction.TransactionalSet;
 
 //tag::trx[]
 public class TransactionalMember {
