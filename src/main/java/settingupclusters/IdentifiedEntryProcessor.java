@@ -1,4 +1,4 @@
-import com.hazelcast.map.AbstractEntryProcessor;
+import com.hazelcast.map.EntryProcessor;
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.IdentifiedDataSerializable;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 //tag::iep[]
-public class IdentifiedEntryProcessor extends AbstractEntryProcessor<String, String> implements IdentifiedDataSerializable {
+public class IdentifiedEntryProcessor implements EntryProcessor<String, String, String>, IdentifiedDataSerializable {
     static final int CLASS_ID = 1;
     private String value;
     public IdentifiedEntryProcessor() {
@@ -16,7 +16,7 @@ public class IdentifiedEntryProcessor extends AbstractEntryProcessor<String, Str
         return IdentifiedFactory.FACTORY_ID;
     }
     @Override
-    public int getId() {
+    public int getClassId() {
         return CLASS_ID;
     }
     @Override
@@ -28,7 +28,7 @@ public class IdentifiedEntryProcessor extends AbstractEntryProcessor<String, Str
         value = in.readUTF();
     }
     @Override
-    public Object process(Map.Entry<String, String> entry) {
+    public String process(Map.Entry<String, String> entry) {
         entry.setValue(value);
         return value;
     }
