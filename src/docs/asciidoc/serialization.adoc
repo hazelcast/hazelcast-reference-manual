@@ -281,18 +281,18 @@ which is a slightly better version of `DataSerializable`.
 But `IdentifiedDataSerializable` uses a factory for this purpose and
 it is faster during deserialization, which requires new instance creations.
 
-===== getID and getFactoryId Methods
+===== getClassId and getFactoryId Methods
 
 `IdentifiedDataSerializable` extends `DataSerializable` and introduces the following methods:
 
-* `int getId();`
+* `int getClassId();`
 * `int getFactoryId();`
 
-`IdentifiedDataSerializable` uses `getId()` instead of class name and it uses
-`getFactoryId()` to load the class when given the Id. To complete the implementation,
+`IdentifiedDataSerializable` uses `getClassId()` instead of class name and it uses
+`getFactoryId()` to load the class when given the id. To complete the implementation,
 you should also implement  `com.hazelcast.nio.serialization.DataSerializableFactory` and
 register it into `SerializationConfig`, which can be accessed from `Config.getSerializationConfig()`.
-Factory's responsibility is to return an instance of the right `IdentifiedDataSerializable` object, given the Id.
+Factory's responsibility is to return an instance of the right `IdentifiedDataSerializable` object, given the id.
 This is currently the most efficient way of Serialization that Hazelcast supports off the shelf.
 
 ===== Implementing IdentifiedDataSerializable
@@ -330,7 +330,7 @@ public class Employee
     }
 
     @Override
-    public int getId() {
+    public int getClassId() {
         return EmployeeDataSerializableFactory.EMPLOYEE_TYPE;
     }
 
@@ -341,7 +341,7 @@ public class Employee
 }
 ----
 
-The methods `getId` and `getFactoryId` return a unique positive number within
+The methods `getClassId` and `getFactoryId` return a unique positive number within
 the `EmployeeDataSerializableFactory`.
 Now, let's create an instance of this `EmployeeDataSerializableFactory`.
 

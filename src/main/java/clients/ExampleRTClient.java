@@ -1,12 +1,12 @@
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientReliableTopicConfig;
+import com.hazelcast.topic.ITopic;
 import com.hazelcast.topic.TopicOverloadPolicy;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.RingbufferConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
 
 
 public class ExampleRTClient {
