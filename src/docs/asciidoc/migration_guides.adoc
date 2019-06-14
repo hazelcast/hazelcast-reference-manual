@@ -6,6 +6,57 @@ This appendix provides guidelines when upgrading to a new Hazelcast IMDG version
 See also the link:https://docs.hazelcast.org/docs/rn/index.html[release notes^] documents
 for any changes to the features.
 
+=== Upgrading to Hazelcast IMDG 4.0
+
+This section provides the notes for you to consider
+when migrating to Hazelcast IMDG 4.0
+
+==== Introducing Lambda Friendly Interfaces
+
+===== Entry Processor
+
+The classes `AbstractEntryProcessor` and `EntryBackupProcessor`
+have been removed to make entry processor lambda friendly.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+        map.executeOnKey(key, new AbstractEntryProcessor<Integer, Employee>() {
+
+            @Override
+            public Object process(Map.Entry<Integer, Employee> entry) {
+                Employee employee = entry.getValue();
+                if (employee == null) {
+                    employee = new Employee();
+                }
+                employee.setSalary(value);
+                entry.setValue(employee);
+                return null;
+            }
+        });
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+        map.executeOnKey(key,
+                entry -> {
+                    Employee employee = entry.getValue();
+                    if (employee == null) {
+                        employee = new Employee();
+                    }
+                    employee.setSalary(value);
+                    entry.setValue(employee);
+                    return null;
+                });
+----
+|===
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
