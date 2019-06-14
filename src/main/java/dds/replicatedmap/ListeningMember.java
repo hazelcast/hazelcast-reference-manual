@@ -36,7 +36,10 @@ public class ListeningMember {
         public void entryEvicted(EntryEvent<String, String> event) {
             System.out.println("entryEvicted: " + event);
         }
-
+        @Override
+        public void entryExpired(EntryEvent<String, String> event) {
+            System.out.println( "Entry expired: " + event );
+        }
         @Override
         public void mapEvicted(MapEvent event) {
             System.out.println("mapEvicted:" + event);

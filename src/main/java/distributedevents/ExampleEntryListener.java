@@ -21,6 +21,10 @@ public class ExampleEntryListener implements EntryListener<String, String> {
         System.out.println( "Entry evicted: " + event );
     }
     @Override
+    public void entryExpired(EntryEvent<String, String> event) {
+        System.out.println( "Entry expired: " + event );
+    }
+    @Override
     public void mapCleared(MapEvent event) {
         System.out.println( "Map Cleared: " + event );
     }
