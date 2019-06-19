@@ -62,6 +62,39 @@ have been removed to make entry processor lambda friendly.
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
 in Hazelcast IMDG 3.12. Hazelcast IMDG 3.11.x checks group name and password, while 3.12 checks
 just the group name when security is disabled, and it uses the client login modules when the security is enabled.
+* **Upgrading Cluster Version From IMDG 3.11 to 3.12**:
+For the IMDG versions before 3.12, REST API could be enabled by using the
+`hazelcast.rest.enabled` system property, which is deprecated now.
+IMDG 3.12 and newer versions introduce the `rest-api` configuration element
+along with REST endpoint groups.
+Therefore, a configuration change is needed specifically when performing
+a rolling member upgrade from IMDG 3.11 to 3.12.
++
+So, the steps listed in the above <<rolling-upgrade-procedure>> section
+should be as follows:
++
+. Shutdown the 3.11 member
+. Wait until all partition migrations are completed
+. Update the member with 3.12 binaries
+. Update the configuration (see below)
+. Start the member
++
+For the 4th step ("Update the configuration"), the configuration
+should be updated as follows:
++
+[source,xml]
+----
+<hazelcast>
+    ...    
+    <rest-api enabled="true">
+        <endpoint-group name="CLUSTER_WRITE" enabled="true"/>
+    </rest-api>
+    ...
+</hazelcast>
+----
++
+See the <<using-the-rest-endpoint-groups>> section for more
+information.
 
 === Upgrading to Hazelcast IMDG 3.8.x
 
