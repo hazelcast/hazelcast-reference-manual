@@ -9,24 +9,39 @@ This chapter explains the procedure of upgrading the version of Hazelcast member
 [[terminology]]
 === Terminology
 
-* **Minor version**: A version change after the decimal point, e.g., 3.12 and 3.13.
-* **Patch version**: A version change after the second decimal point, e.g., 3.12.1 and 3.12.2.
-* **Member codebase version**: The `major.minor.patch` version of the Hazelcast binary on which the member executes. For example, when running on `hazelcast-3.12.jar`, your member's codebase version is `3.12.0`.
-* **Cluster version**: The `major.minor` version at which the cluster operates. This ensures that cluster members are able to communicate using the same cluster protocol and
+* **Minor version**: A version change after the decimal point, e.g.,
+3.12 and 3.13.
+* **Patch version**: A version change after the second decimal point,
+e.g., 3.12.1 and 3.12.2.
+* **Member codebase version**: The `major.minor.patch` version of the
+Hazelcast binary on which the member executes. For example, when running
+on `hazelcast-3.12.jar`, your member's codebase version is `3.12.0`.
+* **Cluster version**: The `major.minor` version at which the cluster
+operates. This ensures that cluster members are able to communicate using
+the same cluster protocol and
 determines the feature set exposed by the cluster.
 
 [[hazelcast-members-compatibility-guarantees]]
 === Hazelcast Members Compatibility Guarantees
 
-Hazelcast members operating on binaries of the same major and minor version numbers are compatible regardless of patch version.
-  For example, in a cluster with members running on version 3.11.1, it is possible to perform a rolling upgrade to 3.11.2 by shutting down, upgrading to `hazelcast-3.11.2.jar` binary
-  and starting each member one by one. _Patch level compatibility applies to both Hazelcast IMDG and Hazelcast IMDG Enterprise_.
+Hazelcast members operating on binaries of the same major and minor
+version numbers are compatible regardless of patch version.
+For example, in a cluster with members running on version 3.11.1,
+it is possible to perform a rolling upgrade to 3.11.2 by shutting
+down, upgrading to `hazelcast-3.11.2.jar` binary and starting each
+member one by one. _Patch level compatibility applies to both Hazelcast
+IMDG and Hazelcast IMDG Enterprise_.
 
-Also, each minor version is compatible with the previous one (back until Hazelcast IMDG 3.8). For example, it is possible to perform a rolling upgrade on a cluster running Hazelcast IMDG Enterprise 3.11 to Hazelcast IMDG Enterprise 3.12.
- _Rolling upgrades across minor versions is a Hazelcast IMDG Enterprise feature_.
+Also, each minor version is compatible with the previous one (back until
+Hazelcast IMDG 3.8). For example, it is possible to perform a rolling
+upgrade on a cluster running Hazelcast IMDG Enterprise 3.11 to Hazelcast
+IMDG Enterprise 3.12. _Rolling upgrades across minor versions is a Hazelcast
+IMDG Enterprise feature_.
 
-The compatibility guarantees described above are given in the context of rolling member upgrades and only apply to GA (general availability) releases. It is never advisable to run a
- cluster with members running on different patch or minor versions for prolonged periods of time.
+The compatibility guarantees described above are given in the context of
+rolling member upgrades and only apply to GA (general availability) releases.
+It is never advisable to run a cluster with members running on different 
+patch or minor versions for prolonged periods of time.
 
 [[rolling-upgrade-procedure]]
 === Rolling Upgrade Procedure
@@ -38,9 +53,11 @@ Let's assume a cluster with four members running on codebase version `3.12.0` wi
 one at version `3.13.0`, includes the following steps which should be repeated for each member:
 
 * Gracefully shut down an existing `3.12.0` member.
-* Wait until all partition migrations are completed; during migrations, membership changes (member joins or removals) are not allowed.
+* Wait until all partition migrations are completed; during migrations,
+membership changes (member joins or removals) are not allowed.
 * Update the member with the new `3.13.0` Hazelcast binaries.
-* Start the member and wait until it joins the cluster. You should see something like the following in your logs:
+* Start the member and wait until it joins the cluster. You should
+see something like the following in your logs:
 +
 ```
  ...
@@ -60,12 +77,56 @@ You have the following options to upgrade the cluster version:
 
 * Using https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Management Center].
 * Using the <<using-the-script-cluster-sh, cluster.sh>> script.
-* Allow the cluster to auto-upgrade.
+* Allow the cluster to <<enabling-auto-upgrading, auto-upgrade>>.
 
-NOTE: You need to upgrade your Management Center version *before* upgrading the member version if you want to
+Note that you need to enable the REST API to use either of the above methods
+to upgrade your cluster version. For this, enable the `CLUSTER_WRITE`
+REST endpoint group (its default is disabled). See the
+<<using-the-rest-endpoint-groups>> section on how to enable them.
+
+Also note that you need to upgrade your Management Center version *before* upgrading the member version if you want to
 change cluster version using Management Center. Management Center is compatible with the previous minor version of
-Hazelcast, starting with version 3.9. For example, Management Center 3.9 works with both Hazelcast IMDG
-3.8 and 3.9. To change your cluster version to 3.9, you need Management Center 3.9.
+Hazelcast, starting with version 3.9. For example, Management Center 3.12 works with both Hazelcast IMDG
+3.11 and 3.12. To change your cluster version to 3.12, you need Management Center 3.12.
+
+[WARNING]
+.Upgrading Cluster Version From IMDG 3.11 to 3.12
+====
+
+For the IMDG versions before 3.12, REST API could be enabled by using the
+`hazelcast.rest.enabled` system property, which is deprecated now.
+IMDG 3.12 and newer versions introduce the `rest-api` configuration element
+along with REST endpoint groups.
+Therefore, a configuration change is needed specifically when performing
+a rolling member upgrade from IMDG 3.11 to 3.12.
+
+So, the steps listed in the above <<rolling-upgrade-procedure>> section
+should be as follows:
+
+. Shutdown the 3.11 member
+. Wait until all partition migrations are completed
+. Update the member with 3.12 binaries
+. Update the configuration (see below)
+. Start the member
+
+For the 4th step ("Update the configuration"), the configuration
+should be updated as follows:
+
+[source,xml]
+----
+<hazelcast>
+    ...    
+    <rest-api enabled="true">
+        <endpoint-group name="CLUSTER_WRITE" enabled="true"/>
+    </rest-api>
+    ...
+</hazelcast>
+----
+
+See the <<using-the-rest-endpoint-groups>> section for more
+information.
+
+====
 
 === Enabling Auto-Upgrading
 
