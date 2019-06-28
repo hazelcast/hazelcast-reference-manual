@@ -601,7 +601,7 @@ MapConfig mCfg = new MapConfig("test");
 mCfg.setTimeToLiveSeconds(15);
 client.getConfig().addMapConfig(mCfg);
 HazelcastClient.shutdownAll();
----- 
+----
 
 [[handling-configuration-conflicts]]
 ==== Handling Configuration Conflicts
@@ -648,6 +648,20 @@ MapConfig sessionsWithoutBackup = new MapConfig("sessions").setBackupCount(0);
 // does not throw exception: new dynamic config is equal to existing dynamic config of same name
 instance.getConfig().addMapConfig(sessionsWithoutBackup);
 ----
+
+==== Dynamic data structure configuration and user customizations
+
+Dynamically added data structure configuration may reference user customizations, such as a user-provided `MapLoader`
+implementation referenced by a `MapConfig`. User customizations can be usually configured either by specifying a
+class or factory class name (e.g. `MapStoreConfig#setClassName`) and letting the Hazelcast members instantiate the object
+or by providing an existing instance (e.g. `MapStoreConfig#setImplementation`). When dynamically adding new data structure
+configuration with user customizations, take into account the following considerations:
+
+ * for user customizations submitted as class name or factory class name, the referenced classes are resolved
+ lazily, therefore should be either already on each member's local classpath or resolvable via <<member-user-code-deployment-beta,user code deployment>>.
+ * when user customizations are submitted as instances (or similarly factory instances), the instances themselves have
+ to be serializable, since the entire config needs to be sent over network to all cluster members, and their classes
+ have to be available on each member's local classpath.
 
 [[checking-configuration]]
 === Checking Configuration
