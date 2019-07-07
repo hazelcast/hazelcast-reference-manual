@@ -954,22 +954,22 @@ associated value for a key also in a partition thread.
 
 Entries loaded by `MapLoader` do not have a set time-to-live property. Therefore,
 they live until evicted or explicitly removed. It is possible to enforce time-to-live
-on entries by using `EntryLoader`. `EntryLoader` allows its implementor to set ttl
-values per key before handing the values to Hazelcast. Therefore, you can store and
-load key specific ttls in external storage.
+on the entries by using `EntryLoader`. `EntryLoader` allows you to set
+time-to-live values per key before handing the values to Hazelcast. Therefore, you can store and
+load key specific time-to-live values in the external storage.
 
 Similar to `EntryLoader`, in order to store custom expiration times associated
-with entries, you may use `EntryStore`. `EntryStore` allows its implementors to
+with the entries, you may use `EntryStore`. `EntryStore` allows you to
 retrieve associated expiration date for each entry. The expiration date is an offset
 from an epoch in milliseconds. Epoch is January 1, 1970 UTC which is used by
 `System.currentTimeMillis()`.
 
-NOTE: Although expiration date is expressed as milliseconds, IMap has second granularity
-when it comes to expiration. Therefore, expiration date is rounded to nearest lower
+NOTE: Although the expiration date is expressed in milliseconds, IMap has second granularity
+when it comes to expiration. Therefore, the expiration date is rounded to the nearest lower
 whole second.
 
-`EntryLoader` and `EntryStore` extend from `MapLoader` and `MapStore` respectively.
-Therefore all features and configuration parameters of `MapLoader`/`MapStore` apply
+`EntryLoader` and `EntryStore` extend from `MapLoader` and `MapStore`, respectively.
+Therefore, all features and configuration parameters of `MapLoader` and `MapStore` apply
 to them, too.
 
 Following is an `EntryStore` example.
@@ -1364,9 +1364,9 @@ is configured before the value is removed from the memory, to remove the value
 from the map store.
 
 | * `setTtl`
-| This method updates ttl of an existing entry. It calls `MapLoader.load(Object)`
-method if no value is found in memory. It also calls `EntryStore.store(Object, MetadataAwareValue)`
-with the entry that whose ttl was updated.
+| This method updates time-to-live of an existing entry. It calls the `MapLoader.load(Object)`
+method if no value is found in the memory. It also calls `EntryStore.store(Object, MetadataAwareValue)`
+with the entry whose time-to-live has been updated.
 
 |`clear()`
 |It clears the map and deletes the items from the backing map store. It calls
