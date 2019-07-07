@@ -952,6 +952,32 @@ completed, the `map.get` method looks up any nonexistent value from the database
 a partition thread, or the `map.put` method looks up the database to return the previously
 associated value for a key also in a partition thread.
 
+Entries loaded by `MapLoader` do not have a set time-to-live property. Therefore,
+they live until evicted or explicitly removed. It is possible to enforce time-to-live
+on entries by using `EntryLoader`. `EntryLoader` allows its implementor to set ttl
+values per key before handing the values to Hazelcast. Therefore, you can store and
+load key specific ttls in external storage.
+
+Similar to `EntryLoader`, in order to store custom expiration times associated
+with entries, you may use `EntryStore`. `EntryStore` allows its implementors to
+retrieve associated expiration date for each entry. The expiration date is an offset
+from an epoch in milliseconds. Epoch is January 1, 1970 UTC which is used by
+`System.currentTimeMillis()`.
+
+NOTE: Although expiration date is expressed as milliseconds, IMap has second granularity
+when it comes to expiration. Therefore, expiration date is rounded to nearest lower
+whole second.
+
+`EntryLoader` and `EntryStore` extend from `MapLoader` and `MapStore` respectively.
+Therefore all features and configuration parameters of `MapLoader`/`MapStore` apply
+to them, too.
+
+Following is an `EntryStore` example.
+
+[source,java]
+----
+include::{javasource}/dds/map/PersonEntryStore.java[tag=personms]
+----
 
 NOTE: For more MapStore/MapLoader code samples,
 see link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java[here^].
@@ -1336,6 +1362,11 @@ from the map store.
 They call the `MapStore.delete(Object)` method if write-through persistence mode
 is configured before the value is removed from the memory, to remove the value
 from the map store.
+
+| * `setTtl`
+| This method updates ttl of an existing entry. It calls `MapLoader.load(Object)`
+method if no value is found in memory. It also calls `EntryStore.store(Object, MetadataAwareValue)`
+with the entry that whose ttl was updated.
 
 |`clear()`
 |It clears the map and deletes the items from the backing map store. It calls
