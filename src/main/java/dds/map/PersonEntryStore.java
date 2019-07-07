@@ -1,5 +1,3 @@
-package dds.map;
-
 import com.hazelcast.map.EntryStore;
 
 import java.sql.Connection;
@@ -13,6 +11,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
+//tag::personms[]
 public class PersonEntryStore implements EntryStore<Long, Person> {
 
     private final Connection con;
@@ -97,3 +96,4 @@ public class PersonEntryStore implements EntryStore<Long, Person> {
         return new StatementIterable<Long>(allKeysStatement);
     }
 }
+//end::personms[]

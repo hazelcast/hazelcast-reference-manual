@@ -6,7 +6,7 @@ import com.hazelcast.config.SecurityConfig;
 import com.hazelcast.config.SecurityInterceptorConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import com.hazelcast.security.Credentials;
 import com.hazelcast.security.Parameters;
 import com.hazelcast.security.SecurityInterceptor;

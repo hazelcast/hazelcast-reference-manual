@@ -1,4 +1,8 @@
-import com.hazelcast.core.*;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
+import com.hazelcast.map.MapEvent;
+import com.hazelcast.core.EntryEvent;
 import com.hazelcast.map.listener.*;
 
 //tag::listen[]

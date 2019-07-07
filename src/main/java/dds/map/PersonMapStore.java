@@ -1,4 +1,4 @@
-import com.hazelcast.core.MapStore;
+import com.hazelcast.map.MapStore;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
