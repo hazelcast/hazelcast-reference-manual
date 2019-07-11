@@ -1812,8 +1812,61 @@ Run the following command:
 If any of the above criteria isn't met, then the `isReachable`
 always falls back on TCP Echo attempts on port 7.
 
-To be able to use the Ping Failure Detector, please add the following
-properties in your Hazelcast declarative configuration file:
+To be able to use the Ping Failure Detector, you can configure it
+using the `icmp` element in your Hazelcast IMDG declarative configuration
+file, e.g., `hazelcast.xml`. An example is shown below:
+
+[source,xml]
+----
+<hazelcast>
+    <network>
+    ...       
+        <failure-detector>
+            <icmp enabled="true">
+                <timeout-milliseconds>1000</timeout-milliseconds>
+                <fail-fast-on-startup>true</fail-fast-on-startup>
+                <interval-milliseconds>1000</interval-milliseconds>
+                <max-attempts>3</max-attempts>
+                <parallel-mode>true</parallel-mode>
+                <ttl>0</ttl>
+            </icmp>
+        </failure-detector>
+    </network>
+    ...
+</hazelcast>
+----
+
+The following are the element and attribute descriptions:
+
+* `enabled`: Specifies whether the legacy ICMP detection mode is enabled; works
+cooperatively with the existing failure detector and only kicks-in after
+a pre-defined period has passed with no heartbeats from a member.
+Its default value is `false`.
+* `parallel-mode`: Specifies whether the parallel ping detector is enabled;
+works separately from the other detectors. Its default value is `true`.
+* `timeout-milliseconds`: Number of milliseconds until a ping attempt
+is considered failed if there was no reply. Its default value is `1000` milliseconds.
+* `max-attempts`: Maximum number of ping attempts before
+the member/node gets suspected by the detector. Its default value is `2`.
+* `interval-milliseconds`: Interval, in milliseconds, between each ping
+attempt. 1000ms (1 sec) is also the minimum interval allowed.
+Its default value is `1000` milliseconds.
+* `ttl`: Maximum number of hops the packets should
+go through. Its default value is `0`.
+* `fail-fast-on-startup`: Specifies whether the cluster member fails to start
+if it is unable to action an ICMP ping command when ICMP is enabled. Failure
+is usually due to OS level restrictions.
+
+In the above example configuration, the Ping detector attempts 3 pings, one every second and
+waits up to 1 second for each to complete. If after 3 seconds, there was no successful
+ping, the member gets suspected.
+
+[NOTE]
+====
+
+Until Hazelcast IMDG 3.10, the following system properties (corresponding to the above
+configuration elements) have been used to configure Ping Failure Detector. These have become deprecated
+starting with Hazelcast IMDG 3.10:
 
 [source,xml]
 ----
@@ -1831,27 +1884,8 @@ properties in your Hazelcast declarative configuration file:
 </hazelcast>
 ----
 
-The following are the property descriptions:
+====
 
-* `hazelcast.icmp.enabled`: Enables legacy ICMP detection mode, works
-cooperatively with the existing failure detector and only kicks-in after
-a pre-defined period has passed with no heartbeats from a member.
-Its default value is `false`.
-* `hazelcast.icmp.parallel.mode`: Enabling the parallel ping detector,
-works separately from the other detectors. Its default value is `true`.
-* `hazelcast.icmp.timeout`: Number of milliseconds until a ping attempt
-is considered failed if there was no reply. Its default value is `1000` milliseconds.
-* `hazelcast.icmp.max.attempts`: Maximum number of ping attempts before
-the member/node gets suspected by the detector. Its default value is `2`.
-* `hazelcast.icmp.interval`: Interval, in milliseconds, between each ping
-attempt. 1000ms (1 sec) is also the minimum interval allowed.
-Its default value is `1000` milliseconds.
-* `hazelcast.icmp.ttl`: Maximum number of hops the packets should
-go through. Its default value is `0`.
-
-In the above configuration, the Ping detector attempts 3 pings, one every second and
-waits up to 1 second for each to complete. If after 3 seconds, there was no successful
-ping, the member gets suspected.
 
 To enforce the <<requirements-and-linuxunix-configuration, Requirements>>, the property
 `hazelcast.icmp.echo.fail.fast.on.startup` can also be set to `true`, in which case,

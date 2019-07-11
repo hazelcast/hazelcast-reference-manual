@@ -96,7 +96,54 @@ should be updated as follows:
 See the <<using-the-rest-endpoint-groups>> section for more
 information.
 
-=== Upgrading to Hazelcast IMDG 3.8.x
+=== Upgrading from Hazelcast IMDG 3.9.x
+
+This section provides information to be considered when upgrading from Hazelcast IMDG 3.9.x to 3.10.x and newer.
+
+* The https://docs.hazelcast.org/docs/3.10/manual/html-single/#requirements-and-linuxunix-configuration[system property based configuration]
+for Ping Failure Detector is deprecated. Instead, use the elements to configure it, an example of which is shown below:
++
+[source,xml]
+----
+<hazelcast>
+    <network>
+    ...       
+        <failure-detector>
+            <icmp enabled="true">
+                <timeout-milliseconds>1000</timeout-milliseconds>
+                <fail-fast-on-startup>true</fail-fast-on-startup>
+                <interval-milliseconds>1000</interval-milliseconds>
+                <max-attempts>2</max-attempts>
+                <parallel-mode>true</parallel-mode>
+                <ttl>255</ttl>
+            </icmp>
+        </failure-detector>
+    </network>
+    ...
+</hazelcast>
+----
+
+Until Hazelcast IMDG 3.10, the configuration has been like the following:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <properties>
+        <property name="hazelcast.icmp.enabled">true</property>
+        <property name="hazelcast.icmp.parallel.mode">true</property>
+        <property name="hazelcast.icmp.timeout">1000</property>
+        <property name="hazelcast.icmp.max.attempts">3</property>
+        <property name="hazelcast.icmp.interval">1000</property>
+        <property name="hazelcast.icmp.ttl">0</property>
+    </properties>
+    ...
+</hazelcast>
+---
+
+=== Upgrading from Hazelcast IMDG 3.8.x
+
+This section provides information to be considered when upgrading from Hazelcast IMDG 3.7.x to 3.8.x and newer.
 
 * **Introducing <wan-publisher> element**: The configuration element `<target-cluster>` has been replaced with
 the element `<wan-publisher>` in WAN replication configuration.
@@ -107,7 +154,9 @@ the element `<wan-publisher>` in WAN replication configuration.
 work if your member is 3.8.x where x < 5. You need to use the 3.8.5 or higher versions where the problem is fixed.
 
 
-=== Upgrading to Hazelcast IMDG 3.7.x
+=== Upgrading from Hazelcast IMDG 3.6.x
+
+This section provides information to be considered when upgrading from Hazelcast IMDG 3.6.x to 3.7.x and newer.
 
 * **Important note about Hazelcast System Properties:** Even Hazelcast has not been
 recommending the usage of `GroupProperties.java` class while benefiting from system properties,
@@ -141,7 +190,9 @@ your Hazelcast member configuration.
 They are ignored if configured, since the map eviction is based on the sampling of entries.
 See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
-=== Upgrading to Hazelcast IMDG 3.6.x
+=== Upgrading from Hazelcast IMDG 3.5.x
+
+This section provides information to be considered when upgrading from Hazelcast IMDG 3.5.x to 3.6.x and newer.
 
 * **Introducing new configuration options for WAN replication:** WAN replication related system properties, which are
 configured on a per member basis, can now be configured per target cluster.
@@ -158,7 +209,9 @@ With this release, the method `getHazelcastTypeId()` is used and you give your o
 Also, `getTypeId()` was used in your custom serializer class; it has been renamed to `getHazelcastTypeId()`, too.
 * The `LOCAL` transaction type has been deprecated. Use `ONE_PHASE` for the Hazelcast IMDG releases 3.6 and higher.
 
-=== Upgrading to Hazelcast IMDG 3.5.x
+=== Upgrading from Hazelcast IMDG 3.4.x
+
+This section provides information to be considered when upgrading from Hazelcast IMDG 3.4.x to 3.5.x and newer.
 
 * **Introducing the `spring-aware` element:** Hazelcast used `SpringManagedContext` to scan `SpringAware` annotations by default.
 This was causing some performance overhead for the users who do not use `SpringAware`.
@@ -167,7 +220,9 @@ By introducing the `spring-aware` element, it is possible to enable it by adding
 See the <<integration-with-spring, Spring Integration section>>.
 
 
-=== Upgrading to Hazelcast IMDG 3.0.x
+=== Upgrading from Hazelcast IMDG 2.x
+
+This section provides information to be considered when upgrading from Hazelcast IMDG 2.x to 3.x.
 
 * **Removal of deprecated static methods:** The static methods of Hazelcast class reaching Hazelcast data components have been removed.
 The functionality of these methods can be reached from the `HazelcastInstance` interface.
