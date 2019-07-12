@@ -967,9 +967,9 @@ To change the cluster version to `X.Y`, use the following command:
 
 The cluster version is always in the `major.minor` format, e.g., 3.12. Using other formats results in a failure.
 
-**Calls against TLS protected members (using HTTPs protocol):**
+**Calls against the TLS protected members (using HTTPS protocol):**
 
-When the member has TLS configured, use `--https` argument to instruct `cluster.sh` to use proper URL scheme:
+When the member has TLS configured, use the `--https` argument to instruct `cluster.sh` to use the proper URL scheme:
 
 [source,sh]
 ----
@@ -977,8 +977,8 @@ When the member has TLS configured, use `--https` argument to instruct `cluster.
   --operation get-state --address member1.example.com --port 5701
 ----
 
-If the default set of trusted Certificate authorities is not sufficient (e.g. you use a self-signed certificate),
-you can provide a custom file with root certificates:
+If the default set of trusted certificate authorities is not sufficient, e.g., you use a self-signed certificate,
+you can provide a custom file with the root certificates:
 
 [source,sh]
 ----
@@ -987,7 +987,7 @@ you can provide a custom file with root certificates:
   --operation get-state --address member1.example.com --port 5701
 ----
 
-When the TLS mutual authentication is enabled, you have to provide client certificate and the related private key:
+When the TLS mutual authentication is enabled, you have to provide the client certificate and related private key:
 
 [source,sh]
 ----
@@ -996,6 +996,7 @@ When the TLS mutual authentication is enabled, you have to provide client certif
   --cert cert.pem \
   --operation get-state --address member1.example.com --port 5701
 ----
+
 NOTE: Currently, this script is not supported on the Windows platforms.
 
 ==== Using REST API for Cluster Management
@@ -1646,7 +1647,7 @@ you should use this parameter to provide the IP address of a member to this scri
 
 |`--https`
 |_no argument expected_
-|Uses HTTPs protocol for REST calls.
+|Uses HTTPS protocol for REST calls.
 
 |`--cacert`
 |_set of well-known CA certificates_
