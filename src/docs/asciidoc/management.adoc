@@ -621,7 +621,7 @@ And the following table lists all the endpoints along with the groups they belon
 
 | `CLUSTER_READ`
 | Enabled
-| 
+|
 
 * `/hazelcast/rest/cluster`
 * `/hazelcast/rest/management/cluster/state`
@@ -631,7 +631,7 @@ And the following table lists all the endpoints along with the groups they belon
 
 | `CLUSTER_WRITE`
 | Disabled
-| 
+|
 
 * `/hazelcast/rest/mancenter/changeurl`
 * `/hazelcast/rest/management/cluster/changeState`
@@ -642,7 +642,7 @@ And the following table lists all the endpoints along with the groups they belon
 
 | `HEALTH_CHECK`
 | Enabled
-| 
+|
 
 * `/hazelcast/health/node-state`
 * `/hazelcast/health/cluster-state`
@@ -653,7 +653,7 @@ And the following table lists all the endpoints along with the groups they belon
 
 | `HOT_RESTART`
 | Disabled
-| 
+|
 
 * `/hazelcast/rest/management/cluster/forceStart`
 * `/hazelcast/rest/management/cluster/partialStart`
@@ -662,7 +662,7 @@ And the following table lists all the endpoints along with the groups they belon
 
 | `WAN`
 | Disabled
-| 
+|
 
 * `/hazelcast/rest/mancenter/wan/sync/map`
 * `/hazelcast/rest/mancenter/wan/sync/allmaps`
@@ -679,7 +679,7 @@ And the following table lists all the endpoints along with the groups they belon
 
 | `DATA`
 | Disabled
-| 
+|
 
 * `/hazelcast/rest/maps/`
 * `/hazelcast/rest/queues/QUEUE_NAME/size`
@@ -907,7 +907,7 @@ See the <<force-start, Force Start section>>.
 
 NOTE: The script `cluster.sh` uses `curl` command and `curl` must be installed to be able to use the script.
 
-The script `cluster.sh` needs the following parameters to operate according to your needs.
+The script `cluster.sh` takes the following parameters to operate according to your needs.
 If these parameters are not provided, the default values are used.
 
 [cols="2,2,5a"]
@@ -935,7 +935,6 @@ you should use this parameter to provide the IP address of a member to this scri
 |`-p` or `--port`
 |`5701`
 |Defines on which port Hazelcast is running on the local or remote machine.
-Its default value is `5701`.
 
 |`-g` or `--groupname`
 |`dev`
@@ -948,13 +947,37 @@ See the <<creating-cluster-groups, Creating Cluster Groups section>>.
 See the <<creating-cluster-groups, Creating Cluster Groups section>>.
 
 |`-v` or `--version`
-|None
+|_no argument expected_
 |Defines the cluster version to change to. It is used in conjunction with
 the `change-cluster-version` operation.
+
+|`-d` or `--debug`
+|_no argument expected_
+|Prints error output.
+
+|`--https`
+|_no argument expected_
+|Uses HTTPs protocol for REST calls.
+
+|`--cacert`
+|_set of well-known CA certificates_
+|Defines trusted PEM-encoded certificate file path. It's used to verify member certificates.
+
+|`--cert`
+|None
+|Defines PEM-encoded client certificate file path. Only needed when client certificate authentication is used.
+
+|`--key`
+|None
+|Defines PEM-encoded client private key file path. Only needed when client certificate authentication is used.
+
+|`--insecure`
+|_no argument expected_
+|Disables member certificate verification.
 |===
 
 The script `cluster.sh` is self-documented; you can see the parameter descriptions using
-the command `sh cluster.sh -h` or `sh cluster.sh --help`.
+the command `./cluster.sh -h` or `./cluster.sh --help`.
 
 NOTE: You can perform the above operations using the Hot Restart tab of Hazelcast Management Center or
 using the REST API. See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart^]
@@ -970,62 +993,62 @@ Let's say you have a cluster running on remote machines and one Hazelcast member
 
 To get the state of the cluster, use the following command:
 
-`sh cluster.sh -o get-state -a 172.16.254.1 -p 5702 -g test -P test`
+`./cluster.sh -o get-state -a 172.16.254.1 -p 5702 -g test -P test`
 
 The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
 
-`sh cluster.sh --operation get-state --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation get-state --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 **Changing the cluster state:**
 
 To change the state of the cluster to `frozen`, use the following command:
 
-`sh cluster.sh -o change-state -s frozen -a 172.16.254.1 -p 5702 -g test -P test`
+`./cluster.sh -o change-state -s frozen -a 172.16.254.1 -p 5702 -g test -P test`
 
 Similarly, you can use the following command for the same purpose:
 
-`sh cluster.sh --operation change-state --state frozen --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation change-state --state frozen --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 **Shutting down the cluster:**
 
 To shutdown the cluster, use the following command:
 
-`sh cluster.sh -o shutdown -a 172.16.254.1 -p 5702 -g test -P test`
+`./cluster.sh -o shutdown -a 172.16.254.1 -p 5702 -g test -P test`
 
 Similarly, you can use the following command for the same purpose:
 
 
-`sh cluster.sh --operation shutdown --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation shutdown --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 **Partial starting the cluster:**
 
 To partial start the cluster when Hot Restart is enabled, use the following command:
 
-`sh cluster.sh -o partial-start -a 172.16.254.1 -p 5702 -g test -P test`
+`./cluster.sh -o partial-start -a 172.16.254.1 -p 5702 -g test -P test`
 
 Similarly, you can use the following command for the same purpose:
 
-`sh cluster.sh --operation partial-start --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation partial-start --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 **Force starting the cluster:**
 
 To force start the cluster when Hot Restart is enabled, use the following command:
 
-`sh cluster.sh -o force-start -a 172.16.254.1 -p 5702 -g test -P test`
+`./cluster.sh -o force-start -a 172.16.254.1 -p 5702 -g test -P test`
 
 Similarly, you can use the following command for the same purpose:
 
-`sh cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 **Getting the current cluster version:**
 
 To get the cluster version, use the following command:
 
-`sh cluster.sh -o get-cluster-version -a 172.16.254.1 -p 5702 -g test -P test`
+`./cluster.sh -o get-cluster-version -a 172.16.254.1 -p 5702 -g test -P test`
 
 The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
 
-`sh cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --groupname test --password test`
 
 **Changing the cluster version:**
 
@@ -1033,9 +1056,39 @@ See the <<rolling-member-upgrades, Rolling Member Upgrades chapter>> to learn mo
 
 To change the cluster version to `X.Y`, use the following command:
 
-`sh cluster.sh -o change-cluster-version -v X.Y -a 172.16.254.1 -p 5702 -g test -P test`
+`./cluster.sh -o change-cluster-version -v X.Y -a 172.16.254.1 -p 5702 -g test -P test`
 
 The cluster version is always in the `major.minor` format, e.g., 3.12. Using other formats results in a failure.
+
+**Calls against TLS protected members (using HTTPs protocol):**
+
+When the member has TLS configured, use `--https` argument to instruct `cluster.sh` to use proper URL scheme:
+
+[source,sh]
+----
+./cluster.sh --https \
+  --operation get-state --address member1.example.com --port 5701
+----
+
+If the default set of trusted Certificate authorities is not sufficient (e.g. you use a self-signed certificate),
+you can provide a custom file with root certificates:
+
+[source,sh]
+----
+./cluster.sh --https \
+  --cacert /path/to/ca-certs.pem \
+  --operation get-state --address member1.example.com --port 5701
+----
+
+When the TLS mutual authentication is enabled, you have to provide client certificate and the related private key:
+
+[source,sh]
+----
+./cluster.sh --https \
+  --key privkey.pem \
+  --cert cert.pem \
+  --operation get-state --address member1.example.com --port 5701
+----
 
 NOTE: Currently, this script is not supported on the Windows platforms.
 
@@ -1582,7 +1635,7 @@ You can control the OperationHeartbeats plugin using the following properties:
 - `hazelcast.diagnostics.operation-heartbeat.seconds`:
 The frequency this plugin is writing the collected information to the disk.
 It is configured to be 10 seconds by default. 0 disables the plugin.
-- `hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`: 
+- `hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`:
 The maximum allowed deviation percentage. Its default value is 33.
 For example, with a default 60 call timeout and operation heartbeat interval being 15 seconds,
 the maximum deviation with a deviation-percentage of 33, is 5 seconds.
@@ -1780,11 +1833,52 @@ $ ./healthcheck.sh <parameters>
 
 The following parameters can be used:
 
-* `-o`, `--operation`: Health check operation. It can be `all`, `node-state`,
+[cols="2,2,5a"]
+|===
+|Parameter | Default Value | Description
+
+|`-o` or `--operation`
+|`get-state`
+|Health check operation. It can be `all`, `node-state`,
 `cluster-state`, `cluster-safe`, `migration-queue-size` and `cluster-size`.
-* `-a`, `--address`: Defines which IP address Hazelcast member is running on. Its default value is `127.0.0.1`.
-* `-p`, `--port`: Defines which port Hazelcast member is running on. Its default value is `5701`.
-* `-h`, `--help`: Lists the parameter descriptions along with a usage example.
+
+|`-a` or `--address`
+|`127.0.0.1`
+|Defines the IP address of a cluster member. If you want to manage your cluster remotely,
+you should use this parameter to provide the IP address of a member to this script.
+
+|`-p` or `--port`
+|`5701`
+|Defines on which port Hazelcast is running on the local or remote machine.
+
+|`-h` or `--help`
+|_no argument expected_
+|Lists the parameter descriptions along with a usage example.
+
+|`-d` or `--debug`
+|_no argument expected_
+|Prints error output.
+
+|`--https`
+|_no argument expected_
+|Uses HTTPs protocol for REST calls.
+
+|`--cacert`
+|_set of well-known CA certificates_
+|Defines trusted PEM-encoded certificate file path. It's used to verify member certificates.
+
+|`--cert`
+|None
+|Defines PEM-encoded client certificate file path. Only needed when client certificate authentication is used.
+
+|`--key`
+|None
+|Defines PEM-encoded client private key file path. Only needed when client certificate authentication is used.
+
+|`--insecure`
+|_no argument expected_
+|Disables member certificate verification.
+|===
 
 
 *_Example 1: Checking Member State of a Healthy Cluster:_*
