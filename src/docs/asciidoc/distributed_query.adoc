@@ -506,6 +506,21 @@ map.addIndex( "age", true );
 map.addIndex( "active", false );
 ----
 
+Note that creating indexes once is sufficient. Subsequent operations are
+reflected in the index automatically. So, although it is safe to call the
+`addIndex()` method consecutively, there will be a performance penalty
+due to the redundant index creation.
+
+When you call, for example, `map.addIndex("fieldName", true)`, each
+partition iterates over their recordset and creates an index for each entry.
+The previously created index entry will be recreated and replaced with the new entry.
+The performance penalty will be parallel with the number of entries. If you
+have maps with a large number of entries, then synchronizing index addition process
+is recommended.
+
+Other than using the `addIndex()` method, you can define your index
+declaratively or programmatically as described in the <<configuring-imap-indexes section>>.
+
 ===== Indexing Ranged Queries
 
 `IMap.addIndex(fieldName, ordered)` is used for adding index. For
