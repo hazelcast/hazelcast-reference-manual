@@ -269,7 +269,6 @@ Since their logic is the same in both the member side and client side, you can s
 their sections as listed below.
 
 * <<replicated-map, Replicated Map>>
-* <<mapreduce, MapReduce>>
 * <<list, List>>
 * <<set, Set>>
 * <<iatomiclong, IAtomicLong>>
@@ -366,7 +365,7 @@ configuration element. See the below example.
 [source,xml]
 ----
 <hazelcast-client>
-    ...    
+    ...
     <instance-name>barClient</instance-name>
     <client-labels>
         <label>user</label>
@@ -964,7 +963,7 @@ And you need to set the Java security property as follows:
 `Security.setProperty("ocsp.enable", "true")`
 
 You can find more details on the related security topics
-link:http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CERTPATH[here^] and 
+link:http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CERTPATH[here^] and
 link:http://docs.oracle.com/javase/6/docs/technotes/guides/security/certpath/CertPathProgGuide.html#AppC[here^].
 ====
 
@@ -1329,7 +1328,7 @@ recovery mechanism described in the next section):
 
 * When a client disconnects from a cluster and
 connects to a new one the `InitialMemberEvent` and `CLIENT_CHANGED_CLUSTER` events are fired.
-* When switching clusters, the client reuses its UUID. 
+* When switching clusters, the client reuses its UUID.
 * The client's listener service re-registers its listeners to the new cluster;
 the listener service opens a new connection to all members in the current
 <<client-network, member list>> and registers the listeners for each connection.
@@ -1342,7 +1341,7 @@ The client is not able to connect to a cluster with different partition count.
 ===== Disaster Recovery Mechanism
 
 When one of your clusters is gone due to a failure, the connection between
-your clients and owner member in that cluster is gone, too. 
+your clients and owner member in that cluster is gone, too.
 When a client is disconnected because of a failure in the cluster,
 it first tries to connect to another member of that same cluster.
 
@@ -1388,7 +1387,7 @@ whose configuration is given by `client-config2.xml`.
 Then, the client tries to connect to the next cluster in this list,
 whose configuration is given by `client-config3.xml`. When the end of the list is reached,
 which is so in this example, and the client could not connect to `client-config3`,
-then `try-count` is incremented and the client continues to try to connect starting with `client-config1`. 
+then `try-count` is incremented and the client continues to try to connect starting with `client-config1`.
 
 This iteration continues until the client connects to a cluster or `try-count` is reached to the configured value.
 When the iteration reaches this value and the client still could not connect to a cluster,
@@ -1402,7 +1401,7 @@ blue-green and disaster recovery scenarios.
 ===== Configuring Using CNAME
 
 Using CNAME, you can change the hostname resolutions and use them dynamically.
-Let's describe the configuration with examples. 
+Let's describe the configuration with examples.
 
 Assume that you have two clusters, Cluster A and Cluster B, and two Java clients.
 
@@ -1483,7 +1482,7 @@ Assume that you have two clusters, Cluster A and Cluster B, and two Java clients
 link:https://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html[networkaddress.cache.ttl^] JVM parameter.
 . Configure the addresses in your clients' configuration to resolve to hostnames of
 Cluster A via CNAME so that the clients will connect to Cluster A when it starts:
-+ 
++
 `production1.myproject` → `clusterA.member1`
 +
 `production2.myproject` → `clusterA.member2`
@@ -1547,12 +1546,12 @@ ClientConfig clientConfig = new ClientConfig();
 clientConfig.getGroupConfig().setName("cluster-a");
 ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
 networkConfig.addAddress("10.216.1.18", "10.216.1.19");
- 
+
 ClientConfig clientConfig2 = new ClientConfig();
 clientConfig2.getGroupConfig().setName("cluster-b");
 ClientNetworkConfig networkConfig2 = clientConfig2.getNetworkConfig();
 networkConfig2.addAddress( "10.214.2.10", "10.214.2.11");
- 
+
 ClientFailoverConfig clientFailoverConfig = new ClientFailoverConfig();
 clientFailoverConfig.addClientConfig(clientConfig).addClientConfig(clientConfig2).setTryCount(10)
 HazelcastInstance client = HazelcastClient.newHazelcastFailoverClient(clientFailoverConfig);
@@ -1572,7 +1571,7 @@ You can also configure it within the Spring context, as shown below:
                 <hz:member>127.0.0.1:5701</hz:member>
             </hz:network>
         </hz:client>
- 
+
         <hz:client>
             <hz:group name="alternativeClusterName" />
             <hz:network>
@@ -1580,7 +1579,7 @@ You can also configure it within the Spring context, as shown below:
                 <hz:member>127.0.0.1:5703</hz:member>
             </hz:network>
         </hz:client>
- 
+
     </hz:client-failover>
 </beans>
 ----
