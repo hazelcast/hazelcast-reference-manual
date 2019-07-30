@@ -57,6 +57,69 @@ have been removed to make entry processor lambda friendly.
 ----
 |===
 
+
+==== WAN Replication
+
+The previously known `WanPublisherConfig` has been separated into
+two configuration elements/classes to be used for built-in and custom WAN publishers:
+
+* `batch-publisher` (declarative configuration) or `WanBatchReplicationPublisherConfig` (programmatic configuration)
+* `custom-publisher` (declarative configuration) or `CustomWanPublisherConfig` (programmatic configuration)
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+The following was an example declarative configuration for `wan-publisher`:
+
+[source,xml]
+----
+<wan-publisher group-name="nyc" publisher-id="nycPublisherId">
+    <class-name>com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication</class-name>
+    <queue-capacity>15000</queue-capacity>
+    <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
+    <initial-publisher-state>REPLICATING</initial-publisher-state>
+    <wan-sync>
+        <consistency-check-strategy>NONE</consistency-check-strategy>
+    </wan-sync>
+    <properties>
+        <property name="endpoints">10.3.5.1:5701,10.3.5.2:5701</property>
+        <property name="batch.size">1000</property>
+        <property name="batch.max.delay.millis">2000</property>
+        <property name="response.timeout.millis">60000</property>
+        <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
+        <property name="snapshot.enabled">false</property>
+        <property name="group.password">nyc-pass</property>
+    </properties>
+</wan-publisher>
+----
+
+| *_After IMDG 4.0_*
+
+And the following is the equivalent of the above configuration after IMDG 4.0:
+
+[source,xml]
+----
+<batch-publisher>
+            <group-name>nyc</group-name>
+            <publisher-id>nycPublisherId</publisher-id>
+            <batch-size>1000</batch-size>
+            <batch-max-delay-millis>2000</batch-max-delay-millis>
+            <response-timeout-millis>60000</response-timeout-millis>
+            <acknowledge-type>ACK_ON_OPERATION_COMPLETE</acknowledge-type>
+            <initial-publisher-state>REPLICATING</initial-publisher-state>
+            <snapshot-enabled>false</snapshot-enabled>
+            <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
+            <queue-capacity>10000</queue-capacity>
+    <target-endpoints>10.3.5.1:5701,10.3.5.2:5701</target-endpoints>
+    <wan-sync>
+        <consistency-check-strategy>NONE</consistency-check-strategy>
+    </wan-sync>
+</batch-publisher>
+----
+|===
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
