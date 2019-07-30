@@ -4,7 +4,8 @@ import com.hazelcast.config.RestEndpointGroup;
 import com.hazelcast.config.RestServerEndpointConfig;
 import com.hazelcast.config.SSLConfig;
 import com.hazelcast.config.ServerSocketEndpointConfig;
-import com.hazelcast.config.WanPublisherConfig;
+import com.hazelcast.config.AbstractWanPublisherConfig;
+import com.hazelcast.config.WanBatchReplicationPublisherConfig;
 import com.hazelcast.config.WanReplicationConfig;
 import com.hazelcast.config.WanReplicationRef;
 import com.hazelcast.core.Hazelcast;
@@ -60,12 +61,13 @@ public class AdvancedNetworkConfig {
                                             .setFactoryClassName("com.hazelcast.examples.MySSLContextFactory")
                                             .setProperty("foo", "bar"))
         );
-        WanPublisherConfig wanPublisherConfig = new WanPublisherConfig();
-        wanPublisherConfig.setEndpoint("tokyo"); // refer to WAN endpoint config
-        config.addWanReplicationConfig(
-                new WanReplicationConfig().setName("replicate-to-tokyo")
-                                          .addWanPublisherConfig(wanPublisherConfig)
-        );
+        WanReplicationConfig wanReplicationConfig = new WanReplicationConfig();
+        WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        			.setEndpoint("tokyo")
+        			.setTargetEndpoints("tokyo.hazelcast.com:8765");
+        wanReplicationConfig.addWanBatchReplicationPublisherConfig(publisherConfig);
+        config.addWanReplicationConfig(wanReplicationConfig);
+
         config.getMapConfig("customers").setWanReplicationRef(
                 new WanReplicationRef("replicate-to-tokyo", "com.company.MergePolicy", emptyList(), false)
         );

@@ -12,11 +12,11 @@ public class ExampleWANReplicationDiscoveryConfiguration {
         WanReplicationConfig wrConfig = new WanReplicationConfig();
         wrConfig.setName("my-wan-cluster-batch");
 
-        WanPublisherConfig publisherConfig = new WanPublisherConfig();
-        publisherConfig.setGroupName("london");
-        publisherConfig.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication");
-        publisherConfig.setQueueFullBehavior(WANQueueFullBehavior.THROW_EXCEPTION);
-        publisherConfig.setQueueCapacity(1000);
+        WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        			.setGroupName("london")
+        			.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication")
+        			.setQueueCapacity(1000)
+        			.setQueueFullBehavior(WANQueueFullBehavior.THROW_EXCEPTION);
 
         Map<String, Comparable> props = publisherConfig.getProperties();
         props.put("batch.size", 500);
@@ -43,7 +43,7 @@ public class ExampleWANReplicationDiscoveryConfiguration {
 
         discoveryConfig.addDiscoveryStrategyConfig(discoveryStrategyConfig);
         publisherConfig.setDiscoveryConfig(discoveryConfig);
-        wrConfig.addWanPublisherConfig(publisherConfig);
+        wrConfig.addWanBatchReplicationPublisherConfig(publisherConfig);
         config.addWanReplicationConfig(wrConfig);
 //end::wrdc[]
     }

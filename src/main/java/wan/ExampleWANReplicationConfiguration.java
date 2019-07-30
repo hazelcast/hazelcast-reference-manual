@@ -11,12 +11,14 @@ public class ExampleWANReplicationConfiguration {
 
         WanReplicationConfig wrConfig = new WanReplicationConfig();
         wrConfig.setName("my-wan-cluster-batch");
-
-        WanPublisherConfig publisherConfig = new WanPublisherConfig();
-        publisherConfig.setGroupName("london");
-        publisherConfig.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication");
-        publisherConfig.setQueueFullBehavior(WANQueueFullBehavior.THROW_EXCEPTION);
-        publisherConfig.setQueueCapacity(1000);
+        
+        WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        			.setEndpoint("my-wan-cluster-batch")
+        			.setTargetEndpoints("my-wan-cluster-batch.hazelcast.com:8765")
+        			.setGroupName("london")
+        			.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication")
+        			.setQueueCapacity(1000)
+        			.setQueueFullBehavior(WANQueueFullBehavior.THROW_EXCEPTION);
 
         Map<String, Comparable> props = publisherConfig.getProperties();
         props.put("batch.size", 500);
@@ -29,7 +31,7 @@ public class ExampleWANReplicationConfiguration {
         props.put("discovery.period", "20");
         props.put("executorThreadCount", "2");
 
-        wrConfig.addWanPublisherConfig(publisherConfig);
+        wrConfig.addWanBatchReplicationPublisherConfig(publisherConfig);
         config.addWanReplicationConfig(wrConfig);
 //end::wrc[]
     }
