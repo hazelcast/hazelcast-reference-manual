@@ -115,7 +115,7 @@ are suppressed.
 
 Hazelcast offers features which allow to reach a required privacy on
 communication level by enabling encryption. Encryption is based on
-link:http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture^].
+link:http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture^] (JCA).
 
 There are two different encryption features:
 
@@ -170,9 +170,12 @@ shared. Here is an example configuration for symmetric encryption.
 ----
 
 You set the encryption algorithm, the salt, password and the iteration count to be used
-for generating the secret key. You also need to set the `enabled` attribute to true.
-Note that all members should have the same
-encryption configuration.
+for generating the secret key. You also need to set the `enabled` attribute to `true`.
+Note that all members should have the same encryption configuration.
+
+Since symmetric encryption relies on JCA, you can additionally benefit from the 
+algorithms provided by the Bouncy Castle Crypto APIs. For this,
+you need to set the `hazelcast.security.bouncy.enabled` property to `true`.
 
 [[tlsssl]]
 === TLS/SSL
@@ -182,9 +185,9 @@ encryption configuration.
 NOTE: You cannot use TLS/SSL when <<encryption, Hazelcast Encryption>>
 is enabled.
 
-One of the offers of Hazelcast is the SSL (Secure Sockets Layer)
-protocol which you can use to establish an encrypted communication
-across your cluster with key stores and trust stores. Note that, if
+You can use the SSL (Secure Sockets Layer)
+protocol to establish an encrypted communication
+across your Hazelcast cluster with key stores and trust stores. Note that, if
 you are developing applications using Java 8, you will be using its
 successor TLS (Transport Layer Security).
 
