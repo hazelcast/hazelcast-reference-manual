@@ -1478,6 +1478,26 @@ Assume that you have two clusters, Cluster A and Cluster B, and two Java clients
 </hazelcast-client>
 ----
 +
+. Assuming that the client configuration file names of the above example clients are
+`hazelcast-client-c1.xml` and `hazelcast-client-c1.xml`, you should configure the
+client failovers for a blue-green deployment scenario as follows:
++
+[source,xml]
+----
+<hazelcast-client-failover>
+    <try-count>4</try-count>
+    <clients>
+        <client>hazelcast-client-c1.xml</client>
+        <client>hazelcast-client-c2.xml</client>
+    </clients>
+</hazelcast-client-failover>
+----
++
+NOTE: You can find the complete Hazelcast client failover
+example configuration file (`hazelcast-client-failover-full-example`)
+both in XML and YAML formats including the descriptions of elements and attributes,
+in the `/bin` folder of your Hazelcast download directory.
++
 . You should also configure your clients to forget DNS lookups using the
 link:https://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html[networkaddress.cache.ttl^] JVM parameter.
 . Configure the addresses in your clients' configuration to resolve to hostnames of
