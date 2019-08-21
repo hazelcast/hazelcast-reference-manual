@@ -11,6 +11,12 @@ for any changes to the features.
 This section provides the notes for you to consider
 when migrating to Hazelcast IMDG 4.0
 
+==== Module Changes
+
+* The `hazelcast-client` module has been merged into the core module: All the classes
+in the `hazelcast-client` module have been moved to `hazelcast`.
+`hazelcast-client.jar` will not be created anymore.
+
 ==== Introducing Lambda Friendly Interfaces
 
 ===== Entry Processor
@@ -174,6 +180,49 @@ And the following is the equivalent of the above configuration after IMDG 4.0:
 </batch-publisher>
 ----
 |===
+
+Besides the above change, the following cleanups have been performed for
+the WAN replication:
+
+* Removed the unused `removeBackup`, `addMapQueue`, `addCacheQueue` methods
+* Added the new family of `removeWanEvents` methods which should cover
+the existing cases
+* Renamed the `clearQueues` method as `removeWanEvents`.
+* Removed the `WanReplicationEndpoint.collectReplicationData` method. 
+Introduced two methods for the same purpose which produce and accept any kind of
+WAN event container:
+** `prepareEventContainerReplicationData`
+** `processEventContainerReplicationData`
+
+==== Predicate API Cleanups
+
+The following refactors and cleanups have been performed
+on the public Predicate related API:
+
+* Moved the following classes from the `com.hazelcast.query` package
+to `com.hazelcast.query.impl.predicates:
+** `IndexAwarePredicate`
+** `VisitablePredicate`
+** `SqlPredicate/Parser`
+** `TruePredicate`
+* Moved the `FalsePredicate` and `SkipIndexPredicate` classes to
+the `com.hazelcast.query.impl.predicates` package.
+* Converted `PagingPredicate` and `PartitionPredicate` to interfaces
+and added `PagingPredicateImpl` and `PartitionPredicateImpl` to
+the `com.hazelcast.query.impl.predicate` package.
+* Converted `PredicateBuilder` and `EntryObject` to interfaces (and made
+`EntryObject` a nested interface in `PredicateBuilder`) and added
+`PredicateBuilderImpl` to the `com.hazelcast.query.impl.predicates` package.
+* The public API classes/interfaces are no longer extend `IndexAwarePredicate`/
+`VisitablePredicate`; this dependency has been moved to the `impl` classes.
+* Introduced the new factory methods in `Predicates`:
+** `newPredicateBuilder()`
+** `sql()`
+** `pagingPredicate()`
+** `partitionPredicate()`
+
+Consequently, the public Predicate API now provides only interfaces (Predicate,
+PagingPredicate, and PartitionPredicate) with no dependencies on any internal APIs.
 
 === Upgrading to Hazelcast IMDG 3.12.x
 
