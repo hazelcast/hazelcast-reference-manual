@@ -386,7 +386,11 @@ The following is an example of the equivalent Spring configuration.
 [[listening-for-clients]]
 ==== Listening for Clients
 
-The Client Listener is used by the Hazelcast cluster members. It notifies the cluster members when a client is connected to or disconnected from the cluster.
+The client listener is used by the Hazelcast cluster members.
+It notifies the cluster member when a client is connected to or
+disconnected from it, i.e., the clients fire an event from only one member
+they are connected to. Other cluster members do not fire a "client is connected"
+or "client is disconnected" event.
 
 To write a client listener class, you implement the `ClientListener` interface and its methods `clientConnected` and `clientDisconnected`,
 which are invoked when a client is connected to or disconnected from the cluster. You can add your client listener as shown below.
