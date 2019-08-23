@@ -1,5 +1,6 @@
 import com.hazelcast.config.*;
 import com.hazelcast.config.cp.*;
+import java.io.File;
 
 
 public class CpSubsystemConfiguration {
@@ -13,7 +14,9 @@ public class CpSubsystemConfiguration {
               .setSessionTimeToLiveSeconds(300)
               .setSessionHeartbeatIntervalSeconds(5)
               .setMissingCPMemberAutoRemovalSeconds(14400)
-              .setFailOnIndeterminateOperationState(false);
+              .setFailOnIndeterminateOperationState(false)
+              .setPersistenceEnabled(true)
+              .setBaseDir(new File("/custom-cp-dir"));
         //end::cpconf[]
 
         //tag::cpraftconf[]
