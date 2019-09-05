@@ -17,6 +17,10 @@ when migrating to Hazelcast IMDG 4.0
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
 
+==== Renaming Quorum as Split Brain Protection
+
+???
+
 ==== Introducing Lambda Friendly Interfaces
 
 ===== Entry Processor
@@ -93,7 +97,17 @@ Introduces interfaces with single abstract method which declares a
 checked exception. The interfaces are also `Serializable` and can be
 readily used when providing a lambda which is then serialized.
 
-???
+For this purpose, the `Projection` class has been converted to an interface
+to make it more lambda friendly.
+
+Also, the custom query attribute classes including the following have been
+converted to functional interfaces:
+
+* `ArgumentParser`
+* `ValueCallback`
+* `ValueCollector`
+* `ValueExtractor`
+* `ValueReader`
 
 ==== Expanding Nullable/Nonnull Annotations
 
