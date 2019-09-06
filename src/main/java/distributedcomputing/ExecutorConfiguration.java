@@ -8,7 +8,7 @@ public class ExecutorConfiguration {
         ExecutorConfig executorConfig = config.getExecutorConfig("exec");
         executorConfig.setPoolSize( 1 ).setQueueCapacity( 10 )
                 .setStatisticsEnabled( true )
-                .setQuorumName( "quorumname" );
+                .setSplitBrainProtectionName( "splitbrainprotectionname" );
         //end::execconf[]
     }
 }

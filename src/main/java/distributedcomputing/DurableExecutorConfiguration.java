@@ -11,7 +11,7 @@ public class DurableExecutorConfiguration {
                 .setPoolSize ( 8 )
                 .setDurability( 1 )
                 .setCapacity( 1 )
-                .setQuorumName( "quorumname" );
+                .setSplitBrainProtectionName( "splitbrainprotectionname" );
 
         HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
         DurableExecutorService durableExecSvc = hazelcast.getDurableExecutorService("myDurableExecSvc");

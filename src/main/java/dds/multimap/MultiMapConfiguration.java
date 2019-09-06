@@ -7,7 +7,7 @@ public class MultiMapConfiguration {
         mmConfig.setName( "default" )
                 .setBackupCount( 0 ).setAsyncBackupCount( 1 )
                 .setValueCollectionType( "SET" )
-                .setQuorumName( "quorumname" );
+                .setSplitBrainProtectionName( "splitbrainprotectionname" );
         //end::mmc[]
     }
 }

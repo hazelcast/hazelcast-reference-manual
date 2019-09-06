@@ -10,7 +10,7 @@ public class QueueConfiguration {
                 .setBackupCount(1)
                 .setMaxSize(0)
                 .setStatisticsEnabled(true)
-                .setQuorumName("quorumname");
+                .setSplitBrainProtectionName("splitbrainprotectionname");
         queueConfig.getQueueStoreConfig()
                 .setEnabled(true)
                 .setClassName("com.hazelcast.QueueStoreImpl")

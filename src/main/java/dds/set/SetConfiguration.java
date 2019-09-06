@@ -8,7 +8,7 @@ public class SetConfiguration {
         CollectionConfig collectionSet = config.getSetConfig("MySet");
         collectionSet.setBackupCount(1)
                 .setMaxSize(10)
-                .setQuorumName("quorumname");
+                .setSplitBrainProtectionName("splitbrainprotectionname");
         //end::sc[]
     }
 }

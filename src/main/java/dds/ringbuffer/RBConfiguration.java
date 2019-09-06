@@ -12,7 +12,7 @@ public class RBConfiguration {
                 .setAsyncBackupCount(0)
                 .setTimeToLiveSeconds(0)
                 .setInMemoryFormat(InMemoryFormat.BINARY)
-                .setQuorumName("quorumname");
+                .setSplitBrainProtectionName("splitbrainprotectionname");
         //end::rbc[]
     }
 }

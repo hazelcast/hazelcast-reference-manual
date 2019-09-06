@@ -11,7 +11,7 @@ public class ScheduledExecutorConfiguration {
                 .setPoolSize ( 16 )
                 .setCapacity( 100 )
                 .setDurability( 1 )
-                .setQuorumName( "quorumname" );
+                .setSplitBrainProtectionName( "splitbrainprotectionname" );
 
         HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(config);
         IScheduledExecutorService myScheduledExecSvc = hazelcast.getScheduledExecutorService("myScheduledExecSvc");
