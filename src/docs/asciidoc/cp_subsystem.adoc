@@ -1,6 +1,12 @@
 
 == CP Subsystem
 
+WARNING: CP Subsystem operates in **unsafe mode** by default,
+without proving strong consistency guarantee. See <<cp-subsystem-unsafe-mode, CP Subsystem Unsafe Mode>>
+for more information about _unsafe_ mode.
+To enable CP Subsystem, set CP member count to a value greater than `0`.
+See <<cp-subsystem-configuration, CP Subsystem Configuration>> section for configuration details.
+
 The CP subsystem is a component of a Hazelcast cluster that builds
 an in-memory strongly consistent layer. It is accessed via
 `HazelcastInstance.getCPSubsystem()`. Its data structures are _CP_ with
@@ -91,7 +97,7 @@ proxies in two aspects:
 
 * Each time you fetch a proxy via one of the methods in this interface,
 internally a commit is performed on the Metadata CP group. Hence, the
-callers should cache  the returned proxies. 
+callers should cache  the returned proxies.
 * If you call the `DistributedObject.destroy()` method on a CP data
 structure proxy, that data structure is terminated on the underlying
 CP group and cannot be reinitialized until the CP group is force-destroyed.
@@ -472,7 +478,7 @@ Hazelcast's Raft consensus algorithm implementation and are only for power users
 in milliseconds. If a candidate cannot win the majority of votes
 in time, a new election round is initiated. Default value is `2000` milliseconds.
 * `leader-heartbeat-period-in-millis`: Period in milliseconds
-for a leader to send heartbeat messages to its followers. 
+for a leader to send heartbeat messages to its followers.
 efault value is `5000` milliseconds.
 * `max-missed-leader-heartbeat-count`: Maximum number of missed
 leader heartbeats to trigger a new leader election. Default value is `5`.
@@ -518,6 +524,14 @@ value is `100` milliseconds.
 ----
 include::{javasource}/cp/CpSubsystemConfiguration.java[tag=cpraftconf]
 ----
+
+=== CP Subsystem Unsafe Mode
+
+When CP Subsystem is not enabled, that means when `CPSubsystemConfig.getCPMemberCount()` is `0`, CP data structures will operate in _unsafe_ mode. In _unsafe_ mode, they will use Hazelcast's partitioning system and lazy replication instead of CP Subsystem's consensus mechanism. For more information about lazy replication, see the <<consistency-and-replication-model, Consistency and Replication Model chapter>>.
+
+_Unsafe_ mode provides weaker consistency guarantees. For example, when you increment an `IAtomicLong` or acquire a `FencedLock`, after crash of a member, even though caller of the API receives a success response, client's write operation (increment of `IAtomicLong` or acquire of `FencedLock`) can be lost. That's why, it's not adviced to be used in systems requiring strong consistency. _Unsafe_ mode is more suitable to be used during development or while testing.
+
+NOTE: In _unsafe_ mode, CP Subsystem Management API will not be available.
 
 
 === CP Subsystem Management
