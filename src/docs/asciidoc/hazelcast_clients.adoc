@@ -1109,6 +1109,10 @@ See the <<serialization, Serialization chapter>>.
 
 Hazelcast has an internal executor service (different from the data structure *Executor Service*)
 that has threads and queues to perform internal operations such as handling responses.
+
+This can be configured using the `executor-pool-size` parameter in your Java client's XML or YAML
+configuration file. Alternatively, you can use the programmatic configuration approach
+using the `setExecutorPoolSize(int)` method of your client configuration object (`ClientConfig`). 
 This parameter specifies the size of the pool of threads which perform these operations laying in the executor's queue.
 If not configured, this parameter has the value of **5 x core size of the client**, i.e.,
 it is 20 for a machine that has 4 cores.
