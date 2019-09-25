@@ -3,8 +3,8 @@
 == Migration Guides
 
 This appendix provides guidelines when upgrading to a new Hazelcast IMDG version.
-See also the link:https://docs.hazelcast.org/docs/rn/index.html[release notes^] documents
-for any changes to the features.
+See also the link:https://docs.hazelcast.org/docs/rn/index.html[release notes^] document
+for the changes for each Hazelcast IMDG release.
 
 === Upgrading to Hazelcast IMDG 4.0
 
@@ -17,9 +17,200 @@ when migrating to Hazelcast IMDG 4.0
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
 
-==== Renaming Quorum as Split Brain Protection
+
+==== Security Changes
+
+===== JAAS Authentication Cleanups
+
+====== Introducing New Principal Types
+
+The `ClusterPrincipal` class representing an authenticated user within the JAAS Subject
+has been replaced by three different principal types:
+
+* `ClusterIdentityPrincipal`
+* `ClusterRolePrincipal`
+* `ClusterEndpointPrincipal`
+
+All these new principal types share the `HazelcastPrincipal` interface so
+it is simple to get or remove them all from the subject.
+
+With this change, the `Credentials` object is not referenced from
+the principals anymore.
+
+Also, `DefaultPermissionPolicy` which was consuming `ClusterPrincipal`
+and also reading the endpoint address from it works with the new
+`ClusterRolePrincipals` and `ClusterEndpointPrincipals` principal types.
+
+See the following table for the before/after sample implementations.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+??? old code sample
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+??? new code sample
+----
+|===
+
+====== Changes in ClusterLoginModule
+
+`ClusterLoginModule` in Hazelcast IMDG 3.x contained four
+abstract methods to alter the behavior of `LoginModule`:
+
+* `onLogin`
+* `onCommit`
+* `onAbort`
+* `onLogout`
+
+The login module was retrieving `Credentials` and
+using it to create the `ClusterPrincipal` back then.
+
+In Hazelcast IMDG 4.0, only `onLogin` is abstract.
+Others now have empty implementations. The login module creates
+`ClusterEndpointPrincipal` automatically and adds it to the `Subject`.
+
+The `getName()` abstract method has been added. It is used for
+constructing `ClusterIdentityPrincipal`. The `addRole(String)` method
+can be called by the child implementations to add `ClusterRolePrincipals`
+with the given name.
+
+Also, `ClusterLoginModule` introduces three login module options (boolean),
+which allows skipping principals of a given type to the JAAS `Subject`.
+It allows, for instance, to have just one `ClusterIdentityPrincipal`
+in the `Subject` even if there are more login modules in the chain. These
+options are:
+
+* `skipIdentity`
+* `skipRole`
+* `skipEndpoint`.
+
+See the following table for the before/after sample implementations.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+??? old code sample
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+??? new code sample
+----
+|===
+
+====== Changes in Credentials for Client Protocol
+
+In Hazelcast IMDG 3.x, the custom credentials coming through
+the client protocol was always automatically deserialized. To
+avoid this, the `Credentials` interface has been redesigned in
+Hazelcast IMDG 4.0 to contain only the `getName()`
+(renamed from `getPrincipal()`) method.
+The endpoint handling has been moved out of the interface.
+
+Now, `Credentials` has two new 2 subinterfaces:
+
+* `PasswordCredentials`: The existing `UsernamePasswordCredentials` class
+is the default implementation.
+* `TokenCredentials`: The new `SimpleTokenCredentials` class has been introduced
+to implement it.
+
+`TokenCredentials` is just a holder for byte array, and
+the authentication implementations themselves, i.e., custom `LoginModules`,
+are responsible for the data deserialization when needed.
+
+The data from client authentication message is not deserialized by Hazelcast members
+anymore. For standard authentication, `UsernamePasswordCredentials` is constructed.
+For custom authentication, `SimpleTokenCredentials` is constructed.
+If the original `Credentials` object is not a `PasswordCredentials`
+or `TokenCredentials` instance, then it can be deserialized manually.
+However, the deserialization during authentication remains a dangerous
+operation and should be avoided.
+
+See the following table for the before/after sample implementations.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+??? old code sample
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+??? new code sample
+----
+|===
+
+
+NOTE: `Credentials` serialization and deserialization in the member protocol
+has not been changed.
+
+====== Changes in JAAS Callbacks
+
+In Hazelcast IMDG 3.x, the `CallbackHandler` implementation `ClusterCallbackHandler`
+was only able to work with Hazelcast's `CredentialsCallback`.
+In Hazelcast IMDG 4.0, it also works with the standard Java Callback implementations
+`NameCallback` and `PasswordCallback`.
+
+`DefaultLoginModule` was using the login module options to retrieve the
+member's `Config` object. Now, custom `Callback` types have been
+implemented which can be used to retrieve additional data required for
+the authentication.
+
+List of the supported ``Callback``s in Hazelcast IMDG 4.0:
+
+* `javax.security.auth.callback.NameCallback`
+* `javax.security.auth.callback.PasswordCallback`
+* `com.hazelcast.security.CredentialsCallback` (provides access to the incoming `Credentials` instance)
+* `com.hazelcast.security.EndpointCallback` (allows retrieving the remote host address, it's a replacement for `Credentials.getEndpoint()` in Hazelcast IMDG 3.x)
+* `com.hazelcast.security.ConfigCallback` (allows retrieving member's `Config` object)
+* `com.hazelcast.security.SerializationServiceCallback` (provides access to Hazelcast `SerializationService`)
+
+See the following table for the before/after sample implementations.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+??? old code sample
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+??? new code sample
+----
+|===
+
+
+==== Quorum Renamed as Split Brain Protection
 
 ???
+
 
 ==== Introducing Lambda Friendly Interfaces
 
@@ -135,13 +326,14 @@ The data structures and interfaces enhanced in this sense are listed below:
 
 ==== WAN Replication
 
-The previously known `WanPublisherConfig` has been separated into
+The previously known `wan-publisher` (or `WanPublisherConfig`) has been separated into
 two configuration elements/classes to be used for built-in and custom WAN publishers:
 
 * `batch-publisher` (declarative configuration) or `WanBatchReplicationPublisherConfig` (programmatic configuration)
 * `custom-publisher` (declarative configuration) or `CustomWanPublisherConfig` (programmatic configuration)
 
-With this change, the `wan-publisher` configuration element has been renamed as `batch-publisher`.
+With this change, the `wan-publisher` configuration element has been renamed as `batch-publisher`
+and `custom-publisher`, according to your publisher preference.
 See the following table for the before/after configuration examples.
 
 [cols="1a"]
