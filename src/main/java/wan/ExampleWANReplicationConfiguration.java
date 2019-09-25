@@ -18,7 +18,7 @@ public class ExampleWANReplicationConfiguration {
         			.setGroupName("london")
         			.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication")
         			.setQueueCapacity(1000)
-        			.setQueueFullBehavior(WANQueueFullBehavior.THROW_EXCEPTION);
+        			.setQueueFullBehavior(WanQueueFullBehavior.THROW_EXCEPTION);
 
         Map<String, Comparable> props = publisherConfig.getProperties();
         props.put("batch.size", 500);

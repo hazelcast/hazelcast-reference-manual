@@ -10,7 +10,7 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.security.Credentials;
 import com.hazelcast.security.Parameters;
 import com.hazelcast.security.SecurityInterceptor;
-import com.hazelcast.util.EmptyStatement;
+import com.hazelcast.internal.util.EmptyStatement;
 
 import java.security.AccessControlException;
 
