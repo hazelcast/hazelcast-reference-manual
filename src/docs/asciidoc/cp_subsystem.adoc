@@ -814,9 +814,9 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=destroygroup]
 .REST API
 [source,sh]
 ----
-> curl -X POST --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/groups/${CPGROUP_NAME}/remove
+> curl -X POST --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/groups/${CPGROUP_NAME}/remove
 OR
-> sh cp-subsystem.sh -o force-destroy-group --group ${CPGROUP_NAME} --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
+> sh cp-subsystem.sh -o force-destroy-group --group ${CPGROUP_NAME} --address 127.0.0.1 --port 5701 --clustername ${CLUSTERNAME} --password ${PASSWORD}
 ----
 +
 * **Remove a CP Member:**
@@ -841,9 +841,9 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=removemember]
 .REST API
 [source,sh]
 ----
-> curl -X POST --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/members/${CPMEMBER_UUID}/remove
+> curl -X POST --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/members/${CPMEMBER_UUID}/remove
 OR
-> sh cp-subsystem.sh -o remove-member --member ${CPMEMBER_UUID} --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
+> sh cp-subsystem.sh -o remove-member --member ${CPMEMBER_UUID} --address 127.0.0.1 --port 5701 --clustername ${CLUSTERNAME} --password ${PASSWORD}
 ----
 +
 * **Promote Local Member to a CP Member**
@@ -864,9 +864,9 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=promotemember]
 .REST API
 [source,sh]
 ----
-> curl -X POST --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/members
+> curl -X POST --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/members
 OR
-> sh cp-subsystem.sh -o promote-member --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
+> sh cp-subsystem.sh -o promote-member --address 127.0.0.1 --port 5701 --clustername ${CLUSTERNAME} --password ${PASSWORD}
 ----
 +
 * **Wipe and Restart CP Subsystem**
@@ -902,9 +902,9 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=restart]
 .REST API
 [source,sh]
 ----
-> curl -X POST --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/restart
+> curl -X POST --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/restart
 OR
-> sh cp-subsystem.sh -o restart --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
+> sh cp-subsystem.sh -o restart --address 127.0.0.1 --port 5701 --clustername ${CLUSTERNAME} --password ${PASSWORD}
 ----
 
 ==== Session Management API
@@ -966,7 +966,7 @@ include::{javasource}/cp/CpSubsystemAPI.java[tag=closesession]
 .REST API
 [source,sh]
 ----
-> curl -X POST --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/groups/${CPGROUP_NAME}/sessions/${CP_SESSION_ID}/remove
+> curl -X POST --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/groups/${CPGROUP_NAME}/sessions/${CP_SESSION_ID}/remove
 OR
-> sh cp-subsystem.sh -o force-close-session --group ${CPGROUP_NAME} --session-id ${CP_SESSION_ID} --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
+> sh cp-subsystem.sh -o force-close-session --group ${CPGROUP_NAME} --session-id ${CP_SESSION_ID} --address 127.0.0.1 --port 5701 --clustername ${CLUSTERNAME} --password ${PASSWORD}
 ----

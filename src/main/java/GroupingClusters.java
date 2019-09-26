@@ -6,10 +6,10 @@ public class GroupingClusters {
     public static void main(String[] args) {
         //tag::groupingclusters[]
         Config configProd = new Config();
-        configProd.getGroupConfig().setName( "production" );
+        configProd.setClusterName( "production" );
 
         Config configDev = new Config();
-        configDev.getGroupConfig().setName( "development" );
+        configDev.setClusterName( "development" );
 
         HazelcastInstance h1 = Hazelcast.newHazelcastInstance( configProd );
         HazelcastInstance h2 = Hazelcast.newHazelcastInstance( configDev );

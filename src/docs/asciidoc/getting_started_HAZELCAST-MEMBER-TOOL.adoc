@@ -397,7 +397,7 @@ You can start as many members as you want and they will automatically form a clu
 
 The name of the process (e.g., `confident_tharp` in the above example) is chosen randomly by the tool. As you start other members, you will see different names for each of them. This naming assignment is for your convenience.
 
-You can see the information about your member, including its cluster's <<creating-cluster-groups, group name>>, IP address and port, using the `hazelcast-members logs` command. You will need these information when you want to connect your clients to this cluster. Note that, when you have more than one members, you need to give the assigned name of a member to see its logs, e.g., `hazelcast-member logs confident_tharp`.
+You can see the information about your member, including its cluster's <<creating-cluster-groups, cluster name>>, IP address and port, using the `hazelcast-members logs` command. You will need these information when you want to connect your clients to this cluster. Note that, when you have more than one members, you need to give the assigned name of a member to see its logs, e.g., `hazelcast-member logs confident_tharp`.
 
 The default configuration for the members is delivered within the `hazelcast-member` tool, i.e., `hazelcast.xml`. You can also pass a customized configuration.
 
@@ -414,7 +414,7 @@ The following is an example client application in Java language. This example cl
 public class MyClient {
    public static void main(String[] args) {
        ClientConfig clientConfig = new ClientConfig();
-       clientConfig.getGroupConfig().setName( "dev" );
+       clientConfig.setClusterName( "dev" );
        clientConfig.getNetworkConfig().addAddress( "10.216.1.68" );
        HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
 
@@ -429,7 +429,7 @@ public class MyClient {
 }
 ----
 
-To connect to the cluster, you need to give the cluster's group name (`dev` in the above example) and the IP address of one of the members (`10.216.1.68` in the above example). You can learn these information using the `hazelcast-member logs` command as explained in the previous section. Then, you can create your map and perform your map operations (`put` in the above example). See the <<java-client, Java Client section>> for information on using the Java client with Hazelcast IMDG.
+To connect to the cluster, you need to give the cluster's name (`dev` in the above example) and the IP address of one of the members (`10.216.1.68` in the above example). You can learn these information using the `hazelcast-member logs` command as explained in the previous section. Then, you can create your map and perform your map operations (`put` in the above example). See the <<java-client, Java Client section>> for information on using the Java client with Hazelcast IMDG.
 
 Besides Java, you can create client applications using the following language and implementations:
 
