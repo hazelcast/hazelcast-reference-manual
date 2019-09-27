@@ -29,7 +29,7 @@ See the <<topic, Topic section>> for more information. Hazelcast also has a stru
 Reliable Topic which uses the same interface of Hazelcast Topic. The difference is that it is
 backed up by the Ringbuffer data structure. See the <<reliable-topic, Reliable Topic section>>.
 * **Concurrency utilities**
-** <<lock, Lock>> is the distributed implementation of `java.util.concurrent.locks.Lock`.
+** <<lock, FencedLock>> is the distributed implementation of `java.util.concurrent.locks.Lock`.
 When you use lock, the critical section that Hazelcast Lock guards is guaranteed to be
 executed by only one thread in the entire cluster.
 ** <<isemaphore, ISemaphore>> is the distributed implementation of `java.util.concurrent.Semaphore`.
@@ -41,9 +41,7 @@ AtomicLong, due to being distributed.
 ** <<iatomicreference, IAtomicReference>> is the distributed implementation of
 `java.util.concurrent.atomic.AtomicReference`. When you need to deal with a reference
 in a distributed environment, you can use Hazelcast IAtomicReference.
-** <<idgenerator, IdGenerator>> is used to generate cluster-wide unique identifiers.
-ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`. This feature
-is deprecated, please use <<flakeidgenerator, FlakeIdGenerator>> instead.
+** <<flakeidgenerator, FlakeIdGenerator>> is used to generate cluster-wide unique identifiers.
 ** <<icountdownlatch, ICountdownLatch>> is the distributed implementation of
 `java.util.concurrent.CountDownLatch`. Hazelcast CountDownLatch is a gate keeper for
 concurrent activities. It enables the threads to wait for other threads to complete
@@ -77,7 +75,7 @@ The following are the non-partitioned Hazelcast data structures:
 * Set
 * List
 * Ringbuffer
-* Lock
+* FencedLock
 * ISemaphore
 * IAtomicLong
 * IAtomicReference
@@ -142,34 +140,34 @@ data structure is recreated when you perform an operation on it even after you h
 ==== Controlling Partitions
 
 Hazelcast uses the name of a distributed object to determine which partition it will be put.
-Let's load two semaphores as shown below:
+Let's load two queues as shown below:
 
 [source,java]
 ----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-ISemaphore s1 = hazelcastInstance.getSemaphore("s1");
-ISemaphore s2 = hazelcastInstance.getSemaphore("s2");
+IQueue q1 = hazelcastInstance.getQueue("q1");
+IQueue q2 = hazelcastInstance.getQueue("q2");
 ----
 
-Since these semaphores have different names, they will be placed into different partitions.
+Since these queues have different names, they will be placed into different partitions.
 If you want to put these two into the same partition, you use the `@` symbol as shown below:
 
 [source,java]
 ----
 HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-ISemaphore s1 = hazelcastInstance.getSemaphore("s1@foo");
-ISemaphore s2 = hazelcastInstance.getSemaphore("s2@foo");
+IQueue q1 = hazelcastInstance.getQueue("q1@foo");
+IQueue q2 = hazelcastInstance.getQueue("q2@foo");
 ----
 
-Now, these two semaphores will be put into the same partition whose partition key is `foo`.
+Now, these two queues will be put into the same partition whose partition key is `foo`.
 Note that you can use the method `getPartitionKey` to learn the partition key of a distributed object.
 It may be useful when you want to create an object in the same partition of an existing object.
 See its usage as shown below:
 
 [source,java]
 ----
-String partitionKey = s1.getPartitionKey();
-ISemaphore s3 = hazelcastInstance.getSemaphore("s3@"+partitionKey);
+String partitionKey = q1.getPartitionKey();
+IQueue q3 = hazelcastInstance.getQueue("q3@"+partitionKey);
 ----
 
 [[common-features-of-all-hazelcast-data-structures]]
@@ -186,7 +184,7 @@ superior. There is no dependency on an external 'server' or 'master'.
 ==== Example Distributed Object Code
 
 Here is an example of how you can retrieve existing data structure instances
-(map, queue, set, lock, topic, etc.) and how you can listen for instance events,
+(map, queue, set, topic, etc.) and how you can listen for instance events,
 such as an instance being created or destroyed.
 
 [source,java]
@@ -474,7 +472,7 @@ if no `get`, `put`, `EntryProcessor.process` or `containsKey` is called on
 it. Valid values are integers between 0 and `Integer.MAX VALUE`.
 Its default value is 0, which means infinite.
 +
-NOTE: Setting this property to 1 second expires the entry after 1 second, regardless of 
+NOTE: Setting this property to 1 second expires the entry after 1 second, regardless of
 the operations done on that entry in-between, due to the loss of millisecond
 resolution on the entry timestamps. Assume that you create a record at time = 1 second
 (1000 milliseconds) and access it at wall clock time 1100 milliseconds and
@@ -686,7 +684,7 @@ a native `OutOfMemoryException`.
 
 When you have an evictable cache/map, you should safely put
 entries to it without facing with any memory shortages.
-Forced eviction helps to achieve this. Regular eviction 
+Forced eviction helps to achieve this. Regular eviction
 removes one entry at a time while forced eviction can remove
 multiple entries, which can even be owned by another caches/maps.
 
@@ -1333,7 +1331,7 @@ entries. It calls the `MapStore.storeAll(Map)` or
 * `putAsync()`
 * `tryPut()`
 * `putIfAbsent()`
-|These methods are used to put entries to the map. They call the 
+|These methods are used to put entries to the map. They call the
 `MapLoader.load(Object)` method for each entry not found in the memory
 to load the value from the map store backing the map. They also call the
 `MapStore.store(Object, Object)` method for each entry, if write-through
@@ -1439,6 +1437,21 @@ The IMap lock will automatically be collected by the garbage collector
 when the lock is released and no other waiting conditions exist on the lock.
 
 The IMap lock is reentrant, but it does not support fairness.
+
+WARNING: In some cases, a client application connected to your
+cluster may cause the entries in a map to remain locked
+after the application has been restarted (which were already locked
+before such a restart). This can be due to the
+reasons such as incomplete/incorrect client implementations. In these cases,
+you can unlock the entries, either from the thread which locked them
+using the `IMap.unlock()` method, or check if the entry is locked
+using the `IMap.isLock()` method and then call `IMap.forceUnlock()`.
+
+TIP: For the above case, as a workaround, you can also kill all the applications connected
+to the cluster and use the Management Center's scripting functionality to clear the map and
+release the locks (instead of using `IMap.forceUnlock()`). Keep in mind that the scripting
+functionality is limited to working with maps that have primitive key types, e.g., string keys
+and limited to relaying only a single string of output per member to the result panel in the Management Center.
 
 Another way to solve the race issue is by acquiring a predictable `Lock`
 object from Hazelcast. This way, every value in the map can be given a lock,
@@ -3380,7 +3393,10 @@ Available values are `DISCARD_OLDEST`, `DISCARD_NEWEST`, `BLOCK` and `ERROR`.
 Its default value is `BLOCK`. See <<slow-consumers, Slow Consumers>> for definitions of these policies.
 
 [[lock]]
-=== Lock
+=== FencedLock
+
+NOTE: `FencedLock` is a member of CP Subsystem API.
+For detailed information, see the <<cp-subsystem, CP Subsystem>> chapter.
 
 `FencedLock` is a linearizable and distributed implementation of
 `java.util.concurrent.locks.Lock`, meaning that if you lock using a `FencedLock`,
@@ -3388,10 +3404,8 @@ the critical section that it guards is guaranteed to be executed by only one thr
 in the entire cluster. Even though locks are great for synchronization, they can lead
 to problems if not used properly. Also note that Hazelcast Lock does not support fairness.
 
-NOTE: `ILock` interface and implementation of `ILock` has been deprecated.
-To read about `ILock`, see the link:https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#lock[Lock^]
-section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>>
-introduces `FencedLock` provided by the *CP Subsystem*.
+NOTE: For detailed information and configuration, see the <<fencedlock, FencedLock section>>
+under the CP Subsystem chapter.
 
 [[using-try-catch-blocks-with-locks]]
 ==== Using Try-Catch Blocks with Locks
@@ -3443,40 +3457,19 @@ make sure they are destroyed.
 * Locks are re-entrant. The same thread can lock multiple times on the same lock.
 Note that for other threads to be able to require this lock, the owner of the lock
 must call `unlock` as many times as the owner called `lock`.
-+
-NOTE: For detailed information and configuration, see the <<fencedlock, FencedLock section>>
-under the CP Subsystem chapter.
-+
-* In some cases, a client application connected to your
-cluster may cause the entries in a map to remain locked
-after the application has been restarted (which were already locked
-before such a restart). This can be due to the
-reasons such as incomplete/incorrect client implementations. In these cases,
-you can unlock the entries, either from the thread which locked them
-using the `IMap.unlock()` method, or check if the entry is locked
-using the `IMap.isLock()` method and then call `IMap.forceUnlock()`.
-** For the above case, as a workaround, you can also kill all the applications connected
-to the cluster and use the Management Center's scripting functionality to clear the map and
-release the locks (instead of using `IMap.forceUnlock()`). Keep in mind that the scripting
-functionality is:
-*** limited to working with maps that have primitive key types,
-e.g., string keys.
-*** limited to relaying only a single string of
-output per member to the result panel in the Management Center.
+
 
 [[iatomiclong]]
 === IAtomicLong
+
+NOTE: `IAtomicLong` is a member of CP Subsystem API.
+For detailed information, see the <<cp-subsystem, CP Subsystem>> chapter.
 
 Hazelcast `IAtomicLong` is the distributed implementation of
 `java.util.concurrent.atomic.AtomicLong`. It offers most of AtomicLong's operations
 such as `get`, `set`, `getAndSet`, `compareAndSet` and `incrementAndGet`.
 Since IAtomicLong is a distributed implementation, these operations involve remote
 calls and thus their performances differ from AtomicLong.
-
-NOTE: The original implementation of `IAtomicLong` has been deprecated.
-To read about the previous implementation, see the link:https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomiclong[IAtomicLong^]
-section of the Hazelcast IMDG 3.11 Reference Manual.
-The <<cp-subsystem, CP Subsystem chapter>> introduces `IAtomicLong` provided by the *CP Subsystem*.
 
 The following example code creates an instance, increments it
 by a million and prints the count.
@@ -3547,12 +3540,10 @@ the data is not pulled into the code, but the code is sent to the data. This mak
 [[isemaphore]]
 === ISemaphore
 
-Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.Semaphore`.
+NOTE: `ISemaphore` is a member of CP Subsystem API.
+For detailed information, see the <<cp-subsystem, CP Subsystem>> chapter.
 
-NOTE: The original implementation of `ISemaphore` has been deprecated.
-To read about the previous implementation, see the link:https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#isemaphore[ISemaphore^]
-section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>>
-introduces `ISemaphore` provided by the *CP Subsystem*.
+Hazelcast ISemaphore is the distributed implementation of `java.util.concurrent.Semaphore`.
 
 [[controlling-thread-counts-with-permits]]
 ==== Controlling Thread Counts with Permits
@@ -3561,11 +3552,11 @@ Semaphores offer **permit**s to control the thread counts when performing concur
 To execute a concurrent activity, a thread grants a permit or waits until a permit
 becomes available. When the execution is completed, the permit is released.
 
-NOTE: `ISemaphore` with a single permit may be considered as a lock. Unlike the locks,
+TIP: `ISemaphore` with a single permit may be considered as a lock. Unlike the locks,
 when semaphores are used, any thread can release the permit depending on the configuration,
 and semaphores can have multiple permits. For more information, see the <<semaphore-configuration, Semaphore Configuration section>>.
 
-NOTE: Hazelcast ISemaphore does not support fairness at all times. There are some edge cases
+WARNING: Hazelcast ISemaphore does not support fairness at all times. There are some edge cases
 where the fairness is not honored, e.g., when the permit becomes available
 at the time when an internal timeout occurs.
 
@@ -3611,16 +3602,13 @@ of concurrent usages.
 [[iatomicreference]]
 === IAtomicReference
 
+NOTE: `IAtomicReference` is a member of CP Subsystem API.
+For detailed information, see the <<cp-subsystem, CP Subsystem>> chapter.
+
 The `IAtomicLong` is very useful if you need to deal with a long,
 but in some cases you need to deal with a reference. That is why Hazelcast
 also supports the `IAtomicReference` which is the distributed version of
 the `java.util.concurrent.atomic.AtomicReference`.
-
-NOTE: The original implementation of `IAtomicReference` has been deprecated.
-To read about the previous implementation, see the
-link:https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#iatomicreference[IAtomicReference^]
-section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>>
-introduces `IAtomicReference` provided by the *CP Subsystem*.
 
 Here is an IAtomicReference example.
 
@@ -3675,19 +3663,19 @@ relevant is sent.
 [[icountdownlatch]]
 === ICountDownLatch
 
-Hazelcast `ICountDownLatch` is the distributed implementation of
-`java.util.concurrent.CountDownLatch`.
+NOTE: `ICountDownLatch` is a member of CP Subsystem API.
+For detailed information, see the <<cp-subsystem, CP Subsystem>> chapter.
 
-NOTE: The original implementation of `ICountDownLatch ` has been deprecated.
-To read about the previous implementation, see the
-link:https://docs.hazelcast.org/docs/3.11.2/manual/html-single/index.html#icountdownlatch[ICountDownLatch^]
-section of the Hazelcast IMDG 3.11 Reference Manual. The <<cp-subsystem, CP Subsystem chapter>>
-introduces `ICountDownLatch` provided by the *CP Subsystem*.
+Hazelcast `ICountDownLatch` is the distributed implementation of
+`java.util.concurrent.CountDownLatch`. But unlike Java's implementation,
+Hazelcast's `ICountDownLatch` count can be reset after a countdown has finished,
+but not during an active count.
+
 
 [[gate-keeping-concurrent-activities]]
 ==== Gate-Keeping Concurrent Activities
 
-`CountDownLatch` is considered to be a gate keeper for concurrent activities.
+`ICountDownLatch` is considered to be a gate keeper for concurrent activities.
 It enables the threads to wait for other threads to complete their operations.
 The following examples describe the mechanism of `ICountDownLatch`.
 
@@ -3713,22 +3701,6 @@ method to enable the thread to listen for the latch. The method `await` has a ti
 value as a parameter. This is useful when the `countDown` method fails. To see `ICountDownLatch`
 in action, start the leader first and then start one or more followers. You will see that the
 followers wait until the leader completes.
-
-[[recovering-from-failure]]
-==== Recovering From Failure
-
-In a distributed environment, the counting down cluster member may go down. In this case,
-all listeners are notified immediately and automatically by Hazelcast. The state of the
-current process just before the failure should be verified and 'how to continue now' should
-be decided, e.g., restart all process operations, continue with the first failed process operation
-and throw an exception.
-
-[[using-icountdownlatch]]
-==== Using ICountDownLatch
-
-Although `ICountDownLatch` is a very useful synchronization aid, you may probably not use
-it on a daily basis. Unlike Java's implementation, Hazelcast's `ICountDownLatch` count
-can be reset after a countdown has finished, but not during an active count.
 
 
 [[pn-counter]]
@@ -3900,92 +3872,6 @@ Following is an equivalent snippet of Java configuration:
 ----
 include::{javasource}/dds/CRDTReplication.java[tag=crdt]
 ----
-
-[[idgenerator]]
-=== IdGenerator
-
-Hazelcast IdGenerator is used to generate cluster-wide unique identifiers.
-Generated identifiers are long type primitive values between 0 and `Long.MAX_VALUE`.
-
-NOTE: ***Feature is deprecated.*** The implementation can produce duplicate
-IDs in case of a network split, even with split-brain protection enabled
-(during short window while split-brain is detected). Please use <<flakeidgenerator, FlakeIdGenerator>>
-for an alternative implementation which does not suffer from the issue. See also the
-<<migrating-to-flakeidgenerator, Migration guide>> at the end of this section.
-
-[[generating-cluster-wide-ids]]
-==== Generating Cluster-Wide IDs
-
-ID generation occurs almost at the speed of `AtomicLong.incrementAndGet()`.
-A group of 10,000 identifiers is allocated for each cluster member.
-In the background, this allocation takes place with an `IAtomicLong` incremented
-by 10,000. Once a cluster member generates IDs (allocation is done), `IdGenerator`
-increments a local counter. If a cluster member uses all IDs in the group, it gets
-another 10000 IDs. This way, only one time of network traffic is needed, meaning
-that 9,999 identifiers are generated in memory instead of over the network. This is fast.
-
-Let's write an example identifier generator.
-
-[source,java]
-----
-include::{javasource}/dds/ExampleIdGenerator.java[tag=idg]
-----
-
-Let's run the above code two times. The output is similar to the following:
-
-```
-Members [1] {
-  Member [127.0.0.1]:5701 this
-}
-Id: 1
-Id: 2
-Id: 3
-```
-
-
-```
-Members [2] {
-  Member [127.0.0.1]:5701
-  Member [127.0.0.1]:5702 this
-}
-Id: 10001
-Id: 10002
-Id: 10003
-```
-
-[[unique-ids-and-duplicate-ids]]
-==== Unique IDs and Duplicate IDs
-
-You can see that the generated IDs are unique and counting upwards.
-If you see duplicated identifiers, it means your instances could not form a cluster.
-
-
-NOTE: Generated IDs are unique during the life cycle of the cluster.
-If the entire cluster is restarted, IDs start from 0, again or
-you can initialize to a value using the `init()` method of IdGenerator.
-
-NOTE: IdGenerator has one synchronous backup and no asynchronous backups.
-Its backup count is not configurable.
-
-[[migrating-to-flakeidgenerator]]
-==== Migrating to FlakeIdGenerator
-
-The Flake ID generator provides similar features with more safety
-guarantees during network splits. The two generators are completely
-different implementations, but both types of generator generate roughly
-ordered IDs. So in order to ensure uniqueness of the generated IDs, we can
-force the Flake ID generator to start at least where the old generator ended.
-This is likely the case, because the values from Flake ID generator are quite
-large compared to values from the old generator. Consider and perform the following:
-
-* Make sure the version of your Hazelcast cluster and of all clients is at least 3.10.
-* If the current ID from old `IdGenerator` is higher than the ID from `FlakeIdGenerator`,
-you need to configure ID offset. See
-link:https://github.com/hazelcast/hazelcast-code-samples/blob/master/distributed-primitives/flake-id-generator/src/main/java/FlakeIdMigrationSample.java[FlakeIdMigrationSample^]
-for more details.
-* Replace all calls to `HazelcastInstance.getIdGenerator()` with
-`HazelcastInstance.getFlakeIdGenerator()`. If you use Spring configuration,
-replace `<id-generator>` with `<flake-id-generator>`
 
 [[flakeidgenerator]]
 === Flake ID Generator
@@ -4285,7 +4171,7 @@ See the <<split-brain-protection-for-replicated-map, Split-Brain Protection for 
 **Programmatic Configuration:**
 
 You can configure a Replicated Map programmatically, as you can do for all other
-data structures in Hazelcast. You must create the configuration upfront, when you 
+data structures in Hazelcast. You must create the configuration upfront, when you
 nstantiate the `HazelcastInstance`.
 A basic example of how to configure the Replicated Map using the programmatic approach
 is shown in the following snippet.
