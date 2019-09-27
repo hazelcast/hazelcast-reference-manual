@@ -412,7 +412,7 @@ You can find the JMX API definition below with descriptions and the API methods 
 *  Build ( `build` )
 *  Configuration ( `config` )
 *  Configuration source ( `configSource` )
-*  Group name ( `groupName` )
+*  Cluster name ( `clusterName` )
 *  Network Port ( `port` )
 *  Cluster-wide Time ( `clusterTime` )
 *  Size of the cluster ( `memberCount` )
@@ -937,15 +937,15 @@ you should use this parameter to provide the IP address of a member to this scri
 |`5701`
 |Defines on which port Hazelcast is running on the local or remote machine.
 
-|`-g` or `--groupname`
+|`-c` or `--clustername`
 |`dev`
-|Defines the name of a cluster group which is used for a simple authentication.
-See the <<creating-cluster-groups, Creating Cluster Groups section>>.
+|Defines the name of a cluster which is used for a simple authentication.
+See the <<creating-cluster, Creating Cluster section>>.
 
 |`-P` or `--password`
 |`dev-pass`
-|Defines the password of a cluster group (valid only for Hazelcast releases older than 3.8.2).
-See the <<creating-cluster-groups, Creating Cluster Groups section>>.
+|Defines the password of a cluster (valid only for Hazelcast releases older than 3.8.2).
+See the <<creating-cluster, Creating Cluster section>>.
 
 |`-v` or `--version`
 |_no argument expected_
@@ -988,7 +988,7 @@ in the Hazelcast Management Center Reference Manual.
 ===== Example Usages for cluster.sh
 
 Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP `172.16.254.1` and on the port
-`5702`. The group name and password of the cluster are `test` and `test`.
+`5702`. The cluster name and password of the cluster are `test` and `test`.
 
 **Getting the cluster state:**
 
@@ -998,7 +998,7 @@ To get the state of the cluster, use the following command:
 
 The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
 
-`./cluster.sh --operation get-state --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation get-state --address 172.16.254.1 --port 5702 --clustername test --password test`
 
 **Changing the cluster state:**
 
@@ -1008,7 +1008,7 @@ To change the state of the cluster to `frozen`, use the following command:
 
 Similarly, you can use the following command for the same purpose:
 
-`./cluster.sh --operation change-state --state frozen --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation change-state --state frozen --address 172.16.254.1 --port 5702 --clustername test --password test`
 
 **Shutting down the cluster:**
 
@@ -1019,7 +1019,7 @@ To shutdown the cluster, use the following command:
 Similarly, you can use the following command for the same purpose:
 
 
-`./cluster.sh --operation shutdown --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation shutdown --address 172.16.254.1 --port 5702 --clustername test --password test`
 
 **Partial starting the cluster:**
 
@@ -1029,7 +1029,7 @@ To partial start the cluster when Hot Restart is enabled, use the following comm
 
 Similarly, you can use the following command for the same purpose:
 
-`./cluster.sh --operation partial-start --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation partial-start --address 172.16.254.1 --port 5702 --clustername test --password test`
 
 **Force starting the cluster:**
 
@@ -1039,7 +1039,7 @@ To force start the cluster when Hot Restart is enabled, use the following comman
 
 Similarly, you can use the following command for the same purpose:
 
-`./cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --clustername test --password test`
 
 **Getting the current cluster version:**
 
@@ -1049,7 +1049,7 @@ To get the cluster version, use the following command:
 
 The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
 
-`./cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --groupname test --password test`
+`./cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --clustername test --password test`
 
 **Changing the cluster version:**
 
@@ -1129,7 +1129,7 @@ To get the state of the cluster, use the following command:
 +
 [source,plain]
 ----
-curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/state
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/state
 ----
 +
 * _Changing the cluster state:_
@@ -1138,7 +1138,7 @@ To change the state of the cluster to `frozen`, use the following command:
 +
 [source,plain]
 ----
-curl --data "${GROUPNAME}&${PASSWORD}&${STATE}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/changeState
+curl --data "${CLUSTERNAME}&${PASSWORD}&${STATE}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/changeState
 ----
 +
 * _Shutting down the cluster:_
@@ -1147,7 +1147,7 @@ To shutdown the cluster, use the following command:
 +
 [source,plain]
 ----
-curl --data "${GROUPNAME}&${PASSWORD}"  http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/clusterShutdown
+curl --data "${CLUSTERNAME}&${PASSWORD}"  http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/clusterShutdown
 ----
 +
 * _Querying the current cluster version:_
@@ -1167,7 +1167,7 @@ To partial start the cluster when Hot Restart is enabled, use the following comm
 +
 [source,plain]
 ----
-curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/partialStart/
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/partialStart/
 ----
 +
 * _Force starting the cluster:_
@@ -1176,7 +1176,7 @@ To force start the cluster when Hot Restart is enabled, use the following comman
 +
 [source,plain]
 ----
-curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/forceStart/
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/forceStart/
 ----
 +
 NOTE: You can also perform the above operations (partialStart and forceStart) using
@@ -1190,7 +1190,7 @@ To initiate the Hot Backup, use the following `curl` command:
 +
 [source,plain]
 ----
-curl --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/hotBackup
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/hotBackup
 ----
 +
 * _Changing the cluster version:_
@@ -1200,10 +1200,10 @@ a new minor version, use the following `curl` command:
 +
 [source,plain]
 ----
-$ curl --data "${GROUPNAME}&${PASSWORD}&${CLUSTER_VERSION}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
+$ curl --data "${CLUSTERNAME}&${PASSWORD}&${CLUSTER_VERSION}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
 ----
 +
-For example, assuming the default group name and password, issue the following command to any member
+For example, assuming the default cluster name and password, issue the following command to any member
 of the cluster to upgrade from cluster version 3.8 to 3.9:
 +
 [source,plain]
@@ -1737,7 +1737,7 @@ The following shows an example of the output:
 
 ```
 10-11-2017 14:11:32 1510319492497 WanBatchSenderLatency[
-    targetClusterGroupName[
+    targetClusterName[
         [127.0.0.1]:5801[
             count=1
             totalTime(us)=2,010,567

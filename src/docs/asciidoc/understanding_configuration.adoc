@@ -51,9 +51,9 @@ A part of `hazelcast.xml` is shown as an example below.
 ----
 <hazelcast>
     ...
-    <group>
+    <cluster>
         <name>dev</name>
-    </group>
+    </cluster>
     <management-center enabled="false">http://localhost:8080/mancenter</management-center>
     <network>
         <port auto-increment="true" port-count="100">5701</port>
@@ -90,7 +90,7 @@ The identical part of the configuration extracted from `hazelcast.yaml` is shown
 ----
 hazelcast:
   ...
-  group:
+  cluster:
     name: dev
     password: dev-pass
   management-center:
@@ -134,17 +134,17 @@ in XML and YAML configurations with the
 limitation that only configuration files written in the same language can be composed.
 
 Let's say you want to compose the declarative configuration for Hazelcast out of two
-XML configurations: `development-group-config.xml` and `development-network-config.xml`.
+XML configurations: `development-cluster-config.xml` and `development-network-config.xml`.
 These two configurations are shown below.
 
-`development-group-config.xml`:
+`development-cluster-config.xml`:
 
 [source,xml]
 ----
 <hazelcast>
-    <group>
+    <cluster>
         <name>dev</name>
-    </group>
+    </cluster>
 </hazelcast>
 ----
 
@@ -178,12 +178,12 @@ use the `<import/>` element as shown below.
 
 The above example using the YAML configuration files looks like the following:
 
-`development-group-config.yaml`:
+`development-cluster-config.yaml`:
 
 [source,yaml]
 ----
 hazelcast:
-  group:
+  cluster:
     name: dev
 ----
 
@@ -219,14 +219,14 @@ This feature also applies to the declarative configuration of Hazelcast client.
 See the following examples.
 
 
-`client-group-config.xml`:
+`client-cluster-config.xml`:
 
 [source,xml]
 ----
 <hazelcast-client>
-    <group>
+    <cluster>
         <name>dev</name>
-    </group>
+    </cluster>
 </hazelcast-client>
 ----
 
@@ -249,7 +249,7 @@ use the `<import/>` element as shown below.
 [source,xml]
 ----
 <hazelcast-client>
-    <import resource="client-group-config.xml"/>
+    <import resource="client-cluster-config.xml"/>
     <import resource="client-network-config.xml"/>
 </hazelcast>
 ----
@@ -257,12 +257,12 @@ use the `<import/>` element as shown below.
 The same client configuration using the YAML language is shown below.
 
 
-`client-group-config.yaml`:
+`client-cluster-config.yaml`:
 
 [source,yaml]
 ----
 hazelcast-client:
-  group:
+  cluster:
     name: dev
 ----
 
@@ -282,7 +282,7 @@ Composing a Hazelcast client declarative configuration by importing the above tw
 ----
 hazelcast-client:
   import:
-    - client-group-config.yaml
+    - client-cluster-config.yaml
     - client-network-config.yaml
 ----
 
@@ -296,7 +296,7 @@ Resources from the classpath and file system may also be used to compose a decla
 [source,xml]
 ----
 <hazelcast>
-    <import resource="file:///etc/hazelcast/development-group-config.xml"/> <!-- loaded from filesystem -->
+    <import resource="file:///etc/hazelcast/development-cluster-config.xml"/> <!-- loaded from filesystem -->
     <import resource="classpath:development-network-config.xml"/>  <!-- loaded from classpath -->
 </hazelcast>
 ----
@@ -306,7 +306,7 @@ Resources from the classpath and file system may also be used to compose a decla
 hazelcast:
   import:
     # loaded from filesystem
-    - file:///etc/hazelcast/development-group-config.yaml
+    - file:///etc/hazelcast/development-cluster-config.yaml
     # loaded from classpath
     - classpath:development-network-config.yaml
 ----
@@ -316,7 +316,7 @@ Importing resources with variables in their names is also supported. See the fol
 [source,xml]
 ----
 <hazelcast>
-    <import resource="${environment}-group-config.xml"/>
+    <import resource="${environment}-cluster-config.xml"/>
     <import resource="${environment}-network-config.xml"/>
 </hazelcast>
 ----
@@ -325,7 +325,7 @@ Importing resources with variables in their names is also supported. See the fol
 ----
 hazelcast:
   import:
-    - ${environment}-group-config.yaml
+    - ${environment}-cluster-config.yaml
     - ${environment}-network-config.yaml
 ----
 
@@ -598,7 +598,7 @@ example Hazelcast configuration when integrated with Spring:
 ----
 <hz:hazelcast id="instance">
     <hz:config>
-        <hz:group name="dev"/>
+        <hz:cluster name="dev"/>
         <hz:network port="5701" port-auto-increment="false">
             <hz:join>
                 <hz:multicast enabled="false"/>
@@ -900,7 +900,7 @@ in the declarative configuration to access the values of the system properties y
 For example, see the following command that sets two system properties.
 
 ```
--Dgroup.name=dev
+-Dcluster.name=dev
 ```
 
 Let's get the values of these system properties in the declarative
@@ -911,9 +911,9 @@ In the XML configuration:
 [source,xml]
 ----
 <hazelcast>
-    <group>
-        <name>${group.name}</name>
-    </group>
+    <cluster>
+        <name>${cluster.name}</name>
+    </cluster>
 </hazelcast>
 ----
 
@@ -922,8 +922,8 @@ In the YAML configuration:
 [source,yaml]
 ----
 hazelcast:
-  group:
-    name: ${group.name}
+  cluster:
+    name: ${cluster.name}
 ----
 
 This also applies to the declarative configuration of Hazelcast Java Client,
@@ -932,17 +932,17 @@ as shown below.
 [source,xml]
 ----
 <hazelcast-client>
-    <group>
-        <name>${group.name}</name>
-    </group>
+    <cluster>
+        <name>${cluster.name}</name>
+    </cluster>
 </hazelcast-client>
 ----
 
 [source,yaml]
 ----
 hazelcast-client:
-  group:
-    name: ${group.name}
+  cluster:
+    name: ${cluster.name}
 ----
 
 If you do not want to rely on the system properties, you can use the
@@ -1088,7 +1088,7 @@ java -cp hazelcast-*.jar \
     -DpasswordFile=/opt/master-password \
     -DpasswordUserProperties=false \
     com.hazelcast.config.replacer.EncryptionReplacer \
-    "aGroup"
+    "aCluster"
 $ENC{Gw45stIlan0=:531:yVN9/xQpJ/Ww3EYkAPvHdA==}
 
 java -cp hazelcast-*.jar \
@@ -1112,10 +1112,10 @@ $ENC{wJxe1vfHTgg=:531:WkAEdSi//YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}
             </properties>
         </replacer>
     </config-replacers>
-    <group>
+    <cluster>
         <name>$ENC{Gw45stIlan0=:531:yVN9/xQpJ/Ww3EYkAPvHdA==}</name>
         <password>$ENC{wJxe1vfHTgg=:531:WkAEdSi/YWEbwvVNoU9mUyZ0DE49acJeaJmGalHHfA=}</password>
-    </group>
+    </cluster>
 </hazelcast>
 ----
 +
@@ -1126,11 +1126,11 @@ java -jar hazelcast-*.jar
 Apr 06, 2018 10:15:43 AM com.hazelcast.config.XmlConfigLocator
 INFO: Loading 'hazelcast.xml' from working directory.
 Apr 06, 2018 10:15:44 AM com.hazelcast.instance.AddressPicker
-INFO: [LOCAL] [aGroup] [3.10-SNAPSHOT] Prefer IPv4 stack is true.
+INFO: [LOCAL] [aCluster] [3.10-SNAPSHOT] Prefer IPv4 stack is true.
 ```
 
-As you can see in the logs, the correctly decrypted group name value
-("aGroup") is used.
+As you can see in the logs, the correctly decrypted cluster name value
+("aCluster") is used.
 
 ==== PropertyReplacer
 

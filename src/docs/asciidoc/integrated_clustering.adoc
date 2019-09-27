@@ -113,12 +113,7 @@ Example code for a Hazelcast Instance declaration is listed below.
 <bean id="instance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
     <constructor-arg>
         <bean class="com.hazelcast.config.Config">
-            <property name="groupConfig">
-                <bean class="com.hazelcast.config.GroupConfig">
-                    <property name="name" value="dev"/>
-                    <property name="password" value="pwd"/>
-                </bean>
-            </property>
+            <property name="clusterName" value="dev"/>
             <!-- and so on ... -->
         </bean>
     </constructor-arg>
@@ -157,7 +152,7 @@ Here is an example schema definition:
 ----
 <hz:hazelcast id="instance">
     <hz:config>
-        <hz:group name="dev" password="password"/>
+        <hz:cluster name="dev" password="password"/>
         <hz:network port="5701" port-auto-increment="false">
             <hz:join>
                 <hz:multicast enabled="false"
@@ -184,7 +179,7 @@ Here is an example schema definition:
 [source,xml]
 ----
 <hz:client id="client">
-    <hz:group name="${cluster.group.name}" password="${cluster.group.password}" />
+    <hz:cluster name="${cluster.name}" password="${cluster.password}" />
     <hz:network connection-attempt-limit="3"
                 connection-attempt-period="3000"
                 connection-timeout="1000"
@@ -328,7 +323,7 @@ and add `<hz:spring-aware />` tag.
     <hz:hazelcast id="instance">
         <hz:config>
             <hz:spring-aware />
-            <hz:group name="dev" password="password"/>
+            <hz:cluster name="dev" password="password"/>
             <hz:network port="5701" port-auto-increment="false">
                 <hz:join>
                     <hz:multicast enabled="false" />

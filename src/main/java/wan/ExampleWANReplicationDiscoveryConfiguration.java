@@ -13,7 +13,7 @@ public class ExampleWANReplicationDiscoveryConfiguration {
         wrConfig.setName("my-wan-cluster-batch");
 
         WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
-        			.setGroupName("london")
+        			.setClusterName("london")
         			.setClassName("com.hazelcast.enterprise.wan.replication.WanBatchReplication")
         			.setQueueCapacity(1000)
         			.setQueueFullBehavior(WanQueueFullBehavior.THROW_EXCEPTION);
@@ -24,7 +24,7 @@ public class ExampleWANReplicationDiscoveryConfiguration {
         props.put("snapshot.enabled", false);
         props.put("response.timeout.millis", 60000);
         props.put("ack.type", WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE.toString());
-        props.put("group.password", "london-pass");
+        props.put("cluster.password", "london-pass");
         props.put("discovery.period", "20");
         props.put("executorThreadCount", "2");
 

@@ -345,7 +345,7 @@ The following was an example declarative configuration for `wan-publisher`:
 
 [source,xml]
 ----
-<wan-publisher group-name="nyc" publisher-id="nycPublisherId">
+<wan-publisher cluster-name="nyc" publisher-id="nycPublisherId">
     <class-name>com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication</class-name>
     <queue-capacity>15000</queue-capacity>
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
@@ -360,7 +360,7 @@ The following was an example declarative configuration for `wan-publisher`:
         <property name="response.timeout.millis">60000</property>
         <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
         <property name="snapshot.enabled">false</property>
-        <property name="group.password">nyc-pass</property>
+        <property name="cluster.password">nyc-pass</property>
     </properties>
 </wan-publisher>
 ----
@@ -372,7 +372,7 @@ And the following is the equivalent of the above configuration after IMDG 4.0:
 [source,xml]
 ----
 <batch-publisher>
-            <group-name>nyc</group-name>
+            <cluster-name>nyc</cluster-name>
             <publisher-id>nycPublisherId</publisher-id>
             <batch-size>1000</batch-size>
             <batch-max-delay-millis>2000</batch-max-delay-millis>
@@ -436,8 +436,8 @@ Consequently, the public Predicate API now provides only interfaces (`Predicate`
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
-in Hazelcast IMDG 3.12. Hazelcast IMDG 3.11.x checks group name and password, while 3.12 checks
-just the group name when security is disabled, and it uses the client login modules when the security is enabled.
+in Hazelcast IMDG 3.12. Hazelcast IMDG 3.11.x checks cluster name and password, while 3.12 checks
+just the cluster name when security is disabled, and it uses the client login modules when the security is enabled.
 * **Upgrading Cluster Version From IMDG 3.11 to 3.12**:
 For the IMDG versions before 3.12, REST API could be enabled by using the
 `hazelcast.rest.enabled` system property, which is deprecated now.

@@ -53,7 +53,7 @@ New York cluster to target the London cluster:
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster-batch">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
             <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
             <queue-capacity>1000</queue-capacity>
@@ -64,7 +64,7 @@ New York cluster to target the London cluster:
                 <property name="response.timeout.millis">60000</property>
                 <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
                 <property name="endpoints">10.3.5.1:5701, 10.3.5.2:5701</property>
-                <property name="group.password">london-pass</property>
+                <property name="cluster.password">london-pass</property>
                 <property name="discovery.period">20</property>
                 <property name="executorThreadCount">2</property>
             </properties>
@@ -91,12 +91,12 @@ As mentioned above just before the configuration example, the endpoint can be a 
 static IP's or discovered using a cloud discovery mechanism.
 The `wan-publisher` element has the following attributes:
 
-* `group-name`: Specifies the target cluster's group name for authentication on the target endpoint.
+* `cluster-name`: Specifies the target cluster's name for authentication on the target endpoint.
 It is mandatory to set this attribute.
 * `publisher-id`: Specifies the publisher ID used for identifying the publisher.
-Setting this ID may be useful when the target group names are not unique for all of
+Setting this ID may be useful when the target cluster names are not unique for all of
 the WAN replication publishers in a single WAN replication scheme.
-It is optional to set this attribute. If this ID is not specified, the `group-name` is used as a publisher ID.
+It is optional to set this attribute. If this ID is not specified, the `cluster-name` is used as a publisher ID.
 
 And, the following are definitions of the configuration elements within `wan-publisher`:
 
@@ -121,7 +121,7 @@ Its default value is 60000 milliseconds. See the <<response-timeout, Response Ti
 It is enough to specify some of the member IP/ports available in the target cluster, i.e., you don’t need to
 provide the IP/ports of all members in there. WAN does not perform the discovery of other members in the target cluster;
 it only expects that the IP addresses you provide are available.
-* `group.password`: Configures target cluster's group password.
+* `cluster.password`: Configures target cluster's password.
 
 The `wan-consumer` is used to configure the processing of the WAN events received from a target cluster.
 You can configure certain behavior when processing the incoming WAN events or
@@ -191,7 +191,7 @@ You must have the link:https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS 
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster-batch">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
             <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
             <queue-capacity>1000</queue-capacity>
@@ -201,7 +201,7 @@ You must have the link:https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS 
                 <property name="snapshot.enabled">false</property>
                 <property name="response.timeout.millis">60000</property>
                 <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
-                <property name="group.password">london-pass</property>
+                <property name="cluster.password">london-pass</property>
                 <property name="discovery.period">20</property>
                 <property name="maxEndpoints">5</property>
                 <property name="executorThreadCount">5</property>
@@ -242,7 +242,7 @@ the WAN replication using the `aws` element. You may use either of these, but no
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster-batch">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
             <queue-full-behavior>THROW_EXCEPTION</queue-full-behavior>
             <queue-capacity>1000</queue-capacity>
@@ -252,7 +252,7 @@ the WAN replication using the `aws` element. You may use either of these, but no
                 <property name="snapshot.enabled">false</property>
                 <property name="response.timeout.millis">60000</property>
                 <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
-                <property name="group.password">london-pass</property>
+                <property name="cluster.password">london-pass</property>
                 <property name="discovery.period">20</property>
                 <property name="discovery.useEndpointPrivateAddress">false</property>
                 <property name="maxEndpoints">5</property>
@@ -440,7 +440,7 @@ Below is the declarative configuration for changing the value of the property:
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <properties>
                 <property name="batch.size">1000</property>
             </properties>
@@ -481,7 +481,7 @@ You can change this property using the declarative configuration as shown below.
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <properties>
                 <property name="batch.max.delay.millis">2000</property>
             </properties>
@@ -519,7 +519,7 @@ Below is an example of declarative configuration:
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <properties>
                 <property name="response.timeout.millis">5000</property>
             </properties>
@@ -556,7 +556,7 @@ You can change this property using the declarative configuration as shown below.
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <queue-capacity>15000</queue-capacity>
         </wan-publisher>
     </wan-replication>
@@ -611,7 +611,7 @@ The following is an example configuration:
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster">
-        <wan-publisher group-name="test-cluster-1">
+        <wan-publisher cluster-name="test-cluster-1">
             <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
         </wan-publisher>
     </wan-replication>
@@ -663,7 +663,7 @@ NOTE: `LOADED` events are filtered out and not replicated to target cluster.
 
 ==== Acknowledgment Types
 
-Starting with Hazelcast 3.6, WAN replication supports different acknowledgment (ACK) types for each target cluster group.
+Starting with Hazelcast 3.6, WAN replication supports different acknowledgment (ACK) types for each target cluster.
 You can choose from 2 different ACK type depending on your consistency requirements. The following ACK types are supported:
 
 * `ACK_ON_RECEIPT`: A batch of replication events is considered successful as soon as
@@ -679,7 +679,7 @@ The following is an example configuration:
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster">
-        <wan-publisher group-name="test-cluster-1">
+        <wan-publisher cluster-name="test-cluster-1">
             <properties>
                 <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
             </properties>
@@ -711,7 +711,7 @@ http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
 You need to add parameters to the request in the following order separated by "&";
 
 * Name of the WAN replication configuration
-* Target group name
+* Target cluster name
 * Map name to be synchronized
 
 Assume that you have configured an IMap with a WAN replication configuration as follows:
@@ -721,7 +721,7 @@ Assume that you have configured an IMap with a WAN replication configuration as 
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster">
-        <wan-publisher group-name="istanbul">
+        <wan-publisher cluster-name="istanbul">
             <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
         </wan-publisher>
     <wan-replication>
@@ -842,12 +842,12 @@ Below is an example using Discovery SPI (AWS configuration):
    "name":"wanReplication",
    "publishers":[
       {
-         "groupName":"tokyo",
+         "clusterName":"tokyo",
          "queueCapacity":10000,
          "queueFullBehavior":0,
          "initialPublisherState":0,
          "properties":{
-            "group.password":"pass"
+            "cluster.password":"pass"
          },
          "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
          "discovery":{
@@ -881,12 +881,12 @@ Below is an example with Discovery SPI (the new AWS configuration)
    "name":"wanReplication",
    "publishers":[
       {
-         "groupName":"tokyo",
+         "clusterName":"tokyo",
          "queueCapacity":1000,
          "queueFullBehavior":0,
          "initialPublisherState":0,
          "properties":{
-            "group.password":"pass"
+            "cluster.password":"pass"
          },
          "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
          "aws":{
@@ -918,13 +918,13 @@ Below is an example with static IP configuration (with some optional attributes)
    "name":"wanReplication",
    "publishers":[
       {
-         "groupName":"tokyo",
+         "clusterName":"tokyo",
          "queueCapacity":1000,
          "queueFullBehavior":0,
          "initialPublisherState":0,
          "properties":{
             "response.timeout.millis":"5000",
-            "group.password":"pass",
+            "cluster.password":"pass",
             "endpoints":"10.3.5.1:5701, 10.3.5.2:5701",
             "batch.max.delay.millis":"3000",
             "batch.size":"50",
@@ -947,12 +947,12 @@ Below is an XML configuration with two publishers and several (disabled) discove
    "name":"wanReplication",
    "publishers":[
       {
-         "groupName":"tokyo",
+         "clusterName":"tokyo",
          "queueCapacity":1000,
          "queueFullBehavior":0,
          "initialPublisherState":0,
          "properties":{
-            "group.password":"pass"
+            "cluster.password":"pass"
          },
          "className":"com.hazelcast.enterprise.wan.replication.WanBatchReplication",
          "aws":{
@@ -1008,13 +1008,13 @@ Below is an XML configuration with two publishers and several (disabled) discove
          }
       },
       {
-         "groupName":"london",
+         "clusterName":"london",
          "queueCapacity":1000,
          "queueFullBehavior":0,
          "initialPublisherState":0,
          "properties":{
             "response.timeout.millis":"5000",
-            "group.password":"pass",
+            "cluster.password":"pass",
             "endpoints":"10.3.5.1:5701, 10.3.5.2:5701",
             "batch.max.delay.millis":"3000",
             "batch.size":"50",
@@ -1146,7 +1146,7 @@ An example WAN replication configuration using the default values of the above p
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster-batch">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
             ...
             <properties>
@@ -1258,7 +1258,7 @@ the aforementioned properties is shown below.
 <hazelcast>
     ...
     <wan-replication name="my-wan-cluster-batch">
-        <wan-publisher group-name="london">
+        <wan-publisher cluster-name="london">
             <class-name>com.hazelcast.enterprise.wan.replication.WanBatchReplication</class-name>
             ...
             <properties>
@@ -1277,7 +1277,7 @@ Please benchmark and try out different values to find out the right values for y
 
 ==== WAN Replication Additional Information
 
-Each cluster in WAN topology has to have a unique `group-name` property for a proper handling of forwarded events.
+Each cluster in WAN topology has to have a unique `cluster-name` property for a proper handling of forwarded events.
 
 Starting with Hazelcast 3.6, WAN replication backs up its event queues to other members to prevent event loss in case of member failures.
 WAN replication's backup mechanism depends on the related data structures' backup operations. Note that, WAN replication is supported for IMap and ICache.
@@ -1336,7 +1336,7 @@ Following is a declarative configuration example of the above:
         </wan-replication-ref>
     </map>
     <wan-replication name="wanReplicationScheme">
-        <wan-publisher group-name="groupName">
+        <wan-publisher cluster-name="clusterName">
             <class-name>...</class-name>
             <wan-sync>
                 <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
@@ -1407,7 +1407,7 @@ Following is a declarative example including the Merkle tree configuration.
         <depth>10</depth>
     </merkle-tree>
     <wan-replication name="wanReplicationScheme">
-        <wan-publisher group-name="groupName">
+        <wan-publisher cluster-name="clusterName">
             <class-name>...</class-name>
             <wan-sync>
                 <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
@@ -1605,7 +1605,7 @@ http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
 You need to add parameters to the request in both cases in the following order separated by "&";
 
 * Name of the WAN replication configuration
-* Target group name
+* Target cluster name
 * Map name to be synchronized
 
 NOTE: You can also use the following URL in your REST call if you want to synchronize all the maps in source and target cluster:

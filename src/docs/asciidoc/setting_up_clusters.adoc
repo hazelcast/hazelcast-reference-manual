@@ -336,26 +336,26 @@ so that you can isolate your clusters.
 * `port`: Integer value that is used to set the multicast port.
 
 
-[[creating-cluster-groups]]
-=== Creating Cluster Groups
+[[creating-cluster]]
+=== Creating Cluster
 
-You can create cluster groups. To do this, use the `group` configuration
+You can create cluster. To do this, use the `cluster` configuration
 element.
 
-You can separate your clusters in a simple way by specifying group names.
+You can separate your clusters in a simple way by specifying cluster names.
 Example groupings can be by *development*, *production*, *test*, *app*, etc.
 The following is an example declarative configuration.
 
 [source,xml]
 ----
 <hazelcast>
-    <group>
+    <cluster>
         <name>production</name>
-    </group>
+    </cluster>
 </hazelcast>
 ----
 
-You can also define the cluster groups using the programmatic configuration.
+You can also define the cluster configuration programmatically.
 A JVM can host multiple Hazelcast instances. Each Hazelcast instance can only
 participate in one group. Each Hazelcast instance only joins to its own group
 and does not interact with other groups. The following code example creates
