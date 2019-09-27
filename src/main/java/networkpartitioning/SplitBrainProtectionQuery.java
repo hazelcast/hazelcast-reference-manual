@@ -26,7 +26,7 @@ public class SplitBrainProtectionQuery {
         SplitBrainProtectionService splitBrainProtectionService = hazelcastInstance.getSplitBrainProtectionService();
         SplitBrainProtection splitBrainProtection = splitBrainProtectionService.getSplitBrainProtection(splitBrainProtectionName);
 
-        boolean splitBrainProtectionPresence = splitBrainProtection.isMinimumClusterSizeSatisfied();
+        boolean splitBrainProtectionPresence = splitBrainProtection.hasMinimumSize();
 //end::qq[]
     }
 }
