@@ -15,6 +15,7 @@ import com.hazelcast.cp.session.CPSession;
 import com.hazelcast.cp.session.CPSessionManagementService;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class CpSubsystemAPI {
 
@@ -22,7 +23,7 @@ public class CpSubsystemAPI {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         String name = "test";
         String groupName = "test";
-        String memberUUID = "test";
+        UUID memberUUID = UUID.randomUUID();
         long sessionId = 1;
 
         //tag::apisample[]
