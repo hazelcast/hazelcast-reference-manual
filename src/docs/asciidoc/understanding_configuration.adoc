@@ -645,16 +645,16 @@ whenever a membership change is detected. However if an exception is thrown from
 `add*Config` method, the configuration may have been partially propagated to some
 cluster members and adding the configuration should be retried by the user.
 
-Adding a new dynamic configuration is supported for all `add*Config` methods except:
+Adding a new dynamic configuration is supported for all `add*Config` methods except the following:
 
-* `JobTracker` which has been deprecated since Hazelcast 3.8
-* `SplitBrainProtectionConfig`: new split brain protection configuration cannot be dynamically added but other
-configuration can reference split brain protections configured in the existing static configuration
-* `WanReplicationConfig`: new WAN replication configuration cannot be dynamically
+* `JobTracker`: It has been deprecated since Hazelcast 3.8.
+* `SplitBrainProtectionConfig`: A new split-brain protection configuration cannot be dynamically added but other
+configuration can reference split-brain protections configured in the existing static configuration.
+* `WanReplicationConfig`: A new WAN replication configuration cannot be dynamically
 added, however existing static ones can be referenced from other configurations,
 e.g., a new dynamic `MapConfig` may include a `WanReplicationRef` to a statically
-configured WAN replication config.
-* `ListenerConfig`: listeners can be instead added at runtime via other API such as
+configured WAN replication.
+* `ListenerConfig`: Listeners can be instead added at runtime via other API such as
 `HazelcastInstance.getCluster().addMembershipListener` and
 `HazelcastInstance.getPartitionService().addMigrationListener`.
 

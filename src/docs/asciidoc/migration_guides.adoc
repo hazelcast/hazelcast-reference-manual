@@ -345,7 +345,7 @@ The following was an example declarative configuration for `wan-publisher`:
 
 [source,xml]
 ----
-<wan-publisher cluster-name="nyc" publisher-id="nycPublisherId">
+<wan-publisher group-name="nyc" publisher-id="nycPublisherId">
     <class-name>com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication</class-name>
     <queue-capacity>15000</queue-capacity>
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
@@ -360,7 +360,7 @@ The following was an example declarative configuration for `wan-publisher`:
         <property name="response.timeout.millis">60000</property>
         <property name="ack.type">ACK_ON_OPERATION_COMPLETE</property>
         <property name="snapshot.enabled">false</property>
-        <property name="cluster.password">nyc-pass</property>
+        <property name="group.password">nyc-pass</property>
     </properties>
 </wan-publisher>
 ----
@@ -436,8 +436,8 @@ Consequently, the public Predicate API now provides only interfaces (`Predicate`
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
-in Hazelcast IMDG 3.12. Hazelcast IMDG 3.11.x checks cluster name and password, while 3.12 checks
-just the cluster name when security is disabled, and it uses the client login modules when the security is enabled.
+in Hazelcast IMDG 3.12. Hazelcast IMDG 3.11.x checks group name and password, while 3.12 checks
+just the group name when security is disabled, and it uses the client login modules when the security is enabled.
 * **Upgrading Cluster Version From IMDG 3.11 to 3.12**:
 For the IMDG versions before 3.12, REST API could be enabled by using the
 `hazelcast.rest.enabled` system property, which is deprecated now.
@@ -471,6 +471,14 @@ should be updated as follows:
 +
 See the <<using-the-rest-endpoint-groups>> section for more
 information.
+
+=== Upgrading from Hazelcast IMDG 3.10.x
+
+This section provides information to be considered when upgrading from Hazelcast IMDG 3.9.x to 3.10.x and newer.
+
+* Starting with Hazelcast 3.10, split-brain recovery is supported for
+the data structures whose in-memory format is `NATIVE`.
+
 
 === Upgrading from Hazelcast IMDG 3.9.x
 
@@ -517,7 +525,7 @@ Until Hazelcast IMDG 3.10, the configuration has been like the following:
 </hazelcast>
 ----
 
-=== Upgrading from Hazelcast IMDG 3.8.x
+=== Upgrading to Hazelcast IMDG 3.8.x
 
 This section provides information to be considered when upgrading from Hazelcast IMDG 3.7.x to 3.8.x and newer.
 
@@ -530,7 +538,7 @@ the element `<wan-publisher>` in WAN replication configuration.
 work if your member is 3.8.x where x < 5. You need to use the 3.8.5 or higher versions where the problem is fixed.
 
 
-=== Upgrading from Hazelcast IMDG 3.6.x
+=== Upgrading to Hazelcast IMDG 3.7.x
 
 This section provides information to be considered when upgrading from Hazelcast IMDG 3.6.x to 3.7.x and newer.
 
@@ -566,7 +574,7 @@ your Hazelcast member configuration.
 They are ignored if configured, since the map eviction is based on the sampling of entries.
 See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
-=== Upgrading from Hazelcast IMDG 3.5.x
+=== Upgrading to Hazelcast IMDG 3.6.x
 
 This section provides information to be considered when upgrading from Hazelcast IMDG 3.5.x to 3.6.x and newer.
 
@@ -585,7 +593,7 @@ With this release, the method `getHazelcastTypeId()` is used and you give your o
 Also, `getTypeId()` was used in your custom serializer class; it has been renamed to `getHazelcastTypeId()`, too.
 * The `LOCAL` transaction type has been deprecated. Use `ONE_PHASE` for the Hazelcast IMDG releases 3.6 and higher.
 
-=== Upgrading from Hazelcast IMDG 3.4.x
+=== Upgrading to Hazelcast IMDG 3.5.x
 
 This section provides information to be considered when upgrading from Hazelcast IMDG 3.4.x to 3.5.x and newer.
 
@@ -596,7 +604,7 @@ By introducing the `spring-aware` element, it is possible to enable it by adding
 See the <<integration-with-spring, Spring Integration section>>.
 
 
-=== Upgrading from Hazelcast IMDG 2.x
+=== Upgrading to Hazelcast IMDG 3.x
 
 This section provides information to be considered when upgrading from Hazelcast IMDG 2.x to 3.x.
 

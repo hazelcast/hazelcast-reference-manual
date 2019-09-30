@@ -1516,13 +1516,13 @@ strategy with the map `replace` method.
 
 Locks can be configured to check the number of currently present members
 before applying a locking operation. If the check fails, the lock operation
-fails with a `SplitBrainProtectionException` (see <<split-brain-protection, Split-Brain Protection>>).
+fails with a `SplitBrainProtectionException` (see the <<split-brain-protection, Split-Brain Protection section>>).
 As pessimistic locking uses lock operations internally, it also uses the configured
-lock split brain protection. This means that you can configure a lock split brain protection with the same name or a
-pattern that matches the map name. Note that the split brain protection for IMap locking actions can be
-different from the split brain protection for other IMap actions.
+lock split-brain protection. This means that you can configure a lock split-brain protection with the same name or a
+pattern that matches the map name. Note that the split-brain protection for IMap locking actions can be
+different from the split-brain protection for other IMap actions.
 
-The following actions check for lock split brain protection before being applied:
+The following actions check for lock split-brain protection before being applied:
 
 * `IMap.lock(K)` and `IMap.lock(K, long, java.util.concurrent.TimeUnit)`
 * `IMap.isLocked()`
@@ -1553,8 +1553,8 @@ An example of declarative configuration:
 </hazelcast>
 ----
 
-Here the configured map uses the `map-lock-actions-split-brain-protection` split brain protection for
-map lock actions and the `map-actions-split-brain-protection` split brain protection for other map actions.
+Here the configured map uses the `map-lock-actions-split-brain-protection` for
+map lock actions and the `map-actions-split-brain-protection` for other map actions.
 
 [[accessing-entry-statistics]]
 ==== Accessing Map and Entry Statistics
@@ -2024,10 +2024,10 @@ in bulks. Bulk load is the size of these bulks. The default value of `bulk-load`
 ==== Split-Brain Protection for Queue
 
 Queues can be configured to check for a minimum number of available members before
-applying queue operations (see <<split-brain-protection, Split-Brain Protection>>).
+applying queue operations (see the <<split-brain-protection, Split-Brain Protection section>>).
 This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-The following is a list of methods, grouped by the split brain protection type, that support Split-Brain Protection checks:
+The following is a list of methods, grouped by the protection types, that support split-brain protection checks:
 
 * WRITE, READ_WRITE
 ** `Collection.addAll()`
@@ -2125,7 +2125,7 @@ If set to `false`, you cannot collect statistics in your implementation
 (using `getLocalQueueStats()`) and also
 link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-queues[Hazelcast Management Center^]
 will not show them. Its default value is `true`.
-* `split-brain-protection-ref` : Name of split brain protection configuration that you want this queue to use.
+* `split-brain-protection-ref` : Name of the split-brain protection configuration that you want this queue to use.
 
 [[multimap]]
 === MultiMap
@@ -2234,7 +2234,7 @@ You can also set the attribute
 `include-value` to `true` if you want the item event to contain the entry values.
 You can set
 `local` to `true` if you want to listen to the entries on the local member.
-* `split-brain-protection-ref`: Name of split brain protection configuration that you want this MultiMap to use.
+* `split-brain-protection-ref`: Name of the split-brain protection configuration that you want this MultiMap to use.
 See the <<split-brain-protection-for-multimap-and-transactionalmultimap, Split-Brain
 Protection for MultiMap and TransactionalMultiMap section>>.
 
@@ -2242,11 +2242,10 @@ Protection for MultiMap and TransactionalMultiMap section>>.
 ==== Split-Brain Protection for MultiMap and TransactionalMultiMap
 
 MultiMap & TransactionalMultiMap can be configured to check for a minimum number of
-available members before applying their operations (see <<split-brain-protection, Split-Brain Protection>>).
+available members before applying their operations (see the <<split-brain-protection, Split-Brain Protection section>>).
 This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-The following is a list of methods that now support Split-Brain Protection checks. The list is grouped by
-split brain protection type.
+The following is a list of methods that support split-brain protection checks. The list is grouped by the protection types.
 
 MultiMap:
 
@@ -2283,7 +2282,7 @@ TransactionalMultiMap:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for MultiMap can be configured programmatically using
+Split-brain protection for MultiMap can be configured programmatically using
 the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/MultiMapConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
@@ -2298,7 +2297,7 @@ or declaratively using the element `split-brain-protection-ref`. Following is an
 </hazelcast>
 ----
 
-The value of `split-brain-protection-ref` should be the split brain protection configuration name which you configured
+The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you configured
 under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[set]]
@@ -2383,18 +2382,18 @@ between 0 and Integer.MAX_VALUE. Its default value is 0, meaning there is no cap
 You can also set the attributes `include-value` to `true` if you want the item event
 to contain the item values. You can set `local` to `true` if you want to listen to
 the items on the local member.
-* `split-brain-protection-ref`: Name of split brain protection configuration that you want this Set to use.
+* `split-brain-protection-ref`: Name of the split-brain protection configuration that you want this Set to use.
 See the <<split-brain-protection-for-iset-and-transactionalset, Split-Brain Protection for ISet and TransactionalSet section>>.
 
 [[split-brain-protection-for-iset-and-transactionalset]]
 ==== Split-Brain Protection for ISet and TransactionalSet
 
 ISet & TransactionalSet can be configured to check for a minimum number of
-available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>).
+available members before applying queue operations (see the <<split-brain-protection, Split-Brain Protection section>>).
 This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-The following is a list of methods, grouped by protection type, that support
-Split-Brain Protection checks:
+The following is a list of methods, grouped by the protection types, that support
+split-brain protection checks:
 
 ISet:
 
@@ -2424,7 +2423,7 @@ TransactionalSet:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for ISet can be configured programmatically using
+Split-brain protection for ISet can be configured programmatically using
 the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/SetConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. The following is an example declarative configuration:
 
@@ -2439,7 +2438,7 @@ or declaratively using the element `split-brain-protection-ref`. The following i
 </hazelcast>
 ----
 
-The value of `split-brain-protection-ref` should be the split brain protection configuration name which you
+The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you
 configured under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[list]]
@@ -2528,17 +2527,17 @@ the cluster. When it is '2', two members will have the backup.
 You can also set the attribute `include-value` to `true` if you want the item event
 to contain the item values. You can set the attribute `local` to `true` if you want
 to listen the items on the local member.
-* `split-brain-protection-ref`: Name of split brain protection configuration that you want this List to use.
+* `split-brain-protection-ref`: Name of the split-brain protection configuration that you want this List to use.
 See the <<split-brain-protection-for-ilist-and-transactionallist, Split-Brain Protection for IList and TransactionalList section>>.
 
 [[split-brain-protection-for-ilist-and-transactionallist]]
 ==== Split-Brain Protection for IList and TransactionalList
 
 IList & TransactionalList can be configured to check for a minimum
-number of available members before applying queue operations (see <<split-brain-protection, Split-Brain Protection>>).
+number of available members before applying queue operations (see the <<split-brain-protection, Split-Brain Protection section>>).
 This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-The following is a list of methods, grouped by protection type, that support Split-Brain Protection checks:
+The following is a list of methods, grouped by the protection types, that support split-brain protection checks:
 
 IList:
 
@@ -2575,7 +2574,7 @@ TransactionalList:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for IList can be configured programmatically using
+Split-brain protection for IList can be configured programmatically using
 the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ListConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
@@ -2590,7 +2589,7 @@ or declaratively using the element `split-brain-protection-ref`. Following is an
 </hazelcast>
 ----
 
-The value of `split-brain-protection-ref` should be the split brain protection configuration name which you
+The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you
 configured under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[ringbuffer]]
@@ -2868,7 +2867,7 @@ Split-Brain Protection section>>. Following is an example snippet:
 </hazelcast>
 ----
 
-The following is a list of methods, grouped by protection type, that support Split-Brain Protection checks:
+The following is a list of methods, grouped by the protection types, that support split-brain protection checks:
 
 * WRITE, READ_WRITE:
 ** `add`
@@ -4240,12 +4239,12 @@ include::{javasource}/dds/replicatedmap/ListeningMember.java[tag=lm]
 ==== Split-Brain Protection for Replicated Map
 
 Replicated Map can be configured to check for a minimum number of available
-members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>).
+members before applying its operations (see the <<split-brain-protection, Split-Brain Protection section>>).
 This is a check to avoid performing successful queue operations on all parts of a
 cluster during a network partition.
 
-The following is a list of methods, grouped by protection type, that support Split-Brain
-Protection checks:
+The following is a list of methods, grouped by the protection types, that support split-brain
+protection checks:
 
 * WRITE, READ_WRITE:
 ** `clear`
@@ -4264,7 +4263,7 @@ Protection checks:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Replicated Map can be configured programmatically
+Split-brain protection for Replicated Map can be configured programmatically
 using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ReplicatedMapConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
@@ -4279,7 +4278,7 @@ or declaratively using the element `split-brain-protection-ref`. Following is an
 </hazelcast>
 ----
 
-The value of `split-brain-protection-ref` should be the quorum configuration name which you
+The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you
 configured under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 [[cardinality-estimator]]
@@ -4330,12 +4329,12 @@ include::{javasource}/dds/ExampleCardinalityEstimator.java[tag=ces]
 ==== Split-Brain Protection for Cardinality Estimator
 
 Cardinality Estimator can be configured to check for a minimum number of
-available members before applying its operations (see <<split-brain-protection,
-Split-Brain Protection>>). This is a check to avoid performing successful queue
+available members before applying its operations (see the <<split-brain-protection,
+Split-Brain Protection section>>). This is a check to avoid performing successful queue
 operations on all parts of a cluster during a network partition.
 
-The following is a list of methods,grouped by protection type, that support
-Split-Brain Protection checks:
+The following is a list of methods, grouped by the protection types, that support
+split-brain protection checks:
 
 * WRITE, READ_WRITE:
 ** `add`
@@ -4346,7 +4345,7 @@ Split-Brain Protection checks:
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Cardinality Estimator can be configured
+Split-brain protection for Cardinality Estimator can be configured
 programmatically using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`.
 Following is an example declarative configuration:
@@ -4362,13 +4361,13 @@ Following is an example declarative configuration:
 </hazelcast>
 ----
 
-The value of `split-brain-protection-ref` should be the split brain protection configuration name
+The value of `split-brain-protection-ref` should be the split-brain protection configuration name
 which you configured under the `split-brain-protection` element as explained in the
 <<split-brain-protection, Split-Brain Protection section>>.
 
 **Configuring Merge Policy**
 
-While recovering from a Split-Brain syndrome, Cardinality Estimator
+While recovering from a split-brain syndrome, Cardinality Estimator
 in the small cluster merges into the bigger cluster based on a configured
 merge policy. When an estimator merges into the cluster, an estimator with
 the same name might already exist in the cluster.
