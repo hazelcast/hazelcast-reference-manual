@@ -256,7 +256,7 @@ The following are example configurations for executor service.
         <pool-size>1</pool-size>
         <queue-capacity>10</queue-capacity>
         <statistics-enabled>true</statistics-enabled>
-        <quorum-ref>quorumname</quorum-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </executor-service>
     ...
 </hazelcast>
@@ -274,13 +274,13 @@ Executor service configuration has the following elements:
 * `pool-size`: The number of executor threads per Member for the Executor. By default, Executor is configured to have 16 threads in the pool. You can change that with this element.
 * `queue-capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled for your Executor Service. If set to `false`, you cannot collect statistics in your implementation (using `getLocalExecutorStats()`) and also link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-executors[Hazelcast Management Center^] will not show them. Its default value is `true`.
-* `quorum-ref`: Name of quorum configuration that you want this Executor Service to use. See the <<split-brain-protection-for-iexecutorservice, Split-Brain Protection for IExecutorService section>>.
+* `split-brain-protection-ref`: Name of quorum configuration that you want this Executor Service to use. See the <<split-brain-protection-for-iexecutorservice, Split-Brain Protection for IExecutorService section>>.
 
 ==== Split-Brain Protection for IExecutorService
 
 IExecutorService can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
+The following is a list of methods, grouped by protection type, that support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE:
 ** `execute`
@@ -298,20 +298,20 @@ The following is a list of methods, grouped by quorum type, that support Split-B
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Executor Service can be configured programmatically using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ExecutorConfig.html[setQuorumName()^], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Executor Service can be configured programmatically using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ExecutorConfig.html[setSplitBrainProtectionName()^], or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
 <hazelcast>
     ...
     <executor-service name="default">
-        <quorum-ref>quorumname</quorum-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </executor-service>
     ...
 </hazelcast>
 ----
 
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+The value of `split-brain-protection-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 === Durable Executor Service
 
@@ -344,7 +344,7 @@ This section presents example configurations for durable executor service along 
         <pool-size>8</pool-size>
         <durability>1</durability>
         <capacity>1</capacity>
-        <quorum-ref>quorumname</quorum-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </durable-executor-service>
     ...
 </hazelcast>
@@ -363,13 +363,13 @@ The following are the descriptions of each configuration element and attribute:
 * `pool-size`: Number of executor threads per member for the executor.
 * `durability`: Number of backups in the cluster for the submitted task. Its default value is 1.
 * `capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
-* `quorum-ref`: Name of quorum configuration that you want this Durable Executor Service to use. See the <<split-brain-protection-for-durable-executor-service, Split-Brain Protection for Durable Executor Service section>>.
+* `split-brain-protection-ref`: Name of quorum configuration that you want this Durable Executor Service to use. See the <<split-brain-protection-for-durable-executor-service, Split-Brain Protection for Durable Executor Service section>>.
 
 ==== Split-Brain Protection for Durable Executor Service
 
 Durable Executor Service can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
+The following is a list of methods, grouped by protection type, that support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE:
 ** `disposeResult`
@@ -385,20 +385,20 @@ The following is a list of methods, grouped by quorum type, that support Split-B
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Durable Executor Service can be configured programmatically using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/DurableExecutorConfig.html[setQuorumName()^], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Durable Executor Service can be configured programmatically using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/DurableExecutorConfig.html[setSplitBrainProtectionName()^], or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
 <hazelcast>
     ...
     <durable-executor-service name="myDurableExecSvc">
-        <quorum-ref>quorumname</quorum-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </durable-executor-service>
     ...
 </hazelcast>
 ----
 
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+The value of `split-brain-protection-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 === Scheduled Executor Service
 
@@ -452,7 +452,7 @@ This section presents example configurations for scheduled executor service alon
         <pool-size>16</pool-size>
         <durability>1</durability>
         <capacity>100</capacity>
-        <quorum-ref>quorumname</quorum-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </scheduled-executor-service>
     ...
 </hazelcast>
@@ -471,7 +471,7 @@ The following are the descriptions of each configuration element and attribute:
 * `pool-size`: Number of executor threads per member for the executor.
 * `capacity`: Maximum number of tasks that a scheduler can have per partition. Attempt to schedule more results in `RejectedExecutionException`. To free up the capacity, tasks should get disposed by the user.
 * `durability`: Durability of the executor.
-* `quorum-ref`: Name of quorum configuration that you want this Scheduled Executor Service to use. See the <<split-brain-protection-for-ischeduled-executor-service, Split-Brain Protection for IScheduled Executor Service section>>.
+* `split-brain-protection-ref`: Name of quorum configuration that you want this Scheduled Executor Service to use. See the <<split-brain-protection-for-ischeduled-executor-service, Split-Brain Protection for IScheduled Executor Service section>>.
 
 [[scheduled-exec-srv-examples]]
 ==== Examples
@@ -511,7 +511,7 @@ long totalTaskRuns = stats.getTotalRuns(); // = 1
 
 IScheduledExecutorService can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
 
-The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
+The following is a list of methods, grouped by protection type, that support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE:
 ** `schedule`
@@ -530,20 +530,20 @@ The following is a list of methods, grouped by quorum type, that support Split-B
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Scheduled Executor Service can be configured programmatically using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[setQuorumName()^], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Scheduled Executor Service can be configured programmatically using the method link:https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[setSplitBrainProtectionName()^], or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
 [source,xml]
 ----
 <hazelcast>
     ...
     <scheduled-executor-service name="myScheduledExecSvc">
-        <quorum-ref>quorumname</quorum-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </scheduled-executor-service>
     ...
 </hazelcast>
 ----
 
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+The value of `split-brain-protection-ref` should be the split brain protection configuration name which you configured under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
 
 === Entry Processor
 

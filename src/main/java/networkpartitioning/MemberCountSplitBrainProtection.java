@@ -7,12 +7,12 @@ public class MemberCountSplitBrainProtection {
     public static void main(String[] args) throws Exception{
 //tag::mcq[]
         SplitBrainProtectionConfig splitBrainProtectionConfig = new SplitBrainProtectionConfig();
-        splitBrainProtectionConfig.setName("quorumRuleWithFourMembers")
+        splitBrainProtectionConfig.setName("splitBrainProtectionRuleWithFourMembers")
 					    .setEnabled(true)
 					    .setMinimumClusterSize(4);
 
         MapConfig mapConfig = new MapConfig();
-        mapConfig.setSplitBrainProtectionName("quorumRuleWithFourMembers");
+        mapConfig.setSplitBrainProtectionName("splitBrainProtectionRuleWithFourMembers");
 
         Config config = new Config();
         config.addSplitBrainProtectionConfig(splitBrainProtectionConfig);

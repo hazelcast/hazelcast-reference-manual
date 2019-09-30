@@ -22,17 +22,17 @@ public class SplitBrainProtectionListenerConfiguration {
             }
         });
         // Or you can give the name of the class that implements SplitBrainProtectionListener interface.
-        listenerConfig.setClassName("com.company.splitBrainProtection.ThreeMemberQuorumListener");
+        listenerConfig.setClassName("com.company.splitBrainProtection.ThreeMemberSplitBrainProtectionListener");
 
         SplitBrainProtectionConfig splitBrainProtectionConfig = new SplitBrainProtectionConfig();
-        splitBrainProtectionConfig.setName("quorumRuleWithFourMembers")
+        splitBrainProtectionConfig.setName("splitBrainProtectionRuleWithFourMembers")
         					    .setEnabled(true)
         					    .setMinimumClusterSize(4)
         					    .addListenerConfig(listenerConfig);
 
 
         MapConfig mapConfig = new MapConfig();
-        mapConfig.setSplitBrainProtectionName("quorumRuleWithFourMembers");
+        mapConfig.setSplitBrainProtectionName("splitBrainProtectionRuleWithFourMembers");
 
         Config config = new Config();
         config.addSplitBrainProtectionConfig(splitBrainProtectionConfig);
