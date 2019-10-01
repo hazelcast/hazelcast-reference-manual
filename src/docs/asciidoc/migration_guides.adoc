@@ -8,7 +8,7 @@ for the changes for each Hazelcast IMDG release.
 
 === Upgrading to Hazelcast IMDG 4.0
 
-This section provides the notes for you to consider
+This section provides the guidelines for you
 when migrating to Hazelcast IMDG 4.0
 
 ==== Module Changes
@@ -16,7 +16,6 @@ when migrating to Hazelcast IMDG 4.0
 * The `hazelcast-client` module has been merged into the core module: All the classes
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
-
 
 ==== Security Changes
 
@@ -209,7 +208,75 @@ See the following table for the before/after sample implementations.
 
 ==== Quorum Renamed as Split Brain Protection
 
-???
+Both in the API/code samples and documentation, the term "quorum" has been
+replaced by "split-brain protection".
+
+With this change, the following configuration parameters
+have been renamed:
+
+**Declarative configuration elements:**
+
+* `quorum` -> `split-brain-protection`
+* `quorum-size` -> `minimum-cluster-size`
+* `quorum-ref` ->  `split-brain-protection-ref`
+* `quorum-type` -> `protect-on`
+* `probabilistic-quorum` -> `probabilistic-split-brain-protection`
+* `recently-active-quorum` -> `recently-active-split-brain-protection`
+* `quorum-function-class-name` -> `split-brain-protection-function-class-name`
+* `quorum-listeners` -> `split-brain-protection-listeners`
+
+**Programmatic configuration objects and methods:**
+
+* `QuorumConfig` -> `SplitBrainProtectionConfig`
+* `QuorumConfig.setSize()` -> `SplitBrainProtectionConfig.setMinimumClusterSize()`
+* `QuorumConfig.setType()` -> `SplitBrainProtectionConfig.setProtectOn()`
+* `QuorumListenerConfig` -> `SplitBrainProtectionListenerConfig`
+* `QuorumEvent` -> `SplitBrainProtectionEvent`
+* `QuorumService` -> `SplitBrainProtectionService`
+* `QuorumService.getQuorum()` -> `SplitBrainProtectionService.getSplitBrainProtection()`
+* `isPresent()` -> `hasMinimumSize()`
+* `setQuorumName()` -> `setSplitBrainProtectionName()`
+* `addQuorumConfig()` -> `addSplitBrainProtectionConfig()`
+* `newProbabilisticQuorumConfigBuilder()` -> `newProbabilisticSplitBrainProtectionConfigBuilder()`
+* `newRecentlyActiveQuorumConfigBuilder()` -> `newRecentlyActiveSplitBrainProtectionConfigBuilder()`
+
+See the following table for a before/after sample.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <quorum name="quorumRuleWithFourMembers" enabled="true">
+        <quorum-size>4</quorum-size>
+    </quorum>
+    <map name="default">
+        <quorum-ref>quorumRuleWithFourMembers</quorum-ref>
+    </map>
+    ...
+</hazelcast>
+----
+
+| *_After IMDG 4.0_*
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <split-brain-protection name="splitBrainProtectionRuleWithFourMembers" enabled="true">
+        <minimum-cluster-size>4</minimum-cluster-size>
+    </split-brain-protection>
+    <map name="default">
+        <split-brain-protection-ref>splitBrainProtectionRuleWithFourMembers</split-brain-protection-ref>
+    </map>
+    ...
+</hazelcast>
+----
+|===
 
 
 ==== Introducing Lambda Friendly Interfaces
