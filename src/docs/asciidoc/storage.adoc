@@ -100,6 +100,7 @@ Memory for tracking the used and available memory blocks. It is used only by
 the **POOLED** memory allocator. Its default value is **12.5**. Please note that
 when the memory runs out, you get a `NativeOutOfMemoryException`;  if your store
 has a large number of entries, you should consider increasing this percentage.
+* **persistent-memory-directory:** See the <<using-persistent-memory, Using Persistent Memory section>> below.
 
 The following is the programmatic configuration example.
 
@@ -119,6 +120,7 @@ The following is the declarative configuration example.
         <min-block-size>16</min-block-size>
         <page-size>4194304</page-size>
         <metadata-space-percentage>12.5</metadata-space-percentage>
+        <persistent-memory-directory>/mnt/persmemory/data</persistent-memory-directory>
     </native-memory>
     ...
 </hazelcast>
@@ -128,6 +130,54 @@ NOTE: You can check whether there is enough free physical memory for the
 requested number of bytes using the system property `hazelcast.hidensity.check.freememory`.
 See the <<system-properties, System Properties appendix>> on how to use Hazelcast
 system properties.
+
+[[using-persistent-memory]]
+==== Using Persistent Memory
+
+To support larger and more affordable storage
+for data structures like IMap, ICache and Near Cache,
+Hazelcast provides integration with persistent memory technologies
+like Intel(R) Optane(TM) DC. To benefit from the technology
+you do not need to make any changes in your application code.
+Only a few configuration changes are required.
+
+The optional `persistent-memory-directory` element under the `native-memory`
+configuration block defines where the persistent memory is mounted.
+This option enables usage of the persistent memory on the cluster member
+so that all data structures backed by High-Density Memory Store use
+the specified mounting directory to store data.
+If the `persistent-memory-directory` element is not configured, standard RAM is used.
+
+The following snippets demonstrate how to configure the persistent memory as
+High-Density Memory Store in Hazelcast. The directory `/mnt/optane/data` is used
+as an example for Intel(R) Optane(TM) DC.
+
+**Declarative Configuration:**
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <native-memory allocator-type="POOLED" enabled="true">
+      <size unit="GIGABYTES" value="100" />
+      <persistent-memory-directory>/mnt/optane/data</persistent-memory-directory>
+    </native-memory>
+    ...
+</hazelcast>
+----
+
+**Programmatic Configuration:**
+
+[source,java]
+----
+Config config = new Config();
+NativeMemoryConfig memoryConfig = new NativeMemoryConfig()
+                .setEnabled(true)
+                .setSize(new MemorySize(100, MemoryUnit.GIGABYTES))
+                .setAllocatorType(POOLED)
+                .setPersistentMemoryDirectory("/mnt/optane/data");
+config.setNativeMemoryConfig(memoryConfig);
+----
 
 === Sizing Practices
 

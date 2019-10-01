@@ -808,6 +808,10 @@ format to `NATIVE`. The following snippet is the declarative configuration examp
 Keep in mind that you should have already enabled the High-Density Memory Store
 usage for your cluster. See the <<configuring-high-density-memory-store, Configuring High-Density Memory Store section>>.
 
+You can also benefit from the persistent memory technologies such as
+Intel(R) Optane(TM) DC to be used by the High-Density Memory Store. See the
+<<using-persistent-memory, Using Persistent Memory section>>.
+
 [[required-configuration-changes-when-using-native]]
 ===== Required configuration changes when using NATIVE
 
@@ -872,44 +876,6 @@ similar to the following:
 
 NOTE: See the <<high-density-memory-store, High-Density Memory Store section>>
 for more information.
-
-[[persistent-memory-configuration]]
-===== Persistent memory configuration
-
-In order to support bigger and more affordable store for data structures like IMap, ICache and NearCache, Hazelcast provides integration with
-persistent memory technologies like Intel Optane DC. To benefit from the technology there is no need to make any application code changes.
-Only a few configuration changes are required.
-
-A `native-memory` configuration block is extended with an optional element `persistent-memory-directory` which defines  where Optane memory
-is mounted. The option enables usage of persistent memory on the cluster member so that all HD data structures will use the specified mounting
-directory to store data. If the `persistent-memory-directory` is not configured, standard RAM is used.
-
-The below snippet demonstrates how to configure the persistent memory as HD memory in Hazelcast.
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <native-memory allocator-type="POOLED" enabled="true">
-      <size unit="GIGABYTES" value="100" />
-      <persistent-memory-directory>/mnt/optane/data</persistent-memory-directory>
-    </native-memory>
-    ...
-</hazelcast>
-----
-
-The following code shows Java API to set persistent memory directory.
-
-[source,java]
-----
-Config config = new Config();
-NativeMemoryConfig memoryConfig = new NativeMemoryConfig()
-                .setEnabled(true)
-                .setSize(new MemorySize(100, MemoryUnit.GIGABYTES))
-                .setAllocatorType(POOLED)
-                .setPersistentMemoryDirectory("/mnt/optane/data");
-config.setNativeMemoryConfig(memoryConfig);
-----
 
 ==== Metadata Policy
 
