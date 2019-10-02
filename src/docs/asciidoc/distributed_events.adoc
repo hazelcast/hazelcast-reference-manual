@@ -215,11 +215,21 @@ The following is an example of the equivalent Spring configuration.
 The Migration Listener interface has methods that are invoked
 for the following events:
 
-* `migrationStarted`: A partition migration is started.
-* `migrationCompleted`: A partition migration is completed.
-* `migrationFailed`: A partition migration failed.
+* `migrationStarted`: Migration starts. Migration consists of a group of replica migrations
+which are planned together. Parameter of `migrationStarted` method, `MigrationState`,
+shows information about the migration; start time of the process, number of the planned migrations etc.
+* `migrationFinished`: Migration finishes. `MigrationState` parameter shows the result of the migration;
+number of the completed migrations, number of the remaining migrations, total elapsed time etc.
+* `replicaMigrationCompleted`: A partition replica migration is started. Method's parameter,
+`ReplicaMigrationEvent`, shows information about a replica migration; partition ID, replica index, source
+and destination members of the migration and elapsed time for this replica migration.
+Also it shows the progress of the overall migration; number of the completed
+and remaining replica migrations and total elapsed time.
+* `replicaMigrationFailed`: A partition replica migration failed. Parameter `MigrationEvent`
+shows the information about this replica migration
+and the overall migration similar to `migrationCompleted` method.
 
-To write a Migration Listener class, you implement the MigrationListener
+To write a Migration Listener class, you implement the `MigrationListener`
 interface and its methods.
 
 The following is an example Migration Listener class.
@@ -228,16 +238,6 @@ The following is an example Migration Listener class.
 ----
 include::{javasource}/distributedevents/ClusterMigrationListener.java[tag=clstrmigrationlistener]
 ----
-
-
-When a respective event is fired, the migration listener outputs
-the partition ID, status of the migration, the old member and the
-new member. The following is an example output.
-
-```
-Started: MigrationEvent{partitionId=98, oldOwner=Member [127.0.0.1]:5701,
-newOwner=Member [127.0.0.1]:5702 this}
-```
 
 ===== Registering Migration Listeners
 
