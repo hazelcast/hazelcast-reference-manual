@@ -11,13 +11,102 @@ for the changes for each Hazelcast IMDG release.
 This section provides the guidelines for you
 when migrating to Hazelcast IMDG 4.0
 
-==== Module Changes
+==== Removal of Hazelcast Client Module
 
 * The `hazelcast-client` module has been merged into the core module: All the classes
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
 
-==== Security Changes
+==== Refactoring of Migration Listener
+
+The `MigrationListener` API has been refactored.
+With this change, an event is published when a new
+migration process starts and another event when migration
+is completed. These events include statistics
+about the migration process including the start time,
+planned migration count, completed migration count, etc.
+
+Additionally, a migration event is published on each replica
+migration, both for primary and backup replica migrations.
+This event includes the partition ID, replica index and
+migration progress statistics.
+
+Before IMDG 4.0, the following were the events listened by
+`MigrationListener`:
+
+* `migrationStarted`
+* `migrationCompleted`
+* `migrationFailed`
+
+After IMDG 4.0, we have the following events:
+
+* `migrationStarted`
+* `migrationFinished`
+* `replicaMigrationCompleted`
+* `replicaMigrationFailed`
+
+See the following table for the before/after samples.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+import com.hazelcast.core.MigrationEvent;
+import com.hazelcast.core.MigrationListener;
+
+public class ClusterMigrationListener implements MigrationListener {
+    @Override
+    public void migrationStarted(MigrationEvent migrationEvent) {
+        System.err.println("Started: " + migrationEvent);
+    }
+    @Override
+    public void migrationCompleted(MigrationEvent migrationEvent) {
+        System.err.println("Completed: " + migrationEvent);
+    }
+    @Override
+    public void migrationFailed(MigrationEvent migrationEvent) {
+        System.err.println("Failed: " + migrationEvent);
+    }
+}
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+import com.hazelcast.partition.MigrationListener;
+import com.hazelcast.partition.MigrationState;
+import com.hazelcast.partition.ReplicaMigrationEvent;
+
+public class ClusterMigrationListener implements MigrationListener {
+
+    @Override
+    public void migrationStarted(MigrationState state) {
+        System.out.println("Migration Started: " + state);
+    }
+
+    @Override
+    public void migrationFinished(MigrationState state) {
+        System.out.println("Migration Finished: " + state);
+    }
+
+    @Override
+    public void replicaMigrationCompleted(ReplicaMigrationEvent event) {
+        System.out.println("Replica Migration Completed: " + event);
+    }
+
+    @Override
+    public void replicaMigrationFailed(ReplicaMigrationEvent event) {
+        System.out.println("Replica Migration Failed: " + event);
+    }
+}
+----
+|===
+
+==== Changes in the Security
 
 ===== JAAS Authentication Cleanups
 
@@ -391,7 +480,7 @@ The data structures and interfaces enhanced in this sense are listed below:
 * Ringbuffer
 * Scheduled Executor
 
-==== WAN Replication
+==== WAN Replication Changes
 
 The previously known `wan-publisher` (or `WanPublisherConfig`) has been separated into
 two configuration elements/classes to be used for built-in and custom WAN publishers:
