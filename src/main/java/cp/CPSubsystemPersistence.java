@@ -1,4 +1,5 @@
 import com.hazelcast.core.*;
+import com.hazelcast.cp.*;
 import com.hazelcast.config.*;
 import com.hazelcast.config.cp.*;
 
@@ -14,7 +15,7 @@ public class CPSubsystemPersistence {
         TcpIpConfig tcpIpConfig = join.getTcpIpConfig();
         tcpIpConfig.setEnabled(true);
         tcpIpConfig.addMember("127.0.0.1");
-        config.getCPSubsystemConfig().setCPMemberCount(3).setPersistenceEnabled(true);
+       // config.getCPSubsystemConfig().setCPMemberCount(3).setPersistenceEnabled(true);
 
         HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(config);
         HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(config);
