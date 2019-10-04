@@ -17,6 +17,96 @@ when migrating to Hazelcast IMDG 4.0
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
 
+==== Changes in Custom Attributes
+
+<<custom-attributes, Custom attributes>> are referenced in
+predicates, queries and indexes. Some improvements have been
+performed in Hazelcast's query engine and one of the results
+is the change in custom attribute configurations.
+
+With this change, the following configuration parameters
+have been renamed:
+
+**Declarative configuration elements:**
+
+* `extractor` -> `extractor-class-name`
+
+**Programmatic configuration objects and methods:**
+
+* `MapAttributeConfig` -> `AttributeConfig`
+* `setExtractor()` -> `setExtractorClassName()`
+* `addMapAttributeConfig()` -> `addAttributeConfig()`
+
+
+See the following table for the before/after samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+2+|Programmatic Configuration
+
+|
+
+[source,java,options="nowrap"]
+----
+MapAttributeConfig attributeConfig = new MapAttributeConfig();
+attributeConfig.setName("currency");
+attributeConfig.setExtractor("com.bank.CurrencyExtractor");
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.addMapAttributeConfig(attributeConfig);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+AttributeConfig attributeConfig = new AttributeConfig();
+attributeConfig.setName("currency");
+attributeConfig.setExtractorClassName("com.bank.CurrencyExtractor");
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.addAttributeConfig(attributeConfig);
+----
+
+2+|Declarative Configuration
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="trades">
+        <attributes>
+            <attribute extractor="com.bank.CurrencyExtractor">currency</attribute>
+        </attributes>
+    </map>
+    ...
+</hazelcast>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="trades">
+        <attributes>
+            <attribute extractor-class-name="com.bank.CurrencyExtractor">currency</attribute>
+        </attributes>
+    </map>
+    ...
+</hazelcast>
+----
+|===
+
+
+
+
 ==== Refactoring of Migration Listener
 
 The `MigrationListener` API has been refactored.
@@ -38,7 +128,7 @@ Before IMDG 4.0, the following were the events listened by
 * `migrationCompleted`
 * `migrationFailed`
 
-After IMDG 4.0, we have the following events:
+After IMDG 4.0, we have the following events instead:
 
 * `migrationStarted`
 * `migrationFinished`
