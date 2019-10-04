@@ -1122,12 +1122,12 @@ The following snippet demonstrates how to define a custom attribute using a `Val
 
 [source,java]
 ----
-MapAttributeConfig attributeConfig = new MapAttributeConfig();
+AttributeConfig attributeConfig = new AttributeConfig();
 attributeConfig.setName("currency");
-attributeConfig.setExtractor("com.bank.CurrencyExtractor");
+attributeConfig.setExtractorClassName("com.bank.CurrencyExtractor");
 
 MapConfig mapConfig = new MapConfig();
-mapConfig.addMapAttributeConfig(attributeConfig);
+mapConfig.addAttributeConfig(attributeConfig);
 ----
 
 `currency` is the name of the custom attribute that will be extracted using
@@ -1147,7 +1147,7 @@ Hazelcast XML Configuration.
     ...
     <map name="trades">
         <attributes>
-            <attribute extractor="com.bank.CurrencyExtractor">currency</attribute>
+            <attribute extractor-class-name="com.bank.CurrencyExtractor">currency</attribute>
         </attributes>
     </map>
     ...
