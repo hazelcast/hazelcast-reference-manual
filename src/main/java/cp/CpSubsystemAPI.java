@@ -1,6 +1,5 @@
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.cp.CPGroup;
 import com.hazelcast.cp.CPGroupId;
 import com.hazelcast.cp.CPMember;
@@ -15,6 +14,7 @@ import com.hazelcast.cp.session.CPSession;
 import com.hazelcast.cp.session.CPSessionManagementService;
 
 import java.util.Collection;
+import java.util.concurrent.CompletionStage;
 import java.util.UUID;
 
 public class CpSubsystemAPI {
@@ -47,72 +47,72 @@ public class CpSubsystemAPI {
         {
         //tag::cpgroups[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Collection<CPGroupId>> future = managementService.getCPGroupIds();
-        Collection<CPGroupId> groups = future.get();
+        CompletionStage<Collection<CPGroupId>> future = managementService.getCPGroupIds();
+        Collection<CPGroupId> groups = future.toCompletableFuture().get();
         //end::cpgroups[]
         }
 
         {
         //tag::cpmembers[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Collection<CPMember>> future = managementService.getCPMembers();
-        Collection<CPMember> members = future.get();
+        CompletionStage<Collection<CPMember>> future = managementService.getCPMembers();
+        Collection<CPMember> members = future.toCompletableFuture().get();
         //end::cpmembers[]
         }
 
         {
         //tag::cpgroup[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<CPGroup> future = managementService.getCPGroup(groupName);
-        CPGroup group = future.get();
+        CompletionStage<CPGroup> future = managementService.getCPGroup(groupName);
+        CPGroup group = future.toCompletableFuture().get();
         //end::cpgroup[]
         }
 
         {
         //tag::destroygroup[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Void> future = managementService.forceDestroyCPGroup(groupName);
-        future.get();
+        CompletionStage<Void> future = managementService.forceDestroyCPGroup(groupName);
+        future.toCompletableFuture().get();
         //end::destroygroup[]
         }
 
         {
         //tag::removemember[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Void> future = managementService.removeCPMember(memberUUID);
-        future.get();
+        CompletionStage<Void> future = managementService.removeCPMember(memberUUID);
+        future.toCompletableFuture().get();
         //end::removemember[]
         }
 
         {
         //tag::promotemember[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Void> future = managementService.promoteToCPMember();
-        future.get();
+        CompletionStage<Void> future = managementService.promoteToCPMember();
+        future.toCompletableFuture().get();
         //end::promotemember[]
         }
 
         {
         //tag::restart[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Void> future = managementService.restart();
-        future.get();
+        CompletionStage<Void> future = managementService.restart();
+        future.toCompletableFuture().get();
         //end::restart[]
         }
 
         {
         //tag::sessions[]
         CPSessionManagementService sessionManagementService = cpSubsystem.getCPSessionManagementService();
-        ICompletableFuture<Collection<CPSession>> future = sessionManagementService.getAllSessions(groupName);
-        Collection<CPSession> sessions = future.get();
+        CompletionStage<Collection<CPSession>> future = sessionManagementService.getAllSessions(groupName);
+        Collection<CPSession> sessions = future.toCompletableFuture().get();
         //end::sessions[]
         }
 
         {
         //tag::closesession[]
         CPSessionManagementService sessionManagementService = cpSubsystem.getCPSessionManagementService();
-        ICompletableFuture<Boolean> future = sessionManagementService.forceCloseSession(groupName, sessionId);
-        future.get();
+        CompletionStage<Boolean> future = sessionManagementService.forceCloseSession(groupName, sessionId);
+        future.toCompletableFuture().get();
         //end::closesession[]
         }
     }
