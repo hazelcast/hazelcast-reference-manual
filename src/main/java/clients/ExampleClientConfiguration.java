@@ -9,13 +9,13 @@ public class ExampleClientConfiguration {
     public static void main(String[] args) throws Exception{
         //tag::scc[]
         ClientConfig clientConfig = new ClientConfig();
+        clientConfig.getConnectionStrategyConfig().getConnectionRetryConfig().setMaxBackoffMillis(5000);
         ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
         networkConfig.addAddress("10.1.1.21", "10.1.1.22:5703")
                 .setSmartRouting(true)
                 .addOutboundPortDefinition("34700-34710")
                 .setRedoOperation(true)
-                .setConnectionTimeout(5000)
-                .setConnectionAttemptLimit(5);
+                .setConnectionTimeout(5000);
 
         AwsConfig clientAwsConfig = new AwsConfig();
         clientAwsConfig.setAccessKey( "my-access-key" )
