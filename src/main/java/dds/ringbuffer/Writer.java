@@ -4,6 +4,7 @@ import com.hazelcast.ringbuffer.OverflowPolicy;
 import com.hazelcast.ringbuffer.Ringbuffer;
 
 import java.util.Random;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
@@ -20,7 +21,7 @@ public class Writer {
         while (true) {
             long sleepMs = 100;
             for (; ; ) {
-                long result = rb.addAsync(i, OverflowPolicy.FAIL).get();
+                long result = rb.addAsync(i, OverflowPolicy.FAIL).toCompletableFuture().get();
                 if (result != -1) {
                     break;
                 }
