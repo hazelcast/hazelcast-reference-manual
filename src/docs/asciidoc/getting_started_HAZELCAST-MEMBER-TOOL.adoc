@@ -13,25 +13,25 @@ The following sections explain the installation of Hazelcast IMDG and Hazelcast 
 ==== Installing Hazelcast IMDG
 
 You can find Hazelcast in standard Maven repositories. If your project uses Maven, you do not need to add
-additional repositories to your `pom.xml` or add `hazelcast-<version>.jar` file into your
+additional repositories to your `pom.xml` or add `hazelcast-{imdg-version}.jar` file into your
 classpath (Maven does that for you). Just add the following lines to your `pom.xml`:
 
-[source,xml]
+[source,xml,subs="attributes+"]
 ----
 <dependencies>
    <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast</artifactId>
-      <version>Hazelcast IMDG Version To Be Installed</version>
+      <version>{imdg-version}</version>
     </dependency>
 </dependencies>
 ----
 
 As an alternative, you can download and install Hazelcast IMDG yourself. You only need to:
 
-* Download the package `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz` from https://hazelcast.org/download[hazelcast.org].
-* Extract the downloaded `hazelcast-<version>.zip` or `hazelcast-<version>.tar.gz`.
-* Add the file `hazelcast-<version>.jar` to your classpath.
+* Download the package `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz` from https://hazelcast.org/download[hazelcast.org].
+* Extract the downloaded `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`.
+* Add the file `hazelcast-{imdg-version}.jar` to your classpath.
 
 [[installing-hazelcast-imdg-enterprise]]
 ==== Installing Hazelcast IMDG Enterprise
@@ -51,18 +51,19 @@ There are two Maven repositories defined for Hazelcast IMDG Enterprise:
 
 Hazelcast IMDG Enterprise customers may also define dependencies, a sample of which is shown below.
 
-```
+[source,xml,subs="attributes+"]
+----
 <dependency>
    <groupId>com.hazelcast</groupId>
    <artifactId>hazelcast-enterprise</artifactId>
-   <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
+   <version>{imdg-version}</version>
 </dependency>
 <dependency>
    <groupId>com.hazelcast</groupId>
    <artifactId>hazelcast-enterprise-all</artifactId>
-   <version>Hazelcast IMDG Enterprise Version To Be Installed</version>
+   <version>{imdg-version}</version>
 </dependency>
-```
+----
 
 [[setting-the-license-key]]
 ==== Setting the License Key
@@ -327,10 +328,10 @@ See the following sections for the details of Hazelcast IMDG supporting JDK 9 an
 
 Java http://openjdk.java.net/projects/jigsaw/[project Jigsaw] brought a new Module System into Java 9 and newer. Hazelcast supports running in the modular environment. If you want to run your application with Hazelcast libraries on the modulepath, use following module names:
 
-* `com.hazelcast.core` for `hazelcast-<version>.jar` and `hazelcast-enterprise-<version>.jar`
-* `com.hazelcast.client` for `hazelcast-client-<version>.jar` and `hazelcast-enterprise-client-<version>.jar`
+* `com.hazelcast.core` for `hazelcast-{imdg-version}.jar` and `hazelcast-enterprise-{imdg-version}.jar`
+* `com.hazelcast.client` for `hazelcast-client-{imdg-version}.jar` and `hazelcast-enterprise-client-{imdg-version}.jar`
 
-Don't use `hazelcast-all-<version>.jar` or `hazelcast-enterprise-all-<version>.jar` on the modulepath as it could lead to problems in module dependencies for your application. You can still use them on the classpath.
+Don't use `hazelcast-all-{imdg-version}.jar` or `hazelcast-enterprise-all-{imdg-version}.jar` on the modulepath as it could lead to problems in module dependencies for your application. You can still use them on the classpath.
 
 The Java Module System comes with stricter visibility rules. It affects Hazelcast which uses internal Java API to reach the best performance results.
 
@@ -347,7 +348,7 @@ You can provide the access to the above mentioned packages by using `--add-expor
 
 **Example: Running a member on the classpath**
 
-[source,bash]
+[source,bash,subs="attributes+"]
 ----
 java --add-modules java.se \
   --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
@@ -356,7 +357,7 @@ java --add-modules java.se \
   --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
   --add-opens java.management/sun.management=ALL-UNNAMED \
   --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED \
-  -jar hazelcast-<version>.jar
+  -jar hazelcast-{imdg-version}.jar
 ----
 
 **Example: Running a member on the modulepath**
@@ -374,7 +375,7 @@ java --add-modules java.se \
   --module com.hazelcast.core/com.hazelcast.core.server.StartServer
 ----
 
-_This example expects `hazelcast-<version>.jar` placed in the `lib` directory._
+_This example expects `hazelcast-{imdg-version}.jar` placed in the `lib` directory._
 
 [[starting-the-member-and-client]]
 === Starting a Hazelcast Member
@@ -484,7 +485,7 @@ Members [2] {
 }
 ```
 +
-* Now, add the `hazelcast-client-`*`<version>`*`.jar` library to your classpath.
+* Now, add the `hazelcast-client-`*`{imdg-version}`*`.jar` library to your classpath.
 This is required to use a Hazelcast client.
 * The following code starts a Hazelcast Client, connects to our cluster,
 and prints the size of the `customers` map.
