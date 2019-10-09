@@ -17,6 +17,16 @@ when migrating to Hazelcast IMDG 4.0
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
 
+==== Changes in Client Configurations
+
+* The `connection-attempt-period` and `connection-attempt-limit`
+configuration have been removed. Instead, the elements of
+`connection-retry` are now used:
+
+???
+
+???
+
 ==== Changes in Custom Attributes
 
 <<custom-attributes, Custom attributes>> are referenced in
@@ -105,7 +115,60 @@ mapConfig.addAttributeConfig(attributeConfig);
 |===
 
 
+==== Removal of MapReduce
 
+MapReduce API has been removed, which was deprecated
+since Hazelcast IMDG 3.8. Instead, you can use the
+<<fast-aggregations>> on top of Query infrastructure and the
+link:https://docs.hazelcast.org/docs/jet/latest/manual/[Hazelcast Jet^]
+distributed computing platform as its successors and replacements.
+
+See the following table for the before(MapReduce)/after(Hazelcast Jet)
+word count sample.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0 (MapReduce)_*
+
+[source,java]
+----
+JobTracker tracker = hazelcastInstance.getJobTracker("default");
+
+IMap<String, String> map = hazelcastInstance.getMap(MAP_NAME);
+KeyValueSource<String, String> source = KeyValueSource.fromMap(map);
+
+Job<String, String> job = tracker.newJob(source);
+ICompletableFuture<Map<String, Integer>> future = job
+           .mapper(new TokenizerMapper())
+           .combiner(new WordcountCombinerFactory())
+           .reducer(new WordcountReducerFactory())
+           .submit();
+
+     System.out.println(ToStringPrettyfier.toString(future.get()));
+----
+
+| *_After IMDG 4.0 (Hazelcast Jet)_*
+
+[source,java]
+----
+JobTracker t = hz.getJobTracker("word-count");
+IMap<Long, String> documents = hz.getMap("documents");
+LongSumAggregation<String, String> aggr = new LongSumAggregation<>();
+Map<String, Long> counts =
+        t.newJob(KeyValueSource.fromMap(documents))
+         .mapper((Long x, String document, Context<String, Long> ctx) ->
+                 Stream.of(document.toLowerCase().split("\\W+"))
+                       .filter(w -> !w.isEmpty())
+                       .forEach(w -> ctx.emit(w, 1L)))
+         .combiner(aggr.getCombinerFactory())
+         .reducer(aggr.getReducerFactory())
+         .submit()
+         .get();
+----
+|===
+
+See the link:https://github.com/hazelcast/hazelcast-jet-code-samples/tree/master/core-api/wordcount-core-api[Jet Code Samples^] for a full insight.
 
 ==== Refactoring of Migration Listener
 
@@ -385,7 +448,9 @@ See the following table for the before/after sample implementations.
 |===
 
 
-==== Quorum Renamed as Split Brain Protection
+==== 
+
+==== Renaming Quorum as Split Brain Protection
 
 Both in the API/code samples and documentation, the term "quorum" has been
 replaced by "split-brain protection".
@@ -442,7 +507,7 @@ See the following table for a before/after sample.
 
 | *_After IMDG 4.0_*
 
-[source,xml]
+[source,xml,options="nowrap"]
 ----
 <hazelcast>
     ...
@@ -454,6 +519,48 @@ See the following table for a before/after sample.
     </map>
     ...
 </hazelcast>
+----
+|===
+
+==== Renaming getID as getClassId
+
+The `getId()` method of the `IdentifiedDataSerializable` interface
+is a method with a common name, meaning a naming conflict would happen frequently.
+For example, database entities also have a `getId()` method.
+Therefore, it has been renamed as `getClassId()`.
+
+See the following table showing the interface code before and after IMDG 4.0.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+package com.hazelcast.nio.serialization;
+
+public interface IdentifiedDataSerializable extends DataSerializable {
+
+    int getFactoryId();
+
+    int getId();
+}
+----
+
+| *_After IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+package com.hazelcast.nio.serialization;
+
+public interface IdentifiedDataSerializable extends DataSerializable {
+
+    int getFactoryId();
+
+    int getClassId();
+}
+
 ----
 |===
 
@@ -570,6 +677,78 @@ The data structures and interfaces enhanced in this sense are listed below:
 * Ringbuffer
 * Scheduled Executor
 
+==== Removal of ICompletableFuture
+
+In Hazelcast IMDG 3.x series, `com.hazelcast.core.ICompletableFuture` was
+introduced to enable reactive programming style. `ICompletableFuture` was
+intended as a temporary, JDK 6 compatible replacement for `java.util.concurrent.CompletableFuture`
+that was introduced in Java 8. Since Hazelcast 4.0 requires Java 8, the user-facing
+asynchronous Hazelcast API methods now have their return type changed from
+`ICompletableFuture` to Java 8's `CompletionStage`.
+
+See the following table for the before/after samples.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.ICompletableFuture;
+import com.hazelcast.cp.CPSubsystem;
+import com.hazelcast.cp.CPSubsystemManagementService;
+
+public class CpSubsystemAPI {
+
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+
+        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
+
+        CPMember localMember = cpSubsystem.getLocalCPMember();
+
+        {
+        CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
+        ICompletableFuture<Collection<CPGroupId>> future = managementService.getCPGroupIds();
+        Collection<CPGroupId> groups = future.get();
+        }
+    }
+}
+----
+
+| *_After IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.cp.CPSubsystem;
+import com.hazelcast.cp.CPSubsystemManagementService;
+
+import java.util.concurrent.CompletionStage;
+
+public class CpSubsystemAPI {
+
+    public static void main(String[] args) throws Exception {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+
+        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
+
+        {
+        CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
+        CompletionStage<Collection<CPGroupId>> future = managementService.getCPGroupIds();
+        Collection<CPGroupId> groups = future.toCompletableFuture().get();
+        }
+    }
+}
+----
+|===
+
+
+
 ==== WAN Replication Changes
 
 The previously known `wan-publisher` (or `WanPublisherConfig`) has been separated into
@@ -589,7 +768,7 @@ See the following table for the before/after configuration examples.
 
 The following was an example declarative configuration for `wan-publisher`:
 
-[source,xml]
+[source,xml,options="nowrap"]
 ----
 <wan-publisher group-name="nyc" publisher-id="nycPublisherId">
     <class-name>com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication</class-name>
