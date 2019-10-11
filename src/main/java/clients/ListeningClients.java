@@ -12,7 +12,7 @@ public class ListeningClients {
     public static void main(String[] args) throws Exception{
         //tag::lc[]
         ClientConfig clientConfig = new ClientConfig();
-        clientConfig.setClusterName("dev");
+        //clientConfig.setClusterName("dev");
         clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
 
         HazelcastInstance instance = Hazelcast.newHazelcastInstance();
