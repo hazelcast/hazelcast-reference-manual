@@ -14,7 +14,8 @@ public class SampleHotRestartConfiguration {
         .setValidationTimeoutSeconds(120)
         .setDataLoadTimeoutSeconds(900)
         .setClusterDataRecoveryPolicy(HotRestartClusterDataRecoveryPolicy.FULL_RECOVERY_ONLY)
-        .setAutoRemoveStaleData(true);
+        .setAutoRemoveStaleData(true)
+        .setStoreMetadata(true);
         config.setHotRestartPersistenceConfig(hotRestartPersistenceConfig);
 
         MapConfig mapConfig = config.getMapConfig("test-map");

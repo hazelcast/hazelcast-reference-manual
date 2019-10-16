@@ -195,6 +195,9 @@ NOTE: Previously, `base-dir` was being used only by a single Hazelcast member. I
 ** `PARTIAL_RECOVERY_MOST_RECENT`: Starts the cluster with the members which have most up-to-date partition table and successfully restored their data. All other members leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.
 ** `PARTIAL_RECOVERY_MOST_COMPLETE`: Starts the cluster with the largest group of members which have the same partition table version and successfully restored their data. All other members leave the cluster and force start themselves. If no member restores its data successfully, cluster start fails.
 * `auto-remove-stale-data`: Enables automatic removal of the stale Hot Restart data. When a member terminates or crashes when the cluster state is `ACTIVE`, the remaining members redistribute the data among themselves and the data persisted on terminated member's storage becomes stale. That terminated member cannot rejoin the cluster without removing Hot Restart data. When auto-removal of stale Hot Restart data is enabled, while restarting that member, Hot Restart data is automatically removed and it joins the cluster as a completely new member. Otherwise, Hot Restart data should be removed manually.
+* `store-metadata`: Enables persistence of TTL metadata for the stored records. This is a global on/off switch that applies to all data structures configured to use the Hot Restart feature. Disabled by default.
++
+NOTE: Some of the record metadata is updated on read access - for example, last access time or access hits. Since read access does not propagate to the Hot Restart Store (only updates do), these metadata properties may not be represented accurately on the Hot Restart level.
 
 ===== Per Data Structure Hot Restart Configuration
 
@@ -222,6 +225,7 @@ An example configuration is shown below.
         <data-load-timeout-seconds>900</data-load-timeout-seconds>
         <cluster-data-recovery-policy>FULL_RECOVERY_ONLY</cluster-data-recovery-policy>
         <auto-remove-stale-data>true</auto-remove-stale-data>
+        <store-metadata>true</store-metadata>
     </hot-restart-persistence>
     ...
     <map name="test-map">
