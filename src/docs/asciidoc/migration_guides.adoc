@@ -119,12 +119,19 @@ ClientConfig clientConfig = new ClientConfig();
 |===
 
 ==== Changes in Index Configuration
-In order to support further extensibility of Hazelcast index configuration was changed.
 
-Index type is now defined through `IndexType` enumeration instead of boolean flag. Ordered index is now referred as `IndexType.SORTED`, unordered as `IndexType.HASH`.
+In order to support further extensibility of Hazelcast,
+index configuration has been refactored.
 
-In composite indexes, index parts are now defined as a list of strings instead of a single string with comma-separated values.
+Index type is now defined through the `IndexType` enumeration
+instead of the boolean flag: ordered index is now referred to as
+`IndexType.SORTED`, unordered as `IndexType.HASH`.
 
+In composite indexes, index parts are now defined as
+a list of strings instead of a single string with comma-separated values.
+
+With these changes, the following configuration parameters
+have been renamed:
 
 **Programmatic configuration objects and methods:**
 
