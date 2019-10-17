@@ -777,20 +777,21 @@ their API documentation have been improved:
 * Now, it is obvious when looking at the API where `null` is allowed and
 where it is not.
 * Some methods were throwing `NullPointerException` while others were throwing
-`IllegalArgumentException`. Some methods actually allowed `null` but there was
-no indication that they did.
+`IllegalArgumentException`. Now the behavior is aligned and an unexpected `null`
+argument results in a `NullPointerException` being thrown.
+* Some methods actually allowed `null` but there was no indication that they did.
 * A method when used on the member would accept `null` and have some behavior
 accordingly while, on the client, the method would throw a `NullPointerException`.
 Now, the behavior of the member and client have been aligned.
 
 The data structures and interfaces enhanced in this sense are listed below:
 
-* IQueue, ISet, IList
-* IMap, MultiMap, Replicated Map
+* `IQueue`, `ISet`, `IList`
+* `IMap`, `MultiMap`, `ReplicatedMap`
 * `Cluster`
-* ITopic
-* Ringbuffer
-* Scheduled Executor
+* `ITopic`
+* `Ringbuffer`
+* `ScheduledExecutor`
 
 ==== Removal of ICompletableFuture
 
