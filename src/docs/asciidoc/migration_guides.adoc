@@ -118,6 +118,115 @@ ClientConfig clientConfig = new ClientConfig();
 
 |===
 
+==== Changes in Index Configuration
+In order to support further extensibility of Hazelcast index configuration was changed.
+
+Index type is now defined through `IndexType` enumeration instead of boolean flag. Ordered index is now referred as `IndexType.SORTED`, unordered as `IndexType.HASH`.
+
+In composite indexes, index parts are now defined as a list of strings instead of a single string with comma-separated values.
+
+
+**Programmatic configuration objects and methods:**
+
+* `MapIndexConfig` -> `IndexConfig`
+* `MapConfig.getMapIndexConfig` -> `MapConfig.getIndexConfig`
+* `MapConfig.setMapIndexConfig` -> `MapConfig.setIndexConfig`
+* `MapConfig.addMapIndexConfig` -> `MapConfig.addIndexConfig`
+* `IMap.addIndex(String, boolean)` -> `IMap.addIndex(IndexConfig)`
+
+
+See the following table for the before/after samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+
+2+|Programmatic Configuration
+
+|
+
+[source,java,options="nowrap"]
+----
+MapIndexConfig indexConfig = new MapIndexConfig();
+indexConfig.setOrdered(false);
+indexConfig.setAttribute("name, age");
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.addMapIndexConfig(indexConfig);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+IndexConfig indexConfig = new IndexConfig();
+indexConfig.setType(IndexType.HASH);
+indexConfig.addAttribute("name");
+indexConfig.addAttribute("age");
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.addIndexConfig(indexConfig);
+----
+
+2+|Declarative Configuration
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="person">
+        <indexes>
+            <index ordered="false">name, age</index>
+        </indexes>
+    </map>
+    ...
+</hazelcast>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="person">
+        <indexes>
+            <index type="HASH">
+                <attributes>
+                    <attribute>name</attribute>
+                    <attribute>age</attribute>
+                </attributes>
+            </index>
+        </indexes>
+    </map>
+    ...
+</hazelcast>
+
+2+|Dynamic Index Create
+
+|
+
+[source,java,options="nowrap"]
+----
+IMap map;
+
+map.addIndex("name, age", false);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+IMap map;
+
+map.addIndex(new IndexConfig(IndexType.HASH, "name", "age"));
+----
+|===
+
 ==== Changes in Custom Attributes
 
 <<custom-attributes, Custom attributes>> are referenced in
