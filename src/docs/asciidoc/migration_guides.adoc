@@ -991,6 +991,61 @@ the `com.hazelcast.query.impl.predicate` package.
 Consequently, the public Predicate API now provides only interfaces (`Predicate`,
 `PagingPredicate` and `PartitionPredicate`) with no dependencies on any internal APIs.
 
+==== Changing the UUID String Type to UUID
+
+Some public APIs that return UUID strings are changed to return UUID. These changes include `getUuid()` method of the `Endpoint` interface,
+`getTxnId()` method of the `TransactionContext` interface, return values of the listener registrations and `registrationId` parameters for the methods
+that de-register the listeners.
+
+See the following table for the before/after sample implementations.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        String registrationId = hazelcastInstance.getClientService().addClientListener(new ClientListener() {
+            @Override
+            public void clientConnected(Client client) {
+                String clientUuid = client.getUuid();
+                System.out.println("Client connected >>> " + clientUuid);
+            }
+
+            @Override
+            public void clientDisconnected(Client client) {
+                String clientUuid = client.getUuid();
+                System.out.println("Client disconnected >>> " + clientUuid);
+            }
+        });
+        hazelcastInstance.getClientService().removeClientListener(registrationId);
+----
+
+| *_After IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        UUID registrationId = hazelcastInstance.getClientService().addClientListener(new ClientListener() {
+            @Override
+            public void clientConnected(Client client) {
+                UUID clientUuid = client.getUuid();
+                System.out.println("Client connected >>> " + clientUuid);
+            }
+
+            @Override
+            public void clientDisconnected(Client client) {
+                UUID clientUuid = client.getUuid();
+                System.out.println("Client disconnected >>> " + clientUuid);
+            }
+        });
+        hazelcastInstance.getClientService().removeClientListener(registrationId);
+----
+|===
+
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
