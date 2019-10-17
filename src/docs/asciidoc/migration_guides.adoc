@@ -561,6 +561,33 @@ public interface IdentifiedDataSerializable extends DataSerializable {
 ----
 |===
 
+==== Renaming `group` as `cluster`
+
+The `group` configuration element has been renamed
+as `cluster`.
+
+See the following table showing before/after samples.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+Config config = new Config();
+config.getGroupConfig().setName( "production" );
+----
+
+| *_After IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+Config config = new Config();
+config.getClusterName( "production" );
+----
+|===
+
 
 ==== Introducing Lambda Friendly Interfaces
 
