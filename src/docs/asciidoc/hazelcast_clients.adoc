@@ -1207,19 +1207,11 @@ clientConfig.getConnectionStrategyConfig()
 
 ===== Configuring Client Connection Retry
 
-When the client tries to connect to a cluster, it considers the <<setting-connection-attempt-limit, connection attempt limit>> and
-<<setting-connection-attempt-period, connection attempt period>>.
-When the client cannot connect to any member in the member list,
-it waits for `connection-attempt-period` between each attempt until the count of attempts reach `connection-attempt-limit`.
+When client is disconnected from the cluster, it searches for new connections
+to reconnect. You can configure the frequency of the reconnection attempts and
+client shutdown behavior using `ConnectionRetryConfig` (programmatical approach)/
+`connection-retry` (declarative approach).
 
-With the connection retry configuration, you can fine tune this connection behavior.
-When this configuration is enabled,
-`connection-attempt-period` and `connection-attempt-limit` are ignored.
-This configuration is used when trying to establish the initial connection and
-any time when the connection to cluster is broken.
-
-Connection retry configuration is done using the `connection-retry` element when
-configuring declaratively or the object `ConnectionRetryConfig` when configuring programmatically.
 Below are the example configurations for each.
 
 Declarative Configuration:
