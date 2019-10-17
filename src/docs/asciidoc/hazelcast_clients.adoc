@@ -1795,6 +1795,18 @@ The table below lists the client configuration properties with their description
 this client can go through the other available cluster members.
 The default behavior (false) disallows performing invocations in this state.
 
+| `hazelcast.client.cleanup.period.millis`
+| 10000
+| int
+| Period, in milliseconds, to check if a client is still part of the cluster.
+
+| `hazelcast.client.cleanup.timeout.millis`
+| 120000
+| int
+| Timeout duration to decide if a client is still part of the cluster.
+If a member cannot find any connection to a client in the cluster,
+it cleans up the local resources that are owned by that client.
+
 |`hazelcast.client.event.queue.capacity`
 |1000000
 |string
