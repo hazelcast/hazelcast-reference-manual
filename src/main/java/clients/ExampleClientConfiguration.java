@@ -6,7 +6,7 @@ import com.hazelcast.core.HazelcastInstance;
 
 public class ExampleClientConfiguration {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         //tag::scc[]
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.getConnectionStrategyConfig().getConnectionRetryConfig().setMaxBackoffMillis(5000);
@@ -18,16 +18,16 @@ public class ExampleClientConfiguration {
                 .setConnectionTimeout(5000);
 
         AwsConfig clientAwsConfig = new AwsConfig();
-        clientAwsConfig.setAccessKey( "my-access-key" )
-                .setSecretKey( "my-secret-key" )
-                .setRegion( "us-west-1" )
-                .setHostHeader( "ec2.amazonaws.com" )
-                .setSecurityGroupName( ">hazelcast-sg" )
-                .setTagKey( "type" )
-                .setTagValue( "hz-members" )
-                .setIamRole( "s3access" )
-                .setEnabled( true );
-        clientConfig.getNetworkConfig().setAwsConfig( clientAwsConfig );
+        clientAwsConfig.setProperty("access-key", "my-access-key")
+                .setProperty("secret-key", "my-secret-key")
+                .setProperty("region", "us-west-1")
+                .setProperty("host-header", "ec2.amazonaws.com")
+                .setProperty("security-group-name", ">hazelcast-sg")
+                .setProperty("tag-key", "type")
+                .setProperty("tag-value", "hz-members")
+                .setProperty("iam-role", "s3access")
+                .setEnabled(true);
+        clientConfig.getNetworkConfig().setAwsConfig(clientAwsConfig);
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
         //end::scc[]
     }
