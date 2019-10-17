@@ -17,12 +17,106 @@ when migrating to Hazelcast IMDG 4.0
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
 
-==== Changes in Client Configurations
+==== Changes in Client Connection Retry Mechanism
 
 * The `connection-attempt-period` and `connection-attempt-limit`
 configuration have been removed. Instead, the elements of
 `connection-retry` are now used. See the <<configuring-client-connection-retry>>
 for the usage of those new elements.
+
+==== Removing Deprecated Client Configurations
+
+The following methods of `ClientConfig` have been refactored:
+
+* `addNearCacheConfig(String, NearCacheConfig)` -> `addNearCacheConfig(NearCacheConfig)`
+* `setSmartRouting(boolean)` -> `getNetworkConfig().setSmartRouting(boolean);`
+* `getSocketInterceptorConfig()` -> `getNetworkConfig().getSocketInterceptorConfig();`
+* `setSocketInterceptorConfig(SocketInterceptorConfig)` -> `getNetworkConfig().setSocketInterceptorConfig(SocketInterceptorConfig);`
+* `getConnectionTimeout()` -> clientConfig.getNetworkConfig().getConnectionTimeout();`
+* `setConnectionTimeout(int)` -> clientConfig.getNetworkConfig().setConnectionTimeout(int);`
+* `addAddress(String)` -> clientConfig.getNetworkConfig().addAddress(String);`
+* `getAddresses()` -> clientConfig.getNetworkConfig().getAddresses();`
+* `setAddresses(List)` -> clientConfig.getNetworkConfig().setAddresses(List);`
+* `isRedoOperation() -> clientConfig.getNetworkConfig().isRedoOperation();`
+* `setRedoOperation(boolean) -> clientConfig.getNetworkConfig().setRedoOperation(boolean);`
+* `getSocketOptions() -> clientConfig.getNetworkConfig().getSocketOptions();`
+* `setSocketOptions() -> clientConfig.getNetworkConfig().setSocketOptions(SocketOptions);`
+* `setSocketOptions() -> clientConfig.getNetworkConfig().setSocketOptions(SocketOptions);`
+* `getNetworkConfig().setAwsConfig(new ClientAwsConfig()); -> clientConfig.getNetworkConfig().setAwsConfig(new AwsConfig());
+
+Also the `ClientAwsConfig` class has been renamed as `AwsConfig`.
+
+See the following table for the before/after configuration samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.addNearCacheConfig("myCache", new NearCacheConfig());
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+NearCacheConfig nearCacheConfig = new NearCacheConfig("myCache");
+clientConfig.addNearCacheConfig(nearCacheConfig);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+            clientConfig.setSmartRouting(true);
+            clientConfig.isSmartRouting();
+            clientConfig.getSocketInterceptorConfig();
+            clientConfig.setSocketInterceptorConfig(new SocketInterceptorConfig());
+            clientConfig.getConnectionTimeout();
+            clientConfig.setConnectionTimeout(1000);
+            clientConfig.addAddress("127.0.0.1:5701");
+            clientConfig.getAddresses();
+            clientConfig.setAddresses(Collections.singletonList("127.0.0.1:5701"));
+            clientConfig.isRedoOperation();
+            clientConfig.setRedoOperation(true);
+            clientConfig.getSocketOptions();
+            clientConfig.setSocketOptions(new SocketOptions());
+            clientConfig.getNetworkConfig().setAwsConfig(new ClientAwsConfig());
+            ClientAwsConfig awsConfig = clientConfig.getNetworkConfig().getAwsConfig();
+        }
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+            clientConfig.getNetworkConfig().setSmartRouting(true);
+            clientConfig.getNetworkConfig().isSmartRouting();
+            clientConfig.getNetworkConfig().getSocketInterceptorConfig();
+            clientConfig.getNetworkConfig().setSocketInterceptorConfig(new SocketInterceptorConfig());
+            clientConfig.getNetworkConfig().getConnectionTimeout();
+            clientConfig.getNetworkConfig().setConnectionTimeout(1000);
+            clientConfig.getNetworkConfig().addAddress("127.0.0.1:5701");
+            clientConfig.getNetworkConfig().getAddresses();
+            clientConfig.getNetworkConfig().setAddresses(Collections.singletonList("127.0.0.1:5701"));
+            clientConfig.getNetworkConfig().isRedoOperation();
+            clientConfig.getNetworkConfig().setRedoOperation(true);
+            clientConfig.getNetworkConfig().getSocketOptions();
+            clientConfig.getNetworkConfig().setSocketOptions(new SocketOptions());
+            clientConfig.getNetworkConfig().setAwsConfig(new AwsConfig());
+            AwsConfig awsConfig = clientConfig.getNetworkConfig().getAwsConfig();
+        }
+----
+
+|===
 
 ==== Changes in Custom Attributes
 
