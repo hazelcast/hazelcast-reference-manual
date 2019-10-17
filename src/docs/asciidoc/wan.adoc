@@ -1231,6 +1231,8 @@ WAN sync can help bring those clusters in-sync.
 The benefit of the `ACK_ON_RECEIPT` value is that now the source cluster can
 send a new batch sooner, without waiting for the previous batch to be processed fully.
 
+NOTE: WAN synchronization strategies (neither the default nor the <<delta-wan-synchronization>>)
+don't synchronize the deletions since they are not yet tracked under WAN.
 
 The `max.concurrent.invocations` property controls the maximum number of
 WAN event batches being sent to the target cluster concurrently.

@@ -3,6 +3,7 @@ import com.hazelcast.client.Client;
 import com.hazelcast.client.ClientListener;
 import com.hazelcast.client.ClientService;
 import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.config.Config;
 import com.hazelcast.core.*;
 
 import java.util.Collection;

@@ -17,15 +17,222 @@ when migrating to Hazelcast IMDG 4.0
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
 
-==== Changes in Client Configurations
+==== Changes in Client Connection Retry Mechanism
 
 * The `connection-attempt-period` and `connection-attempt-limit`
 configuration have been removed. Instead, the elements of
-`connection-retry` are now used:
+`connection-retry` are now used. See the <<configuring-client-connection-retry>>
+for the usage of those new elements.
 
-???
+==== Removing Deprecated Client Configurations
 
-???
+The following methods of `ClientConfig` have been refactored:
+
+* `addNearCacheConfig(String, NearCacheConfig)` -> `addNearCacheConfig(NearCacheConfig)`
+* `setSmartRouting(boolean)` -> `getNetworkConfig().setSmartRouting(boolean);`
+* `getSocketInterceptorConfig()` -> `getNetworkConfig().getSocketInterceptorConfig();`
+* `setSocketInterceptorConfig(SocketInterceptorConfig)` -> `getNetworkConfig().setSocketInterceptorConfig(SocketInterceptorConfig);`
+* `getConnectionTimeout()` -> `getNetworkConfig().getConnectionTimeout();`
+* `setConnectionTimeout(int)` -> `getNetworkConfig().setConnectionTimeout(int);`
+* `addAddress(String)` -> `getNetworkConfig().addAddress(String);`
+* `getAddresses()` -> `getNetworkConfig().getAddresses();`
+* `setAddresses(List)` -> `getNetworkConfig().setAddresses(List);`
+* `isRedoOperation()` -> `getNetworkConfig().isRedoOperation();`
+* `setRedoOperation(boolean)` -> `getNetworkConfig().setRedoOperation(boolean);`
+* `getSocketOptions()` -> `getNetworkConfig().getSocketOptions();`
+* `setSocketOptions()` -> `getNetworkConfig().setSocketOptions(SocketOptions);`
+* `setSocketOptions()` -> `getNetworkConfig().setSocketOptions(SocketOptions);`
+* `getNetworkConfig().setAwsConfig(new ClientAwsConfig());` -> `getNetworkConfig().setAwsConfig(new AwsConfig());`
+
+Also the `ClientAwsConfig` class has been renamed as `AwsConfig`.
+
+See the following table for the before/after configuration samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+clientConfig.addNearCacheConfig("myCache", new NearCacheConfig());
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+NearCacheConfig nearCacheConfig = new NearCacheConfig("myCache");
+clientConfig.addNearCacheConfig(nearCacheConfig);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+            clientConfig.setSmartRouting(true);
+            clientConfig.isSmartRouting();
+            clientConfig.getSocketInterceptorConfig();
+            clientConfig.setSocketInterceptorConfig(new SocketInterceptorConfig());
+            clientConfig.getConnectionTimeout();
+            clientConfig.setConnectionTimeout(1000);
+            clientConfig.addAddress("127.0.0.1:5701");
+            clientConfig.getAddresses();
+            clientConfig.setAddresses(Collections.singletonList("127.0.0.1:5701"));
+            clientConfig.isRedoOperation();
+            clientConfig.setRedoOperation(true);
+            clientConfig.getSocketOptions();
+            clientConfig.setSocketOptions(new SocketOptions());
+            clientConfig.getNetworkConfig().setAwsConfig(new ClientAwsConfig());
+            ClientAwsConfig awsConfig = clientConfig.getNetworkConfig().getAwsConfig();
+        }
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+ClientConfig clientConfig = new ClientConfig();
+            clientConfig.getNetworkConfig().setSmartRouting(true);
+            clientConfig.getNetworkConfig().isSmartRouting();
+            clientConfig.getNetworkConfig().getSocketInterceptorConfig();
+            clientConfig.getNetworkConfig().setSocketInterceptorConfig(new SocketInterceptorConfig());
+            clientConfig.getNetworkConfig().getConnectionTimeout();
+            clientConfig.getNetworkConfig().setConnectionTimeout(1000);
+            clientConfig.getNetworkConfig().addAddress("127.0.0.1:5701");
+            clientConfig.getNetworkConfig().getAddresses();
+            clientConfig.getNetworkConfig().setAddresses(Collections.singletonList("127.0.0.1:5701"));
+            clientConfig.getNetworkConfig().isRedoOperation();
+            clientConfig.getNetworkConfig().setRedoOperation(true);
+            clientConfig.getNetworkConfig().getSocketOptions();
+            clientConfig.getNetworkConfig().setSocketOptions(new SocketOptions());
+            clientConfig.getNetworkConfig().setAwsConfig(new AwsConfig());
+            AwsConfig awsConfig = clientConfig.getNetworkConfig().getAwsConfig();
+        }
+----
+
+|===
+
+==== Changes in Index Configuration
+
+In order to support further extensibility of Hazelcast,
+index configuration has been refactored.
+
+Index type is now defined through the `IndexType` enumeration
+instead of the boolean flag: ordered index is now referred to as
+`IndexType.SORTED`, unordered as `IndexType.HASH`.
+
+In composite indexes, index parts are now defined as
+a list of strings instead of a single string with comma-separated values.
+
+With these changes, the following configuration parameters
+have been renamed:
+
+**Programmatic configuration objects and methods:**
+
+* `MapIndexConfig` -> `IndexConfig`
+* `MapConfig.getMapIndexConfig` -> `MapConfig.getIndexConfig`
+* `MapConfig.setMapIndexConfig` -> `MapConfig.setIndexConfig`
+* `MapConfig.addMapIndexConfig` -> `MapConfig.addIndexConfig`
+* `IMap.addIndex(String, boolean)` -> `IMap.addIndex(IndexConfig)`
+
+
+See the following table for the before/after samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+
+2+|Programmatic Configuration
+
+|
+
+[source,java,options="nowrap"]
+----
+MapIndexConfig indexConfig = new MapIndexConfig();
+indexConfig.setOrdered(false);
+indexConfig.setAttribute("name, age");
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.addMapIndexConfig(indexConfig);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+IndexConfig indexConfig = new IndexConfig();
+indexConfig.setType(IndexType.HASH);
+indexConfig.addAttribute("name");
+indexConfig.addAttribute("age");
+
+MapConfig mapConfig = new MapConfig();
+mapConfig.addIndexConfig(indexConfig);
+----
+
+2+|Declarative Configuration
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="person">
+        <indexes>
+            <index ordered="false">name, age</index>
+        </indexes>
+    </map>
+    ...
+</hazelcast>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="person">
+        <indexes>
+            <index type="HASH">
+                <attributes>
+                    <attribute>name</attribute>
+                    <attribute>age</attribute>
+                </attributes>
+            </index>
+        </indexes>
+    </map>
+    ...
+</hazelcast>
+
+2+|Dynamic Index Create
+
+|
+
+[source,java,options="nowrap"]
+----
+IMap map;
+
+map.addIndex("name, age", false);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+IMap map;
+
+map.addIndex(new IndexConfig(IndexType.HASH, "name", "age"));
+----
+|===
 
 ==== Changes in Custom Attributes
 
@@ -436,19 +643,60 @@ See the following table for the before/after sample implementations.
 
 [source,java]
 ----
-??? old code sample
+Collection<String> keys = map.project(new Projection<Entry<String, Double>, String>() {
+    @Override
+    public String transform(Entry<String, Double> input) {
+        return input.getKey();
+    }
+});
 ----
 
 | *_After IMDG 4.0_*
 
 [source,java]
 ----
-??? new code sample
+Collection<String> keys = map.project(Entry::getKey);
 ----
 |===
 
+Also, some custom query attribute classes were previously abstract classes
+with one abstract method. They have been converted into functional interfaces:
 
-==== 
+* `ValueCallback`
+* `ValueExtractor`
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+public static class PortableNameExtractor extends ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", new ValueCallback<Object>() {
+            @Override
+            public void onResult(Object value) {
+                collector.addObject(value);
+            }
+        });
+    }
+}
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+public static class PortableNameExtractor implements ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", (ValueCallback) value -> collector.addObject(value));
+    }
+}
+----
+|===
 
 ==== Renaming Quorum as Split Brain Protection
 
@@ -564,13 +812,44 @@ public interface IdentifiedDataSerializable extends DataSerializable {
 ----
 |===
 
+==== Renaming `group-name` as `cluster-name`
+
+The `group` configuration element has been renamed
+as `cluster`.
+
+See the following table showing before/after samples.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+Config config = new Config();
+config.getGroupConfig().setName( "production" );
+----
+
+| *_After IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+Config config = new Config();
+config.getClusterName( "production" );
+----
+|===
+
 
 ==== Introducing Lambda Friendly Interfaces
 
 ===== Entry Processor
 
-The classes `AbstractEntryProcessor` and `EntryBackupProcessor`
-have been removed to make entry processor lambda friendly.
+The `EntryBackupProcessor` interface has been removed in favour
+of `EntryProcessor` which now defines how the entries will be processed
+both on the primary and the backup replicas.
+
+Because of this, the `AbstractEntryProcessor` interface has been removed.
+This should make writing entry processors more lambda friendly.
 
 [cols="1a"]
 |===
@@ -598,24 +877,46 @@ have been removed to make entry processor lambda friendly.
 
 [source,java]
 ----
-        map.executeOnKey(key,
-                entry -> {
-                    Employee employee = entry.getValue();
-                    if (employee == null) {
-                        employee = new Employee();
-                    }
-                    employee.setSalary(value);
-                    entry.setValue(employee);
-                    return null;
-                });
+map.executeOnKey(key,
+        entry -> {
+            Employee employee = entry.getValue();
+            if (employee == null) {
+                employee = new Employee();
+            }
+            employee.setSalary(value);
+            entry.setValue(employee);
+            return null;
+        });
 ----
 |===
 
-===== Projection
+This should cover most cases. If you need to define a custom
+backup entry processor, you can override the `EntryProcessor#getBackupProcessor` method.
 
-The `Projection` class has been made a functional interface. It was
-an abstract class before.
+[source,java]
+----
+map.executeOnKey(key, new EntryProcessor<Object, Object, Object>() {
+    @Override
+    public Object process(Entry<Object, Object> entry) {
+        // process primary entry
+    }
 
+    private Object processBackupEntry(Entry<Object, Object> backupEntry) {
+        // process backup entry
+    }
+
+    @Nullable
+    @Override
+    public EntryProcessor<Object, Object, Object> getBackupProcessor() {
+        return this::processBackupEntry;
+    }
+});
+----
+
+===== Functional and Serializable Interfaces
+
+The `Projection` class was an abstract interface for historical reasons.
+It has been turned into a functional interface so it's more lambda-friendly.
 
 [cols="1a"]
 |===
@@ -641,18 +942,6 @@ Introduces interfaces with single abstract method which declares a
 checked exception. The interfaces are also `Serializable` and can be
 readily used when providing a lambda which is then serialized.
 
-For this purpose, the `Projection` class has been converted to an interface
-to make it more lambda friendly.
-
-Also, the custom query attribute classes including the following have been
-converted to functional interfaces:
-
-* `ArgumentParser`
-* `ValueCallback`
-* `ValueCollector`
-* `ValueExtractor`
-* `ValueReader`
-
 ==== Expanding Nullable/Nonnull Annotations
 
 The APIs of the distributed data structures have been made cleaner
@@ -662,20 +951,21 @@ their API documentation have been improved:
 * Now, it is obvious when looking at the API where `null` is allowed and
 where it is not.
 * Some methods were throwing `NullPointerException` while others were throwing
-`IllegalArgumentException`. Some methods actually allowed `null` but there was
-no indication that they did.
+`IllegalArgumentException`. Now the behavior is aligned and an unexpected `null`
+argument results in a `NullPointerException` being thrown.
+* Some methods actually allowed `null` but there was no indication that they did.
 * A method when used on the member would accept `null` and have some behavior
 accordingly while, on the client, the method would throw a `NullPointerException`.
 Now, the behavior of the member and client have been aligned.
 
 The data structures and interfaces enhanced in this sense are listed below:
 
-* IQueue, ISet, IList
-* IMap, MultiMap, Replicated Map
+* `IQueue`, `ISet`, `IList`
+* `IMap`, `MultiMap`, `ReplicatedMap`
 * `Cluster`
-* ITopic
-* Ringbuffer
-* Scheduled Executor
+* `ITopic`
+* `Ringbuffer`
+* `ScheduledExecutor`
 
 ==== Removal of ICompletableFuture
 
@@ -684,7 +974,13 @@ introduced to enable reactive programming style. `ICompletableFuture` was
 intended as a temporary, JDK 6 compatible replacement for `java.util.concurrent.CompletableFuture`
 that was introduced in Java 8. Since Hazelcast 4.0 requires Java 8, the user-facing
 asynchronous Hazelcast API methods now have their return type changed from
-`ICompletableFuture` to Java 8's `CompletionStage`.
+`ICompletableFuture` to Java 8's `java.util.concurrent.CompletionStage`.
+
+Dependent computation stages registered using default async methods which do not
+accept an explicit `Executor` argument (such as `thenAcceptAsync`, `whenCompleteAsync` etc)
+are executed by the `java.util.concurrent.ForkJoinPool#commonPool()` (unless it does not
+support a parallelism level of at least two, in which case, a new `Thread` is created to
+run each task).
 
 See the following table for the before/after samples.
 
@@ -695,26 +991,38 @@ See the following table for the before/after samples.
 
 [source,java,options="nowrap"]
 ----
+import com.hazelcast.core.ExecutionCallback;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ICompletableFuture;
-import com.hazelcast.cp.CPSubsystem;
-import com.hazelcast.cp.CPSubsystemManagementService;
+import com.hazelcast.core.IMap;
 
-public class CpSubsystemAPI {
+public class Main {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        IMap<Integer, String> map = hazelcastInstance.getMap("map");
 
-        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
+        map.putAsync(1, "one").andThen(new ExecutionCallback<String>() {
+            @Override
+            public void onResponse(String response) {
+                map.getAsync(1).andThen(new ExecutionCallback<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println("Value of 1 is " + response);
+                    }
 
-        CPMember localMember = cpSubsystem.getLocalCPMember();
+                    @Override
+                    public void onFailure(Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
 
-        {
-        CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Collection<CPGroupId>> future = managementService.getCPGroupIds();
-        Collection<CPGroupId> groups = future.get();
-        }
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 }
 ----
@@ -725,23 +1033,23 @@ public class CpSubsystemAPI {
 ----
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.cp.CPSubsystem;
-import com.hazelcast.cp.CPSubsystemManagementService;
+import com.hazelcast.map.IMap;
 
-import java.util.concurrent.CompletionStage;
+public class Main {
 
-public class CpSubsystemAPI {
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        IMap<Integer, String> map = hazelcastInstance.getMap("map");
 
-        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
-
-        {
-        CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        CompletionStage<Collection<CPGroupId>> future = managementService.getCPGroupIds();
-        Collection<CPGroupId> groups = future.toCompletableFuture().get();
-        }
+        map.putAsync(1, "one").whenCompleteAsync((response, throwable) -> {
+            if (throwable == null) {
+                map.getAsync(1).thenAcceptAsync(v -> {
+                    System.out.println("Value of 1 is " + v);
+                });
+            } else {
+                throwable.printStackTrace();
+            }
+        });
     }
 }
 ----
@@ -858,6 +1166,63 @@ the `com.hazelcast.query.impl.predicate` package.
 Consequently, the public Predicate API now provides only interfaces (`Predicate`,
 `PagingPredicate` and `PartitionPredicate`) with no dependencies on any internal APIs.
 
+==== Changing the UUID String Type to UUID
+
+Some public APIs that return UUID strings have been changed to return UUID.
+These changes include `getUuid()` method of the `Endpoint` interface,
+`getTxnId()` method of the `TransactionContext` interface,
+return values of the listener registrations and `registrationId` parameters for the methods
+that de-register the listeners.
+
+See the following table for the before/after sample implementations.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        String registrationId = hazelcastInstance.getClientService().addClientListener(new ClientListener() {
+            @Override
+            public void clientConnected(Client client) {
+                String clientUuid = client.getUuid();
+                System.out.println("Client connected >>> " + clientUuid);
+            }
+
+            @Override
+            public void clientDisconnected(Client client) {
+                String clientUuid = client.getUuid();
+                System.out.println("Client disconnected >>> " + clientUuid);
+            }
+        });
+        hazelcastInstance.getClientService().removeClientListener(registrationId);
+----
+
+| *_After IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        UUID registrationId = hazelcastInstance.getClientService().addClientListener(new ClientListener() {
+            @Override
+            public void clientConnected(Client client) {
+                UUID clientUuid = client.getUuid();
+                System.out.println("Client connected >>> " + clientUuid);
+            }
+
+            @Override
+            public void clientDisconnected(Client client) {
+                UUID clientUuid = client.getUuid();
+                System.out.println("Client disconnected >>> " + clientUuid);
+            }
+        });
+        hazelcastInstance.getClientService().removeClientListener(registrationId);
+----
+|===
+
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
@@ -886,7 +1251,7 @@ should be updated as follows:
 [source,xml]
 ----
 <hazelcast>
-    ...    
+    ...
     <rest-api enabled="true">
         <endpoint-group name="CLUSTER_WRITE" enabled="true"/>
     </rest-api>
@@ -916,7 +1281,7 @@ for Ping Failure Detector is deprecated. Instead, use the elements to configure 
 ----
 <hazelcast>
     <network>
-    ...       
+    ...
         <failure-detector>
             <icmp enabled="true">
                 <timeout-milliseconds>1000</timeout-milliseconds>

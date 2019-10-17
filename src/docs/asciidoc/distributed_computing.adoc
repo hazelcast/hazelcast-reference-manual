@@ -595,8 +595,8 @@ The entry processor respects locks ONLY when its executions are performed on a s
 
 [source,java]
 ----
-Object executeOnKey(K key, EntryProcessor entryProcessor);
-ICompletableFuture submitToKey(K key, EntryProcessor entryProcessor);
+<R> R executeOnKey(K key, EntryProcessor<K, V, R> entryProcessor);
+<R> CompletionStage<R> submitToKey(K key, EntryProcessor<K, V, R> entryProcessor);
 ----
 
 Therefore, if you want to to perform an entry processor execution on a single key using one of these methods and that key has a lock on it, the execution will wait until the lock on that key is removed.

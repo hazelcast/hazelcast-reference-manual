@@ -570,6 +570,45 @@ Here is an example of configuring network for Java Client programmatically.
 include::{javasource}/clients/ExampleClientConfiguration.java[tag=scc]
 ----
 
+====== Configuring Backup Acknowledgment
+
+When an operation with sync backup is sent by a client to the Hazelcast member(s),
+the acknowledgment of the operation's backup is sent to the client by the backup
+replica member(s). This improves the performance of the client operations.
+
+By default, backup acknowledgement to the client is enabled for smart clients
+(unisocket clients do not support it).
+
+Here is an example of configuring the backup acknowledgement for Java Client declaratively.
+
+[source,xml]
+----
+<hazelcast-client ... >
+       <backup-ack-to-client-enabled>false</backup-ack-to-client-enabled>
+</hazelcast-client>
+----
+
+And here is its equivalent programmatical configuration.
+
+[source,java]
+----
+clientConfig.setBackupAckToClientEnabled(boolean enabled)
+----
+
+You can also fine tune this feature using the following system properties:
+
+* `hazelcast.client.operation.backup.timeout.millis`: If an operation has
+backups, this property specifies how long (in milliseconds) the invocation waits
+for acks from the backup replicas. If acks are not received from some
+of the backups, there will not be any rollback on the other successful replicas.
+Its default value is `5000` milliseconds.
+* `hazelcast.client.operation.fail.on.indeterminate.state`: When it is `true`,
+if an operation has sync backups and acks are not received from backup replicas
+in time, or the member which owns primary replica of the target partition leaves
+the cluster, then the invocation fails. However, even if the invocation fails,
+there will not be any rollback on other successful replicas. It is default
+value is `false`.
+
 ====== Configuring Address List
 
 Address List is the initial list of cluster addresses to which the client will connect.
@@ -1207,19 +1246,11 @@ clientConfig.getConnectionStrategyConfig()
 
 ===== Configuring Client Connection Retry
 
-When the client tries to connect to a cluster, it considers the <<setting-connection-attempt-limit, connection attempt limit>> and
-<<setting-connection-attempt-period, connection attempt period>>.
-When the client cannot connect to any member in the member list,
-it waits for `connection-attempt-period` between each attempt until the count of attempts reach `connection-attempt-limit`.
+When client is disconnected from the cluster, it searches for new connections
+to reconnect. You can configure the frequency of the reconnection attempts and
+client shutdown behavior using `ConnectionRetryConfig` (programmatical approach)/
+`connection-retry` (declarative approach).
 
-With the connection retry configuration, you can fine tune this connection behavior.
-When this configuration is enabled,
-`connection-attempt-period` and `connection-attempt-limit` are ignored.
-This configuration is used when trying to establish the initial connection and
-any time when the connection to cluster is broken.
-
-Connection retry configuration is done using the `connection-retry` element when
-configuring declaratively or the object `ConnectionRetryConfig` when configuring programmatically.
 Below are the example configurations for each.
 
 Declarative Configuration:
@@ -1802,6 +1833,18 @@ The table below lists the client configuration properties with their description
 (so its state known by the cluster is `CLIENT_DISCONNECTED`), the invocations from
 this client can go through the other available cluster members.
 The default behavior (false) disallows performing invocations in this state.
+
+| `hazelcast.client.cleanup.period.millis`
+| 10000
+| int
+| Period, in milliseconds, to check if a client is still part of the cluster.
+
+| `hazelcast.client.cleanup.timeout.millis`
+| 120000
+| int
+| Timeout duration to decide if a client is still part of the cluster.
+If a member cannot find any connection to a client in the cluster,
+it cleans up the local resources that are owned by that client.
 
 |`hazelcast.client.event.queue.capacity`
 |1000000

@@ -989,7 +989,7 @@ disk contents of the backup directory meaning that you must remove it manually.
 Records stored in the Hot Restart Store may contain sensitive information. This sensitive
 information may be present in the keys, in the values, or in both. In Hot Restart terms,
 Encryption at Rest concerns with encryption on the chunk file level. Since complete chunk
-files are encrypted, all data data stored in the Hot Restart Store is protected when
+files are encrypted, all data stored in the Hot Restart Store is protected when
 Encryption at Rest is enabled.
 
 Data persisted in the Hot Restart Store is encrypted using symmetric encryption. The
@@ -1026,7 +1026,7 @@ element has the following attributes and sub-elements:
 
 * `enabled`: Attribute that specifies whether Encryption at Rest is enabled; `false`
 by default.
-* `algorithm`: Specifies the symmetric cipher to use (such as `AES/CBC/PKCS5Padding`)
+* `algorithm`: Specifies the symmetric cipher to use (such as `AES/CBC/PKCS5Padding`).
 * `salt`: The encryption salt.
 * `key-size`: The size of the auto-generated Hot Restart Store-level encryption key.
 * `secure-store`: Specifies the Secure Store to use for the retrieval of master
@@ -1068,17 +1068,18 @@ include::{javasource}/storage/SampleEncryptionAtRestConfiguration.java[tag=encry
 
 [[configuring-secure-store]]
 ===== Configuring a Secure Store
+
 A Secure Store represents a (secure) source of master encryption keys and
 is required for using Encryption at Rest.
 
-Hazelcast Enterprise provides Secure Store implementations for the
+Hazelcast IMDG Enterprise provides Secure Store implementations for the
 link:https://docs.oracle.com/javase/8/docs/api/java/security/KeyStore.html[Java KeyStore^]
 and for link:https://www.vaultproject.io/[HashiCorp Vault^].
 
 **Java KeyStore Secure Store**
 
 The Java KeyStore Secure Store provides integration with the link:https://docs.oracle.com/javase/8/docs/api/java/security/KeyStore.html[Java KeyStore^].
-It can configured programmatically or declaratively using the
+It can be configured programmatically or declaratively using the
 `keystore` sub-element of `secure-store`. The `keystore` element has the following sub-elements:
 
 * `path`: The path to the KeyStore file.
@@ -1123,7 +1124,7 @@ include::{javasource}/storage/SampleEncryptionAtRestConfiguration.java[tag=keyst
 **HashiCorp Vault Secure Store**
 
 The HashiCorp Vault Secure Store provides integration with link:https://www.vaultproject.io/[HashiCorp Vault^].
-It can configured programmatically or declaratively using the
+It can be configured programmatically or declaratively using the
 `vault` sub-element of `secure-store`. The `vault` element has the following sub-elements:
 
 * `address`: The address of the Vault server.
@@ -1131,15 +1132,15 @@ It can configured programmatically or declaratively using the
 * `token`: The Vault authentication token.
 * `polling-interval`: The polling interval (in seconds) for checking for changes in Vault. Disabled
 by default.
-* `ssl`: The TLS/SSL configuration for HTTPS support. See <<tlsssl, TLS/SSL section>> for more
+* `ssl`: The TLS/SSL configuration for HTTPS support. See the <<tlsssl, TLS/SSL section>> for more
 information about how to use the `ssl` element.
 
 NOTE: Sensitive configuration properties such as `token` should be protected using
 <<variable-replacers, encryption replacers>>.
 
 The HashiCorp Vault Secure Store implementation uses the official REST API to integrate with
-HashiCorp Vault. Only the link:https://www.vaultproject.io/docs/secrets/kv/index.html[KV secrets engine^]
-Both KV V1 and KV V2 can be used, but since only V2 provides secrets versioning, this is
+HashiCorp Vault. Only for the link:https://www.vaultproject.io/docs/secrets/kv/index.html[KV secrets engine^],
+both KV V1 and KV V2 can be used, but since only V2 provides secrets versioning, this is
 the recommended option. With KV V1 (no versioning support), only one version of the encryption
 key can be kept, whereas with KV V2, the HashiCorp Vault Secure Store is able to retrieve
 also the historical encryption keys. (Note that the size of the version history is configurable

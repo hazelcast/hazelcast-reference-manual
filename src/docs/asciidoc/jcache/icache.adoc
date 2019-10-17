@@ -67,28 +67,28 @@ By configuring an instance name in `hazelcast.xml` in the classpath root,
 the `CacheManager` locates the existing instance by name and reuses it.
 
 * `hazelcast.xml`:
-+  
++
 [source,xml]
 ----
 <hazelcast>
     ...
     <instance-name>hz-member-1</instance-name>
-    ...  
+    ...
 </hazelcast>
 ----
-+  
++
 * `HazelcastInstance` & `CacheManager` startup:
 +
 [source,java]
 ----
-// start hazelcast, configured with default hazelcast.xml 
+// start hazelcast, configured with default hazelcast.xml
 HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 // start the default CacheManager -- it locates the default hazelcast.xml configuration
 // and identify the existing HazelcastInstance by its name
 CachingProvider caching = Caching.getCachingProvider();
 CacheManager cacheManager = caching.getCacheManager();
 ----
- 
+
 ====== Starting a `CacheManager` with a New `HazelcastInstance` Configured with a Non-default Configuration File
 
 Given a configuration file named `hazelcast-jcache.xml` in the package
@@ -121,7 +121,7 @@ same configuration file locates by name and reuses the same
 Assuming a `HazelcastInstance` named `hc-instance` is already
 started, it can be used as the `HazelcastInstance` to back a
 `CacheManager`:
- 
+
 * By using the instance's name as the `CacheManager`'s `URI`:
 +
 [source,java]
@@ -159,7 +159,7 @@ If both `HazelcastCachingProvider#HAZELCAST_CONFIG_LOCATION` property is set
 and the `CacheManager` `URI` resolves to a valid config file location, then
 the property value is used to obtain the configuration for the `HazelcastInstance`
 the first time a `CacheManager` is created for the given `URI`.
- 
+
 Here is an example of using configuration scope:
 
 [source,java]
@@ -318,7 +318,7 @@ CachingProvider cachingProvider = Caching.getCachingProvider();
 
 // Create Properties instance pointing to a named HazelcastInstance
 Properties properties = new Properties();
-properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_NAME, 
+properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_NAME,
      instanceName );
 
 URI cacheManagerName = new URI( "my-cache-manager" );
@@ -342,7 +342,7 @@ CachingProvider cachingProvider = Caching.getCachingProvider();
 
 // Create Properties instance pointing to a named HazelcastInstance
 Properties properties = new Properties();
-properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_NAME, 
+properties.setProperty( HazelcastCachingProvider.HAZELCAST_INSTANCE_NAME,
      instanceName );
 
 URI cacheManagerName = new URI( "my-cache-manager" );
@@ -387,7 +387,7 @@ passed to the `CacheManager` by setting the property
 HazelcastInstance instance = Hazelcast.newHazelcastInstance();
 
 Properties properties = new Properties();
-properties.put( HazelcastCachingProvider.HAZELCAST_INSTANCE_ITSELF, 
+properties.put( HazelcastCachingProvider.HAZELCAST_INSTANCE_ITSELF,
      instance );
 
 CachingProvider cachingProvider = Caching.getCachingProvider();
@@ -487,7 +487,7 @@ are executed before the mutating cache operation is finished.
 The mutating operation is blocked. Its default value is 1.
 * `async-backup-count`: Number of asynchronous backups. Those
 backups are executed asynchronously so the mutating operation
-is not blocked and it is done immediately. Its default value is 0.  
+is not blocked and it is done immediately. Its default value is 0.
 * `in-memory-format`: Internal storage format. For more information,
 see the <<setting-in-memory-format, in-memory format section>>.
 Its default value is `BINARY`.
@@ -541,26 +541,19 @@ NOTE: ICache can be configured only programmatically on the client side.
 
 As another addition of Hazelcast ICache over the normal JCache specification,
 Hazelcast provides asynchronous versions of almost
-all methods, returning a `com.hazelcast.core.ICompletableFuture`. By using these
-methods and the returned future objects, you can use JCache in a reactive way by
-registering zero or more callbacks on the future to prevent blocking the current thread.
+all methods, returning a `java.util.concurrent.CompletionStage`. By using these
+methods and the returned objects, you can use JCache in a reactive way by
+registering dependent computation stages on the returned `CompletionStage`
+to prevent blocking the current thread.
 
 The asynchronous versions of the methods append the phrase `Async` to the method
 name. The example code below uses the method `putAsync()`.
 
 [source,java]
 ----
-ICache<Integer, String> unwrappedCache = cache.unwrap( ICache.class );
-ICompletableFuture<String> future = unwrappedCache.getAndPutAsync( 1, "value" );
-future.andThen( new ExecutionCallback<String>() {
-    public void onResponse( String response ) {
-        System.out.println( "Previous value: " + response );
-    }
-
-    public void onFailure( Throwable t ) {
-        t.printStackTrace();
-    }
-} );
+ICache<Integer, String> unwrappedCache = cache.unwrap(ICache.class);
+CompletionStage<String> stage = unwrappedCache.getAndPutAsync(1, "value");
+stage.thenAcceptAsync(v -> System.out.println("Previous value: " + v));
 ----
 
 Following methods
@@ -731,7 +724,7 @@ the possibility of performing no eviction.
 ====== Custom Eviction Policies
 
 Besides the out-of-the-box eviction policies LFU and LRU, you can also specify
-your custom eviction policies 
+your custom eviction policies
 through the eviction configuration either programmatically or declaratively.
 
 You can provide your `com.hazelcast.cache.CacheEvictionPolicyComparator`
@@ -762,17 +755,17 @@ public class MyCacheEvictionPolicyComparator
 }
 ----
 
-Custom eviction policy comparator can be specified through the eviction configuration 
+Custom eviction policy comparator can be specified through the eviction configuration
 by giving the full class name of the `EvictionPolicyComparator`
-(`CacheEvictionPolicyComparator` for JCache and its Near Cache) 
+(`CacheEvictionPolicyComparator` for JCache and its Near Cache)
 implementation or by specifying its instance itself.
 
 **Programmatic Configuration:**
 
 You can specify the full class name of custom `EvictionPolicyComparator`
-(`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
+(`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation
 through `EvictionConfig`. This approach is useful when eviction configuration
-is specified on the client side 
+is specified on the client side
 and custom `EvictionPolicyComparator` implementation class itself does not
 exist at the client but at server side.
 
@@ -780,23 +773,23 @@ exist at the client but at server side.
 ----
 CacheConfig cacheConfig = new CacheConfig();
 ...
-EvictionConfig evictionConfig = 
-    new EvictionConfig(50000, 
-                       MaxSizePolicy.ENTRY_COUNT, 
+EvictionConfig evictionConfig =
+    new EvictionConfig(50000,
+                       MaxSizePolicy.ENTRY_COUNT,
                        "com.mycompany.MyEvictionPolicyComparator");
 cacheConfig.setEvictionConfig(evictionConfig);
 ----
 
 You can specify the custom `EvictionPolicyComparator` (`CacheEvictionPolicyComparator`
-for JCache and its Near Cache) instance itself directly through `EvictionConfig`. 
+for JCache and its Near Cache) instance itself directly through `EvictionConfig`.
 
 [source,java]
 ----
 CacheConfig cacheConfig = new CacheConfig();
 ...
-EvictionConfig evictionConfig = 
-    new EvictionConfig(50000, 
-                       MaxSizePolicy.ENTRY_COUNT, 
+EvictionConfig evictionConfig =
+    new EvictionConfig(50000,
+                       MaxSizePolicy.ENTRY_COUNT,
                        new MyEvictionPolicyComparator());
 cacheConfig.setEvictionConfig(evictionConfig);
 ----
@@ -804,7 +797,7 @@ cacheConfig.setEvictionConfig(evictionConfig);
 **Declarative Configuration:**
 
 You can specify the full class name of custom `EvictionPolicyComparator`
-(`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
+(`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation
 in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast
 configuration XML file.
 
@@ -812,8 +805,8 @@ configuration XML file.
 ----
 <hazelcast>
     ...
-    <cache name="cacheWithCustomEvictionPolicyComparator"> 
-        <eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/> 
+    <cache name="cacheWithCustomEvictionPolicyComparator">
+        <eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/>
     </cache>
     ...
 </hazelcast>
@@ -822,7 +815,7 @@ configuration XML file.
 **Declarative Configuration for Spring:**
 
 You can specify the full class name of custom `EvictionPolicyComparator`
-(`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation 
+(`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation
 in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast
 *Spring* configuration XML file.
 
@@ -834,7 +827,7 @@ in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast
 ----
 
 You can specify the custom `EvictionPolicyComparator`
-(`CacheEvictionPolicyComparator` for JCache and its Near Cache) bean in the `<eviction>` tag 
+(`CacheEvictionPolicyComparator` for JCache and its Near Cache) bean in the `<eviction>` tag
 by referencing through `comparator-bean` attribute in Hazelcast *Spring* configuration XML file
 
 [source,xml]
@@ -893,7 +886,7 @@ underlying data storage.
 . The put operation returns to the user.
 
 NOTE: Note that expiration based eviction does not only occur for the
-above scenario (Step 6). It is mentioned for the sake of explaining the eviction algorithm. 
+above scenario (Step 6). It is mentioned for the sake of explaining the eviction algorithm.
 
 As seen in the flowchart, the general eviction operation is easy.
 As long as the cache does not reach its maximum capacity,
@@ -927,7 +920,7 @@ pretty near), `Deviation := sqrt(BalancedPartitionSize)`.
 ====== Reference Caches
 
 A Reference Cache is typically small and the number of elements
-to store in the reference caches is normally 
+to store in the reference caches is normally
 known prior to creating the cache. Typical examples of reference
 caches are lookup tables for abbreviations or the states of a
 country. They tend to have a fixed but small element number and
@@ -960,7 +953,7 @@ MaxPartitionSize := Deviation * 5 + BalancedPartitionSize
 ```
 
 This formula ends up with big partition sizes which, summed up,
-exceed the expected maximum cache size (set by the user). 
+exceed the expected maximum cache size (set by the user).
 Since the small caches typically have a well known maximum number
 of elements, this is not a big
 issue. Only if the small caches are used for a use case other than
