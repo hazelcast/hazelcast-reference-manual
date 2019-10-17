@@ -98,7 +98,7 @@ is the code for the <<employee-map-query-example, above example query>>.
 ----
 IMap<String, Employee> map = hazelcastInstance.getMap( "employee" );
 
-EntryObject e = new PredicateBuilder().getEntryObject();
+EntryObject e = Predicates.newPredicateBuilder().getEntryObject();
 Predicate predicate = e.is( "active" ).and( e.get( "age" ).lessThan( 30 ) );
 
 Collection<Employee> employees = map.values( predicate );
@@ -126,6 +126,7 @@ The following are descriptions for some of them:
 * `like`: Checks if the result of an expression matches some string pattern. %
 (percentage sign) is the placeholder for many characters,  (underscore) is
 placeholder for only one character.
+* `ilike`: A case-insensitive variant of `like`.
 * `greaterThan`: Checks if the result of an expression is greater than a
 certain value.
 * `greaterEqual`: Checks if the result of an expression is greater than or
@@ -141,6 +142,8 @@ collection.
 * `isNot`: Checks if the result of an expression is false.
 * `regex`: Checks if the result of an expression matches some regular
 expression.
+* `alwaysTrue`: The result of an expression always matches.
+* `alwaysFalse`: The result of an expression ever matches.
 
 
 NOTE: See the
@@ -184,14 +187,14 @@ public Collection<Employee> getNotWithName( String name ) {
 
 ===== Simplifying with PredicateBuilder
 
-You can simplify predicate usage with the `PredicateBuilder` class,
+You can simplify predicate usage with the `PredicateBuilder` interface,
 which offers simpler predicate building. See the
 below example code which selects all people with a certain name and age.
 
 [source,java]
 ----
 public Collection<Employee> getWithNameAndAgeSimplified( String name, int age ) {
-    EntryObject e = new PredicateBuilder().getEntryObject();
+    EntryObject e = Predicates.newPredicateBuilder().getEntryObject();
     Predicate agePredicate = e.get( "age" ).equal( age );
     Predicate predicate = e.get( "name" ).equal( name ).and( agePredicate );
     return employeeMap.values( predicate );
@@ -200,13 +203,13 @@ public Collection<Employee> getWithNameAndAgeSimplified( String name, int age ) 
 
 ==== Querying with SQL
 
-`com.hazelcast.query.SqlPredicate` takes the regular SQL `where` clause.
+`Predicates.sql()` takes the regular SQL `where` clause.
 Here is an example:
 
 [source,java]
 ----
 IMap<String, Employee> map = hazelcastInstance.getMap( "employee" );
-Set<Employee> employees = map.values( new SqlPredicate( "active AND age < 30" ) );
+Set<Employee> employees = map.values( Predicates.sql( "active AND age < 30" ) );
 ----
 
 ===== Supported SQL Syntax
@@ -271,7 +274,7 @@ personMap.put("Alice", new Person("Alice", 35, Gender.FEMALE));
 personMap.put("Andy",  new Person("Andy",  37, Gender.MALE));
 personMap.put("Bob",   new Person("Bob",   22, Gender.MALE));
 [...]
-Predicate predicate = new SqlPredicate("__key like A%");
+Predicate predicate = Predicates.sql("__key like A%");
 Collection<Person> startingWithA = personMap.values(predicate);
 ----
 
@@ -376,7 +379,7 @@ creation is on.
 ==== Filtering with Paging Predicates
 
 Hazelcast provides paging for defined predicates. With its `PagingPredicate`
-class, you can
+interface, you can
 get a collection of keys, values, or entries page by page by filtering
 them with predicates and giving the size of the pages. Also, you
 can sort the entries by specifying comparators. In this case, the comparator
@@ -408,7 +411,7 @@ updated `PagingPredicate`.
 ----
 IMap<Integer, Student> map = hazelcastInstance.getMap( "students" );
 Predicate greaterEqual = Predicates.greaterEqual( "age", 18 );
-PagingPredicate pagingPredicate = new PagingPredicate( greaterEqual, 5 );
+PagingPredicate pagingPredicate = Predicates.pagingPredicate( greaterEqual, 5 );
 // Retrieve the first page
 Collection<Student> values = map.values( pagingPredicate );
 ...
@@ -439,16 +442,16 @@ Transactional Context.
 You can run queries on a single partition in your cluster using
 the partition predicate (`PartitionPredicate`).
 
-It takes a predicate and partition key as parameters, gets the
-partition ID using the key and  runs that predicate only on the partition
-where that key belongs.
+The `Predicates.partitionPredicate()` method takes a predicate and partition key
+as parameters, gets the partition ID using the key and  runs that predicate only
+on the partition where that key belongs.
 
 See the following code snippet:
 
 [source,java]
 ----
 ...
-Predicate predicate = new PartitionPredicate<String, Integer>(partitionKey, TruePredicate.INSTANCE);
+Predicate predicate = Predicates.partitionPredicate(partitionKey, Predicates.alwaysTrue());
 
 Collection<Integer> values = map.values(predicate);
 Collection<String> keys = map.keySet(predicate);
@@ -734,12 +737,12 @@ map.addIndex("this", true);
 Predicate<Integer, Integer> lessEqual = Predicates.between("this", 12, 20);
 ----
 
-Another basic example using `SqlPredicate` is shown below.
+Another basic example using `SQL` predicate is shown below.
 
 [source,java]
 ----
-new SqlPredicate("this = 'jones'")
-new SqlPredicate("this.age > 33")
+Predicates.sql("this = 'jones'")
+Predicates.sql("this.age > 33")
 ----
 
 The special attribute `this` acts on the value of a map entry. Typically,
@@ -845,11 +848,11 @@ Predicate p = Predicates.equal("wheels[any].name", "front-wheel");
 Collection<Motorbike> result = map.values(p);
 ----
 
-The exact same query may be executed using the `SQLPredicate` as shown below:
+The exact same query may be executed using the `SQL` predicate as shown below:
 
 [source,java]
 ----
-Predicate p = new SqlPredicate("wheels[any].name = 'front-wheel'");
+Predicate p = Predicates.sql("wheels[any].name = 'front-wheel'");
 Collection<Motorbike> result = map.values(p);
 ----
 
@@ -1455,7 +1458,7 @@ recovery case.
 +
 [source,java]
 ----
-QueryCache queryCache = map.getQueryCache("cache-name", new SqlPredicate("this > 20"), true);
+QueryCache queryCache = map.getQueryCache("cache-name", Predicates.sql("this > 20"), true);
 queryCache.addEntryListener(new EventLostListener() {
 @Override
 public void eventLost(EventLostEvent event) {
