@@ -643,14 +643,58 @@ See the following table for the before/after sample implementations.
 
 [source,java]
 ----
-??? old code sample
+Collection<String> keys = map.project(new Projection<Entry<String, Double>, String>() {
+    @Override
+    public String transform(Entry<String, Double> input) {
+        return input.getKey();
+    }
+});
 ----
 
 | *_After IMDG 4.0_*
 
 [source,java]
 ----
-??? new code sample
+Collection<String> keys = map.project(Entry::getKey);
+----
+|===
+
+Also, some custom query attribute classes were previously abstract classes
+with one abstract method. They have been converted into functional interfaces:
+
+* `ValueCallback`
+* `ValueExtractor`
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java]
+----
+public static class PortableNameExtractor extends ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", new ValueCallback<Object>() {
+            @Override
+            public void onResult(Object value) {
+                collector.addObject(value);
+            }
+        });
+    }
+}
+----
+
+| *_After IMDG 4.0_*
+
+[source,java]
+----
+public static class PortableNameExtractor implements ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", (ValueCallback) value -> collector.addObject(value));
+    }
+}
 ----
 |===
 
@@ -800,8 +844,12 @@ config.getClusterName( "production" );
 
 ===== Entry Processor
 
-The classes `AbstractEntryProcessor` and `EntryBackupProcessor`
-have been removed to make entry processor lambda friendly.
+The `EntryBackupProcessor` interface has been removed in favour
+of `EntryProcessor` which now defines how the entries will be processed
+both on the primary and the backup replicas.
+
+Because of this, the `AbstractEntryProcessor` interface has been removed.
+This should make writing entry processors more lambda friendly.
 
 [cols="1a"]
 |===
@@ -829,24 +877,46 @@ have been removed to make entry processor lambda friendly.
 
 [source,java]
 ----
-        map.executeOnKey(key,
-                entry -> {
-                    Employee employee = entry.getValue();
-                    if (employee == null) {
-                        employee = new Employee();
-                    }
-                    employee.setSalary(value);
-                    entry.setValue(employee);
-                    return null;
-                });
+map.executeOnKey(key,
+        entry -> {
+            Employee employee = entry.getValue();
+            if (employee == null) {
+                employee = new Employee();
+            }
+            employee.setSalary(value);
+            entry.setValue(employee);
+            return null;
+        });
 ----
 |===
 
-===== Projection
+This should cover most cases. If you need to define a custom
+backup entry processor, you can override the `EntryProcessor#getBackupProcessor` method.
 
-The `Projection` class has been made a functional interface. It was
-an abstract class before.
+[source,java]
+----
+map.executeOnKey(key, new EntryProcessor<Object, Object, Object>() {
+    @Override
+    public Object process(Entry<Object, Object> entry) {
+        // process primary entry
+    }
 
+    private Object processBackupEntry(Entry<Object, Object> backupEntry) {
+        // process backup entry
+    }
+
+    @Nullable
+    @Override
+    public EntryProcessor<Object, Object, Object> getBackupProcessor() {
+        return this::processBackupEntry;
+    }
+});
+----
+
+===== Functional and Serializable Interfaces
+
+The `Projection` class was an abstract interface for historical reasons.
+It has been turned into a functional interface so it's more lambda-friendly.
 
 [cols="1a"]
 |===
@@ -871,18 +941,6 @@ an abstract class before.
 Introduces interfaces with single abstract method which declares a
 checked exception. The interfaces are also `Serializable` and can be
 readily used when providing a lambda which is then serialized.
-
-For this purpose, the `Projection` class has been converted to an interface
-to make it more lambda friendly.
-
-Also, the custom query attribute classes including the following have been
-converted to functional interfaces:
-
-* `ArgumentParser`
-* `ValueCallback`
-* `ValueCollector`
-* `ValueExtractor`
-* `ValueReader`
 
 ==== Expanding Nullable/Nonnull Annotations
 
