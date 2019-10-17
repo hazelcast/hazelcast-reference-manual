@@ -445,7 +445,7 @@ See the following table for the before/after sample implementations.
 ----
 ??? new code sample
 ----
-|=== 
+|===
 
 ==== Renaming Quorum as Split Brain Protection
 
@@ -681,7 +681,13 @@ introduced to enable reactive programming style. `ICompletableFuture` was
 intended as a temporary, JDK 6 compatible replacement for `java.util.concurrent.CompletableFuture`
 that was introduced in Java 8. Since Hazelcast 4.0 requires Java 8, the user-facing
 asynchronous Hazelcast API methods now have their return type changed from
-`ICompletableFuture` to Java 8's `CompletionStage`.
+`ICompletableFuture` to Java 8's `java.util.concurrent.CompletionStage`.
+
+Dependent computation stages registered using default async methods which do not
+accept an explicit `Executor` argument (such as `thenAcceptAsync`, `whenCompleteAsync` etc)
+are executed by the `java.util.concurrent.ForkJoinPool#commonPool()` (unless it does not
+support a parallelism level of at least two, in which case, a new `Thread` is created to
+run each task).
 
 See the following table for the before/after samples.
 
@@ -692,26 +698,38 @@ See the following table for the before/after samples.
 
 [source,java,options="nowrap"]
 ----
+import com.hazelcast.core.ExecutionCallback;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ICompletableFuture;
-import com.hazelcast.cp.CPSubsystem;
-import com.hazelcast.cp.CPSubsystemManagementService;
+import com.hazelcast.core.IMap;
 
-public class CpSubsystemAPI {
+public class Main {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        IMap<Integer, String> map = hazelcastInstance.getMap("map");
 
-        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
+        map.putAsync(1, "one").andThen(new ExecutionCallback<String>() {
+            @Override
+            public void onResponse(String response) {
+                map.getAsync(1).andThen(new ExecutionCallback<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println("Value of 1 is " + response);
+                    }
 
-        CPMember localMember = cpSubsystem.getLocalCPMember();
+                    @Override
+                    public void onFailure(Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
 
-        {
-        CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        ICompletableFuture<Collection<CPGroupId>> future = managementService.getCPGroupIds();
-        Collection<CPGroupId> groups = future.get();
-        }
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 }
 ----
@@ -722,23 +740,23 @@ public class CpSubsystemAPI {
 ----
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.cp.CPSubsystem;
-import com.hazelcast.cp.CPSubsystemManagementService;
+import com.hazelcast.map.IMap;
 
-import java.util.concurrent.CompletionStage;
+public class Main {
 
-public class CpSubsystemAPI {
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        IMap<Integer, String> map = hazelcastInstance.getMap("map");
 
-        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
-
-        {
-        CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        CompletionStage<Collection<CPGroupId>> future = managementService.getCPGroupIds();
-        Collection<CPGroupId> groups = future.toCompletableFuture().get();
-        }
+        map.putAsync(1, "one").whenCompleteAsync((response, throwable) -> {
+            if (throwable == null) {
+                map.getAsync(1).thenAcceptAsync(v -> {
+                    System.out.println("Value of 1 is " + v);
+                });
+            } else {
+                throwable.printStackTrace();
+            }
+        });
     }
 }
 ----
@@ -883,7 +901,7 @@ should be updated as follows:
 [source,xml]
 ----
 <hazelcast>
-    ...    
+    ...
     <rest-api enabled="true">
         <endpoint-group name="CLUSTER_WRITE" enabled="true"/>
     </rest-api>
@@ -913,7 +931,7 @@ for Ping Failure Detector is deprecated. Instead, use the elements to configure 
 ----
 <hazelcast>
     <network>
-    ...       
+    ...
         <failure-detector>
             <icmp enabled="true">
                 <timeout-milliseconds>1000</timeout-milliseconds>
