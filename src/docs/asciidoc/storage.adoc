@@ -224,6 +224,9 @@ for information on the cluster and member states. The purpose of the Hot Restart
 is to provide a maintenance window for member operations and restart the cluster
 in a fast way. It is not meant to recover the catastrophic shutdown of one member.
 
+Hot Restart Persistence supports optional data encryption. See the <<encryption-at-rest, Encryption at Rest section>>
+for more information.
+
 ==== Hot Restart Types
 
 The Hot Restart feature is supported for the following restart types:
@@ -479,6 +482,8 @@ member's storage becomes stale. That terminated member cannot rejoin the cluster
 without removing Hot Restart data. When auto-removal of stale Hot Restart data is enabled,
 while restarting that member, Hot Restart data is automatically removed and it joins
 the cluster as a completely new member. Otherwise, Hot Restart data should be removed manually.
+* `encryption-at-rest`: Configures encryption on the Hot Restart data level.
+See the <<encryption-at-rest, Encryption at Rest section>> for more information.
 
 ===== Per Data Structure Hot Restart Configuration
 
@@ -977,6 +982,211 @@ service.interruptLocalBackupTask();
 
 The backup task stops as soon as possible and it does not remove the
 disk contents of the backup directory meaning that you must remove it manually.
+
+[[encryption-at-rest]]
+==== Encryption at Rest
+
+Records stored in the Hot Restart Store may contain sensitive information. This sensitive
+information may be present in the keys, in the values, or in both. In Hot Restart terms,
+Encryption at Rest concerns with encryption on the chunk file level. Since complete chunk
+files are encrypted, all data data stored in the Hot Restart Store is protected when
+Encryption at Rest is enabled.
+
+Data persisted in the Hot Restart Store is encrypted using symmetric encryption. The
+implementation is based on
+link:https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html[Java Cryptography Architecture^] (JCA).
+The encryption scheme uses two levels of encryption keys: auto-generated Hot Restart
+Store-level encryption keys (one per configured parallelism) that are used to encrypt
+the chunk files and a master encryption key that is used to encrypt the store-specific
+encryption keys. The master encryption key is sourced from an external system called Secure
+Store and, in contrast to the Hot Restart Store-level encryption keys, it is not persisted
+anywhere within the Hot Restart Store.
+
+When Hot Restart with Encryption at Rest is first enabled on a member, the member contacts
+the Secure Store during the startup and retrieves the master encryption key. Then it generates
+the Hot Restart Store-level encryption keys for the parallel Stores and stores them (encrypted
+using the master key) under the Hot Restart Store's directory. The subsequent writes to Hot
+Restart chunk files will be encrypted using the Store-level encryption key. During Hot Restart,
+the member retrieves the master encryption key from the Secure Store, decrypts the Store-level
+encryption keys and uses those to decrypt the chunk files.
+
+Master key rotation is supported. If the master encryption key changes in the Secure Store,
+the Hot Restart subsystem will detect it and retrieve the new master encryption key. During
+this process, it will also re-encrypt the Hot Restart Store-level encryption keys using
+the new master encryption key.
+
+The <<configuring-secure-store, Configuring a Secure Store section>> provides information
+about the supported Secure Store types.
+
+===== Configuring Encryption at Rest
+
+Encryption at Rest can be enabled and configured programmatically or declaratively using the
+`encryption-at-rest` sub-element of `hot-restart-persistence`. The `encryption-at-rest`
+element has the following attributes and sub-elements:
+
+* `enabled`: Attribute that specifies whether Encryption at Rest is enabled; `false`
+by default.
+* `algorithm`: Specifies the symmetric cipher to use (such as `AES/CBC/PKCS5Padding`)
+* `salt`: The encryption salt.
+* `key-size`: The size of the auto-generated Hot Restart Store-level encryption key.
+* `secure-store`: Specifies the Secure Store to use for the retrieval of master
+encryption keys. See the <<configuring-secure-store, Configuring a Secure Store section>>
+for more details.
+
+The following are the example configurations for Encryption at Rest.
+
+**Declarative Configuration**:
+
+An example configuration is shown below.
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <hot-restart-persistence enabled="true">
+        ...
+        <encryption-at-rest enabled="true">
+            <algorithm>AEC/CBC/PKCS5Padding</algorithm>
+            <salt>thesalt</salt>
+            <key-size>128</key-size>
+            <secure-store>...</secure-store>
+        </encryption-at-rest>
+        ...
+    </hot-restart-persistence>
+    ...
+</hazelcast>
+----
+
+**Programmatic Configuration**:
+
+The programmatic equivalent of the above declarative configuration is shown below.
+
+[source,java]
+----
+include::{javasource}/storage/SampleEncryptionAtRestConfiguration.java[tag=encryptionatrest]
+----
+
+[[configuring-secure-store]]
+===== Configuring a Secure Store
+A Secure Store represents a (secure) source of master encryption keys and
+is required for using Encryption at Rest.
+
+Hazelcast Enterprise provides Secure Store implementations for the
+link:https://docs.oracle.com/javase/8/docs/api/java/security/KeyStore.html[Java KeyStore^]
+and for link:https://www.vaultproject.io/[HashiCorp Vault^].
+
+**Java KeyStore Secure Store**
+
+The Java KeyStore Secure Store provides integration with the link:https://docs.oracle.com/javase/8/docs/api/java/security/KeyStore.html[Java KeyStore^].
+It can configured programmatically or declaratively using the
+`keystore` sub-element of `secure-store`. The `keystore` element has the following sub-elements:
+
+* `path`: The path to the KeyStore file.
+* `type`: The type of the KeyStore (`PKCS12`, `JCEKS`, etc.).
+* `password`: The KeyStore password.
+* `current-key-alias`: The alias for the current encryption key entry (optional).
+* `polling-interval`: The polling interval (in seconds) for checking for changes in the KeyStore.
+Disabled by default.
+
+NOTE: Sensitive configuration properties such as `password` should be protected using
+<<variable-replacers, encryption replacers>>.
+
+The Java KeyStore Secure treats all `KeyStore.SecretKeyEntry` entries stored in the KeyStore as
+encryption keys. It expects that these entries use the same protection password as the KeyStore
+itself. Entries of other types (private key entries, certificate entries) are ignored. If
+`current-key-alias` is set, the corresponding entry will be treated as the current encryption key;
+otherwise, the highest entry in the alphabetical order will be used. The remaining entries will
+represent historical versions of the encryption key.
+
+An example XML configuration is shown below:
+
+[source,xml]
+----
+<secure-store>
+    <keystore>
+        <path>/path/to/keystore.file</path>
+        <type>PKCS12</type>
+        <password>password</password>
+        <current-key-alias>current</current-key-alias>
+        <polling-interval>60</polling-interval>
+    </keystore>
+</secure-store>
+----
+
+The following is an equivalent programmatic configuration:
+
+[source,java]
+----
+include::{javasource}/storage/SampleEncryptionAtRestConfiguration.java[tag=keystore]
+----
+
+**HashiCorp Vault Secure Store**
+
+The HashiCorp Vault Secure Store provides integration with link:https://www.vaultproject.io/[HashiCorp Vault^].
+It can configured programmatically or declaratively using the
+`vault` sub-element of `secure-store`. The `vault` element has the following sub-elements:
+
+* `address`: The address of the Vault server.
+* `secret-path`: The secret path under which the encryption keys are stored.
+* `token`: The Vault authentication token.
+* `polling-interval`: The polling interval (in seconds) for checking for changes in Vault. Disabled
+by default.
+* `ssl`: The TLS/SSL configuration for HTTPS support. See <<tlsssl, TLS/SSL section>> for more
+information about how to use the `ssl` element.
+
+NOTE: Sensitive configuration properties such as `token` should be protected using
+<<variable-replacers, encryption replacers>>.
+
+The HashiCorp Vault Secure Store implementation uses the official REST API to integrate with
+HashiCorp Vault. Only the link:https://www.vaultproject.io/docs/secrets/kv/index.html[KV secrets engine^]
+Both KV V1 and KV V2 can be used, but since only V2 provides secrets versioning, this is
+the recommended option. With KV V1 (no versioning support), only one version of the encryption
+key can be kept, whereas with KV V2, the HashiCorp Vault Secure Store is able to retrieve
+also the historical encryption keys. (Note that the size of the version history is configurable
+on the Vault side.) Having access to the previous encryption keys may be critical to avoid
+scenarios where the Hot Restart data becomes undecryptable because the master encryption key
+is no longer usable (for instance, when the original master encryption key got rotated out
+in the Secure Store while the cluster was down).
+
+The encryption key is expected to be stored at the specified secret path and represented as a
+single key/value pair in the following format:
+
+```
+name=Base64-encoded-data
+```
+
+where name can be an arbitrary string. Multiple key/value pairs under the same secret path are not
+supported. Here is an example of how such a key/value pair can be stored using the HashiCorp
+Vault command-line client (under the secret path `hz/cluster`):
+
+```
+vault kv put hz/cluster value=HEzO124Vz...
+```
+
+With KV V2, a second `put` to the same secret path creates a new version of the encryption key.
+With KV V1, it simply overwrites the current encryption key, discarding the old value.
+
+An example XML configuration is shown below:
+
+[source,xml]
+----
+<secure-store>
+    <vault>
+        <address>http://localhost:1234</address>
+        <secret-path>secret/path</secret-path>
+        <token>token</token>
+        <polling-interval>60</polling-interval>
+        <ssl>...</ssl>
+    </vault>
+</secure-store>
+----
+
+The following is an equivalent programmatic configuration:
+
+[source,java]
+----
+include::{javasource}/storage/SampleEncryptionAtRestConfiguration.java[tag=vault]
+----
 
 === Hazelcast Striim Hot Cache
 
