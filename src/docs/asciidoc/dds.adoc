@@ -2899,8 +2899,9 @@ See the following example code.
 [source,java]
 ----
 List<String> items = Arrays.asList("1","2","3");
-ICompletableFuture<Long> f = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
-f.get();
+CompletionStage<Long> s = rb.addAllAsync(items, OverflowPolicy.OVERWRITE);
+// block until all items are added
+s.toCompletableFuture().join();
 ----
 
 In the above case, three strings are added to the Ringbuffer using the policy
@@ -2923,7 +2924,7 @@ See the following example code.
 
 [source,java]
 ----
-ICompletableFuture<ReadResultSet<E>> readManyAsync(
+CompletionStage<ReadResultSet<E>> readManyAsync(
     long startSequence,
     int minCount,
     int maxCount,
@@ -2938,7 +2939,7 @@ set it to 0. If you want to block for at least one item,
 set it to 1.
 * `maxCount`: Maximum number of the items to retrieve. Its value cannot exceed 1000.
 * `filter`: A function that accepts an item and checks if it should be returned.
-If no filtering should be applied, set it to null.
+If no filtering should be applied, set it to `null`.
 
 A full example is given below.
 
@@ -2946,12 +2947,14 @@ A full example is given below.
 ----
 long sequence = rb.headSequence();
 for(;;) {
-    ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, 1, 10, null);
-    ReadResultSet<String> rs = f.get();
-    for (String s : rs) {
-        System.out.println(s);
-    }
-    sequence+=rs.readCount();
+    CompletionStage<ReadResultSet<String>> f = rb.readManyAsync(sequence, 1, 10, null);
+    CompletionStage<Integer> readCountStage = f.thenApplyAsync(rs -> {
+        for (String s : rs) {
+            System.out.println(s);
+        }
+        return rs.readCount();
+    });
+    sequence += readCountStage.toCompletableFuture().join();
 }
 ----
 
@@ -2989,16 +2992,11 @@ rb.add("peach");
 rb.add("avocado");
 
 long sequence = rb.headSequence();
-ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, 2, 5, new FruitFilter());
+CompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, 2, 5, new FruitFilter()).toCompletableFuture();
 
-try {
-    ReadResultSet<String> rs = f.get();
-    for (String s : rs) {
-        System.out.println(s);
-    }
-}
-catch (InterruptedException | ExecutionException e) {
-    System.out.println(e.getMessage());
+ReadResultSet<String> rs = f.join();
+for (String s : rs) {
+    System.out.println(s);
 }
 ----
 
@@ -3007,37 +3005,35 @@ catch (InterruptedException | ExecutionException e) {
 
 Hazelcast Ringbuffer provides asynchronous methods for more powerful operations
 like batched writing or batched reading with filtering.
-To make these methods synchronous, just call the method `get()` on the returned future.
+To wait for the result of the operation in a blocking way, obtain a `CompletableFuture`
+from the returned `CompletionStage` by invoking `CompletionStage#toCompletableFuture()` method, then
+use either `CompletableFuture#get()` or `CompletableFuture#join()`.
 
 See the following example code.
 
 [source,,java]
 ----
-ICompletableFuture f = ringbuffer.addAsync(item, OverflowPolicy.FAIL);
-f.get();
+CompletionStage<Long> f = ringbuffer.addAsync(item, OverflowPolicy.FAIL);
+f.toCompletableFuture().get();
 ----
 
-However, you can also use `ICompletableFuture` to get notified when the operation
-has completed. The advantage of `ICompletableFuture` is that the thread used for
-the call is not blocked till the response is returned.
+However, you can also use `CompletionStage` API to add subsequent dependent computation
+stages which will be executed when the operation  has completed. This way the thread used for
+the call is not blocked until the response is returned.
 
 See the below code as an example of when you want to
 get notified when a batch of reads has completed.
 
 [source,java]
 ----
-ICompletableFuture<ReadResultSet<String>> f = rb.readManyAsync(sequence, min, max, someFilter);
-f.andThen(new ExecutionCallback<ReadResultSet<String>>() {
-    @Override
-    public void onResponse(ReadResultSet<String> response) {
+CompletionStage<ReadResultSet<String>> stage = rb.readManyAsync(sequence, min, max, someFilter);
+stage.whenCompleteAsync((response, throwable) -> {
+    if (throwable == null) {
          for (String s : response) {
              System.out.println("Received:" + s);
          }
-    }
-
-    @Override
-    public void onFailure(Throwable t) {
-        t.printStackTrace();
+    } else {
+        throwable.printStackTrace();
     }
 });
 ----
