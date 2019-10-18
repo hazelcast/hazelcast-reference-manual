@@ -155,7 +155,7 @@ other members' committed CP member lists
 * The local Hazelcast member fails to commit its discovered CP member list for
 any reason.
 
-When CP Subsystem is reset via `CPSubsystemManagementService.restart()`,
+When CP Subsystem is reset via `CPSubsystemManagementService.reset()`,
 the CP discovery process is triggered again. However, it does not terminate
 Hazelcast members if the new CP discovery round fails for any of
 the aforementioned reasons, because Hazelcast members are likely to contain
@@ -230,7 +230,7 @@ If the majority of CP members are permanently lost, CP Subsystem becomes
 unavailable. There is no solution to recover from this failure case with strong
 consistency guarantee. CP Subsystem Management API contains a method to delete
 all CP Subsystem state on the remaining CP members and start from scratch.
-`CPSubsystemManagementService.restart()` wipes and resets the whole CP
+`CPSubsystemManagementService.reset()` wipes and resets the whole CP
 Subsystem state and initializes it as if the Hazelcast cluster is starting up
 for the first time. This method deletes the persisted CP member states as well.
 
@@ -378,7 +378,7 @@ the majority of CP members become online by successfully restarting some of
 failed CP members, CP Subsystem regains its availability back. **Otherwise, it
 means that CP Subsystem has lost its majority irrevocably.** In this case,
 the only solution is to wipe-out the whole CP Subsystem state by performing
-a force-reset via `CPSubsystemManagementService.restart()`.
+a force-reset via `CPSubsystemManagementService.reset()`.
 
 
 **When `CPSubsystemConfig.getCPMemberCount()` is greater than
@@ -410,7 +410,7 @@ CP groups continue serving to incoming requests, but since the _METADATA CP
 group_ is not available anymore, no management tasks can be performed on CP
 Subsystem. For instance, a new CP group cannot be created. In this case,
 the only solution is to wipe-out the whole CP Subsystem state by performing
-a force-reset via `CPSubsystemManagementService.restart()`.
+a force-reset via `CPSubsystemManagementService.reset()`.
 
 See <<cp-subsystem-management-apis, CP Subsystem Management APIs section>> for
 more details.
@@ -736,6 +736,11 @@ released upon failure of the holder `HazelcastInstance`. So there is a minor
 behavioral difference to the `j.u.c.Semaphore.release()` method.
 +
 JDK compatibility is disabled by default.
+* `initial-permits`: Number of permits to initialize the Semaphore.
+If a positive value is set, the Semaphore is initialized with the given number
+of permits.
++
+Default value is 0.
 
 **Declarative Configuration:**
 
@@ -753,6 +758,7 @@ JDK compatibility is disabled by default.
             <cp-semaphore>
                 <name>another-semaphore</name>
                 <jdk-compatible>false</jdk-compatible>
+                <initial-permits>5</initial-permits>
             </cp-semaphore>
         </semaphores>
     </cp-subsystem>
@@ -1200,7 +1206,7 @@ the cluster and check if the CP discovery process completes successfully.
 +
 WARNING: This method is **NOT** idempotent and multiple invocations can break
 the whole system! After calling this API, you must observe the system to see if
-the restart process is successfully completed or failed before making another
+the reset process is successfully completed or failed before making another
 call.
 +
 WARNING: This method deletes all CP data written by CP Subsystem Persistence.
@@ -1208,15 +1214,15 @@ WARNING: This method deletes all CP data written by CP Subsystem Persistence.
 .Java API
 [source,java]
 ----
-include::{javasource}/cp/CpSubsystemAPI.java[tag=restart]
+include::{javasource}/cp/CpSubsystemAPI.java[tag=reset]
 ----
 +
 .REST API
 [source,sh]
 ----
-> curl -X POST --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/restart
+> curl -X POST --data "${GROUPNAME}&${PASSWORD}" http://127.0.0.1:5701/hazelcast/rest/cp-subsystem/reset
 OR
-> sh cp-subsystem.sh -o restart --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
+> sh cp-subsystem.sh -o reset --address 127.0.0.1 --port 5701 --groupname ${GROUPNAME} --password ${PASSWORD}
 ----
 
 ==== Session Management API

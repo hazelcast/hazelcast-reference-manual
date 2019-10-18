@@ -16,7 +16,7 @@ when migrating to Hazelcast IMDG 4.0
 * The `hazelcast-client` module has been merged into the core module: All the classes
 in the `hazelcast-client` module have been moved to `hazelcast`.
 `hazelcast-client.jar` will not be created anymore.
-Also the `com.hazelcast.client` Java module is not used anymore. All classes
+* Also the `com.hazelcast.client` Java module is not used anymore. All classes
 are now available within the `com.hazelcast.core` module.
 
 ==== Changes in Client Connection Retry Mechanism
@@ -335,12 +335,14 @@ distributed computing platform as its successors and replacements.
 See the following table for the before(MapReduce)/after(Hazelcast Jet)
 word count sample.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0 (MapReduce)_*
+| *_Before IMDG 4.0 (MapReduce)_* | *_After IMDG 4.0 (Hazelcast Jet)_*
 
-[source,java]
+|
+
+[source,java,options="nowrap"]
 ----
 JobTracker tracker = hazelcastInstance.getJobTracker("default");
 
@@ -357,9 +359,9 @@ ICompletableFuture<Map<String, Integer>> future = job
      System.out.println(ToStringPrettyfier.toString(future.get()));
 ----
 
-| *_After IMDG 4.0 (Hazelcast Jet)_*
+|
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 JobTracker t = hz.getJobTracker("word-count");
 IMap<Long, String> documents = hz.getMap("documents");
@@ -409,12 +411,14 @@ After IMDG 4.0, we have the following events instead:
 
 See the following table for the before/after samples.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-[source,java]
+|
+
+[source,java,options="nowrap"]
 ----
 import com.hazelcast.core.MigrationEvent;
 import com.hazelcast.core.MigrationListener;
@@ -435,9 +439,9 @@ public class ClusterMigrationListener implements MigrationListener {
 }
 ----
 
-| *_After IMDG 4.0_*
+|
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 import com.hazelcast.partition.MigrationListener;
 import com.hazelcast.partition.MigrationState;
@@ -493,12 +497,14 @@ and also reading the endpoint address from it works with the new
 
 See the following table for the before/after sample `IPermissionPolicy` implementations.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-[source,java]
+|
+
+[source,java,options="nowrap"]
 ----
 public PermissionCollection getPermissions(Subject subject, Class<? extends Permission> type) {
     PermissionCollection collection = ...;
@@ -511,9 +517,9 @@ public PermissionCollection getPermissions(Subject subject, Class<? extends Perm
 }
 ----
 
-| *_After IMDG 4.0_*
+|
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 public PermissionCollection getPermissions(Subject subject, Class<? extends Permission> type) {
     PermissionCollection collection = ...;
@@ -562,12 +568,14 @@ options are:
 
 See the following table for the before/after sample implementations.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-[source,java]
+|
+
+[source,java,options="nowrap"]
 ----
 // Adds a single "foo" ClusterPrincipal to the JAAS Subject if credentials match.
 public class TestLoginModule extends ClusterLoginModule {
@@ -600,9 +608,9 @@ public class TestLoginModule extends ClusterLoginModule {
 }
 ----
 
-| *_After IMDG 4.0_*
+|
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 // Adds 3 principals to the JAAS Subject if credentials match:
 // ClusterIdentityPrincipal "foo", ClusterRolePrincipal "admin" and a ClusterEndpointPrincipal
@@ -666,12 +674,14 @@ operation and should be avoided.
 
 See the following table for the before/after sample implementations.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-[source,java]
+|
+
+[source,java,options="nowrap"]
 ----
 // login module already gets a deserialized credentials object
 public boolean onLogin() throws LoginException {
@@ -686,9 +696,9 @@ public boolean onLogin() throws LoginException {
 }
 ----
 
-| *_After IMDG 4.0_*
+|
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 // login module can ask for credentials, but it gets just a byte array "token"
 // wrapped in the SimpleTokenCredentials instance
@@ -738,16 +748,16 @@ List of the supported ``Callback``s in Hazelcast IMDG 4.0:
 * `com.hazelcast.security.SerializationServiceCallback` (provides access to Hazelcast `SerializationService`)
 * `com.hazelcast.security.ClusterNameCallback` (provides access to Hazelcast cluster name sent by the connecting party)
 
-====== Other changes ??
-
 See the following table for the before/after sample implementations.
 
 [cols="1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-[source,java]
+|
+
+[source,java,options="nowrap"]
 ----
 Collection<String> keys = map.project(new Projection<Entry<String, Double>, String>() {
     @Override
@@ -757,9 +767,9 @@ Collection<String> keys = map.project(new Projection<Entry<String, Double>, Stri
 });
 ----
 
-| *_After IMDG 4.0_*
+|
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 Collection<String> keys = map.project(Entry::getKey);
 ----
@@ -771,12 +781,14 @@ with one abstract method. They have been converted into functional interfaces:
 * `ValueCallback`
 * `ValueExtractor`
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-[source,java]
+|
+
+[source,java,options="nowrap"]
 ----
 public static class PortableNameExtractor extends ValueExtractor<ValueReader, Object> {
     @Override
@@ -791,9 +803,9 @@ public static class PortableNameExtractor extends ValueExtractor<ValueReader, Ob
 }
 ----
 
-| *_After IMDG 4.0_*
+|
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 public static class PortableNameExtractor implements ValueExtractor<ValueReader, Object> {
     @Override
@@ -840,10 +852,12 @@ have been renamed:
 
 See the following table for a before/after sample.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
 
 [source,xml]
 ----
@@ -859,7 +873,7 @@ See the following table for a before/after sample.
 </hazelcast>
 ----
 
-| *_After IMDG 4.0_*
+|
 
 [source,xml,options="nowrap"]
 ----
@@ -876,7 +890,7 @@ See the following table for a before/after sample.
 ----
 |===
 
-==== Renaming getID as getClassId
+==== Renaming getID to getClassId in IdentifiedDataSerializable
 
 The `getId()` method of the `IdentifiedDataSerializable` interface
 is a method with a common name, meaning a naming conflict would happen frequently.
@@ -885,10 +899,12 @@ Therefore, it has been renamed as `getClassId()`.
 
 See the following table showing the interface code before and after IMDG 4.0.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
 
 [source,java,options="nowrap"]
 ----
@@ -902,7 +918,7 @@ public interface IdentifiedDataSerializable extends DataSerializable {
 }
 ----
 
-| *_After IMDG 4.0_*
+|
 
 [source,java,options="nowrap"]
 ----
@@ -925,10 +941,12 @@ as `cluster`.
 
 See the following table showing before/after samples.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
 
 [source,java,options="nowrap"]
 ----
@@ -936,7 +954,7 @@ Config config = new Config();
 config.getGroupConfig().setName( "production" );
 ----
 
-| *_After IMDG 4.0_*
+|
 
 [source,java,options="nowrap"]
 ----
@@ -957,10 +975,12 @@ both on the primary and the backup replicas.
 Because of this, the `AbstractEntryProcessor` interface has been removed.
 This should make writing entry processors more lambda friendly.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
 
 [source,java]
 ----
@@ -979,7 +999,7 @@ This should make writing entry processors more lambda friendly.
         });
 ----
 
-| *_After IMDG 4.0_*
+|
 
 [source,java]
 ----
@@ -999,7 +1019,7 @@ map.executeOnKey(key,
 This should cover most cases. If you need to define a custom
 backup entry processor, you can override the `EntryProcessor#getBackupProcessor` method.
 
-[source,java]
+[source,java,options="nowrap"]
 ----
 map.executeOnKey(key, new EntryProcessor<Object, Object, Object>() {
     @Override
@@ -1024,17 +1044,19 @@ map.executeOnKey(key, new EntryProcessor<Object, Object, Object>() {
 The `Projection` class was an abstract interface for historical reasons.
 It has been turned into a functional interface so it's more lambda-friendly.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
 
 [source,java]
 ----
 ??? old code sample
 ----
 
-| *_After IMDG 4.0_*
+|
 
 [source,java]
 ----
@@ -1090,10 +1112,12 @@ run each task).
 
 See the following table for the before/after samples.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
 
 [source,java,options="nowrap"]
 ----
@@ -1133,7 +1157,7 @@ public class Main {
 }
 ----
 
-| *_After IMDG 4.0_*
+|
 
 [source,java,options="nowrap"]
 ----
@@ -1175,12 +1199,12 @@ With this change, the `wan-publisher` configuration element has been renamed as 
 and `custom-publisher`, according to your publisher preference.
 See the following table for the before/after configuration examples.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-The following was an example declarative configuration for `wan-publisher`:
+| The following was an example declarative configuration for `wan-publisher`:
 
 [source,xml,options="nowrap"]
 ----
@@ -1204,11 +1228,9 @@ The following was an example declarative configuration for `wan-publisher`:
 </wan-publisher>
 ----
 
-| *_After IMDG 4.0_*
+| And the following is the equivalent of the above configuration after IMDG 4.0:
 
-And the following is the equivalent of the above configuration after IMDG 4.0:
-
-[source,xml]
+[source,xml,options="nowrap"]
 ----
 <batch-publisher>
             <cluster-name>nyc</cluster-name>
@@ -1282,10 +1304,12 @@ that de-register the listeners.
 
 See the following table for the before/after sample implementations.
 
-[cols="1a"]
+[cols="1a,1a"]
 |===
 
-| *_Before IMDG 4.0_*
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
 
 [source,java,options="nowrap"]
 ----
@@ -1306,7 +1330,7 @@ See the following table for the before/after sample implementations.
         hazelcastInstance.getClientService().removeClientListener(registrationId);
 ----
 
-| *_After IMDG 4.0_*
+|
 
 [source,java,options="nowrap"]
 ----
@@ -1327,6 +1351,132 @@ See the following table for the before/after sample implementations.
         hazelcastInstance.getClientService().removeClientListener(registrationId);
 ----
 |===
+
+==== Removal of Deprecated Concurrency API Implementations
+
+After introduction of _CP Subsystem_ in Hazelcast IMDG 3.12,
+legacy implementations of the distributed concurrency APIs, e.g., `ILock` and `IAtomicLong`,
+had been deprecated.
+In IMDG 4.0, these deprecated implementations and additionally
+`ILock` and `ICondition` interfaces are completely removed.
+
+Differently from Hazelcast IMDG 3.12, _CP Subsystem_ received
+an _unsafe_ operation mode in IMDG 4.0 which provides weaker
+consistency guarantees similar to former implementations in Hazelcast IMDG 3.x series.
+
+For more information see the <<cp-subsystem, CP Subsystem section>>.
+
+See the following table for the before/after samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java,options="nowrap"]
+----
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IAtomicLong;
+import com.hazelcast.core.IAtomicReference;
+import com.hazelcast.core.ICountDownLatch;
+import com.hazelcast.core.ILock;
+import com.hazelcast.core.ISemaphore;
+
+public class Main {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+
+        IAtomicLong atomiclong = hazelcastInstance.getAtomicLong("atomiclong");
+        atomiclong.incrementAndGet();
+
+        IAtomicReference<String> atomicref = hazelcastInstance.getAtomicReference("atomicref");
+        atomicref.set("value");
+
+        ILock lock = hazelcastInstance.getLock("lock");
+        lock.tryLock();
+
+        ISemaphore semaphore = hazelcastInstance.getSemaphore("semaphore");
+        semaphore.tryAcquire();
+
+        ICountDownLatch latch = hazelcastInstance.getCountDownLatch("latch");
+        latch.countDown();
+    }
+}
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.cp.CPSubsystem;
+import com.hazelcast.cp.IAtomicLong;
+import com.hazelcast.cp.IAtomicReference;
+import com.hazelcast.cp.ICountDownLatch;
+import com.hazelcast.cp.ISemaphore;
+import com.hazelcast.cp.lock.FencedLock;
+
+public class Main {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
+
+        IAtomicLong atomiclong = cpSubsystem.getAtomicLong("atomiclong");
+        atomiclong.incrementAndGet();
+
+        IAtomicReference<String> atomicref = cpSubsystem.getAtomicReference("atomicref");
+        atomicref.set("value");
+
+        FencedLock lock = cpSubsystem.getLock("lock");
+        lock.tryLock();
+
+        ISemaphore semaphore = cpSubsystem.getSemaphore("semaphore");
+        semaphore.tryAcquire();
+
+        ICountDownLatch latch = cpSubsystem.getCountDownLatch("latch");
+        latch.countDown();
+    }
+}
+----
+|===
+
+==== Removal of Legacy Merge Policies
+
+All legacy merge policies have been removed. Replacements of
+legacies are under the `com.hazelcast.spi.merge` package.
+
+These are the replacements for IMap and ICache:
+
+_Removed IMap Merge Policies and Their Replacements_
+
+* `com.hazelcast.map.merge.HigherHitsMapMergePolicy` -> `com.hazelcast.spi.merge.HigherHitsMergePolicy`
+* `com.hazelcast.map.merge.LatestUpdateMapMergePolicy` -> `com.hazelcast.spi.merge.LatestUpdateMergePolicy`
+* `com.hazelcast.map.merge.PassThroughMergePolicy` -> `com.hazelcast.spi.merge.PassThroughMergePolicy`
+* `com.hazelcast.map.merge.PutIfAbsentMapMergePolicy` -> `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`
+
+_Removed ICache Merge Policies and Their Replacements_
+
+* `com.hazelcast.cache.merge.HigherHitsCacheMergePolicy` -> `com.hazelcast.spi.merge.HigherHitsMergePolicy`
+* `com.hazelcast.cache.merge.LatestAccessCacheMergePolicy` -> `com.hazelcast.spi.merge.LatestAccessMergePolicy`
+* `com.hazelcast.cache.merge.PassThroughCacheMergePolicy` -> `com.hazelcast.spi.merge.PassThroughMergePolicy`
+* `com.hazelcast.cache.merge.PutIfAbsentCacheMergePolicy` -> `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`
+
+Moreover, the `setMergePolicy/getMergePolicy` methods have been
+removed from `MapConfig`, `ReplicatedMapConfig` and `CacheConfig`.
+They have been replaced by the `setMergePolicyConfig/getMergePolicyConfig` methods.
+
+The `merge-policy` declarative configuration element that
+has been used in the older IMDG versions still can be used:
+
+```
+<merge-policy batch-size="100">LatestAccessMergePolicy</merge-policy>
+```
 
 
 === Upgrading to Hazelcast IMDG 3.12.x

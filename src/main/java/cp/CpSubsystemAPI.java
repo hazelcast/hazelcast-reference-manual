@@ -93,11 +93,11 @@ public class CpSubsystemAPI {
         }
 
         {
-        //tag::restart[]
+        //tag::reset[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        CompletionStage<Void> future = managementService.restart();
+        CompletionStage<Void> future = managementService.reset();
         future.toCompletableFuture().get();
-        //end::restart[]
+        //end::reset[]
         }
 
         {

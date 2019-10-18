@@ -5,7 +5,7 @@ import com.hazelcast.config.WanReplicationRef;
 
 public class EnablingWRforCache {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 //tag::wrcache[]
         Config config = new Config();
 
@@ -16,7 +16,7 @@ public class EnablingWRforCache {
 
         WanReplicationRef cacheWanRef = new WanReplicationRef();
         cacheWanRef.setName("my-wan-cluster");
-        cacheWanRef.setMergePolicy("com.hazelcast.cache.merge.PassThroughCacheMergePolicy");
+        cacheWanRef.setMergePolicy("com.hazelcast.spi.merge.PassThroughMergePolicy");
         cacheWanRef.setRepublishingEnabled(true);
         config.getCacheConfig("my-shared-cache").setWanReplicationRef(cacheWanRef);
 //end::wrcache[]
