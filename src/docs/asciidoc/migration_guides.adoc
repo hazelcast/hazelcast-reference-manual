@@ -769,7 +769,7 @@ public class TestLoginModule extends ClusterLoginModule {
         PasswordCallback pcb = new PasswordCallback("", false);
         try {
             callbackHandler.handle(new Callback[] { ncb, pcb });
-        } catch (IOException | UnsupportedCallbackException e) {
+        } catch (Exception e) {
             throw new LoginException("Unable to handle credentials");
         }
         name = credentials.getName();
