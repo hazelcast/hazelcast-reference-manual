@@ -339,7 +339,7 @@ replicated by adding the `wan-replication-ref` element in the map configuration 
     </wan-replication>
     <map name="my-shared-map">
         <wan-replication-ref name="my-wan-cluster">
-            <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+            <merge-policy>com.hazelcast.spi.merge.PassThroughMergePolicy</merge-policy>
             <republishing-enabled>false</republishing-enabled>
         </wan-replication-ref>
     </map>
@@ -372,13 +372,13 @@ the above example configuration (using the `merge-policy` sub-element under the 
 
 Hazelcast provides the following merge policies for IMap:
 
-* `com.hazelcast.map.merge.PutIfAbsentMapMergePolicy`: Incoming entry merges from the source map to
+* `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`: Incoming entry merges from the source map to
 the target map if it does not exist in the target map.
-* `com.hazelcast.map.merge.HigherHitsMapMergePolicy`: Incoming entry merges from the source map to
+* `com.hazelcast.spi.merge.HigherHitsMergePolicy`: Incoming entry merges from the source map to
 the target map if the source entry has more hits than the target one.
-* `com.hazelcast.map.merge.PassThroughMergePolicy`: Incoming entry merges from the source map to
+* `com.hazelcast.spi.merge.PassThroughMergePolicy`: Incoming entry merges from the source map to
 the target map unless the incoming entry is not null.
-* `com.hazelcast.map.merge.LatestUpdateMapMergePolicy`: Incoming entry merges from the source map to
+* `com.hazelcast.spi.merge.LatestUpdateMergePolicy`: Incoming entry merges from the source map to
 the target map if the source entry has been updated more recently than the target entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
 
@@ -399,7 +399,7 @@ The following is a declarative configuration example for enabling WAN Replicatio
     </wan-replication>
     <cache name="my-shared-cache">
         <wan-replication-ref name="my-wan-cluster">
-            <merge-policy>com.hazelcast.cache.merge.PassThroughCacheMergePolicy</merge-policy>
+            <merge-policy>com.hazelcast.spi.merge.PassThroughMergePolicy</merge-policy>
             <republishing-enabled>true</republishing-enabled>
         </wan-replication-ref>
     </cache>
@@ -421,9 +421,9 @@ source and target clusters.
 
 Hazelcast provides the following merge policies for ICache:
 
-* `com.hazelcast.cache.merge.HigherHitsCacheMergePolicy`: Incoming entry merges from the source cache to
+* `com.hazelcast.spi.merge.HigherHitsMergePolicy`: Incoming entry merges from the source cache to
 the target cache if the source entry has more hits than the target one.
-* `com.hazelcast.cache.merge.PassThroughCacheMergePolicy`: Incoming entry merges from the source cache to
+* `com.hazelcast.spi.merge.PassThroughMergePolicy`: Incoming entry merges from the source cache to
 the target cache unless the incoming entry is not null.
 
 ==== Batch Size
@@ -727,7 +727,7 @@ Assume that you have configured an IMap with a WAN replication configuration as 
     <wan-replication>
     <map name="my-map">
         <wan-replication-ref name="my-wan-cluster">
-            <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+            <merge-policy>com.hazelcast.spi.merge.PassThroughMergePolicy</merge-policy>
         </wan-replication-ref>
     </map>
     ...
@@ -799,7 +799,7 @@ For instance, this is an example of an XML configuration to which you can dynami
     <wan-replication name="wanReplication"></wan-replication>
     <map name="my-map">
         <wan-replication-ref name="wan-replication">
-            <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+            <merge-policy>com.hazelcast.spi.merge.PassThroughMergePolicy</merge-policy>
             <republishing-enabled>false</republishing-enabled>
        </wan-replication-ref>
     </map>
