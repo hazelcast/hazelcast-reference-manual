@@ -821,7 +821,7 @@ Let's have a look at the following data structure expressed in pseudo-code:
 [source,java]
 ----
 class Motorbike {
-    Wheel wheels[2];
+    Wheel[] wheels;
 }
 
 class Wheel {
@@ -1024,9 +1024,9 @@ including the Portable serialization.
 
 ==== Implementing a ValueExtractor
 
-In order to implement a `ValueExtractor`, extend the abstract
-`com.hazelcast.query.extractor.ValueExtractor` class
-and implement the `extract()` method. This method does not return any values
+In order to implement a `ValueExtractor`, implement the
+`com.hazelcast.query.extractor.ValueExtractor` interface
+and the `extract()` method. This method does not return any values
 since the extracted value is collected by the `ValueCollector`.
 In order to return multiple results from a single extraction, invoke the
 `ValueCollector.collect()` method
@@ -1065,7 +1065,7 @@ Let's have a look at the following data structure in pseudo-code:
 [source,java]
 ----
 class Motorbike {
-    Wheel wheel[2];
+    Wheel[] wheel;
 }
 
 class Wheel {
@@ -1108,7 +1108,7 @@ The parser parses the string according to its custom logic and it returns a
 parsed object.
 The parsed object may be a single object, array, collection, or any arbitrary
 object.
-It is up to the `ValueExtractor`'s implementor to understand the semantics of
+It is up to the `ValueExtractor` implementation to understand the semantics of
 the parsed argument object.
 
 For now it is **not** possible to register a custom `ArgumentParser`, thus a
@@ -1117,7 +1117,7 @@ It follows a `pass-through` semantic, which means that the string located in
 the square brackets is passed "as is" to
 the `ValueExtractor.extract()` method.
 
-Please note that using square brackets within the argument string is not allowed.
+Please note that using square brackets within the argument string are not allowed.
 
 ==== Configuring a Custom Attribute Programmatically
 
