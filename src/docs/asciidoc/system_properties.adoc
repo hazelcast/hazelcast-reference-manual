@@ -457,10 +457,10 @@ events that match entry, update or exit from predicate value space.
 |`hazelcast.map.expiry.delay.seconds`
 |10
 |int
-|Useful to deal with some possible edge cases.
-For example, when using EntryProcessor, without this delay, you may see an
-EntryProcessor running on owner partition found a key but EntryBackupProcessor did not find it on backup.
-As a result of this, when backup promotes to owner, you may end up with an unprocessed key.
+|Delays expiration of backup map entries by the defined amount.
+This may be useful to prevent some cases where an entry might be observed
+on the primary replica (partition owner) but not on the backup replica.
+For instance, when running an entry processor on both primary and backup replicas.
 
 |`hazelcast.map.invalidation.batchfrequency.seconds`
 | 10
