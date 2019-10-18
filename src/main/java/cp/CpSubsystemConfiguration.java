@@ -30,8 +30,8 @@ public class CpSubsystemConfiguration {
 
         //tag::cpsemaconf[]
         config.getCPSubsystemConfig()
-              .addSemaphoreConfig(new SemaphoreConfig("jdk-compatible-semaphore", true, 0))
-              .addSemaphoreConfig(new SemaphoreConfig("another-semaphore", false, 5));
+              .addSemaphoreConfig(new SemaphoreConfig("jdk-compatible-semaphore", true))
+              .addSemaphoreConfig(new SemaphoreConfig("another-semaphore", false));
         //end::cpsemaconf[]
 
         //tag::cplockconf[]
