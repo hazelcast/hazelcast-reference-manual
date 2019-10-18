@@ -1447,30 +1447,38 @@ public class Main {
 |===
 
 ==== Removal of Legacy Merge Policies
-All legacy merge policies were removed. Replacements of legacies are under `com.hazelcast.spi.merge` package.
+
+All legacy merge policies have been removed. Replacements of
+legacies are under the `com.hazelcast.spi.merge` package.
 
 These are the replacements for IMap and ICache:
 
-Removed IMap Merge Policies and Their Replacements
-com.hazelcast.map.merge.HigherHitsMapMergePolicy --> com.hazelcast.spi.merge.HigherHitsMergePolicy
-com.hazelcast.map.merge.LatestUpdateMapMergePolicy --> com.hazelcast.spi.merge.LatestUpdateMergePolicy
-com.hazelcast.map.merge.PassThroughMergePolicy --> com.hazelcast.spi.merge.PassThroughMergePolicy
-com.hazelcast.map.merge.PutIfAbsentMapMergePolicy --> com.hazelcast.spi.merge.PutIfAbsentMergePolicy
+_Removed IMap Merge Policies and Their Replacements_
 
-Removed ICache Merge Policies and Their Replacements
-com.hazelcast.cache.merge.HigherHitsCacheMergePolicy --> com.hazelcast.spi.merge.HigherHitsMergePolicy
-com.hazelcast.cache.merge.LatestAccessCacheMergePolicy --> com.hazelcast.spi.merge.LatestAccessMergePolicy
-com.hazelcast.cache.merge.PassThroughCacheMergePolicy --> com.hazelcast.spi.merge.PassThroughMergePolicy
-com.hazelcast.cache.merge.PutIfAbsentCacheMergePolicy --> com.hazelcast.spi.merge.PutIfAbsentMergePolicy
+* `com.hazelcast.map.merge.HigherHitsMapMergePolicy` -> `com.hazelcast.spi.merge.HigherHitsMergePolicy`
+* `com.hazelcast.map.merge.LatestUpdateMapMergePolicy` -> `com.hazelcast.spi.merge.LatestUpdateMergePolicy`
+* `com.hazelcast.map.merge.PassThroughMergePolicy` -> `com.hazelcast.spi.merge.PassThroughMergePolicy`
+* `com.hazelcast.map.merge.PutIfAbsentMapMergePolicy` -> `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`
+
+_Removed ICache Merge Policies and Their Replacements_
+
+* `com.hazelcast.cache.merge.HigherHitsCacheMergePolicy` -> `com.hazelcast.spi.merge.HigherHitsMergePolicy`
+* `com.hazelcast.cache.merge.LatestAccessCacheMergePolicy` -> `com.hazelcast.spi.merge.LatestAccessMergePolicy`
+* `com.hazelcast.cache.merge.PassThroughCacheMergePolicy` -> `com.hazelcast.spi.merge.PassThroughMergePolicy`
+* `com.hazelcast.cache.merge.PutIfAbsentCacheMergePolicy` -> `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`
+
+Moreover, the `setMergePolicy/getMergePolicy` methods have been
+removed from `MapConfig`, `ReplicatedMapConfig` and `CacheConfig`.
+They have been replaced by the `setMergePolicyConfig/getMergePolicyConfig` methods.
+
+The `merge-policy` declarative configuration element that
+has been used in the older IMDG versions still can be used:
+
+```
+<merge-policy batch-size="100">LatestAccessMergePolicy</merge-policy>
+```
 
 
-Configuration Changes:
-
-Programmatic:
-`setMergePolicy/getMergePolicy` methods were removed from MapConfig, ReplicatedMapConfig and CacheConfig in favor of `setMergePolicyConfig/getMergePolicyConfig`.
-
-Declarative:
-Same <merge-policy/> tag with older versions can still be used: `<merge-policy batch-size="100">LatestAccessMergePolicy</merge-policy>`
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
