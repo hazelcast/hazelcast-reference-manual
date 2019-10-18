@@ -1189,19 +1189,19 @@ public class Main {
 
 ==== WAN Replication Configuration Changes
 
-Configuring WAN replication was previously problematic:
+Previously, Configuring WAN replication was problematic:
 
-- you needed to specify the fully qualified class name of the WAN implementation that should be used.
-In most cases, this was the built-in Hazelcast EE implementation.
-- there were various configuration options, some of which were present as java class instance fields
+* You needed to specify the fully qualified class name of the WAN implementation that should be used.
+In most cases, this was the built-in Hazelcast IMDG Enterprise Edition (EE) implementation.
+* There were various configuration options, some of which were present as Java class instance fields
 or XML child nodes and attributes while others were present in a properties list. The issue with
 the property list is that there was no checking for typos, no documentation and no IDE help.
-- if you wanted to use a custom WAN publisher SPI implementation, some configuration options don't
-make sense as they are tied to our implementation (e.g. WAN queue size)
-- it was verbose
+* If you wanted to use a custom WAN publisher SPI implementation, some configuration options did not
+make sense as they were tied to our implementation, e.g., WAN queue size.
+* It was verbose.
 
-The tag which was supposed to cover both cases - using the built-in Hazelcast EE implementation and a
-custom WAN replication implementation (`wan-publisher` or `WanPublisherConfig`) has been separated into
+The tag which was supposed to cover both cases, using the built-in Hazelcast EE implementation and a
+custom WAN replication implementation (`wan-publisher` or `WanPublisherConfig`), has been separated into
 two configuration elements/classes to be used for built-in and custom WAN publishers:
 
 * `batch-publisher` (declarative configuration) or `WanBatchReplicationPublisherConfig` (programmatic configuration)
@@ -1212,8 +1212,8 @@ is `batch-publisher` or `WanBatchReplicationPublisherConfig`.
 If you're using a custom WAN replication implementation, the new configuration element is
 `custom-publisher` or `CustomWanPublisherConfig`.
 
-Additionally, the group password was removed from the configuration and now only the cluster name is checked
-when connecting to the target cluster. This was done to align the behaviour with members forming a single
+Additionally, the group password has been removed from the configuration and now only the cluster name is checked
+when connecting to the target cluster. This has been done to align the behavior with members forming a single
 cluster, where members with different passwords but with the same cluster name (previously group name)
 could form a cluster.
 
@@ -1249,6 +1249,7 @@ See the following tables for the before/after configuration examples.
 ----
 
 Or, in programmatic config:
+
 [source,java,options="nowrap"]
 ----
 WanPublisherConfig publisherConfig = new WanPublisherConfig()
@@ -1290,7 +1291,9 @@ properties.put("group.password", "nyc-pass");
     </wan-sync>
 </batch-publisher>
 ----
+
 Or, in programmatic config:
+
 [source,java,options="nowrap"]
 ----
 WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
@@ -1327,7 +1330,9 @@ publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckS
     </properties>
 </wan-publisher>
 ----
+
 Or, in programmatic config:
+
 [source,java,options="nowrap"]
 ----
 WanPublisherConfig publisherConfig = new WanPublisherConfig()
@@ -1351,7 +1356,9 @@ properties.put("some.other.property", "some-other-value");
     </properties>
 </custom-publisher>
 ----
+
 Or, in programmatic config:
+
 [source,java,options="nowrap"]
 ----
 CustomWanPublisherConfig publisherConfig = new CustomWanPublisherConfig()
@@ -1367,21 +1374,21 @@ properties.put("some.other.property", "some-other-value");
 
 ==== WAN Replication SPI Changes
 
-In 3.x, the WAN publisher SPI allows the user to plug into the lifecycle of a map/cache entry
+In IMDG 3.x series, the WAN publisher SPI allowed you to plug into the lifecycle of a map/cache entry
 and replicate the updates to another system. For example, you might implement replication to
 Kafka or some JMS queue or even write out map and cache event changes to a log on disk.
 The SPI was not very intuitive though:
 
-- is was not clear which interface needed to be implemented (`WanReplicationPublisher` vs `WanReplicationEndpoint`)
-- you had to implement different interfaces, depending on whether you were using the
-open-source or enterprise version of Hazelcast
-- there were cases of leaking internals which don't make sense for some custom implementations
-- there were unused methods in the public SPI
+* It was not clear which interface needed to be implemented (`WanReplicationPublisher` vs. `WanReplicationEndpoint`).
+* You had to implement different interfaces, depending on whether you were using Hazelcast IMDG
+Open Source or Enterprise edition.
+* There were cases of leaking internals which don't make sense for some custom implementations.
+* There were unused methods in the public SPI.
 
-In Hazelcast 4.0 we have provided a new and cleaner WAN publisher SPI. The user needs only to
-implement a single interface - `com.hazelcast.wan.WanReplicationPublisher`. This implementation can
-then be set in the WAN replication configuration and be used with both Hazelcast open-source and
-enterprise edition.
+In Hazelcast IMDG 4.0, we have provided a new and cleaner WAN publisher SPI. You only need to
+implement a single interface: `com.hazelcast.wan.WanReplicationPublisher`. This implementation can
+then be set in the WAN replication configuration and be used with both Hazelcast Open Source and
+Enterprise editions.
 
 ==== Predicate API Cleanups
 
