@@ -425,12 +425,10 @@ application on it.
 Java link:http://openjdk.java.net/projects/jigsaw/[project Jigsaw^] brought
 a new Module System into Java 9 and newer. Hazelcast supports running in
 the modular environment. If you want to run your application with Hazelcast
-libraries on the modulepath, use the following module names:
+libraries on the modulepath, use the following module name:
 
 * `com.hazelcast.core` for `hazelcast-{imdg-version}.jar` and
 `hazelcast-enterprise-{imdg-version}.jar`
-* `com.hazelcast.client` for `hazelcast-client-{imdg-version}.jar`
-and `hazelcast-enterprise-client-{imdg-version}.jar`
 
 Don't use `hazelcast-all-{imdg-version}.jar` or
 `hazelcast-enterprise-all-{imdg-version}.jar` on the modulepath as it could
@@ -482,7 +480,7 @@ java --add-modules java.se \
   --add-opens jdk.management/com.ibm.lang.management.internal=com.hazelcast.core \
   --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
   --module-path lib \
-  --module com.hazelcast.core/com.hazelcast.core.server.StartServer
+  --module com.hazelcast.core/com.hazelcast.core.server.HazelcastMemberStarter
 ----
 
 _This example expects `hazelcast-{imdg-version}.jar` placed in the `lib` directory._
