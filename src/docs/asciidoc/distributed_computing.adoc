@@ -609,7 +609,7 @@ If, however, you would like to run a custom processor on backup entries, you may
 
 You may also return `null` from the `EntryProcessor#getBackupProcessor` method. This signifies that there is nothing to be done on the backup replicas which is most convenient when you are using the entry processor to read and not modify entries.
 
-NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually synchronizes those owner and backup partitions so you do not lose any data. When coding an backup entry processor, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
+NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually synchronizes those owner and backup partitions so you do not lose any data. When coding a backup entry processor, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
 
 ==== Creating an Entry Processor
 
