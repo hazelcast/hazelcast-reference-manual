@@ -1222,6 +1222,96 @@ See the following table for the before/after sample implementations.
 ----
 |===
 
+==== Removal of Deprecated Concurrency API Implementations
+
+After introduction of _CP Subsystem_ in Hazelcast IMDG 3.12,
+legacy implementations of distributed concurrency APIs, e.g. `ILock`, `IAtomicLong` etc., had been deprecated.
+In 4.0, these deprecated implementations and additionally `ILock` and `ICondition` interfaces
+are completely removed.
+
+Differently from Hazelcast IMDG 3.12, in 4.0 _CP Subsystem_ received an _unsafe_ operation mode
+which provides weaker consistency guarantees similar to former implementations in Hazelcast IMDG 3.x series.
+
+For more information see the <<cp-subsystem, CP Subsystem>> section.
+
+See the following table for the before/after samples.
+
+[cols="1a"]
+|===
+
+| *_Before IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IAtomicLong;
+import com.hazelcast.core.IAtomicReference;
+import com.hazelcast.core.ICountDownLatch;
+import com.hazelcast.core.ILock;
+import com.hazelcast.core.ISemaphore;
+
+public class Main {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+
+        IAtomicLong atomiclong = hazelcastInstance.getAtomicLong("atomiclong");
+        atomiclong.incrementAndGet();
+
+        IAtomicReference<String> atomicref = hazelcastInstance.getAtomicReference("atomicref");
+        atomicref.set("value");
+
+        ILock lock = hazelcastInstance.getLock("lock");
+        lock.tryLock();
+
+        ISemaphore semaphore = hazelcastInstance.getSemaphore("semaphore");
+        semaphore.tryAcquire();
+
+        ICountDownLatch latch = hazelcastInstance.getCountDownLatch("latch");
+        latch.countDown();
+    }
+}
+----
+
+| *_After IMDG 4.0_*
+
+[source,java,options="nowrap"]
+----
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.cp.CPSubsystem;
+import com.hazelcast.cp.IAtomicLong;
+import com.hazelcast.cp.IAtomicReference;
+import com.hazelcast.cp.ICountDownLatch;
+import com.hazelcast.cp.ISemaphore;
+import com.hazelcast.cp.lock.FencedLock;
+
+public class Main {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        CPSubsystem cpSubsystem = hazelcastInstance.getCPSubsystem();
+
+        IAtomicLong atomiclong = cpSubsystem.getAtomicLong("atomiclong");
+        atomiclong.incrementAndGet();
+
+        IAtomicReference<String> atomicref = cpSubsystem.getAtomicReference("atomicref");
+        atomicref.set("value");
+
+        FencedLock lock = cpSubsystem.getLock("lock");
+        lock.tryLock();
+
+        ISemaphore semaphore = cpSubsystem.getSemaphore("semaphore");
+        semaphore.tryAcquire();
+
+        ICountDownLatch latch = cpSubsystem.getCountDownLatch("latch");
+        latch.countDown();
+    }
+}
+----
+|===
+
 
 === Upgrading to Hazelcast IMDG 3.12.x
 
