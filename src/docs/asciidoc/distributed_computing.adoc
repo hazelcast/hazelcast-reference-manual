@@ -577,17 +577,17 @@ NOTE: When `in-memory-format` is `OBJECT`, the old value of the updated entry wi
 
 The link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IMap.html[IMap interface^] provides the following methods for entry processing:
 
-* `executeOnKey` processes an entry mapped by a key.
-* `executeOnKeys` processes entries mapped by a collection of keys.
-* `submitToKey` processes an entry mapped by a key while listening to event status.
-* `executeOnEntries` processes all entries in a map.
-* `executeOnEntries` can also process all entries in a map with a defined predicate.
+* `executeOnKey` processes an entry mapped by a key, blocking until the processing is complete and the result is returned.
+* `executeOnKeys` processes entries mapped by a collection of keys, blocking until the processing is complete and the results are returned.
+* `submitToKey` processes an entry mapped by a key and provides a way to register a callback to receive notifications about the result of the entry processing.
+* `executeOnEntries` processes all entries in a map, blocking until the processing is complete and the results are returned.
+* `executeOnEntries` process all entries in a map matching the provided predicate, blocking until the processing is complete and the results are returned.
 
-When using the `executeOnEntries` method, if the number of entries is high and you do not need the results, then returning null with the `process()` method is a good practice. This method is offered by the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface^]. By returning null, results of the processing is not stored in the map and thus out of memory errors are eliminated.
+When using the `executeOnEntries` method, if the number of entries is high and you do not need the results, then returning null with the `process()` method is a good practice. This method is offered by the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface^]. By returning null, results of the processing are not collected and thus out of memory errors are eliminated.
 
-If you want to execute a task on a single key, you can also use `executeOnKeyOwner` provided by link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IExecutorService.html#executeOnKeyOwner-java.lang.Runnable-java.lang.Object-[IExecutorService^]. However, in this case you need to perform a lock and serialization.
+If you do not need to read or modify the entry in any way but would like to execute a task on the member owning the entry with that key (i.e. the member is the partition owner for that key), you can also use `executeOnKeyOwner` provided by link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/IExecutorService.html#executeOnKeyOwner-java.lang.Runnable-java.lang.Object-[IExecutorService^]. You need to make sure that the runnable can be serialized (using any of the available serialization techniques in Hazelcast). The runnable will not receive the map entry key or value and is not running on the same thread as operations reading the map data so operations such as `map.get()` or `map.put()` will not be blocked.
 
-NOTE: Entry processors run via Operation Threads that are dedicated to specific partitions.  Therefore, with long running entry processor executions, other partition operations such as `map.put(key)` cannot be processed. With this in mind, it is a good practice to make your entry processor executions as quick as possible.
+NOTE: Entry processors run via operation threads that are dedicated to specific partitions. Therefore, with long running entry processor executions, other partition operations such as `map.put(key)` on some partitions can be blocked while partition operations on other partitions might run concurrently. With this in mind, it is a good practice to make your entry processor executions as quick as possible.
 
 ===== Respecting Locks on Single Keys
 
@@ -603,19 +603,18 @@ Therefore, if you want to to perform an entry processor execution on a single ke
 
 ===== Processing Backup Entries
 
-If your code modifies the data, then you should also provide a processor for backup entries. This is required to prevent the primary map entries from having different values than the backups because it causes the entry processor to be applied both on the primary and backup entries. The interface link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/EntryBackupProcessor.html[EntryBackupProcessor^] offers the method `processBackup` for this purpose.
+If your code modifies the data, then you will most likely need to modify backup entries as well. This should be done to prevent divergence of map values between copies of data in the cluster (the primary and backup replicas). In most cases, this is simple. By implementing the `EntryProcessor` interface and providing only the `process()` method, the same entry processor will be applied on all copies of the map entry.
 
-NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it at the run time due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually synchronizes those owner and backup partitions so you do not lose any data. When coding an `EntryBackupProcessor`, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
+If, however, you would like to run a custom processor on backup entries, you may provide the processor by overriding the `EntryProcessor#getBackupProcessor` method. The method should return an instance of an `EntryProcessor` which will be run on backup entries exclusively. As such, it may carry some state that was derived from running the entry processor on primary replicas.
+
+You may also return `null` from the `EntryProcessor#getBackupProcessor` method. This signifies that there is nothing to be done on the backup replicas which is most convenient when you are using the entry processor to read and not modify entries.
+
+NOTE: It is possible that an entry processor could see that a key exists though its backup processor may not find it due to an unsent backup of a previous operation, e.g., a previous put operation. In those situations, Hazelcast internally/eventually synchronizes those owner and backup partitions so you do not lose any data. When coding an backup entry processor, you should take that case into account, otherwise `NullPointerException` can be seen since `Map.Entry.getValue()` may return `null`.
 
 ==== Creating an Entry Processor
 
 The class `IncrementingEntryProcessor` creates an entry processor to process the map
-entries. It implements:
-
-* the map interfaces `EntryProcessor` and `EntryBackupProcessor`
-* `java.io.Serializable` interface
-* `EntryProcessor` methods `process` and `getBackupProcessor`
-* `EntryBackupProcessor` method `processBackup`.
+entries. It implements the `EntryProcessor` interface. The `process()` method will be called for both primary and backup entries.
 
 [source,java]
 ----
@@ -636,14 +635,6 @@ Map<Integer, Object> res = map.executeOnEntries( new IncrementingEntryProcessor(
 NOTE: You should explicitly call the `setValue` method of `Map.Entry` when modifying data in the entry processor. Otherwise, the entry processor is accepted as read-only.
 
 NOTE: An entry processor instance is not thread-safe. If you are storing a partition specific state between invocations, be sure to register this in a thread-local.  An entry processor instance can be used by multiple partition threads.
-
-==== Abstract Entry Processor
-
-You can use the `AbstractEntryProcessor` class when the same processing will be performed both on the primary and backup map entries, i.e., the same logic applies to them. If you use entry processor, you need to apply the same logic to the backup entries separately. The `AbstractEntryProcessor` class makes this primary/backup processing easier.
-
-You can use the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/map/AbstractEntryProcessor.html[AbstractEntryProcessor class^] to create your own abstract entry processor. The method `getBackupProcessor` in this class returns an `EntryBackupProcessor` instance. This means the same processing applies to both the primary and backup entries. If you want to apply the processing only upon the primary entries, make the `getBackupProcessor` method return null.
-
-NOTE: Beware of the null issue described above. Due to a yet unsent backup from a previous operation, an `EntryBackupProcessor` may temporarily receive `null` from `Map.Entry.getValue()` even though the value actually exists in the map. If you decide to use `AbstractEntryProcessor`, make sure your code logic is not sensitive to null values, or you may encounter `NullPointerException` during runtime.
 
 ==== Entry Processor Performance Optimizations
 
