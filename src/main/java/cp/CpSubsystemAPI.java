@@ -95,8 +95,8 @@ public class CpSubsystemAPI {
         {
         //tag::reset[]
         CPSubsystemManagementService managementService = cpSubsystem.getCPSubsystemManagementService();
-        CompletionStage<Void> future = managementService.reset();
-        future.toCompletableFuture().get();
+        //CompletionStage<Void> future = managementService.reset();
+        //future.toCompletableFuture().get();
         //end::reset[]
         }
 
