@@ -491,7 +491,7 @@ Also, `DefaultPermissionPolicy` which was consuming `ClusterPrincipal`
 and also reading the endpoint address from it works with the new
 `ClusterRolePrincipals` and `ClusterEndpointPrincipals` principal types.
 
-See the following table for the before/after sample implementations.
+See the following table for the before/after sample `IPermissionPolicy` implementations.
 
 [cols="1a"]
 |===
@@ -500,14 +500,31 @@ See the following table for the before/after sample implementations.
 
 [source,java]
 ----
-??? old code sample
+public PermissionCollection getPermissions(Subject subject, Class<? extends Permission> type) {
+    PermissionCollection collection = ...;
+    for (ClusterPrincipal principal : subject.getPrincipals(ClusterPrincipal.class)) {
+      String endpoint = principal.getEndpoint();
+      String principalName = principal.getPrincipal();
+      addPermissionsToPrincipal(collection, principalName, endpoint);
+    }
+    return collection;
+}
 ----
 
 | *_After IMDG 4.0_*
 
 [source,java]
 ----
-??? new code sample
+public PermissionCollection getPermissions(Subject subject, Class<? extends Permission> type) {
+    PermissionCollection collection = ...;
+    Set<ClusterEndpointPrincipal> endpointPrincipals = subject.getPrincipals(ClusterEndpointPrincipal.class);
+    String endpoint = endpointIterator.hasNext() ? endpointIterator.next().getName() : null;
+    for (ClusterRolePrincipal rolePrincipal : subject.getPrincipals(ClusterRolePrincipal.class)) {
+        String role = rolePrincipal.getName();
+        addPermissionsToPrincipal(collection, role, endpoint);
+    }
+    return collection;
+}
 ----
 |===
 
@@ -552,14 +569,70 @@ See the following table for the before/after sample implementations.
 
 [source,java]
 ----
-??? old code sample
+// Adds a single "foo" ClusterPrincipal to the JAAS Subject if credentials match.
+public class TestLoginModule extends ClusterLoginModule {
+
+    @Override
+    public boolean onLogin() throws LoginException {
+        UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
+        if ("foo".equals(usernamePasswordCredentials.getUsername())
+                && "bar".equals(usernamePasswordCredentials.getPassword())) {
+            // the "foo" principal is added
+            return true;
+        }
+        throw new FailedLoginException("Username or password doesn't match expected value.");
+    }
+
+    @Override
+    public boolean onCommit() {
+        return loginSucceeded;
+    }
+
+    @Override
+    protected boolean onAbort() {
+        return true;
+    }
+
+    @Override
+    protected boolean onLogout() {
+        return true;
+    }
+}
 ----
 
 | *_After IMDG 4.0_*
 
 [source,java]
 ----
-??? new code sample
+// Adds 3 principals to the JAAS Subject if credentials match:
+// ClusterIdentityPrincipal "foo", ClusterRolePrincipal "admin" and a ClusterEndpointPrincipal
+public class TestLoginModule extends ClusterLoginModule {
+
+    private String name;
+
+    @Override
+    public boolean onLogin() throws LoginException {
+        NameCallback ncb = new NameCallback("");
+        PasswordCallback pcb = new PasswordCallback("", false);
+        try {
+            callbackHandler.handle(new Callback[] { ncb, pcb });
+        } catch (IOException | UnsupportedCallbackException e) {
+            throw new LoginException("Unable to handle credentials");
+        }
+        name = credentials.getName();
+        if ("foo".equals(name)
+                && Arrays.equals("bar".toCharArray(), pcb.getPassword())) {
+            addRole("admin");
+            return true;
+        }
+        throw new FailedLoginException("Username or password doesn't match expected value.");
+    }
+
+    @Override
+    protected String getName() {
+        return name;
+    }
+}
 ----
 |===
 
@@ -600,14 +673,42 @@ See the following table for the before/after sample implementations.
 
 [source,java]
 ----
-??? old code sample
+// login module already gets a deserialized credentials object
+public boolean onLogin() throws LoginException {
+    if (credentials == null || !(credentials instanceof CustomCredentials)) {
+        throw new FailedLoginException("No valid CustomCredentials found");
+    }
+    CustomCredentials custom = (CustomCredentials) credentials;
+    if (!verify(custom.getJsonToken())) {
+      throw new FailedLoginException("JSON token is not valid.");
+    }
+    return true;
+}
 ----
 
 | *_After IMDG 4.0_*
 
 [source,java]
 ----
-??? new code sample
+// login module can ask for credentials, but it gets just a byte array "token"
+// wrapped in the SimpleTokenCredentials instance
+public boolean onLogin() throws LoginException {
+    CredentialsCallback cc = new CredentialsCallback();
+    try {
+        callbackHandler.handle(new Callback[] { cc });
+    } catch (IOException | UnsupportedCallbackException e) {
+        throw new FailedLoginException("Unable to retrieve credentials. " + e.getMessage());
+    }
+    Credentials creds = cc.getCredentials();
+    if (creds == null || !(creds instanceof TokenCredentials)) {
+        throw new FailedLoginException("No valid TokenCredentials found");
+    }
+    TokenCredentials tokenCreds = (TokenCredentials) creds;
+    if (!verify(new String(tokenCreds.getToken()))) {
+      throw new FailedLoginException("JSON token is not valid.");
+    }
+    return true;
+}
 ----
 |===
 
@@ -635,6 +736,9 @@ List of the supported ``Callback``s in Hazelcast IMDG 4.0:
 * `com.hazelcast.security.EndpointCallback` (allows retrieving the remote host address, it's a replacement for `Credentials.getEndpoint()` in Hazelcast IMDG 3.x)
 * `com.hazelcast.security.ConfigCallback` (allows retrieving member's `Config` object)
 * `com.hazelcast.security.SerializationServiceCallback` (provides access to Hazelcast `SerializationService`)
+* `com.hazelcast.security.ClusterNameCallback` (provides access to Hazelcast cluster name sent by the connecting party)
+
+====== Other changes ??
 
 See the following table for the before/after sample implementations.
 
