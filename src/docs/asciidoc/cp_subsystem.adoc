@@ -736,6 +736,11 @@ released upon failure of the holder `HazelcastInstance`. So there is a minor
 behavioral difference to the `j.u.c.Semaphore.release()` method.
 +
 JDK compatibility is disabled by default.
+* `initial-permits`: Number of permits to initialize the Semaphore.
+If a positive value is set, the Semaphore is initialized with the given number
+of permits.
++
+Default value is 0.
 
 **Declarative Configuration:**
 
@@ -753,6 +758,7 @@ JDK compatibility is disabled by default.
             <cp-semaphore>
                 <name>another-semaphore</name>
                 <jdk-compatible>false</jdk-compatible>
+                <initial-permits>5</initial-permits>
             </cp-semaphore>
         </semaphores>
     </cp-subsystem>
