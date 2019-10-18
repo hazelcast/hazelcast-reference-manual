@@ -1187,28 +1187,48 @@ public class Main {
 
 
 
-==== WAN Replication Changes
+==== WAN Replication Configuration Changes
 
-The previously known `wan-publisher` (or `WanPublisherConfig`) has been separated into
+Configuring WAN replication was previously problematic:
+
+- you needed to specify the fully qualified class name of the WAN implementation that should be used.
+In most cases, this was the built-in Hazelcast EE implementation.
+- there were various configuration options, some of which were present as java class instance fields
+or XML child nodes and attributes while others were present in a properties list. The issue with
+the property list is that there was no checking for typos, no documentation and no IDE help.
+- if you wanted to use a custom WAN publisher SPI implementation, some configuration options don't
+make sense as they are tied to our implementation (e.g. WAN queue size)
+- it was verbose
+
+The tag which was supposed to cover both cases - using the built-in Hazelcast EE implementation and a
+custom WAN replication implementation (`wan-publisher` or `WanPublisherConfig`) has been separated into
 two configuration elements/classes to be used for built-in and custom WAN publishers:
 
 * `batch-publisher` (declarative configuration) or `WanBatchReplicationPublisherConfig` (programmatic configuration)
 * `custom-publisher` (declarative configuration) or `CustomWanPublisherConfig` (programmatic configuration)
 
-With this change, the `wan-publisher` configuration element has been renamed as `batch-publisher`
-and `custom-publisher`, according to your publisher preference.
-See the following table for the before/after configuration examples.
+This means, if you're using the Hazelcast built-in WAN replication, the new configuration element
+is `batch-publisher` or `WanBatchReplicationPublisherConfig`.
+If you're using a custom WAN replication implementation, the new configuration element is
+`custom-publisher` or `CustomWanPublisherConfig`.
+
+Additionally, the group password was removed from the configuration and now only the cluster name is checked
+when connecting to the target cluster. This was done to align the behaviour with members forming a single
+cluster, where members with different passwords but with the same cluster name (previously group name)
+could form a cluster.
+
+See the following tables for the before/after configuration examples.
 
 [cols="1a,1a"]
 |===
 
 | *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-| The following was an example declarative configuration for `wan-publisher`:
+| The following was an example declarative configuration for a built-in `wan-publisher`:
 
 [source,xml,options="nowrap"]
 ----
-<wan-publisher group-name="nyc" publisher-id="nycPublisherId">
+<wan-publisher group-name="builtInPublisher" publisher-id="builtInPublisherId">
     <class-name>com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication</class-name>
     <queue-capacity>15000</queue-capacity>
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
@@ -1228,41 +1248,140 @@ See the following table for the before/after configuration examples.
 </wan-publisher>
 ----
 
+Or, in programmatic config:
+[source,java,options="nowrap"]
+----
+WanPublisherConfig publisherConfig = new WanPublisherConfig()
+        .setGroupName("builtInPublisher")
+        .setPublisherId("builtInPublisherId")
+        .setClassName("com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication")
+        .setQueueCapacity(15000)
+        .setQueueFullBehavior(WANQueueFullBehavior.DISCARD_AFTER_MUTATION)
+        .setInitialPublisherState(WanPublisherState.REPLICATING);
+publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckStrategy.NONE);
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("endpoints", "10.3.5.1:5701,10.3.5.2:5701");
+properties.put("batch.size", 1000);
+properties.put("batch.max.delay.millis", 2000);
+properties.put("response.timeout.millis", 60000);
+properties.put("ack.type", WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE.toString());
+properties.put("snapshot.enabled", false);
+properties.put("group.password", "nyc-pass");
+----
+
 | And the following is the equivalent of the above configuration after IMDG 4.0:
 
 [source,xml,options="nowrap"]
 ----
 <batch-publisher>
-            <cluster-name>nyc</cluster-name>
-            <publisher-id>nycPublisherId</publisher-id>
-            <batch-size>1000</batch-size>
-            <batch-max-delay-millis>2000</batch-max-delay-millis>
-            <response-timeout-millis>60000</response-timeout-millis>
-            <acknowledge-type>ACK_ON_OPERATION_COMPLETE</acknowledge-type>
-            <initial-publisher-state>REPLICATING</initial-publisher-state>
-            <snapshot-enabled>false</snapshot-enabled>
-            <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
-            <queue-capacity>10000</queue-capacity>
+    <cluster-name>builtInPublisher</cluster-name>
+    <publisher-id>builtInPublisherId</publisher-id>
+    <batch-size>1000</batch-size>
+    <batch-max-delay-millis>2000</batch-max-delay-millis>
+    <response-timeout-millis>60000</response-timeout-millis>
+    <acknowledge-type>ACK_ON_OPERATION_COMPLETE</acknowledge-type>
+    <initial-publisher-state>REPLICATING</initial-publisher-state>
+    <snapshot-enabled>false</snapshot-enabled>
+    <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
+    <queue-capacity>10000</queue-capacity>
     <target-endpoints>10.3.5.1:5701,10.3.5.2:5701</target-endpoints>
     <wan-sync>
         <consistency-check-strategy>NONE</consistency-check-strategy>
     </wan-sync>
 </batch-publisher>
 ----
+Or, in programmatic config:
+[source,java,options="nowrap"]
+----
+WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        .setClusterName("builtInPublisher")
+        .setPublisherId("builtInPublisherId")
+        .setClassName("com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication")
+        .setQueueCapacity(15000)
+        .setQueueFullBehavior(WanQueueFullBehavior.DISCARD_AFTER_MUTATION)
+        .setInitialPublisherState(WanPublisherState.REPLICATING)
+        .setTargetEndpoints("10.3.5.1:5701,10.3.5.2:5701")
+        .setBatchSize(1000)
+        .setBatchMaxDelayMillis(2000)
+        .setResponseTimeoutMillis(60000)
+        .setAcknowledgeType(WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE)
+        .setSnapshotEnabled(false);
+publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckStrategy.NONE);
+----
 |===
 
-Besides the above change, the following cleanups have been performed for
-the WAN replication:
+[cols="1a,1a"]
+|===
 
-* Removed the unused `removeBackup`, `addMapQueue`, `addCacheQueue` methods
-* Added the new family of `removeWanEvents` methods which should cover
-the existing cases
-* Renamed the `clearQueues` method as `removeWanEvents`
-* Removed the `WanReplicationEndpoint.collectReplicationData` method
-Introduced two methods for the same purpose which produce and accept any kind of
-WAN event container:
-** `prepareEventContainerReplicationData`
-** `processEventContainerReplicationData`
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+| The following was an example declarative configuration for a custom `wan-publisher`:
+
+[source,xml,options="nowrap"]
+----
+<wan-publisher group-name="customWanPublisherId">
+    <class-name>com.myCompany.MyImplementation</class-name>
+    <properties>
+        <property name="some.property">some-value</property>
+        <property name="some.other.property">some-other-value</property>
+    </properties>
+</wan-publisher>
+----
+Or, in programmatic config:
+[source,java,options="nowrap"]
+----
+WanPublisherConfig publisherConfig = new WanPublisherConfig()
+        .setGroupName("customWanPublisherId")
+        .setClassName("com.myCompany.MyImplementation");
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("some.property", "some-value");
+properties.put("some.other.property", "some-other-value");
+----
+
+| And the following is the equivalent of the above configuration after IMDG 4.0:
+
+[source,xml,options="nowrap"]
+----
+<custom-publisher>
+    <publisher-id>customPublisherId</publisher-id>
+    <class-name>com.myCompany.MyImplementation</class-name>
+    <properties>
+        <property name="some.property">some-value</property>
+        <property name="some.other.property">some-other-value</property>
+    </properties>
+</custom-publisher>
+----
+Or, in programmatic config:
+[source,java,options="nowrap"]
+----
+CustomWanPublisherConfig publisherConfig = new CustomWanPublisherConfig()
+        .setPublisherId("customWanPublisherId")
+        .setClassName("com.myCompany.MyImplementation");
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("some.property", "some-value");
+properties.put("some.other.property", "some-other-value");
+----
+|===
+
+
+
+==== WAN Replication SPI Changes
+
+In 3.x, the WAN publisher SPI allows the user to plug into the lifecycle of a map/cache entry
+and replicate the updates to another system. For example, you might implement replication to
+Kafka or some JMS queue or even write out map and cache event changes to a log on disk.
+The SPI was not very intuitive though:
+
+- is was not clear which interface needed to be implemented (`WanReplicationPublisher` vs `WanReplicationEndpoint`)
+- you had to implement different interfaces, depending on whether you were using the
+open-source or enterprise version of Hazelcast
+- there were cases of leaking internals which don't make sense for some custom implementations
+- there were unused methods in the public SPI
+
+In Hazelcast 4.0 we have provided a new and cleaner WAN publisher SPI. The user needs only to
+implement a single interface - `com.hazelcast.wan.WanReplicationPublisher`. This implementation can
+then be set in the WAN replication configuration and be used with both Hazelcast open-source and
+enterprise edition.
 
 ==== Predicate API Cleanups
 
