@@ -324,6 +324,47 @@ mapConfig.addAttributeConfig(attributeConfig);
 |===
 
 
+Also, some custom query attribute classes were previously abstract classes
+with one abstract method. They have been converted into functional interfaces:
+
+* `ValueCallback`
+* `ValueExtractor`
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java,options="nowrap"]
+----
+public static class PortableNameExtractor extends ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", new ValueCallback<Object>() {
+            @Override
+            public void onResult(Object value) {
+                collector.addObject(value);
+            }
+        });
+    }
+}
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+public static class PortableNameExtractor implements ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", (ValueCallback) value -> collector.addObject(value));
+    }
+}
+----
+|===
+
 ==== Removal of MapReduce
 
 MapReduce API has been removed, which was deprecated
@@ -748,73 +789,7 @@ List of the supported ``Callback``s in Hazelcast IMDG 4.0:
 * `com.hazelcast.security.SerializationServiceCallback` (provides access to Hazelcast `SerializationService`)
 * `com.hazelcast.security.ClusterNameCallback` (provides access to Hazelcast cluster name sent by the connecting party)
 
-See the following table for the before/after sample implementations.
 
-[cols="1a"]
-|===
-
-| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
-
-|
-
-[source,java,options="nowrap"]
-----
-Collection<String> keys = map.project(new Projection<Entry<String, Double>, String>() {
-    @Override
-    public String transform(Entry<String, Double> input) {
-        return input.getKey();
-    }
-});
-----
-
-|
-
-[source,java,options="nowrap"]
-----
-Collection<String> keys = map.project(Entry::getKey);
-----
-|===
-
-Also, some custom query attribute classes were previously abstract classes
-with one abstract method. They have been converted into functional interfaces:
-
-* `ValueCallback`
-* `ValueExtractor`
-
-[cols="1a,1a"]
-|===
-
-| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
-
-|
-
-[source,java,options="nowrap"]
-----
-public static class PortableNameExtractor extends ValueExtractor<ValueReader, Object> {
-    @Override
-    public void extract(ValueReader target, Object argument, ValueCollector collector) {
-        target.read("name", new ValueCallback<Object>() {
-            @Override
-            public void onResult(Object value) {
-                collector.addObject(value);
-            }
-        });
-    }
-}
-----
-
-|
-
-[source,java,options="nowrap"]
-----
-public static class PortableNameExtractor implements ValueExtractor<ValueReader, Object> {
-    @Override
-    public void extract(ValueReader target, Object argument, ValueCollector collector) {
-        target.read("name", (ValueCallback) value -> collector.addObject(value));
-    }
-}
-----
-|===
 
 ==== Renaming Quorum as Split Brain Protection
 
@@ -1041,34 +1016,39 @@ map.executeOnKey(key, new EntryProcessor<Object, Object, Object>() {
 
 ===== Functional and Serializable Interfaces
 
+Introduces interfaces with single abstract method which declares a
+checked exception. The interfaces are also `Serializable` and can be
+readily used when providing a lambda which is then serialized.
+
 The `Projection` class was an abstract interface for historical reasons.
 It has been turned into a functional interface so it's more lambda-friendly.
 
-[cols="1a,1a"]
+See the following table for the before/after sample implementations.
+
+[cols="1a"]
 |===
 
 | *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
 |
 
-[source,java]
+[source,java,options="nowrap"]
 ----
-??? old code sample
+Collection<String> keys = map.project(new Projection<Entry<String, Double>, String>() {
+    @Override
+    public String transform(Entry<String, Double> input) {
+        return input.getKey();
+    }
+});
 ----
 
 |
 
-[source,java]
+[source,java,options="nowrap"]
 ----
-??? new code sample
+Collection<String> keys = map.project(Entry::getKey);
 ----
 |===
-
-===== Functional and Serializable Interfaces
-
-Introduces interfaces with single abstract method which declares a
-checked exception. The interfaces are also `Serializable` and can be
-readily used when providing a lambda which is then serialized.
 
 ==== Expanding Nullable/Nonnull Annotations
 
