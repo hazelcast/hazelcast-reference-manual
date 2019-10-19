@@ -685,7 +685,7 @@ See the following table for the before/after sample implementations.
 ----
 // login module already gets a deserialized credentials object
 public boolean onLogin() throws LoginException {
-    if (credentials == null || !(credentials instanceof CustomCredentials)) {
+    if (credentials == null \|\| !(credentials instanceof CustomCredentials)) {
         throw new FailedLoginException("No valid CustomCredentials found");
     }
     CustomCredentials custom = (CustomCredentials) credentials;
@@ -710,7 +710,7 @@ public boolean onLogin() throws LoginException {
         throw new FailedLoginException("Unable to retrieve credentials. " + e.getMessage());
     }
     Credentials creds = cc.getCredentials();
-    if (creds == null || !(creds instanceof TokenCredentials)) {
+    if (creds == null \|\| !(creds instanceof TokenCredentials)) {
         throw new FailedLoginException("No valid TokenCredentials found");
     }
     TokenCredentials tokenCreds = (TokenCredentials) creds;
