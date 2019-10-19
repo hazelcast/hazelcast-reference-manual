@@ -324,6 +324,47 @@ mapConfig.addAttributeConfig(attributeConfig);
 |===
 
 
+Also, some custom query attribute classes were previously abstract classes
+with one abstract method. They have been converted into functional interfaces:
+
+* `ValueCallback`
+* `ValueExtractor`
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java,options="nowrap"]
+----
+public static class PortableNameExtractor extends ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", new ValueCallback<Object>() {
+            @Override
+            public void onResult(Object value) {
+                collector.addObject(value);
+            }
+        });
+    }
+}
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+public static class PortableNameExtractor implements ValueExtractor<ValueReader, Object> {
+    @Override
+    public void extract(ValueReader target, Object argument, ValueCollector collector) {
+        target.read("name", (ValueCallback) value -> collector.addObject(value));
+    }
+}
+----
+|===
+
 ==== Removal of MapReduce
 
 MapReduce API has been removed, which was deprecated
@@ -472,13 +513,11 @@ public class ClusterMigrationListener implements MigrationListener {
 ----
 |===
 
-==== Changes in the Security
+==== Changes in the Security Configurations
 
-===== Security configuration changes
+===== Replacing `group` by Simple Cluster Name Configuration
 
-====== Group configuration replaced by simple cluster name configuration
-
-Both the client and member configuration have the `GroupConfig` (or `<group>` in XML) replaced
+Both the client and member configurations have the `GroupConfig` (or `<group>` in XML) replaced
 by a simple  cluster name configuration. The password part from the `GroupConfig` which
 was already deprecated is removed now.
 
@@ -511,14 +550,13 @@ See the following table for the before/after sample configurations.
 ----
 |===
 
-====== Member authentication and identity configuration
+===== Member Authentication and Identity Configuration
 
-Hazelcast 4 replaces the `<member-credentials-factory>`, `<member-login-modules>` and
+Hazelcast IMDG 4.0 replaces the `<member-credentials-factory>`, `<member-login-modules>` and
 `<client-login-modules>` configuration by references to security realms.
-
-The Security Realms is a new abstraction in the security configuration of Hazelcast members.
-It define security configuration independently on the configuration
-part where the security will be used. The component requesting security just references
+The security realms is a new abstraction in the security configuration of Hazelcast members.
+It defines the security configuration independently on the configuration
+part where the security is used. The component requesting security just references
 the security realm name.
 
 See the following table for the before/after sample configurations.
@@ -586,12 +624,14 @@ See the following table for the before/after sample configurations.
 ----
 |===
 
-====== Client identity configuration
+===== Client Identity Configuration
 
-The `<credentials>` configuration is not supported anymore in the client security configuration.
-Existing `<credentials-factory>` configuration allows to fully replace the credentials as it is more flexible.
-There are also new `<username-password>` and `<token>` configuration elements
-which simplify the migration.
+The `<credentials>` configuration is not supported
+anymore in the client security configuration.
+Existing `<credentials-factory>` configuration allows
+to fully replace the credentials as it is more flexible.
+There are also new `<username-password>` and `<token>`
+configuration elements which simplify the migration.
 
 See the following table for the before/after sample configurations.
 
@@ -619,9 +659,9 @@ See the following table for the before/after sample configurations.
 ----
 |===
 
-===== JAAS Authentication Cleanups
+==== JAAS Authentication Cleanups
 
-====== Introducing New Principal Types
+===== Introducing New Principal Types
 
 The `ClusterPrincipal` class representing an authenticated user within the JAAS Subject
 has been replaced by three different principal types:
@@ -679,7 +719,7 @@ public PermissionCollection getPermissions(Subject subject, Class<? extends Perm
 ----
 |===
 
-====== Changes in ClusterLoginModule
+===== Changes in ClusterLoginModule
 
 `ClusterLoginModule` in Hazelcast IMDG 3.x contained four
 abstract methods to alter the behavior of `LoginModule`:
@@ -769,7 +809,7 @@ public class TestLoginModule extends ClusterLoginModule {
         PasswordCallback pcb = new PasswordCallback("", false);
         try {
             callbackHandler.handle(new Callback[] { ncb, pcb });
-        } catch (Exception e) {
+        } catch (IOException \| UnsupportedCallbackException e) {
             throw new LoginException("Unable to handle credentials");
         }
         name = credentials.getName();
@@ -789,7 +829,7 @@ public class TestLoginModule extends ClusterLoginModule {
 ----
 |===
 
-====== Changes in Credentials for Client Protocol
+===== Changes in Credentials for Client Protocol
 
 In Hazelcast IMDG 3.x, the custom credentials coming through
 the client protocol was always automatically deserialized. To
@@ -830,7 +870,7 @@ See the following table for the before/after sample implementations.
 ----
 // login module already gets a deserialized credentials object
 public boolean onLogin() throws LoginException {
-    if (credentials == null || !(credentials instanceof CustomCredentials)) {
+    if (credentials == null \|\| !(credentials instanceof CustomCredentials)) {
         throw new FailedLoginException("No valid CustomCredentials found");
     }
     CustomCredentials custom = (CustomCredentials) credentials;
@@ -855,7 +895,7 @@ public boolean onLogin() throws LoginException {
         throw new FailedLoginException("Unable to retrieve credentials. " + e.getMessage());
     }
     Credentials creds = cc.getCredentials();
-    if (creds == null || !(creds instanceof TokenCredentials)) {
+    if (creds == null \|\| !(creds instanceof TokenCredentials)) {
         throw new FailedLoginException("No valid TokenCredentials found");
     }
     TokenCredentials tokenCreds = (TokenCredentials) creds;
@@ -871,7 +911,7 @@ public boolean onLogin() throws LoginException {
 NOTE: `Credentials` serialization and deserialization in the member protocol
 has not been changed.
 
-====== Changes in JAAS Callbacks
+===== Changes in JAAS Callbacks
 
 In Hazelcast IMDG 3.x, the `CallbackHandler` implementation `ClusterCallbackHandler`
 was only able to work with Hazelcast's `CredentialsCallback`.
@@ -892,74 +932,6 @@ List of the supported ``Callback``s in Hazelcast IMDG 4.0:
 * `com.hazelcast.security.ConfigCallback` (allows retrieving member's `Config` object)
 * `com.hazelcast.security.SerializationServiceCallback` (provides access to Hazelcast `SerializationService`)
 * `com.hazelcast.security.ClusterNameCallback` (provides access to Hazelcast cluster name sent by the connecting party)
-
-See the following table for the before/after sample implementations.
-
-[cols="1a"]
-|===
-
-| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
-
-|
-
-[source,java,options="nowrap"]
-----
-Collection<String> keys = map.project(new Projection<Entry<String, Double>, String>() {
-    @Override
-    public String transform(Entry<String, Double> input) {
-        return input.getKey();
-    }
-});
-----
-
-|
-
-[source,java,options="nowrap"]
-----
-Collection<String> keys = map.project(Entry::getKey);
-----
-|===
-
-Also, some custom query attribute classes were previously abstract classes
-with one abstract method. They have been converted into functional interfaces:
-
-* `ValueCallback`
-* `ValueExtractor`
-
-[cols="1a,1a"]
-|===
-
-| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
-
-|
-
-[source,java,options="nowrap"]
-----
-public static class PortableNameExtractor extends ValueExtractor<ValueReader, Object> {
-    @Override
-    public void extract(ValueReader target, Object argument, ValueCollector collector) {
-        target.read("name", new ValueCallback<Object>() {
-            @Override
-            public void onResult(Object value) {
-                collector.addObject(value);
-            }
-        });
-    }
-}
-----
-
-|
-
-[source,java,options="nowrap"]
-----
-public static class PortableNameExtractor implements ValueExtractor<ValueReader, Object> {
-    @Override
-    public void extract(ValueReader target, Object argument, ValueCollector collector) {
-        target.read("name", (ValueCallback) value -> collector.addObject(value));
-    }
-}
-----
-|===
 
 ==== Renaming Quorum as Split Brain Protection
 
@@ -1004,7 +976,7 @@ See the following table for a before/after sample.
 
 |
 
-[source,xml]
+[source,xml,options="nowrap"]
 ----
 <hazelcast>
     ...
@@ -1186,8 +1158,14 @@ map.executeOnKey(key, new EntryProcessor<Object, Object, Object>() {
 
 ===== Functional and Serializable Interfaces
 
+Introduces interfaces with single abstract method which declares a
+checked exception. The interfaces are also `Serializable` and can be
+readily used when providing a lambda which is then serialized.
+
 The `Projection` class was an abstract interface for historical reasons.
 It has been turned into a functional interface so it's more lambda-friendly.
+
+See the following table for the before/after sample implementations.
 
 [cols="1a,1a"]
 |===
@@ -1196,24 +1174,23 @@ It has been turned into a functional interface so it's more lambda-friendly.
 
 |
 
-[source,java]
+[source,java,options="nowrap"]
 ----
-??? old code sample
+Collection<String> keys = map.project(new Projection<Entry<String, Double>, String>() {
+    @Override
+    public String transform(Entry<String, Double> input) {
+        return input.getKey();
+    }
+});
 ----
 
 |
 
-[source,java]
+[source,java,options="nowrap"]
 ----
-??? new code sample
+Collection<String> keys = map.project(Entry::getKey);
 ----
 |===
-
-===== Functional and Serializable Interfaces
-
-Introduces interfaces with single abstract method which declares a
-checked exception. The interfaces are also `Serializable` and can be
-readily used when providing a lambda which is then serialized.
 
 ==== Expanding Nullable/Nonnull Annotations
 
@@ -1332,28 +1309,48 @@ public class Main {
 
 
 
-==== WAN Replication Changes
+==== WAN Replication Configuration Changes
 
-The previously known `wan-publisher` (or `WanPublisherConfig`) has been separated into
+Previously, Configuring WAN replication was problematic:
+
+* You needed to specify the fully qualified class name of the WAN implementation that should be used.
+In most cases, this was the built-in Hazelcast IMDG Enterprise Edition (EE) implementation.
+* There were various configuration options, some of which were present as Java class instance fields
+or XML child nodes and attributes while others were present in a properties list. The issue with
+the property list is that there was no checking for typos, no documentation and no IDE help.
+* If you wanted to use a custom WAN publisher SPI implementation, some configuration options did not
+make sense as they were tied to our implementation, e.g., WAN queue size.
+* It was verbose.
+
+The tag which was supposed to cover both cases, using the built-in Hazelcast EE implementation and a
+custom WAN replication implementation (`wan-publisher` or `WanPublisherConfig`), has been separated into
 two configuration elements/classes to be used for built-in and custom WAN publishers:
 
 * `batch-publisher` (declarative configuration) or `WanBatchReplicationPublisherConfig` (programmatic configuration)
 * `custom-publisher` (declarative configuration) or `CustomWanPublisherConfig` (programmatic configuration)
 
-With this change, the `wan-publisher` configuration element has been renamed as `batch-publisher`
-and `custom-publisher`, according to your publisher preference.
-See the following table for the before/after configuration examples.
+This means, if you're using the Hazelcast built-in WAN replication, the new configuration element
+is `batch-publisher` or `WanBatchReplicationPublisherConfig`.
+If you're using a custom WAN replication implementation, the new configuration element is
+`custom-publisher` or `CustomWanPublisherConfig`.
+
+Additionally, the group password has been removed from the configuration and now only the cluster name is checked
+when connecting to the target cluster. This has been done to align the behavior with members forming a single
+cluster, where members with different passwords but with the same cluster name (previously group name)
+could form a cluster.
+
+See the following tables for the before/after configuration examples.
 
 [cols="1a,1a"]
 |===
 
 | *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-| The following was an example declarative configuration for `wan-publisher`:
+| The following was an example declarative configuration for a built-in `wan-publisher`:
 
 [source,xml,options="nowrap"]
 ----
-<wan-publisher group-name="nyc" publisher-id="nycPublisherId">
+<wan-publisher group-name="builtInPublisher" publisher-id="builtInPublisherId">
     <class-name>com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication</class-name>
     <queue-capacity>15000</queue-capacity>
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
@@ -1373,41 +1370,147 @@ See the following table for the before/after configuration examples.
 </wan-publisher>
 ----
 
+Or, in programmatic config:
+
+[source,java,options="nowrap"]
+----
+WanPublisherConfig publisherConfig = new WanPublisherConfig()
+        .setGroupName("builtInPublisher")
+        .setPublisherId("builtInPublisherId")
+        .setClassName("com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication")
+        .setQueueCapacity(15000)
+        .setQueueFullBehavior(WANQueueFullBehavior.DISCARD_AFTER_MUTATION)
+        .setInitialPublisherState(WanPublisherState.REPLICATING);
+publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckStrategy.NONE);
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("endpoints", "10.3.5.1:5701,10.3.5.2:5701");
+properties.put("batch.size", 1000);
+properties.put("batch.max.delay.millis", 2000);
+properties.put("response.timeout.millis", 60000);
+properties.put("ack.type", WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE.toString());
+properties.put("snapshot.enabled", false);
+properties.put("group.password", "nyc-pass");
+----
+
 | And the following is the equivalent of the above configuration after IMDG 4.0:
 
 [source,xml,options="nowrap"]
 ----
 <batch-publisher>
-            <cluster-name>nyc</cluster-name>
-            <publisher-id>nycPublisherId</publisher-id>
-            <batch-size>1000</batch-size>
-            <batch-max-delay-millis>2000</batch-max-delay-millis>
-            <response-timeout-millis>60000</response-timeout-millis>
-            <acknowledge-type>ACK_ON_OPERATION_COMPLETE</acknowledge-type>
-            <initial-publisher-state>REPLICATING</initial-publisher-state>
-            <snapshot-enabled>false</snapshot-enabled>
-            <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
-            <queue-capacity>10000</queue-capacity>
+    <cluster-name>builtInPublisher</cluster-name>
+    <publisher-id>builtInPublisherId</publisher-id>
+    <batch-size>1000</batch-size>
+    <batch-max-delay-millis>2000</batch-max-delay-millis>
+    <response-timeout-millis>60000</response-timeout-millis>
+    <acknowledge-type>ACK_ON_OPERATION_COMPLETE</acknowledge-type>
+    <initial-publisher-state>REPLICATING</initial-publisher-state>
+    <snapshot-enabled>false</snapshot-enabled>
+    <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
+    <queue-capacity>10000</queue-capacity>
     <target-endpoints>10.3.5.1:5701,10.3.5.2:5701</target-endpoints>
     <wan-sync>
         <consistency-check-strategy>NONE</consistency-check-strategy>
     </wan-sync>
 </batch-publisher>
 ----
+
+Or, in programmatic config:
+
+[source,java,options="nowrap"]
+----
+WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        .setClusterName("builtInPublisher")
+        .setPublisherId("builtInPublisherId")
+        .setClassName("com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication")
+        .setQueueCapacity(15000)
+        .setQueueFullBehavior(WanQueueFullBehavior.DISCARD_AFTER_MUTATION)
+        .setInitialPublisherState(WanPublisherState.REPLICATING)
+        .setTargetEndpoints("10.3.5.1:5701,10.3.5.2:5701")
+        .setBatchSize(1000)
+        .setBatchMaxDelayMillis(2000)
+        .setResponseTimeoutMillis(60000)
+        .setAcknowledgeType(WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE)
+        .setSnapshotEnabled(false);
+publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckStrategy.NONE);
+----
 |===
 
-Besides the above change, the following cleanups have been performed for
-the WAN replication:
+[cols="1a,1a"]
+|===
 
-* Removed the unused `removeBackup`, `addMapQueue`, `addCacheQueue` methods
-* Added the new family of `removeWanEvents` methods which should cover
-the existing cases
-* Renamed the `clearQueues` method as `removeWanEvents`
-* Removed the `WanReplicationEndpoint.collectReplicationData` method
-Introduced two methods for the same purpose which produce and accept any kind of
-WAN event container:
-** `prepareEventContainerReplicationData`
-** `processEventContainerReplicationData`
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+| The following was an example declarative configuration for a custom `wan-publisher`:
+
+[source,xml,options="nowrap"]
+----
+<wan-publisher group-name="customWanPublisherId">
+    <class-name>com.myCompany.MyImplementation</class-name>
+    <properties>
+        <property name="some.property">some-value</property>
+        <property name="some.other.property">some-other-value</property>
+    </properties>
+</wan-publisher>
+----
+
+Or, in programmatic config:
+
+[source,java,options="nowrap"]
+----
+WanPublisherConfig publisherConfig = new WanPublisherConfig()
+        .setGroupName("customWanPublisherId")
+        .setClassName("com.myCompany.MyImplementation");
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("some.property", "some-value");
+properties.put("some.other.property", "some-other-value");
+----
+
+| And the following is the equivalent of the above configuration after IMDG 4.0:
+
+[source,xml,options="nowrap"]
+----
+<custom-publisher>
+    <publisher-id>customPublisherId</publisher-id>
+    <class-name>com.myCompany.MyImplementation</class-name>
+    <properties>
+        <property name="some.property">some-value</property>
+        <property name="some.other.property">some-other-value</property>
+    </properties>
+</custom-publisher>
+----
+
+Or, in programmatic config:
+
+[source,java,options="nowrap"]
+----
+CustomWanPublisherConfig publisherConfig = new CustomWanPublisherConfig()
+        .setPublisherId("customWanPublisherId")
+        .setClassName("com.myCompany.MyImplementation");
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("some.property", "some-value");
+properties.put("some.other.property", "some-other-value");
+----
+|===
+
+
+
+==== WAN Replication SPI Changes
+
+In IMDG 3.x series, the WAN publisher SPI allowed you to plug into the lifecycle of a map/cache entry
+and replicate the updates to another system. For example, you might implement replication to
+Kafka or some JMS queue or even write out map and cache event changes to a log on disk.
+The SPI was not very intuitive though:
+
+* It was not clear which interface needed to be implemented (`WanReplicationPublisher` vs. `WanReplicationEndpoint`).
+* You had to implement different interfaces, depending on whether you were using Hazelcast IMDG
+Open Source or Enterprise edition.
+* There were cases of leaking internals which don't make sense for some custom implementations.
+* There were unused methods in the public SPI.
+
+In Hazelcast IMDG 4.0, we have provided a new and cleaner WAN publisher SPI. You only need to
+implement a single interface: `com.hazelcast.wan.WanReplicationPublisher`. This implementation can
+then be set in the WAN replication configuration and be used with both Hazelcast Open Source and
+Enterprise editions.
 
 ==== Predicate API Cleanups
 
