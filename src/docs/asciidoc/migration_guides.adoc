@@ -513,11 +513,155 @@ public class ClusterMigrationListener implements MigrationListener {
 ----
 |===
 
-==== Changes in the Security
+==== Changes in the Security Configurations
 
-===== JAAS Authentication Cleanups
+===== Replacing `group` by Simple Cluster Name Configuration
 
-====== Introducing New Principal Types
+Both the client and member configurations have the `GroupConfig` (or `<group>` in XML) replaced
+by a simple  cluster name configuration. The password part from the `GroupConfig` which
+was already deprecated is removed now.
+
+See the following table for the before/after sample configurations.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    <group>
+        <name>dev</name>
+        <password>dev-pass</password>
+    </group>
+</hazelcast>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    <cluster-name>dev</cluster-name>
+</hazelcast>
+----
+|===
+
+===== Member Authentication and Identity Configuration
+
+Hazelcast IMDG 4.0 replaces the `<member-credentials-factory>`, `<member-login-modules>` and
+`<client-login-modules>` configuration by references to security realms.
+The security realms is a new abstraction in the security configuration of Hazelcast members.
+It defines the security configuration independently on the configuration
+part where the security is used. The component requesting security just references
+the security realm name.
+
+See the following table for the before/after sample configurations.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,xml,options="nowrap"]
+----
+<security enabled="true">
+    <member-credentials-factory class-name="com.hazelcast.examples.MyCredentialsFactory">
+        <properties>
+            <property name="property">value</property>
+        </properties>
+    </member-credentials-factory>
+    <member-login-modules>
+        <login-module class-name="com.hazelcast.examples.MyRequiredLoginModule" usage="REQUIRED">
+            <properties>
+                <property name="property">value</property>
+            </properties>
+        </login-module>
+    </member-login-modules>
+    <client-login-modules>
+        <login-module class-name="com.hazelcast.examples.MyRequiredLoginModule" usage="REQUIRED">
+            <properties>
+                <property name="property">value</property>
+            </properties>
+        </login-module>
+    </client-login-modules>
+</security>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<security enabled="true">
+    <realms>
+        <realm name="realm1">
+            <authentication>
+                <jaas>
+                    <login-module class-name="com.hazelcast.examples.MyRequiredLoginModule" usage="REQUIRED">
+                        <properties>
+                            <property name="property">value</property>
+                        </properties>
+                    </login-module>
+                </jaas>
+            </authentication>
+            <identity>
+                <credentials-factory class-name="com.hazelcast.examples.MyCredentialsFactory">
+                    <properties>
+                        <property name="property">value</property>
+                    </properties>
+                </credentials-factory>
+            </identity>
+        </realm>
+    </realms>
+    <member-authentication realm="realm1"/>
+    <client-authentication realm="realm1"/>
+</security>
+----
+|===
+
+===== Client Identity Configuration
+
+The `<credentials>` configuration is not supported
+anymore in the client security configuration.
+Existing `<credentials-factory>` configuration allows
+to fully replace the credentials as it is more flexible.
+There are also new `<username-password>` and `<token>`
+configuration elements which simplify the migration.
+
+See the following table for the before/after sample configurations.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,xml,options="nowrap"]
+----
+<security>
+    <credentials>com.acme.security.JohnDoeCredentials</credentials>
+</security>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<security>
+    <username-password username="johndoe" password="s3crEt"/>
+</security>
+----
+|===
+
+==== JAAS Authentication Cleanups
+
+===== Introducing New Principal Types
 
 The `ClusterPrincipal` class representing an authenticated user within the JAAS Subject
 has been replaced by three different principal types:
@@ -575,7 +719,7 @@ public PermissionCollection getPermissions(Subject subject, Class<? extends Perm
 ----
 |===
 
-====== Changes in ClusterLoginModule
+===== Changes in ClusterLoginModule
 
 `ClusterLoginModule` in Hazelcast IMDG 3.x contained four
 abstract methods to alter the behavior of `LoginModule`:
@@ -665,7 +809,7 @@ public class TestLoginModule extends ClusterLoginModule {
         PasswordCallback pcb = new PasswordCallback("", false);
         try {
             callbackHandler.handle(new Callback[] { ncb, pcb });
-        } catch (IOException | UnsupportedCallbackException e) {
+        } catch (IOException \| UnsupportedCallbackException e) {
             throw new LoginException("Unable to handle credentials");
         }
         name = credentials.getName();
@@ -685,7 +829,7 @@ public class TestLoginModule extends ClusterLoginModule {
 ----
 |===
 
-====== Changes in Credentials for Client Protocol
+===== Changes in Credentials for Client Protocol
 
 In Hazelcast IMDG 3.x, the custom credentials coming through
 the client protocol was always automatically deserialized. To
@@ -767,7 +911,7 @@ public boolean onLogin() throws LoginException {
 NOTE: `Credentials` serialization and deserialization in the member protocol
 has not been changed.
 
-====== Changes in JAAS Callbacks
+===== Changes in JAAS Callbacks
 
 In Hazelcast IMDG 3.x, the `CallbackHandler` implementation `ClusterCallbackHandler`
 was only able to work with Hazelcast's `CredentialsCallback`.
@@ -788,8 +932,6 @@ List of the supported ``Callback``s in Hazelcast IMDG 4.0:
 * `com.hazelcast.security.ConfigCallback` (allows retrieving member's `Config` object)
 * `com.hazelcast.security.SerializationServiceCallback` (provides access to Hazelcast `SerializationService`)
 * `com.hazelcast.security.ClusterNameCallback` (provides access to Hazelcast cluster name sent by the connecting party)
-
-
 
 ==== Renaming Quorum as Split Brain Protection
 
