@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
+
+<!-- tag::realms[] -->
+    <security enabled="true">
+        <realms>
+            <realm name="realm1">
+                <authentication>
+                    <jaas>
+                        <login-module class-name="com.hazelcast.examples.MyRequiredLoginModule" usage="REQUIRED">
+                            <properties>
+                                <property name="property">value</property>
+                            </properties>
+                        </login-module>
+                    </jaas>
+                </authentication>
+                <identity>
+                    <credentials-factory class-name="com.hazelcast.examples.MyCredentialsFactory">
+                        <properties>
+                            <property name="property">value</property>
+                        </properties>
+                    </credentials-factory>
+                </identity>
+            </realm>
+        </realms>
+        <member-authentication realm="realm1"/>
+        <client-authentication realm="realm1"/>
+    </security>
+<!-- end::realms[] -->
+</hazelcast>
