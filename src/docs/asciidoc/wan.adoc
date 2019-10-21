@@ -81,118 +81,125 @@ New York cluster to target the London cluster:
 </hazelcast>
 ----
 
-The `wan-replication` element has the following configuration elements:
-- `name`: Name of your WAN replication scheme. This name is referenced in IMap or ICache
+The `wan-replication` configuration element has the following sub-elements
+and attributes:
+
+* `name`: Name of your WAN replication scheme. This name is referenced in IMap or ICache
 configuration when you add WAN Replication for these data structures (using the element
 `wan-replication-ref` in the configuration of IMap or ICache).
-- `batch-publisher`: WAN publisher using the built-in WAN replication implementation
-in the Hazelcast enterprise edition. Waits until a batch size is reached or a delay time is passed.
-- `custom-publisher`: Custom implementation of a WAN publisher implementing WanReplicationPublisher.
-- `consumer`: Config for processing WAN events received from a target cluster. You can configure
-certain behaviour when processing incoming WAN events  or even configure your own implementation
+* `batch-publisher`: WAN publisher which uses the built-in WAN replication implementation
+in the Hazelcast Enterprise Edition. It waits until a batch size is reached or a delay time is passed.
+* `custom-publisher`: Custom implementation of a WAN publisher implementing `WanReplicationPublisher`.
+* `consumer`: Configuration for processing the WAN events received from a target cluster. You can configure
+a certain behavior when processing the incoming WAN events  or even configure your own implementation
 for a WAN consumer. A custom WAN consumer allows you to define custom processing logic and is usually
 used in combination with a custom WAN publisher. A custom consumer is optional and you may simply
-omit defining it which will cause the default processing logic to be used.
+omit defining it which causes the default processing logic to be used.
 
 A single WAN replication scheme can contain multiple `batch-publisher` and `custom-publisher`
 WAN replication publishers.
 
 The `batch-publisher` element is used to configure the built-in WAN replication
-implementation in the Hazelcast enterprise edition.
+implementation in the Hazelcast Enterprise Edition.
 It defines how to connect to the target cluster and how WAN events are sent to a
-specific target endpoint. As mentioned above just before the configuration example,
-the target endpoints can be a different cluster defined by static IP's or discovered
+specific target endpoint. As mentioned above, just before the configuration example,
+the target endpoints can be a different cluster defined by static IPs or discovered
 using a cloud discovery mechanism.
 
-The `batch-publisher` element has the following configuration elements:
-- `cluster-name`: Sets the cluster name used as an endpoint cluster name for authentication
+The `batch-publisher` configuration element has the following sub-elements:
+* `cluster-name`: Sets the cluster name used as an endpoint cluster name for authentication
 on the target endpoint. If there is no separate publisher ID element defined, this cluster name
-will also be used as a WAN publisher ID. This ID is then used for identifying the publisher in a
+is also used as a WAN publisher ID. This ID is then used for identifying the publisher in a
 WAN replication scheme. It is mandatory to set this attribute.
-- `publisher-id`: Sets the publisher ID used for identifying the publisher in a
+* `publisher-id`: Sets the publisher ID used to identify the publisher in a
 WAN replication scheme. Setting this ID may be useful when the `wan-replication` element contains
 multiple WAN publishers and the cluster names are not unique for all of the WAN replication
 publishers in a single WAN replication scheme. It is optional to set this attribute. If this ID
 is not specified, the `cluster-name` is used as a publisher ID.
-- `batch-size`: Changes the maximum size of events that are sent to the target cluster
+* `batch-size`: Changes the maximum size of events that are sent to the target cluster
 in a single batch. The batch of events is not sent until this size is
 reached or enough time has elapsed. Its default value is 500. See the <<batch-size, Batch Size section>>.
-- `batch-max-delay-millis`: If the number of events generated does not reach the "batch-size", they
+* `batch-max-delay-millis`: If the number of events generated does not reach the `batch-size`, they
 are sent to the target cluster after a certain amount of time is passed. You can set this time in
 milliseconds using this element. Its default value is 1000 milliseconds.
 See the <<batch-maximum-delay, Batch Maximum Delay section>>.
-- `response-timeout-millis`: After a replication event batch is sent to the target cluster, the source
+* `response-timeout-millis`: After a replication event batch is sent to the target cluster, the source
 member waits for a confirmation that says the event has reached the target. If confirmation is not
 received for a period of `response-timeout-millis`, the event is resent to the target cluster.
 The default value is 60000 milliseconds. See the <<response-timeout, Response Timeout section>>.
-- `acknowledge-type`: Acknowledgment type for each target cluster when the events are replicated.
+* `acknowledge-type`: Acknowledgment type for each target cluster when the events are replicated.
 See the <<acknowledgment-types, Acknowledgment Types section>>.
-- `snapshot-enabled`: Sets if key-based coalescing is configured for this WAN publisher.
+* `snapshot-enabled`: Sets if key-based coalescing is configured for this WAN publisher.
 When enabled, only the latest event for a key is sent to target. Its default value is `false`.
-- `idle-max-park-ns`: Sets the maximum duration in nanoseconds that the WAN replication thread
-will be parked if there are no events to replicate.
-- `idle-min-park-ns`: Sets the minimum duration in nanoseconds that the WAN replication thread
-will be parked if there are no events to replicate.
-- `max-concurrent-invocations`: Sets the maximum number of WAN event batches being sent to the target
-cluster concurrently. Setting this element to anything less than 2 will only allow a
+* `idle-max-park-ns`: Sets the maximum duration in nanoseconds that the WAN replication thread
+is parked if there are no events to replicate.
+* `idle-min-park-ns`: Sets the minimum duration in nanoseconds that the WAN replication thread
+is parked if there are no events to replicate.
+* `max-concurrent-invocations`: Sets the maximum number of WAN event batches being sent to the target
+cluster concurrently. Setting this element to anything less than 2 only allows a
 single batch of events to be sent to each target endpoint and will
 maintain causality of events for a single partition.
-Setting this element to 2 or higher will allow multiple batches
++
+Setting this element to 2 or higher allows multiple batches
 of WAN events to be sent to each target endpoint. Since this allows
 reordering or batches due to network conditions, causality and ordering
 of events for a single partition is lost and batches for a single
 partition are now sent randomly to any available target endpoint.
++
 This, however, does present faster WAN replication for certain scenarios
 such as replicating immutable, independent map entries which are only
 added once and where ordering of when these entries are added is not
 necessary.
++
 Keep in mind that if you set this element to a value which is less than
 the target endpoint count, you will lose performance as not all target
-endpoints will be used at any point in time to process WAN event batches.
+endpoints are used at any point in time to process the WAN event batches.
 So, for instance, if you have a target cluster with 3 members (target
 endpoints) and you want to use this element, it makes sense to set it
 to a value higher than 3. Otherwise, you can simply disable it
 by setting it to less than 2 in which case WAN will use the
 default replication strategy and adapt to the target endpoint count
 while maintaining causality.
-- `queue-full-behavior`: Policy to be applied when WAN Replication event queues are full.
+* `queue-full-behavior`: Policy to be applied when the WAN Replication event queues are full.
 See the <<queue-full-behavior, Queue Full Behavior section>>.
-- `queue-capacity`: Size of the queue of events. Its default value is 10000. If you exceed this queue size,
+* `queue-capacity`: Size of the queue of events. Its default value is 10000. If you exceed this queue size,
 then the oldest, not yet replicated updates might get lost. Therefore, if you have a large rate of
-put/update/remove operations, you should increase queue capacity. See the <<queue-capacity, Queue Capacity section>>.
-- `target-endpoints`: IP addresses and ports of the cluster members for which the WAN replication is implemented.
+put/update/remove operations, you should increase the queue capacity. See the <<queue-capacity, Queue Capacity section>>.
+* `target-endpoints`: IP addresses and ports of the cluster members for which the WAN replication is implemented.
 It is enough to specify some of the member IP/ports available in the target cluster, i.e., you don’t need to
 provide the IP/ports of all members in there. WAN does not perform the discovery of other members in the target cluster;
 it only expects that the IP addresses you provide are available.
-- `wan-sync`: Configuration for the WAN sync mechanism.
-- `aws`: Configuration for discovery strategy for Amazon EC2 discovery plugin.
-- `gcp`: Configuration for discovery strategy for Google cloud platform discovery plugin.
-- `azure`: Configuration for discovery strategy for Microsoft Azure discovery plugin.
-- `kubernetes`: Configuration for discovery strategy for Kubernetes discovery plugin.
-- `eureka`: Configuration for discovery strategy for Eureka discovery plugin.
-- `discovery-strategies`: Set its `enabled` attribute to true for discovery in various cloud infrastructures.
+* `wan-sync`: Configuration for the WAN sync mechanism.
+* `aws`: Configuration for discovery strategy for Amazon EC2 discovery plugin.
+* `gcp`: Configuration for discovery strategy for Google cloud platform discovery plugin.
+* `azure`: Configuration for discovery strategy for Microsoft Azure discovery plugin.
+* `kubernetes`: Configuration for discovery strategy for Kubernetes discovery plugin.
+* `eureka`: Configuration for discovery strategy for Eureka discovery plugin.
+* `discovery-strategies`: Set its `enabled` attribute to true for discovery in various cloud infrastructures.
 You can define multiple discovery strategies using the `discovery-strategy` sub-element and its elements.
 
 The `custom-publisher` is used to configure a custom implementation of a WAN replication implementing
-WanReplicationPublisher. For example, you might implement replication to Kafka or some JMS queue or even
+`WanReplicationPublisher`. For example, you might implement replication to Kafka or some JMS queue or even
 write out map and cache event changes to a log on disk. It has the following sub-elements:
-- `class-name`: Mandatory config value defining the fully qualified class name of the
+
+* `class-name`: Mandatory configuration value defining the fully qualified class name of the
 WAN publisher implementation.
-- `publisher-id`: Mandatory config value for the publisher ID used for identifying the
-publisher in a WanReplicationConfig.
+* `publisher-id`: Mandatory configuration value for the publisher ID used for identifying the
+publisher in a `WanReplicationConfig`.
 
 The `consumer` is used to configure the processing of the WAN events received from a source cluster.
-You can configure certain behavior when processing the incoming WAN events or
+You can configure a certain behavior when processing the incoming WAN events or
 even configure your own implementation for a WAN consumer. A custom WAN consumer allows you to
 define a custom processing logic and is usually used in combination with a custom WAN publisher.
-A custom consumer is optional and you may simply omit defining it which will cause
+A custom consumer is optional and you may simply omit defining it which causes
 the default processing logic to be used. It has the following sub-elements:
-- `class-name`: Name of the class implementing a custom WAN consumer (`WanReplicationConsumer`).
+
+* `class-name`: Name of the class implementing a custom WAN consumer (`WanReplicationConsumer`).
 If you don't define a class name, the default processing logic for incoming WAN events is used.
-- `properties`: Properties for the custom WAN consumer.
+* `properties`: Properties for the custom WAN consumer.
 These properties are accessible when initializing the WAN consumer.
 You can define the host, username and password for the host, name of the queue to be polled by the consumer, etc.
-- `persist-wan-replicated-data`: When set to `true`, an incoming event over WAN replication can be
+* `persist-wan-replicated-data`: When set to `true`, an incoming event over WAN replication can be
 persisted to a database for example, otherwise it is not persisted. Default value is `true`.
 
 And the following is the equivalent programmatic configuration snippet:
@@ -203,7 +210,7 @@ include::{javasource}/wan/ExampleWANReplicationConfiguration.java[tag=wrc]
 ----
 
 Using this configuration, the cluster replicates to a cluster with the name "london".
-The "london" cluster should have similar configuration if you want to run in Active-Active mode.
+The "london" cluster should have a similar configuration if you want to run in Active-Active mode.
 
 You can achieve various WAN topologies using different configurations on different clusters. For instance,
 if the New York and London cluster configurations contain the `wan-replication` element and the Tokyo cluster
@@ -311,15 +318,17 @@ the WAN replication using the `aws` element. You may use either of these, but no
 
 See the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>>
 sections for the descriptions of above AWS configuration elements.
+
 The following are the definitions of additional configuration elements:
-- `discovery-period-seconds`: Sets the period in seconds in which WAN tries to discover new target
+
+* `discovery-period-seconds`: Sets the period in seconds in which WAN tries to discover new target
 endpoints and reestablish connections to failed endpoints.
-- `max-target-endpoints`: Returns the maximum number of endpoints that WAN will connect to when
-using a discovery mechanism to define endpoints. This element has no effect when static endpoint addresses
+* `max-target-endpoints`: Returns the maximum number of endpoints that WAN connects to when
+a discovery mechanism is used to define the endpoints. This element has no effect when static endpoint addresses
 are defined using `target-endpoints`. Default is `Integer.MAX_VALUE`.
-- `use-endpoint-private-address`: Sets whether the WAN connection manager should connect to the
+* `use-endpoint-private-address`: Sets whether the WAN connection manager should connect to the
 endpoint on the private address returned by the discovery SPI. By default this element is `false`
-which means the WAN connection manager will always use the public address.
+which means the WAN connection manager always uses the public address.
 
 You can also define the WAN publisher with discovery SPI using the programmatic configuration:
 
@@ -328,11 +337,12 @@ You can also define the WAN publisher with discovery SPI using the programmatic 
 include::{javasource}/wan/ExampleWANReplicationDiscoveryConfiguration.java[tag=wrdc]
 ----
 
-==== WAN batch publisher implementation
+[[wanbatchreplication-implementation]]
+==== WAN Batch Publisher Implementation
 
-Hazelcast enterprise edition offers the WAN batch publisher implementation for WAN replication.
+Hazelcast IMDG Enterprise Edition offers the WAN batch publisher implementation for WAN replication.
 
-As you see in the above configuration examples, this implementation is used simply by using
+As you see in the above configuration examples, this implementation is specified simply by using
 the `batch-publisher` element (in the declarative configuration) or the `WanBatchReplicationPublisherConfig`
 class (in the programmatic configuration) when defining a WAN replication publisher.
 
@@ -451,6 +461,7 @@ Cache configurations should be defined either declaratively (by XML) or programm
 source and target clusters.
 
 Hazelcast provides the following merge policies for ICache:
+
 * `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`: Incoming entry merges from the source cache to
 the target cache if it does not exist in the target cache.
 * `com.hazelcast.spi.merge.HigherHitsMergePolicy`: Incoming entry merges from the source cache to
