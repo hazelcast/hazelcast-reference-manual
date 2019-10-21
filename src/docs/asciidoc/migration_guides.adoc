@@ -2010,3 +2010,8 @@ See the <<executor-service, Executor Service section>>.
 Starting with this release, the default is **PER_NODE**.
 After upgrading, the `max-size` should be set according to this new default, if it is not changed.
 Otherwise, it is likely that `OutOfMemoryException` may be thrown.
+
+
+OpenSSL:
+If SSL is used and OpenSSL capabilities are detected and the Java version is less than 11 and no explicit SSLEngineFactory
+is configured, Hazelcast will default to OpenSSL.
