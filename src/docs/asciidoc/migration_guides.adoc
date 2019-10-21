@@ -2010,3 +2010,9 @@ See the <<executor-service, Executor Service section>>.
 Starting with this release, the default is **PER_NODE**.
 After upgrading, the `max-size` should be set according to this new default, if it is not changed.
 Otherwise, it is likely that `OutOfMemoryException` may be thrown.
+
+If there are 20 or more processors detected, the Member by default will start 4+4 IO threads (4 input and 4 output).
+This is done to increase out of the box performance on faster machines because often (especially the cache with
+caching situations) the performance is IO bound and having some extra cores available for IO can make a significant
+difference. If less than 20 cores are detected, 3+3 IO threads are used and the behavior remains the same as Hazelcast
+3.x.
