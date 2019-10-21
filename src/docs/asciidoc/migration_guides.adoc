@@ -1859,6 +1859,28 @@ should be used instead.
 Deprecated `getObjectId()` method is removed, `getObjectName()` should be used
 instead.
 
+==== Removal of Deprecated `EntryListener`-based Listener API in `IMap`
+
+The following set of deprecated `EntryListener`-based listener API methods was
+removed:
+
+* `addLocalEntryListener(EntryListener<K, V>)`
+* `addLocalEntryListener(EntryListener<K, V>, Predicate<K, V>, boolean)`
+* `addLocalEntryListener(EntryListener<K, V>, Predicate<K, V>, K, boolean)`
+* `addEntryListener(EntryListener<K, V>, boolean)`
+* `addEntryListener(EntryListener<K, V>, K, boolean)`
+
+The following `MapListener`-based methods should be used as replacements.
+
+* `addLocalEntryListener(MapListener)`
+* `addLocalEntryListener(MapListener, Predicate<K,V>, boolean)`
+* `addLocalEntryListener(MapListener, Predicate<K,V>, K, boolean)`
+* `addEntryListener(MapListener, boolean)`
+* `addEntryListener(MapListener, K, boolean)`
+
+`EntryListener`-based listeners are still supported by the newer
+`MapListener`-based API and declarative configuration.
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
