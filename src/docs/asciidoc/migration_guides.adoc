@@ -1770,6 +1770,45 @@ has been used in the older IMDG versions still can be used:
 <merge-policy batch-size="100">LatestAccessMergePolicy</merge-policy>
 ```
 
+==== AWS Configuration Changes
+
+AWS programmatic configuration is merged with a more universal configuration
+infrastructure common to all cloud providers. The declarative configuration
+remains unchanged.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java,options="nowrap"]
+----
+AwsConfig config = new AwsConfig();
+config.setSecretKey("my-secret-key") ;
+config.setRegion("my-region");
+config.setSecurityGroupName("my-security-group");
+config.setTagKey("my-tag-key");
+config.setTagValue("my-tag-value");
+...
+config.setEnabled(true);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+AwsConfig config = new AwsConfig();
+config.setProperty("secret-key", "my-secret-key") ;
+config.setProperty("region", "my-region");
+config.setProperty("security-group-name", "my-security-group-name");
+config.setProperty("tag-key", "my-tag-key");
+config.setProperty("tag-value", "my-tag-value");
+...
+config.setEnabled(true);
+----
+|===
 
 === Upgrading to Hazelcast IMDG 3.12.x
 
