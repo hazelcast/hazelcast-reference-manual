@@ -450,15 +450,15 @@ fails during the startup.
 (Hot Backups) are stored. See the <<hot-backup, Hot Backup section>> for
 more information.
 * `parallelism`: Level of parallelism in Hot Restart Persistence. There
-are this many IO threads, each writing in parallel to its own files.
-During the Hot Restart procedure, this many IO threads are reading the files
+are this many I/O threads, each writing in parallel to its own files.
+During the Hot Restart procedure, this many I/O threads are reading the files
 and this many rebuilder threads are rebuilding the Hot Restart metadata. The
 default value for this property is 1. This is a good default in most but not
-all cases. You should measure the raw IO throughput of your infrastructure and
+all cases. You should measure the raw I/O throughput of your infrastructure and
 test with different values of parallelism. In some cases such as dedicated
 hardware higher parallelism can yield more throughput of Hot Restart. In other
 cases such as running on EC2, it can yield diminishing returns - more thread
-scheduling, more contention on IO and less efficient garbage collection.
+scheduling, more contention on I/O and less efficient garbage collection.
 * `validation-timeout-seconds`: Validation timeout for the Hot Restart process
 when validating the cluster members expected to join and the partition table on the whole cluster.
 * `data-load-timeout-seconds`: Data load timeout for the Hot Restart process.
@@ -893,7 +893,7 @@ whenever possible because they provide big performance benefits and because
 the backups share disk usage.
 
 The performance benefit comes from the fact that Hot Restart file contents are
-not being duplicated (thus using disk and IO resources) but rather a new file name
+not being duplicated (thus using disk and I/O resources) but rather a new file name
 is created for the same contents on disk (another pointer to the same inode).
 Since all backups and stores share the same inode, disk usage drops.
 
