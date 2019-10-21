@@ -2010,3 +2010,7 @@ See the <<executor-service, Executor Service section>>.
 Starting with this release, the default is **PER_NODE**.
 After upgrading, the `max-size` should be set according to this new default, if it is not changed.
 Otherwise, it is likely that `OutOfMemoryException` may be thrown.
+
+A smart client will by default get 3+3 (3 input and 3 output) IO threads to speed up performance. In the past this was
+1+1; but with too few threads, the client IO can become a bottleneck. If SSL is enabled, then by default a smart client
+will make use of 3+3 IO threads; this was already the case with previous versions of Hazelcast.
