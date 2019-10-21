@@ -43,6 +43,25 @@ speed up the performance. Before Hazelcast IMDG 4.0, this was
 If TLS/SSL is enabled, then by default a smart client
 makes use of 3+3 I/O threads which was already the case with previous versions.
 
+There is a new performance feature in Hazelcast IMDG 4.0 called
+thread overcommit. By default, Hazelcast creates more
+threads than it has cores, e.g., on a 20 cores machine it creates 28 threads;
+20 threads for the partition operations
+and 4+4 threads for I/O. In case of a typical caching usage (get/put/set, etc.)
+having too many threads can cause a performance
+degradation due to increased context switching. So there is
+a new option called `hazelcast.operation.thread.overcommit`.
+If this property is set to true, i.e., `-Dhazelcast.operation.thread.overcommit=true`,
+which is the default, Hazelcast uses the old style thread
+configuration where there are more threads than cores. If set to false,
+the number of partition threads plus the I/O threads will be equal to the  core count.
+It depends on the environment if this gives a performance boost or not.
+In some environments it can give a significant boost
+and in some it will give a significant loss; it is best to benchmark
+for your specific situation. If you are doing lots of queries or other tasks
+which are CPU-bound, e.g aggregations, you probably want to have as many cores available to partition
+operations as possible.
+
 ==== Removing Deprecated Client Configurations
 
 The following methods of `ClientConfig` have been refactored:
