@@ -2170,3 +2170,17 @@ See the <<executor-service, Executor Service section>>.
 Starting with this release, the default is **PER_NODE**.
 After upgrading, the `max-size` should be set according to this new default, if it is not changed.
 Otherwise, it is likely that `OutOfMemoryException` may be thrown.
+
+A new performance feature in Hazelcast 4.0 is the write through optimization. This will help to reduce latency in case
+of single threaded usages. Normally when a request is made, the request is handed over the the IO system where an
+IO thread will take care of sending it over the wire. This is great for throughput, but in case of single threaded setups
+it adds to the latency and therefor it reduced throughput because threads need to be notified.
+
+In Hazelcast 4.0 we detect single threaded usage and will try to write through to the socket directly instead of handing
+it over to the IO thread; we call this the write through.  This technique is being applied on the client, but also on the server.
+We have something similar when responses are received; normally a response is processed by the response thread; but in case of
+single threaded usage, the response is processed on the IO thread so we can remove a thread notification and therefor get
+higher throughput.
+
+Both the write through and response through are enabled by default. If we detect that there are many threads active, the
+response and write through are disabled so it won't cause a performance degradation.
