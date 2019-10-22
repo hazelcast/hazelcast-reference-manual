@@ -1776,6 +1776,116 @@ has been used in the older IMDG versions still can be used:
 <merge-policy batch-size="100">LatestAccessMergePolicy</merge-policy>
 ```
 
+==== AWS Configuration Changes
+
+AWS programmatic configuration is merged with a more universal configuration
+infrastructure common to all cloud providers. The declarative configuration
+remains unchanged.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java,options="nowrap"]
+----
+AwsConfig config = new AwsConfig();
+config.setSecretKey("my-secret-key") ;
+config.setRegion("my-region");
+config.setSecurityGroupName("my-security-group");
+config.setTagKey("my-tag-key");
+config.setTagValue("my-tag-value");
+...
+config.setEnabled(true);
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+AwsConfig config = new AwsConfig();
+config.setProperty("secret-key", "my-secret-key") ;
+config.setProperty("region", "my-region");
+config.setProperty("security-group-name", "my-security-group-name");
+config.setProperty("tag-key", "my-tag-key");
+config.setProperty("tag-value", "my-tag-value");
+...
+config.setEnabled(true);
+----
+|===
+
+==== Undeprecation of Deprecated System Properties
+
+The following properties have proven to be useful in containerized environments
+and no longer deprecated:
+
+* `hazelcast.rest.enabled`
+* `hazelcast.memcache.enabled`
+* `hazelcast.http.healthcheck.enabled`
+
+==== Removal of Deprecations in `LoginModuleConfig`
+
+The following deprecated methods were removed:
+
+* `getImplementation()`, replaced by `getClassName()`.
+* `setImplementation(Object)`, replaced by `setClassName(String)`.
+
+In declarative configuration `class-name` property should be used instead.
+
+==== Removal of Deprecations in `MultiMapConfig`
+
+The following deprecated methods were removed:
+
+* `getSyncBackupCount()`, replaced by `getBackupCount()`.
+* `setSyncBackupCount(int)`, replaced by `setBackupCount(int)`.
+
+In declarative configuration `backup-count` property should be used instead.
+
+==== Removal of Deprecations in `PartitioningStrategyConfig`
+
+Misspelled `setPartitionStrategy(PartitioningStrategy)` is removed,
+`setPartitioningStrategy(PartitioningStrategy)` should be used instead.
+
+==== Removal of Deprecations in `ServiceConfig`
+
+The following deprecated methods were removed:
+
+* `getServiceImpl()`, replaced by `getImplementation()`.
+* `setServiceImpl(Object)`, replaced by `setImplementation(Object)`.
+
+==== Removal of Deprecations in `TransactionContext`
+
+Deprecated `getXaResource()` method is removed, `HazelcastInstance.getXAResource()`
+should be used instead.
+
+==== Removal of Deprecations in `DistributedObjectEvent`
+
+Deprecated `getObjectId()` method is removed, `getObjectName()` should be used
+instead.
+
+==== Removal of Deprecated `EntryListener`-based Listener API in `IMap`
+
+The following set of deprecated `EntryListener`-based listener API methods was
+removed:
+
+* `addLocalEntryListener(EntryListener<K, V>)`
+* `addLocalEntryListener(EntryListener<K, V>, Predicate<K, V>, boolean)`
+* `addLocalEntryListener(EntryListener<K, V>, Predicate<K, V>, K, boolean)`
+* `addEntryListener(EntryListener<K, V>, boolean)`
+* `addEntryListener(EntryListener<K, V>, K, boolean)`
+
+The following `MapListener`-based methods should be used as replacements.
+
+* `addLocalEntryListener(MapListener)`
+* `addLocalEntryListener(MapListener, Predicate<K,V>, boolean)`
+* `addLocalEntryListener(MapListener, Predicate<K,V>, K, boolean)`
+* `addEntryListener(MapListener, boolean)`
+* `addEntryListener(MapListener, K, boolean)`
+
+`EntryListener`-based listeners are still supported by the newer
+`MapListener`-based API and declarative configuration.
 
 === Upgrading to Hazelcast IMDG 3.12.x
 
