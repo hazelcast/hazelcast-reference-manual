@@ -62,9 +62,11 @@ for your specific situation. If you are doing lots of queries or other tasks
 which are CPU-bound, e.g aggregations, you probably want to have as many cores available to partition
 operations as possible.
 
+See the <<threading-model, Threading Model section>> for more information on Hazelcast IMDG's threading model.
+
 ==== Removing Deprecated Client Configurations
 
-The following methods of `ClientConfig` have been refactored:
+The following methods of link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/client/config/ClientConfig.html[ClientConfig^] have been refactored:
 
 * `addNearCacheConfig(String, NearCacheConfig)` -> `addNearCacheConfig(NearCacheConfig)`
 * `setSmartRouting(boolean)` -> `getNetworkConfig().setSmartRouting(boolean);`
@@ -82,7 +84,7 @@ The following methods of `ClientConfig` have been refactored:
 * `setSocketOptions()` -> `getNetworkConfig().setSocketOptions(SocketOptions);`
 * `getNetworkConfig().setAwsConfig(new ClientAwsConfig());` -> `getNetworkConfig().setAwsConfig(new AwsConfig());`
 
-Also the `ClientAwsConfig` class has been renamed as `AwsConfig`.
+Also the `ClientAwsConfig` class has been renamed as link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/client/config/AwsConfig.html[AwsConfig^].
 
 See the following table for the before/after configuration samples.
 
@@ -363,8 +365,8 @@ mapConfig.addAttributeConfig(attributeConfig);
 Also, some custom query attribute classes were previously abstract classes
 with one abstract method. They have been converted into functional interfaces:
 
-* `ValueCallback`
-* `ValueExtractor`
+* link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/query/extractor/ValueCallback.html[ValueCallback^]
+* link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/query/extractor/ValueExtractor.html[ValueExtractor^]
 
 [cols="1a,1a"]
 |===
@@ -472,8 +474,7 @@ migration, both for primary and backup replica migrations.
 This event includes the partition ID, replica index and
 migration progress statistics.
 
-Before IMDG 4.0, the following were the events listened by
-`MigrationListener`:
+Before IMDG 4.0, the following were the events listened by `MigrationListener`:
 
 * `migrationStarted`
 * `migrationCompleted`
@@ -549,6 +550,9 @@ public class ClusterMigrationListener implements MigrationListener {
 ----
 |===
 
+See the link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/partition/MigrationListener.html[MigrationListener^] Javadoc
+for a full insight.
+
 ==== Defaulting to OpenSSL
 
 Hazelcast IMDG defaults to use OpenSSL when:
@@ -561,9 +565,9 @@ Hazelcast IMDG defaults to use OpenSSL when:
 
 ===== Replacing `group` by Simple Cluster Name Configuration
 
-Both the client and member configurations have the `GroupConfig` (or `<group>` in XML) replaced
-by a simple  cluster name configuration. The password part from the `GroupConfig` which
-was already deprecated is removed now.
+The `GroupConfig` class has been removed. Both the client and member configurations have
+the `GroupConfig` (or `<group>` in XML) replaced by a simple  cluster name configuration.
+The password part from the `GroupConfig` which was already deprecated is removed now.
 
 See the following table for the before/after sample configurations.
 
@@ -571,6 +575,8 @@ See the following table for the before/after sample configurations.
 |===
 
 | *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+2+| Declarative Configuration 
 
 |
 
@@ -591,6 +597,30 @@ See the following table for the before/after sample configurations.
 <hazelcast>
     <cluster-name>dev</cluster-name>
 </hazelcast>
+----
+
+2+| Programmatic Configuration
+
+|
+
+[source,java,options="nowrap"]
+----
+Config configProd = new Config();
+configProd.getGroupConfig().setName( "production" );
+
+Config configDev = new Config();
+configDev.getGroupConfig().setName( "development" );
+----
+
+|
+
+[source,java,options="nowrap"]
+----
+Config configProd = new Config();
+configProd.setClusterName( "production" );
+
+Config configDev = new Config();
+configDev.setClusterName( "development" );
 ----
 |===
 
@@ -724,7 +754,7 @@ Also, `DefaultPermissionPolicy` which was consuming `ClusterPrincipal`
 and also reading the endpoint address from it works with the new
 `ClusterRolePrincipals` and `ClusterEndpointPrincipals` principal types.
 
-See the following table for the before/after sample `IPermissionPolicy` implementations.
+See the following table for the before/after sample link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/security/IPermissionPolicy.html[IPermissionPolicy^] implementations.
 
 [cols="1a,1a"]
 |===
@@ -1051,9 +1081,11 @@ See the following table for a before/after sample.
 ----
 |===
 
+See the <<split-brain-protection, Split-Brain Protection section>> for more information on network partitioning.
+
 ==== Renaming getID to getClassId in IdentifiedDataSerializable
 
-The `getId()` method of the `IdentifiedDataSerializable` interface
+The `getId()` method of the link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/nio/serialization/IdentifiedDataSerializable.html[IdentifiedDataSerializable^] interface
 is a method with a common name, meaning a naming conflict would happen frequently.
 For example, database entities also have a `getId()` method.
 Therefore, it has been renamed as `getClassId()`.
@@ -1095,42 +1127,14 @@ public interface IdentifiedDataSerializable extends DataSerializable {
 ----
 |===
 
-==== Renaming `group-name` as `cluster-name`
-
-The `group-name` configuration element has been renamed
-as `cluster-name` and `GroupConfig` interface was removed.
-
-See the following table showing before/after samples.
-
-[cols="1a,1a"]
-|===
-
-| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
-
-|
-
-[source,java,options="nowrap"]
-----
-Config config = new Config();
-config.getGroupConfig().setName( "production" );
-----
-
-|
-
-[source,java,options="nowrap"]
-----
-Config config = new Config();
-config.getClusterName( "production" );
-----
-|===
-
+See <<identifieddataserializable, here>> for more information on `IdentifiedDataSerializable`.
 
 ==== Introducing Lambda Friendly Interfaces
 
 ===== Entry Processor
 
 The `EntryBackupProcessor` interface has been removed in favor
-of `EntryProcessor` which now defines how the entries will be processed
+of link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor^] which now defines how the entries will be processed
 both on the primary and the backup replicas.
 
 Because of this, the `AbstractEntryProcessor` interface has been removed.
@@ -1206,7 +1210,7 @@ Introduces interfaces with single abstract method which declares a
 checked exception. The interfaces are also `Serializable` and can be
 readily used when providing a lambda which is then serialized.
 
-The `Projection` class was an abstract interface for historical reasons.
+The link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/projection/Projection.html[Projection^] class was an abstract interface for historical reasons.
 It has been turned into a functional interface so it's more lambda-friendly.
 
 See the following table for the before/after sample implementations.
@@ -1268,7 +1272,7 @@ introduced to enable reactive programming style. `ICompletableFuture` was
 intended as a temporary, JDK 6 compatible replacement for `java.util.concurrent.CompletableFuture`
 that was introduced in Java 8. Since Hazelcast 4.0 requires Java 8, the user-facing
 asynchronous Hazelcast API methods now have their return type changed from
-`ICompletableFuture` to Java 8's `java.util.concurrent.CompletionStage`.
+`ICompletableFuture` to Java 8's link:https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletionStage.html[java.util.concurrent.CompletionStage^].
 
 Dependent computation stages registered using default async methods which do not
 accept an explicit `Executor` argument (such as `thenAcceptAsync`, `whenCompleteAsync` etc)
@@ -1536,7 +1540,7 @@ properties.put("some.other.property", "some-other-value");
 ----
 |===
 
-
+See the <<wan-replication, here>> for more information on WAN Replication.
 
 ==== WAN Replication SPI Changes
 
@@ -1585,6 +1589,8 @@ the `com.hazelcast.query.impl.predicate` package.
 
 Consequently, the public Predicate API now provides only interfaces (`Predicate`,
 `PagingPredicate` and `PartitionPredicate`) with no dependencies on any internal APIs.
+
+See the <<distributed-query, Distributed Query chapter>> for more information on predicates.
 
 ==== Changing the UUID String Type to UUID
 
@@ -1656,7 +1662,7 @@ Differently from Hazelcast IMDG 3.12, _CP Subsystem_ received
 an _unsafe_ operation mode in IMDG 4.0 which provides weaker
 consistency guarantees similar to former implementations in Hazelcast IMDG 3.x series.
 
-For more information see the <<cp-subsystem, CP Subsystem section>>.
+For more information, see the <<cp-subsystem, CP Subsystem section>>.
 
 See the following table for the before/after samples.
 
