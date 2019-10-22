@@ -19,6 +19,14 @@ in the `hazelcast-client` module have been moved to `hazelcast`.
 * Also the `com.hazelcast.client` Java module is not used anymore. All classes
 are now available within the `com.hazelcast.core` module.
 
+==== Removal of User Defined Services
+
+Hazelcast IMDG's public SPI (Service Provider Interface) which was known as
+User Defined Service has been removed. It was not simple enough and
+backwards compatibility was broken. A new and clearly
+defined SPI may be developed in the future if there is enough interest.
+The removed SPI's classes will be kept to be used internally.
+
 ==== Changes in Client Connection Retry Mechanism
 
 * The `connection-attempt-period` and `connection-attempt-limit`
@@ -63,6 +71,32 @@ which are CPU-bound, e.g aggregations, you probably want to have as many cores a
 operations as possible.
 
 See the <<threading-model, Threading Model section>> for more information on Hazelcast IMDG's threading model.
+
+==== Optimizing for Single Threaded Usages
+
+A write-through optimization has been performed. This helps to reduce the
+latency in case of single threaded usages.
+
+Normally, when a request is made, the request is handed over the
+I/O system where an I/O thread takes care of sending it over the wire.
+This is great for throughput, but in case of single threaded setups,
+it adds to the latency and therefore it reduces the throughput because threads
+need to be notified.
+
+With this release, Hazelcast IMDG detects the single threaded usage
+and tries to write through to the socket directly instead of handing
+it over to the I/O thread; this optimization is called "write-through".
+
+This technique is being applied on the client, but also on the member.
+We have something similar when responses are received: normally a
+response is processed by the response thread, but in case of
+a single threaded usage, the response is processed on the I/O thread
+so we can remove a thread notification and therefore get higher throughput.
+
+Both the write-through and response-through are enabled by default.
+If Hazelcast IMDG detects that there are many active threads,
+response- and write-through are disabled so it won't cause a performance
+degradation.
 
 ==== Removing Deprecated Client Configurations
 
@@ -1355,8 +1389,6 @@ public class Main {
 ----
 |===
 
-
-
 ==== WAN Replication Configuration Changes
 
 Previously, Configuring WAN replication was problematic:
@@ -1776,11 +1808,16 @@ has been used in the older IMDG versions still can be used:
 <merge-policy batch-size="100">LatestAccessMergePolicy</merge-policy>
 ```
 
-==== AWS Configuration Changes
+See <<configuring-merge-policies, here>> for more information on configuring merge policies.
 
-AWS programmatic configuration is merged with a more universal configuration
+==== Changes in AWS Configuration
+
+AWS programmatic configuration has been merged with a more universal configuration
 infrastructure common to all cloud providers. The declarative configuration
-remains unchanged.
+remains unchanged. See link:https://github.com/hazelcast/hazelcast-aws/blob/master/README.md#configuration[here^]
+for more information on configuring Hazelcast IMDG on AWS.
+
+See the following table for the before/after samples.
 
 [cols="1a,1a"]
 |===
@@ -1825,9 +1862,12 @@ and no longer deprecated:
 * `hazelcast.memcache.enabled`
 * `hazelcast.http.healthcheck.enabled`
 
+See the <<system-properties, System Properties appendix>> for more information on
+these properties.
+
 ==== Removal of Deprecations in `LoginModuleConfig`
 
-The following deprecated methods were removed:
+The following deprecated methods have been removed:
 
 * `getImplementation()`, replaced by `getClassName()`.
 * `setImplementation(Object)`, replaced by `setClassName(String)`.
@@ -1836,38 +1876,51 @@ In declarative configuration `class-name` property should be used instead.
 
 ==== Removal of Deprecations in `MultiMapConfig`
 
-The following deprecated methods were removed:
+The following deprecated methods have been removed:
 
 * `getSyncBackupCount()`, replaced by `getBackupCount()`.
 * `setSyncBackupCount(int)`, replaced by `setBackupCount(int)`.
 
 In declarative configuration `backup-count` property should be used instead.
 
+See <<configuring-multimap, here>> for more information on configuring MultiMap.
+
 ==== Removal of Deprecations in `PartitioningStrategyConfig`
 
-Misspelled `setPartitionStrategy(PartitioningStrategy)` is removed,
+Misspelled `setPartitionStrategy(PartitioningStrategy)` has been removed,
 `setPartitioningStrategy(PartitioningStrategy)` should be used instead.
+
+See <<partitioningstrategy, here>> for more information on configuring MultiMap.
 
 ==== Removal of Deprecations in `ServiceConfig`
 
-The following deprecated methods were removed:
+The following deprecated methods have been removed:
 
 * `getServiceImpl()`, replaced by `getImplementation()`.
 * `setServiceImpl(Object)`, replaced by `setImplementation(Object)`.
 
+See the link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/config/ServiceConfig.html[here^]
+for ``ServiceConfig``s Javadoc.
+
 ==== Removal of Deprecations in `TransactionContext`
 
-Deprecated `getXaResource()` method is removed, `HazelcastInstance.getXAResource()`
+Deprecated `getXaResource()` method has been removed. `HazelcastInstance.getXAResource()`
 should be used instead.
+
+See the link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/core/HazelcastInstance.html[here^]
+for ``HazelcastInstance``s Javadoc.
 
 ==== Removal of Deprecations in `DistributedObjectEvent`
 
-Deprecated `getObjectId()` method is removed, `getObjectName()` should be used
+Deprecated `getObjectId()` method has been removed, `getObjectName()` should be used
 instead.
+
+See the link:https://docs.hazelcast.org/docs/4.0-BETA-1/javadoc/com/hazelcast/core/DistributedObjectEvent.html[here^]
+for ``DistributedObjectEvents``s Javadoc.
 
 ==== Removal of Deprecated `EntryListener`-based Listener API in `IMap`
 
-The following set of deprecated `EntryListener`-based listener API methods was
+The following set of deprecated `EntryListener`-based listener API methods has been
 removed:
 
 * `addLocalEntryListener(EntryListener<K, V>)`
@@ -1876,7 +1929,7 @@ removed:
 * `addEntryListener(EntryListener<K, V>, boolean)`
 * `addEntryListener(EntryListener<K, V>, K, boolean)`
 
-The following `MapListener`-based methods should be used as replacements.
+The following `MapListener`-based methods should be used as replacements:
 
 * `addLocalEntryListener(MapListener)`
 * `addLocalEntryListener(MapListener, Predicate<K,V>, boolean)`
