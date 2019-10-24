@@ -58,18 +58,23 @@ The larger the sync window value, the less frequent a asynchronous backup is con
 |int
 |Defines cache invalidation event batch sending frequency in seconds.
 
-|`hazelcast.clientengine.query.thread.count`
-|
-|int
-| Number of threads to process query requests coming from the clients.
-Default count is the number of cores multiplied by 1.
-
 |`hazelcast.client.endpoint.remove.delay.seconds`
 | 60
 |int
 | Time, in seconds, after which the client connection is removed or the owner member of a client is removed from the cluster, in case of a client disconnection.
 Normally, the disconnection cleans all resources of a client, i.e., listeners are removed and locks/transactions are released.
 Using this property, the client has a window to connect back and prevent cleaning up its resources.
+
+|`hazelcast.client.protocol.max.message.bytes`
+| 1024
+|int
+| Client protocol message size limit (in bytes) for unverified connections. I.e. maximal length of the client authentication message.
+
+|`hazelcast.clientengine.query.thread.count`
+|
+|int
+| Number of threads to process query requests coming from the clients.
+Default count is the number of cores multiplied by 1.
 
 |`hazelcast.clientengine.thread.count`
 |
