@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
+
+    <security enabled="true">
+        <realms>
+            <!-- tag::jaas[] -->
+            <realm name="jaasRealm">
+                <authentication>
+                    <jaas>
+                        <login-module class-name="com.examples.LdapLoginModule" usage="SUFFICIENT">
+                            <properties>
+                                <property name="url">ldap://corp-ldap/</property>
+                            </properties>
+                        </login-module>
+                        <login-module class-name="com.examples.DatabaseLoginModule" usage="SUFFICIENT">
+                            <properties>
+                                <property name="type">ora18</property>
+                                <property name="host">corp-db</property>
+                                <property name="table">USERS</property>
+                            </properties>
+                        </login-module>
+                    </jaas>
+                </authentication>
+            </realm>
+            <!-- end::jaas[] -->
+
+            <!-- tag::ldaps[] -->
+            <realm name="ldapsRealm">
+                <authentication>
+                    <ldap>
+                        <url>ldaps://ldapserver.acme.com</url>
+                        <socket-factory-class-name>security.ldap.CustomSSLSocketFactory</socket-factory-class-name>
+                        <role-mapping-attribute>cn</role-mapping-attribute>
+                    </ldap>
+                </authentication>
+            </realm>
+            <!-- end::ldaps[] -->
+
+            <!-- tag::ldap-fallback[] -->
+            <realm name="ldapFallbackRealm">
+                <authentication>
+                    <ldap>
+                        <url>ldap://ldap-master.example.com ldap://ldap-backup.example.com</url>
+                    </ldap>
+                </authentication>
+            </realm>
+            <!-- end::ldap-fallback[] -->
+
+            <!-- tag::tls[] -->
+            <realm name="tlsRealm">
+                <authentication>
+                    <tls roleAttribute="cn" />
+                </authentication>
+            </realm>
+            <!-- end::tls[] -->
+
+            <!-- tag::token[] -->
+            <realm name="tokenRealm1">
+                <identity>
+                    <token>Hazelcast</token>
+                </identity>
+            </realm>
+            <realm name="tokenRealm2">
+                <identity>
+                    <token encoding="base64">SGF6ZWxjYXN0</token>
+                </identity>
+            </realm>
+            <!-- end::token[] -->
+
+
+            <!-- tag::credentialsFactoryRealm[] -->
+            <realm name="credentialsFactoryRealm">
+                <identity>
+                    <credentials-factory class-name="com.examples.TOTPCredentialsFactory">
+                        <properties>
+                            <property name="seed">3132333435363738393031323334353637383930</property>
+                        </properties>
+                    </credentials-factory>
+                </identity>
+            </realm>
+            <!-- end::credentialsFactoryRealm[] -->
+        </realms>
+    </security>
+</hazelcast>
