@@ -891,10 +891,9 @@ at com.hazelcast.core.Hazelcast.newHazelcastInstance(Hazelcast.java:58)
 ----
 
 [[security-realms]]
-
 === Security Realms
 
-Hazelcast 4 introduces a new security configuration - security realms.
+Hazelcast IMDG 4.0 introduces a new security configuration: security realms.
 Realms allow configuring JAAS authentication and/or own identity
 independently on the module which consumes this configuration.
 The realm is a named configuration and other modules just reference it by name.
@@ -904,171 +903,216 @@ The realm is a named configuration and other modules just reference it by name.
 include::{javatestresource}/hazelcast-security-realms.xml[tag=realms]
 ----
 
-==== Authentication configuration
+==== Authentication Configuration
 
 There are several types of authentication configuration available in a security realm.
-The realm can't have more than one authentication method specified.
+The realm cannot have more than one authentication method specified.
 
 Available authentication types:
 
-* `jaas` - allows defining JAAS login module stacks
-* `ldap` - verifies `PasswordCredentials` against an LDAP server
-* `tls` - verifies that the TLS mutual authentication was
-  used in the incoming connection and the peer's certificate chain is
-  available.
+* `jaas`: allows defining JAAS login module stacks
+* `ldap`: verifies `PasswordCredentials` against an LDAP server
+* `tls`: verifies that the TLS mutual authentication was used
+in the incoming connection and the peer's certificate chain is available.
 
-===== JAAS authentication type
+===== JAAS Authentication Type
 
-The `<jaas>` authentication configuration is the most flexible form of the authentication configuration, but it requires knowledge of JAAS login modules and related concepts. It allows using custom login modules and ordering them in a login module stack.
+The `<jaas>` authentication configuration is the most flexible
+form of the authentication configuration, but it requires knowledge
+of JAAS login modules and related concepts. It allows using
+custom login modules and ordering them in a login module stack.
 
-Sample configuration, which authenticates against an LDAP server or Database as a fallback:
+The following is a sample configuration which authenticates against an LDAP server or
+database as a fallback:
 
 [source,xml,options="nowrap"]
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=jaas]
 ----
 
-For more details look into <<jaas-authentication, JAAS authentication>> section.
+For more details, see the <<jaas-authentication, JAAS authentication section>>.
 
-===== LDAP authentication type
+===== LDAP Authentication Type
 
-LDAP servers are one of the most popular identity stores in companies. They can track information about organization structure, users, groups, servers and configurations.
+LDAP servers are one of the most popular identity stores in companies.
+They can track information about the organization structure,
+users, groups, servers and configurations.
 
-Hazelcast supports authentication and authorization against LDAP servers. The authentication verifies provided name and password. The authorization part allows to map roles to the authenticated user.
+Hazelcast supports authentication and authorization against LDAP servers.
+The authentication verifies the provided name and password.
+The authorization part allows to map roles to the authenticated user.
 
-The password verification during authentication is possible by 2 means:
+The password verification during the authentication is possible by:
 
-* making a new LDAP bind operation with given name and password
-* using a separate "admin connection" to verify provided password against an LDAP object attribute
+* making a new LDAP bind operation with the given name and password
+* using a separate "admin connection" to verify the provided password
+against an LDAP object attribute.
 
-The LDAP authentication allows also a role mapping. As there are more ways how roles can be mapped in the LDAP, Hazelcast provides several approaches to retrieve them:
+The LDAP authentication allows also a role mapping.
+As there are more ways how roles can be mapped in the LDAP,
+Hazelcast provides several approaches to retrieve them:
 
-* `attribute`: the role name is stored as an attribute in the object representing the identity;
-* `direct` mapping: the identity object contains an attribute with reference to role object(s);
-* `reverse` mapping: role objects having a reference to the identity object are searched.
+* `attribute`: The role name is stored as an attribute in the object representing the identity.
+* `direct` mapping: The identity object contains an attribute with reference to the role object(s).
+* `reverse` mapping: The role objects having a reference to the identity object are searched.
 
-The `direct` and `reverse` mapping modes will also allow a role search recursion.
+The `direct` and `reverse` mapping modes also allow a role search recursion.
 
 [cols="1,1,3"]
-.LDAP configuration options
+.LDAP Configuration Options
 |===
 | Option Name
 | Default Value
 | Description
 
-| url
+| `url`
 |
-| URL of the LDAP server. The value is configured as JNDI environment property `java.naming.provider.url`.
+| URL of the LDAP server. The value is configured as the JNDI environment
+property, i.e., `java.naming.provider.url`.
 
-| socket-factory-class-name
+| `socket-factory-class-name`
 |
-| Socket factory class name. The factory can be used for fine grained configuration of TLS protocol on top of LDAP protocol (i.e. `ldaps` scheme)
+| Socket factory class name. The factory can be used for fine grained
+configuration of the TLS protocol on top of the LDAP protocol, i.e., `ldaps` scheme.
 
-| parse-dn
+| `parse-dn`
 | false
-| If set to `true`, then it treats the value of `role-mapping-attribute` as a DN and extracts only `role-name-attribute` attribute values as role names. When the `parse-dn` option value is `false`, then the whole value of `role-mapping-attribute` is used as a role name.
+| If set to `true`, it treats the value of `role-mapping-attribute` as a DN and
+extracts only the `role-name-attribute` values as role names. If set to `false`,
+the whole value of `role-mapping-attribute` is used as a role name.
 
-This option is only used when the `role-mapping-mode` option has value `attribute`.
+This option is only used when the `role-mapping-mode` option has the value `attribute`.
 
-| role-context
+| `role-context`
 |
-| LDAP Context in which assigned roles are searched. (E.g. `ou=Roles,dc=hazelcast,dc=com`).
+| LDAP Context in which assigned roles are searched, e.g., `ou=Roles,dc=hazelcast,dc=com`.
 
-This option is only used when the `role-mapping-mode` option has value `reverse`.
+This option is only used when the `role-mapping-mode` option has the value `reverse`.
 
-| role-filter
+| `role-filter`
 | `([role-mapping-attribute]={memberDN})`
-| LDAP search string which usually contains placeholder `{memberDN}` to be replaced by provided login name. (E.g. `(member={memberDN})`)
+| LDAP search string which usually contains a placeholder `{memberDN}` to be
+replaced by the provided login name, e.g., `(member={memberDN})`.
 
-If the role search recursion is enabled (see `role-recursion-max-depth`), the `{memberDN}` is replaced by role DNs in the recurrent searches.
+If the role search recursion is enabled (see `role-recursion-max-depth`), the `{memberDN}`
+is replaced by role DNs in the recurrent searches.
 
-This option is only used when the `role-mapping-mode` option has value `reverse`.
+This option is only used when the `role-mapping-mode` option has the value `reverse`.
 
-| role-mapping-attribute
+| `role-mapping-attribute`
 |
-| Name of the LDAP attribute which contains either role name or role DN.
+| Name of the LDAP attribute which contains either the role name or role DN.
 
-This option is  used when the `role-mapping-mode` option has value `attribute` or `direct`. If the mapping mode is `reverse` then the value is used in `role-filter` default value.
+This option is  used when the `role-mapping-mode` option has the value `attribute` or `direct`.
+If the mapping mode is `reverse`, the value is used in `role-filter` default value.
 
-| role-mapping-mode
+| `role-mapping-mode`
 | `attribute`
-a| Role mapping mode - it can have one of the following values:
+a| Role mapping mode. It can have one of the following values:
 
-* `attribute` - user object in the LDAP contains directly role name in the given attribute. Role name can be parsed from a DN string when `parse-dn=true`. No additional LDAP query is done to find assigned roles.
-* `direct` - user object contains an attribute with DN(s) of assigned role(s). Role object(s) is/are loaded from the LDAP and the role name is retrieved from its attributes. Role search recursion can be enabled for this mode.
-* `reverse` - role objects are located by executing an LDAP search query with given `role-filter`. In this case, the role object usually contains attributes with DNs of assigned users. Role search recursion can be enabled for this mode.
+* `attribute`: The user object in the LDAP contains directly role name in the
+given attribute. Role name can be parsed from a DN string when `parse-dn=true`
+No additional LDAP query is done to find assigned roles.
+* `direct`: The user object contains an attribute with DN(s) of assigned
+role(s). Role object(s) is/are loaded from the LDAP and the role name is
+retrieved from its attributes. Role search recursion can be enabled for this mode.
+* `reverse`: The role objects are located by executing an LDAP search query
+with the given `role-filter`. In this case, the role object usually contains
+attributes with DNs of the assigned users. Role search recursion can be enabled for this mode.
 
-| role-name-attribute
+| `role-name-attribute`
 |
-| This option either refers to a name of LDAP attribute within role object which contains the role name in case of `direct` and `reverse` role mapping mode. Or it refers to the attribute name within X.500 name stored in `role-mapping-attribute` when `role-mapping-mode=attribute` and `parse-dn=true`.
+| This option may refer to a name of LDAP attribute within the role object which
+contains the role name in case of `direct` and `reverse` role mapping mode. It may also refer
+to the attribute name within X.500 name stored in `role-mapping-attribute` when
+`role-mapping-mode=attribute` and `parse-dn=true`.
 
-| role-recursion-max-depth
+| `role-recursion-max-depth`
 | 1
-| Sets max depth of role search recursion. The default value 1 means the role search recursion is disabled.
+| Sets the maximum depth of role search recursion. The default value 1 means
+the role search recursion is disabled.
 
 This option is only used when the `role-mapping-mode` option has value `direct` or `reverse`.
 
-| role-search-scope
+| `role-search-scope`
 | `subtree`
-a| LDAP search scope used for `role-filter` search. Allowed values are:
+a| LDAP search scope used for `role-filter` search. It can have one of the following values:
 
-* `subtree` - searches for objects in the given context and its subtree
-* `one-level` - searches just one-level under the given context
-* `object` - searches (or tests) just for the context object itself (if it matches the filter criteria)
+* `subtree`: Searches for objects in the given context and its subtree.
+* `one-level`: Searches just one-level under the given context.
+* `object`: Searches (or tests) just for the context object itself (if it matches the filter criteria).
 
-This option is only used when the `role-mapping-mode` option has value `reverse`.
+This option is only used when the `role-mapping-mode` option has the value `reverse`.
 
-| user-name-attribute
+| `user-name-attribute`
 | `uid`
-| LDAP Attribute name which value will be used as a name in `ClusterIdentityPrincipal` added to the JAAS Subject.
+| LDAP attribute name whose value is used as a name in
+`ClusterIdentityPrincipal` added to the JAAS Subject.
 
-| system-user-dn
+| `system-user-dn`
 |
-a| Admin account DN. If configured, then following is true:
+a| Admin account DN. If configured, then the following are true:
 
-* for the user and role object search queries is used an admin connection instead of the "user" one created by LDAP bind with provided credentials;
-* LDAP authentication doesn't expect full user DN to be provided as a login name. It rather expects names like `"jduke"` than `"uid=jduke,ou=Engineering,o=Hazelcast,dc=com"`;
-* the admin connection allows verifying provided user credentials against a value defined in `password-attribute` option.
+* For the user and role object, search queries are used an admin connection instead
+of the "user" one created by LDAP bind with provided credentials.
+* LDAP authentication doesn't expect the full user DN to be provided as a login name.
+It rather expects names like `"jduke"` than `"uid=jduke,ou=Engineering,o=Hazelcast,dc=com"`;
+* The admin connection allows verifying the provided user credentials against a
+value defined in the `password-attribute` option.
 
-| system-user-password
+| `system-user-password`
 |
-| Admin's password - (for `system-user-dn` account).
+| Admin's password (for `system-user-dn` account).
 
-| password-attribute
+| `password-attribute`
 |
-| Credentials verification is done by new LDAP binds by default. Nevertheless, the password can be stored in a non-default LDAP attribute and in this case use `password-attribute` to configure against which LDAP attribute (within the user object) is the provided password compared during the login. As a result, if the `password-attribute` option is provided, then the extra LDAP bind to verify credentials is not done and passwords are just compared within the Hazelcast code after the retrieving user object from LDAP server.
+| Credentials verification is done by the new LDAP binds by default.
+Nevertheless, the password can be stored in a non-default LDAP attribute,
+and in this case use `password-attribute` to configure against which
+LDAP attribute (within the user object) is the provided password compared
+during the login. As a result, if the `password-attribute` option is provided,
+then the extra LDAP bind to verify credentials is not done and passwords
+are just compared within the Hazelcast code after retrieving the user object from LDAP server.
 
-This option is only used when the `system-user-dn` option (i.e. admin connection) is configured.
+This option is only used when the `system-user-dn` option, i.e., admin connection, is configured.
 
-| user-context
+| `user-context`
 |
-| LDAP Context in which user objects are searched. (E.g. `ou=Users,dc=hazelcast,dc=com`)
+| LDAP context in which the user objects are searched, e.g., `ou=Users,dc=hazelcast,dc=com`.
 
-This option is only used when the `system-user-dn` option (i.e. admin connection) is configured.
+This option is only used when the `system-user-dn` option, i.e., admin connection, is configured.
 
-| user-filter
+| `user-filter`
 | `(uid={login})`
-| LDAP search string for retrieving user objects based on provided login name. It usually contains placeholder substring `{login}` which is replaced by the provided login name.
+| LDAP search string for retrieving the user objects based on the provided login name.
+It usually contains a placeholder substring `{login}` which is replaced by the provided login name.
 
-This option is only used when the `system-user-dn` option (i.e. admin connection) is configured.
+This option is only used when the `system-user-dn` option, i.e., admin connection, is configured.
 
-| user-search-scope
+| `user-search-scope`
 | `subtree`
-a| LDAP search scope used for `user-filter` search. Allowed values are:
+a| LDAP search scope used for `user-filter` search. It can have one of the following values:
 
-* `subtree` - searches for objects in the given context and its subtree
-* `one-level` - searches just one-level under the given context
-* `object` - searches (or tests) just for the context object itself (if it matches the filter criteria)
+* `subtree`: Searches for objects in the given context and its subtree.
+* `one-level`: Searches just one-level under the given context.
+* `object`: Searches (or tests) just for the context object itself (if it matches the filter criteria).
 
-This option is only used when the `system-user-dn` option (i.e. admin connection) is configured.
+This option is only used when the `system-user-dn` option, i.e., admin connection, is configured.
 
 |===
 
-====== TLS protected LDAP server connections
+====== TLS Protected LDAP Server Connections
 
-The LDAP authentication type supports TLS protected connections to LDAP servers - i.e. the `ldaps` protocol scheme. The TLS is handled on the Java runtime side (JNDI API and URL handlers).
+The LDAP authentication type supports TLS protected connections
+to LDAP servers, i.e., the `ldaps` protocol scheme. The TLS is
+handled on the Java runtime side (JNDI API and URL handlers).
 
-When using TLS, the LDAP provider will, by default, use the socket factory, `javax.net.ssl.SSLSocketFactory` for creating a TLS socket to communicate with the server, using the default JSSE configuration. By default, the server's certificate is validated against Java default CA certificate store and hostname in LDAPs URL is verified against the name(s) in the server certificate. The behavior can be controlled globally by using `javax.net.ssl.*` properties. Example:
+When using TLS, the LDAP provider will, by default, use the socket factory,
+`javax.net.ssl.SSLSocketFactory` for creating a TLS socket to communicate
+with the server, using the default JSSE configuration. By default, the server's
+certificate is validated against Java default CA certificate store and hostname
+in LDAPs URL is verified against the name(s) in the server certificate. The behavior
+can be controlled globally by using `javax.net.ssl.*` properties. Here is an example:
 
 [source,shell]
 ----
@@ -1079,67 +1123,80 @@ java -Djavax.net.ssl.trustStore=/opt/hazelcast.truststore \
   ...
 ----
 
-There can be also vendor or java version specific properties allowing more fine-grained control. E.g. disabling host name validation:
+There can be also properties specific to vendor or Java version allowing more
+fine-grained control. Here is an example on disabling host name validation:
 
 [source,shell]
 ----
 -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true
 ----
 
-When even more control is necessary, users can implement their own `SSLSocketFactory` and use its class name as the value in `ldap` authentication option `socket-factory-class-name`.
+When even more control is necessary, you can implement your own
+`SSLSocketFactory` and use its class name as the value in the `ldap`
+authentication option `socket-factory-class-name`.
 
-Example custom socket factory class:
+Here is an example custom socket factory class:
 
 [source,java]
 ----
 include::{javasource}/security/ldap/CustomSSLSocketFactory.java[]
 ----
 
-The authentication configuration could look like:
+The authentication configuration could look like as follows:
 
 [source,xml,options="nowrap"]
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=ldaps]
 ----
 
-The LDAP authentication is backed  by the JNDI API in Java. It has also the failover support. Users can configure multiple space-separated URLs in the `<url>` option:
+The LDAP authentication is backed by the JNDI API in Java.
+It has also the failover support. You can configure multiple space-separated
+URLs in the `<url>` option:
 
 [source,xml,options="nowrap"]
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=ldap-fallback]
 ----
 
-===== TLS authentication type
+===== TLS Authentication Type
 
-Hazelcast is able to protect network communication using TLS. The TLS mutual authentication is also supported. It means not only the server side identifies itself to a client side (member, client, REST client, ...), but also client side needs to prove its identity by using a TLS (X.509) certificate.
+Hazelcast is able to protect network communication using TLS.
+The TLS mutual authentication is also supported. It means not only the
+server side identifies itself to a client side (member, client, REST client, etc.),
+but also the client side needs to prove its identity by using a TLS (X.509) certificate.
 
-The `tls` authentication type verifies within the JAAS authentication that incoming connection already authenticated the client's TLS certificate. As a `ClusterIdentityPrincipal` is used the subject DN (distinguished name) from the client's TLS certificate.
+The `tls` authentication type verifies within the JAAS authentication
+that the incoming connection already authenticated the client's TLS certificate.
+A `ClusterIdentityPrincipal` uses the subject DN (distinguished name)
+from the client's TLS certificate.
 
-This authentication type is able to parse a role name from the client's certificate subject DN. The `<tls>` element has an attribute `roleAttribute` which specifies part of DN to be used as a role name.
+This authentication type is able to parse a role name from the client's certificate
+subject DN. The `<tls>` element has an attribute, `roleAttribute`, which specifies
+a part of DN to be used as a role name.
 
 [source,xml,options="nowrap"]
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=tls]
 ----
 
-This `tls` authentication  uses `cn` attribute from subject DN as the role name.
+This `tls` authentication  uses `cn` attribute from the subject DN as the role name.
 If the subject DN in the certificate is `cn=admin,ou=Devs,o=Hazelcast` for instance,
-then following `Principals` are added:
+then the following `Principals` are added:
 
 * `ClusterIdentityPrincipal: CN=admin,OU=Devs,O=Hazelcast`
 * `ClusterRolePrincipal: admin`
 * `ClusterEndpointPrincipal: [remote address of the connecting party]`
 
-==== Identity configuration
+==== Identity Configuration
 
 The Identity configuration allows defining own <<credentials, Credentials>>.
 These Credentials are used to authenticate to other systems.
 
-Available identity configuration types:
+Available identity configuration types are as follows:
 
-* `username-password` - defines a new `PasswordCredentials` object
-* `token` - defines a new `TokenCredentials` object
-* `credentials-factory` - configures factory class which creates `Credentials` objects
+* `username-password`: Defines a new `PasswordCredentials` object.
+* `token`: Defines a new `TokenCredentials` object.
+* `credentials-factory`: Configures the factory class which creates the `Credentials` objects.
 
 [[credentials]]
 ===== Credentials
@@ -1148,7 +1205,7 @@ Available identity configuration types:
 
 One of the key elements in Hazelcast security is the `Credentials` object, which
 represents evidence of the identity (member or client).
-The content of `Credentials` object is verified during authentication.
+The content of `Credentials` object is verified during the authentication.
 Credentials is an interface which extends `Serializable`.
 
 [source,java]
@@ -1158,13 +1215,13 @@ public interface Credentials extends Serializable {
 }
 ----
 
-There are 2 subtype interfaces which simplify `Credentials` usage.
-The subtypes reflect data provided in client authentication messages:
+There are two subtype interfaces which simplify the `Credentials` usage.
+The subtypes reflect data provided in the client authentication messages:
 
 * Name and password (`com.hazelcast.security.PasswordCredentials`)
 * Byte array token (`com.hazelcast.security.TokenCredentials`)
 
-The interfaces have following form:
+The interfaces have the following forms:
 
 [source,java]
 ----
@@ -1184,64 +1241,69 @@ public interface TokenCredentials extends Credentials {
 }
 ----
 
-The `Credentials` instance can be retrieved in login modules
+The `Credentials` instance can be retrieved in the login modules
 by handling a `CredentialsCallback`.
 
-Example:
+Here is an example:
 
 [source,java]
 ----
 include::{javatest}/security/CustomLoginModuleTest.java[tag=credentials-callback]
 ----
 
-===== Password credentials
+===== Password Credentials
 
-A `PasswordCredentials` implementation can be configured as a simple identity representation. It's configured by XML element `<username-password/>`:
+A `PasswordCredentials` implementation can be configured as a
+simple identity representation. It is configured by the `<username-password/>`
+XML configuration element as shown below:
 
 [source,xml]
 ----
 include::{javatestresource}/hazelcast-password-realm.xml[tag=password]
 ----
 
-The programmatic configuration:
+The equivalent programmatic configuration is shown below:
 
 [source,java]
 ----
 include::{javatest}/security/SecurityXmlTest.java[tag=password-realm]
 ----
 
-===== Token credentials
+===== Token Credentials
 
 `TokenCredentials` instances are also simply configurable for
-identity representation. The XML element `<token/>` allows using either plain
-ASCII tokens or Base64 encoded values. Its optional argument `encoding` can have
-value `base64` or `none` (default).
+identity representation. The `<token/>` XML configuration element
+allows using either plain ASCII tokens or Base64 encoded values.
+Its optional argument `encoding` can have either `base64` or `none` (default)
+as its value.
 
-Following 2 realms defines the same token value - bytes of the "Hazelcast" string:
+The following two realms define the same token value - bytes of the "Hazelcast" string:
 
 [source,xml]
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=token]
 ----
 
-The programmatic configuration:
+The equivalent programmatic configuration is as follows:
 
 [source,java]
 ----
 include::{javatest}/security/SecurityXmlTest.java[tag=token-realm]
 ----
 
-===== Credentials factory
+===== Credentials Factory
 
-The most flexible way to define the `Credentials` objects is using a custom credential factory. It is an implementation of `com.hazelcast.security.ICredentialsFactory`
+The most flexible way to define the `Credentials` objects
+is using a custom credential factory. It is an implementation
+of `com.hazelcast.security.ICredentialsFactory`
 interface. Its `newCredentials()` method is the one which provides credentials.
 
-The XML configuration uses `<credentials-factory>` element to define factory class.
+The XML configuration uses `<credentials-factory>` element to define the factory class.
 
-Behavior of credential factories can be controlled by specifying factory properties.
-The properties are provided in `init(Properties)` method.
+The behavior of credential factories can be controlled by specifying factory properties.
+The properties are provided in the `init(Properties)` method.
 
-Sample configuration:
+A sample configuration is shown below:
 
 [source,xml]
 ----
@@ -1254,15 +1316,18 @@ include::{javatestresource}/hazelcast-authentication-types.xml[tag=credentialsFa
 
 ==== JAAS Principals used in Hazelcast
 
-Hazelcast works with 3 JAAS link:https://docs.oracle.com/javase/8/docs/api/java/security/Principal.html[Principal^] implementations added to the link:https://docs.oracle.com/javase/8/docs/api/javax/security/auth/Subject.html[Subject^]:
+Hazelcast works with the following JAAS link:https://docs.oracle.com/javase/8/docs/api/java/security/Principal.html[Principal^]
+implementations added to the link:https://docs.oracle.com/javase/8/docs/api/javax/security/auth/Subject.html[Subject^]:
 
-* `ClusterIdentityPrincipal` - represents name of the authenticated party (usually one instance in the `Subject`)
-* `ClusterRolePrincipal` - represent role assigned to the authenticated party,
-  (usually zero or more instances in the `Subject`)
-* `ClusterEndpointPrincipal` - represents remote address of the authenticated party (usually one instance in the `Subject`)
+* `ClusterIdentityPrincipal`: Represents the name of authenticated party (usually
+one instance in the `Subject`).
+* `ClusterRolePrincipal`: Represents the role assigned to the authenticated party
+(usually zero or more instances in the `Subject`).
+* `ClusterEndpointPrincipal`: Represents the remote address of the authenticated
+party (usually one instance in the `Subject`).
 
-These implementations share a common abstract parent class `HazelcastPrincipal`
-so it's simple to find them in the JAAS `Subject`.
+These implementations share a common abstract parent class `HazelcastPrincipal`,
+so it is simple to find them in the JAAS `Subject`.
 
 [source,java]
 ----
@@ -1270,22 +1335,23 @@ Set<HazelcastPrincipal> hazelcastPrincipals =
             subject.getPrincipals(HazelcastPrincipal.class);
 ----
 
-==== Callbacks supported in login modules
+==== Callbacks Supported in Login Modules
 
-JAAS link:https://docs.oracle.com/javase/8/docs/api/javax/security/auth/callback/Callback.html[Callback^] instances are used for accessing different kinds of data from
-link:http://docs.oracle.com/javase/8/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule^] implementations. Hazelcast supports following `Callback` types:
+JAAS link:https://docs.oracle.com/javase/8/docs/api/javax/security/auth/callback/Callback.html[Callback^]
+instances are used for accessing different kinds of data from the
+link:http://docs.oracle.com/javase/8/docs/api/javax/security/auth/spi/LoginModule.html[LoginModule^]
+implementations. Hazelcast supports the following `Callback` types:
 
-* `javax.security.auth.callback.NameCallback` - retrieves a name from `Credentials` object
-* `javax.security.auth.callback.PasswordCallback` - retrieves a password from `PasswordCredentials` object
-* `com.hazelcast.security.CertificatesCallback` - retrieves TLS certificate chain  (if any) of the connecting party
-* `com.hazelcast.security.ClusterNameCallback` - retrieves cluster name used for authentication
-* `com.hazelcast.security.CredentialsCallback` - retrieves `Credentials` used for authentication
-* `com.hazelcast.security.ConfigCallback` - retrieves `Config` object of current Hazelcast member
-* `com.hazelcast.security.EndpointCallback` - retrieves remote address of the connecting party
-* `com.hazelcast.security.SerializationServiceCallback` - retrieves `SerializationService` of current Hazelcast member
+* `javax.security.auth.callback.NameCallback`: Retrieves a name from `Credentials` object.
+* `javax.security.auth.callback.PasswordCallback`: Retrieves a password from `PasswordCredentials` object.
+* `com.hazelcast.security.CertificatesCallback`: Retrieves the TLS certificate chain (if any) of the connecting party.
+* `com.hazelcast.security.ClusterNameCallback`: Retrieves the cluster name used for the authentication.
+* `com.hazelcast.security.CredentialsCallback`: Retrieves `Credentials` used for authentication.
+* `com.hazelcast.security.ConfigCallback`: Retrieves the `Config` object of current Hazelcast member.
+* `com.hazelcast.security.EndpointCallback`: Retrieves the remote address of the connecting party.
+* `com.hazelcast.security.SerializationServiceCallback`: Retrieves `SerializationService` of current Hazelcast member.
 
-
-The callbacks are usually used in `login()` method of a login module:
+The callbacks are usually used in the `login()` method of a login module:
 
 [source,java]
 ----
@@ -1297,14 +1363,20 @@ include::{javatest}/security/CustomLoginModuleTest.java[tag=callback-sample]
 [blue]*Hazelcast IMDG Enterprise Feature*
 
 Hazelcast has an abstract implementation of `LoginModule` that contains
-shared logic and cleanup operations. It automatically creates the `ClusterEndpointPrincipal` instance and it also provides method `addRole(String)` which simplifies adding `ClusterRolePrincipal` instances.
+shared logic and cleanup operations. It automatically creates the
+`ClusterEndpointPrincipal` instance and it also provides the `addRole(String)`
+method which simplifies adding the `ClusterRolePrincipal` instances.
 
-The `ClusterLoginModule` implements all methods from `LoginModule` interface and makes them final. It provides protected methods with empty implementations (e.g. `onCommit()`) to align the logic to user needs. The module comes also with 2 abstract methods:
+`ClusterLoginModule` implements all methods from the `LoginModule`
+interface and makes them final. It provides protected methods with empty
+implementations, e.g., `onCommit()`, to align the logic to user needs.
+The module comes also with the following abstract methods:
 
-* `getName()` used to retrieve name of `ClusterIdentityPrincipal`
-* `onLogin()` logic of the login method which needs to be provided
+* `getName()`: It is used to retrieve the name of `ClusterIdentityPrincipal`.
+* `onLogin()`: Logic of the login method which needs to be provided.
 
-Extending the `ClusterLoginModule` is recommended instead of implementing all required stuff from scratch.
+Extending the `ClusterLoginModule` is recommended instead of implementing
+all the required stuff from scratch.
 
 [source,java]
 ----
@@ -1331,7 +1403,10 @@ public abstract class ClusterLoginModule implements LoginModule {
 }
 ----
 
-The `ClusterLoginModule` supports a basic set of login module options, which allow skipping adding principals of a given type to the JAAS Subject. It allows for instance to have just one `ClusterIdentityPrincipal` in the `Subject` even if there are more login modules in the chain:
+`ClusterLoginModule` supports a basic set of login module options,
+which allow skipping adding principals of a given type to the JAAS Subject.
+It allows, for instance, to have just one `ClusterIdentityPrincipal` in
+the `Subject` even if there are more login modules in the chain:
 
 [cols="1,1,3"]
 .ClusterLoginModule options
@@ -1340,25 +1415,27 @@ The `ClusterLoginModule` supports a basic set of login module options, which all
 | Default Value
 | Description
 
-| skipIdentity
+| `skipIdentity`
 | `false`
-| Don't add any ClusterIdentityPrincipal to the Subject.
+| Don't add any `ClusterIdentityPrincipal` to the Subject.
 
-| skipRole
+| `skipRole`
 | `false`
-| Don't add any ClusterRolePrincipal to the Subject.
+| Don't add any `ClusterRolePrincipal` to the Subject.
 
-| skipEndpoint
+| `skipEndpoint`
 | `false`
-| Don't add any ClusterEndpointPrincipal to the Subject.
+| Don't add any `ClusterEndpointPrincipal` to the Subject.
 |===
 
 ==== Enterprise Integration
 
 Using the above API, you can implement a `LoginModule` that performs
-authentication against the Security System of your choice, such databases, directory services or some other corporate standard you might have. For example, you may wish to have
-your clients send an identification token in the `Credentials` object.
-This token can then be sent to your back-end security system via the
+authentication against the security system of your choice,
+such databases, directory services or some other corporate standard you might have.
+For example, you may wish to have your clients send an identification
+token in the `Credentials` object.
+This token can then be sent to your backend security system via the
 `LoginModule` that runs on the cluster side.
 
 Additionally, the same system may authenticate the user and also then
@@ -1374,7 +1451,8 @@ for further information.
 
 Hazelcast supports the standard Java Security (JAAS) based authentication
 between the cluster members. A <<security-realms, Security Realm>> can
-be referenced by `<member-authentication/>` element to define authentication between member and identity of the current member.
+be referenced by `<member-authentication/>` element to define authentication
+between the member and identity of the current member.
 
 
 [source,xml,options="nowrap"]
@@ -1409,11 +1487,12 @@ Hazelcast's Client security includes both authentication and authorization.
 ==== Authentication
 
 The authentication mechanism works in similar way as the cluster member authentication.
+It can be referenced by the `<member-authentication/>` element to
+define authentication between the member and identity of the current member.
 
-can
-be referenced by `<member-authentication/>` element to define authentication between member and identity of the current member.
-
-To implement client authentication, you reference a <<security-realms, Security Realm>> with `authentication` section defined in the `<client-authentication/>` element of a cluster member configuration.
+To implement the client authentication, you reference a <<security-realms, Security Realm>>
+with the `authentication` section defined in the `<client-authentication/>` element
+of a cluster member configuration.
 
 [source,xml,options="nowrap"]
 ----
@@ -1436,8 +1515,9 @@ To implement client authentication, you reference a <<security-realms, Security 
 </hazelcast>
 ----
 
-The identity of the connecting client is defined on client side.
-There are no security realms on clients, but just identity defined directly in security configuration:
+The identity of the connecting client is defined on the client side.
+There are no security realms on the clients, but just identity
+defined directly in the security configuration:
 
 
 [source,xml,options="nowrap"]
@@ -1451,7 +1531,7 @@ There are no security realms on clients, but just identity defined directly in s
 </hazelcast-client>
 ----
 
-On clients, You can use the same identity types as in security realms:
+On the clients, You can use the same identity types as in security realms:
 
 * `username-password`
 * `token`
