@@ -262,6 +262,13 @@ Similar to LIKE predicate but in a case-insensitive manner.
 
 * `name REGEX 'abc-.*'` (true for 'abc-123'; false for 'abx-123')
 
+NOTE: You can escape the `%` and `_` placeholder characters in your
+SQL queries with predicates using the
+backslash (`\`) character. The apostrophe (`'`) can be escaped with another
+apostrophe, i.e., `''`. If you use REGEX, you need to escape characters
+according to the normal Java escape syntax; see link:https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[here^]
+for the details.
+
 ===== Querying Entry Keys with Predicates
 
 You can use `__key` attribute to perform a predicated search for entry
