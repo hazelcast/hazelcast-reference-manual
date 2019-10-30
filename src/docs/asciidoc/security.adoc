@@ -1101,6 +1101,8 @@ This option is only used when the `system-user-dn` option, i.e., admin connectio
 
 |===
 
+Detailed logging for LDAP authentication can be enabled by configuring more verbose logger  level for `com.hazelcast.security` package as described in the <<security-debugging, Security Debugging>> section.
+
 ====== TLS Protected LDAP Server Connections
 
 The LDAP authentication type supports TLS protected connections
@@ -2010,7 +2012,24 @@ client.shutdown();
 hzLite.shutdown();
 ----
 
-=== Java Security Debugging
+
+[[security-debugging]]
+=== Security Debugging
+
+The biggest part of business logic related to security in Hazelcast is located in Java package `com.hazelcast.security`. Issues can be investigated by printing more debug info from this package.
+
+Example Log4J2 configuration:
+
+[source,xml]
+----
+<Configuration>
+    <Loggers>
+        <Logger name="com.hazelcast.security" level="ALL"/>
+    </Loggers>
+</Configuration>
+----
+
+==== Java Security Debugging
 
 Java is able to print the debug information about using the security components.
 During the security troubleshooting, it's often helpful to print the additional
