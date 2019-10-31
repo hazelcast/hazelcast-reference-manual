@@ -811,6 +811,77 @@ clientConfig.getConnectionStrategyConfig()
             .setReconnectMode(ClientConnectionStrategyConfig.ReconnectMode.ASYNC);
 ```
 
+===== Configuring Client Connection Retry
+
+When the client tries to connect to a cluster, it considers the <<setting-connection-attempt-limit, connection attempt limit>> and
+<<setting-connection-attempt-period, connection attempt period>>. When the client cannot connect to any member in the member list, it waits for `connection-attempt-period` between each attempt until the count of attempts reach `connection-attempt-limit`.
+
+With the connection retry configuration, you can fine tune this connection behavior. When this configuration is enabled,
+`connection-attempt-period` and `connection-attempt-limit` are ignored.
+This configuration is used when trying to establish the initial connection and any time when the connection to cluster is broken.
+
+Connection retry configuration is done using the `connection-retry` element when configuring declaratively or the object `ConnectionRetryConfig` when configuring programmatically. Below are the example configurations for each.
+
+Declarative Configuration:
+
+[source,xml]
+----
+<hazelcast-client>
+    ...
+    <connection-strategy async-start="false" reconnect-mode="ON">
+        <connection-retry enabled="true">
+            <initial-backoff-millis>1000</initial-backoff-millis>
+            <max-backoff-millis>60000</max-backoff-millis>
+            <multiplier>2</multiplier>
+            <fail-on-max-backoff>true</fail-on-max-backoff>
+            <jitter>0.5</jitter>
+        </connection-retry>
+    </connection-strategy>
+    ...
+</hazelcast-client>
+----
+
+Programmatic Configuration:
+
+[source,java]
+----
+ClientConfig config = new ClientConfig();
+ClientConnectionStrategyConfig connectionStrategyConfig = config.getConnectionStrategyConfig();
+ConnectionRetryConfig connectionRetryConfig = connectionStrategyConfig.getConnectionRetryConfig();
+connectionRetryConfig.setInitialBackoffMillis(1000)
+                     .setMaxBackoffMillis(60000)
+                     .setMultiplier(2)
+                     .setFailOnMaxBackoff(true)
+                     .setJitter(0.2)
+                     .setEnabled(true);
+
+----
+
+The following are configuration element descriptions:
+
+* `initial-backoff-millis`: Specifies how long to wait (backoff) after the first failure before retrying in milliseconds. Its default value is 1000 ms.
+* `max-backoff-millis`: Specifies the upper limit for the backoff in milliseconds. Its default value is 30000 ms.
+* `multiplier`: Factor to multiply the backoff after a failed retry. Its default value is 2.
+* `fail-on-max-backoff`: Specifies whether to fail when the `max-backoff-millis` has reached or continue waiting `max-backoff-millis` at each iteration. Its default value is false.
+* `jitter`: Specifies by how much to randomize backoffs. Its default value is 0.2.
+
+A pseudo-code is as follows:
+
+[source,plain]
+----
+ current_backoff_millis = INITIAL_BACKOFF_MILLIS
+ while (TryConnect(connectionTimeout)) != SUCCESS)
+    if (fail-on-max-backoff && current_backoff_millis >= MAX_BACKOFF_MILLIS) {
+        FAIL WITH EXCEPTION
+    }
+    randomizedSleepMillis = UniformRandom(-JITTER * current_backoff_millis, JITTER * current_backoff_millis)
+    Sleep(randomizedSleepMillis)
+    current_backoff = Min(current_backoff_millis * MULTIPLIER, MAX_BACKOFF_MILLIS)
+----
+
+Note that, `TryConnect` above tries to connect to any member that the client knows, and for each connection we have a connection timeout; see the <<setting-connection-timeout, Setting Connection Timeout section>>.
+
+
 ===== Other Configurations
 
 ====== Configuring Client Near Cache
