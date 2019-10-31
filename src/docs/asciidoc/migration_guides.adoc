@@ -459,6 +459,8 @@ word count sample.
 
 | *_Before IMDG 4.0 (MapReduce)_* | *_After IMDG 4.0 (Hazelcast Jet)_*
 
+2+| Word Count Sample
+
 |
 
 [source,java,options="nowrap"]
@@ -533,6 +535,8 @@ See the following table for the before/after samples.
 |===
 
 | *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+2+| Implementing a Migration Listener
 
 |
 
@@ -1425,14 +1429,16 @@ when connecting to the target cluster. This has been done to align the behavior 
 cluster, where members with different passwords but with the same cluster name (previously group name)
 could form a cluster.
 
-See the following tables for the before/after configuration examples.
+See the following table for the before/after built-in WAN publisher examples:
 
 [cols="1a,1a"]
 |===
 
 | *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-| The following was an example declarative configuration for a built-in `wan-publisher`:
+2+| Declarative Configuration
+
+|
 
 [source,xml,options="nowrap"]
 ----
@@ -1456,29 +1462,7 @@ See the following tables for the before/after configuration examples.
 </wan-publisher>
 ----
 
-Or, in programmatic config:
-
-[source,java,options="nowrap"]
-----
-WanPublisherConfig publisherConfig = new WanPublisherConfig()
-        .setGroupName("builtInPublisher")
-        .setPublisherId("builtInPublisherId")
-        .setClassName("com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication")
-        .setQueueCapacity(15000)
-        .setQueueFullBehavior(WANQueueFullBehavior.DISCARD_AFTER_MUTATION)
-        .setInitialPublisherState(WanPublisherState.REPLICATING);
-publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckStrategy.NONE);
-Map<String, Comparable> properties = publisherConfig.getProperties();
-properties.put("endpoints", "10.3.5.1:5701,10.3.5.2:5701");
-properties.put("batch.size", 1000);
-properties.put("batch.max.delay.millis", 2000);
-properties.put("response.timeout.millis", 60000);
-properties.put("ack.type", WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE.toString());
-properties.put("snapshot.enabled", false);
-properties.put("group.password", "nyc-pass");
-----
-
-| And the following is the equivalent of the above configuration after IMDG 4.0:
+| 
 
 [source,xml,options="nowrap"]
 ----
@@ -1500,7 +1484,31 @@ properties.put("group.password", "nyc-pass");
 </batch-publisher>
 ----
 
-Or, in programmatic config:
+2+| Programmatic Configuration
+
+|
+
+[source,java,options="nowrap"]
+----
+WanPublisherConfig publisherConfig = new WanPublisherConfig()
+        .setGroupName("builtInPublisher")
+        .setPublisherId("builtInPublisherId")
+        .setClassName("com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication")
+        .setQueueCapacity(15000)
+        .setQueueFullBehavior(WANQueueFullBehavior.DISCARD_AFTER_MUTATION)
+        .setInitialPublisherState(WanPublisherState.REPLICATING);
+publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckStrategy.NONE);
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("endpoints", "10.3.5.1:5701,10.3.5.2:5701");
+properties.put("batch.size", 1000);
+properties.put("batch.max.delay.millis", 2000);
+properties.put("response.timeout.millis", 60000);
+properties.put("ack.type", WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE.toString());
+properties.put("snapshot.enabled", false);
+properties.put("group.password", "nyc-pass");
+----
+
+|
 
 [source,java,options="nowrap"]
 ----
@@ -1521,12 +1529,17 @@ publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckS
 ----
 |===
 
+See the following table for the before/after custom WAN publisher examples:
+
+
 [cols="1a,1a"]
 |===
 
 | *_Before IMDG 4.0_* | *_After IMDG 4.0_*
 
-| The following was an example declarative configuration for a custom `wan-publisher`:
+2+| Declarative Configuration
+
+|
 
 [source,xml,options="nowrap"]
 ----
@@ -1539,19 +1552,7 @@ publisherConfig.getWanSyncConfig().setConsistencyCheckStrategy(ConsistencyCheckS
 </wan-publisher>
 ----
 
-Or, in programmatic config:
-
-[source,java,options="nowrap"]
-----
-WanPublisherConfig publisherConfig = new WanPublisherConfig()
-        .setGroupName("customWanPublisherId")
-        .setClassName("com.myCompany.MyImplementation");
-Map<String, Comparable> properties = publisherConfig.getProperties();
-properties.put("some.property", "some-value");
-properties.put("some.other.property", "some-other-value");
-----
-
-| And the following is the equivalent of the above configuration after IMDG 4.0:
+|
 
 [source,xml,options="nowrap"]
 ----
@@ -1565,7 +1566,21 @@ properties.put("some.other.property", "some-other-value");
 </custom-publisher>
 ----
 
-Or, in programmatic config:
+2+| Programmatic Configuration
+
+|
+
+[source,java,options="nowrap"]
+----
+WanPublisherConfig publisherConfig = new WanPublisherConfig()
+        .setGroupName("customWanPublisherId")
+        .setClassName("com.myCompany.MyImplementation");
+Map<String, Comparable> properties = publisherConfig.getProperties();
+properties.put("some.property", "some-value");
+properties.put("some.other.property", "some-other-value");
+----
+
+|
 
 [source,java,options="nowrap"]
 ----
