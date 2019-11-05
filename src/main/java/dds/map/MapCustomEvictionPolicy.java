@@ -1,4 +1,6 @@
 import com.hazelcast.config.Config;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.MaxSizePolicy;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryView;
 import com.hazelcast.core.Hazelcast;
@@ -10,7 +12,7 @@ import com.hazelcast.map.listener.EntryEvictedListener;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.hazelcast.config.MaxSizeConfig.MaxSizePolicy.PER_NODE;
+import static com.hazelcast.config.MaxSizePolicy.PER_NODE;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -23,8 +25,9 @@ public class MapCustomEvictionPolicy {
         Config config = new Config();
         config.getMapConfig("test")
                 .setMapEvictionPolicy(new OddEvictor())
-                .getMaxSizeConfig()
-                .setMaxSizePolicy(PER_NODE).setSize(10000);
+                .getEvictionConfig()
+                .setMaxSizePolicy(PER_NODE)
+                .setSize(10000);
 
         HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
         IMap<Integer, Integer> map = instance.getMap("test");

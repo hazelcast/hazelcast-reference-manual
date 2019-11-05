@@ -1,7 +1,7 @@
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
-import com.hazelcast.monitor.LocalExecutorStats;
+import com.hazelcast.executor.LocalExecutorStats;
 
 public class ExampleExecutorStats {
 
