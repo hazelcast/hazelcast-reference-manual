@@ -1965,6 +1965,24 @@ The following `MapListener`-based methods should be used as replacements:
 `EntryListener`-based listeners are still supported by the newer
 `MapListener`-based API and declarative configuration.
 
+==== New `IMap` Eviction Configuration:
+Old way:
+[source,xml,options="nowrap"]
+----
+<map name="default">
+ <eviction-policy>LRU</eviction-policy>
+ <max-size policy="PER_NODE">20</max-size>
+</map>
+----
+
+New way:
+[source,xml,options="nowrap"]
+----
+<map name="default">
+ <eviction eviction-policy="LRU" max-size-policy="PER_NODE" size="20"/>
+</map>
+----
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
