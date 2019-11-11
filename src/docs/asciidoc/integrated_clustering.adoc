@@ -165,11 +165,10 @@ Here is an example schema definition:
         </hz:network>
         <hz:map name="map"
             backup-count="2"
-            max-size="0"
-            eviction-percentage="30"
             read-backup-data="true"
-            eviction-policy="NONE"
-            merge-policy="com.hazelcast.spi.merge.PassThroughMergePolicy"/>
+            merge-policy="com.hazelcast.spi.merge.PassThroughMergePolicy">
+            <hz:eviction eviction-policy="NONE" size="0"/>
+        </hz:map>
     </hz:config>
 </hz:hazelcast>
 ----
@@ -273,8 +272,9 @@ For map-store, you should set either the *class-name* or the *implementation* at
             write-delay-seconds="0" />
 
         <hz:near-cache time-to-live-seconds="0"
-            max-idle-seconds="60" eviction-policy="LRU" max-size="5000"
-            invalidate-on-change="true" />
+            max-idle-seconds="60" invalidate-on-change="true" >
+            <hz:eviction eviction-policy="LRU" size="5000"/>
+        </hz:near-cache>
     </hz:map>
 
     <hz:map name="map2">

@@ -1944,10 +1944,9 @@ Let's recall the Java client's Near Cache configuration
 <hazelcast-client>
     ...
     <near-cache name="MENU">
-        <max-size>2000</max-size>
+        <eviction size="2000" eviction-policy="LFU"/>
         <time-to-live-seconds>0</time-to-live-seconds>
         <max-idle-seconds>0</max-idle-seconds>
-        <eviction-policy>LFU</eviction-policy>
         <invalidate-on-change>true</invalidate-on-change>
         <in-memory-format>OBJECT</in-memory-format>
     </near-cache>
@@ -1963,20 +1962,14 @@ by setting the in-memory format to NATIVE. See the following configuration examp
 <hazelcast-client>
     ...
     <near-cache>
+        <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
         <time-to-live-seconds>0</time-to-live-seconds>
         <max-idle-seconds>0</max-idle-seconds>
         <invalidate-on-change>true</invalidate-on-change>
         <in-memory-format>NATIVE</in-memory-format>
-        <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
     </near-cache>
 </hazelcast-client>
 ----
-
-Please notice that when the in-memory format is NATIVE, i.e., High-Density Memory Store is enabled,
-the configuration element `<eviction>` is used to specify the eviction behavior
-of your client's Near Cache. In this case, the elements `<max-size>` and
-`<eviction-policy>` used in the configuration of a Near Cache without
-High-Density Memory Store do not have any impact.
 
 The `<eviction>` element has the following attributes:
 
@@ -1990,7 +1983,7 @@ Available values are as follows:
 ** FREE_NATIVE_MEMORY_PERCENTAGE: Minimum free native memory percentage to trigger cleanup.
 * `eviction-policy`: Eviction policy configuration. Its default values is NONE.
 Available values are as follows:
-** NONE: No items are evicted and the `max-size` property is ignored.
+** NONE: No items are evicted and the `size` property is ignored.
 You still can combine it with time-to-live-seconds.
 ** LRU: Least Recently Used.
 ** LFU: Least Frequently Used.
