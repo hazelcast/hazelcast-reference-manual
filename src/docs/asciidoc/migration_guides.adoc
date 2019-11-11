@@ -1965,23 +1965,45 @@ The following `MapListener`-based methods should be used as replacements:
 `EntryListener`-based listeners are still supported by the newer
 `MapListener`-based API and declarative configuration.
 
-==== New `IMap` Eviction Configuration:
-Old way:
+==== Changing the `IMap` Eviction Configuration
+
+There has been a simplification and improvement in the
+way of configuring the eviction for a map.
+
+See the following table for the before/after samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
 [source,xml,options="nowrap"]
 ----
-<map name="default">
- <eviction-policy>LRU</eviction-policy>
- <max-size policy="PER_NODE">20</max-size>
-</map>
+<hazelcast>
+    ...
+    <map name="default">
+        <eviction-policy>LRU</eviction-policy>
+        <max-size policy="PER_NODE">20</max-size>
+    </map>
+    ...
+</hazelcast>
 ----
 
-New way:
+|
+
 [source,xml,options="nowrap"]
 ----
-<map name="default">
- <eviction eviction-policy="LRU" max-size-policy="PER_NODE" size="20"/>
-</map>
+<hazelcast>
+    ...
+    <map name="default">
+        <eviction eviction-policy="LRU" max-size-policy="PER_NODE" size="20"/>
+    </map>
+    ...
+</hazelcast>
 ----
+|===
 
 === Upgrading to Hazelcast IMDG 3.12.x
 
