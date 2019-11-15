@@ -1151,7 +1151,7 @@ that has threads and queues to perform internal operations such as handling resp
 
 This can be configured using the `executor-pool-size` parameter in your Java client's XML or YAML
 configuration file. Alternatively, you can use the programmatic configuration approach
-using the `setExecutorPoolSize(int)` method of your client configuration object (`ClientConfig`). 
+using the `setExecutorPoolSize(int)` method of your client configuration object (`ClientConfig`).
 This parameter specifies the size of the pool of threads which perform these operations laying in the executor's queue.
 If not configured, this parameter has the value of **5 x core size of the client**, i.e.,
 it is 20 for a machine that has 4 cores.
@@ -1822,73 +1822,6 @@ The table below lists the client configuration properties with their description
 |===
 |Property Name | Default Value | Type | Description
 
-|`hazelcast.client.allow.invocations.when.disconnected`
-|false
-|bool
-|When set to true, even the client's owner member is gone in the cluster
-(so its state known by the cluster is `CLIENT_DISCONNECTED`), the invocations from
-this client can go through the other available cluster members.
-The default behavior (false) disallows performing invocations in this state.
-
-| `hazelcast.client.cleanup.period.millis`
-| 10000
-| int
-| Period, in milliseconds, to check if a client is still part of the cluster.
-
-| `hazelcast.client.cleanup.timeout.millis`
-| 120000
-| int
-| Timeout duration to decide if a client is still part of the cluster.
-If a member cannot find any connection to a client in the cluster,
-it cleans up the local resources that are owned by that client.
-
-|`hazelcast.client.event.queue.capacity`
-|1000000
-|string
-|Default value of the capacity of executor that handles incoming event packets.
-
-|`hazelcast.client.event.thread.count`
-|5
-|string
-|Thread count for handling incoming event packets.
-
-|`hazelcast.client.heartbeat.interval`
-|10000
-|string
-|Frequency of heartbeat messages sent by the clients to members.
-
-|`hazelcast.client.heartbeat.timeout`
-|60000
-|string
-|Timeout for the heartbeat messages sent by the client to members.
-If no messages pass between client and member within the given time via
-this property in milliseconds, the connection will be closed.
-
-|`hazelcast.client.max.concurrent.invocations`
-|Integer.MAX_VALUE
-|string
-|Maximum allowed number of concurrent invocations. You can apply a constraint on
-the number of concurrent invocations in order to prevent the system from overloading.
-If the maximum number of concurrent invocations is exceeded and a new invocation comes in,
-Hazelcast throws `HazelcastOverloadException`.
-
-|`hazelcast.client.invocation.timeout.seconds`
-|120
-|string
-|Period, in seconds, to give up the invocation when a member in the member list is not reachable.
-
-|`hazelcast.client.shuffle.member.list`
-|true
-|string
-|The client shuffles the given member list to prevent all clients to connect
-to the same member when this property is `true`. When it is set to `false`, the client tries to connect to the members in the given order.
-
-|`hazelcast.compatibility.3.6.server`
-|false
-|bool
-|When this property is true, if the client cannot know the server version,
-it assumes that the server has the version 3.6.x.
-
 |`hazelcast.invalidation.max.tolerated.miss.count`
 |10
 |int
@@ -1900,6 +1833,137 @@ relevant cached data will be made unreachable.
 |int
 |Period, in seconds, for which the clients are scanned to compare generated
 invalidation events with the received ones from Near Cache.
+
+|`hazelcast.client.shuffle.member.list`
+|true
+|string
+|The client shuffles the given member list to prevent all clients to connect
+to the same member when this property is `true`. When it is set to `false`, the client tries to connect to the members in the given order.
+
+|`hazelcast.client.heartbeat.timeout`
+|60000
+|int
+|Timeout for the heartbeat messages sent by the client to members.
+If no messages pass between client and member within the given time via
+this property in milliseconds, the connection will be closed.
+
+|`hazelcast.client.heartbeat.interval`
+|5000
+|int
+|Frequency of heartbeat messages sent by the clients to members.
+
+|`hazelcast.client.event.thread.count`
+|5
+|int
+|Thread count for handling incoming event packets.
+
+|`hazelcast.client.event.queue.capacity`
+|1000000
+|int
+|Default value of the capacity of executor that handles incoming event packets.
+
+|`hazelcast.client.invocation.timeout.seconds`
+|1000
+|int
+|Period, in seconds, to give up the invocation when a member in the member list is not reachable.
+
+|`hazelcast.client.invocation.retry.pause.millis`
+|1000
+|int
+|Pause time between each retry cycle of an invocation in milliseconds.
+
+|`hazelcast.client.max.concurrent.invocations`
+|Integer.MAX_VALUE
+|int
+|Maximum allowed number of concurrent invocations. You can apply a constraint on
+the number of concurrent invocations in order to prevent the system from overloading.
+If the maximum number of concurrent invocations is exceeded and a new invocation comes in,
+Hazelcast throws `HazelcastOverloadException`.
+
+|`hazelcast.client.invocation.backoff.timeout.millis`
+|-1
+|int
+|Control the maximum timeout in millis to wait for an invocation space to be available.
+If an invocation can't be made because there are too many pending invocations,
+then an exponential backoff is done to give the system time to deal with
+the backlog of invocations. This property controls how long an invocation is
+allowed to wait before getting a ``HazelcastOverloadException``.
+When set to -1 then ``HazelcastOverloadException`` is thrown immediately without any waiting.
+
+|`hazelcast.client.io.input.thread.count`
+|-1
+|int
+|Controls the number of IO input threads. Defaults to -1, so the system will decide.
+If client is a smart client, it will default to 3 otherwise it will default to 1.
+
+|hazelcast.client.io.output.thread.count
+|-1
+|int
+|Controls the number of IO output threads. Defaults to -1, so the system will decide.
+If client is a smart client, it will default to 3 otherwise it will default to 1.
+
+
+|hazelcast.client.io.balancer.interval.seconds
+|20
+|int
+|The interval in seconds between ``com.hazelcast.internal.networking.nio.iobalancer.IOBalancer``
+executions. The shorter intervals will catch I/O Imbalance faster, but they will cause higher overhead.
+Please see the documentation of ``com.hazelcast.internal.networking.nio.iobalancer.IOBalancer``
+for a detailed explanation of the problem. A value smaller than 1 disables the balancer.
+
+|hazelcast.client.io.write.through
+|true
+|bool
+|Optimization that allows sending of packets over the network to be done on the calling thread if the
+conditions are right. This can reduce latency and increase performance for low threaded environments.
+
+|hazelcast.client.concurrent.window.ms
+|100
+|int
+|Property needed for concurrency detection so that write through and dynamic response handling
+can be done correctly. This property sets the window the concurrency detection will signalling
+that concurrency has been detected, even if there are no further updates in that window.
+Normally in a concurrency system the windows keeps sliding forward so it will always remain concurrent.
+Setting it too high effectively disabled the optimization because once concurrency has been detected
+it will keep that way. Setting it too low could lead to suboptimal performance because the system
+will try write through and other optimization even though the system is concurrent.
+
+
+|hazelcast.client.response.thread.count
+|2
+|int
+|The number of response threads.
+By default there are 2 response threads; this gives stable and good performance.
+If set to 0, the response threads are bypassed and the response handling is done
+on the IO threads. Under certain conditions this can give a higher throughput, but
+setting to 0 should be regarded an experimental feature.
+If set to 0, the IO_OUTPUT_THREAD_COUNT is really going to matter because the
+inbound thread will have more work to do. By default when TLS isn't enable,
+there is just 1 inbound thread.
+
+|hazelcast.client.response.thread.dynamic
+|true
+|bool
+|Enabled dynamic switching between processing responses on the io threads and offloading the response threads.
+Under certain conditions (single threaded clients) processing on the io
+thread can increase performance because useless handover to the response
+thread is removed. Also the response thread isn't created until it is needed
+and especially for ephemeral clients reducing threads can lead to
+increased performance and reduced memory usage.
+
+|`hazelcast.client.operation.backup.timeout.millis`
+|5000
+|int
+|If an operation has backups, this property specifies how long the invocation will wait for acks from the backup replicas.
+If acks are not received from some backups, there will not be any rollback on other successful replicas.
+
+|`hazelcast.client.operation.fail.on.indeterminate.state`
+|bool
+|false
+|When this configuration is enabled, if an operation has sync backups and acks are not received from backup replicas
+in time, or the member which owns primary replica of the target partition leaves the cluster, then the invocation fails
+with ``IndeterminateOperationStateException``. However, even if the invocation fails,
+there will not be any rollback on other successful replicas.
 
 |`hazelcast.client.statistics.enabled`
 |false
@@ -1917,15 +1981,6 @@ in the Hazelcast Management Center Reference Manual for more information.
 See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-clients[Monitoring Clients section^]
 in the Hazelcast Management Center Reference Manual for more information on the client statistics.
 
-|`hazelcast.client.responsequeue.idlestrategy`
-|block
-|string
-|Specifies whether the response thread for internal operations on
-the client side is blocked or not. If you use `block` (the default value),
-the thread is blocked and needs to be notified which can cause a reduction in the performance.
-If you use `backoff` there is no blocking. By enabling the backoff mode and depending on your use case,
-you can get a 5-10% performance improvement. However, keep in mind that this increases the CPU utilization.
-We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
 |===
 
 ==== Using High-Density Memory Store with Java Client
@@ -2346,7 +2401,7 @@ the Memcache client request listener service using either one of the following c
 NOTE: You can also use the `hazelcast.memcache.enabled`
 group property to enable the Memcache client request
 listener service, e.g., `java -Dhazelcast.memcache.enabled=true`.
-See <<configuring-with-system-properties>>. 
+See <<configuring-with-system-properties>>.
 
 ==== Memcache Client Code Examples
 

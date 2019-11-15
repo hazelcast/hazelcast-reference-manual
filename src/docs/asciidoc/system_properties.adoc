@@ -58,12 +58,17 @@ The larger the sync window value, the less frequent a asynchronous backup is con
 |int
 |Defines cache invalidation event batch sending frequency in seconds.
 
-|`hazelcast.client.endpoint.remove.delay.seconds`
-| 60
-|int
-| Time, in seconds, after which the client connection is removed or the owner member of a client is removed from the cluster, in case of a client disconnection.
-Normally, the disconnection cleans all resources of a client, i.e., listeners are removed and locks/transactions are released.
-Using this property, the client has a window to connect back and prevent cleaning up its resources.
+| `hazelcast.client.cleanup.period.millis`
+| 10000
+| int
+| Period, in milliseconds, to check if a client is still part of the cluster.
+
+| `hazelcast.client.cleanup.timeout.millis`
+| 120000
+| int
+| Timeout duration to decide if a client is still part of the cluster.
+If a member cannot find any connection to a client in the cluster,
+it cleans up the local resources that are owned by that client.
 
 |`hazelcast.client.protocol.max.message.bytes`
 | 1024
@@ -215,12 +220,6 @@ By default all cancelled tasks are eventually get removed by the scheduler worke
 |300
 |int
 |Time after which the member assumes the client is dead and closes its connections to the client.
-
-|`hazelcast.compatibility.3.6.client`
-|false
-|bool
-|When this property is true, if the server cannot determine the connected client version, it assumes that it has the version 3.6.x.
-This property is especially needed if you are using ICache (or JCache).
 
 |`hazelcast.connect.all.wait.seconds`
 | 120
