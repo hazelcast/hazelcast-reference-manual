@@ -1812,7 +1812,7 @@ You can set them as property name and value pairs through declarative configurat
 programmatic configuration, or JVM system property. See the <<system-properties, System Properties appendix>>
 to learn how to set these properties.
 
-NOTE: When you want to reconfigure a system property, you need to restart the members for
+NOTE: When you want to reconfigure a system property, you need to restart the clients for
 which the property is modified.
 
 The table below lists the client configuration properties with their descriptions.
@@ -1826,41 +1826,42 @@ The table below lists the client configuration properties with their description
 |10
 |int
 |If missed invalidation count is bigger than this value,
-relevant cached data will be made unreachable.
+the relevant cached data is made unreachable.
 
 |`hazelcast.invalidation.reconciliation.interval.seconds`
 |60
 |int
-|Period, in seconds, for which the clients are scanned to compare generated
+|Period, in seconds, for which the clients are scanned to compare the generated
 invalidation events with the received ones from Near Cache.
 
 |`hazelcast.client.shuffle.member.list`
 |true
 |string
-|The client shuffles the given member list to prevent all clients to connect
-to the same member when this property is `true`. When it is set to `false`, the client tries to connect to the members in the given order.
+|The client shuffles the given member list to prevent all the clients to connect
+to the same member when this property is `true`. When it is set to `false`,
+the client tries to connect to the members in the given order.
 
 |`hazelcast.client.heartbeat.timeout`
 |60000
 |int
 |Timeout for the heartbeat messages sent by the client to members.
-If no messages pass between client and member within the given time via
+If no messages pass between the client and member within the given time via
 this property in milliseconds, the connection will be closed.
 
 |`hazelcast.client.heartbeat.interval`
 |5000
 |int
-|Frequency of heartbeat messages sent by the clients to members.
+|Frequency of the heartbeat messages sent by the clients to members.
 
 |`hazelcast.client.event.thread.count`
 |5
 |int
-|Thread count for handling incoming event packets.
+|Thread count for handling the incoming event packets.
 
 |`hazelcast.client.event.queue.capacity`
 |1000000
 |int
-|Default value of the capacity of executor that handles incoming event packets.
+|Default value of the capacity of executor that handles the incoming event packets.
 
 |`hazelcast.client.invocation.timeout.seconds`
 |1000
@@ -1883,72 +1884,70 @@ Hazelcast throws `HazelcastOverloadException`.
 |`hazelcast.client.invocation.backoff.timeout.millis`
 |-1
 |int
-|Control the maximum timeout in millis to wait for an invocation space to be available.
-If an invocation can't be made because there are too many pending invocations,
+|Controls the maximum timeout, in milliseconds, to wait for an invocation space to be available.
+If an invocation cannot be made because there are too many pending invocations,
 then an exponential backoff is done to give the system time to deal with
 the backlog of invocations. This property controls how long an invocation is
-allowed to wait before getting a ``HazelcastOverloadException``.
-When set to -1 then ``HazelcastOverloadException`` is thrown immediately without any waiting.
+allowed to wait before getting a `HazelcastOverloadException`.
+When set to -1 then `HazelcastOverloadException` is thrown immediately without any waiting.
 
 |`hazelcast.client.io.input.thread.count`
 |-1
 |int
-|Controls the number of IO input threads. Defaults to -1, so the system will decide.
-If client is a smart client, it will default to 3 otherwise it will default to 1.
+|Controls the number of I/O input threads. Defaults to -1, i.e., the system decides.
+If the client is a smart client, it defaults to 3, otherwise it defaults to 1.
 
 |hazelcast.client.io.output.thread.count
 |-1
 |int
-|Controls the number of IO output threads. Defaults to -1, so the system will decide.
-If client is a smart client, it will default to 3 otherwise it will default to 1.
-
+|Controls the number of I/O output threads. Defaults to -1, i.e., the system decides.
+If the client is a smart client, it defaults to 3, otherwise it defaults to 1.
 
 |hazelcast.client.io.balancer.interval.seconds
 |20
 |int
-|The interval in seconds between ``com.hazelcast.internal.networking.nio.iobalancer.IOBalancer``
-executions. The shorter intervals will catch I/O Imbalance faster, but they will cause higher overhead.
-Please see the documentation of ``com.hazelcast.internal.networking.nio.iobalancer.IOBalancer``
+|Interval in seconds between `com.hazelcast.internal.networking.nio.iobalancer.IOBalancer`
+executions. The shorter intervals catch I/O Imbalance faster, but they cause higher overhead.
+Please see the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/internal/networking/nio/iobalancer/IOBalancer.html[IOBalancer Javadocs]
 for a detailed explanation of the problem. A value smaller than 1 disables the balancer.
 
 |hazelcast.client.io.write.through
 |true
 |bool
 |Optimization that allows sending of packets over the network to be done on the calling thread if the
-conditions are right. This can reduce latency and increase performance for low threaded environments.
+conditions are right. This can reduce the latency and increase the performance for low threaded environments.
 
 |hazelcast.client.concurrent.window.ms
 |100
 |int
 |Property needed for concurrency detection so that write through and dynamic response handling
-can be done correctly. This property sets the window the concurrency detection will signalling
-that concurrency has been detected, even if there are no further updates in that window.
-Normally in a concurrency system the windows keeps sliding forward so it will always remain concurrent.
-Setting it too high effectively disabled the optimization because once concurrency has been detected
+can be done correctly. This property sets the window for a concurrency detection (duration when it signals
+that a concurrency has been detected), even if there are no further updates in that window.
+Normally in a concurrent system the windows keeps sliding forward so it always remains concurrent.
+Setting it too high effectively disables the optimization because once concurrency has been detected
 it will keep that way. Setting it too low could lead to suboptimal performance because the system
-will try write through and other optimization even though the system is concurrent.
-
+will try write through and other optimizations even though the system is concurrent.
 
 |hazelcast.client.response.thread.count
 |2
 |int
-|The number of response threads.
-By default there are 2 response threads; this gives stable and good performance.
+|Number of the response threads.
+By default, there are two response threads; this gives stable and good performance.
 If set to 0, the response threads are bypassed and the response handling is done
-on the IO threads. Under certain conditions this can give a higher throughput, but
-setting to 0 should be regarded an experimental feature.
+on the I/O threads. Under certain conditions this can give a higher throughput, but
+setting to 0 should be regarded as an experimental feature.
 If set to 0, the IO_OUTPUT_THREAD_COUNT is really going to matter because the
-inbound thread will have more work to do. By default when TLS isn't enable,
-there is just 1 inbound thread.
+inbound thread will have more work to do. By default when TLS is not enabled,
+there is just one inbound thread.
 
 |hazelcast.client.response.thread.dynamic
 |true
 |bool
-|Enabled dynamic switching between processing responses on the io threads and offloading the response threads.
-Under certain conditions (single threaded clients) processing on the io
-thread can increase performance because useless handover to the response
-thread is removed. Also the response thread isn't created until it is needed
-and especially for ephemeral clients reducing threads can lead to
+|Enables dynamic switching between processing the responses on the I/O threads and offloading the response threads.
+Under certain conditions (single threaded clients) processing on the I/O
+thread can increase the performance because useless handover to the response
+thread is removed. Also the response thread is not created until it is needed.
+Especially for ephemeral clients, reducing the threads can lead to
 increased performance and reduced memory usage.
 
 |`hazelcast.client.operation.backup.timeout.millis`
@@ -1958,11 +1957,11 @@ increased performance and reduced memory usage.
 If acks are not received from some backups, there will not be any rollback on other successful replicas.
 
 |`hazelcast.client.operation.fail.on.indeterminate.state`
-|bool
 |false
+|bool
 |When this configuration is enabled, if an operation has sync backups and acks are not received from backup replicas
 in time, or the member which owns primary replica of the target partition leaves the cluster, then the invocation fails
-with ``IndeterminateOperationStateException``. However, even if the invocation fails,
+with `IndeterminateOperationStateException`. However, even if the invocation fails,
 there will not be any rollback on other successful replicas.
 
 |`hazelcast.client.statistics.enabled`
