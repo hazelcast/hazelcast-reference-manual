@@ -688,22 +688,19 @@ multiple entries, which can even be owned by another caches/maps.
 [[custom-eviction-policy]]
 ===== Custom Eviction Policy
 
-NOTE: This section is valid for Hazelcast 3.7 and higher releases.
-
-
 Apart from the policies such as LRU and LFU, which Hazelcast provides out-of-the-box,
 you can develop and use your own eviction policy.
 
-To achieve this, you need to provide an implementation of `MapEvictionPolicy` as in
+To achieve this, you need to provide an implementation of `MapEvictionPolicyComparator` as in
 the following `OddEvictor` example:
 
 [source,java]
 ----
-include::{javasource}/dds/map/MapCustomEvictionPolicy.java[tag=mcep]
+include::{javasource}/dds/map/MapCustomEvictionPolicyComparator.java[tag=mcep]
 ----
 
 Then you can enable your policy by setting it via the method
-`MapConfig.setMapEvictionPolicy()`
+`MapConfig.getEvictionConfig().setComparatorClassName()`
 programmatically or via XML declaratively. Following is the example
 declarative configuration for the eviction policy `OddEvictor` implemented above:
 
@@ -713,7 +710,7 @@ declarative configuration for the eviction policy `OddEvictor` implemented above
     ...
     <map name="test">
         ...
-        <map-eviction-policy-class-name>com.package.OddEvictor</map-eviction-policy-class-name>
+        <eviction comparator-class-name="com.mycompany.OddEvictor"/>
         ...
     </map>
 </hazelcast>
@@ -724,7 +721,7 @@ If you Hazelcast with Spring, you can enable your policy as shown below.
 [source,xml]
 ----
 <hz:map name="test">
-    <hz:map-eviction-policy class-name="com.package.OddEvictor"/>
+    <hz:map-eviction comparator-class-name="com.package.OddEvictor"/>
 </hz:map>
 ----
 

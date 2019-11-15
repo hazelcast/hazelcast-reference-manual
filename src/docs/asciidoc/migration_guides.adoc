@@ -2015,6 +2015,43 @@ See the following table for the before/after samples.
 ----
 |===
 
+==== Changing the `IMap` Custom Eviction Policy Configuration
+Before/after samples.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="default">
+        <map-eviction-policy-class-name>
+            com.mycompany.MyMapEvictionPolicyComparator
+        </map-eviction-policy-class-name>
+    </map>
+    ...
+</hazelcast>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="default">
+        <eviction comparator-class-name="com.mycompany.MyMapEvictionPolicyComparator"/>
+    </map>
+    ...
+</hazelcast>
+----
+|===
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
