@@ -737,21 +737,26 @@ Here is an example for custom eviction policy comparator implementation for JCac
 [source,java]
 ----
 public class MyCacheEvictionPolicyComparator
-        extends CacheEvictionPolicyComparator<Long, String> {
+        implements CacheEvictionPolicyComparator<Long, String> {
 
     @Override
     public int compare(CacheEntryView<Long, String> e1, CacheEntryView<Long, String> e2) {
         long id1 = e1.getKey();
         long id2 = e2.getKey();
-        if (id1 > id2) {
-            return FIRST_ENTRY_HAS_HIGHER_PRIORITY_TO_BE_EVICTED; // -1
-        } else if (id1 < id2) {
-            return SECOND_ENTRY_HAS_HIGHER_PRIORITY_TO_BE_EVICTED; // +1
-        } else {
-            return BOTH_OF_ENTRIES_HAVE_SAME_PRIORITY_TO_BE_EVICTED; // 0
-        }
-    }
 
+        if (id1 > id2) {
+            // first entry has higher priority to be evicted
+            return -1;
+        }
+
+        if (id1 < id2) {
+            // second entry has higher priority to be evicted
+            return  1;
+        }
+
+        // both entries have same priority
+        return 0;
+    }
 }
 ----
 
