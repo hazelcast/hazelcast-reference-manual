@@ -316,26 +316,6 @@ For the `protocol` property, we recommend you to provide TLS with its
 version information, e.g., `TLSv1.2`. Note that if you write only `TLS`,
 your application chooses the TLS version according to your Java version.
 
-===== Other Property Configuration Options
-
-You can set all the properties presented in this section as system properties
-using the `javax.net.ssl` prefix, e.g., `javax.net.ssl.keyStore` and
-`javax.net.ssl.keyStorePassword`.
-
-See below equivalent examples:
-
-```
-System.setProperty("javax.net.ssl.trustStore", "/user/home/hazelcast.ts");
-```
-
-Or,
-
-```
--Djavax.net.ssl.trustStore=/user/home/hazelcast.ts
-```
-
-This way of TLS/SSL configuration is then system wide in your Java runtime.
-
 ==== TLS/SSL for Hazelcast Clients
 
 The TLS configuration in Hazelcast clients is very similar to member configuration.
@@ -492,13 +472,6 @@ it defaults to 3 input threads and 3 output threads.
 Having more client I/O threads than members in the cluster does not lead to
 an increased performance. So with a 2-member cluster,
 2 in and 2 out threads give the best performance.
-
-==== TLS/SSL for Hazelcast Management Center
-
-In order to use a secured communication between the Hazelcast cluster and Management Center,
-you have to configure the cluster as explained in the
-link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center section^] in the Hazelcast
-Management Center Reference Manual.
 
 === Integrating OpenSSL / BoringSSL
 
@@ -685,6 +658,54 @@ information, e.g., `TLSv1.2`. Note that if you
 provide only `SSL` or `TLS` as a value for the `protocol` property, they are
 converted to `SSLv3` and `TLSv1.2`, respectively. We strongly recommend to avoid
 SSL protocols.
+
+=== Other TLS related configuration
+
+==== TLS/SSL for Hazelcast Management Center
+
+In order to use a secured communication between the Hazelcast cluster and Management Center,
+you have to configure the cluster as explained in the
+link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center section^] in the Hazelcast
+Management Center Reference Manual.
+
+==== Updating certificates in the running cluster
+
+Hazelcast allows updating TLS certificates on the members without cluster full stop. Cluster members can be stopped one by one and the certificates may be replaced gradually. We can distinguish two cases based on the fact if the new certificate is already trusted.
+
+1. New certificates are not trusted on the members.
++
+This is usually a case when self-signed certificates are used on members.
++
+Before we can deploy new member certificates we have to update list of trusted certificates on all members. Complete following steps for each member (one-by-one) in the cluster:
+
+* Shutdown gracefully the member;
+* Wait for the cluster safe state (rebalance);
+* Import all new certificates to the member's truststore, so it contains both old and new ones.
++
+The `keytool` executable from Java installation can be used to import the new certificates. Example:
++
+[source,bash]
+----
+keytool -import -noprompt \
+  -keystore member.truststore -storepass s3crEt \
+  -alias new-cert-1 -file member-new-cert.crt
+----
+
+* Start the member with the updated truststore;
+* Wait for the cluster safe state (rebalance).
+
++
+After completing these steps, follow the steps described in the next point (certificates trusted).
+
+2. New certificates are already trusted on the members
++
+Switch certificate on each member one-by-one:
+
+* Shutdown gracefully the member;
+* Wait for the cluster safe state (rebalance);
+* Replace the private key and certificate in the member's keystore;
+* Start the member with the updated keystore;
+* Wait for the cluster safe state (rebalance).
 
 ==== Configuring Cipher Suites
 
