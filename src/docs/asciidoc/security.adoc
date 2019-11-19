@@ -668,21 +668,29 @@ you have to configure the cluster as explained in the
 link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#connecting-hazelcast-members-to-management-center[Connecting Hazelcast members to Management Center section^] in the Hazelcast
 Management Center Reference Manual.
 
-==== Updating certificates in the running cluster
+==== Updating Certificates in the Running Cluster
 
-Hazelcast allows updating TLS certificates on the members without cluster full stop. Cluster members can be stopped one by one and the certificates may be replaced gradually. We can distinguish two cases based on the fact if the new certificate is already trusted.
+Hazelcast allows updating TLS certificates on the members
+without fully stopping the cluster. You can stop the cluster members
+one by one and replace the certificates gradually. We can
+distinguish two cases based on the fact if the new certificate
+is already trusted:
 
-1. New certificates are not trusted on the members.
+. New certificates are not trusted on the members.
 +
-This is usually a case when self-signed certificates are used on members.
+This is usually a case when self-signed certificates are used on the members.
 +
-Before we can deploy new member certificates we have to update list of trusted certificates on all members. Complete following steps for each member (one-by-one) in the cluster:
+Before we can deploy new member certificates, we have to
+update the list of trusted certificates on all members.
+Complete the following steps on each member (one by one) in the cluster:
 
-* Shutdown gracefully the member;
-* Wait for the cluster safe state (rebalance);
-* Import all new certificates to the member's truststore, so it contains both old and new ones.
+* Gracefully shutdown the member
+* Wait for the cluster safe state (rebalance)
+* Import all new certificates to the member's truststore,
+so it contains both old and new ones.
 +
-The `keytool` executable from Java installation can be used to import the new certificates. Example:
+You can use the `keytool` executable from Java installation
+to import the new certificates. Example:
 +
 [source,bash]
 ----
@@ -690,22 +698,21 @@ keytool -import -noprompt \
   -keystore member.truststore -storepass s3crEt \
   -alias new-cert-1 -file member-new-cert.crt
 ----
-
-* Start the member with the updated truststore;
-* Wait for the cluster safe state (rebalance).
-
 +
-After completing these steps, follow the steps described in the next point (certificates trusted).
-
-2. New certificates are already trusted on the members
+* Start the member with the updated truststore
+* Wait for the cluster safe state (rebalance)
 +
-Switch certificate on each member one-by-one:
+After completing the above steps, follow the steps
+described in the next point (certificates trusted).
+. New certificates are already trusted on the members
++
+Switch certificate on each member one by one:
 
-* Shutdown gracefully the member;
-* Wait for the cluster safe state (rebalance);
-* Replace the private key and certificate in the member's keystore;
-* Start the member with the updated keystore;
-* Wait for the cluster safe state (rebalance).
+* Gracefully shutdown the member
+* Wait for the cluster safe state (rebalance)
+* Replace the private key and certificate in the member's keystore
+* Start the member with the updated keystore
+* Wait for the cluster safe state (rebalance)
 
 ==== Configuring Cipher Suites
 
