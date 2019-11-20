@@ -2056,6 +2056,33 @@ See the following table for the before/after samples.
 ----
 |===
 
+==== Changes in the `EntryListenerConfig`
+
+Return type of `EntryListenerConfig#getImplementation` method has been changed
+from `EntryListener` to `MapListener`.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,java]
+----
+EntryListenerConfig config = new EntryListenerConfig();
+EntryListener listenerImpl = config.getImplementation();
+----
+
+|
+
+[source,java]
+----
+EntryListenerConfig config = new EntryListenerConfig();
+MapListener listenerImpl = config.getImplementation();
+----
+|===
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
