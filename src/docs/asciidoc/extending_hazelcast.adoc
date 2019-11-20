@@ -91,7 +91,7 @@ a line with the full canonical class name of the `DiscoveryStrategy` per provide
 
 The `com.hazelcast.spi.discovery.DiscoveryNode` abstract class describes a member in the Discovery SPI.
 It is used for multiple purposes, since it will be returned from strategies for discovered members.
-It is also passed to `DiscoveryStrategyFactory`s factory method to define
+It is also passed to ``DiscoveryStrategyFactory``s factory method to define
 the local member itself if created on a Hazelcast member; on Hazelcast clients, null is passed.
 
 ===== SimpleDiscoveryNode: Default DiscoveryNode
@@ -151,11 +151,11 @@ The full example's source code can be found link:https://github.com/hazelcast/ha
 As a first step we do some basic configuration setup. We want the user to be able to
 configure the site domain for the discovery inside the hosts file, therefore we define
 a configuration property called `site-domain`. The configuration is not optional:
-it must be configured before the creation of the `HazelcastInstance`, either via XML or
-the Hazelcast Config API.
+you need to configure it before the creation of the `HazelcastInstance`, either
+via Hazelcast's declarative or programmatic configuration.
 
 It is recommended that you keep all defined properties in a separate configuration class as
-public constants (public final static) with sufficient documentation.
+public constants (`public static final`) with sufficient documentation.
 This allows users to easily look up possible configuration values.
 
 [source,java]
@@ -219,8 +219,8 @@ include::{javasource}/extendinghazelcast/HostsDiscoveryStrategy.java[tag=hds]
 ===== Overriding Discovery Configuration
 
 So far our implementation retrieves the configuration property for the `site-domain`.
-Our implementation offers the option to override the value from the configuration (XML or
-Config API) right from the system environment or JVM properties.
+Our implementation offers the option to override the value from the configuration
+(declarative or programmatic) right from the system environment or JVM properties.
 That can be useful when the `hazelcast.xml` defines a setup for an developer system (like `cluster.local`) and
 operations wants to override it for the real deployment.
 By providing a prefix (in this case `discovery.hosts`) we created an
@@ -235,10 +235,10 @@ The lookup priority is explained in the following list, priority is from top to 
 
 ===== Implementing Lookup
 
-Since we now have the value for our property we can implement the actual lookup and
+Since we have the value for our property now, we can implement the actual lookup and
 mapping as already prepared in the `discoverNodes` method.
-The following part is very specific to this special discovery strategy,
-for completeness we're showing it anyways.
+The following part is very specific to this special discovery strategy;
+for completeness we are showing it anyways.
 
 [source,java]
 ----
@@ -275,8 +275,9 @@ private List<String> filterHosts() {
 
 ===== Mapping to DiscoveryNode
 
-After we now collected the address assignments configured in the hosts file,
-we can go to the final step and map those to the ``DiscoveryNode``s to return them from our strategy.
+After we have collected the address assignments configured in the hosts file,
+we can go to the final step and map those to the ``DiscoveryNode``s to return
+them from our strategy.
 
 [source,java]
 ----
@@ -299,15 +300,17 @@ private Iterable<DiscoveryNode> mapToDiscoveryNodes( List<String> assignments ) 
 }
 ----
 
-With that mapping we now have a full discovery, executed whenever Hazelcast asks for IPs.
+With that mapping, we now have a full discovery, executed whenever Hazelcast asks for IPs.
 So why don't we read them in once and cache them?
-The answer is simple, it might happen that members go down or come up over time.
-Since we expect the hosts file to be injected into the running container it also might change over time.
-We want to get the latest available members, therefore we read the file on request.
+The answer is simple: it might happen that members go down or come up over time.
+Since we expect the hosts file to be injected into the running container,
+it also might change over time. We want to get the latest available
+members, therefore we read the file on request.
 
 ===== Configuring DiscoveryStrategy
 
-To actually use the new `DiscoveryStrategy` implementation we need to configure it like in the following example:
+To actually use the new `DiscoveryStrategy` implementation we need to
+configure it like in the following example:
 
 [source,xml]
 ----
@@ -341,18 +344,19 @@ To actually use the new `DiscoveryStrategy` implementation we need to configure 
 </hazelcast>
 ----
 
-To find out further details, please have a look at the Discovery SPI Javadoc.
+To find out further details, please have a look at the
+link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/spi/discovery/package-summary.html[Discovery SPI Javadoc].
 
 ==== DiscoveryService (Framework integration)
 
-Since the `DiscoveryStrategy` is meant for cloud vendors or implementors of service discovery systems,
-the `DiscoveryService` is meant for integrators.
-In this case, integrators means people integrating Hazelcast into their own systems or frameworks.
-In those situations, there are sometimes special requirements on
+Since the `DiscoveryStrategy` is meant for cloud vendors or implementors
+of service discovery systems, the `DiscoveryService` is meant for integrators.
+In this case, integrators mean people integrating Hazelcast into their own systems or frameworks.
+In those situations, there may be special requirements on
 how to lookup framework services like the discovery strategies or similar services.
 Integrators can extend or implement their own `DiscoveryService` and
-`DiscoveryServiceProvider` and inject it using the
-Hazelcast Config API (`com.hazelcast.config.DiscoveryConfig`) prior to instantiating the `HazelcastInstance`.
+`DiscoveryServiceProvider` and inject them using the
+`com.hazelcast.config.DiscoveryConfig` configuration API prior to instantiating the `HazelcastInstance`.
 In any case, integrators might have to remember that a `DiscoveryService` might have to change
 behavior based on the runtime environment (Hazelcast member or client) and
 then the `DiscoveryServiceSettings` should provide information about the started `HazelcastInstance`.
