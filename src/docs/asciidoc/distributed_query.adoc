@@ -511,9 +511,9 @@ IMap `addIndex` method.
 ----
 IMap map = hazelcastInstance.getMap( "employees" );
 // ordered, since we have ranged queries for this field
-map.addIndex( "age", true );
+map.addIndex(new IndexConfig(IndexType.SORTED, "age"));
 // not ordered, because boolean field cannot have range
-map.addIndex( "active", false );
+map.addIndex(new IndexConfig(IndexType.HASH, "active"));
 ----
 
 Note that creating indexes once is sufficient. Subsequent operations are
@@ -533,10 +533,10 @@ declaratively or programmatically as described in the <<configuring-imap-indexes
 
 ===== Indexing Ranged Queries
 
-`IMap.addIndex(fieldName, ordered)` is used for adding index. For
+`IMap.addIndex(IndexConfig)` is used for adding index. For
 each indexed field, if you have ranged queries such as `age>30`,
-`age BETWEEN 40 AND 60`, then you should set the `ordered` parameter
-to `true`. Otherwise, set it to `false`.
+`age BETWEEN 40 AND 60`, then use `IndexType.SORTED` index
+Otherwise, use `IndexType.HASH`.
 
 ===== Configuring IMap Indexes
 
@@ -549,8 +549,16 @@ shown below.
     ...
     <map name="default">
         <indexes>
-            <index ordered="false">name</index>
-            <index ordered="true">age</index>
+            <index type="HASH">
+                <attributes>
+                    <attribute>name</attribute>
+                </attributes>
+            </index>
+            <index>
+                <attributes>
+                    <attribute>age</attribute>
+                </attributes>
+            </index>
         </indexes>
     </map>
     ...
@@ -562,8 +570,8 @@ as in the example below.
 
 [source,java]
 ----
-mapConfig.addMapIndexConfig( new MapIndexConfig( "name", false ) );
-mapConfig.addMapIndexConfig( new MapIndexConfig( "age", true ) );
+mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "name"));
+mapConfig.addIndexConfig(new IndexConfig(IndexType.SORTED, "age"));
 ----
 
 The following is the Spring declarative configuration for the same
@@ -573,8 +581,16 @@ example.
 ----
 <hz:map name="default">
     <hz:indexes>
-        <hz:index attribute="name"/>
-        <hz:index attribute="age" ordered="true"/>
+        <hz:index type="HASH">
+            <hz:attributes>
+                <hz:attribute>name</hz:attribute>
+            </hz:attributes>
+        </hz:index>
+        <hz:index>
+            <hz:attributes>
+                <hz:attribute>age</hz:attribute>
+            </hz:attributes>
+        </hz:index>
     </hz:indexes>
 </hz:map>
 ----
@@ -618,7 +634,12 @@ configured for a map as follows:
     ...
     <map name="persons">
         <indexes>
-            <index ordered="false">name, age</index>
+            <index type="HASH">
+                <attributes>
+                    <attribute>name</attribute>
+                    <attribute>age</attribute>
+                </attributes>
+            </index>
         </indexes>
     </map>
     ...
@@ -649,7 +670,13 @@ candidates to be covered by an ordered composite index configured as follows:
     ...
     <map name="persons">
         <indexes>
-            <index ordered="true">name, age, balance</index>
+            <index>
+                <attributes>
+                    <attribute>name</attribute>
+                    <attribute>age</attribute>
+                    <attribute>balance</attribute>
+                </attributes>
+            </index>
         </indexes>
     </map>
     ...
@@ -740,7 +767,7 @@ index or creating a predicate. A basic usage is shown below.
 
 [source,java]
 ----
-map.addIndex("this", true);
+map.addIndex(new IndexConfig(IndexType.SORTED, "this"));
 Predicate<Integer, Integer> lessEqual = Predicates.between("this", 12, 20);
 ----
 
@@ -899,7 +926,11 @@ Let's assume you have the following index definition:
 <hazelcast>
     ...
     <indexes>
-        <index ordered="false">wheels[any].name</index>
+        <index type="HASH">
+            <attributes>
+                <attribute>wheels[any].name</attribute>
+            </attributes>
+        </index>
     </indexes>
     ...
 </hazelcast>
@@ -929,7 +960,11 @@ another index, as shown below:
 <hazelcast>
     ...
     <indexes>
-        <index ordered="false">wheels[0].name</index>
+        <index type="HASH">
+            <attributes>
+                <attribute>wheels[0].name</attribute>
+            </attributes>
+        </index>
     </indexes>
     ...
 </hazelcast>
@@ -1188,9 +1223,17 @@ below:
     ...
     <indexes>
         <!-- custom attribute without an extraction argument -->
-        <index ordered="true">currency</index>
+        <index>
+            <attributes>
+                <attribute>currency</attribute>
+            </attributes>
+        </index>
         <!-- custom attribute using an extraction argument -->
-        <index ordered="true">currency[incoming]</index>
+        <index>
+            <attributes>
+                <attribute>currency[incoming]</attribute>
+            </attributes>
+        </index>
     </indexes>
     ...
 </hazelcast>
@@ -1509,7 +1552,11 @@ The following is an example declarative configuration.
                 <buffer-size>32</buffer-size>
                 <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
                 <indexes>
-                    <index ordered="true">...</index>
+                    <index>
+                        <attributes>
+                            <attribute>age</attribute>
+                        </attributes>
+                    </index>
                 </indexes>
             </query-cache>
         </query-caches>
