@@ -1802,10 +1802,6 @@ you must enable the Health Check using either one of the following configuration
 </hazelcast>
 ----
 
-NOTE: You can also use the `hazelcast.http.healthcheck.enabled`
-group property to enable the service, e.g., `java -Dhazelcast.http.healthcheck.enabled=true`.
-See <<configuring-with-system-properties>>.
-
 ==== Health Check
 
 This is Hazelcast's HTTP based health check implementation which provides
@@ -1833,8 +1829,9 @@ to learn more about each state of a Hazelcast cluster and member.
 ==== Using the healthcheck.sh Script
 
 The `healthcheck.sh` script comes with the Hazelcast package. Internally, it uses
-the HTTP-based Health Check endpoint and that is why you also need to set the
-`hazelcast.http.healthcheck.enabled` system property to `true`.
+the HTTP-based Health Check endpoint. You will need to enable the endpoint by using the
+`advanced-network` configuration element.
+See the <<health-check-and-monitoring, Health Check and Monitoring section>>.
 
 You can use the script to check health parameters in the following manner:
 
@@ -1910,8 +1907,7 @@ Assuming there is no member running under the address `127.0.0.1:5701`, the foll
 ```
 $ ./healthcheck.sh -a 127.0.0.1 -p 5701 -o cluster-safe
 Error while checking health of hazelcast cluster on ip 127.0.0.1 on port 5701.
-Please check that cluster is running and that health check is enabled (property set to true:
-'hazelcast.http.healthcheck.enabled' or 'hazelcast.rest.enabled').
+Please check that cluster is running and that health check is enabled in REST API configuration.
 ```
 
 ==== Health Monitor
@@ -1981,8 +1977,9 @@ to create a new monitor. Next, apply the following configuration according to yo
 ====== HTTP/HTTPS Monitors
 
 NOTE: Please note that you should enable the Hazelcast health check for
-HTTP/HTTPS monitors to run. To do this, set the `hazelcast.http.healthcheck.enabled` system property to true.
-By default, it is false.
+HTTP/HTTPS monitors to run. You will need to enable the endpoint by using the
+`advanced-network` configuration element.
+See the <<health-check-and-monitoring, Health Check and Monitoring section>>.
 
 **Using a GET request:**
 

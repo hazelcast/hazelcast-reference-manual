@@ -986,8 +986,8 @@ Hazelcast Cloud is disabled for the Java client, by default (`enabled` attribute
 See this Hazelcast Cloud link:https://hazelcast.com/products/cloud/[web page^]
 for more information on Hazelcast Cloud.
 
-NOTE: Since this is a REST based discovery, you need to enable the REST listener service,
-too, by setting the `hazelcast.rest.enabled` property to `true`.
+NOTE: Since this is a REST based discovery, you need to enable the REST listener service.
+See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> on how to enable REST endpoints.
 
 [NOTE]
 ====
@@ -2112,7 +2112,6 @@ NOTE: REST client request listener service is not enabled by default.
 You should enable it on your cluster members to use REST client.
 It can be enabled using the `DATA` endpoint group; see the
 <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>>.
-You can also use the `hazelcast.rest.enabled` group property to enable it.
 
 NOTE: All parameters that are used in REST API URLs, such as the distributed data structure and key names, must be
 link:https://en.wikipedia.org/wiki/Percent-encoding[URL encoded^] when composing a call. As an example, `name.with/special@chars`
@@ -2407,11 +2406,6 @@ the Memcache client request listener service using either one of the following c
     ...
 </hazelcast>
 ----
-
-NOTE: You can also use the `hazelcast.memcache.enabled`
-group property to enable the Memcache client request
-listener service, e.g., `java -Dhazelcast.memcache.enabled=true`.
-See <<configuring-with-system-properties>>.
 
 ==== Memcache Client Code Examples
 

@@ -281,14 +281,6 @@ See the <<public-address, Public Address section>>.
 | int
 | Maximum wait in seconds during graceful shutdown.
 
-|`hazelcast.http.healthcheck.enabled`
-|false
-|bool
-|Enable/disable Hazelcast's HTTP based health check implementation.
-When it is enabled, you can retrieve information about your cluster's health status (member state,
-cluster state, cluster size, etc.) by launching `+http://<your member's host IP>:5701/hazelcast/health+`.
-You can also use the `advanced-network` configuration element. See the <<health-check-and-monitoring, Health Check and Monitoring section>>.
-
 |`hazelcast.health.monitoring.delay.seconds`
 |30
 |int
@@ -587,13 +579,6 @@ name consisting of a randomly chosen adjective and the surname of a famous perso
 If set to `true`, a Moby name is generated. Otherwise, a name that is concatenation
 of a static prefix, number and cluster name is provided.
 
-|`hazelcast.memcache.enabled`
-| false
-| bool
-| Enables <<memcache-client, Memcache>> client request listener service.
-You can also use the `advanced-network` configuration element for the same purpose.
-See <<memcache-client>>.
-
 |`hazelcast.merge.first.run.delay.seconds`
 | 300
 | int
@@ -769,13 +754,6 @@ Set to `true` if you are using slow predicates or have > 100,000s entries per me
 This value defines the maximum number of returned elements for a single query result.
 If a query exceeds this number of elements, a QueryResultSizeExceededException is thrown.
 Its default value is -1, meaning it is disabled.
-
-|`hazelcast.rest.enabled`
-| false
-| bool
-| Enables <<rest-client, REST>> client request listener service.
-You can also use the `rest-api` configuration element for the same purpose.
-See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>>.
 
 |`hazelcast.shutdownhook.enabled`
 | true
