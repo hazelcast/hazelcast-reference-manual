@@ -1815,11 +1815,13 @@ cluster state, cluster size, etc.) by launching `+http://<your member's host IP>
 An example output is given below:
 
 ```
-Hazelcast::NodeState=ACTIVE
-Hazelcast::ClusterState=ACTIVE
-Hazelcast::ClusterSafe=TRUE
-Hazelcast::MigrationQueueSize=0
-Hazelcast::ClusterSize=2
+{
+  "nodeState": "ACTIVE",
+  "clusterState": "ACTIVE",
+  "clusterSafe": true,
+  "migrationQueueSize": 0,
+  "clusterSize": 3
+}
 ```
 
 See the <<managing-cluster-and-member-states, Managing Cluster and Member States section>>
@@ -1830,7 +1832,7 @@ to learn more about each state of a Hazelcast cluster and member.
 
 The `healthcheck.sh` script comes with the Hazelcast package. Internally, it uses
 the HTTP-based Health Check endpoint. You will need to enable the endpoint by using the
-`advanced-network` configuration element.
+`advanced-network` or the `network` configuration element.
 See the <<health-check-and-monitoring, Health Check and Monitoring section>>.
 
 You can use the script to check health parameters in the following manner:
@@ -1978,7 +1980,7 @@ to create a new monitor. Next, apply the following configuration according to yo
 
 NOTE: Please note that you should enable the Hazelcast health check for
 HTTP/HTTPS monitors to run. You will need to enable the endpoint by using the
-`advanced-network` configuration element.
+`advanced-network` or the `network` configuration element.
 See the <<health-check-and-monitoring, Health Check and Monitoring section>>.
 
 **Using a GET request:**
@@ -1992,7 +1994,7 @@ GET /hazelcast/health HTTP/1.1\r\n\nHost: [HOST-ADDRESS-OF-HAZELCAST-MEMBER] \r\
 * Set the “Receive String” as follows:
 +
 ```
-Hazelcast::NodeState=ACTIVE\nHazelcast::ClusterState=ACTIVE\nHazelcast::ClusterSafe=TRUE\nHazelcast::MigrationQueueSize=0\nHazelcast::ClusterSize=([^\s]+)\n
+{"nodeState":"ACTIVE","clusterState":"ACTIVE","clusterSafe":true,"migrationQueueSize":0,"clusterSize":([^\s]+)}
 ```
 
 
