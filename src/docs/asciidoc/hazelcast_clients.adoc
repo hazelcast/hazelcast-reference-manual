@@ -2328,18 +2328,34 @@ The response is as follows:
 [source,plain]
 ----
 < HTTP/1.1 200 OK
-< Content-Length: 119
 
-Members [5] {
-  Member [10.20.17.1:5701] this
-  Member [10.20.17.2:5701]
-  Member [10.20.17.4:5701]
-  Member [10.20.17.3:5701]
-  Member [10.20.17.5:5701]
+{
+  "members": [
+    {
+      "address": "[127.0.0.1]:5701",
+      "liteMember": false,
+      "localMember": true,
+      "uuid": "73f5d6ad-7b51-4e74-bd74-15b2e7de7edd",
+      "memberVersion": "4.0.0"
+    },
+    {
+      "address": "[127.0.0.1]:5702",
+      "liteMember": false,
+      "localMember": false,
+      "uuid": "e8b41ac6-9db9-43f1-9e98-8b0392891560",
+      "memberVersion": "4.0.0"
+    },
+    {
+      "address": "[127.0.0.1]:5703",
+      "liteMember": false,
+      "localMember": false,
+      "uuid": "c6929312-d4d3-4527-83bc-474c229394d6",
+      "memberVersion": "4.0.0"
+    }
+  ],
+  "connectionCount": 1,
+  "allConnectionCount": 3
 }
-
-ConnectionCount: 5
-AllConnectionCount: 20
 ----
 
 ==== Checking the Name of the Instance for REST Client

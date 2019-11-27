@@ -633,6 +633,13 @@ Hazelcast’s REST API. Below is the URL for its REST call:
 http://member_ip:port/hazelcast/rest/mancenter/wan/clearWanQueues
 ```
 
+You need to add the following URL-encoded parameters to the request in the following order separated by "&";
+
+* Cluster name
+* Cluster password
+* Name of the WAN replication configuration
+* WAN replication publisher ID/target cluster name
+
 This may be useful, for instance, to release the consumed heap if you know that
 the target cluster is being shut down, decommissioned, put out of use and it will never come back.
 Or, when a failure happens and queues are not replicated anymore, you could clear the queues using this clearing action.
@@ -758,10 +765,12 @@ Below is the URL for the REST call;
 http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
 ```
 
-You need to add parameters to the request in the following order separated by "&";
+You need to add URL-encoded parameters to the request in the following order separated by "&";
 
+* Cluster name
+* Cluster password
 * Name of the WAN replication configuration
-* Target cluster name
+* WAN replication publisher ID/target cluster name
 * Map name to be synchronized
 
 Assume that you have configured an IMap with a WAN replication configuration as follows:
@@ -787,7 +796,7 @@ Assume that you have configured an IMap with a WAN replication configuration as 
 Then, an example CURL command to initiate the synchronization for "my-map" would be as follows:
 
 ```
-curl -H "Content-type: text/plain" -X POST -d "my-wan-cluster&istanbul&my-map" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/sync/map
+curl -X POST -d "clusterName&clusterPassword&my-wan-cluster&istanbul&my-map" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/sync/map
 ```
 
 [NOTE]
@@ -798,6 +807,14 @@ You can also use the following URL in your REST call if you want to
 synchronize all the maps in source and target cluster:
 
 `+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/allmaps+`
+
+You need to add the following URL-encoded parameters to
+the request in the following order separated by "&";
+
+* Cluster name
+* Cluster password
+* Name of the WAN replication configuration
+* WAN replication publisher ID/target cluster name
 ====
 
 NOTE: Synchronization for a target cluster operates only with
@@ -835,7 +852,12 @@ Below is the URL for the REST call:
 http://member_ip:port/hazelcast/rest/mancenter/wan/addWanConfig
 ```
 
-You need to add the configuration for the WAN publishers as a JSON parameter.
+You need to add the following URL-encoded parameters to the request in the following order separated by "&";
+
+* Cluster name
+* Cluster password
+* WAN replication configuration, serialized as JSON
+
 You can, at any point, even when maps and caches are concurrently mutated, add a new WAN publisher to
 an existing WAN replication configuration.
 The limitation is that there must be an existing WAN replication configuration but
@@ -862,7 +884,7 @@ You can then add the new WAN replication publishers (target clusters) by
 performing an HTTP POST as shown below:
 
 ```
-curl -H "Content-type: text/plain" -X POST -d "{...}" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/addWanConfig
+curl -X POST -d "clusterName&clusterPassword&{...}" --URL http://127.0.0.1:5701/hazelcast/rest/mancenter/wan/addWanConfig
 
 ```
 
@@ -1629,14 +1651,22 @@ The URL for the synchronization REST call - the same as it is for the default sy
 http://member_ip:port/hazelcast/rest/mancenter/wan/sync/map
 ```
 
-You need to add parameters to the request in both cases in the following order separated by "&";
+You need to add URL-encoded parameters to the request in both cases in the following order separated by "&";
 
+* Cluster name
+* Cluster password
 * Name of the WAN replication configuration
-* Target cluster name
+* WAN replication publisher ID/target cluster name
 * Map name to be synchronized
 
 NOTE: You can also use the following URL in your REST call if you want to synchronize all the maps in source and target cluster:
-`+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/allmaps+`
+`+http://member_ip:port/hazelcast/rest/mancenter/wan/sync/allmaps+`. You need to add the following URL-encoded parameters to
+the request in the following order separated by "&";
+
+* Cluster name
+* Cluster password
+* Name of the WAN replication configuration
+* WAN replication publisher ID/target cluster name
 
 NOTE: Consistency check can be triggered only for one map.
 

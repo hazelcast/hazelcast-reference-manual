@@ -2088,6 +2088,32 @@ MapListener listenerImpl = config.getImplementation();
 ----
 |===
 
+==== Changes in REST endpoints
+
+The following REST endpoints now require cluster name and password as the first two URL-encoded parameters:
+
+* `/hazelcast/rest/mancenter/wan/sync/map`
+* `/hazelcast/rest/mancenter/wan/sync/allmaps`
+* `/hazelcast/rest/mancenter/wan/clearWanQueues`
+* `/hazelcast/rest/mancenter/wan/addWanConfig`
+* `/hazelcast/rest/mancenter/wan/pausePublisher`
+* `/hazelcast/rest/mancenter/wan/stopPublisher`
+* `/hazelcast/rest/mancenter/wan/resumePublisher`
+* `/hazelcast/rest/mancenter/wan/consistencyCheck/map`
+* `/hazelcast/rest/wan/sync/map`
+* `/hazelcast/rest/wan/sync/allmaps`
+* `/hazelcast/rest/mancenter/clearWanQueues`
+* `/hazelcast/rest/wan/addWanConfig`
+
+The output of the following endpoints has been changed to JSON:
+* `/hazelcast/health/node-state`
+* `/hazelcast/health/cluster-state`
+* `/hazelcast/health/cluster-safe`
+* `/hazelcast/health/migration-queue-size`
+* `/hazelcast/health/cluster-size`
+* `/hazelcast/health/ready`
+* `/hazelcast/rest/cluster`
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
