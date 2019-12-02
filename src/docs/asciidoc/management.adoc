@@ -1405,6 +1405,105 @@ NOTE: If you want to use the above methods, please note that they are available 
 See link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster-safety[here^]
 for more `PartitionService` code samples.
 
+=== Metrics
+
+Metrics are `<string,value>` key-value pairs of data that capture runtime information about the members and clients in a Hazelcast cluster.
+Such a metric can be the number of the entries stored in a particular IMap on a given member, JVM metrics like used heap, OS metrics like load average and so on.
+The Metrics System is responsible for collecting these metrics and making them available for the <<metric-consumers, consumers>> of the metrics.
+There are a few hundred metrics collected during every metrics collection cycle by default, but the number of the metrics grow as more and more features and data structures is used.
+This is because every data structure provides its own metrics.
+For example, if there are two IMaps used in a cluster, both IMaps will produce their metrics on every member.
+
+[[metrics-configuration]]
+==== Configuration
+
+The metrics system can be configured with the Hazelcast configuration.
+The member configuration is as follows, with these default values.
+
+```xml
+<metrics enabled="true">
+    <management-center enabled="true">
+        <retention-seconds>5</retention-seconds>
+    </management-center>
+    <jmx enabled="true"/>
+    <collection-frequency-seconds>5</collection-frequency-seconds>
+</metrics>
+```
+
+Note that all of the metrics configuration values can be overridden with system properties.
+The properties are the following ones:
+
+* `hazelcast.metrics.enabled`: Enables the metrics collection if set to `true`, disables it otherwise.
+* `hazelcast.metrics.mc.enabled`: Enables buffering the collected metrics for Management Center if set to `true`, disables it otherwise.
+* `hazelcast.metrics.mc.retention`: Sets the seconds the metrics are retained for Management Center to the provided integer value.
+* `hazelcast.metrics.jmx.enabled`: Enables exposing the collected metrics over JMX if set to `true`, disables it otherwise.
+* `hazelcast.metrics.collection.frequency`: Sets the frequency of the metrics collection cycle the provided integer value, expressed in seconds.
+* `hazelcast.metrics.debug.enabled`: Enables collecting debug metrics if set to `true`, disables it otherwise.
+Note that this can be set with system property only and is meant to be enabled only if diagnostics is enabled, since currently only diagnostics consumes the debug metrics.
+
+The client configuration is very similar, it just lacks the Management Center configuration section.
+This is because the clients are not connected to the Management Center and the client metrics are sent to the Management Center through a member the client is connected to.
+
+```xml
+<metrics enabled="true">
+    <jmx enabled="true"/>
+    <collection-frequency-seconds>5</collection-frequency-seconds>
+</metrics>
+```
+
+Similarly to the member configuration, the client metrics configuration can be overridden with the following system properties:
+
+* `hazelcast.client.metrics.enabled`: Enables the metrics collection if set to `true`, disables it otherwise.
+* `hazelcast.client.metrics.jmx.enabled`: Enables exposing the collected metrics over JMX if set to `true`, disables it otherwise.
+* `hazelcast.client.metrics.collection.frequency`: Sets the frequency of the metrics collection cycle the provided integer value, expressed in seconds.
+* `hazelcast.client.metrics.debug.enabled`: Enables collecting debug metrics if set to `true`, disables it otherwise.
+Note that this can be set with system property only and is meant to be enabled only if diagnostics is enabled, since currently only diagnostics consumes the debug metrics.
+
+==== Metric Consumers
+
+In Hazelcast 3.x, metrics were part of the diagnostics system.
+With Hazelcast 4.0 metrics are made available for other consumers as well.
+The current set of metric consumers is:
+
+* Management Center
+* JMX
+* Diagnostics
+
+===== Management Center
+
+Starting with Hazelcast 4.0, Management Center receives the metrics used for building its view about the Hazelcast cluster from the metrics system.
+The members collect their metrics with the frequency defined with
+`collection-frequency-seconds`, which is by default once in every 5 seconds.
+Then it saves the collected metrics into a blob stored in an in-memory buffer.
+The blob then is retained for the time configured in the `retention-seconds` under the `management-center` section.
+This is also 5 seconds by default, which means there is at most one blob stored by default.
+Management Center periodically reads out the metrics from this buffer, which frees up the heap occupied by the blob once it is consumed.
+
+As mentioned earlier, the client metrics are also stored in these blobs on the member-side with timestamps assigned to them on the client-side.
+
+===== JMX
+
+Starting with Hazelcast 4.0, the metrics are made available on the JMX interface of the Hazelcast members and clients.
+The metrics are exposed under `com.hazelcast/$INSTANCE_NAME/Metrics` where `$INSTANCE_NAME` is the name of the member or client instance the JMX client is connected to.
+
+===== Diagnostics
+
+There are no diagnostics related settings in the metrics configuration section.
+Please refer to the
+<<diagnostics-metrics, Metrics>> section of the Diagnostics for the details.
+
+==== Notes on Performance
+
+The metrics system was designed with care to make the least possible impact on the performance of the cluster.
+Since the metrics collection takes place periodically with a few seconds frequency, the main focus is keeping allocation rates and memory footprint at minimum.
+Therefore, the blobs that store the metrics for the Management Center are stored in the memory in a compressed format.
+Measurements used multiple IMaps to scale up the number of metrics showed that one blob occupy a few KB only and it grows above 10KB only if there are more than 1000 IMaps are used.
+
+The allocation rate of a metric collection cycle is also low.
+With Both Management Center and JMX consumers enabled, the allocation rate with 100 IMaps is below 256KB per cycle and grows above 1MB with 1000 IMaps.This means metrics collection doesn't increase the frequency of the GC noticeably.
+
+While the metrics collection is considered GC friendly, it should be noted that the blobs are not recycled, which means configuring the retention time should be done with taking the frequency of the GC into account to prevent the blobs from getting promoted into the tenured region of the heap that in the end contributes to major GCs after time.
+
 === Diagnostics
 
 Hazelcast offers an extended set of diagnostics plugins for both Hazelcast members and clients.
@@ -1507,17 +1606,15 @@ your Hazelcast installation. These are the properties starting with `java` (excl
 It shows the Hazelcast properties and their values explicitly set by you either
 on the command line (with `-D`) or by using declarative/programmatic configuration.
 
+[[diagnostics-metrics]]
 ===== Metrics
 
 It shows a comprehensive log of what is happening in your Hazelcast system.
 
-You can configure the level of detail and frequency of dumping information to
-the log file using the following properties:
+You can configure the frequency of dumping information to the log file using the following property:
 
 * `hazelcast.diagnostics.metrics.period.seconds`: Set a value in seconds.
 Its default value is `60` seconds.
-* `hazelcast.diagnostics.metric.level`: Set a level. It can be `Mandatory`, `Info` and `Debug`.
-Its default value is `Mandatory`.
 
 ===== SlowOperations
 

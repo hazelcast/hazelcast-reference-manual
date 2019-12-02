@@ -152,14 +152,6 @@ along with this and the following diagnostic related system properties, see the 
 |long
 |Frequency, in seconds, at which the cluster information is dumped to the diagnostics log file.
 
-|`hazelcast.diagnostics.metric.level`
-|Mandatory
-|string
-|Level of the comprehensive logs presented
-by the <<diagnostics, diagnostics tool>> related to
-what is happening in your Hazelcast system. Available
-values are `Mandatory`, `Info` and `Debug`.
-
 |`hazelcast.diagnostics.metrics.period.seconds`
 |60
 |long
@@ -588,6 +580,66 @@ of a static prefix, number and cluster name is provided.
 | 120
 | int
 | Run interval of <<split-brain-syndrome, split-brain/merge process>> in seconds.
+
+|`hazelcast.metrics.enabled`
+| true
+| bool
+| Enables the <<metrics, metrics collection>> if set to `true`, disables it otherwise. Note that the preferred way for
+controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.metrics.mc.enabled`
+| true
+| bool
+| Enables buffering the collected <<metrics, metrics>> for Management Center if set to `true`, disables it otherwise. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.metrics.mc.retention`
+| 5
+| int
+| Sets the seconds the <<metrics, metrics>> are retained for Management Center to the provided integer value. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.metrics.jmx.enabled`
+| true
+| bool
+| Enables exposing the collected <<metrics, metrics>> over JMX if set to `true`, disables it otherwise. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.metrics.collection.frequency`
+| 5
+| int
+| Sets the frequency of the <<metrics, metrics>> collection cycle the provided integer value, expressed in seconds. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.metrics.debug.enabled`
+| false
+| bool
+| Enables collecting debug metrics if set to `true`, disables it otherwise.
+Note that this is meant to be enabled only if diagnostics is enabled, since currently only diagnostics consumes the debug metrics.
+
+|`hazelcast.client.metrics.enabled`
+| true
+| bool
+| Enables the <<metrics, metrics collection>> if set to `true`, disables it otherwise. Note that the preferred way for
+controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.client.metrics.jmx.enabled`
+| true
+| bool
+| Enables exposing the collected <<metrics, metrics>> over JMX if set to `true`, disables it otherwise. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.client.metrics.collection.frequency`
+| 5
+| int
+| Sets the frequency of the <<metrics, metrics>> collection cycle the provided integer value, expressed in seconds. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.client.metrics.debug.enabled`
+| false
+| bool
+| Enables collecting debug metrics if set to `true`, disables it otherwise.
+Note that this is meant to be enabled only if diagnostics is enabled, since currently only diagnostics consumes the debug metrics.
 
 |`hazelcast.migration.min.delay.on.member.removed.seconds`
 |5
