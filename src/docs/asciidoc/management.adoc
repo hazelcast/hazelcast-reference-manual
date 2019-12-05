@@ -633,7 +633,6 @@ And the following table lists all the endpoints along with the groups they belon
 | Disabled
 |
 
-* `/hazelcast/rest/mancenter/changeurl`
 * `/hazelcast/rest/management/cluster/changeState`
 * `/hazelcast/rest/license` (`POST`)
 * `/hazelcast/rest/management/cluster/version` (`POST`)
@@ -674,18 +673,14 @@ And the following table lists all the endpoints along with the groups they belon
 | Disabled
 |
 
-* `/hazelcast/rest/mancenter/wan/sync/map`
-* `/hazelcast/rest/mancenter/wan/sync/allmaps`
-* `/hazelcast/rest/mancenter/wan/clearWanQueues`
-* `/hazelcast/rest/mancenter/wan/addWanConfig`
-* `/hazelcast/rest/mancenter/wan/pausePublisher`
-* `/hazelcast/rest/mancenter/wan/stopPublisher`
-* `/hazelcast/rest/mancenter/wan/resumePublisher`
-* `/hazelcast/rest/mancenter/wan/consistencyCheck/map`
 * `/hazelcast/rest/wan/sync/map`
 * `/hazelcast/rest/wan/sync/allmaps`
-* `/hazelcast/rest/mancenter/clearWanQueues`
+* `/hazelcast/rest/wan/clearWanQueues`
 * `/hazelcast/rest/wan/addWanConfig`
+* `/hazelcast/rest/wan/pausePublisher`
+* `/hazelcast/rest/wan/stopPublisher`
+* `/hazelcast/rest/wan/resumePublisher`
+* `/hazelcast/rest/wan/consistencyCheck/map`
 
 | `DATA`
 | Disabled
@@ -2147,9 +2142,7 @@ the `management-center` element within the Hazelcast member configuration file, 
 ----
 <hazelcast>
     ...
-    <management-center enabled="true" scripting-enabled="false">
-        http://localhost:8080/hazelcast-mancenter
-    </management-center>
+    <management-center scripting-enabled="false" />
     ...
 </hazelcast>
 ----
