@@ -665,10 +665,10 @@ and age = 33` predicates are served by the matched index, while the
 Bitmap indexes provide capabilities similar to unordered/hash indexes.
 The same set of predicates is supported: `equal`, `notEqual`, `in`,
 `and`, `or` and `not`. But, unlike hash indexes, bitmap indexes are able
-to achieve a much higher memory efficiency at the cost of reduced query
-performance. In practice, the query performance is comparable to the
-performance of hash indexes, while memory footprint reduction is high,
-usually around an order of magnitude.
+to achieve a much higher memory efficiency for low cardinality attributes
+at the cost of reduced query performance. In practice, the query
+performance is comparable to the performance of hash indexes, while
+memory footprint reduction is high, usually around an order of magnitude.
 
 Bitmap indexes are especially useful for indexing of collection and
 array attributes since a single `IMap` entry produces many index entries
