@@ -1253,12 +1253,12 @@ Declarative Configuration:
 <hazelcast-client>
     ...
     <connection-strategy async-start="false" reconnect-mode="ON">
-        <connection-retry enabled="true">
+        <connection-retry>
             <initial-backoff-millis>1000</initial-backoff-millis>
             <max-backoff-millis>60000</max-backoff-millis>
             <multiplier>2</multiplier>
-            <fail-on-max-backoff>true</fail-on-max-backoff>
-            <jitter>0.5</jitter>
+            <cluster-connect-timeout-millis>50000</cluster-connect-timeout-millis>
+            <jitter>0.2</jitter>
         </connection-retry>
     </connection-strategy>
     ...
@@ -1275,9 +1275,8 @@ ConnectionRetryConfig connectionRetryConfig = connectionStrategyConfig.getConnec
 connectionRetryConfig.setInitialBackoffMillis(1000)
                      .setMaxBackoffMillis(60000)
                      .setMultiplier(2)
-                     .setFailOnMaxBackoff(true)
-                     .setJitter(0.2)
-                     .setEnabled(true);
+                     .setClusterConnectTimeoutMillis(50000)
+                     .setJitter(0.2);
 
 ----
 
@@ -1288,23 +1287,24 @@ Its default value is 1000 ms.
 * `max-backoff-millis`: Specifies the upper limit for the backoff in milliseconds.
 Its default value is 30000 ms.
 * `multiplier`: Factor to multiply the backoff after a failed retry.
-Its default value is 2.
-* `fail-on-max-backoff`: Specifies whether to fail when the `max-backoff-millis` has reached or
-continue waiting `max-backoff-millis` at each iteration. Its default value is false.
-* `jitter`: Specifies by how much to randomize backoffs. Its default value is 0.2.
+Its default value is 1.
+* `cluster-connect-timeout-millis`: Timeout value in milliseconds for the client to give up to connect to the current cluster
+Its default value is 20000.
+* `jitter`: Specifies by how much to randomize backoffs. Its default value is 0.
 
 A pseudo-code is as follows:
 
 [source,plain]
 ----
+ begin_time = getCurrentTime()
  current_backoff_millis = INITIAL_BACKOFF_MILLIS
- while (TryConnect(connectionTimeout)) != SUCCESS)
-    if (fail-on-max-backoff && current_backoff_millis >= MAX_BACKOFF_MILLIS) {
-        FAIL WITH EXCEPTION
+ while (TryConnect(connectionTimeout)) != SUCCESS) {
+    if (getCurrentTime() - begin_time >= CLUSTER_CONNECT_TIMEOUT_MILLIS) {
+        GIVE UP
     }
-    randomizedSleepMillis = UniformRandom(-JITTER * current_backoff_millis, JITTER * current_backoff_millis)
-    Sleep(randomizedSleepMillis)
+    Sleep(current_backoff_millis + UniformRandom(-JITTER * current_backoff_millis, JITTER * current_backoff_millis))
     current_backoff = Min(current_backoff_millis * MULTIPLIER, MAX_BACKOFF_MILLIS)
+}
 ----
 
 Note that, `TryConnect` above tries to connect to any member that the client knows,
