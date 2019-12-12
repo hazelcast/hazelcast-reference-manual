@@ -2116,6 +2116,22 @@ The output of the following endpoints has been changed to JSON:
 * `/hazelcast/health/ready`
 * `/hazelcast/rest/cluster`
 
+==== Changes in the Diagnostics Configuration
+
+By introducing the <<metrics, metrics system>> in Hazelcast IMDG 4.0,
+the metrics collected by <<diagnostics, Diagnostics>>
+and the metrics system is shared.
+This has come with the following changes of the system
+properties that configure diagnostics:
+
+* `hazelcast.diagnostics.metric.level` is not available anymore.
+Collecting debug metrics can be enabled by setting
+the `hazelcast.metrics.debug.enabled` or `hazelcast.client.metrics.debug.enabled`
+system properties to `true` for the members and clients respectively.
+* `hazelcast.diagnostics.metric.distributed.datastructures` is not anymore available
+since the data structure metrics are required for the other <<metric-consumers, Metric Consumers>>.
+Therefore, they are collected by default and no need for enabling it for the diagnostics.
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
