@@ -2090,21 +2090,22 @@ MapListener listenerImpl = config.getImplementation();
 
 ==== Changes in REST Endpoints
 
+The following REST endpoints have been changed:
+
+* `/hazelcast/rest/mancenter/changeurl` is removed
+* All `/hazelcast/rest/mancenter/wan/*` endpoints are renamed to `/hazelcast/rest/wan/`
+
 The following REST endpoints now require cluster name and password
 as the first two URL-encoded parameters:
 
-* `/hazelcast/rest/mancenter/wan/sync/map`
-* `/hazelcast/rest/mancenter/wan/sync/allmaps`
-* `/hazelcast/rest/mancenter/wan/clearWanQueues`
-* `/hazelcast/rest/mancenter/wan/addWanConfig`
-* `/hazelcast/rest/mancenter/wan/pausePublisher`
-* `/hazelcast/rest/mancenter/wan/stopPublisher`
-* `/hazelcast/rest/mancenter/wan/resumePublisher`
-* `/hazelcast/rest/mancenter/wan/consistencyCheck/map`
 * `/hazelcast/rest/wan/sync/map`
 * `/hazelcast/rest/wan/sync/allmaps`
-* `/hazelcast/rest/mancenter/clearWanQueues`
+* `/hazelcast/rest/wan/clearWanQueues`
 * `/hazelcast/rest/wan/addWanConfig`
+* `/hazelcast/rest/wan/pausePublisher`
+* `/hazelcast/rest/wan/stopPublisher`
+* `/hazelcast/rest/wan/resumePublisher`
+* `/hazelcast/rest/wan/consistencyCheck/map`
 
 The output of the following endpoints has been changed to JSON:
 
@@ -2131,6 +2132,24 @@ system properties to `true` for the members and clients respectively.
 * `hazelcast.diagnostics.metric.distributed.datastructures` is not anymore available
 since the data structure metrics are required for the other <<metric-consumers, Metric Consumers>>.
 Therefore, they are collected by default and no need for enabling it for the diagnostics.
+
+==== Changes in the Management Center Configuration
+
+As Management Center now uses Hazelcast Java client for communication with the cluster,
+all attributes and nested elements were removed from programmatic, XML and YAML configurations
+for Management Center (i.e. from `ManagementCenterConfig` class and `management-center`
+configuration element), except for the `scripting-enabled` attribute.
+
+A full example of settings available in the Management Center configuration now looks like the following:
+
+[source,xml]
+----
+<management-center scripting-enabled="true" />
+----
+
+This came with the following changes of the system properties that configure Management Center.
+
+* `hazelcast.mc.url.change.enabled` is not available anymore.
 
 === Upgrading to Hazelcast IMDG 3.12.x
 
