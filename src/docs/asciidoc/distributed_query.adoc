@@ -663,8 +663,16 @@ and age = 33` predicates are served by the matched index, while the
 ===== Bitmap Indexes
 
 Bitmap indexes provide capabilities similar to unordered/hash indexes.
-The same set of predicates is supported: `equal`, `notEqual`, `in`,
-`and`, `or` and `not`. But, unlike hash indexes, bitmap indexes are able
+The same set of predicates is supported:
+
+* `equal`
+* `notEqual`
+* `in`,
+* `and`
+* `or`
+* `not`
+
+But, unlike hash indexes, bitmap indexes are able
 to achieve a much higher memory efficiency for low cardinality attributes
 at the cost of reduced query performance. In practice, the query
 performance is comparable to the performance of hash indexes, while
@@ -675,10 +683,10 @@ array attributes since a single `IMap` entry produces many index entries
 in that case. A single hash index entry costs a few tens of bytes, while
 a single bitmap index entry usually costs just a few bytes.
 
-====== Bitmap Index Configuration
+====== Configuring Bitmap Indexes
 
 In the simplest form, bitmap index for an `IMap` entry attribute can be
-configured as follows:
+declaratively configured as follows:
 
 [source,xml]
 ----
@@ -693,8 +701,8 @@ configured as follows:
 </hazelcast>
 ----
 
-Internally, a unique non-negative `long` ID will be assigned to every
-indexed `IMap` entry based on the entry key. That unique `long` ID is
+Internally, a unique non-negative `long` ID is assigned to every
+indexed `IMap` entry based on the entry key. That unique ID is
 required for bitmap indexes to distinguish one indexed `IMap` entry from
 another.
 
@@ -719,14 +727,14 @@ as follows:
 ----
 
 The index definition above instructs Hazelcast to create a bitmap index
-on `age` attribute, extract unique key values from `uniqueId` attribute
+on the `age` attribute, extract the unique key values from `uniqueId` attribute
 and use the raw (`RAW`) extracted values directly as `long` IDs. If the
 extracted unique key value is not of `long` type, the widening
 conversion is performed for the following types: `byte`, `short` and
 `int`; boxed variants are also supported.
 
-In certain cases, the extracted raw IDs might be randomly distributed,
-that causes increased memory usage in bitmap indexes since the best case
+In certain cases, the extracted raw IDs might be randomly distributed.
+This causes increased memory usage in bitmap indexes since the best case
 scenario for them is sequential contiguous IDs. That can be countered by
 applying the renumbering technique:
 
@@ -743,7 +751,7 @@ applying the renumbering technique:
 </hazelcast>
 ----
 
-The index definition above instructs the bitmap index to extract unique
+The index definition above instructs the bitmap index to extract the unique
 keys from `uniqueId` attribute, convert every extracted non-negative
 value to `long` (`LONG`) and assign an internal sequential unique `long`
 ID based on that extracted and then converted unique value. The widening
@@ -758,45 +766,42 @@ as Java objects (`OBJECT`) to assign internal unique `long` IDs.
 
 The full-form definition syntax is defined as follows:
 
-[source]
+[source,plain]
 ----
 BITMAP(<attr>, <key>, <transform>)
 ----
 
-Where `<attr>` specifies the attribute index, `<key>` specifies the
-attribute to use as a unique key source for internal unique `long` ID
-assignment and `<transform>` specifies the transformation to be applied
+The following are the parameter descriptions:
+
+* `<attr>`: Specifies the attribute index.
+* `<key>`: Specifies the attribute to use as a unique key source
+for internal unique `long` ID assignment.
+* `<transform>`: Specifies the transformation to be applied
 to unique keys to generate unique `long` IDs from them. The following
 transformations are supported:
+** `OBJECT`: Object-to-long transformation. Each extracted unique
+key value is interpreted as a Java object instance. Internally, an
+object-to-long hash table is used to establish the mapping from unique
+keys to unique IDs. Good as a general-purpose transformation.
+** `LONG`: Long-to-long transformation. Each extracted unique key value
+is interpreted as a non-negative `long` value, the widening conversion
+from `byte`, `short` and `int` is performed, if necessary.
+Internally, a long-to-long hash table is used to establish the mapping
+from unique keys to unique IDs, which is more efficient than the
+object-to-long hash table. It is good for sparse/random unique integer-valued keys
+renumbering to raise the IDs density and to make the bitmap index more
+memory-efficient as a result.
+** `RAW`: Raw transformation. Each extracted unique key value is interpreted as
+a non-negative `long` value, the widening conversion from `byte`, `short` and
+`int` is performed, if necessary. Internally, no hash table of any kind is
+used to establish the mapping from unique keys to unique IDs, the raw extracted
+keys are used directly as IDs. It is good for dense unique integer-valued keys,
+and it has the best performance in terms of time and memory.
 
-    - `OBJECT`: object-to-long transformation. Each extracted unique key
-      value is interpreted as a Java object instance. Internally, an
-      object-to-long hash table is used to establish the mapping from
-      unique keys to unique IDs. Good as a general-purpose transformation.
-
-    - `LONG`: long-to-long transformation. Each extracted unique key
-      value is interpreted as a non-negative `long` value, the widening
-      conversion from `byte`, `short` and `int` is performed, if
-      necessary. Internally, a long-to-long hash table is used to
-      establish the mapping from unique keys to unique IDs, which is
-      more efficient than the object-to-long hash table. Good for
-      sparse/random unique integer-valued keys renumbering to raise the
-      IDs density and to make the bitmap index more memory-efficient as
-      a result.
-
-    - `RAW`: raw transformation. Each extracted unique key value is
-      interpreted as a non-negative `long` value, the widening
-      conversion from `byte`, `short` and `int` is performed, if
-      necessary. Internally, no hash table of any kind is used to
-      establish the mapping from unique keys to unique IDs, the raw
-      extracted keys are used directly as IDs. Good for dense unique
-      integer-valued keys, has the best performance in terms of time and
-      memory.
-
-The regular doted attribute path syntax is supported for `<attr>` and
+The regular dotted attribute path syntax is supported for `<attr>` and
 `<key>`:
 
-[source]
+[source,plain]
 ----
 BITMAP(name.first)
 BITMAP(name.first, __key, RAW)
@@ -807,18 +812,18 @@ BITMAP(name.first, id.external, RAW)
 
 Collection and array indexing is also possible using the regular syntax:
 
-[source]
+[source,plain]
 ----
 BITMAP(habits[any])
 BITMAP(habits[0], __key, RAW)
 ...
 ----
 
-See <<Indexing in Collections and Arrays>> for more details.
+See <<indexing-in-collections-and-arrays, Indexing in Collections and Arrays section>> for more details.
 
 ====== Bitmap Index Querying
 
-Bitmap index matching and selection for queries is performed
+Bitmap index matching and selection for queries are performed
 automatically. No special treatment is required. The querying can be
 performed using the regular `IMap` querying methods:
 `IMap.values(Predicate)`, `IMap.entrySet(Predicate)`, etc.
