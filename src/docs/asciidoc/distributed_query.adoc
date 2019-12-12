@@ -5,7 +5,7 @@
 Distributed queries access data from multiple data sources stored on
 either the same or different members.
 
-Hazelcast partitions your data and spreads it across cluster of members. 
+Hazelcast partitions your data and spreads it across cluster of members.
 You can iterate over the map entries and look for certain entries
 (specified by predicates) you are interested in. However, this is not
 very efficient because you have to bring the entire entry set and iterate
@@ -124,7 +124,7 @@ The following are descriptions for some of them:
 * `notEqual`: Checks if the result of an expression is not equal to a given value.
 * `instanceOf`: Checks if the result of an expression has a certain type.
 * `like`: Checks if the result of an expression matches some string pattern. %
-(percentage sign) is the placeholder for many characters,  (underscore) is 
+(percentage sign) is the placeholder for many characters,  (underscore) is
 placeholder for only one character.
 * `greaterThan`: Checks if the result of an expression is greater than a
 certain value.
@@ -362,7 +362,7 @@ This metadata object is created every time
 a `HazelcastJsonValue` is put into an IMap. Metadata is later used
 to speed up the query operations. Metadata creation
 is on by default. Depending on your application's needs, you may want
-to turn off the metadata creation 
+to turn off the metadata creation
 to decrease the put latency and increase the throughput. You can configure
 this using <<metadata-policy, Metadata Policy>>.
 
@@ -659,6 +659,169 @@ index matcher: `name = 'Alice' and age = 33 and balance > 0.0` can be
 partially matched by the `name, age` composite index, the `name = 'Alice'
 and age = 33` predicates are served by the matched index, while the
 `balance > 0.0` predicate is processed by other means.
+
+===== Bitmap Indexes
+
+Bitmap indexes provide capabilities similar to unordered/hash indexes.
+The same set of predicates is supported: `equal`, `notEqual`, `in`,
+`and`, `or` and `not`. But, unlike hash indexes, bitmap indexes are able
+to achieve a much higher memory efficiency for low cardinality attributes
+at the cost of reduced query performance. In practice, the query
+performance is comparable to the performance of hash indexes, while
+memory footprint reduction is high, usually around an order of magnitude.
+
+Bitmap indexes are especially useful for indexing of collection and
+array attributes since a single `IMap` entry produces many index entries
+in that case. A single hash index entry costs a few tens of bytes, while
+a single bitmap index entry usually costs just a few bytes.
+
+====== Bitmap Index Configuration
+
+In the simplest form, bitmap index for an `IMap` entry attribute can be
+configured as follows:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="persons">
+        <indexes>
+            <index>BITMAP(age)</index>
+        </indexes>
+    </map>
+    ...
+</hazelcast>
+----
+
+Internally, a unique non-negative `long` ID will be assigned to every
+indexed `IMap` entry based on the entry key. That unique `long` ID is
+required for bitmap indexes to distinguish one indexed `IMap` entry from
+another.
+
+The mapping between `IMap` entries and `long` IDs is not free and its
+performance and memory footprint can be improved in certain cases. For
+instance, if `IMap` entries already have a unique integer-valued
+attribute, the attribute values can be used as unique `long` IDs
+directly without any additional transformations. That can be configured
+as follows:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="persons">
+        <indexes>
+            <index>BITMAP(age, uniqueId, RAW)</index>
+        </indexes>
+    </map>
+    ...
+</hazelcast>
+----
+
+The index definition above instructs Hazelcast to create a bitmap index
+on `age` attribute, extract unique key values from `uniqueId` attribute
+and use the raw (`RAW`) extracted values directly as `long` IDs. If the
+extracted unique key value is not of `long` type, the widening
+conversion is performed for the following types: `byte`, `short` and
+`int`; boxed variants are also supported.
+
+In certain cases, the extracted raw IDs might be randomly distributed,
+that causes increased memory usage in bitmap indexes since the best case
+scenario for them is sequential contiguous IDs. That can be countered by
+applying the renumbering technique:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="persons">
+        <indexes>
+            <index>BITMAP(age, uniqueId, LONG)</index>
+        </indexes>
+    </map>
+    ...
+</hazelcast>
+----
+
+The index definition above instructs the bitmap index to extract unique
+keys from `uniqueId` attribute, convert every extracted non-negative
+value to `long` (`LONG`) and assign an internal sequential unique `long`
+ID based on that extracted and then converted unique value. The widening
+conversion is applied to the extracted values, if necessary.
+
+This long-to-long mapping is performed more efficiently than the general
+object-to-long mapping done for the simple index definitions. Basically,
+a simple bitmap index definition like `BITMAP(age)` is equivalent to the
+following full-form definition: `BITMAP(age, __key, OBJECT)`, which
+indexes `age` attribute, uses `IMap` entry keys (`__key`) interpreted
+as Java objects (`OBJECT`) to assign internal unique `long` IDs.
+
+The full-form definition syntax is defined as follows:
+
+[source]
+----
+BITMAP(<attr>, <key>, <transform>)
+----
+
+Where `<attr>` specifies the attribute index, `<key>` specifies the
+attribute to use as a unique key source for internal unique `long` ID
+assignment and `<transform>` specifies the transformation to be applied
+to unique keys to generate unique `long` IDs from them. The following
+transformations are supported:
+
+    - `OBJECT`: object-to-long transformation. Each extracted unique key
+      value is interpreted as a Java object instance. Internally, an
+      object-to-long hash table is used to establish the mapping from
+      unique keys to unique IDs. Good as a general-purpose transformation.
+
+    - `LONG`: long-to-long transformation. Each extracted unique key
+      value is interpreted as a non-negative `long` value, the widening
+      conversion from `byte`, `short` and `int` is performed, if
+      necessary. Internally, a long-to-long hash table is used to
+      establish the mapping from unique keys to unique IDs, which is
+      more efficient than the object-to-long hash table. Good for
+      sparse/random unique integer-valued keys renumbering to raise the
+      IDs density and to make the bitmap index more memory-efficient as
+      a result.
+
+    - `RAW`: raw transformation. Each extracted unique key value is
+      interpreted as a non-negative `long` value, the widening
+      conversion from `byte`, `short` and `int` is performed, if
+      necessary. Internally, no hash table of any kind is used to
+      establish the mapping from unique keys to unique IDs, the raw
+      extracted keys are used directly as IDs. Good for dense unique
+      integer-valued keys, has the best performance in terms of time and
+      memory.
+
+The regular doted attribute path syntax is supported for `<attr>` and
+`<key>`:
+
+[source]
+----
+BITMAP(name.first)
+BITMAP(name.first, __key, RAW)
+BITMAP(name.first, __key.id, RAW)
+BITMAP(name.first, id.external, RAW)
+...
+----
+
+Collection and array indexing is also possible using the regular syntax:
+
+[source]
+----
+BITMAP(habits[any])
+BITMAP(habits[0], __key, RAW)
+...
+----
+
+See <<Indexing in Collections and Arrays>> for more details.
+
+====== Bitmap Index Querying
+
+Bitmap index matching and selection for queries is performed
+automatically. No special treatment is required. The querying can be
+performed using the regular `IMap` querying methods:
+`IMap.values(Predicate)`, `IMap.entrySet(Predicate)`, etc.
 
 ===== Copying Indexes
 
