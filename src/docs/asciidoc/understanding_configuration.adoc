@@ -88,9 +88,7 @@ The identical part of the configuration extracted from `hazelcast.yaml` is shown
 ----
 hazelcast:
   ...
-  cluster:
-    name: dev
-    password: dev-pass
+  cluster-name: dev
   management-center:
     enabled: false
     url: http://localhost:8080/hazelcast-mancenter
@@ -179,8 +177,7 @@ The above example using the YAML configuration files looks like the following:
 [source,yaml]
 ----
 hazelcast:
-  cluster:
-    name: dev
+  cluster-name: dev
 ----
 
 `development-network-config.yaml`:
@@ -256,8 +253,7 @@ The same client configuration using the YAML language is shown below.
 [source,yaml]
 ----
 hazelcast-client:
-  cluster:
-    name: dev
+  cluster-name: dev
 ----
 
 `client-network-config.yaml`:
@@ -914,8 +910,7 @@ In the YAML configuration:
 [source,yaml]
 ----
 hazelcast:
-  cluster:
-    name: ${cluster.name}
+  cluster-name: ${cluster.name}
 ----
 
 This also applies to the declarative configuration of Hazelcast Java Client,
@@ -931,8 +926,7 @@ as shown below.
 [source,yaml]
 ----
 hazelcast-client:
-  cluster:
-    name: ${cluster.name}
+  cluster-name: ${cluster.name}
 ----
 
 If you do not want to rely on the system properties, you can use the
