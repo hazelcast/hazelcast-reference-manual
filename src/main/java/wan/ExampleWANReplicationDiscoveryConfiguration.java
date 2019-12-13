@@ -12,7 +12,7 @@ public class ExampleWANReplicationDiscoveryConfiguration {
         WanReplicationConfig wrConfig = new WanReplicationConfig();
         wrConfig.setName("my-wan-cluster-batch");
 
-        WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
                 .setClusterName("london")
                 .setQueueFullBehavior(WanQueueFullBehavior.THROW_EXCEPTION)
                 .setQueueCapacity(1000)
@@ -38,7 +38,7 @@ public class ExampleWANReplicationDiscoveryConfiguration {
 
         discoveryConfig.addDiscoveryStrategyConfig(discoveryStrategyConfig);
         publisherConfig.setDiscoveryConfig(discoveryConfig);
-        wrConfig.addWanBatchReplicationPublisherConfig(publisherConfig);
+        wrConfig.addBatchReplicationPublisherConfig(publisherConfig);
         config.addWanReplicationConfig(wrConfig);
 //end::wrdc[]
     }

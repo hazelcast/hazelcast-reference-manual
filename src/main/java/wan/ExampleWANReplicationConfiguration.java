@@ -10,7 +10,7 @@ public class ExampleWANReplicationConfiguration {
         WanReplicationConfig wrConfig = new WanReplicationConfig()
                 .setName("my-wan-cluster-batch");
 
-        WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
                 .setClusterName("london")
                 .setQueueFullBehavior(WanQueueFullBehavior.THROW_EXCEPTION)
                 .setQueueCapacity(1000)

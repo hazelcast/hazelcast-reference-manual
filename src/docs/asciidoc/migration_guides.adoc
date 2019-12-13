@@ -1430,13 +1430,13 @@ The tag which was supposed to cover both cases, using the built-in Hazelcast EE 
 custom WAN replication implementation (`wan-publisher` or `WanPublisherConfig`), has been separated into
 two configuration elements/classes to be used for built-in and custom WAN publishers:
 
-* `batch-publisher` (declarative configuration) or `WanBatchReplicationPublisherConfig` (programmatic configuration)
-* `custom-publisher` (declarative configuration) or `CustomWanPublisherConfig` (programmatic configuration)
+* `batch-publisher` (declarative configuration) or `WanBatchPublisherConfig` (programmatic configuration)
+* `custom-publisher` (declarative configuration) or `WanCustomPublisherConfig` (programmatic configuration)
 
 This means, if you're using the Hazelcast built-in WAN replication, the new configuration element
-is `batch-publisher` or `WanBatchReplicationPublisherConfig`.
+is `batch-publisher` or `WanBatchPublisherConfig`.
 If you're using a custom WAN replication implementation, the new configuration element is
-`custom-publisher` or `CustomWanPublisherConfig`.
+`custom-publisher` or `WanCustomPublisherConfig`.
 
 Additionally, the group password has been removed from the configuration and now only the cluster name is checked
 when connecting to the target cluster. This has been done to align the behavior with members forming a single
@@ -1526,7 +1526,7 @@ properties.put("group.password", "nyc-pass");
 
 [source,java,options="nowrap"]
 ----
-WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
         .setClusterName("builtInPublisher")
         .setPublisherId("builtInPublisherId")
         .setClassName("com.hazelcast.enterprise.wan.impl.replication.WanBatchReplication")
@@ -1598,7 +1598,7 @@ properties.put("some.other.property", "some-other-value");
 
 [source,java,options="nowrap"]
 ----
-CustomWanPublisherConfig publisherConfig = new CustomWanPublisherConfig()
+WanCustomPublisherConfig publisherConfig = new WanCustomPublisherConfig()
         .setPublisherId("customWanPublisherId")
         .setClassName("com.myCompany.MyImplementation");
 Map<String, Comparable> properties = publisherConfig.getProperties();

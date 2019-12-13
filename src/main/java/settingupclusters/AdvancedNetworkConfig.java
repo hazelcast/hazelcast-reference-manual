@@ -5,7 +5,7 @@ import com.hazelcast.config.RestServerEndpointConfig;
 import com.hazelcast.config.SSLConfig;
 import com.hazelcast.config.ServerSocketEndpointConfig;
 import com.hazelcast.config.AbstractWanPublisherConfig;
-import com.hazelcast.config.WanBatchReplicationPublisherConfig;
+import com.hazelcast.config.WanBatchPublisherConfig;
 import com.hazelcast.config.WanReplicationConfig;
 import com.hazelcast.config.WanReplicationRef;
 import com.hazelcast.core.Hazelcast;
@@ -62,10 +62,10 @@ public class AdvancedNetworkConfig {
                                             .setProperty("foo", "bar"))
         );
         WanReplicationConfig wanReplicationConfig = new WanReplicationConfig();
-        WanBatchReplicationPublisherConfig publisherConfig = new WanBatchReplicationPublisherConfig()
+        WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
         			.setEndpoint("tokyo")
         			.setTargetEndpoints("tokyo.hazelcast.com:8765");
-        wanReplicationConfig.addWanBatchReplicationPublisherConfig(publisherConfig);
+        wanReplicationConfig.addBatchReplicationPublisherConfig(publisherConfig);
         config.addWanReplicationConfig(wanReplicationConfig);
 
         config.getMapConfig("customers").setWanReplicationRef(
