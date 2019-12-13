@@ -678,10 +678,14 @@ at the cost of reduced query performance. In practice, the query
 performance is comparable to the performance of hash indexes, while
 memory footprint reduction is high, usually around an order of magnitude.
 
-Bitmap indexes are especially useful for indexing of collection and
+Bitmap indexes are specifically designed for indexing of collection and
 array attributes since a single `IMap` entry produces many index entries
 in that case. A single hash index entry costs a few tens of bytes, while
 a single bitmap index entry usually costs just a few bytes.
+
+It's also possible to improve the memory footprint while indexing regular
+single-value attributes, but the improvement is usually minor, depending
+on the data layout and total number of indexes.
 
 ====== Configuring Bitmap Indexes
 
