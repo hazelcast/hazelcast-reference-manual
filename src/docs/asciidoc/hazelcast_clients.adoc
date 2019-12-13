@@ -1300,7 +1300,7 @@ A pseudo-code is as follows:
  current_backoff_millis = INITIAL_BACKOFF_MILLIS
  while (TryConnect(connectionTimeout)) != SUCCESS) {
     if (getCurrentTime() - begin_time >= CLUSTER_CONNECT_TIMEOUT_MILLIS) {
-        GIVE UP
+         //Give up to connecting to the current cluster and switch to another if exists.
     }
     Sleep(current_backoff_millis + UniformRandom(-JITTER * current_backoff_millis, JITTER * current_backoff_millis))
     current_backoff = Min(current_backoff_millis * MULTIPLIER, MAX_BACKOFF_MILLIS)
