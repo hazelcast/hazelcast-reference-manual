@@ -20,6 +20,6 @@ public class EnablingWRforMap {
         wanRef.setMergePolicy(PassThroughMergePolicy.class.getName());
         wanRef.setRepublishingEnabled(false);
         config.getMapConfig("my-shared-map").setWanReplicationRef(wanRef);
-//tag::wrmap[]
+//end::wrmap[]
     }
 }
