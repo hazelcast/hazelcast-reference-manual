@@ -1616,14 +1616,14 @@ and replicate the updates to another system. For example, you might implement re
 Kafka or some JMS queue or even write out map and cache event changes to a log on disk.
 The SPI was not very intuitive though:
 
-* It was not clear which interface needed to be implemented (`WanReplicationPublisher` vs. `WanReplicationEndpoint`).
+* It was not clear which interface needed to be implemented (`WanPublisher` vs. `WanReplicationEndpoint`).
 * You had to implement different interfaces, depending on whether you were using Hazelcast IMDG
 Open Source or Enterprise edition.
 * There were cases of leaking internals which don't make sense for some custom implementations.
 * There were unused methods in the public SPI.
 
 In Hazelcast IMDG 4.0, we have provided a new and cleaner WAN publisher SPI. You only need to
-implement a single interface: `com.hazelcast.wan.WanReplicationPublisher`. This implementation can
+implement a single interface: `com.hazelcast.wan.WanPublisher`. This implementation can
 then be set in the WAN replication configuration and be used with both Hazelcast Open Source and
 Enterprise editions.
 

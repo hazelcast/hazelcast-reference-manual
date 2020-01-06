@@ -89,7 +89,7 @@ configuration when you add WAN Replication for these data structures (using the 
 `wan-replication-ref` in the configuration of IMap or ICache).
 * `batch-publisher`: WAN publisher which uses the built-in WAN replication implementation
 in the Hazelcast Enterprise Edition. It waits until a batch size is reached or a delay time is passed.
-* `custom-publisher`: Custom implementation of a WAN publisher implementing `WanReplicationPublisher`.
+* `custom-publisher`: Custom implementation of a WAN publisher implementing `WanPublisher`.
 * `consumer`: Configuration for processing the WAN events received from a target cluster. You can configure
 a certain behavior when processing the incoming WAN events  or even configure your own implementation
 for a WAN consumer. A custom WAN consumer allows you to define custom processing logic and is usually
@@ -107,6 +107,7 @@ the target endpoints can be a different cluster defined by static IPs or discove
 using a cloud discovery mechanism.
 
 The `batch-publisher` configuration element has the following sub-elements:
+
 * `cluster-name`: Sets the cluster name used as an endpoint cluster name for authentication
 on the target endpoint. If there is no separate publisher ID element defined, this cluster name
 is also used as a WAN publisher ID. This ID is then used for identifying the publisher in a
@@ -179,7 +180,7 @@ it only expects that the IP addresses you provide are available.
 You can define multiple discovery strategies using the `discovery-strategy` sub-element and its elements.
 
 The `custom-publisher` is used to configure a custom implementation of a WAN replication implementing
-`WanReplicationPublisher`. For example, you might implement replication to Kafka or some JMS queue or even
+`WanPublisher`. For example, you might implement replication to Kafka or some JMS queue or even
 write out map and cache event changes to a log on disk. It has the following sub-elements:
 
 * `class-name`: Mandatory configuration value defining the fully qualified class name of the
@@ -194,7 +195,7 @@ define a custom processing logic and is usually used in combination with a custo
 A custom consumer is optional and you may simply omit defining it which causes
 the default processing logic to be used. It has the following sub-elements:
 
-* `class-name`: Name of the class implementing a custom WAN consumer (`WanReplicationConsumer`).
+* `class-name`: Name of the class implementing a custom WAN consumer (`WanConsumer`).
 If you don't define a class name, the default processing logic for incoming WAN events is used.
 * `properties`: Properties for the custom WAN consumer.
 These properties are accessible when initializing the WAN consumer.
