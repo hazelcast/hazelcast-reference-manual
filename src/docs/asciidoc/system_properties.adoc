@@ -959,3 +959,9 @@ as the value tries to get deserialized, causing ``ClassNotFoundException``s.
 You can switch to using map remove instead on the PASSIVE cluster with this property.
 This both saves the bandwidth and avoid the exceptions.
 |===
+
+|hazelcast.write.through
+|true
+|bool
+|Optimization that allows sending of packets over the network to be done on the calling thread if the
+conditions are right. This can reduce the latency and increase the performance for low threaded environments.
