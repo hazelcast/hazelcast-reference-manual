@@ -402,45 +402,90 @@ The value of `quorum-ref` should be the quorum configuration name which you conf
 
 === Scheduled Executor Service
 
-Hazelcast's scheduled executor service (IScheduledExecutorService) is a data structure which implements the `java.util.concurrent.ScheduledExecutorService`, partially.
-Here, partially means that it allows the scheduling of a single future execution and/or at a fixed rate execution but not at a fixed delay.
+Hazelcast's scheduled executor service (IScheduledExecutorService) is
+a data structure which implements the `java.util.concurrent.ScheduledExecutorService`, partially.
+Here, partially means that it allows the scheduling of a single future execution
+and/or at a fixed rate execution but not at a fixed delay.
 
-On top of the Vanilla Scheduling API, IScheduledExecutorService allows additional methods such as the following:
+On top of the Vanilla Scheduling API, IScheduledExecutorService
+allows additional methods such as the following:
 
 * `scheduleOnMember`: On a specific cluster member.
 * `scheduleOnKeyOwner`: On the partition owning that key.
 * `scheduleOnAllMembers`: On all cluster members.
 * `scheduleOnAllMembers`: On all given members.
 
-See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledExecutorService.html[IScheduledExecutorService Javadoc] for its API details.
+See the 
+https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledExecutorService.html[IScheduledExecutorService Javadoc]
+for its API details.
 
 There are two different modes of durability for the service:
 
-1. Upon partition specific scheduling, the future task is stored both in the primary partition and also in its N backups, N being the `<durability>` property in the configuration. More specifically, there are always one or more backups to take ownership of the task in the event of a lost member. If a member is lost, the task is re-scheduled on the backup (new primary) member, which might induce further delays on the subsequent executions of the task.
-For example, if we schedule a task to run in 10 seconds from now, `schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds the owner member goes down (before the execution takes place), then the backup owner re-schedules the task in 10 seconds from now. Therefore, from the user's perspective waiting on the result, this will be available in `10 + 5 = 15` seconds rather than 10 seconds as it is anticipated originally. If `atFixedRate` was used, then only the initial delay is affected in the above scenario, all subsequent executions should adhere to the given period parameter.
+1. Upon partition specific scheduling, the future task is
+stored both in the primary partition and also in its N backups,
+N being the `<durability>` property in the configuration. More
+specifically, there are always one or more backups to take ownership
+of the task in the event of a lost member. If a member is lost, the
+task is re-scheduled on the backup (new primary) member, which might
+induce further delays on the subsequent executions of the task.
+For example, if we schedule a task to run in 10 seconds from now,
+`schedule(new ExampleTask(), 10, TimeUnit.SECONDS);` and after 5 seconds
+the owner member goes down (before the execution takes place), then the
+backup owner re-schedules the task in 10 seconds from now. Therefore,
+from the user's perspective waiting on the result, this will be available
+in `10 + 5 = 15` seconds rather than 10 seconds as it is anticipated originally.
+If `atFixedRate` was used, then only the initial delay is affected in the above
+scenario, all subsequent executions should adhere to the given period parameter.
 
-2. Upon member specific scheduling, the future task is *only* stored in the member itself, which means that in the event of a lost member, the task is lost as well.
+2. Upon member specific scheduling, the future task is *only* stored in the
+member itself, which means that in the event of a lost member, the task is lost as well.
 
-To accomplish the described durability, all tasks provide a unique identity/name before the scheduling takes place. The name allows the service to reach the scheduled task even after the caller (client or member) goes down and also allows to prevent duplicate tasks.
-The name of the task can be user-defined if it needs to be, by implementing the `com.hazelcast.scheduledexecutor.NamedTask` interface (plain wrapper util is available here: `com.hazelcast.scheduledexecutor.TaskUtils.named(java.lang.String, java.lang.Runnable)`). If the task does not provide a name in its implementation, the service provides a random UUID for it, internally.
+To accomplish the described durability, all tasks provide a unique
+identity/name before the scheduling takes place. The name allows the
+service to reach the scheduled task even after the caller (client or member)
+goes down and also allows to prevent duplicate tasks.
+The name of the task can be user-defined if it needs to be, by implementing
+the `com.hazelcast.scheduledexecutor.NamedTask` interface (plain wrapper util
+is available here: `com.hazelcast.scheduledexecutor.TaskUtils.named(java.lang.String, java.lang.Runnable)`).
+If the task does not provide a name in its implementation, the service provides a random UUID for it, internally.
 
-Upon scheduling, the service returns an `IScheduledFuture`, which on top of the `java.util.concurrent.ScheduledFuture` functionality, provides an API to get the resource handler of the task `ScheduledTaskHandler` and also the runtime statistics of the task.
+Upon scheduling, the service returns an `IScheduledFuture`, which on top of
+the `java.util.concurrent.ScheduledFuture` functionality, provides an API to
+get the resource handler of the task `ScheduledTaskHandler` and also the
+runtime statistics of the task.
 
-Futures associated with a scheduled task, in order to be aware of lost partitions and/or members, act as listeners on the local member/client. Therefore, they are always strongly referenced, on the member/client side. In order to clean up their resources, once completed, you can use the method `dispose()`. This method also cancels further executions of the task if scheduled at a fixed rate. See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledFuture.html[IScheduledFuture Javadoc] for its API details.
+Futures associated with a scheduled task, in order to be aware of lost
+partitions and/or members, act as listeners on the local member/client.
+Therefore, they are always strongly referenced, on the member/client side.
+In order to clean up their resources, once completed, you can use the method `dispose()`.
+This method also cancels further executions of the task if scheduled at a fixed rate.
+See the https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/scheduledexecutor/IScheduledFuture.html[IScheduledFuture Javadoc]
+for its API details.
 
-The task handler is a descriptor class holding information for the scheduled future, which is used to pinpoint the actual task in the cluster. It contains the name of the task, the owner (member or partition) and the scheduler name.
+The task handler is a descriptor class holding information for the
+scheduled future, which is used to pinpoint the actual task in the cluster.
+It contains the name of the task, the owner (member or partition) and the scheduler name.
 
-The handler is always available after scheduling and can be stored in a plain string format `com.hazelcast.scheduledexecutor.ScheduledTaskHandler.toUrn()` and re-constructed back from that String `com.hazelcast.scheduledexecutor.ScheduledTaskHandler.of()`. If the handler is lost, you can still find a task under a given scheduler by using the Scheduler's `com.hazelcast.scheduledexecutor.IScheduledExecutorService.getAllScheduledFutures()`.
+The handler is always available after scheduling and can be stored in a
+plain string format `com.hazelcast.scheduledexecutor.ScheduledTaskHandler.toUrn()` and
+re-constructed back from that String `com.hazelcast.scheduledexecutor.ScheduledTaskHandler.of()`.
+If the handler is lost, you can still find a task under a given scheduler by using the Scheduler's `com.hazelcast.scheduledexecutor.IScheduledExecutorService.getAllScheduledFutures()`.
 
-Last but not least, similar to <<executor-service, executor service>>, the scheduled executor service allows Stateful tasks to be scheduled. Stateful tasks, are tasks that require any kind of state during their runtime, which must also be durable along with the task in the event of a lost partition.
+Last but not least, similar to <<executor-service, executor service>>, the
+scheduled executor service allows Stateful tasks to be scheduled. Stateful tasks,
+are tasks that require any kind of state during their runtime, which must also
+be durable along with the task in the event of a lost partition.
 
-Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask` interface, providing implementation details for saving the state and loading it back. If a partition is lost, then the re-scheduled task loads the previously saved state before its execution.
+Stateful tasks can be created by implementing the `com.hazelcast.scheduledexecutor.StatefulTask`
+interface, providing implementation details for saving the state and loading it back.
+If a partition is lost, then the re-scheduled task loads the previously saved state before its execution.
 
 NOTE: As with the tasks, Objects stored in the state Map need to be Hazelcast serializable.
 
 ==== Configuring Scheduled Executor Service
 
-This section presents example configurations for scheduled executor service along with the descriptions of its configuration elements and attributes.
+This section presents example configurations for scheduled executor
+service along with the descriptions of its configuration elements and attributes.
 
 **Declarative Configuration:**
 
@@ -469,9 +514,31 @@ The following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the scheduled executor.
 * `pool-size`: Number of executor threads per member for the executor.
-* `capacity`: Maximum number of tasks that a scheduler can have per partition. Attempt to schedule more results in `RejectedExecutionException`. To free up the capacity, tasks should get disposed by the user.
+* `capacity`: Maximum number of tasks that a scheduler can have per partition.
+Attempt to schedule more results in `RejectedExecutionException`. To free up
+the capacity, tasks should get disposed by the user.
 * `durability`: Durability of the executor.
-* `quorum-ref`: Name of quorum configuration that you want this Scheduled Executor Service to use. See the <<split-brain-protection-for-ischeduled-executor-service, Split-Brain Protection for IScheduled Executor Service section>>.
+* `quorum-ref`: Name of quorum configuration that you want this Scheduled
+Executor Service to use.
+See the <<split-brain-protection-for-ischeduled-executor-service, Split-Brain Protection for IScheduled Executor Service section>>.
+
+===== Monitoring the Tasks
+
+You can see the count of pending tasks in your Scheduled Executor Service implementation
+in the Hazelcast main log file.
+For this, use the `hazelcast.scheduledexecutor.logdelay.seconds` property:
+
+* When you set this property to `0` or a negative value, it means the
+logging of tasks is disabled. This is the default value.
+* To enable the logging, set this property's value to `1` or a larger
+value. Besides enabling the logging, these values also represent the
+interval, in seconds, for taking the logs.
+
+The retrieved log value is a best effort. When a migration is in place, the numbers might not
+be accurate.
+
+See the <<logging-configuration, Logging Configuration section>>
+if you want learn more on Hazelcast IMDG logging.
 
 [[scheduled-exec-srv-examples]]
 ==== Examples
@@ -509,9 +576,14 @@ long totalTaskRuns = stats.getTotalRuns(); // = 1
 
 ==== Split-Brain Protection for IScheduled Executor Service
 
-IScheduledExecutorService can be configured to check for a minimum number of available members before applying its operations (see <<split-brain-protection, Split-Brain Protection>>). This is a check to avoid performing successful queue operations on all parts of a cluster during a network partition.
+IScheduledExecutorService can be configured to check for a
+minimum number of available members before applying its operations
+(see <<split-brain-protection, Split-Brain Protection>>). This
+is a check to avoid performing successful queue operations on
+all parts of a cluster during a network partition.
 
-The following is a list of methods, grouped by quorum type, that support Split-Brain Protection checks:
+The following is a list of methods, grouped by quorum type, that
+support Split-Brain Protection checks:
 
 * WRITE, READ_WRITE:
 ** `schedule`
@@ -530,7 +602,11 @@ The following is a list of methods, grouped by quorum type, that support Split-B
 
 **Configuring Split-Brain Protection**
 
-Split-Brain protection for Scheduled Executor Service can be configured programmatically using the method https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[`setQuorumName()`], or declaratively using the element `quorum-ref`. Following is an example declarative configuration:
+Split-Brain protection for Scheduled Executor Service can be
+configured programmatically using the method
+https://docs.hazelcast.org/docs/3.10/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[`setQuorumName()`],
+or declaratively using the element `quorum-ref`. Following is
+an example declarative configuration:
 
 [source,xml]
 ----
@@ -543,7 +619,9 @@ Split-Brain protection for Scheduled Executor Service can be configured programm
 </hazelcast>
 ----
 
-The value of `quorum-ref` should be the quorum configuration name which you configured under the `quorum` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
+The value of `quorum-ref` should be the quorum configuration
+name which you configured under the `quorum` element as explained
+in the <<split-brain-protection, Split-Brain Protection section>>.
 
 === Entry Processor
 
