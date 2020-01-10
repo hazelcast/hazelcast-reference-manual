@@ -11,7 +11,7 @@ public class ExampleQueueStats {
         IQueue<Integer> orders = node.getQueue( "orders" );
         LocalQueueStats queueStatistics = orders.getLocalQueueStats();
         System.out.println( "average age of items = "
-                + queueStatistics.getAvgAge() );
+                + queueStatistics.getAverageAge() );
         //end::qs[]
     }
 }
