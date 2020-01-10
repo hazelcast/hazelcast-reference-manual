@@ -17,7 +17,7 @@ public class EnablingWRforMap {
 
         WanReplicationRef wanRef = new WanReplicationRef();
         wanRef.setName("my-wan-cluster");
-        wanRef.setMergePolicy(PassThroughMergePolicy.class.getName());
+        wanRef.setMergePolicyClassName(PassThroughMergePolicy.class.getName());
         wanRef.setRepublishingEnabled(false);
         config.getMapConfig("my-shared-map").setWanReplicationRef(wanRef);
 //end::wrmap[]
