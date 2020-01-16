@@ -9,16 +9,16 @@ import java.util.concurrent.ConcurrentMap;
 
 
 //tag::ucmp[]
-public class UserContextMergePolicy<V> implements SplitBrainMergePolicy<V, MergingValue<V>>, HazelcastInstanceAware {
+public class UserContextMergePolicy<V> implements SplitBrainMergePolicy<V, MergingValue<V>, Object>, HazelcastInstanceAware {
 
     public static final String TRUTH_PROVIDER_ID = "truthProvider";
 
     private transient TruthProvider truthProvider;
 
     @Override
-    public V merge(MergingValue<V> mergingValue, MergingValue<V> existingValue) {
-        Object mergingUserValue = mergingValue.getDeserializedValue();
-        Object existingUserValue = existingValue == null ? null : existingValue.getDeserializedValue();
+    public Object merge(MergingValue<V> mergingValue, MergingValue<V> existingValue) {
+        Object mergingUserValue = mergingValue.getValue();
+        Object existingUserValue = existingValue == null ? null : existingValue.getValue();
         boolean isMergeable = truthProvider.isMergeable(mergingUserValue, existingUserValue);
         System.out.println("========================== Merging..."
                         + "\n    mergingValue: " + mergingUserValue
@@ -26,7 +26,7 @@ public class UserContextMergePolicy<V> implements SplitBrainMergePolicy<V, Mergi
                         + "\n    isMergeable(): " + isMergeable
         );
         if (isMergeable) {
-            return mergingValue.getValue();
+            return mergingValue.getRawValue();
         }
         return null;
     }

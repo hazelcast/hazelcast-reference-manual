@@ -7,22 +7,22 @@ import com.hazelcast.spi.merge.SplitBrainMergePolicy;
 import com.hazelcast.spi.merge.SplitBrainMergeTypes.MapMergeTypes;
 
 //tag::me[]
-public class MapEntryCostsMergePolicy implements SplitBrainMergePolicy<Data, MapMergeTypes> {
+public class MapEntryCostsMergePolicy implements SplitBrainMergePolicy<Object, MapMergeTypes<Object, Object>, Object> {
 
     @Override
-    public Data merge(MapMergeTypes mergingValue, MapMergeTypes existingValue) {
+    public Object merge(MapMergeTypes mergingValue, MapMergeTypes existingValue) {
         if (existingValue == null) {
             return mergingValue.getValue();
         }
-        System.out.println("========================== Merging key " + mergingValue.getDeserializedKey() + "..."
+        System.out.println("========================== Merging key " + mergingValue.getKey() + "..."
                 + "\n    mergingValue costs: " + mergingValue.getCost()
                 + "\n    existingValue costs: " + existingValue.getCost()
         );
 
         if (mergingValue.getCost() > existingValue.getCost()) {
-            return mergingValue.getValue();
+            return mergingValue.getRawValue();
         }
-        return existingValue.getValue();
+        return existingValue.getRawValue();
     }
 
     @Override

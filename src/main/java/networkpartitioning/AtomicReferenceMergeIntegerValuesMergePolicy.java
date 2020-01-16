@@ -4,12 +4,13 @@ import com.hazelcast.spi.merge.SplitBrainMergePolicy;
 import com.hazelcast.spi.merge.SplitBrainMergeTypes.AtomicReferenceMergeTypes;
 
 //tag::ar[]
-public class AtomicReferenceMergeIntegerValuesMergePolicy implements SplitBrainMergePolicy<Object, AtomicReferenceMergeTypes> {
+public class AtomicReferenceMergeIntegerValuesMergePolicy
+        implements SplitBrainMergePolicy<Object, AtomicReferenceMergeTypes, Object> {
 
     @Override
     public Object merge(AtomicReferenceMergeTypes mergingValue, AtomicReferenceMergeTypes existingValue) {
-        Object mergingUserValue = mergingValue.getDeserializedValue();
-        Object existingUserValue = existingValue == null ? null : existingValue.getDeserializedValue();
+        Object mergingUserValue = mergingValue.getValue();
+        Object existingUserValue = existingValue == null ? null : existingValue.getValue();
         System.out.println("========================== Merging..."
                 + "\n    mergingValue: " + mergingUserValue
                 + "\n    existingValue: " + existingUserValue
@@ -17,7 +18,7 @@ public class AtomicReferenceMergeIntegerValuesMergePolicy implements SplitBrainM
                 + "\n    existingValue class: " + (existingUserValue == null ? "null" : existingUserValue.getClass().getName())
         );
         if (mergingUserValue instanceof Integer) {
-            return mergingValue.getValue();
+            return mergingValue.getRawValue();
         }
         return null;
     }

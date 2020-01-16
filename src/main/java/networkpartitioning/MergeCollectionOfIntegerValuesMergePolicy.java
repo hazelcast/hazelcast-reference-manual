@@ -9,19 +9,19 @@ import java.util.Collection;
 
 //tag::mc[]
 public class MergeCollectionOfIntegerValuesMergePolicy
-        implements SplitBrainMergePolicy<Collection<Object>, MergingValue<Collection<Object>>> {
+        implements SplitBrainMergePolicy<Collection<Object>, MergingValue<Collection<Object>>, Collection<Object>> {
 
     @Override
     public Collection<Object> merge(MergingValue<Collection<Object>> mergingValue,
                                     MergingValue<Collection<Object>> existingValue) {
-        Collection<Object> result = new ArrayList<Object>();
-        for (Object value : mergingValue.<Collection<Object>>getDeserializedValue()) {
+        Collection<Object> result = new ArrayList<>();
+        for (Object value : mergingValue.getValue()) {
             if (value instanceof Integer) {
                 result.add(value);
             }
         }
         if (existingValue != null) {
-            for (Object value : existingValue.<Collection<Object>>getDeserializedValue()) {
+            for (Object value : existingValue.getValue()) {
                 if (value instanceof Integer) {
                     result.add(value);
                 }
