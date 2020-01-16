@@ -525,10 +525,10 @@ To implement a custom merge policy you have to implement `com.hazelcast.spi.Spli
 
 [source,java]
 ----
-public interface SplitBrainMergePolicy<V, T extends MergingValue<V>>
+public interface SplitBrainMergePolicy<V, T extends MergingValue<V>, R>
     extends DataSerializable {
 
-  V merge(T mergingValue, T existingValue);
+  R merge(T mergingValue, T existingValue);
 }
 ----
 
@@ -541,21 +541,25 @@ This happens when a data structure or key-based entry was just created in the sm
 
 A merge type defines an attribute which is required by a merge policy and provided by a data structure.
 
-`MergingValue` is the base type, which is required by all merge policies and provided by
-all data structures. It contains the value of the merged data in raw and deserialized format:
+`MergingValue` is the main merge type, which is required by all merge policies and provided by
+all data structures. It contains the value of the merged data in raw (in-memory storage) and
+deserialized format:
 
 [source,java]
 ----
-public interface MergingValue<V> {
+public interface MergingValue<V> extends MergingView {
 
   V getValue();
 
-  <DV> DV getDeserializedValue();
+  Object getRawValue();
 }
 ----
 
-The most common extension is `MergingEntry`, which additionally provides the key in
-raw and deserialized format (used by all key-based data structures like `IMap` or `ICache`):
+`MergingValue` extends `MergingView`, which is a marker interface extended by all provided merge types.
+
+The most common extension of `MergingValue` is `MergingEntry`, which additionally provides the key in
+raw (in-memory storage) and deserialized format (used by all key-based data structures like
+`IMap` or `ICache`):
 
 [source,java]
 ----
@@ -563,7 +567,7 @@ public interface MergingEntry<K, V> extends MergingValue<V> {
 
   K getKey();
 
-  <DK> DK getDeserializedKey();
+  Object getRawKey();
 }
 ----
 
@@ -572,7 +576,7 @@ An example is `MergingHits`, which provides the hit counter of the merge data:
 
 [source,java]
 ----
-public interface MergingHits<V> extends MergingValue<V> {
+public interface MergingHits extends MergingView {
 
   long getHits();
 }
@@ -583,12 +587,12 @@ which show the provided merge types and required merge policy return type for ea
 
 [source,java]
 ----
-public interface ReplicatedMapMergeTypes extends MergingEntry<Object, Object>,
-    MergingCreationTime<Object>, MergingHits<Object>, MergingLastAccessTime<Object>,
-    MergingLastUpdateTime<Object>, MergingTTL<Object> {
+public interface ReplicatedMapMergeTypes<K, V> extends MergingEntry<K, V>,
+    MergingCreationTime, MergingHits, MergingLastAccessTime, MergingLastUpdateTime,
+    MergingTTL {
 }
 
-public interface QueueMergeTypes extends MergingValue<Collection<Object>> {
+public interface QueueMergeTypes<V> extends MergingValue<Collection<V>> {
 }
 ----
 
@@ -683,14 +687,13 @@ merge type interfaces for all data structures, specific merge types or a specifi
 
 ===== Accessing Deserialized Values
 
-`MergingValue.getValue()` and `MergingEntry.getKey()` always return
+`MergingValue.getRawValue()` and `MergingEntry.getRawKey()` always return
 the data in the in-memory format of the data structure.
 For some data structure like `IMap` this depends on your configuration.
 Other data structure like `ISet` or `IList` always use the `BINARY` in-memory format.
-So it is very likely, that you will receive a `Data` instance as key or value from those methods.
 
-If you need the deserialized key or value, you have to call `MergingValue.getDeserializedValue()` or
-`MergingEntry.getDeserializedKey()`.
+If you need the deserialized key or value, you have to call `MergingValue.getValue()` or
+`MergingEntry.getKey()`.
 The deserialization is done lazily on that method call, since it's quite expensive and
 should be avoided if the result is not needed.
 This also requires the deserialized classes to be on the classpath of the server.
@@ -725,7 +728,7 @@ include::{javasource}/networkpartitioning/MergeIntegerValuesMergePolicy2.java[ta
 
 
 NOTE: Please have in mind that `existingValue` can be `null`, so a `null` check is
-mandatory before calling `existingValue.getValue()` or `existingValue.getDeserializedValue()`.
+mandatory before calling `existingValue.getValue()` or `existingValue.getRawValue()`.
 
 NOTE: If you return `null` on a collection based data structure, the whole data structure will be removed.
 An empty collection works in the same way, so you don't have to check `Collection.isEmpty()` in your merge policy.
@@ -820,7 +823,7 @@ See SplitBrainMergingTypes for supported merging types.
 ```
 
 This is another example for a merge policy, which only works on
-the `IAtomicReference` and uses a named type parameter `T`:
+the `IAtomicReference`:
 
 [source,java]
 ----
@@ -842,11 +845,10 @@ See SplitBrainMergingTypes for supported merging types.
 
 Here are some best practices when implementing your own merge policy
 
-* Only call `MergingValue.getDeserializedValue()` and
-`MergingEntry.getDeserializedKey()` when you really need
+* Only call `MergingValue.getValue()` and `MergingEntry.getKey()` when you really need
 the deserialized value to save costs (CPU and memory) and avoid `ClassNotFoundException`.
 * If you want to return one of the given values (merging or existing),
-it's best to return `mergingValue.getValue()` or `existingValue.getValue()`,
+it's best to return `mergingValue.getRawValue()` or `existingValue.getRawValue()`,
 since they are already in the correct in-memory format of the data structure.
 If you return a deserialized value, it might need to be serialized again, which are avoidable costs.
 * Be careful with slow operations in the merge policy (like database accesses),

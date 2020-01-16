@@ -5,12 +5,12 @@ import com.hazelcast.spi.merge.MergingValue;
 import com.hazelcast.spi.merge.SplitBrainMergePolicy;
 
 //tag::mivmp[]
-public class MergeIntegerValuesMergePolicy<V> implements SplitBrainMergePolicy<V, MergingValue<V>> {
+public class MergeIntegerValuesMergePolicy<V> implements SplitBrainMergePolicy<V, MergingValue<V>, Object> {
 
     @Override
-    public V merge(MergingValue<V> mergingValue, MergingValue<V> existingValue) {
-        Object mergingUserValue = mergingValue.getDeserializedValue();
-        Object existingUserValue = existingValue == null ? null : existingValue.getDeserializedValue();
+    public Object merge(MergingValue<V> mergingValue, MergingValue<V> existingValue) {
+        Object mergingUserValue = mergingValue.getValue();
+        Object existingUserValue = existingValue == null ? null : existingValue.getValue();
         System.out.println("========================== Merging..."
                 + "\n    mergingValue: " + mergingUserValue
                 + "\n    existingValue: " + existingUserValue
@@ -18,7 +18,7 @@ public class MergeIntegerValuesMergePolicy<V> implements SplitBrainMergePolicy<V
                 + "\n    existingValue class: " + (existingUserValue == null ? "null" : existingUserValue.getClass().getName())
         );
         if (mergingUserValue instanceof Integer) {
-            return mergingValue.getValue();
+            return mergingValue.getRawValue();
         }
         return null;
     }
