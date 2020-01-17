@@ -714,8 +714,8 @@ Map and Cache have different filter interfaces: `MapWanEventFilter` and
 `CacheWanEventFilter`. Both of these interfaces have the method `filter` which takes the following parameters:
 
 * `mapName`/`cacheName`: Name of the related data structure.
-* `entryView`: link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/EntryView.html[EntryView^]
-or link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/cache/CacheEntryView.html[CacheEntryView^] depending on the data structure.
+* `entryView`: link:{docBaseUrl}/javadoc/com/hazelcast/core/EntryView.html[EntryView^]
+or link:{docBaseUrl}/javadoc/com/hazelcast/cache/CacheEntryView.html[CacheEntryView^] depending on the data structure.
 * `eventType`: Enum type - `UPDATED(1)`, `REMOVED(2)` or `LOADED(3)` - depending on the event.
 
 NOTE: `LOADED` events are filtered out and not replicated to target cluster.
@@ -1370,7 +1370,7 @@ To be able to use Delta WAN synchronization for a Hazelcast data structure:
 . Configure the WAN synchronization mechanism for your WAN publisher so that
 it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of
 the `wan-sync` element. If configuring programmatically, you can use the setter of the
-link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/WanSyncConfig.html[WanSyncConfig^] object.
+link:{docBaseUrl}/javadoc/com/hazelcast/config/WanSyncConfig.html[WanSyncConfig^] object.
 . Bind that WAN synchronization configuration to the data structure (currently IMap):
 Simply set the WAN replication reference of your map to the name of the WAN replication configuration which uses the Merkle tree.
 
@@ -1407,7 +1407,7 @@ The element `consistency-check-strategy` has currently two values:
 
 ==== Configuring Delta WAN Synchronization
 
-You can configure Delta WAN Synchronization declaratively using the `merkle-tree` element or programmatically using the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/config/MerkleTreeConfig.html[MerkleTreeConfig^] object.
+You can configure Delta WAN Synchronization declaratively using the `merkle-tree` element or programmatically using the link:{docBaseUrl}/javadoc/com/hazelcast/config/MerkleTreeConfig.html[MerkleTreeConfig^] object.
 
 Following is a declarative configuration example showing how to
 enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap in the below case) and specify its depth.
