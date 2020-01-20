@@ -6,9 +6,6 @@ stored in different partitions on multiple cluster members.
 The data you need may not be present on the local member, and in that case,
 Hazelcast retrieves that data from another member. This requires serialization.
 
-Hazelcast serializes all your objects into an instance of `com.hazelcast.nio.serialization.Data`.
-`Data` is the binary representation of an object.
-
 Serialization is used in the following cases:
 
 * Adding key/value objects to a map
@@ -41,7 +38,7 @@ For complex objects, use the following interfaces for serialization and deserial
 * Custom Serialization (using <<implementing-streamserializer, StreamSerializer>> and <<implementing-bytearrayserializer, ByteArraySerializer>>).
 * Global Serializer: See the <<global-serializer, Global Serializer section>> for details.
 
-When Hazelcast serializes an object into `Data`:
+When Hazelcast serializes an object:
 
 . It first checks whether the object is `null`.
 . If the above check fails, then Hazelcast checks if it is an instance of `com.hazelcast.nio.serialization.DataSerializable` or `com.hazelcast.nio.serialization.IdentifiedDataSerializable`.
