@@ -778,10 +778,14 @@ as follows:
 
 [source,xml]
 ----
-<index type="BITMAP" unique-key="uniqueId" unique-key-transform="RAW">
+<index type="BITMAP">
     <attributes>
         <attribute>age</attribute>
     </attributes>
+    <bitmap-index-options>
+        <unique-key>uniqueId</unique-key>
+        <unique-key-transformation>RAW</unique-key-transformation>
+    </bitmap-index-options>
 </index>
 ----
 
@@ -799,10 +803,14 @@ applying the renumbering technique:
 
 [source,xml]
 ----
-<index type="BITMAP" unique-key="uniqueId" unique-key-transform="LONG">
+<index type="BITMAP">
     <attributes>
         <attribute>age</attribute>
     </attributes>
+    <bitmap-index-options>
+        <unique-key>uniqueId</unique-key>
+        <unique-key-transformation>LONG</unique-key-transformation>
+    </bitmap-index-options>
 </index>
 ----
 
@@ -829,10 +837,14 @@ Is equivalent to the following full-form definition:
 
 [source,xml]
 ----
-<index type="BITMAP" unique-key="__key" unique-key-transform="OBJECT">
+<index type="BITMAP">
     <attributes>
         <attribute>age</attribute>
     </attributes>
+    <bitmap-index-options>
+        <unique-key>__key</unique-key>
+        <unique-key-transformation>OBJECT</unique-key-transformation>
+    </bitmap-index-options>
 </index>
 ----
 
@@ -843,10 +855,14 @@ The full-form definition syntax is defined as follows:
 
 [source,xml]
 ----
-<index type="BITMAP" unique-key="<key>" unique-key-transform="<transform>">
+<index type="BITMAP">
     <attributes>
         <attribute><attr></attribute>
     </attributes>
+    <bitmap-index-options>
+        <unique-key><key></unique-key>
+        <unique-key-transformation><transformation></unique-key-transformation>
+    </bitmap-index-options>
 </index>
 ----
 
@@ -855,7 +871,7 @@ The following are the parameter descriptions:
 * `<attr>`: Specifies the attribute index.
 * `<key>`: Specifies the attribute to use as a unique key source
 for internal unique `long` ID assignment.
-* `<transform>`: Specifies the transformation to be applied
+* `<transformation>`: Specifies the transformation to be applied
 to unique keys to generate unique `long` IDs from them. The following
 transformations are supported:
 ** `OBJECT`: Object-to-long transformation. Each extracted unique
@@ -887,15 +903,21 @@ The regular dotted attribute path syntax is supported for `<attr>` and
         <attribute>name.first</attribute>
     </attributes>
 </index>
-<index type="BITMAP" unique-key="__key.id">
+<index type="BITMAP">
     <attributes>
         <attribute>name.first</attribute>
     </attributes>
+    <bitmap-index-options>
+        <unique-key>__key.id</unique-key>
+    </bitmap-index-options>
 </index>
-<index type="BITMAP" unique-key="id.external">
+<index type="BITMAP">
     <attributes>
         <attribute>name.first</attribute>
     </attributes>
+    <bitmap-index-options>
+        <unique-key>id.external</unique-key>
+    </bitmap-index-options>
 </index>
 ...
 ----
