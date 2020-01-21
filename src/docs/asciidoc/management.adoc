@@ -39,7 +39,7 @@ The following are some of the metrics that you can access via the `LocalMapStats
 * Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`)
 (it may be imprecise for queries involving partition predicates (`PartitionPredicate`) on the off-heap storage).
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc^] to see all the metrics.
 
 ==== Map Index Statistics
 
@@ -71,7 +71,7 @@ To compute an average latency divide the returned value by the number of operati
 this memory cost metric value is a best-effort approximation and
 doesn't indicate a precise on-heap memory usage of an index.
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc^] to see all the metrics.
 
 To compute an aggregated value of `getAverageHitSelectivity()` for all cluster members,
 you can use a simple averaging computation as shown below:
@@ -125,7 +125,7 @@ the `NearCacheStats` object (applies to both client and member Near Caches):
 * memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`)
 * number of hits (reads) of the locally owned entries (`getHits()`)
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc^] to see all the metrics.
 
 ==== Multimap Statistics
 
@@ -152,7 +152,7 @@ the `LocalMultiMapStats` object:
 * number of get and put operations on the map (`getPutOperationCount()` and
 `getGetOperationCount()`)
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc^] to see all the metrics.
 
 ==== Queue Statistics
 
@@ -175,7 +175,7 @@ the `LocalQueueStats ` object:
 * minimum and maximum ages of the items in the member (`getMinAge()` and `getMaxAge()`)
 * number of offer, put and add operations (`getOfferOperationCount()`)
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc^] to see all the metrics.
 
 ==== Topic Statistics
 
@@ -196,7 +196,7 @@ The following are the metrics that you can access via the `LocalTopicStats ` obj
 * total number of published messages of the topic on the member (`getPublishOperationCount()`)
 * total number of received messages of the topic on the member (`getReceiveOperationCount()`)
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalTopicStats.html[`LocalTopicStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalTopicStats.html[`LocalTopicStats` Javadoc^] to see all the metrics.
 
 ==== Executor Statistics
 
@@ -219,7 +219,7 @@ the `LocalExecutorStats ` object:
 * number of started operations of the executor service (`getStartedTaskCount()`)
 * number of completed operations of the executor service (`getCompletedTaskCount()`)
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc^] to see all the metrics.
 
 === JMX API per Member
 
@@ -814,7 +814,7 @@ you can use to allow or restrict the designated cluster/member operations.
 By changing the state of your cluster, you can allow/restrict several
 cluster operations or change the behavior of those operations.
 You can use the methods `changeClusterState()` and `shutdown()` which are in the
-link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface^] to change your cluster's state.
+link:{docBaseUrl}/javadoc/com/hazelcast/core/Cluster.html[Cluster interface^] to change your cluster's state.
 
 Hazelcast clusters have the following states:
 
@@ -859,7 +859,7 @@ removed from the partition table if cluster state moves back to `ACTIVE`.
 `map.get()` and `cache.get()`, replication and cluster heartbeat tasks.
 ** You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
 ** You can make use of `PASSIVE` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
-feature. See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html#shutdown--[Cluster Shutdown API^]
+feature. See the link:{docBaseUrl}/javadoc/com/hazelcast/core/Cluster.html#shutdown--[Cluster Shutdown API^]
 for more info.
 * **`IN_TRANSITION`**:
 ** This state shows that the state of the cluster is in transition.
@@ -883,7 +883,7 @@ public interface Cluster {
     void shutdown(TransactionOptions transactionOptions);
 ----
 
-See the link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/core/Cluster.html[Cluster interface Javadoc^] for information on these methods.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/core/Cluster.html[Cluster interface Javadoc^] for information on these methods.
 
 ===== Cluster Member States
 
@@ -944,12 +944,12 @@ you should use this parameter to provide the IP address of a member to this scri
 |`-c` or `--clustername`
 |`dev`
 |Defines the name of a cluster which is used for a simple authentication.
-See the <<creating-cluster, Creating Cluster section>>.
+See the <<creating-cluster, Creating Clusters section>>.
 
 |`-P` or `--password`
 |`dev-pass`
 |Defines the password of a cluster (valid only for Hazelcast releases older than 3.8.2).
-See the <<creating-cluster, Creating Cluster section>>.
+See the <<creating-cluster, Creating Clusters section>>.
 
 |`-v` or `--version`
 |_no argument expected_

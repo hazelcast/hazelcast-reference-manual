@@ -397,7 +397,7 @@ You can start as many members as you want and they will automatically form a clu
 
 The name of the process (e.g., `confident_tharp` in the above example) is chosen randomly by the tool. As you start other members, you will see different names for each of them. This naming assignment is for your convenience.
 
-You can see the information about your member, including its cluster's <<creating-cluster-groups, cluster name>>, IP address and port, using the `hazelcast-members logs` command. You will need these information when you want to connect your clients to this cluster. Note that, when you have more than one members, you need to give the assigned name of a member to see its logs, e.g., `hazelcast-member logs confident_tharp`.
+You can see the information about your member, including its cluster's <<creating-cluster, cluster name>>, IP address and port, using the `hazelcast-members logs` command. You will need these information when you want to connect your clients to this cluster. Note that, when you have more than one members, you need to give the assigned name of a member to see its logs, e.g., `hazelcast-member logs confident_tharp`.
 
 The default configuration for the members is delivered within the `hazelcast-member` tool, i.e., `hazelcast.xml`. You can also pass a customized configuration.
 
@@ -410,7 +410,7 @@ Once your cluster of Hazelcast members is ready, you can connect to this cluster
 The following is an example client application in Java language. This example client is first connecting to the Hazelcast cluster that you created with the `hazelcast-member` tool. Then, it creates a map and puts entries in it.
 
 [source,java]
----- 
+----
 public class MyClient {
    public static void main(String[] args) {
        ClientConfig clientConfig = new ClientConfig();
@@ -514,7 +514,7 @@ see the https://docs.hazelcast.org/docs/management-center/latest/manual/html/ind
 By default, Hazelcast uses multicast to discover other members that can form a cluster.  If you are
 working with other Hazelcast developers on the same network, you may find yourself joining their
 clusters under the default settings.  Hazelcast provides a way to segregate clusters within the same
-network when using multicast. See the <<creating-cluster-groups, Creating Cluster Groups section>>
+network when using multicast. See the <<creating-cluster, Creating Clusters section>>
 for more information.  Alternatively, if you do not wish to use the default multicast mechanism,
 you can provide a fixed list of IP addresses that are allowed to join. See
 the <<join, Join configuration section>> for more information.
