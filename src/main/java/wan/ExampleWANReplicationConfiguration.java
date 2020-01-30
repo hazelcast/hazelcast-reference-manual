@@ -7,21 +7,23 @@ public class ExampleWANReplicationConfiguration {
 
     public static void main(String[] args) throws Exception{
 //tag::wrc[]
-        WanReplicationConfig wrConfig = new WanReplicationConfig()
-                .setName("my-wan-cluster-batch");
-
-        WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
+        Config config = new Config();
+        WanBatchPublisherConfig batchPublisherConfig = new WanBatchPublisherConfig()
                 .setClusterName("london")
-                .setQueueFullBehavior(WanQueueFullBehavior.THROW_EXCEPTION)
-                .setQueueCapacity(1000)
-                .setBatchSize(500)
-                .setBatchMaxDelayMillis(1000)
-                .setSnapshotEnabled(false)
-                .setResponseTimeoutMillis(60000)
-                .setAcknowledgeType(WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE)
-                .setTargetEndpoints("10.3.5.1:5701,10.3.5.2:5701")
-                .setDiscoveryPeriodSeconds(20)
-                .setEndpoint("my-wan-cluster-batch");
+                .setTargetEndpoints("10.3.5.1:5701,10.3.5.2:5701");
+
+        WanConsumerConfig consumerConfig = new WanConsumerConfig()
+                .setPersistWanReplicatedData(false);
+
+        WanReplicationConfig wrConfig = new WanReplicationConfig()
+                .setName("london-wan-rep")
+                .addBatchReplicationPublisherConfig(batchPublisherConfig)
+                .setConsumerConfig(consumerConfig);
+
+        config.addWanReplicationConfig(wrConfig);
+
+        config.getMapConfig("replicatedMap").setWanReplicationRef(new WanReplicationRef().setName("london-wan-rep"));
+        config.getCacheConfig("replicatedCache").setWanReplicationRef(new WanReplicationRef().setName("london-wan-rep"));
 //end::wrc[]
     }
 }
