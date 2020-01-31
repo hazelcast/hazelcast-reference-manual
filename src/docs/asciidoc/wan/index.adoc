@@ -1,0 +1,51 @@
+== WAN
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+=== WAN Replication
+
+There could be cases where you need to synchronize multiple independent Hazelcast clusters to the same state
+or if you would like to replicate map and cache updates to some other external system.
+Hazelcast WAN Replication allows you to keep multiple Hazelcast clusters or other systems in sync by replicating
+their state over WAN environments such as the Internet.
+
+Imagine you have different data centers in New York, London and Tokyo each running
+an independent Hazelcast cluster. Each cluster would be operating at native speed in their own LAN
+(Local Area Network), but you also want some or all updates in these clusters to be replicated to
+each other - updates in the Tokyo cluster should also replicate to London and New York and updates
+in the New York cluster are to be synchronized to the Tokyo and London clusters.
+
+WAN Replication also is able to provide much more control than the replication mechanism between members in a single
+cluster with features and capabilities such as:
+* WAN Replication will gracefully detect if there is a connectivity issue between clusters, buffering any updates
+that are not yet replicated and will attempt to re-establish a connection to resume replication
+* WAN Replication allows you to permanently pause, stop and resume replication. This is most useful when you know
+that one of the clusters will be temporarily (e.g. upgrade) or permanently (removing a cluster out of service) unavailable.
+* WAN Replication allows you to synchronize the contents of maps and caches
+* WAN Replication allows you to dynamically add new target clusters without any restarts
+And much more.
+
+This section explains how you can replicate the state of your clusters over Wide Area Network (WAN)
+through Hazelcast WAN Replication.
+
+NOTE: You can download the white paper **Hazelcast on AWS: Best Practices for Deployment** at
+link:https://hazelcast.com/resources/amazon-ec2-deployment-guide/[Hazelcast.com^].
+
+NOTE: To be able to use the REST calls related to WAN Replication mentioned in the following sections,
+you need to enable the `WAN` REST endpoint group.
+See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> for details.
+
+
+include::setup.adoc[]
+
+include::batch_replication.adoc[]
+
+include::custom_replication.adoc[]
+
+include::synchronization.adoc[]
+
+include::tuning.adoc[]
+
+include::failures.adoc[]
+
+include::additional_info.adoc[]

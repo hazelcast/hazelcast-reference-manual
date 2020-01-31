@@ -9,21 +9,8 @@ public class ExampleWANReplicationDiscoveryConfiguration {
 //tag::wrdc[]
         Config config = new Config();
 
-        WanReplicationConfig wrConfig = new WanReplicationConfig();
-        wrConfig.setName("my-wan-cluster-batch");
-
-        WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
-                .setClusterName("london")
-                .setQueueFullBehavior(WanQueueFullBehavior.THROW_EXCEPTION)
-                .setQueueCapacity(1000)
-                .setBatchSize(500)
-                .setBatchMaxDelayMillis(1000)
-                .setSnapshotEnabled(false)
-                .setResponseTimeoutMillis(60000)
-                .setAcknowledgeType(WanAcknowledgeType.ACK_ON_OPERATION_COMPLETE)
-                .setDiscoveryPeriodSeconds(20);
-
-        DiscoveryConfig discoveryConfig = new DiscoveryConfig();
+        WanBatchPublisherConfig batchPublisherConfig = new WanBatchPublisherConfig()
+                .setClusterName("london");
 
         DiscoveryStrategyConfig discoveryStrategyConfig = new DiscoveryStrategyConfig("com.hazelcast.aws.AwsDiscoveryStrategy");
         discoveryStrategyConfig.addProperty("access-key","test-access-key");
@@ -36,10 +23,17 @@ public class ExampleWANReplicationDiscoveryConfiguration {
         discoveryStrategyConfig.addProperty("tag-value","test-tag-value");
         discoveryStrategyConfig.addProperty("hz-port",5702);
 
-        discoveryConfig.addDiscoveryStrategyConfig(discoveryStrategyConfig);
-        publisherConfig.setDiscoveryConfig(discoveryConfig);
-        wrConfig.addBatchReplicationPublisherConfig(publisherConfig);
+        DiscoveryConfig discoveryConfig = new DiscoveryConfig()
+                .addDiscoveryStrategyConfig(discoveryStrategyConfig);
+        batchPublisherConfig.setDiscoveryConfig(discoveryConfig);
+
+        WanReplicationConfig wrConfig = new WanReplicationConfig()
+                .setName("london-wan-rep")
+                .addBatchReplicationPublisherConfig(batchPublisherConfig);
         config.addWanReplicationConfig(wrConfig);
+
+        config.getMapConfig("replicatedMap").setWanReplicationRef(new WanReplicationRef().setName("london-wan-rep"));
+        config.getCacheConfig("replicatedCache").setWanReplicationRef(new WanReplicationRef().setName("london-wan-rep"));
 //end::wrdc[]
     }
 }
