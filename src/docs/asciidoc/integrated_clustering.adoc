@@ -152,7 +152,7 @@ Here is an example schema definition:
 ----
 <hz:hazelcast id="instance">
     <hz:config>
-        <hz:cluster name="dev" password="password"/>
+        <hz:cluster-name name="dev"/>
         <hz:network port="5701" port-auto-increment="false">
             <hz:join>
                 <hz:multicast enabled="false"
@@ -178,7 +178,7 @@ Here is an example schema definition:
 [source,xml]
 ----
 <hz:client id="client">
-    <hz:cluster name="${cluster.name}" password="${cluster.password}" />
+    <hz:cluster-name name="${cluster.name}"/>
     <hz:network connection-attempt-limit="3"
                 connection-attempt-period="3000"
                 connection-timeout="1000"
@@ -323,7 +323,7 @@ and add `<hz:spring-aware />` tag.
     <hz:hazelcast id="instance">
         <hz:config>
             <hz:spring-aware />
-            <hz:cluster name="dev" password="password"/>
+            <hz:cluster-name name="dev"/>
             <hz:network port="5701" port-auto-increment="false">
                 <hz:join>
                     <hz:multicast enabled="false" />
