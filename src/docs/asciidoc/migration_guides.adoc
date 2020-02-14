@@ -2154,6 +2154,68 @@ This has come with the following changes of the system properties that configure
 
 * `hazelcast.mc.url.change.enabled` is not available anymore.
 
+==== Changes in the Event Journal Configuration
+
+Event journal configuration had been put as a top-level configuration
+element. With IMDG 4.0, this restriction has been removed; this means
+event journal configuration now can be part of both map and cache
+configurations. This eliminates additionally specifying the map
+/cache names on the event journal configuration to connect it
+to the map/cache configurations.
+
+See the following table for the before/after snippets.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <event-journal enabled="false">
+        <mapName>default</mapName>
+        <capacity>10000</capacity>
+        <time-to-live-seconds>0</time-to-live-seconds>
+    </event-journal>
+    ...
+    <event-journal enabled="false">
+        <cacheName>default</cacheName>
+        <capacity>10000</capacity>
+        <time-to-live-seconds>0</time-to-live-seconds>
+    </event-journal>
+    ...
+</hazelcast>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="default">
+        <event-journal enabled="false">
+            <capacity>10000</capacity>
+            <time-to-live-seconds>0</time-to-live-seconds>
+        </event-journal>
+    </map>
+    ...
+    <cache name="default">
+        <event-journal enabled="false">
+            <capacity>10000</capacity>
+            <time-to-live-seconds>0</time-to-live-seconds>
+        </event-journal>
+    </cache>
+    ...
+</hazelcast>
+----
+|===
+
+
 === Upgrading to Hazelcast IMDG 3.12.x
 
 * **REST endpoint authentication**: The authentication to REST endpoints has been changed
