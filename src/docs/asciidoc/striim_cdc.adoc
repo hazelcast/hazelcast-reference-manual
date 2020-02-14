@@ -22,12 +22,12 @@ The following sections describe this integration.
 
 Through CDC, Striim is able to recognize which tables and key values have changed.
 It immediately captures these changes with their table and key, and pushes the changes
-into a cache. 
+into a cache. Supported databases are Oracle, My SQL and Microsoft SQL Server.
 
 When it comes to Hazelcast, you can get the changes in a database and
 put them into your Hazelcast IMDG member
-using a "writer" developed by Striim, i.e., Hazelcast Writer. Supported
-databases for this mechanism are Oracle, My SQL and Microsoft SQL Server.
+using a "writer" developed by Striim, i.e., Hazelcast Writer. This writer
+creates a Hazelcast client once you start Striim, to connect to your IMDG member.
 
 To learn more, see the link:http://www.striim.com/blog/newsroom/press/hazelcast-striim-hot-cache/[full press release^],
 visit the Hazelcast Striim Hot Cache link:https://hazelcast.com/product-features/imdg-striim-hot-cache//[product page^],
@@ -42,7 +42,7 @@ This integration only works with Hazelcast IMDG **3.x versions**. Support for 4.
 [[striim-cdc-logging]]
 === Logging
 
-You can enable logging to see the status of the Hazelcast Writer.
+You can enable logging to see the status of the Hazelcast client created by the Hazelcast Writer.
 For this, you need to add the following line to the `server.sh` file
 on the machine where Striim is running:
 
@@ -76,7 +76,8 @@ following lists all the available levels:
 The logs are written into the `striim.server.log` which is typically located
 at the `/opt/striim/logs` directory.
 
-You can also set a logging level dynamically. Follow the
+The above settings are for the Hazelcast Client created by the writer.
+You can also change the logging level dynamically for Hazelcast Writer. Follow the
 below instructions for this:
 
 . Open the Striim console using the `console.sh` command.
