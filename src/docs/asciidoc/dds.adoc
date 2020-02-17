@@ -1076,6 +1076,32 @@ load is asynchronous. EAGER means load is blocked till all partitions are loaded
 See the <<initializing-map-on-startup, Initializing Map on Startup section>> for
 more details.
 
+===== Lifecycle of a MapLoader
+
+When created on a member, `MapLoader` can be used for operations
+such as establishing a connection to the database or
+accessing to other Hazelcast maps.
+
+Since those operations access to a Hazelcast instance, a `Maploader`
+lifecycle is needed, which has the create, use and destroy stages.
+While `MapLoader` is handling the "use" stage, `MapLoaderLifecycleSupport`
+provides the "create" and "destroy" stages.
+
+The `MapLoaderLifecycleSupport` interface provides this lifecycle support for
+implementing the `MapLoader` class. This interface has the `init()` and
+`destroy()` methods.
+
+The `init()` method initializes the `MapLoader` implementation. Hazelcast calls
+this method when the map is first used on the Hazelcast instance. The `MapLoader`
+implementation can initialize the required resources for implementing `MapLoader`
+such as reading a configuration file or creating a database connection.
+
+Hazelcast calls the method `destroy()` before shutting down. You can override this
+method  to cleanup the resources held by this `MapLoader` implementation, such as
+closing the database connections.
+
+See link:https://github.com/hazelcast/hazelcast-code-samples/blob/master/hazelcast-integration/mongodb/src/main/java/com/hazelcast/loader/MongoMapStore.java[here^] to see this interface in action.
+
 [[storing-entries-to-multiple-maps]]
 ===== Storing Entries to Multiple Maps
 
@@ -1104,17 +1130,8 @@ mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
 
 To initialize the `MapLoader` implementation with the given map name, configuration
 properties and the Hazelcast instance, implement the
-link:{docBaseUrl}/javadoc/com/hazelcast/map/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface^].
-This interface has the methods `init()` and `destroy()`.
-
-The method `init()` initializes the `MapLoader` implementation. Hazelcast calls
-this method when the map is first used on the Hazelcast instance. The `MapLoader`
-implementation can initialize the required resources for implementing `MapLoader`
-such as reading a configuration file or creating a database connection.
-
-Hazelcast calls the method `destroy()` before shutting down. You can override this
-method  to cleanup the resources held by this `MapLoader` implementation, such as
-closing the database connections.
+link:{docBaseUrl}/javadoc/com/hazelcast/map/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface^]
+which is described in the previous section.
 
 [[initializing-map-on-startup]]
 ===== Initializing Map on Startup
