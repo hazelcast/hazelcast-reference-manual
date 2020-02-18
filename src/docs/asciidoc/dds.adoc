@@ -1076,29 +1076,26 @@ load is asynchronous. EAGER means load is blocked till all partitions are loaded
 See the <<initializing-map-on-startup, Initializing Map on Startup section>> for
 more details.
 
-===== Lifecycle of a MapLoader
+===== Managing the Lifecycle of a MapLoader
 
-When created on a member, `MapLoader` can be used for operations
-such as establishing a connection to the database or
-accessing to other Hazelcast maps.
-
-Since those operations access to a Hazelcast instance, a `Maploader`
-lifecycle is needed, which has the create, use and destroy stages.
-While `MapLoader` is handling the "use" stage, `MapLoaderLifecycleSupport`
-provides the "create" and "destroy" stages.
-
-The `MapLoaderLifecycleSupport` interface provides this lifecycle support for
-implementing the `MapLoader` class. This interface has the `init()` and
-`destroy()` methods.
+With `MapLoader` (and `MapStore` which extends it), you can do the regular store and load operations.
+If you need to perform other operations on create or on destroy of a `MapLoader`,
+such as establishing a connection to a database or accessing to other Hazelcast maps,
+you need to implement the `MapLoaderLifeCycleSupport` interface. By implementing
+it, you will have the `init()` and `destroy()` methods.
 
 The `init()` method initializes the `MapLoader` implementation. Hazelcast calls
-this method when the map is first used on the Hazelcast instance. The `MapLoader`
-implementation can initialize the required resources for implementing `MapLoader`
-such as reading a configuration file or creating a database connection.
+this method when the map is first created on a Hazelcast instance. The `MapLoader`
+implementation can initialize the required resources
+such as reading a configuration file or creating a database connection 
+or accessing a Hazelcast instance.
 
-Hazelcast calls the method `destroy()` before shutting down. You can override this
-method  to cleanup the resources held by this `MapLoader` implementation, such as
+The `destroy()` method is called during the graceful shutdown of a Hazelcast instance. 
+You can override this method  to cleanup the resources held by the `MapLoader` implementation, such as
 closing the database connections.
+
+In summary, you need `MapLoaderLifecycleSupport` to perform actions
+on create and on destroy of a `MapLoader`.
 
 See link:https://github.com/hazelcast/hazelcast-code-samples/blob/master/hazelcast-integration/mongodb/src/main/java/com/hazelcast/loader/MongoMapStore.java[here^] to see this interface in action.
 
