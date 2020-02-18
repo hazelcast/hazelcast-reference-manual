@@ -387,12 +387,12 @@ Therefore, even though there is a hit on a key in backups, your original key on 
 [[map-eviction]]
 ==== Map Eviction
 
-NOTE: Starting with Hazelcast 3.7, Hazelcast Map uses a new eviction mechanism which is based on
-the sampling of entries. See the <<eviction-algorithm, Eviction Algorithm section>> for details.
-
 Unless you delete the map entries manually or use an eviction policy, they will remain in the map.
 Hazelcast supports policy-based eviction for distributed maps. Currently supported policies are
 LRU (Least Recently Used) and LFU (Least Frequently Used).
+
+Hazelcast Map uses the same eviction mechanism as the JCache implementation.
+See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 [[understanding-map-eviction]]
 ===== Understanding Map Eviction
@@ -888,6 +888,10 @@ When you provide a `MapLoader` implementation and request an entry
 method loads that entry from the data store. This loaded entry is placed
 into the map and will stay there until it is removed or evicted.
 
+All loads can be listened via `EntryLoadedListener`. See the
+<<listening-for-map-events, Listening for Map Events section>>
+to learn how you can catch entry-based events.
+
 When a `MapStore` implementation is provided, an entry is also put into a
 user defined data store.
 
@@ -897,9 +901,6 @@ is not supported.
 
 NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface
 as you can see in the interface link:{docBaseUrl}/javadoc/com/hazelcast/core/MapStore.html[code^].
-
-NOTE: Starting with Hazelcast IMDG 3.11, all loads can be listened via `EntryLoadedListener`.
-
 
 Following is a `MapStore` example.
 

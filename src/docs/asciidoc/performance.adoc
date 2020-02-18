@@ -1079,7 +1079,7 @@ the batch size should be configured with the `hazelcast.map.invalidation.batch.s
 Near Caches are invalidated by invalidation events. Invalidation events can be lost due to the fire-and-forget fashion of eventing system.
 If an event is lost, reads from Near Cache can indefinitely be stale.
 
-To solve this problem, starting with Hazelcast 3.8, Hazelcast provides
+To solve this problem, Hazelcast provides
 eventually consistent behavior for IMap/JCache Near Caches by detecting invalidation losses.
 After detection of an invalidation loss, stale data is made unreachable and Near Cache's `get` calls to
 that data are directed to the underlying IMap/JCache to fetch the fresh data.

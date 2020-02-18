@@ -1,6 +1,6 @@
 === Synchronizing WAN Target Cluster
 
-Starting with Hazelcast 3.7 you can initiate a synchronization operation on an IMap for a specific target cluster.
+You can initiate a synchronization operation on an IMap for a specific target cluster.
 Synchronization operation sends all the data of an IMap to a target cluster to align the state of target IMap with source IMap.
 Synchronization is useful if two remote clusters lost their synchronization due to WAN queue overflow or in restart scenarios.
 
@@ -105,7 +105,7 @@ To be able to use Delta WAN synchronization for a Hazelcast data structure:
 
 . Configure the WAN synchronization mechanism for your WAN publisher so that
 it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of
-the `wan-sync` element. If configuring programmatically, you can use the setter of the
+the `sync` element. If configuring programmatically, you can use the setter of the
 link:{docBaseUrl}/javadoc/com/hazelcast/config/WanSyncConfig.html[WanSyncConfig^] object.
 . Bind that WAN synchronization configuration to the data structure (currently IMap):
 Simply set the WAN replication reference of your map to the name of the WAN replication configuration which uses the Merkle tree.
@@ -123,9 +123,9 @@ Following is a declarative configuration example of the above:
     <wan-replication name="wanReplicationScheme">
         <batch-publisher>
             <cluster-name>clusterName</cluster-name>
-            <wan-sync>
+            <sync>
                 <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
-            </wan-sync>
+            </sync>
         </batch-publisher>
     </wan-replication>
     ...
@@ -194,9 +194,9 @@ Following is a declarative example including the Merkle tree configuration.
     <wan-replication name="wanReplicationScheme">
         <batch-publisher>
             <cluster-name>clusterName</cluster-name>
-            <wan-sync>
+            <sync>
                 <consistency-check-strategy>MERKLE_TREES</consistency-check-strategy>
-            </wan-sync>
+            </sync>
         </batch-publisher>
     </wan-replication>
     ...
