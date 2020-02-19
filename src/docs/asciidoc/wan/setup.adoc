@@ -17,7 +17,7 @@ If the active cluster becomes unavailable, you may redirect user traffic to the 
 cluster becomes available again, you may again redirect user traffic to the active cluster. The active cluster may have
 however been started empty or might have simply missed any updates that have happened on the passive clusters.
 Any updates made on the passive clusters will not be replicated back to the active cluster and if the data is out-of-sync,
-it will not be synchronised. If you require that these updates be copied back to the active cluster, you may consider
+it will not be synchronized. If you require that these updates be copied back to the active cluster, you may consider
 using active-active mode instead.
 
 * **Active-Active:** Every cluster is equal, each cluster replicates to all other clusters.
@@ -35,7 +35,7 @@ in that target cluster. That means that a WAN publisher replicates to multiple W
 replicate to a WAN replication scheme, meaning that a single map/cache update can be replicated to multiple target
 clusters or multiple external systems.
 * WAN publisher ID: A unique identifier for a specific WAN replication publisher in a WAN replication scheme. This
-identifier can then be used to control the behaviour of a WAN replication publisher while the source/active cluster is
+identifier can then be used to control the behavior of a WAN replication publisher while the source/active cluster is
 running. For instance, you can use this identifier in combination with the WAN replication scheme name to pause, stop or
 resume WAN replication for that specific publisher. Or, you can trigger synchronization with a specific target cluster
 and so on.
@@ -133,10 +133,8 @@ You can achieve various WAN topologies using different configurations on differe
 if the New York and London cluster configurations contain the `wan-replication` element and the Tokyo cluster
 does not, it might mean that the New York and London clusters are active endpoints and Tokyo is a passive endpoint.
 
-
-
 [[wanbatchreplication-static-endpoints]]
-==== Defining WAN Replication Using Static Endpoints
+==== Using Static Endpoints
 
 Below is an example of declarative configuration of WAN Replication between two Hazelcast clusters. Here, we show the
 configuration that is needed on the source ("active") cluster. In most cases, the target ("passive") cluster does not
@@ -183,11 +181,11 @@ include::{javasource}/wan/ExampleWANReplicationConfiguration.java[tag=wrc]
 ----
 
 The default settings for WAN Replication will suit most use cases. If, however, you have specific needs or if you
-would like to fine-tune the behaviour of WAN Replication for your application, please refer to the
+would like to fine-tune the behavior of WAN Replication for your application, please refer to the
 <<tuning-wan-replication, Tuning WAN Replication>> section for more information.
 
 [[wanbatchreplication-discovery-spi]]
-==== Defining WAN Replication Using Discovery SPI
+==== Using Discovery SPI
 
 In addition to defining target cluster endpoints with static IP addresses,
 you can configure WAN to work with the discovery SPI and determine the endpoint IP addresses at runtime.
@@ -300,10 +298,11 @@ include::{javasource}/wan/ExampleWANReplicationDiscoveryConfiguration.java[tag=w
 ----
 
 The default settings for WAN Replication will suit most use cases. If, however, you have specific needs or if you
-would like to fine-tune the behaviour of WAN Replication for your application, please refer to the
+would like to fine-tune the behavior of WAN Replication for your application, please refer to the
 <<tuning-wan-replication, Tuning WAN Replication>> section for more information.
 
-==== Configuring WAN Replication for IMap and ICache
+[[configuring-wan-replication-for-imap-and-icache]]
+==== Configuring for IMap and ICache
 
 You can configure WAN replication for Hazelcast's IMap and ICache data structures.
 To enable WAN replication for an IMap or ICache instance, you can use the `wan-replication-ref` element.
@@ -332,7 +331,7 @@ the map configuration as shown below.
 </hazelcast>
 ----
 
-The following is the equivalent program matic configuration:
+The following is the equivalent programmatic configuration:
 
 [source,java]
 ----
@@ -429,9 +428,9 @@ Please note that this merge policy can only be used when the clusters' clocks ar
 the target cache if the source entry has been updated more recently than the target entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
 
-==== Customizing WAN event processing on passive/target cluster
+==== Customizing WAN Event Processing on Passive/Target Cluster
 
-In addition to customizing behaviour of the source cluster and how WAN events are sent and retained, you can also
+In addition to customizing behavior of the source cluster and how WAN events are sent and retained, you can also
 configure some aspects of how WAN events are processed on the receiving (target/passive) cluster. In addition, you
 can also define a custom implementation of a WAN event consumer. A custom WAN consumer allows you to define custom
 processing logic and is usually used in combination with a custom WAN publisher. A custom consumer is optional and
@@ -470,12 +469,12 @@ In the configuration above you can see that the WAN Replication configuration is
 scheme name to the exact map and cache configuration. This means that different structures can process WAN events
 differently.
 
-The processing behaviour is configured using the `consumer` element. It has the following sub-elements:
+The processing behavior is configured using the `consumer` element. It has the following sub-elements:
 
 * `persist-wan-replicated-data`: When set to `true`, an incoming event over WAN replication can be
 persisted to a database for example, otherwise it is not persisted. Default value is `true`.
 
-[[defining-custom-wan-replication]]
+[[defining-custom-wr]]
 ==== Defining custom WAN Replication
 
 In addition to using the Hazelcast provided WAN Replication implementation, you can implement your own
