@@ -1,0 +1,101 @@
+[[hazelcast-striim-hot-cache]]
+== Database CDC Integration using Striim Hot Cache
+
+[blue]*Hazelcast IMDG Enterprise*
+
+Change Data Capture (CDC) refers to the technology for identifying and capturing
+changes made to a data source. These changes can then be applied to
+another data repository or made available in a format supported by
+data integration tools.
+
+link:https://www.striim.com/[Striim^] is a real-time data integration
+and streaming analytics software platform. It uses
+CDC (Change Data Capture) mechanism to detect changes performed on
+a data source.
+
+Hazelcast Striim Hot Cache, the integration solution of Hazelcast and Striim,
+enables real-time, push-based propagation of changes from the database to the cache.
+The following sections describe this integration.
+
+[[striim-cdc-introduction]]
+=== Introduction
+
+Through CDC, Striim is able to recognize which tables and key values have changed.
+It immediately captures these changes with their table and key, and pushes the changes
+into a cache. Supported databases are Oracle, My SQL and Microsoft SQL Server.
+
+When it comes to Hazelcast, you can get the changes in a database and
+put them into your Hazelcast IMDG member
+using a "writer" developed by Striim, i.e., Hazelcast Writer. This writer
+creates a Hazelcast client once you start Striim, to connect to your IMDG member.
+
+
+[[striim-cdc-supported-versions]]
+=== Supported Versions
+
+This integration only works with Hazelcast IMDG **3.x versions**. Support for 4.x will be added in the near future.
+
+[[striim-cdc-logging]]
+=== Logging
+
+You can enable logging to see the status of the Hazelcast client created by the Hazelcast Writer.
+For this, you need to add the following line to the `server.sh` file
+on the machine where Striim is running:
+
+[source]
+----
+-Dhazelcast.logging.type=log4j
+----
+
+The `server.sh` file is typically located at the `/opt/striim/bin` directory.
+
+You can also set the logging level by adding the following
+line to the `log4j.server.properties` file:
+
+[source]
+----
+log4j.logger.com.hazelcast=debug
+----
+
+The `log4j.server.properties` file is typically located at the `/opt/striim/conf` directory.
+
+In the above example line, the logging level is set as `DEBUG`. The
+following lists all the available levels:
+
+* `TRACE`
+* `DEBUG`
+* `INFO`
+* `WARN`
+* `ERROR`
+* `OFF`
+
+The logs are written into the `striim.server.log` which is typically located
+at the `/opt/striim/logs` directory.
+
+The above settings are for the Hazelcast Client created by the writer.
+You can also change the logging level dynamically for Hazelcast Writer. Follow the
+below instructions for this:
+
+. Open the Striim console using the `console.sh` command.
+See link:https://www.striim.com/docs/en/console-commands.html[here^]
+for the usage of this command.
+. While in the console, run the following command:
++
+[source]
+----
+set loglevel = {com.webaction.proc.HazelcastWriter_1_0:debug};
+----
+
+=== Full Worked Example Application
+
+We have created a link:https://github.com/hazelcast-guides/striim-hazelcast-cdc[full example application^] with step-by-step instructions which guides you through using Striim to load data from an Oracle database using the Striim Hazelcast Writer. We recommend you start here before applying this to your own application. 
+
+
+[[striim-cdc-resources]]
+=== Further Resources
+
+You can refer to link:https://www.striim.com/docs/en/hazelcast-writer.html[here^]
+for more information on Hazelcast Writer.
+
+Download a fully loaded evaluation copy of
+link:http://www.striim.com/download-striim-for-hazelcast-hot-cache/[Striim for Hazelcast Hot Cache^].

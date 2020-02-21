@@ -1898,10 +1898,12 @@ If the client is a smart client, it defaults to 3, otherwise it defaults to 1.
 |hazelcast.client.io.balancer.interval.seconds
 |20
 |int
-|Interval in seconds between `com.hazelcast.internal.networking.nio.iobalancer.IOBalancer`
-executions. The shorter intervals catch I/O Imbalance faster, but they cause higher overhead.
-Please see the link:{docBaseUrl}/javadoc/com/hazelcast/internal/networking/nio/iobalancer/IOBalancer.html[IOBalancer Javadocs]
-for a detailed explanation of the problem. A value smaller than 1 disables the balancer.
+|Interval in seconds between each `IOBalancer`
+execution. By default Hazelcast uses 3 threads to read
+data from TCP connections and 3 threads to write data to connections.
+`IOBalancer` detects and fixes the fluctuations when these threads are not
+utilized equally. The shorter intervals catch I/O imbalances faster, but they cause higher overhead.
+A value smaller than 1 disables the balancer.
 
 |hazelcast.client.io.write.through
 |true

@@ -39,7 +39,7 @@ The following are some of the metrics that you can access via the `LocalMapStats
 * Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`)
 (it may be imprecise for queries involving partition predicates (`PartitionPredicate`) on the off-heap storage).
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalMapStats.html[`LocalMapStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/map/LocalMapStats.html[`LocalMapStats` Javadoc^] to see all the metrics.
 
 ==== Map Index Statistics
 
@@ -71,7 +71,7 @@ To compute an average latency divide the returned value by the number of operati
 this memory cost metric value is a best-effort approximation and
 doesn't indicate a precise on-heap memory usage of an index.
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalIndexStats.html[`LocalIndexStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/query/LocalIndexStats.html[`LocalIndexStats` Javadoc^] to see all the metrics.
 
 To compute an aggregated value of `getAverageHitSelectivity()` for all cluster members,
 you can use a simple averaging computation as shown below:
@@ -125,7 +125,7 @@ the `NearCacheStats` object (applies to both client and member Near Caches):
 * memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`)
 * number of hits (reads) of the locally owned entries (`getHits()`)
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/NearCacheStats.html[`NearCacheStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/nearcache/NearCacheStats.html[`NearCacheStats` Javadoc^] to see all the metrics.
 
 ==== Multimap Statistics
 
@@ -152,7 +152,7 @@ the `LocalMultiMapStats` object:
 * number of get and put operations on the map (`getPutOperationCount()` and
 `getGetOperationCount()`)
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/multimap/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc^] to see all the metrics.
 
 ==== Queue Statistics
 
@@ -175,7 +175,7 @@ the `LocalQueueStats ` object:
 * minimum and maximum ages of the items in the member (`getMinAge()` and `getMaxAge()`)
 * number of offer, put and add operations (`getOfferOperationCount()`)
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalQueueStats.html[`LocalQueueStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/collection/LocalQueueStats.html[`LocalQueueStats` Javadoc^] to see all the metrics.
 
 ==== Topic Statistics
 
@@ -196,7 +196,7 @@ The following are the metrics that you can access via the `LocalTopicStats ` obj
 * total number of published messages of the topic on the member (`getPublishOperationCount()`)
 * total number of received messages of the topic on the member (`getReceiveOperationCount()`)
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalTopicStats.html[`LocalTopicStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/topic/LocalTopicStats.html[`LocalTopicStats` Javadoc^] to see all the metrics.
 
 ==== Executor Statistics
 
@@ -219,7 +219,7 @@ the `LocalExecutorStats ` object:
 * number of started operations of the executor service (`getStartedTaskCount()`)
 * number of completed operations of the executor service (`getCompletedTaskCount()`)
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/monitor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc^] to see all the metrics.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/executor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc^] to see all the metrics.
 
 === JMX API per Member
 
@@ -820,8 +820,7 @@ for more information on membership events.
 
 ==== Managing Cluster and Member States
 
-Starting with Hazelcast 3.6, Hazelcast introduces cluster and member states in addition to the default `ACTIVE` state.
-This section explains these states of Hazelcast clusters and members which
+This section explains the states of Hazelcast clusters and members which
 you can use to allow or restrict the designated cluster/member operations.
 
 ===== Cluster States
@@ -829,18 +828,26 @@ you can use to allow or restrict the designated cluster/member operations.
 By changing the state of your cluster, you can allow/restrict several
 cluster operations or change the behavior of those operations.
 You can use the methods `changeClusterState()` and `shutdown()` which are in the
-link:{docBaseUrl}/javadoc/com/hazelcast/core/Cluster.html[Cluster interface^] to change your cluster's state.
+link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface^] to change your cluster's state.
 
 Hazelcast clusters have the following states:
 
 * **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
 * **`NO_MIGRATION`**:
-** In this state, migrations (partition rebalancing) and backup replications are not allowed.
-In other words, there are no data movement between Hazelcast members.
-However, in case of member failures, backup replicas can be still promoted to the primaries to
-maintain availability and migration listeners can be notified for these promotion migrations.
-Please note that promoting a backup replica to the primary replica is a local operation and
-does not transfer partition data between Hazelcast members.
+** In this state, there is no data movement between Hazelcast members.
+It means that when there is a member crash or a new member in the cluster,
+there won’t be any partition rebalancing, partition backup replica creation
+or migration. 
++
+Please note that promoting a backup replica to the primary replica is a
+local operation and does not involve any data movement between cluster members.
+Hence, backup promotions occur on member crashes when the cluster is in this mode.
+Upon a member crash, all other members that keep backup replicas of the crashed member
+promote backup replicas to the primary replica role and restore availability.
+However, there is a limitation here. Since the maximum number of backups is 6,
+if you lose 7 members in your large cluster, you can lose availability of the
+partitions whose primary and backup replicas are mapped to those crashed members. 
++
 ** The cluster accepts new members.
 ** All other operations are allowed.
 ** You cannot change the state of a cluster to `NO_MIGRATION` when
@@ -874,7 +881,7 @@ removed from the partition table if cluster state moves back to `ACTIVE`.
 `map.get()` and `cache.get()`, replication and cluster heartbeat tasks.
 ** You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
 ** You can make use of `PASSIVE` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
-feature. See the link:{docBaseUrl}/javadoc/com/hazelcast/core/Cluster.html#shutdown--[Cluster Shutdown API^]
+feature. See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html#shutdown--[Cluster Shutdown API^]
 for more info.
 * **`IN_TRANSITION`**:
 ** This state shows that the state of the cluster is in transition.
@@ -898,7 +905,7 @@ public interface Cluster {
     void shutdown(TransactionOptions transactionOptions);
 ----
 
-See the link:{docBaseUrl}/javadoc/com/hazelcast/core/Cluster.html[Cluster interface Javadoc^] for information on these methods.
+See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface Javadoc^] for information on these methods.
 
 ===== Cluster Member States
 
@@ -1409,8 +1416,6 @@ Once it returns `true`, the given member is safe and it can be shut down without
 Similarly, the method `isLocalMemberSafe` does the same check for the local member.
 The method `forceLocalMemberToBeSafe` forces the owned and backup partitions to be synchronized,
 making the local member safe.
-
-NOTE: If you want to use the above methods, please note that they are available starting with Hazelcast 3.3.
 
 See link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster-safety[here^]
 for more `PartitionService` code samples.
@@ -2181,12 +2186,11 @@ for its usage details.
 
 ==== Toggle Scripting Support
 
-The support for script execution is enabled in the Hazelcast IMDG Open Source edition and
-disabled in the Hazelcast IMDG Enterprise edition by default. The reason is security.
+The support for script execution is disabled by default. The reason is security.
 Script engines allow to access the underlying system on the members (files and other resources).
 Scripts access the system, on which the member runs, with permissions of the running user.
 
-The scripting can be allowed or prevented by specifying the `scripting-enabled` attribute of
+Scripting can be allowed or prevented by specifying the `scripting-enabled` attribute of
 the `management-center` element within the Hazelcast member configuration file, as shown below:
 
 [source,xml]
