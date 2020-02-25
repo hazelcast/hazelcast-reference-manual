@@ -1,0 +1,42 @@
+
+[[wr-rest]]
+=== REST API
+
+NOTE: To be able to use the REST calls related to WAN Replication
+mentioned in this section, you need to enable the `WAN` REST endpoint group.
+See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> on
+how to enable it.
+
+The two phases of the Merkle tree based synchronization can be triggered by a REST call, as it can be done with the
+default synchronization.
+
+The URL for the consistency check REST call:
+
+```
+http://member_ip:port/hazelcast/rest/wan/consistencyCheck/map
+```
+
+The URL for the synchronization REST call - the same as it is for the default synchronization:
+
+```
+http://member_ip:port/hazelcast/rest/wan/sync/map
+```
+
+You need to add URL-encoded parameters to the request in both cases in the following order separated by "&";
+
+* Cluster name
+* Cluster password
+* Name of the WAN replication configuration
+* WAN replication publisher ID/target cluster name
+* Map name to be synchronized
+
+NOTE: You can also use the following URL in your REST call if you want to synchronize all the maps in source and target cluster:
+`+http://member_ip:port/hazelcast/rest/wan/sync/allmaps+`. You need to add the following URL-encoded parameters to
+the request in the following order separated by "&";
+
+* Cluster name
+* Cluster password
+* Name of the WAN replication configuration
+* WAN replication publisher ID/target cluster name
+
+NOTE: Consistency check can be triggered only for one map.

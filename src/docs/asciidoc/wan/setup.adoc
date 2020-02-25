@@ -1,13 +1,7 @@
 === WAN Replication Modes
 
 In clusters connected with WAN Replication, a cluster can have one of two roles:
-
-* Active: user updates performed on the cluster will be replicated to other clusters connected through
-WAN Replication. In another words, this cluster may be seen as the "source" cluster which generates WAN update
-events and replicates them actively to other clusters.
-* Passive: user updates performed on this cluster will not be replicated to other clusters. In another words,
-this cluster can be seen as the "target" cluster which is capable of receiving, applying and possibly forwarding
-WAN events from other ("active") clusters but will not generate any WAN update events because of user interaction.
+Active or Passive, conceptually explained in the previous section above.
 
 With these roles, there are two modes of WAN Replication that Hazelcast supports:
 
@@ -24,21 +18,69 @@ using active-active mode instead.
 This is normally used to connect different clients to different clusters for the sake of
 the shortest path between client and server.
 
-Let's first define several important terms that are most important when discussing WAN Replication:
+==== Setting Up an Active-Passive Mode
 
-* WAN publisher: A publisher is a sink for WAN events and an implementation of `WanReplicationPublisher`.
-Most often, this is a single, entire target Hazelcast IMDG cluster but you can also define custom publishers which
-may transmit WAN events to other systems such as messaging queues, Kafka or even persist events on disk.
-* WAN endpoint: when a publisher is replicating events to another Hazelcast cluster, an endpoint is a single member
-in that target cluster. That means that a WAN publisher replicates to multiple WAN endpoints.
-* WAN replication scheme: a named collection of WAN publishers. Hazelcast maps and caches are configured to
-replicate to a WAN replication scheme, meaning that a single map/cache update can be replicated to multiple target
-clusters or multiple external systems.
-* WAN publisher ID: A unique identifier for a specific WAN replication publisher in a WAN replication scheme. This
-identifier can then be used to control the behavior of a WAN replication publisher while the source/active cluster is
-running. For instance, you can use this identifier in combination with the WAN replication scheme name to pause, stop or
-resume WAN replication for that specific publisher. Or, you can trigger synchronization with a specific target cluster
-and so on.
+This mode requires configuration only on the source cluster.
+In most cases, the target cluster does not need any
+configuration.
+
+Here is a simple, minimal declarative (XML) configuration example:
+
+[source,xml]
+----
+<hazelcast>
+    <wan-replication name="london-wan-rep">
+        <batch-publisher>
+            <cluster-name>london</cluster-name>
+            <target-endpoints>10.3.5.1:5701, 10.3.5.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
+
+    <map name="replicatedMap">
+        <wan-replication-ref name="london-wan-rep"/>
+    </map>
+
+</hazelcast>
+----
+
+Here is the equivalent programmatic configuration example:
+
+[source,java]
+----
+include::{javasource}/wan/MinimalWANReplicationConfiguration.java[tag=wrc]
+----
+
+In the above example, we have configured the map named `replicatedMap` to
+replicate to the target cluster named `london` on two endpoints - `10.3.5.1:5701, 10.3.5.2:5701`. 
+Notice that the name of `wan-replication` configuration (`london-wan-rep`) is referenced in
+the `map` configuration using the `wan-replication-ref` element.
+
+The `london` cluster might have more than two members specified in this example, but only
+those two will receive the WAN events. In that case
+and if you want the events to be forwarded to the other cluster members, see the `republishing-enabled`
+element description in the <<configuring-wan-replication-for-imap-and-icache, Configuring for IMap and ICache section>>.
+
+This example configuration uses static endpoints to specify the members in the target cluster.
+You can also use Hazelcast's Discovery SPI for WAN Replication to specify endpoints on various
+cloud infrastructures. See the <<wanbatchreplication-discovery-spi, Using Discovery SPI section>>.
+
+Basically, what we did here is defining a WAN Replication configuration (`wan-replication`)
+and configuring our map to use it (`wan-replication-ref`). As mentioned, this is the minimal
+configuration example, which is fine for most use cases. There are more configuration options for tuning the WAN Replication; see
+
+==== Setting Up an Active-Active Mode
+
+This mode requires configuration on both the source and
+target clusters. See the following examples:
+
+Configuration on the source cluster:
+
+???
+
+Configuration on the target cluster:
+
+???
+
 
 === Defining WAN Replication
 
@@ -184,7 +226,7 @@ include::{javasource}/wan/ExampleWANReplicationConfiguration.java[tag=wrc]
 
 The default settings for WAN Replication will suit most use cases. If, however, you have specific needs or if you
 would like to fine-tune the behavior of WAN Replication for your application, please refer to the
-<<tuning-wan-replication, Tuning WAN Replication>> section for more information.
+<<tuning-wr, Tuning WAN Replication>> section for more information.
 
 [[wanbatchreplication-discovery-spi]]
 ==== Using Discovery SPI
@@ -301,7 +343,7 @@ include::{javasource}/wan/ExampleWANReplicationDiscoveryConfiguration.java[tag=w
 
 The default settings for WAN Replication will suit most use cases. If, however, you have specific needs or if you
 would like to fine-tune the behavior of WAN Replication for your application, please refer to the
-<<tuning-wan-replication, Tuning WAN Replication>> section for more information.
+<<tuning-wr, Tuning WAN Replication>> section for more information.
 
 [[configuring-wan-replication-for-imap-and-icache]]
 ==== Configuring for IMap and ICache
@@ -438,7 +480,7 @@ can also define a custom implementation of a WAN event consumer. A custom WAN co
 processing logic and is usually used in combination with a custom WAN publisher. A custom consumer is optional and
 you may simply omit defining it which causes the default processing logic to be used. We will not describe custom
 WAN replication here in detail. Please refer to the
-<<defining-custom-wan-replication, Defining custom WAN Replication>> section for more information.
+<<defining-custom-wr, Defining custom WAN Replication>> section for more information.
 
 Below you can see an example configuration of the target/passive cluster where we configure how incoming WAN events
 are processed.
@@ -475,83 +517,3 @@ The processing behavior is configured using the `consumer` element. It has the f
 
 * `persist-wan-replicated-data`: When set to `true`, an incoming event over WAN replication can be
 persisted to a database for example, otherwise it is not persisted. Default value is `true`.
-
-[[defining-custom-wr]]
-==== Defining custom WAN Replication
-
-In addition to using the Hazelcast provided WAN Replication implementation, you can implement your own
-replication mechanism using the WAN publisher SPI.
-
-Following is the configuration snippet where `replicatedMap` and `replicatedCache` use the custom implementation
-`com.my.WanPublisher` to replicate map and cache updates.
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <wan-replication name="london-wan-rep">
-        <custom-publisher>
-            <publisher-id>myCustomPublisher</publisher-id>
-            <class-name>com.my.WanPublisher</class-name>
-            <properties>
-                <property name="prop1">val1</property>
-                <property name="prop2">val2</property>
-            </properties>
-        </custom-publisher>
-    </wan-replication>
-
-    <map name="replicatedMap">
-        <wan-replication-ref name="london-wan-rep"/>
-        ...
-    </map>
-
-    <cache name="replicatedCache">
-        <wan-replication-ref name="london-wan-rep"/>
-        ...
-    </cache>
-    ...
-</hazelcast>
-----
-
-The `custom-publisher` is used to configure a custom implementation of a WAN replication implementing
-`com.hazelcast.wan.WanPublisher`. For example, you might implement replication to Kafka or some JMS queue or even
-write out map and cache event changes to a log on disk. It has the following sub-elements:
-
-* `class-name`: Mandatory configuration value defining the fully qualified class name of the
-WAN publisher implementation. The class must implement `com.hazelcast.wan.WanPublisher`.
-* `publisher-id`: Mandatory configuration value for the publisher ID used for identifying the
-publisher in a `WanReplicationConfig`. This ID will be used to refer to this specific WAN publisher in
-a certain WAN replication scheme.
-
-In some cases, specifying the configuration on the source/active cluster is enough to fully implement your use case.
-This is the case when you don't have any target/passive Hazelcast cluster which consumes these events. In cases when
-you do have a target Hazelcast cluster and you wish to use a custom WAN Replication implementation, you will need to
-configure the target cluster as well. For example, you might want to implement WAN Replication by transmitting WAN events
-through some JMS queue like ActiveMQ. In this case, you need to implement both your custom WAN publisher and WAN consumer.
-
-Below is a configuration example for specifying a custom WAN replication consumer on the target/passive cluster:
-
-[source,xml]
-----
-<hazelcast>
-    ...
-    <wan-replication name="london-wan-rep">
-        <consumer>
-            <class-name>com.my.WanConsumer</class-name>
-            <properties>
-                <property name="prop1">val1</property>
-                <property name="prop2">val2</property>
-            </properties>
-        </consumer>
-    </wan-replication>
-</hazelcast>
-----
-
-The `consumer` is used to configure the implementation of the `com.hazelcast.wan.WanConsumer` interface
-which will be used to retrieve and process WAN events. A custom WAN consumer allows you to
-define custom processing logic and is used in combination with a custom WAN publisher.
-
-The `consumer` configuration element has the following sub-elements:
-* `class-name`: Name of the class implementing a custom WAN consumer (`com.hazelcast.wan.WanConsumer`).
-* `properties`: Properties for the custom WAN consumer. These properties are accessible when initializing the WAN consumer.
-You can define the host, username and password for the host, name of the queue to be polled by the consumer, etc.
