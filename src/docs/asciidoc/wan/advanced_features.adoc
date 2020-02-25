@@ -5,13 +5,23 @@ This section describes how you can synchronize your WAN replicated clusters,
 change their configurations dynamically and intercept WAN replication events using
 the event filtering API.
 
-==== Synchronizing WAN Target Cluster
+==== Synchronizing WAN Clusters
 
-You can initiate a synchronization operation on an IMap for a specific target cluster.
-Synchronization operation sends all the data of an IMap to a target cluster to align the state of target IMap with source IMap.
-Synchronization is useful if two remote clusters lost their synchronization due to WAN queue overflow or in restart scenarios.
+There are two options to synchronize your WAN replicated clusters:
 
-Synchronization can be initiated through
+* Full synchronization
+* Delta synchronization
+
+The following sections describe each. 
+
+[[synchronizing-wan-target-cluster]]
+===== Full WAN Synchronization
+
+Full WAN synchronization sends all the data of an IMap to a target cluster to align the state of target IMap with source IMap.
+It is useful if two remote clusters lost their synchronizations due to overflow in the WAN queue or in restart scenarios.
+This is the default synchronization option.
+
+Full WAN Synchronization can be initiated through
 link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center^] and
 Hazelcast's REST API.
 
@@ -77,7 +87,7 @@ NOTE: Synchronization for a target cluster operates only with
 the data residing in the memory. Therefore, evicted entries are not
 synchronized, not even if `MapLoader` is configured.
 
-==== Delta WAN Synchronization
+===== Delta WAN Synchronization
 
 Hazelcast clusters connected over WAN can go out-of-sync because of various reasons such as member failures and concurrent updates.
 To overcome the out-of-sync issue, Hazelcast has the default
@@ -95,10 +105,10 @@ Merkle tree hash exchanges can detect inconsistencies in the map data and
 synchronize only the different entries when using WAN synchronization, instead of sending all the map entries.
 
 NOTE: Currently, Delta WAN Synchronization is implemented only for Hazelcast IMap.
-It will also be implemented for ICache in the future releases.
+It will be implemented also for ICache in the future releases.
 
 [[requirements-for-delta-wan-sync]]
-===== Requirements
+====== Requirements
 
 To be able to use Delta WAN synchronization, the following must be met:
 
@@ -107,7 +117,7 @@ To be able to use Delta WAN synchronization, the following must be met:
 * Both clusters must use the same partitioning strategy.
 * Both clusters must have the Merkle tree structure enabled.
 
-===== Using Delta WAN Synchronization
+====== Using Delta WAN Synchronization
 
 To be able to use Delta WAN synchronization for a Hazelcast data structure:
 
@@ -149,7 +159,7 @@ The element `consistency-check-strategy` has currently two values:
 * `NONE`: Means that there are no consistency checks. This is the default value.
 * `MERKLE_TREES`: Means that WAN synchronization uses Merkle tree structure.
 
-===== Configuring Delta WAN Synchronization
+====== Configuring Delta WAN Synchronization
 
 You can configure Delta WAN Synchronization declaratively using the `merkle-tree` element or programmatically using the link:{docBaseUrl}/javadoc/com/hazelcast/config/MerkleTreeConfig.html[MerkleTreeConfig^] object.
 
@@ -221,7 +231,7 @@ NOTE: Merkle trees are created for each partition holding IMap data.
 Therefore, increasing the partition count also
 increases the efficiency of the Delta WAN Synchronization.
 
-===== The Process
+====== The Process
 
 Synchronizing the maps based on Merkle trees consists of two phases:
 
@@ -236,7 +246,7 @@ is in both the source and target clusters.
 NOTE: If you only need the differences between the clusters, you can trigger the consistency check without performing
 synchronization.
 
-===== Memory Consumption
+====== Memory Consumption
 
 Since Merkle trees are built for each partition and each map, the memory overhead of the trees with high entry count and deep
 trees can be significant. The trees are maintained on-heap, therefore - besides the memory consumption - garbage collection could be another
@@ -298,7 +308,7 @@ The table below shows a few examples for what the memory overhead could be.
 
 |===
 
-===== Defining the Depth
+====== Defining the Depth
 
 The efficiency of the Delta WAN Synchronization (WAN synchronization based on Merkle trees) is determined by the average number of entries per the tree
 leaves that is proportionate to the number of entries in the map. The bigger this average the more entries are getting

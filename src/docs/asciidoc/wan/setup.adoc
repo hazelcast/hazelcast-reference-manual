@@ -16,7 +16,8 @@ using active-active mode instead.
 
 * **Active-Active:** Every cluster is equal, each cluster replicates to all other clusters.
 This is normally used to connect different clients to different clusters for the sake of
-the shortest path between client and server.
+the shortest path between client and server. An example use case would be geographically
+distributed applications.
 
 ==== Setting Up an Active-Passive Mode
 
@@ -73,13 +74,48 @@ configuration example, which is fine for most use cases. There are more configur
 This mode requires configuration on both the source and
 target clusters. See the following examples:
 
-Configuration on the source cluster:
+Example configuration on the source cluster:
 
-???
+[source,xml]
+----
+<hazelcast>
+    <cluster-name>tokyo</cluster-name>
+    <wan-replication name="london-wan-rep">
+        <batch-publisher>
+            <cluster-name>london</cluster-name>
+            <target-endpoints>10.3.5.1:5701, 10.3.5.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
 
-Configuration on the target cluster:
+    <map name="replicatedMap">
+        <wan-replication-ref name="london-wan-rep"/>
+    </map>
 
-???
+</hazelcast>
+----
+
+Example configuration on the target cluster:
+
+[source,xml]
+----
+<hazelcast>
+    <cluster-name>london</cluster-name>
+    <wan-replication name="tokyo-wan-rep">
+        <batch-publisher>
+            <cluster-name>tokyo</cluster-name>
+            <target-endpoints>32.1.1.1:5701, 32.1.1.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
+
+    <map name="replicatedMap">
+        <wan-replication-ref name="tokyo-wan-rep"/>
+    </map>
+
+</hazelcast>
+----
+
+Notice the `cluster-name` configuration element (not the one under the `batch-publisher` element).
+
 
 
 === Defining WAN Replication
