@@ -1,45 +1,119 @@
 
 [[wr-rest]]
-=== REST API
+=== REST API Wrap-Up
 
 NOTE: To be able to use the REST calls related to WAN Replication
 mentioned in this section, you need to enable the `WAN` REST endpoint group.
 See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> on
 how to enable it.
 
-The two phases of the Merkle tree based synchronization can be triggered by a REST call, as it can be done with the
-default synchronization.
+==== Parameters
 
-The URL for the consistency check REST call:
+Here is the list of parameters used in the WAN Replication REST calls, which
+are shown as placeholders in the REST calls:
+
+* `clusterOnSource`: Name of your local (source) cluster.
+* `clusterPassword`: Password, if set, of your source cluster.
+Note that you need to enable the <<enabling-jaas-security, security>>
+when you need a cluster password.
+* `wanRepName`: Name of the WAN Replication configuration.
+* `publisherId`: WAN replication publisher ID. If not set,
+`cluster-name` under the `batch-publisher` element is used.
+* `mapName`: Name of the map to be synchronized.
+
+The parameters in the following curl commands need to be
+in the given order.
+
+==== Clearing the Queues
+
+The URL for cleaning the WAN event queues is as follows:
 
 ```
-http://member_ip:port/hazelcast/rest/wan/consistencyCheck/map
+http://{member IP address:port}/hazelcast/rest/wan/clearWanQueues
 ```
 
-The URL for the synchronization REST call - the same as it is for the default synchronization:
+The following is the curl command: 
 
 ```
-http://member_ip:port/hazelcast/rest/wan/sync/map
+curl -X POST -d "{clusteronSourceName}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/clearWanQueues
 ```
 
-You need to add URL-encoded parameters to the request in both cases in the following order separated by "&";
+==== Pausing the Publisher
 
-* Cluster name
-* Cluster password
-* Name of the WAN replication configuration
-* WAN replication publisher ID/target cluster name
-* Map name to be synchronized
+The URL for pausing the WAN publisher is as follows:
 
-[NOTE]
-====
-You can also use the following URL in your REST call if you want to synchronize all the maps in source and target cluster:
-`+http://member_ip:port/hazelcast/rest/wan/sync/allmaps+`. You need to add the following URL-encoded parameters to
-the request in the following order separated by "&";
+```
+http://{member IP address:port}/hazelcast/rest/wan/pausePublisher
+```
 
-* Cluster name
-* Cluster password
-* Name of the WAN replication configuration
-* WAN replication publisher ID/target cluster name
-====
+The following is the curl command: 
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/pausePublisher
+```
+
+==== Resuming the Publisher
+
+The URL for resuming the WAN publisher is as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/resumePublisher
+```
+
+The following is the curl command: 
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/resumePublisher
+```
+
+==== Stopping the Publisher
+
+The URL for stopping the WAN publisher is as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/stopPublisher
+```
+
+The following is the curl command: 
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/stopPublisher
+```
+
+==== Synchronizing the Clusters
+
+For the full synchronization, the URLs for synchronizing a single map and all maps are as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/sync/map
+http://{member IP address:port}/hazelcast/rest/wan/sync/allMaps
+```
+
+The following are the respective curl commands:
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}&{mapName}" --URL http://{member IP address:port}/hazelcast/rest/wan/sync/map
+
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/sync/allMaps
+
+```
+
+For the delta synchronization, you need to first perform a
+consistency check, using the the following REST call URL:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/consistencyCheck/map
+```
+
+Here is the respective curl command:
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}&{mapName}" --URL http://{member IP address:port}/hazelcast/rest/wan/consistencyCheck/map
+```
+
+After the consistency check, you can use the same REST calls
+used in full synchronization in the same way to synchronize
+a single map or all the maps.
+
 
 NOTE: Consistency check can be triggered only for one map.
