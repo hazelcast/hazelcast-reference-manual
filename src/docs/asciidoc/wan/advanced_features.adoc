@@ -246,6 +246,24 @@ is in both the source and target clusters.
 NOTE: If you only need the differences between the clusters, you can trigger the consistency check without performing
 synchronization.
 
+The two phases of the Merkle tree based synchronization can be triggered by a REST call, as it can be done with the
+full synchronization.
+
+The URL for the consistency check REST call:
+
+```
+http://member_ip:port/hazelcast/rest/wan/consistencyCheck/map
+```
+
+The URL for the synchronization REST call - the same as it is for the default synchronization:
+
+```
+http://member_ip:port/hazelcast/rest/wan/sync/map
+```
+
+See the REST call details <<synchronizing-the-clusters, here>>.
+
+
 ====== Memory Consumption
 
 Since Merkle trees are built for each partition and each map, the memory overhead of the trees with high entry count and deep
