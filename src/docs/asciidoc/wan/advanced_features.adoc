@@ -125,20 +125,13 @@ To be able to use Delta WAN synchronization for a Hazelcast data structure:
 it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of
 the `sync` element. If configuring programmatically, you can use the setter of the
 link:{docBaseUrl}/javadoc/com/hazelcast/config/WanSyncConfig.html[WanSyncConfig^] object.
-. Bind that WAN synchronization configuration to the data structure (currently IMap):
-Simply set the WAN replication reference of your map to the name of the WAN replication configuration which uses the Merkle tree.
-
-Following is a declarative configuration example of the above:
-
+Here is a declarative example:
++
 [source,xml]
 ----
 <hazelcast>
     ...
-    <map name="myMap">
-        <wan-replication-ref name="wanReplicationScheme">
-        </wan-replication-ref>
-    </map>
-    <wan-replication name="wanReplicationScheme">
+     <wan-replication name="wanReplicationScheme">
         <batch-publisher>
             <cluster-name>clusterName</cluster-name>
             <sync>
@@ -149,28 +142,30 @@ Following is a declarative configuration example of the above:
     ...
 </hazelcast>
 ----
-
-Here, the element `consistency-check-strategy` sets the strategy for
-checking the consistency of data between the source and target clusters.
-You must initiate the WAN synchronization (via Management Center or REST API as explained in
-<<synchronizing-wan-target-cluster, Synchronizing WAN clusters>>) to let this strategy reconcile the inconsistencies.
-The element `consistency-check-strategy` has currently two values:
-
-* `NONE`: Means that there are no consistency checks. This is the default value.
-* `MERKLE_TREES`: Means that WAN synchronization uses Merkle tree structure.
-
-====== Configuring Delta WAN Synchronization
-
-You can configure Delta WAN Synchronization declaratively using the `merkle-tree` element or programmatically using the link:{docBaseUrl}/javadoc/com/hazelcast/config/MerkleTreeConfig.html[MerkleTreeConfig^] object.
-
-Following is a declarative configuration example showing how to
-enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap in the below case) and specify its depth.
-
+. Bind that WAN synchronization configuration to the data structure (currently IMap):
+Simply set the WAN replication reference of your map to the name of the WAN replication
+configuration which uses the Merkle tree.
+Here is a declarative example:
++
 [source,xml]
 ----
 <hazelcast>
     ...
-    <map name="someMap">
+    <map name="myMap">
+        <wan-replication-ref name="wanReplicationScheme">
+        </wan-replication-ref>
+    </map>
+    ...
+</hazelcast>
+----
+. Finally, configure the Merkle tree using the `merkle-tree` element which is contained
+in the `map` configuration:
++
+[source,xml]
+----
+<hazelcast>
+    ...
+    <map name="myMap">
         <merkle-tree enabled="true">
             <depth>5</depth>
         </merkle-tree>
@@ -178,23 +173,13 @@ enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap
     ...
 </hazelcast>
 ----
++
+You can programmatically configure it, too, using the
+link:{docBaseUrl}/javadoc/com/hazelcast/config/MerkleTreeConfig.html[MerkleTreeConfig^] object.
 
-Here are the descriptions of sub-elements and attributes:
+Here is the full declarative configuration example showing how to
+enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap in this case) and specify its depth:
 
-* `enabled`: Specifies whether the Merkle tree structure is enabled. Its default value is `true`.
-* `mapName`: Specifies the name of the map for which the Merkle tree structure is used.
-* `depth`: Specifies the depth of Merkle tree. Valid values are between 2 and 27 (exclusive). Its default value is `10`.
-** A larger depth means that a data synchronization mechanism is able to pinpoint a smaller subset of
-the data structure (e.g., IMap) contents in which a change has occurred.
-This causes the synchronization mechanism to be more efficient.
-However, keep in mind that a large depth means that the Merkle tree will consume more memory.
-As the comparison mechanism is iterative, a larger depth also prolongs the comparison duration.
-Therefore, it is recommended not to have large tree depths if the latency of the comparison operation is high.
-** A smaller depth means that the Merkle tree is shallower and the data synchronization mechanism transfers
-larger chunks of the data structure (e.g., IMap) in which a possible change has happened.
-As you can imagine, a shallower Merkle tree will consume less memory.
-
-Following is a declarative example including the Merkle tree configuration.
 
 [source,xml]
 ----
@@ -221,6 +206,31 @@ Following is a declarative example including the Merkle tree configuration.
 </hazelcast>
 ----
 
+Here, the element `consistency-check-strategy` sets the strategy for
+checking the consistency of data between the source and target clusters.
+You must initiate the WAN synchronization (via Management Center or REST API as explained in
+<<synchronizing-wan-target-cluster, Synchronizing WAN clusters>>) to let this strategy reconcile the inconsistencies.
+The element `consistency-check-strategy` has currently two values:
+
+* `NONE`: Means that there are no consistency checks. This is the default value.
+* `MERKLE_TREES`: Means that WAN synchronization uses Merkle tree structure.
+
+The Merkle tree structure is enabled using its `enabled` attribute (default is `true`).
+Its  `depth` element specifies the depth of Merkle tree. Valid values are between 2 and 27 (exclusive).
+Its default value is `10`.
+
+* A larger depth means that a data synchronization mechanism is able to pinpoint a smaller subset of
+the data structure (e.g., IMap) contents in which a change has occurred.
+This causes the synchronization mechanism to be more efficient.
+However, keep in mind that a large depth means that the Merkle tree will consume more memory.
+As the comparison mechanism is iterative, a larger depth also prolongs the comparison duration.
+Therefore, it is recommended not to have large tree depths if the latency of the comparison operation is high.
+* A smaller depth means that the Merkle tree is shallower and the data synchronization mechanism transfers
+larger chunks of the data structure (e.g., IMap) in which a possible change has happened.
+As you can imagine, a shallower Merkle tree will consume less memory.
+
+Also see the <<defining-the-depth, Defining the Depth section>> for more insights.
+
 NOTE: If you do not specifically configure the `merkle-tree` in your
 Hazelcast configuration, Hazelcast uses the default Merkle tree structure values
 (i.e., it is enabled by default and its default depth is 10) when there is a WAN publisher using
@@ -246,7 +256,7 @@ is in both the source and target clusters.
 NOTE: If you only need the differences between the clusters, you can trigger the consistency check without performing
 synchronization.
 
-The two phases of the Merkle tree based synchronization can be triggered by a REST call, as it can be done with the
+The two phases of the Merkle tree based synchronization can be triggered by the REST calls, as it can be done with the
 full synchronization.
 
 The URL for the consistency check REST call:
