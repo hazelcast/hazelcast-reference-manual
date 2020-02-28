@@ -3,16 +3,17 @@
 In clusters connected with WAN Replication, a cluster can have one of two roles:
 Active or Passive, conceptually explained in the previous section above.
 
-With these roles, there are two modes of WAN Replication that Hazelcast supports:
+With these roles, there are two modes of WAN Replication:
 
-* **Active-Passive:** This mode is mostly used for failover scenarios where you want to replicate an active
+* **Active-Passive:** This mode can be used for failover scenarios where you want to replicate an active
 cluster to one or more passive clusters, for the purpose of maintaining a backup.
 If the active cluster becomes unavailable, you may redirect user traffic to the passive clusters. Once the active
 cluster becomes available again, you may again redirect user traffic to the active cluster. The active cluster may have
 however been started empty or might have simply missed any updates that have happened on the passive clusters.
 Any updates made on the passive clusters will not be replicated back to the active cluster and if the data is out-of-sync,
 it will not be synchronized. If you require that these updates be copied back to the active cluster, you may consider
-using active-active mode instead.
+using active-active mode instead. A use case for active-passive mode would be a cross-site replication
+where the source cluster replicates the changes to separate distant clusters.
 
 * **Active-Active:** Every cluster is equal, each cluster replicates to all other clusters.
 This is normally used to connect different clients to different clusters for the sake of
@@ -44,7 +45,7 @@ Here is a simple, minimal declarative (XML) configuration example:
 </hazelcast>
 ----
 
-Here is the equivalent programmatic configuration example:
+Here is its programmatic configuration equivalent:
 
 [source,java]
 ----
@@ -61,13 +62,14 @@ those two will receive the WAN events. In that case
 and if you want the events to be forwarded to the other cluster members, see the `republishing-enabled`
 element description in the <<configuring-wan-replication-for-imap-and-icache, Configuring for IMap and ICache section>>.
 
-This example configuration uses static endpoints to specify the members in the target cluster.
+This example configuration uses static endpoints to specify the members on the target cluster.
 You can also use Hazelcast's Discovery SPI for WAN Replication to specify endpoints on various
 cloud infrastructures. See the <<wanbatchreplication-discovery-spi, Using Discovery SPI section>>.
 
 Basically, what we did here is defining a WAN Replication configuration (`wan-replication`)
 and configuring our map to use it (`wan-replication-ref`). As mentioned, this is the minimal
-configuration example, which is fine for most use cases. There are more configuration options for tuning the WAN Replication; see
+configuration example, which is fine for most use cases. There are more configuration options for
+tuning the WAN Replication; see the <<tuning-wr, Tuning WAN Replication section>>.
 
 ==== Setting Up an Active-Active Mode
 
@@ -115,8 +117,8 @@ Example configuration on the target cluster:
 ----
 
 Notice the `cluster-name` configuration element (not the one under the `batch-publisher` element).
-
-
+These are the names specifying the IMDG members' clusters on their locals. So, the source cluster name
+should be mentioned in the target's `cluster-name` element under `batch-publisher`.
 
 === Defining WAN Replication
 
@@ -160,8 +162,8 @@ fully configure WAN Replication.
 </hazelcast>
 ----
 
-Above, you can notice that we have configured the instance to replicate a map and a cache to a target cluster
-with the cluster-name `london`. WAN Replication will check that this cluster name matches during connection
+Above, you notice that we have configured the instance to replicate a map and a cache to a target cluster
+with the cluster name `london`. WAN Replication will check that this cluster name matches during connection
 establishment to each endpoint. This does not serve as a security measure though. This serves only to prevent
 misconfiguration where the source cluster would mistakenly replicate to the wrong cluster and as an attempt to
 detect and prevent loops where the same WAN event would be infinitely forwarded between the same clusters.
