@@ -28,7 +28,7 @@ Hazelcast's REST API.
 Below is the URL for the REST call;
 
 ```
-http://member_ip:port/hazelcast/rest/wan/sync/map
+http://{member IP address:port}/hazelcast/rest/wan/sync/map
 ```
 
 You need to add URL-encoded parameters to the request in the following order separated by "&";
@@ -59,29 +59,18 @@ Assume that you have configured an IMap with a WAN replication configuration as 
 </hazelcast>
 ----
 
-Then, an example CURL command to initiate the synchronization for "my-map" would be as follows:
+Then, an example curl command to initiate the synchronization for "my-map" would be as follows:
 
 ```
-curl -X POST -d "clusterName&clusterPassword&london-wan-rep&istanbul&my-map" --URL http://127.0.0.1:5701/hazelcast/rest/wan/sync/map
+curl -X POST -d "{clusterName}&{clusterPassword}&london-wan-rep&istanbul&my-map" --URL http://127.0.0.1:5701/hazelcast/rest/wan/sync/map
 ```
 
-[NOTE]
-.Synchronizing All Maps
-====
+You can also synchronize all the maps in source and target cluster.
+In that case the curl command using the above parameters becomes as follows:
 
-You can also use the following URL in your REST call if you want to
-synchronize all the maps in source and target cluster:
-
-`+http://member_ip:port/hazelcast/rest/wan/sync/allmaps+`
-
-You need to add the following URL-encoded parameters to
-the request in the following order separated by "&";
-
-* Cluster name
-* Cluster password
-* Name of the WAN replication configuration
-* WAN replication publisher ID/target cluster name
-====
+```
+curl -X POST -d "{clusterName}&{clusterPassword}&london-wan-rep&istanbul" --URL http://127.0.0.1:5701/hazelcast/rest/wan/sync/allMaps
+```
 
 NOTE: Synchronization for a target cluster operates only with
 the data residing in the memory. Therefore, evicted entries are not
@@ -262,13 +251,13 @@ full synchronization.
 The URL for the consistency check REST call:
 
 ```
-http://member_ip:port/hazelcast/rest/wan/consistencyCheck/map
+http://{member IP address:port}/hazelcast/rest/wan/consistencyCheck/map
 ```
 
 The URL for the synchronization REST call - the same as it is for the default synchronization:
 
 ```
-http://member_ip:port/hazelcast/rest/wan/sync/map
+http://{member IP address:port}/hazelcast/rest/wan/sync/map
 ```
 
 See the REST call details <<synchronizing-the-clusters, here>>.
@@ -434,14 +423,11 @@ You cannot remove the existing configurations but can put the publishers into
 a STOPPED state which prevents the WAN events from being enqueued in the WAN queues and
 prevents the replication, rendering the publisher idle. The configurations also cannot be changed.
 
-Synchronization can be initiated through
-link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#wan-sync[Management Center^] and
-Hazelcast’s REST API.
-
-Below is the URL for the REST call:
+You can dynamically add a WAN publisher configuration using the
+following REST call URL:
 
 ```
-http://member_ip:port/hazelcast/rest/wan/addWanConfig
+http://{member IP address:port}/hazelcast/rest/wan/addWanConfig
 ```
 
 You need to add the following URL-encoded parameters to the request in the following order separated by "&";
