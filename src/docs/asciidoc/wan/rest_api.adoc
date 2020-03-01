@@ -20,7 +20,8 @@ when you need a cluster password.
 * `publisherId`: WAN replication publisher ID. If not set,
 `cluster-name` under the `batch-publisher` element is used.
 * `mapName`: Name of the map to be synchronized.
-* `wanConfig`: WAN publisher configuration file to be added dynamically.
+* `wanConfig`: WAN publisher configuration file, as a JSON string,
+to be added dynamically.
 
 The parameters in the following curl commands need to be
 in the given order.
@@ -132,5 +133,8 @@ The following is the curl command:
 
 
 ```
-curl -X POST -d "{clusterOnSource}&{clusterPassword}&{...}" --URL http://127.0.0.1:5701/hazelcast/rest/wan/addWanConfig
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanConfig}" --URL http://127.0.0.1:5701/hazelcast/rest/wan/addWanConfig
 ```
+
+The `wanConfig` parameter should be the full configuration as a JSON string.
+See <<dynamically-adding-wan-publishers, here>> for configuration examples.

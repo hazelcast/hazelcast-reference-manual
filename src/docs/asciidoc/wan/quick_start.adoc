@@ -1,0 +1,120 @@
+=== Quick Start
+
+This section provides information on how you can
+start using WAN Replication with a minimal setup for both
+Active-Passive and Active-Active modes.
+
+==== Setting Up an Active-Passive Mode
+
+This mode requires configuration only on the source cluster.
+In most cases, the target cluster does not need any
+configuration.
+
+. Make sure that your clusters operate as expected without WAN Replication.
+. Add the following declarative (XML) configuration example on your source cluster:
++
+[source,xml]
+----
+<hazelcast>
+    <wan-replication name="london-wan-rep">
+        <batch-publisher>
+            <cluster-name>london</cluster-name>
+            <target-endpoints>10.3.5.1:5701, 10.3.5.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
+
+    <map name="replicatedMap">
+        <wan-replication-ref name="london-wan-rep"/>
+    </map>
+
+</hazelcast>
+----
++
+Here is its programmatic configuration equivalent:
++
+[source,java]
+----
+include::{javasource}/wan/MinimalWANReplicationConfiguration.java[tag=wrc]
+----
++
+. Start your clusters to start using Active-Passive WAN Replication.
+
+In the above example, we have configured the map named `replicatedMap` to
+replicate to the target cluster named `london` on two endpoints, as specified with
+the `target-endpoints` element. Notice that the name of `wan-replication`
+configuration (`london-wan-rep`) is referenced in
+the `map` configuration using the `wan-replication-ref` element; this is how
+you make your map to use the WAN Replication feature. For now, only Hazelcast maps
+and caches support this feature.
+
+The `london` cluster might have more than two members specified in this example, but only
+those two endpoints will receive the WAN events. In that case
+and if you want the events to be forwarded to the other cluster members, see the `republishing-enabled`
+element description in the <<configuring-wan-replication-for-imap-and-icache, Configuring for IMap and ICache section>>.
+
+This example configuration uses static endpoints to specify the members on the target cluster.
+You can also use Hazelcast's Discovery SPI for WAN Replication to specify endpoints on various
+cloud infrastructures. See the <<wanbatchreplication-discovery-spi, Using Discovery SPI section>>.
+
+Basically, what we did here is defining a WAN Replication configuration (`wan-replication`)
+and configuring our map to use it (`wan-replication-ref`). As mentioned, this is the minimal
+configuration example, which is fine for most use cases. There are more configuration options for
+tuning the WAN Replication; see the <<tuning-wr, Tuning WAN Replication section>>.
+
+==== Setting Up an Active-Active Mode
+
+This mode requires configuration on both the source and
+target clusters.
+
+. Make sure that your clusters operate as expected without WAN Replication.
+. Add the following declarative (XML) configuration example on your source cluster:
++
+[source,xml]
+----
+<hazelcast>
+    <cluster-name>tokyo</cluster-name>
+    <wan-replication name="london-wan-rep">
+        <batch-publisher>
+            <cluster-name>london</cluster-name>
+            <target-endpoints>10.3.5.1:5701, 10.3.5.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
+
+    <map name="replicatedMap">
+        <wan-replication-ref name="london-wan-rep"/>
+    </map>
+
+</hazelcast>
+----
++
+. Add the following declarative (XML) configuration example on your target cluster:
++
+[source,xml]
+----
+<hazelcast>
+    <cluster-name>london</cluster-name>
+    <wan-replication name="tokyo-wan-rep">
+        <batch-publisher>
+            <cluster-name>tokyo</cluster-name>
+            <target-endpoints>32.1.1.1:5701, 32.1.1.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
+
+    <map name="replicatedMap">
+        <wan-replication-ref name="tokyo-wan-rep"/>
+    </map>
+
+</hazelcast>
+----
++
+. Start your clusters to start using Active-Active WAN Replication.
+
+Notice the `cluster-name` configuration element (not the one under the `batch-publisher` element).
+These are the names specifying the IMDG members' clusters on their locals. So, the source cluster name
+should be mentioned in the target's `cluster-name` element under `batch-publisher`.
+
+As in the Active-Passive example shown in the previous section, this example configuration
+also uses static endpoints to specify the target members.
+See the <<wanbatchreplication-discovery-spi, Using Discovery SPI section>> for information
+on using the Discovery SPI to specify target members.
+

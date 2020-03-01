@@ -14,8 +14,8 @@ Assume that you have data centers in different cities each running an independen
 Hazelcast IMDG cluster. You can reliably use the WAN Replication feature
 to synchronize all of these clusters by replicating the updates to each of them.
 
-WAN Replication provides a much more control than the replication mechanism between
-the members in a single cluster with features and capabilities such as the following:
+WAN Replication provides more control compared to the replication mechanism between
+the members in a single cluster. It has the following features and capabilities:
 
 * It gracefully detects if there is a connectivity issue between the clusters, buffering any updates
 that are not yet replicated and attempts to re-establish a connection to resume the replication.
@@ -29,7 +29,8 @@ This chapter explains how you can replicate the state of your clusters over wide
 networks through Hazelcast's WAN Replication.
 
 NOTE: WAN Replication is a Hazelcast IMDG Enterprise Edition feature. However,
-its API is available publicly link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/wan/package-summary.html[here^] and, benefiting from it, you may write your own replication logic.
+its API is available publicly link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/wan/package-summary.html[here^] and,
+benefiting from it, you may write your own replication logic.
 
 [[wr-concepts]]
 ==== Concepts
@@ -55,6 +56,10 @@ identifier can then be used to control the behavior of a WAN replication publish
 running. For instance, you can use this identifier in combination with the WAN replication scheme name to pause, stop or
 resume WAN replication for that specific publisher. Or, you can trigger synchronization with a specific target cluster
 and so on.
+
+include::modes.adoc[]
+
+include::quick_start.adoc[]
 
 include::setup.adoc[]
 
