@@ -1233,9 +1233,7 @@ Assume that you have two clusters, Cluster A and Cluster B, and two Java clients
 
 ===== Configuring Without CNAME
 
-Let's first give example configurations and describe the configuration elements.
-
-**Declarative Configuration:**
+Here is a declarative configuration example:
 
 [source,xml]
 ----
@@ -1250,7 +1248,13 @@ Let's first give example configurations and describe the configuration elements.
 
 The following are the descriptions for the configuration elements:
 
-* `try-count`: Count of connection retries by the client to the alternative clusters. When this value is reached and the client still could not connect to a cluster, the client shuts down.
+* `try-count`: Count of connection retries by the client to the alternative clusters. When this value is reached and the client still could not connect to a cluster, the client shuts down. Note that
+this value applies to the alternative clusters whose configurations are provided
+with the `client` element. For the above example, two alternative clusters are given
+with the `try-count` set as `4`. This means the number of connection attempts is
+4 x 2 = 8. You should also keep in mind that if you have configured a connection attempt limit
+as explained <<setting-connection-attempt-limit, here>>, this has an effect.
+In that case, the number of connection attempts for the above example would be 4 x 2 x connection attempt limit.
 * `client`: Path to the client configuration that corresponds to an alternative cluster that the client will try to connect.
 
 [NOTE]
