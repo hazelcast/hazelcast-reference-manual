@@ -1521,29 +1521,6 @@ Let's first give example configurations and describe the configuration elements.
 </hazelcast-client-failover>
 ----
 
-The following are the descriptions for the configuration elements:
-
-* `try-count`: Count of connection retries by the client to the alternative clusters.
-When this value is reached and the client still could not connect to a cluster, the client shuts down.
-* `client`: Path to the client configuration that corresponds to an alternative cluster that the client will try to connect.
-
-[NOTE]
-====
-The client configurations must be exactly the same except the following configuration options:
-
-* `SecurityConfig`
-* `NetworkConfig.Addresses`
-* `NetworkConfig.SocketInterceptorConfig`
-* `NetworkConfig.SSLConfig`
-* `NetworkConfig.AwsConfig`
-* `NetworkConfig.GcpConfig`
-* `NetworkConfig.azureConfig`
-* `NetworkConfig.KubernetesConfig`
-* `NetworkConfig.EurekaConfig`
-* `NetworkConfig.CloudConfig`
-* `NetworkConfig.DiscoveryConfig`
-====
-
 **Programmatic Configuration:**
 
 [source,java]
@@ -1563,6 +1540,31 @@ clientFailoverConfig.addClientConfig(clientConfig).addClientConfig(clientConfig2
 HazelcastInstance client = HazelcastClient.newHazelcastFailoverClient(clientFailoverConfig);
 ----
 
+The following are the descriptions for the configuration elements:
+
+* `try-count`: Count of connection retries by the client to the alternative clusters.
+When this value is reached and the client still could not connect to a cluster, the client
+shuts down. Note that this value applies to the alternative clusters whose configurations are provided
+with the `client` element. For the above example, two alternative clusters are given
+with the `try-count` set as `4`. This means the number of connection attempts is
+4 x 2 = 8.
+* `client`: Path to the client configuration that corresponds to an alternative cluster that the client will try to connect.
+
+The client configurations must be exactly the same except the following configuration options:
+
+* `SecurityConfig`
+* `NetworkConfig.Addresses`
+* `NetworkConfig.SocketInterceptorConfig`
+* `NetworkConfig.SSLConfig`
+* `NetworkConfig.AwsConfig`
+* `NetworkConfig.GcpConfig`
+* `NetworkConfig.azureConfig`
+* `NetworkConfig.KubernetesConfig`
+* `NetworkConfig.EurekaConfig`
+* `NetworkConfig.CloudConfig`
+* `NetworkConfig.DiscoveryConfig`
+
+
 You can also configure it within the Spring context, as shown below:
 
 [source,xml]
@@ -1571,7 +1573,7 @@ You can also configure it within the Spring context, as shown below:
 <beans>
     <hz:client-failover id="blueGreenClient" try-count="5">
         <hz:client>
-            <hz:cluster name="dev"/>
+            <hz:cluster-name name="dev"/>
             <hz:network>
                 <hz:member>127.0.0.1:5700</hz:member>
                 <hz:member>127.0.0.1:5701</hz:member>
@@ -1579,7 +1581,7 @@ You can also configure it within the Spring context, as shown below:
         </hz:client>
 
         <hz:client>
-            <hz:cluster name="alternativeClusterName" />
+            <hz:cluster-name name="alternativeClusterName"/>
             <hz:network>
                 <hz:member>127.0.0.1:5702</hz:member>
                 <hz:member>127.0.0.1:5703</hz:member>
