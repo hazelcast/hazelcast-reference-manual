@@ -1234,7 +1234,7 @@ connectionRetryConfig.setInitialBackoffMillis(1000)
 
 The following are configuration element descriptions:
 
-* `initial-backoff-millis`: Specifies how long to wait (backoff) after the first failure before retrying in milliseconds.
+* `initial-backoff-millis`: Specifies how long to wait (backoff), in milliseconds, after the first failure before retrying.
 Its default value is 1000 ms.
 * `max-backoff-millis`: Specifies the upper limit for the backoff in milliseconds.
 Its default value is 30000 ms.
@@ -1509,29 +1509,6 @@ Let's first give example configurations and describe the configuration elements.
 </hazelcast-client-failover>
 ----
 
-The following are the descriptions for the configuration elements:
-
-* `try-count`: Count of connection retries by the client to the alternative clusters.
-When this value is reached and the client still could not connect to a cluster, the client shuts down.
-* `client`: Path to the client configuration that corresponds to an alternative cluster that the client will try to connect.
-
-[NOTE]
-====
-The client configurations must be exactly the same except the following configuration options:
-
-* `SecurityConfig`
-* `NetworkConfig.Addresses`
-* `NetworkConfig.SocketInterceptorConfig`
-* `NetworkConfig.SSLConfig`
-* `NetworkConfig.AwsConfig`
-* `NetworkConfig.GcpConfig`
-* `NetworkConfig.azureConfig`
-* `NetworkConfig.KubernetesConfig`
-* `NetworkConfig.EurekaConfig`
-* `NetworkConfig.CloudConfig`
-* `NetworkConfig.DiscoveryConfig`
-====
-
 **Programmatic Configuration:**
 
 [source,java]
@@ -1550,6 +1527,31 @@ ClientFailoverConfig clientFailoverConfig = new ClientFailoverConfig();
 clientFailoverConfig.addClientConfig(clientConfig).addClientConfig(clientConfig2).setTryCount(10)
 HazelcastInstance client = HazelcastClient.newHazelcastFailoverClient(clientFailoverConfig);
 ----
+
+The following are the descriptions for the configuration elements:
+
+* `try-count`: Count of connection retries by the client to the alternative clusters.
+When this value is reached and the client still could not connect to a cluster, the client
+shuts down. Note that this value applies to the alternative clusters whose configurations are provided
+with the `client` element. For the above example, two alternative clusters are given
+with the `try-count` set as `4`. This means the number of connection attempts is
+4 x 2 = 8.
+* `client`: Path to the client configuration that corresponds to an alternative cluster that the client will try to connect.
+
+The client configurations must be exactly the same except the following configuration options:
+
+* `SecurityConfig`
+* `NetworkConfig.Addresses`
+* `NetworkConfig.SocketInterceptorConfig`
+* `NetworkConfig.SSLConfig`
+* `NetworkConfig.AwsConfig`
+* `NetworkConfig.GcpConfig`
+* `NetworkConfig.azureConfig`
+* `NetworkConfig.KubernetesConfig`
+* `NetworkConfig.EurekaConfig`
+* `NetworkConfig.CloudConfig`
+* `NetworkConfig.DiscoveryConfig`
+
 
 You can also configure it within the Spring context, as shown below:
 
