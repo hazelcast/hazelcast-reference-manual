@@ -152,14 +152,11 @@ There are two main failure cases and configurations you can perform to achieve p
 While the client is trying to connect initially to one of the members in the
 `ClientNetworkConfig.addressList`, all the members might be not available.
 Instead of giving up, throwing an exception and stopping the client,
-the client retries as many as `connectionAttemptLimit` times.
-
-You can configure `connectionAttemptLimit` for the number of times you want the client
-to retry connecting. See the <<setting-connection-attempt-limit, Setting Connection Attempt Limit section>>.
+the client retries to connect as configured which is described in the
+<<configuring-client-connection-retry, Configuring Client Connection Retry section>>.
 
 The client executes each operation through the already established connection to the cluster.
 If this connection(s) disconnects or drops, the client tries to reconnect as configured.
-
 
 **Handling Retry-able Operation Failure:**
 
@@ -785,38 +782,6 @@ clientConfig.getNetworkConfig().setConnectionTimeout(5000);
 ----
 
 Its default value is *5000* milliseconds.
-
-====== Setting Connection Attempt Limit
-
-While the client is trying to connect initially to one of the members in the `ClientNetworkConfig.addressList`,
-that member might not be available at that moment.
-Instead of giving up, throwing an exception and stopping the client,
-the client retries as many as `ClientNetworkConfig.connectionAttemptLimit` times.
-This is also the case when the previously established connection between the client and
-that member goes down. The following are example configurations.
-
-Declarative Configuration:
-
-[source,xml]
-----
-<hazelcast-client>
-    ...
-    <network>
-        <connection-attempt-limit>5</connection-attempt-limit>
-    </network>
-    ...
-</hazelcast-client>
-----
-
-Programmatic Configuration:
-
-[source,java]
-----
-ClientConfig clientConfig = new ClientConfig();
-clientConfig.getNetworkConfig().setConnectionAttemptLimit(5);
-----
-
-Its default value is *2*.
 
 ====== Setting Connection Attempt Period
 
