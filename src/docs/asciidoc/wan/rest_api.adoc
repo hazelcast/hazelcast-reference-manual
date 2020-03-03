@@ -12,10 +12,12 @@ how to enable it.
 Here is the list of parameters used in the WAN Replication REST calls, which
 are shown as placeholders in the REST calls:
 
+* member IP address and port: IP address and port number of the
+member on which you run the REST calls.
 * `clusterOnSource`: Name of your local (source) cluster.
 * `clusterPassword`: Password, if set, of your source cluster.
 Note that you need to enable the <<enabling-jaas-security, security>>
-when you need a cluster password.
+when you need a cluster password. If not set, the parameter is empty.
 * `wanRepName`: Name of the WAN Replication configuration.
 * `publisherId`: WAN replication publisher ID. If not set,
 `cluster-name` under the `batch-publisher` element is used.
@@ -23,8 +25,30 @@ when you need a cluster password.
 * `wanConfig`: WAN publisher configuration file, as a JSON string,
 to be added dynamically.
 
-The parameters in the following curl commands need to be
-in the given order.
+The parameters in the below curl commands need to be provided
+in the given order, separated by `&`.
+
+Let's use the following declarative configuration as the example to
+be used in the curl commands described in the sections below, and
+let's assume that our source cluster does not have a password:
+
+[source,xml]
+----
+<hazelcast>
+    <cluster-name>tokyo</cluster-name>
+    <wan-replication name="london-wan-rep">
+        <batch-publisher>
+            <cluster-name>london</cluster-name>
+            <target-endpoints>10.3.5.1:5701, 10.3.5.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
+
+    <map name="myMap">
+        <wan-replication-ref name="london-wan-rep"/>
+    </map>
+</hazelcast>
+----
+
 
 ==== Clearing the Queues
 
@@ -40,6 +64,13 @@ The following is the curl command:
 curl -X POST -d "{clusteronSourceName}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/clearWanQueues
 ```
 
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/clearWanQueues
+```
+
+
 ==== Pausing the Publisher
 
 The URL for pausing the WAN publisher is as follows:
@@ -52,6 +83,12 @@ The following is the curl command:
 
 ```
 curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/pausePublisher
+```
+
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/pausePublisher
 ```
 
 ==== Resuming the Publisher
@@ -68,6 +105,13 @@ The following is the curl command:
 curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/resumePublisher
 ```
 
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/resumePublisher
+```
+
+
 ==== Stopping the Publisher
 
 The URL for stopping the WAN publisher is as follows:
@@ -80,6 +124,12 @@ The following is the curl command:
 
 ```
 curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/stopPublisher
+```
+
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/stopPublisher
 ```
 
 ==== Synchronizing the Clusters
@@ -99,6 +149,13 @@ curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}&
 curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/sync/allMaps
 
 ```
+
+The command according to the above example configuration is as follows (for that single map):
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london&myMap" --URL http://{member IP address:port}/hazelcast/rest/wan/sync/map
+```
+
 
 For the delta synchronization, you need to first perform a
 consistency check, using the the following REST call URL:
