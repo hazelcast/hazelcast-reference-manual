@@ -3,14 +3,14 @@ import com.hazelcast.config.*;
 import java.util.Map;
 
 
-public class MinimalWANReplicationConfiguration {
+public class MinimalActivePassiveConfiguration {
 
     public static void main(String[] args) throws Exception{
 //tag::wrc[]
         Config config = new Config();
         WanBatchPublisherConfig batchPublisherConfig = new WanBatchPublisherConfig()
                 .setClusterName("london")
-                .setTargetEndpoints("10.3.5.1:5701,10.3.5.2:5701");
+                .setTargetEndpoints("10.3.5.1:5701");
 
         WanReplicationConfig wrConfig = new WanReplicationConfig()
                 .setName("london-wan-rep")
