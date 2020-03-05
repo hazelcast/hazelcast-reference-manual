@@ -2124,6 +2124,22 @@ It returns the following response if successful:
 < Content-Length: 0
 ----
 
+If your `POST` call has a trailing slash, Hazelcast will strip it so that it is not appended to the key string. So if you send this `POST` call:
+
+[source,plain]
+----
+$ curl -v -H "Content-Type: text/plain" -d "bar"
+    http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo/
+----
+
+The `POST` call will instead be processed as below:
+
+[source,plain]
+----
+$ curl -v -H "Content-Type: text/plain" -d "bar"
+    http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
+----
+
 ===== Retrieving Entries from a Map for REST Client
 
 If you want to retrieve an entry, you can use a `GET` call
@@ -2156,6 +2172,8 @@ It returns the following if there is no mapping for the given key:
 < HTTP/1.1 204 No Content
 < Content-Length: 0
 ----
+
+Similarly to the `POST` call, Hazelcast will strip the trailing slash from your `GET` call.
 
 ===== Removing Entries from a Map for REST Client
 
