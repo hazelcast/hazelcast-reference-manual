@@ -10,9 +10,11 @@ This mode requires configuration only on the source cluster.
 In most cases, the target cluster does not need any
 configuration.
 
-. Add the following declarative (XML) configuration example on your source cluster:
-+
-[source,xml]
+
+1- Add the following configuration example on your source cluster:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <wan-replication name="london-wan-rep">
@@ -28,15 +30,14 @@ configuration.
 
 </hazelcast>
 ----
-+
-Here is its programmatic configuration equivalent:
-+
-[source,java]
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
 ----
 include::{javasource}/wan/MinimalActivePassiveConfiguration.java[tag=wrc]
 ----
-+
-. Start your clusters to start using Active-Passive WAN Replication.
+
+2- Start your clusters to start using Active-Passive WAN Replication.
 
 Basically, what we did here is defining a WAN Replication configuration (`wan-replication`)
 and configuring our map to use it (`wan-replication-ref`). As mentioned, this is the minimal
@@ -65,9 +66,10 @@ cloud infrastructures. See the <<wanbatchreplication-discovery-spi, Using Discov
 This mode requires configuration on both the source and
 target clusters.
 
-. Add the following declarative (XML) configuration example on your source cluster:
-+
-[source,xml]
+1- Add the following configuration example on your source cluster:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <cluster-name>tokyo</cluster-name>
@@ -84,17 +86,17 @@ target clusters.
 
 </hazelcast>
 ----
-+
-Here is its programmatic configuration equivalent:
-+
-[source,java]
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
 ----
 include::{javasource}/wan/MinimalActiveActiveConfiguration1.java[tag=wrc]
 ----
-+
-. Add the following declarative (XML) configuration example on your target cluster:
-+
-[source,xml]
+
+2- Add the following configuration example on your target cluster:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <cluster-name>london</cluster-name>
@@ -111,15 +113,14 @@ include::{javasource}/wan/MinimalActiveActiveConfiguration1.java[tag=wrc]
 
 </hazelcast>
 ----
-+
-Here is its programmatic configuration equivalent:
-+
-[source,java]
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
 ----
 include::{javasource}/wan/MinimalActiveActiveConfiguration2.java[tag=wrc]
 ----
 +
-. Start your clusters to start using Active-Active WAN Replication.
+3- Start your clusters to start using Active-Active WAN Replication.
 
 Notice the `cluster-name` configuration element (not the one under the `batch-publisher` element, but
 the one under the `hazelcast` element).
