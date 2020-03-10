@@ -70,6 +70,35 @@ The larger the sync window value, the less frequent a asynchronous backup is con
 If a member cannot find any connection to a client in the cluster,
 it cleans up the local resources that are owned by that client.
 
+|[[client-max-no]] `hazelcast.client.max.no.heartbeat.seconds`
+|300
+|int
+|Time after which the member assumes the client is dead and closes its connections to the client.
+
+|`hazelcast.client.metrics.collection.frequency`
+| 5
+| int
+| Frequency, in seconds, of the <<metrics, metrics>> collection cycle. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.client.metrics.debug.enabled`
+| false
+| bool
+| Enables collecting debug metrics if set to `true`, disables it otherwise.
+Note that this is meant to be enabled only if diagnostics is enabled, since currently only diagnostics consumes the debug metrics.
+
+|`hazelcast.client.metrics.enabled`
+| true
+| bool
+| Enables the <<metrics, metrics collection>> if set to `true`, disables it otherwise. Note that the preferred way for
+controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.client.metrics.jmx.enabled`
+| true
+| bool
+| Enables exposing the collected <<metrics, metrics>> over JMX if set to `true`, disables it otherwise. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
 |`hazelcast.client.protocol.max.message.bytes`
 | 1024
 |int
@@ -87,13 +116,20 @@ Default count is the number of cores multiplied by 1.
 |Maximum number of threads to process non-partition-aware client requests, like `map.size()`, executor tasks, etc.
 Default count is the number of cores multiplied by 20.
 
-|`hazelcast.diagnostics.directory`
-|`user.dir`
-|string
-|Output directory of the diagnostic log files.
+|`hazelcast.connect.all.wait.seconds`
+| 120
+| int
+| Timeout to connect all other cluster members when a member is joining to a cluster.
 
-NOTE: For detailed information on the diagnostic tool,
-along with this and the following diagnostic related system properties, see the <<diagnostics, Diagnostics section>>.
+|`hazelcast.connection.monitor.interval`
+| 100
+| int
+| Minimum interval in milliseconds to consider a connection error as critical.
+
+|`hazelcast.connection.monitor.max.faults`
+| 3
+| int
+| Maximum I/O error count before disconnecting from a member.
 
 |`hazelcast.cluster.version.auto.upgrade.enabled`
 | false
@@ -104,6 +140,14 @@ along with this and the following diagnostic related system properties, see the 
 | 1
 | int
 | When set to a value greater than 1, automatic upgrading waits to reach that cluster size to proceed.
+
+|`hazelcast.diagnostics.directory`
+|`user.dir`
+|string
+|Output directory of the diagnostic log files.
+
+NOTE: For detailed information on the diagnostic tool,
+along with this and the following diagnostic related system properties, see the <<diagnostics, Diagnostics section>>.
 
 |`hazelcast.diagnostics.enabled`
 |false
@@ -136,16 +180,17 @@ along with this and the following diagnostic related system properties, see the 
 |int
 | Size of each diagnostic file to be rolled.
 
+|`hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`
+|100
+|int
+|Maximum allowed deviation for a member-to-member heartbeats.
+
 |`hazelcast.diagnostics.member-heartbeat.seconds`
 |10
 |long
 |Period for which the MemberHeartbeats plugin of the diagnostics tool runs.
 0 means this plugin is disabled.
 
-|`hazelcast.diagnostics.member-heartbeat.max-deviation-percentage`
-|100
-|int
-|Maximum allowed deviation for a member-to-member heartbeats.
 
 |`hazelcast.diagnostics.memberinfo.period.second`
 |60
@@ -157,16 +202,16 @@ along with this and the following diagnostic related system properties, see the 
 |long
 |Frequency, in seconds, at which the Metrics plugin dumps information to the diagnostics log file.
 
+|`hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`
+|33
+|int
+|Maximum allowed deviation for a member-to-member operation heartbeats.
+
 |`hazelcast.diagnostics.operation-heartbeat.seconds`
 |10
 |long
 |Period, in seconds, for which the OperationHeartbeats plugin of the diagnostics tool runs.
 0 means this plugin is disabled.
-
-|`hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage`
-|33
-|int
-|Maximum allowed deviation for a member-to-member operation heartbeats.
 
 |`hazelcast.diagnostics.pending.invocations.period.seconds`
 |0
@@ -208,10 +253,12 @@ along with this and the following diagnostic related system properties, see the 
 See <<discovery-spi>> for more information.
 
 |`hazelcast.discovery.public.ip.enabled`
-|false
-|bool
-|Enables the discovery joiner to use public IPs from `DiscoveredNode`.
-See <<discovery-spi>> for more information.
+| false
+| bool
+| Enable use of public IP address in member discovery with Discovery SPI.
+If you set this property to true in your source cluster, please make sure you have set the public addresses for your
+target members since they will be discovered using their public addresses. Otherwise, they cannot be discovered.
+See the <<public-address, Public Address section>>.
 
 |`hazelcast.executionservice.taskscheduler.remove.oncancel`
 | false
@@ -219,34 +266,6 @@ See <<discovery-spi>> for more information.
 | Controls whether the task scheduler removes tasks immediately upon cancellation.
 This is disabled by default, because it can cause severe delays on the other operations.
 By default all cancelled tasks are eventually get removed by the scheduler workers.
-
-|[[client-max-no]] `hazelcast.client.max.no.heartbeat.seconds`
-|300
-|int
-|Time after which the member assumes the client is dead and closes its connections to the client.
-
-|`hazelcast.connect.all.wait.seconds`
-| 120
-| int
-| Timeout to connect all other cluster members when a member is joining to a cluster.
-
-|`hazelcast.connection.monitor.interval`
-| 100
-| int
-| Minimum interval in milliseconds to consider a connection error as critical.
-
-|`hazelcast.connection.monitor.max.faults`
-| 3
-| int
-| Maximum I/O error count before disconnecting from a member.
-
-|`hazelcast.discovery.public.ip.enabled`
-| false
-| bool
-| Enable use of public IP address in member discovery with Discovery SPI.
-If you set this property to true in your source cluster, please make sure you have set the public addresses for your
-target members since they will be discovered using their public addresses. Otherwise, they cannot be discovered.
-See the <<public-address, Public Address section>>.
 
 |`hazelcast.enterprise.license.key`
 | null
@@ -308,8 +327,8 @@ When *NOISY*, logs are always printed periodically. Set *OFF* to turn off comple
 it checks whether there is enough free physical memory for the requested number of bytes.
 If the free memory checker is disabled (false), acts as if the check is succeeded.
 
-|`hazelcast.icmp.echo.fail.fast.on.startup`|
- true
+|`hazelcast.icmp.echo.fail.fast.on.startup`
+| true
 | bool
 | Specifies whether ICMP Echo Request mode for ping detector is enforced.
 If OS is not supported, or not configured correctly, as explained in
@@ -575,6 +594,19 @@ of a static prefix, number and cluster name is provided.
 | int
 | Run interval of <<split-brain-syndrome, split-brain/merge process>> in seconds.
 
+|`hazelcast.metrics.collection.frequency`
+| 5
+| int
+| Frequency, in seconds, of the <<metrics, metrics>> collection cycle. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.metrics.debug.enabled`
+| false
+| bool
+| Enables collecting debug metrics if set to `true`, disables it otherwise.
+Note that this is meant to be enabled only if diagnostics feature is enabled,
+since currently only this feature consumes the debug metrics.
+
 |`hazelcast.metrics.enabled`
 | true
 | bool
@@ -598,43 +630,6 @@ the preferred way for controlling this setting is <<metrics-configuration, Metri
 | bool
 | Enables exposing the collected <<metrics, metrics>> over JMX if set to `true`, disables it otherwise. Note that
 the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
-
-|`hazelcast.metrics.collection.frequency`
-| 5
-| int
-| Frequency, in seconds, of the <<metrics, metrics>> collection cycle. Note that
-the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
-
-|`hazelcast.metrics.debug.enabled`
-| false
-| bool
-| Enables collecting debug metrics if set to `true`, disables it otherwise.
-Note that this is meant to be enabled only if diagnostics feature is enabled,
-since currently only this feature consumes the debug metrics.
-
-|`hazelcast.client.metrics.enabled`
-| true
-| bool
-| Enables the <<metrics, metrics collection>> if set to `true`, disables it otherwise. Note that the preferred way for
-controlling this setting is <<metrics-configuration, Metrics Configuration>>.
-
-|`hazelcast.client.metrics.jmx.enabled`
-| true
-| bool
-| Enables exposing the collected <<metrics, metrics>> over JMX if set to `true`, disables it otherwise. Note that
-the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
-
-|`hazelcast.client.metrics.collection.frequency`
-| 5
-| int
-| Frequency, in seconds, of the <<metrics, metrics>> collection cycle. Note that
-the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
-
-|`hazelcast.client.metrics.debug.enabled`
-| false
-| bool
-| Enables collecting debug metrics if set to `true`, disables it otherwise.
-Note that this is meant to be enabled only if diagnostics is enabled, since currently only diagnostics consumes the debug metrics.
 
 |`hazelcast.migration.min.delay.on.member.removed.seconds`
 |5
@@ -660,17 +655,17 @@ By default they are disabled, to avoid connectivity issues when deployed under N
 |Maximum time a caller to wait for backup responses of an operation.
 After this timeout, operation response is returned to the caller even no backup response is received.
 
+|`hazelcast.operation.call.timeout.millis`
+| 60000
+| int
+| Timeout to wait for a response when a remote call is sent, in milliseconds.
+
 |`hazelcast.operation.fail.on.indeterminate.state`
 | false
 | bool
 | When enabled, an operation fails with `IndeterminateOperationStateException`,
 if it does not receive backup acks in time with respect to backup configuration of
 its data structure, or the member which owns primary replica of the target partition leaves the cluster.
-
-|`hazelcast.operation.call.timeout.millis`
-| 60000
-| int
-| Timeout to wait for a response when a remote call is sent, in milliseconds.
 
 |`hazelcast.operation.generic.thread.count`
 | -1
@@ -745,6 +740,11 @@ Its default value is "false", meaning that stale reads are allowed.
 |string
 |Class name implementing `com.hazelcast.core.PartitioningStrategy`, which defines key to partition mapping.
 
+|`hazelcast.performance.monitor.delay.seconds`
+|
+|int
+| The period between successive entries in the performance monitor's log file.
+
 |`hazelcast.performance.monitor.max.rolled.file.count`
 |10
 |int
@@ -764,10 +764,10 @@ Every HazelcastInstance gets its own history of log files.
 |Enable the performance monitor, a tool which allows you to see internal performance metrics.
 These metrics are written to a dedicated log file.
 
-|`hazelcast.performance.monitor.delay.seconds`
-|
-|int
-| The period between successive entries in the performance monitor's log file.
+|`hazelcast.phone.home.enabled`
+| true
+| bool
+| Enable or disable the sending of phone home data to Hazelcast's phone home server.
 
 |`hazelcast.prefer.ipv4.stack`
 | true
@@ -937,11 +937,6 @@ that is used to connect to a host (which is defined without a port in TCP/IP mem
 "enforced" enforces the usage of `Unsafe` even if your platform does not support it.
 This property can only be set by passing a JVM-wide system property.
 
-|`hazelcast.phone.home.enabled`
-| true
-| bool
-| Enable or disable the sending of phone home data to Hazelcast's phone home server.
-
 |`hazelcast.wait.seconds.before.join`
 | 5
 | int
@@ -958,10 +953,10 @@ This can also lead to issues if the PASSIVE cluster does not contain the class d
 as the value tries to get deserialized, causing ``ClassNotFoundException``s.
 You can switch to using map remove instead on the PASSIVE cluster with this property.
 This both saves the bandwidth and avoid the exceptions.
-|===
 
 |hazelcast.write.through
 |true
 |bool
 |Optimization that allows sending of packets over the network to be done on the calling thread if the
 conditions are right. This can reduce the latency and increase the performance for low threaded environments.
+|===
