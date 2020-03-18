@@ -392,6 +392,17 @@ This is crucial to enable Hazelcast to find the correct factory.
 NOTE: See the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>>
 for a full description of Hazelcast Serialization configuration.
 
+When using a client/server deployment, you also need to register the implemented factory on
+the client side. For a Java client, the process is the same as described above to be performed
+in the client configuration, e.g., `hazelcast-client.xml`.
+For the other Hazelcast clients, see the following for details:
+
+* link:https://github.com/hazelcast/hazelcast-csharp-client#41-identifieddataserializable-serialization[.NET^]
+* link:https://github.com/hazelcast/hazelcast-cpp-client#41-identifieddataserializable-serialization[C++^]
+* link:https://github.com/hazelcast/hazelcast-nodejs-client#41-identifieddataserializable-serialization[Node.js^]
+* link:https://github.com/hazelcast/hazelcast-python-client#41-identifieddataserializable-serialization[Python^]
+* link:https://github.com/hazelcast/hazelcast-go-client#41-identifieddataserializable-serialization[Go^]
+
 === Implementing Portable Serialization
 
 As an alternative to the existing serialization methods, Hazelcast offers
@@ -473,6 +484,17 @@ config.getSerializationConfig().addPortableFactory( 1, new MyPortableFactory() )
 
 Note that the `id` that is passed to the `SerializationConfig` is the same
 as the `factoryId` that the `Foo` class returns.
+
+When using a client/server deployment, you also need to register the implemented factory on
+the client side. For a Java client, the process is the same as described above to be performed
+in the client configuration, e.g., `hazelcast-client.xml`.
+For the other Hazelcast clients, see the following for details:
+
+* link:https://github.com/hazelcast/hazelcast-csharp-client#42-portable-serialization[.NET^]
+* link:https://github.com/hazelcast/hazelcast-cpp-client#42-portable-serialization[C++^]
+* link:https://github.com/hazelcast/hazelcast-nodejs-client#42-portable-serialization[Node.js^]
+* link:https://github.com/hazelcast/hazelcast-python-client#42-portable-serialization[Python^]
+* link:https://github.com/hazelcast/hazelcast-go-client#42-portable-serialization[Go^]
 
 ==== Versioning for Portable Serialization
 
