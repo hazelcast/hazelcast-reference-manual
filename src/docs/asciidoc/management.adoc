@@ -2205,12 +2205,14 @@ the `management-center` element within the Hazelcast member configuration file, 
 
 Note that the link:https://jcp.org/en/jsr/detail?id=223[JSR 223^] API is used in Hazelcast IMDG to support scripting.
 
-==== Limit source address
+==== Limiting Source Addresses
 
-It's possible to restrict source IP addresses from which Management center operations
+It's possible to restrict the source IP addresses from which Management center operations
 are allowed. By default all source connections are allowed.
 
-Defining source addresses is possible through the property `hazelcast.mc.trusted.interfaces`. The wildcard (`*`) and ranges can be used.
+Defining the source addresses is possible through the
+`hazelcast.mc.trusted.interfaces` property. The wildcard (`*`) and ranges can be used.
+See the following example:
 
 [source,xml]
 ----
@@ -2221,7 +2223,9 @@ Defining source addresses is possible through the property `hazelcast.mc.trusted
 </hazelcast>
 ----
 
-NOTE: The property `hazelcast.mc.trusted.interfaces` is only available in patch releases for Hazelcast IMDG minor version `4.0`. Starting with IMDG `4.1` new configuration element is added under `<management-center />` configuration and the property-based configuration is not supported anymore.
+NOTE: This property is only available in the patch releases for Hazelcast IMDG minor version `4.0`.
+Starting with IMDG `4.1` a new configuration element is added under `management-center` configuration
+block and the property-based configuration is not supported anymore.
 
 === Clustered JMX and REST via Management Center
 
