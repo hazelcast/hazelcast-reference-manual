@@ -725,3 +725,129 @@ or link:{docBaseUrl}/javadoc/com/hazelcast/cache/CacheEntryView.html[CacheEntryV
 * `eventType`: Enum type - `UPDATED(1)`, `REMOVED(2)` or `LOADED(3)` - depending on the event.
 
 NOTE: `LOADED` events are filtered out and not replicated to target cluster.
+
+[[defining-custom-wr]]
+==== Implementing a Custom WAN Publisher
+
+In addition to using the Hazelcast's built-in WAN Replication implementation, you can implement your own replication mechanism using the WAN publisher SPI.
+
+Following is the configuration snippet where `replicatedMap` and `replicatedCache` use the custom implementation
+`com.my.WanPublisher` to replicate map and cache updates.
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <wan-replication name="london-wan-rep">
+        <custom-publisher>
+            <publisher-id>myCustomPublisher</publisher-id>
+            <class-name>com.my.WanPublisher</class-name>
+            <properties>
+                <property name="prop1">val1</property>
+                <property name="prop2">val2</property>
+            </properties>
+        </custom-publisher>
+    </wan-replication>
+
+    <map name="replicatedMap">
+        <wan-replication-ref name="london-wan-rep"/>
+        ...
+    </map>
+
+    <cache name="replicatedCache">
+        <wan-replication-ref name="london-wan-rep"/>
+        ...
+    </cache>
+    ...
+</hazelcast>
+----
+
+The `custom-publisher` is used to configure a custom implementation of a WAN replication implementing
+`com.hazelcast.wan.WanPublisher`. For example, you might implement replication to Kafka or some JMS queue or even
+write out map and cache event changes to a log on disk. It has the following sub-elements:
+
+* `class-name`: Mandatory configuration value defining the fully qualified class name of the
+WAN publisher implementation. The class must implement `com.hazelcast.wan.WanPublisher`.
+* `publisher-id`: Mandatory configuration value for the publisher ID used for identifying the
+publisher in a `WanReplicationConfig`. This ID will be used to refer to this specific WAN publisher in
+a certain WAN replication scheme.
+
+In some cases, specifying the configuration on the source/active cluster is enough to fully implement your use case.
+This is the case when you don't have any target/passive Hazelcast cluster which consumes these events. In cases when
+you do have a target Hazelcast cluster and you wish to use a custom WAN Replication implementation, you will need to
+configure the target cluster as well. For example, you might want to implement WAN Replication by transmitting WAN events
+through some JMS queue like ActiveMQ. In this case, you need to implement both your custom WAN publisher and WAN consumer.
+
+Below is a configuration example for specifying a custom WAN replication consumer on the target/passive cluster:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <wan-replication name="london-wan-rep">
+        <consumer>
+            <class-name>com.my.WanConsumer</class-name>
+            <properties>
+                <property name="prop1">val1</property>
+                <property name="prop2">val2</property>
+            </properties>
+        </consumer>
+    </wan-replication>
+</hazelcast>
+----
+
+The `consumer` is used to configure the implementation of the `com.hazelcast.wan.WanConsumer` interface
+which will be used to retrieve and process WAN events. A custom WAN consumer allows you to
+define custom processing logic and is used in combination with a custom WAN publisher.
+
+The `consumer` configuration element has the following sub-elements:
+
+* `class-name`: Name of the class implementing a custom WAN consumer (`com.hazelcast.wan.WanConsumer`).
+* `properties`: Properties for the custom WAN consumer. These properties are accessible when initializing the WAN consumer.
+You can define the host, username and password for the host, name of the queue to be polled by the consumer, etc.
+
+==== Customizing WAN Event Processing on Passive/Target Cluster
+
+In addition to customizing behavior of the source cluster and how WAN events are sent and retained, you can also
+configure some aspects of how WAN events are processed on the receiving (target/passive) cluster. In addition, you
+can also define a custom implementation of a WAN event consumer. A custom WAN consumer allows you to define custom
+processing logic and is usually used in combination with a custom WAN publisher. A custom consumer is optional and
+you may simply omit defining it which causes the default processing logic to be used. See the
+<<defining-custom-wr, Using the WAN Custom Publisher section>> for more information.
+
+Below you can see an example configuration of the target/passive cluster where we configure how incoming WAN events
+are processed.
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+
+    <wan-replication name="london-wan-rep">
+        <consumer>
+            <persist-wan-replicated-data>false</persist-wan-replicated-data>
+        </consumer>
+    </wan-replication>
+
+    <map name="replicatedMap">
+        <wan-replication-ref name="london-wan-rep"/>
+        ...
+    </map>
+
+    <cache name="replicatedCache">
+        <wan-replication-ref name="london-wan-rep"/>
+        ...
+    </cache>
+    ...
+</hazelcast>
+----
+
+In the configuration above you can see that the WAN Replication configuration is again matched by WAN replication
+scheme name to the exact map and cache configuration. This means that different structures can process WAN events
+differently.
+
+The processing behavior is configured using the `consumer` element. It has the following sub-elements:
+
+* `persist-wan-replicated-data`: When set to `true`, an incoming event over WAN replication can be
+persisted to a database for example, otherwise it is not persisted. Default value is `true`.
+

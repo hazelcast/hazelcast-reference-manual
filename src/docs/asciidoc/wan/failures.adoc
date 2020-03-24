@@ -3,13 +3,13 @@
 
 The failure detection and recovery mechanisms in WAN handle failures during WAN replication and
 they closely interact with the list of endpoints that WAN is replicating to.
-There might be some small differences when using static endpoints or the discovery SPI but
+There might be some small differences when using static endpoints or the Discovery SPI but
 here we will outline the general mechanism of failure detection and recovery.
 
 ==== WAN Target Endpoint List
 
 The WAN connection manager maintains a list of public addresses that it can replicate to at any moment.
-This list may change over time as failures are detected or as new addresses are discovered when using the discovery SPI.
+This list may change over time as failures are detected or as new addresses are discovered when using the Discovery SPI.
 The connection manager does not eagerly create connections to these addresses as
 they are added to the list to avoid overloading the endpoint with connections from all members using
 the same configuration. It tries to connect to the endpoint just before WAN events are about to be transmitted.
@@ -36,7 +36,7 @@ The period is 10 seconds by default but can be configured using the `discovery-p
 The discovered endpoints depend on the configuration used to define WAN replication.
 If using static WAN endpoints (by using the `target-endpoints` element), the discovered endpoints are always the same and
 are equal to the values defined in the configuration.
-If using discovery SPI with WAN, the discovered endpoints may be different each time.
+If using Discovery SPI with WAN, the discovered endpoints may be different each time.
 
 When the discovery returns a list of endpoints (addresses), the WAN target endpoint list is updated.
 Newly discovered endpoints are added and endpoints which are no longer in the discovered list are removed.
