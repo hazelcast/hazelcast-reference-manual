@@ -6,12 +6,12 @@ start using WAN Replication with a minimal setup for both
 
 ==== Setting Up an Active-Passive Mode
 
-This mode requires configuration only on the source cluster.
-In most cases, the target cluster does not need any
-configuration.
+This mode usually requires configuration only on one of the clusters.
+Let's say you have two clusters, one in London and the other in Tokyo.
+You want to replicate the updates between each other and use the one in Tokyo
+as the active cluster.
 
-
-1- Add the following configuration example on your source cluster:
+1- Add the following configuration example on your cluster in Tokyo:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
@@ -52,8 +52,8 @@ the `map` configuration using the `wan-replication-ref` element; this is how
 you make your map to use the WAN Replication feature. For now, only Hazelcast maps
 and caches support this feature.
 
-The `london` cluster might have more than two members specified in this example, but only
-those two endpoints will receive the WAN events. In that case
+The `london` cluster might have more members than the one specified in this example, but only
+that endpoint will receive the WAN events. In that case
 and if you want the events to be forwarded to the other cluster members, see the `republishing-enabled`
 element description in the <<configuring-wan-replication-for-imap-and-icache, Configuring for IMap and ICache section>>.
 
@@ -63,10 +63,9 @@ cloud infrastructures. See the <<wanbatchreplication-discovery-spi, Using Discov
 
 ==== Setting Up an Active-Active Mode
 
-This mode requires configuration on both the source and
-target clusters.
+Using the above scenario, this mode requires configuration on both clusters.
 
-1- Add the following configuration example on your source cluster:
+1- Add the following configuration example on your cluster in Tokyo:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
@@ -93,7 +92,7 @@ target clusters.
 include::{javasource}/wan/MinimalActiveActiveConfiguration1.java[tag=wrc]
 ----
 
-2- Add the following configuration example on your target cluster:
+2- Add the following configuration example on your cluster in London:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
@@ -124,8 +123,8 @@ include::{javasource}/wan/MinimalActiveActiveConfiguration2.java[tag=wrc]
 
 Notice the `cluster-name` configuration element (not the one under the `batch-publisher` element, but
 the one under the `hazelcast` element).
-These are the names specifying the IMDG members' clusters on their locals. So, the source cluster name
-should be mentioned in the target's `cluster-name` element under `batch-publisher`.
+These are the names specifying the IMDG members' clusters on their locals. So, the name
+of the cluster in one location should be mentioned on the cluster in the other location, as shown above.
 
 As in the Active-Passive example shown in the previous section, this example configuration
 also uses a static endpoint to specify the target cluster member.
@@ -133,5 +132,5 @@ See the <<wanbatchreplication-discovery-spi, Using Discovery SPI section>> for i
 on using the Discovery SPI to specify target members.
 
 As mentioned previously, the above configurations are the minimal ones
-to get you started. You may want to configure some additional aspects of your maps or caches that use WAN replication; see the <<configuring-wan-replication-for-imap-and-icache, Configuring for IMap and ICache section>> for information on this.
+to get you started. In case you need to configure some additional aspects of your maps or caches that use WAN Replication, see the <<configuring-wan-replication-for-imap-and-icache, Configuring for IMap and ICache section>>.
 

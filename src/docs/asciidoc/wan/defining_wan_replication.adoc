@@ -19,6 +19,10 @@ This implementation meets most of your WAN replication needs and is configured u
 to build your own implementation; see the <<defining-custom-wr, Advanced Features section>>
 for details in case you need more custom configurations.
 
+The default settings for WAN Replication configuration suit most use cases. If, however, you have specific needs or if you
+would like to fine-tune the behavior of WAN Replication for your application, see the
+<<tuning-wr, Fine-Tuning WAN Replication section>>.
+
 Let's see how we configure a simple WAN replication using the static endpoints and Discovery SPI, and
 then let's see the configuration details of Hazelcast's built-in WAN replication implementation.
 
@@ -75,7 +79,7 @@ Please notice that the WAN Replication configuration is referenced in map and ca
 
 The default settings for WAN Replication will suit most use cases. If, however, you have specific needs or if you
 would like to fine-tune the behavior of WAN Replication for your application, please refer to the
-<<tuning-wr, Tuning WAN Replication>> section for more information.
+<<tuning-wr, Fine-Tuning WAN Replication>> section for more information.
 
 [[wanbatchreplication-discovery-spi]]
 ==== Using the Discovery SPI
@@ -94,7 +98,7 @@ link:https://github.com/hazelcast/hazelcast-gcp[Hazelcast GCP discovery plugin^]
 You can store the list of IP addresses in those infrastructures and use these plugins
 to read from that list.
 
-For more advanced cases, you can provide your own Discovery SPI implementation with custom logic for
+For more advanced cases, you can provide your own <<discovery-spi, Discovery SPI>> implementation with custom logic for
 determining the WAN target endpoints such as looking up the endpoints in some service registry or even
 reading the endpoint addresses from a file.
 
@@ -102,9 +106,9 @@ NOTE: When using the Discovery SPI, WAN always connects to the public address of
 the Discovery SPI implementation. This is opposite to the cluster membership mechanism using
 the Discovery SPI where a member connects to a different member in the same cluster through its private address.
 Should you prefer for WAN to use the private address of the discovered member as well,
-please use the `use-endpoint-private-address` publisher element (see below).
+please use the `use-endpoint-private-address` publisher element, described in the following paragraphs.
 
-Following is an example of setting up the WAN replication with the EC2 discovery plugin.
+The following is an example of setting up the WAN replication with the EC2 discovery plugin.
 You must have the link:https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS EC2 discovery plugin^] on the classpath.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -160,7 +164,8 @@ the port on which Hazelcast is running, only the IP address. For some other Disc
 this might not be necessary and it might discover the port as well, e.g., by looking up in a service registry.
 
 The other properties are the same as when using the `aws` element. In case of EC2 discovery you can configure
-the WAN replication using the `aws` element. You may use either of these, but not both at the same time.
+the WAN replication using the `aws` element. You may use either the `discovery-strategies` or `aws`
+element, but not both at the same time.
 
 [source,xml]
 ----
@@ -211,10 +216,6 @@ that are supported by Discovery SPI:
 * link:https://github.com/bitsofinfo/hazelcast-consul-discovery-spi#usage[Consul^]
 * link:https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md#configuration[Zookeeper^]
 * link:https://github.com/jkutner/hazelcast-heroku-discovery/blob/master/README.md#configuration[Heroku^]
-
-The default settings for WAN Replication will suit most use cases. If, however, you have specific needs or if you
-would like to fine-tune the behavior of WAN Replication for your application, see the
-<<tuning-wr, Fine-Tuning WAN Replication section>> for more information.
 
 [[wanbatchreplication-implementation]]
 ==== Using the Built-In WAN Batch Publisher 

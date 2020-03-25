@@ -7,7 +7,20 @@ the event filtering API.
 
 ==== Synchronizing WAN Clusters
 
-There are two options to synchronize your WAN replicated clusters:
+Hazelcast clusters connected over WAN may become out-of-sync because of various reasons
+including but not limited to the following:
+
+* Member failures
+* Concurrent updates
+* Target cluster freshly starts with no data
+* Target cluster experiences problems and some operations fail
+* Two sides disconnect and the in-memory buffer of the source
+cluster gets full (the behavior in this case is <<queue-full-behavior, configurable>>)
+* The WAN link can't keep up with the burst that the source cluster experiences
+and its in-memory buffer gets full (the behavior in this case is <<queue-full-behavior, configurable>>)
+
+To overcome this out-of-sync issue, you have the
+following options to synchronize your WAN replicated clusters:
 
 * Full synchronization
 * Delta synchronization
@@ -78,15 +91,13 @@ synchronized, not even if `MapLoader` is configured.
 
 ===== Delta WAN Synchronization
 
-Hazelcast clusters connected over WAN can go out-of-sync because of various reasons such as member failures and concurrent updates.
-To overcome the out-of-sync issue, Hazelcast has the default
-<<synchronizing-wan-target-cluster, WAN synchronization>> feature, through which
-the maps in different clusters are synced by transferring all entries from the source to the target cluster.
+As explained in the previous section, the default <<synchronizing-wan-target-cluster, Full WAN Synchronization>> feature
+synchronizes  the maps in different clusters by transferring all the entries from the source to the target cluster.
 This may be not efficient since some of the entries have remained unchanged on both clusters and
 do not require to be transferred. Also, for the entries to be transferred, they need to be copied to
 on-heap on the source cluster. This may cause spikes in the heap usage, especially if using large off-heap stores.
 
-Besides the default WAN synchronization, Hazelcast provides Delta WAN Synchronization which uses
+In addition to the default Full WAN Synchronization, Hazelcast provides Delta WAN Synchronization which uses
 link:https://en.wikipedia.org/wiki/Merkle_tree[Merkle tree^] for the same purpose.
 It is a data structure used for efficient comparison of the difference in the contents of large data structures.
 The precision of this comparison is defined by Merkle tree's depth.
@@ -401,6 +412,58 @@ NOTE: The averages in the table are calculated with 5009 partitions.
 NOTE: The average entries per leaf number above assumes perfect distribution of the entries amongst the leaves. Since this is
 typically not true in real-life scenarios the efficiency can be slightly worse. The statistics section below describes how to
 get the actual average for the leaves involved in the synchronization.
+
+===== WAN Synchronization Statistics
+
+Both Full and Delta WAN Synchronization processes write statistics into the
+<<diagnostics-2, diagnostics>> subsystem and send them to Hazelcast Management
+Center. Using these statistics you can measure the efficiency of your configuration.
+
+Full WAN Synchronization reports the following:
+
+* Duration of the synchronization
+* Count of the synchronized entries
+* Total count of the synchronized partitions
+
+Here is an example output:
+
+[source,plain]
+----
+Synchronization statistics:
+	 Synchronization UUID: 8af2f9e7-3f9f-4c31-b594-47c421bfb33c
+	 Duration: 0 secs
+	 Total records synchronized: 448
+	 Total partitions synchronized: 5
+---- 
+
+Delta WAN Synchronization reports the following:
+
+* Duration of the synchronization
+* Count of the synchronized entries
+* Total count of the synchronized partitions
+* Merkle tree nodes checked
+* Merkle tree nodes found to be different
+* Count of the entries needed to be synchronized to make the clusters consistent
+* Average count of entries per tree leaves in the synchronized leaves
+
+Here is an example output:
+
+[source,plain]
+----
+Merkle synchronization statistics:
+	 Synchronization UUID: f49a25ba-dc57-4547-817b-bea67ff7f0fe
+	 Duration: 0 secs
+	 Total records synchronized: 528
+	 Total partitions synchronized: 6
+	 Total Merkle tree nodes synchronized: 178
+	 Average records per Merkle tree node: 2.97
+	 StdDev of records per Merkle tree node: 1.55
+	 Minimum records per Merkle tree node: 1
+	 Maximum records per Merkle tree node: 7
+----
+
+See the <<diagnostics-2, Diagnostics section>> to learn how to enable
+diagnostics and locate its log file to see the above statistics.
 
 ==== Dynamically Adding WAN Publishers
 
