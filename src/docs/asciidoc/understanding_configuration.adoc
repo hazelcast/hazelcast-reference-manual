@@ -665,7 +665,7 @@ they are not persisted. This will be improved in the future Hazelcast IMDG relea
 ==== Handling Configuration Conflicts
 
 Attempting to add a dynamic configuration, when a static configuration for
-the same element already exists, throws `ConfigurationException`. For example,
+the same element already exists, throws `InvalidConfigurationException`. For example,
 assuming we start a member with the following fragment in `hazelcast.xml` configuration:
 
 [source,xml]
@@ -680,7 +680,7 @@ assuming we start a member with the following fragment in `hazelcast.xml` config
 ----
 
 Then adding a dynamic configuration for a map with the name `sessions` throws
-a `ConfigurationException`:
+a `InvalidConfigurationException`:
 
 [source,java]
 ----
@@ -694,7 +694,7 @@ instance.getConfig().addMapConfig(sessionsMapConfig);
 
 When attempting to add dynamic configuration for an element for which dynamic
 configuration has already been added, then if a configuration conflict is detected
-a `ConfigurationException` is thrown. For example:
+a `InvalidConfigurationException` is thrown. For example:
 
 [source,java]
 ----
