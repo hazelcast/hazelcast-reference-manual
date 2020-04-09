@@ -288,8 +288,11 @@ You can also define your own partition strategy by implementing the class `Parti
 To enable your implementation, add the full class name to your Hazelcast configuration using either
 the declarative or programmatic approach, as exemplified above.
 
-As stated previously, above strategies are defined **per map** in your Hazelcast member.
-You can also define a strategy **per member** in your Hazelcast cluster.
+The examples above show how to define a partitioning strategy per map.
+Note that all the members of your cluster must have the same
+partitioning strategy configurations.
+
+You can also change a global strategy which is applied to all the data structures in your cluster.
 This can be done by defining the `hazelcast.partitioning.strategy.class` system property.
 An example declarative way of configuring this property is shown below:
 
@@ -306,13 +309,15 @@ An example declarative way of configuring this property is shown below:
 </hazelcast>
 ----
 
+You can specify the aforementioned out-of-the-box strategies or your custom
+partitioning strategy.
+
 You can also use other system property configuring options as explained in the
 <<configuring-with-system-properties, Configuring with System Properties section>>.
 
-NOTE: As described above, partitioning strategy is supported on the member side
-(per map and per member configurations). The Hazelcast clients do not support it yet and they
-should not access the maps which have partitioning strategies defined on the
-member side.
+The per map and global (cluster) partitioning strategies are supported on the member side.
+Hazelcast IMDG Java clients only support the global strategy and it is configured
+via the same system property used in the members (`hazelcast.partitioning.strategy.class `).
 
 === Running on EC2
 

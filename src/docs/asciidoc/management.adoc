@@ -822,7 +822,7 @@ Hazelcast clusters have the following states:
 ** In this state, there is no data movement between Hazelcast members.
 It means that when there is a member crash or a new member in the cluster,
 there won’t be any partition rebalancing, partition backup replica creation
-or migration. 
+or migration.
 +
 Please note that promoting a backup replica to the primary replica is a
 local operation and does not involve any data movement between cluster members.
@@ -831,7 +831,7 @@ Upon a member crash, all other members that keep backup replicas of the crashed 
 promote backup replicas to the primary replica role and restore availability.
 However, there is a limitation here. Since the maximum number of backups is 6,
 if you lose 7 members in your large cluster, you can lose availability of the
-partitions whose primary and backup replicas are mapped to those crashed members. 
+partitions whose primary and backup replicas are mapped to those crashed members.
 +
 ** The cluster accepts new members.
 ** All other operations are allowed.
@@ -2188,6 +2188,28 @@ the `management-center` element within the Hazelcast member configuration file, 
 ----
 
 Note that the link:https://jcp.org/en/jsr/detail?id=223[JSR 223^] API is used in Hazelcast IMDG to support scripting.
+
+==== Limiting Source Addresses
+
+It's possible to restrict the source IP addresses from which Management Center operations
+are allowed. By default all source connections are allowed.
+
+Defining these source addresses is possible through the `trusted-interfaces`
+configuration element. The wildcard (`*`) and ranges can be used.
+See the following example:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <management-center>
+        <trusted-interfaces>
+            <interface>192.168.1.*</interface>
+        </trusted-interfaces>
+    </management-center>
+    ...
+</hazelcast>
+----
 
 === Clustered JMX and REST via Management Center
 
