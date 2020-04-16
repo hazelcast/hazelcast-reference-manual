@@ -322,8 +322,9 @@ Hazelcast supports both synchronous and asynchronous backups. By default, backup
 are synchronous and configured with `backup-count`. In this case, backup operations block
 operations until backups are successfully copied to backup members (or deleted from backup
 members in case of remove) and acknowledgements are received. Therefore, backups are updated
-before a `put` operation is completed, provided that the cluster is stable. Sync backup
-operations have a blocking cost which may lead to latency issues.
+before a `write`(put, set, remove and their async counterparts) operation is completed, 
+provided that the cluster is stable. Sync backup operations have a blocking cost which may 
+lead to latency issues.
 
 [[creating-async-backups]]
 ===== Creating Async Backups
