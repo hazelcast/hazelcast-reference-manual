@@ -7,7 +7,11 @@ the event filtering API.
 
 ==== Synchronizing WAN Clusters
 
-Hazelcast clusters connected over WAN may become out-of-sync because of various reasons
+WAN Replication replicates mutation events that happen on the source
+cluster as they happen. The events are queued up, collected in a batch
+and sent to the target cluster to be applied, without any user interaction.
+
+However, Hazelcast clusters connected over WAN may become out-of-sync because of various reasons
 including but not limited to the following:
 
 * Member failures
