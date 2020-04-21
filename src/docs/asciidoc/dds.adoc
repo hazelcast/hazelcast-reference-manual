@@ -385,6 +385,9 @@ your hits to the keys in the backups are not reflected as hits to the original k
 members. This has an impact on IMap's maximum idle seconds or time-to-live seconds expiration.
 Therefore, even though there is a hit on a key in backups, your original key on the primary member may expire.
 
+NOTE: Backup reads that are requested by Hazelcast clients are ignored since this operation
+is performed on the local entries.
+
 [[map-eviction]]
 ==== Map Eviction
 
