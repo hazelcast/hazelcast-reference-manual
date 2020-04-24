@@ -46,8 +46,6 @@ license.
 
 === Socket Interceptor
 
-[blue]*Hazelcast IMDG Enterprise Feature*
-
 Hazelcast allows you to intercept socket connections before a member
 joins a cluster or a client connects to a member of a cluster.
 This allow you to add custom hooks to join and perform connection
@@ -92,8 +90,6 @@ include::{javasource}/security/SocketInterceptorClient.java[tag=sic]
 
 === Security Interceptor
 
-[blue]*Hazelcast IMDG Enterprise Feature*
-
 Hazelcast allows you to intercept every remote operation executed
 by the client. This lets you add a very flexible custom security logic.
 To do this, implement `com.hazelcast.security.SecurityInterceptor`.
@@ -110,8 +106,6 @@ to the client, but exceptions thrown while executing the `after` method
 are suppressed.
 
 === Encryption
-
-[blue]*Hazelcast IMDG Enterprise Feature*
 
 Hazelcast offers features which allow to reach a required privacy on
 communication level by enabling encryption. Encryption is based on
@@ -184,8 +178,6 @@ you need to set the `hazelcast.security.bouncy.enabled` property to `true`.
 
 [[tlsssl]]
 === TLS/SSL
-
-[blue]*Hazelcast IMDG Enterprise Feature*
 
 NOTE: You cannot use TLS/SSL when <<encryption, Hazelcast Encryption>>
 is enabled.
@@ -474,8 +466,6 @@ an increased performance. So with a 2-member cluster,
 2 in and 2 out threads give the best performance.
 
 === Integrating OpenSSL / BoringSSL
-
-[blue]*Hazelcast IMDG Enterprise Feature*
 
 NOTE: You cannot integrate OpenSSL into Hazelcast when <<encryption, Hazelcast Encryption>>
 is enabled.
@@ -803,8 +793,6 @@ Or,
 ```
 
 === Validating Secrets Using Strength Policy
-
-[blue]*Hazelcast IMDG Enterprise Feature*
 
 Hazelcast IMDG Enterprise offers a secret validation mechanism including a strength
 policy. The term "secret" here refers to the symmetric encryption password,
@@ -1233,8 +1221,6 @@ Available identity configuration types are as follows:
 [[credentials]]
 ===== Credentials
 
-[blue]*Hazelcast IMDG Enterprise Feature*
-
 One of the key elements in Hazelcast security is the `Credentials` object, which
 represents evidence of the identity (member or client).
 The content of `Credentials` object is verified during the authentication.
@@ -1391,8 +1377,6 @@ include::{javatest}/security/CustomLoginModuleTest.java[tag=callback-sample]
 
 ==== ClusterLoginModule
 
-[blue]*Hazelcast IMDG Enterprise Feature*
-
 Hazelcast has an abstract implementation of `LoginModule` that contains
 shared logic and cleanup operations. It automatically creates the
 `ClusterEndpointPrincipal` instance and it also provides the `addRole(String)`
@@ -1478,8 +1462,6 @@ for further information.
 
 === Cluster Member Security
 
-[blue]*Hazelcast IMDG Enterprise Feature*
-
 Hazelcast supports the standard Java Security (JAAS) based authentication
 between the cluster members. A <<security-realms, Security Realm>> can
 be referenced by `<member-authentication/>` element to define authentication
@@ -1510,8 +1492,6 @@ between the member and identity of the current member.
 ----
 
 === Native Client Security
-
-[blue]*Hazelcast IMDG Enterprise Feature*
 
 Hazelcast's Client security includes both authentication and authorization.
 
