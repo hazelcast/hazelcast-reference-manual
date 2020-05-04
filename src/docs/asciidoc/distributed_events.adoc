@@ -927,22 +927,34 @@ The following is an example of the equivalent Spring configuration.
 
 === Event Listeners for Hazelcast Clients
 
-You can add event listeners to a Hazelcast Java client.
+You can add event listeners to Hazelcast clients.
 You can configure the following listeners to listen to the events
-on the client side. See the respective content under the <<cluster-events, Cluster Events section>>
-for example codes.
+on the client side:
 
 * <<listening-for-lifecycle-events, Lifecycle Listener>>: Notifies
 when the client is starting, started, shutting down and shutdown.
 * <<listening-for-member-events, Membership Listener>>: Notifies when
 a member joins to/leaves the cluster to which the client is connected,
 or when an attribute is changed in a member.
-* <<listening-for-distributed-object-events, DistributedObject Listener>>:
+* <<listening-for-distributed-object-events, Distributed Object Listener>>:
 Notifies when a distributed object is created or destroyed throughout
-the cluster to which the client is connected.
+the cluster to which the client is connected. Also notifies for the events
+happening in the distributed data structures, e.g., entry, item and message
+listeners.
 
-NOTE: See the <<configuring-client-listeners, Configuring Client
-Listeners section>> for more information.
+For Hazelcast Java client example code/configuration snippets, see the
+sections of the current chapter, i.e., <<distributed-events, Distributed Events>>.
+See also the <<configuring-client-listeners, Configuring Client Listeners section>>
+for more information.
+
+Follow the below links to learn how to configure the event listeners on other
+Hazelcast clients:
+
+* link:https://github.com/hazelcast/hazelcast-csharp-client#75-distributed-events[.NET client^]
+* link:https://github.com/hazelcast/hazelcast-cpp-client#75-distributed-events[C++ client^]
+* link:https://github.com/hazelcast/hazelcast-nodejs-client/blob/master/DOCUMENTATION.md#75-distributed-events[Node.js client^]
+* link:https://github.com/hazelcast/hazelcast-go-client#75-distributed-events[Go client^]
+* link:https://github.com/hazelcast/hazelcast-python-client#75-distributed-events[Python client^]
 
 === Global Event Configuration
 
