@@ -956,6 +956,19 @@ Hazelcast clients:
 * link:https://github.com/hazelcast/hazelcast-go-client#75-distributed-events[Go client^]
 * link:https://github.com/hazelcast/hazelcast-python-client#75-distributed-events[Python client^]
 
+Note that you can simply add a listener to your client that you already configured
+and registered on the member side. You do not need to configure the listener on the client.
+Assuming that you implemented a listener for a map, .e.g., `MyListener` on the member side,
+see the following example for a Java client:
+
+[source,java]
+----
+IMap<Object, Object> map = client.getMap("mymap");
+map.addEntryListener(new MyListener(), true);
+----
+
+As you see, no configuration is needed.
+
 === Global Event Configuration
 
 * `hazelcast.event.queue.capacity`: default value is 1000000
