@@ -1504,6 +1504,7 @@ The metrics are exposed under `com.hazelcast/$INSTANCE_NAME/Metrics` where
 `$INSTANCE_NAME` is the name of the member or client instance to which the JMX client
 is connected.
 
+[[metrics-diagnostics]]
 ===== Diagnostics
 
 There are no diagnostics related settings in the metrics configuration section.
@@ -1619,8 +1620,6 @@ You can also set the number of files using the following property:
 -Dhazelcast.diagnostics.max.rolled.file.count=5
 ```
 
-In Hazelcast 3.9 the default file size has been upgraded from 10MB to 50MB.
-
 ==== Diagnostics Plugins
 
 As it is stated in the introduction of this section and shown in the log file content above,
@@ -1683,6 +1682,33 @@ You can configure the frequency at which the cluster information is dumped to th
 
 * `hazelcast.diagnostics.memberinfo.period.second`: Set a value in seconds. Its default value is `60` seconds.
 
+===== EventQueue
+
+It checks the event queues in the data structures and samples the event types if the queue size is
+above a certain threshold. It is useful to figure out why the event
+queue is running full.
+
+* `hazelcast.diagnostics.event.queue.period.seconds`: Duration, in seconds, that this plugin runs,
+gathers information and writes to the diagnostics log file.
+When set to `0` (its default value), it is disabled.
+* `hazelcast.diagnostics.event.queue.threshold`: Minimum number of events in the
+queue before it is being sampled. Its default value is `1000`.
+* `hazelcast.diagnostics.event.queue.samples`: Number of samples to take from the event queue.
+Increasing the number of samples gives more accuracy of the content, but it has a negative
+performance effect. Its default value is `100`.
+
+An example output for a Hazelcast map is as follows:
+
+```
+17-04-2019 17:36:37 EventQueues[
+    worker=1[
+        eventCount=441
+        sampleCount=100
+        samples[
+            IMap 'myMap' ADDED sampleCount=51 51.000%
+            IMap 'myMap' REMOVED sampleCount=49 49.000%]]
+```
+
 ===== SystemLog
 
 It shows the activities in your cluster including when a connection/member is added or removed and
@@ -1705,7 +1731,7 @@ latency distributions for each store. The following is an example output snippet
 the diagnostics log file for Hazelcast MapStore:
 
 ```
-17-9-2016 13:12:34 MapStoreLatency[
+17-9-2019 13:12:34 MapStoreLatency[
     map[
         loadAllKeys[
             count=1
@@ -1760,7 +1786,7 @@ these packets, it may be due to the problems such as network latencies.
 The following shows an example of the output where an operation heartbeat has not been received for 37 seconds:
 
 ```
-20-7-2017 11:12:55 OperationHeartbeats[
+20-7-2019 11:12:55 OperationHeartbeats[
     member[10.212.1.119]:5701[
         deviation(%)=146.6666717529297
         noHeartbeat(ms)=37,000
@@ -1797,7 +1823,7 @@ detect if there are networking problems long before they actually lead to proble
 The following shows an example of the output where no member/member heartbeat has been received for 9 seconds:
 
 ```
-20-7-2017 19:32:22 MemberHeartbeats[
+20-7-2019 19:32:22 MemberHeartbeats[
     member[10.212.1.119]:5701[
         deviation(%)=80.0
         noHeartbeat(ms)=9,000
@@ -1847,7 +1873,7 @@ The following shows an example of the output when the property
 
 [source,plain,options="nowrap"]
 ----
-28-08-2018 07:40:07 1535442007330 OperationThreadSamples[
+28-08-2019 07:40:07 1535442007330 OperationThreadSamples[
     Partition[
         com.hazelcast.map.impl.operation.MapSizeOperation=304623 85.6927%
         com.hazelcast.map.impl.operation.PutOperation=33061 9.300304%
@@ -1878,7 +1904,7 @@ The frequency this plugin is writing the collected information to the disk. 0 di
 The following shows an example of the output:
 
 ```
-10-11-2017 14:11:32 1510319492497 WanBatchSenderLatency[
+10-11-2019 14:11:32 1510319492497 WanBatchSenderLatency[
     targetClusterName[
         [127.0.0.1]:5801[
             count=1

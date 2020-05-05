@@ -5,7 +5,7 @@
 This chapter describes what Hazelcast IMDG (In-Memory Data Grid) is along with its
 use cases, topology and architecture.
 
-=== What is Hazelcast IMDG
+=== What is Hazelcast IMDG?
 
 Hazelcast IMDG is an open-source distributed in-memory
 object store supporting a wide variety of data structures.
@@ -18,7 +18,7 @@ Hazelcast IMDG is highly scalable and available. Distributed applications can us
 it for distributed caching, synchronization, clustering, processing,
 pub/sub messaging, etc.
 
-It is implemented in Java language and has clients for Java, C/C++, .NET, REST, Python,
+It is implemented in Java language and has clients for Java, C++, .NET, REST, Python,
 Go and Node.js. Hazelcast IMDG also speaks Memcached and REST protocols. It plugs into
 Hibernate and can easily be used with any existing database system.
 
@@ -42,35 +42,15 @@ When you add new members. they automatically discover the cluster
 and linearly increase both the memory and
 processing capacity. The members maintain a TCP connection between
 each other and all communication is performed through
-this layer.
+this layer. Each cluster member is configured to be the same in terms
+of functionality. The oldest member (the first member created
+in the cluster) automatically performs the data assignment to cluster members.
+If the oldest member dies, the second oldest member takes over.
 
-If you are looking for in-memory speed, scalability and the
-developer friendliness of NoSQL, Hazelcast is a great choice.
-
-[[why-hazelcast]]
-=== Why Hazelcast?
-
-Hazelcast IMDG is designed around the concept of distribution. It
-shares data around the cluster for flexibility and performance. It is an in-memory data grid for
-clustering and highly scalable data distribution.
-
-One of the main features of Hazelcast IMDG is that each cluster member
-is configured to be the same in terms of functionality. The oldest member (the first member created
-in the cluster) automatically performs the data assignment to cluster members. If the oldest member
-dies, the second oldest member takes over.
-
-NOTE: You can come across with the term "master" or "master member" in some sections of this manual.
-They are used for contextual clarification purposes; please remember that they refer to the "oldest
-member" which is explained in the above paragraph.
-
-Another main feature of Hazelcast is that the data is held entirely in-memory. This is fast. In the
-case of a failure, such as a member crash, no data is lost since Hazelcast distributes copies of the
-data across all the cluster members.
-
-As shown in the feature list in the <<distributed-data-structures, Distributed Data Structures chapter>>,
-Hazelcast supports a number of distributed data structures and computing utilities. These
-provide powerful ways of accessing distributed clustered memory and accessing CPUs
-for true distributed computing.
+NOTE: You can come across with the term "master" or "master member" in some
+sections of this manual. They are used for contextual clarification purposes;
+please remember that they refer to the "oldest member" which is explained in
+the above paragraph.
 
 Hazelcast IMDG offers simple scalability, partitioning (sharding), and re-balancing
 out-of-the-box. It does not require any extra coordination processes. NoSQL and
@@ -143,7 +123,7 @@ developed using, for example, Spring framework
 * as storage for session data in web applications (enables horizontal scalability of the web application).
 
 [[hazelcast-imdg-architecture]]
-=== Hazelcast IMDG Architecture
+=== Architecture
 
 You can see the features for all Hazelcast IMDG editions in the following
 architecture diagram.
@@ -158,7 +138,7 @@ For more information on Hazelcast IMDG's Architecture, see the white paper
 link:https://hazelcast.com/resources/architects-view-hazelcast/[An Architect's View of Hazelcast^].
 
 [[hazelcast-topology]]
-=== Hazelcast Topology
+=== Topology
 
 You can deploy a Hazelcast cluster in two ways: Embedded or Client/Server.
 
@@ -201,7 +181,7 @@ for your clients. This enables the frequently used data to be kept in the client
 See the <<configuring-client-near-cache, Configuring Client Near Cache section>>.
 
 [[sharding-in-hazelcast]]
-=== Sharding in Hazelcast
+=== Sharding
 
 Hazelcast shards are called **partitions**. By default, Hazelcast has 271 partitions.
 Given a key, we serialize, hash and mod it with the number of partitions to find
@@ -240,7 +220,6 @@ for descriptive purposes. Normally, the partitions are not distributed in any or
 shown in these illustrations, but are distributed randomly (they do not have to be sequentially
 distributed to each member). The important point here is that Hazelcast equally distributes the
 partition primaries and their backup replicas among the members.
-
 
 image::BackupPartitions.jpg[Cluster with Two Members - Backups are Created]
 
