@@ -1,6 +1,5 @@
 package security;
 
-import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -42,7 +41,7 @@ public class CustomLoginModuleTest {
         Map<String, String> options = new HashMap<>();
         options.put("name", "john");
         options.put("password", "doe");
-        lmPass.initialize(subject, new TestCallbackHandler("john", "doe"), emptyMap(), options);
+        lmPass.initialize(subject, new TestCallbackHandler("john", "doe"), new HashMap<String, Object>(), options);
         lmPass.login();
         assertEquals("Login should not add Principals to the Subject", 0,
                 subject.getPrincipals(HazelcastPrincipal.class).size());
@@ -50,7 +49,7 @@ public class CustomLoginModuleTest {
         assertEquals(3, subject.getPrincipals().size());
 
         CustomLoginModule lmFail = new CustomLoginModule();
-        lmFail.initialize(subject, new TestCallbackHandler("john", "wrongPass"), emptyMap(), options);
+        lmFail.initialize(subject, new TestCallbackHandler("john", "wrongPass"), new HashMap<String, Object>(), options);
         expected.expect(LoginException.class);
         lmFail.login();
     }
