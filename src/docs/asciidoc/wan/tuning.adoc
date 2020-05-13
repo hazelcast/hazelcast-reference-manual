@@ -1,8 +1,8 @@
-[[tuning-wan-replication]]
-=== Tuning WAN Replication
+[[tuning-wr]]
+=== Fine-Tuning WAN Replication
 
 WAN Replication will work fine for most use cases with the default settings. However, there are some specific
-use cases where you might want to change the behaviour of WAN Replication to suit your needs. You might also
+use cases where you might want to change the behavior of WAN Replication to suit your needs. You might also
 be interested in the details how WAN Replication works. If that is the case, this section is for you.
 
 ==== Batch Size
@@ -230,7 +230,7 @@ The following is an example configuration:
 
 NOTE: `acknowledge-type` configuration is optional. Its default value is `ACK_ON_OPERATION_COMPLETE`.
 
-==== Key-based coalescing
+==== Key-based Coalescing
 
 By default, WAN Replication will replicate all of the updates on map and cache entries. If you are updating a
 single "hot" entry multiple times, WAN Replication will send an update event for every entry update. If you don't need
@@ -255,8 +255,8 @@ The following is an example configuration:
 
 NOTE: `snapshot-enabled` is optional. Its default value is `false`.
 
-[[tune-wr]]
-==== Tuning WAN Replication For Lower Latencies and Higher Throughput
+[[low-latency-higher-throughput]]
+==== Achieving Lower Latencies and Higher Throughput
 
 The WAN replication mechanism allows
 tuning for lower latencies of replication and higher throughput.
@@ -324,7 +324,7 @@ spend consuming CPU in a quiescent state - when there is no mutation on the maps
 
 The next element you might lower is the `batch-max-delay-millis`. If you have a strict upper bound on
 the latency for WAN replication, this element must be below that limit. Setting this value too low might
-adversely affect the performance as well since then the WAN replication thread might be sending
+adversely affect the performance: in that case the WAN replication thread might send
 smaller batches than what it would if the element was higher and it had waited for some more time.
 You can even try setting this element to zero which instructs the WAN replication thread to
 send batches as soon as it is able to collect any events; but keep in mind this will result in
@@ -423,7 +423,7 @@ the aforementioned elements is shown below.
 Finally, as we've mentioned, the exact values which will give you the optimal performance depend on your environment and use case.
 Please benchmark and try out different values to find out the right values for you.
 
-==== Discovery period (Discovery SPI)
+==== Discovery Period
 
 When using WAN Replication with Discovery SPI, you can set the period in seconds in which WAN tries to
 discover new target endpoints and reestablish connections to failed endpoints using the `discovery-period-seconds`
@@ -444,7 +444,7 @@ property. The default value is 10 seconds.
 </hazelcast>
 ----
 
-==== Maximum number of target endpoints (Discovery SPI)
+==== Maximum Number of Target Endpoints
 
 When using WAN Replication with Discovery SPI, you can set the maximum number of endpoints that WAN connects to
 at any point using the `max-target-endpoints` property. This element has no effect when static endpoint addresses
@@ -465,10 +465,10 @@ are defined using `target-endpoints`. Default is `Integer.MAX_VALUE`.
 </hazelcast>
 ----
 
-==== Use endpoint private address (Discovery SPI)
+==== Use Endpoint Private Address
 
 When using WAN Replication with Discovery SPI, you can set whether the WAN connection manager should connect to the
-endpoint on the private address returned by the discovery SPI using the `use-endpoint-private-address` property.
+endpoint on the private address returned by the Discovery SPI using the `use-endpoint-private-address` property.
 By default this element is `false` which means the WAN connection manager always uses the public address.
 
 [source,xml]

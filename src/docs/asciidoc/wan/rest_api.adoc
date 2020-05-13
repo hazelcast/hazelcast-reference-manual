@@ -1,0 +1,197 @@
+
+[[wr-rest]]
+=== REST API Wrap-Up
+
+NOTE: To be able to use the REST calls related to WAN Replication
+mentioned in this section, you need to enable the `WAN` REST endpoint group.
+See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> on
+how to enable it.
+
+==== Parameters
+
+Here is the list of parameters used in the WAN Replication REST calls, which
+are shown as placeholders in the REST calls:
+
+* member IP address and port: IP address and port number of the
+member on which you run the REST calls.
+* `clusterOnSource`: Name of your local (source) cluster.
+* `clusterPassword`: Password, if set, of your source cluster.
+Note that you need to enable the <<enabling-jaas-security, security>>
+when you need a cluster password. If not set, the parameter is empty.
+* `wanRepName`: Name of the WAN Replication configuration.
+* `publisherId`: WAN replication publisher ID. If not set,
+`cluster-name` under the `batch-publisher` element is used.
+* `mapName`: Name of the map to be synchronized.
+* `wanConfig`: WAN publisher configuration file, as a JSON string,
+to be added dynamically.
+
+The parameters in the below curl commands need to be provided
+in the given order, separated by `&`.
+
+Let's use the following declarative configuration as the example to
+be used in the curl commands described in the sections below, and
+let's assume that our source cluster does not have a password:
+
+[source,xml]
+----
+<hazelcast>
+    <cluster-name>tokyo</cluster-name>
+    <wan-replication name="london-wan-rep">
+        <batch-publisher>
+            <cluster-name>london</cluster-name>
+            <target-endpoints>10.3.5.1:5701, 10.3.5.2:5701</target-endpoints>
+        </batch-publisher>
+    </wan-replication>
+
+    <map name="myMap">
+        <wan-replication-ref name="london-wan-rep"/>
+    </map>
+</hazelcast>
+----
+
+
+==== Clearing the Queues
+
+The URL for cleaning the WAN event queues is as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/clearWanQueues
+```
+
+The following is the curl command: 
+
+```
+curl -X POST -d "{clusteronSourceName}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/clearWanQueues
+```
+
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/clearWanQueues
+```
+
+
+==== Pausing the Publisher
+
+The URL for pausing the WAN publisher is as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/pausePublisher
+```
+
+The following is the curl command: 
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/pausePublisher
+```
+
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/pausePublisher
+```
+
+==== Resuming the Publisher
+
+The URL for resuming the WAN publisher is as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/resumePublisher
+```
+
+The following is the curl command: 
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/resumePublisher
+```
+
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/resumePublisher
+```
+
+
+==== Stopping the Publisher
+
+The URL for stopping the WAN publisher is as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/stopPublisher
+```
+
+The following is the curl command: 
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/stopPublisher
+```
+
+The command according to the above example configuration is as follows:
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london" --URL http://127.0.0.1:5701/hazelcast/rest/wan/stopPublisher
+```
+
+==== Synchronizing the Clusters
+
+For the full synchronization, the URLs for synchronizing a single map and all maps are as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/sync/map
+http://{member IP address:port}/hazelcast/rest/wan/sync/allMaps
+```
+
+The following are the respective curl commands:
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}&{mapName}" --URL http://{member IP address:port}/hazelcast/rest/wan/sync/map
+
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}" --URL http://{member IP address:port}/hazelcast/rest/wan/sync/allMaps
+
+```
+
+The command according to the above example configuration is as follows (for that single map):
+
+```
+curl -X POST -d "tokyo&&london-wan-rep&london&myMap" --URL http://{member IP address:port}/hazelcast/rest/wan/sync/map
+```
+
+
+For the delta synchronization, you need to first perform a
+consistency check, using the the following REST call URL:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/consistencyCheck/map
+```
+
+Here is the respective curl command:
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanRepName}&{publisherId}&{mapName}" --URL http://{member IP address:port}/hazelcast/rest/wan/consistencyCheck/map
+```
+
+After the consistency check, you can use the same REST calls
+used in full synchronization in the same way to synchronize
+a single map or all the maps.
+
+
+NOTE: Consistency check can be triggered only for one map.
+
+[[wr-dynamically-adding]]
+==== Dynamically Adding WAN Publishers
+
+The URL for dynamically adding a WAN publisher configuration is as follows:
+
+```
+http://{member IP address:port}/hazelcast/rest/wan/addWanConfig
+```
+
+The following is the curl command: 
+
+
+```
+curl -X POST -d "{clusterOnSource}&{clusterPassword}&{wanConfig}" --URL http://127.0.0.1:5701/hazelcast/rest/wan/addWanConfig
+```
+
+The `wanConfig` parameter should be the full configuration as a JSON string.
+See <<dynamically-adding-wan-publishers, here>> for configuration examples.

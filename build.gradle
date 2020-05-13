@@ -7,6 +7,7 @@ buildscript {
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.7'
         classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.16'
         classpath 'org.asciidoctor:asciidoctorj-epub3:1.5.0-alpha.8.1'
+        classpath 'org.asciidoctor:asciidoctorj:1.6.0'
     }
 }
 
@@ -30,6 +31,10 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
+    maven {
+        url  "https://dl.bintray.com/bmuschko/maven" 
+    }
+
 }
 
 compileJava {
@@ -44,12 +49,12 @@ dependencies {
      compile "javax.cache:cache-api:1.1.1"
      compile "org.mongodb:mongo-java-driver:3.0.4"
      compile "junit:junit:4.12"
+     asciidoctor 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.2'
 }
 
 asciidoctor {
     dependsOn compileJava
     inputs.files compileJava.outputs
-    /* requires file('./multipage-html5-converter.rb') */
 
     sources {
       include 'index.adoc'
