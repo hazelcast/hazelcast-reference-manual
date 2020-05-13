@@ -1027,9 +1027,14 @@ log4j.logger.com.hazelcast=debug
 ```
 
 
-If you do not need detailed logs, the default settings is enough.
+If you do not need detailed logs, the default settings are enough.
 Using the Hazelcast specific lines in the above configuration file,
 you can select to see specific logs (cluster, partition, hibernate, etc.) in desired levels.
+
+You can also use the `hazelcast.logging.details.enabled` property to
+specify whether the name, IP address and version of the cluster are included
+in the logs. When there are lots of log lines, it may be hard to follow.
+When set to `false`, those information will not appear.
 
 ==== Example Log4j Configuration
 
@@ -1886,7 +1891,7 @@ detector (see. phi or deadline in the sections above). Ping in this mode
 only kicks in after a period when there are no heartbeats received, in which
 case the remote Hazelcast member is pinged up to a configurable count of attempts.
 If all those attempts fail, the member gets suspected. You can configure this
-attempt count using the <<max-attempts, hazelcast.icmp.max.attempts>> system property.
+attempt count using the `max-attempts` configuration element listed above.
 | Supported  ICMP Echo if available - Falls back on TCP Echo on port 7
 | Supported  TCP Echo on port 7
 | Supported ICMP Echo if available - Falls back on TCP Echo on port 7
