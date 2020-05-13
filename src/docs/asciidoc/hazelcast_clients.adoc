@@ -1735,29 +1735,53 @@ which the property is modified.
 
 The table below lists the client configuration properties with their descriptions.
 
-[cols="3,1,1,5a"]
+[cols="1,1,1,3"]
 .Client System Properties
 |===
 |Property Name | Default Value | Type | Description
 
-|`hazelcast.invalidation.max.tolerated.miss.count`
-|10
-|int
-|If missed invalidation count is bigger than this value,
-the relevant cached data is made unreachable.
+|`hazelcast.client.cloud.discovery.token`
+|
+|long
+|Token to use when discovering the cluster via Hazelcast Cloud.
 
-|`hazelcast.invalidation.reconciliation.interval.seconds`
-|60
+|`hazelcast.client.concurrent.window.ms`
+|100
 |int
-|Period, in seconds, for which the clients are scanned to compare the generated
-invalidation events with the received ones from Near Cache.
+|Property needed for concurrency detection so that write through and dynamic response handling
+can be done correctly. This property sets the window for a concurrency detection (duration when it signals
+that a concurrency has been detected), even if there are no further updates in that window.
+Normally in a concurrent system the windows keeps sliding forward so it always remains concurrent.
+Setting it too high effectively disables the optimization because once concurrency has been detected
+it will keep that way. Setting it too low could lead to suboptimal performance because the system
+will try write through and other optimizations even though the system is concurrent.
 
-|`hazelcast.client.shuffle.member.list`
-|true
-|string
-|The client shuffles the given member list to prevent all the clients to connect
-to the same member when this property is `true`. When it is set to `false`,
-the client tries to connect to the members in the given order.
+|`hazelcast.discovery.enabled`
+|false
+|bool
+|Enables/disables the Discovery SPI lookup over the old native implementations.
+See <<discovery-spi>> for more information.
+
+|`hazelcast.discovery.public.ip.enabled`
+|false
+|bool
+|Enables the discovery joiner to use public IPs from `DiscoveredNode`.
+See <<discovery-spi>> for more information.
+
+|`hazelcast.client.event.queue.capacity`
+|1000000
+|int
+|Default value of the capacity of executor that handles the incoming event packets.
+
+|`hazelcast.client.event.thread.count`
+|5
+|int
+|Thread count for handling the incoming event packets.
+
+|`hazelcast.client.heartbeat.interval`
+|5000
+|int
+|Frequency of the heartbeat messages sent by the clients to members.
 
 |`hazelcast.client.heartbeat.timeout`
 |60000
@@ -1765,39 +1789,6 @@ the client tries to connect to the members in the given order.
 |Timeout for the heartbeat messages sent by the client to members.
 If no messages pass between the client and member within the given time via
 this property in milliseconds, the connection will be closed.
-
-|`hazelcast.client.heartbeat.interval`
-|5000
-|int
-|Frequency of the heartbeat messages sent by the clients to members.
-
-|`hazelcast.client.event.thread.count`
-|5
-|int
-|Thread count for handling the incoming event packets.
-
-|`hazelcast.client.event.queue.capacity`
-|1000000
-|int
-|Default value of the capacity of executor that handles the incoming event packets.
-
-|`hazelcast.client.invocation.timeout.seconds`
-|1000
-|int
-|Period, in seconds, to give up the invocation when a member in the member list is not reachable.
-
-|`hazelcast.client.invocation.retry.pause.millis`
-|1000
-|int
-|Pause time between each retry cycle of an invocation in milliseconds.
-
-|`hazelcast.client.max.concurrent.invocations`
-|Integer.MAX_VALUE
-|int
-|Maximum allowed number of concurrent invocations. You can apply a constraint on
-the number of concurrent invocations in order to prevent the system from overloading.
-If the maximum number of concurrent invocations is exceeded and a new invocation comes in,
-Hazelcast throws `HazelcastOverloadException`.
 
 |`hazelcast.client.invocation.backoff.timeout.millis`
 |-1
@@ -1809,19 +1800,17 @@ the backlog of invocations. This property controls how long an invocation is
 allowed to wait before getting a `HazelcastOverloadException`.
 When set to -1 then `HazelcastOverloadException` is thrown immediately without any waiting.
 
-|`hazelcast.client.io.input.thread.count`
-|-1
+|`hazelcast.client.invocation.retry.pause.millis`
+|1000
 |int
-|Controls the number of I/O input threads. Defaults to -1, i.e., the system decides.
-If the client is a smart client, it defaults to 3, otherwise it defaults to 1.
+|Pause time between each retry cycle of an invocation in milliseconds.
 
-|hazelcast.client.io.output.thread.count
-|-1
+|`hazelcast.client.invocation.timeout.seconds`
+|1000
 |int
-|Controls the number of I/O output threads. Defaults to -1, i.e., the system decides.
-If the client is a smart client, it defaults to 3, otherwise it defaults to 1.
+|Period, in seconds, to give up the invocation when a member in the member list is not reachable.
 
-|hazelcast.client.io.balancer.interval.seconds
+|`hazelcast.client.io.balancer.interval.seconds`
 |20
 |int
 |Interval in seconds between each `IOBalancer`
@@ -1831,44 +1820,55 @@ data from TCP connections and 3 threads to write data to connections.
 utilized equally. The shorter intervals catch I/O imbalances faster, but they cause higher overhead.
 A value smaller than 1 disables the balancer.
 
-|hazelcast.client.io.write.through
+|`hazelcast.client.io.input.thread.count`
+|-1
+|int
+|Controls the number of I/O input threads. Defaults to -1, i.e., the system decides.
+If the client is a smart client, it defaults to 3, otherwise it defaults to 1.
+
+|`hazelcast.client.io.output.thread.count`
+|-1
+|int
+|Controls the number of I/O output threads. Defaults to -1, i.e., the system decides.
+If the client is a smart client, it defaults to 3, otherwise it defaults to 1.
+
+|`hazelcast.client.io.write.through`
 |true
 |bool
 |Optimization that allows sending of packets over the network to be done on the calling thread if the
 conditions are right. This can reduce the latency and increase the performance for low threaded environments.
 
-|hazelcast.client.concurrent.window.ms
-|100
+|`hazelcast.client.max.concurrent.invocations`
+|Integer.MAX_VALUE
 |int
-|Property needed for concurrency detection so that write through and dynamic response handling
-can be done correctly. This property sets the window for a concurrency detection (duration when it signals
-that a concurrency has been detected), even if there are no further updates in that window.
-Normally in a concurrent system the windows keeps sliding forward so it always remains concurrent.
-Setting it too high effectively disables the optimization because once concurrency has been detected
-it will keep that way. Setting it too low could lead to suboptimal performance because the system
-will try write through and other optimizations even though the system is concurrent.
+|Maximum allowed number of concurrent invocations. You can apply a constraint on
+the number of concurrent invocations in order to prevent the system from overloading.
+If the maximum number of concurrent invocations is exceeded and a new invocation comes in,
+Hazelcast throws `HazelcastOverloadException`.
 
-|hazelcast.client.response.thread.count
-|2
-|int
-|Number of the response threads.
-By default, there are two response threads; this gives stable and good performance.
-If set to 0, the response threads are bypassed and the response handling is done
-on the I/O threads. Under certain conditions this can give a higher throughput, but
-setting to 0 should be regarded as an experimental feature.
-If set to 0, the IO_OUTPUT_THREAD_COUNT is really going to matter because the
-inbound thread will have more work to do. By default when TLS is not enabled,
-there is just one inbound thread.
+|`hazelcast.client.metrics.collection.frequency`
+| 5
+| int
+| Frequency, in seconds, of the <<metrics, metrics>> collection cycle. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
 
-|hazelcast.client.response.thread.dynamic
-|true
-|bool
-|Enables dynamic switching between processing the responses on the I/O threads and offloading the response threads.
-Under certain conditions (single threaded clients) processing on the I/O
-thread can increase the performance because useless handover to the response
-thread is removed. Also the response thread is not created until it is needed.
-Especially for ephemeral clients, reducing the threads can lead to
-increased performance and reduced memory usage.
+|`hazelcast.client.metrics.debug.enabled`
+| false
+| bool
+| Enables collecting debug metrics if set to `true`, disables it otherwise.
+Note that this is meant to be enabled only if diagnostics is enabled, since currently only diagnostics consumes the debug metrics.
+
+|`hazelcast.client.metrics.enabled`
+| true
+| bool
+| Enables the <<metrics, metrics collection>> if set to `true`, disables it otherwise. Note that the preferred way for
+controlling this setting is <<metrics-configuration, Metrics Configuration>>.
+
+|`hazelcast.client.metrics.jmx.enabled`
+| true
+| bool
+| Enables exposing the collected <<metrics, metrics>> over JMX if set to `true`, disables it otherwise. Note that
+the preferred way for controlling this setting is <<metrics-configuration, Metrics Configuration>>.
 
 |`hazelcast.client.operation.backup.timeout.millis`
 |5000
@@ -1883,6 +1883,35 @@ If acks are not received from some backups, there will not be any rollback on ot
 in time, or the member which owns primary replica of the target partition leaves the cluster, then the invocation fails
 with `IndeterminateOperationStateException`. However, even if the invocation fails,
 there will not be any rollback on other successful replicas.
+
+|`hazelcast.client.response.thread.count`
+|2
+|int
+|Number of the response threads.
+By default, there are two response threads; this gives stable and good performance.
+If set to 0, the response threads are bypassed and the response handling is done
+on the I/O threads. Under certain conditions this can give a higher throughput, but
+setting to 0 should be regarded as an experimental feature.
+If set to 0, the IO_OUTPUT_THREAD_COUNT is really going to matter because the
+inbound thread will have more work to do. By default when TLS is not enabled,
+there is just one inbound thread.
+
+|`hazelcast.client.response.thread.dynamic`
+|true
+|bool
+|Enables dynamic switching between processing the responses on the I/O threads and offloading the response threads.
+Under certain conditions (single threaded clients) processing on the I/O
+thread can increase the performance because useless handover to the response
+thread is removed. Also the response thread is not created until it is needed.
+Especially for ephemeral clients, reducing the threads can lead to
+increased performance and reduced memory usage.
+
+|`hazelcast.client.shuffle.member.list`
+|true
+|string
+|The client shuffles the given member list to prevent all the clients to connect
+to the same member when this property is `true`. When it is set to `false`,
+the client tries to connect to the members in the given order.
 
 |`hazelcast.client.statistics.enabled`
 |false
@@ -1899,18 +1928,6 @@ in the Hazelcast Management Center Reference Manual for more information.
 |Period in seconds the client statistics are collected and sent to the cluster.
 See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#monitoring-clients[Monitoring Clients section^]
 in the Hazelcast Management Center Reference Manual for more information on the client statistics.
-
-|`hazelcast.discovery.enabled`
-|false
-|bool
-|Enables/disables the Discovery SPI lookup over the old native implementations.
-See <<discovery-spi>> for more information.
-
-|`hazelcast.discovery.public.ip.enabled`
-|false
-|bool
-|Enables the discovery joiner to use public IPs from `DiscoveredNode`.
-See <<discovery-spi>> for more information.
 |===
 
 ==== Using High-Density Memory Store with Java Client
