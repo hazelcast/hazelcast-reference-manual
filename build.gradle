@@ -60,7 +60,13 @@ asciidoctor {
       include 'index.adoc'
     }
 
-    backends = [ 'html5' /*, 'pdf' /*, 'multipage_html5', 'epub3'*/ ]
+    backends = [ 'html5' , 'pdf' /*, 'multipage_html5', 'epub3'*/ ]
+
+    if (project.hasProperty('skipPdf')) {
+	println "Skipping generation of PDF due to -PskipPdf flag set"
+        backends.remove('pdf')
+    }
+	
     attributes \
         'imdg-version': project.imdgVersion,
         'docBaseUrl': 'https://docs.hazelcast.org/docs/' + project.imdgVersion,
