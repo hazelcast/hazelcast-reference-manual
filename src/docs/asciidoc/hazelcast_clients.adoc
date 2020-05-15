@@ -209,9 +209,9 @@ You can use any <<map, Distributed Map>> object with the client, as shown below.
 
 [source,java]
 ----
-Imap<Integer, String> map = client.getMap(“myMap”);
+Imap<Integer, String> map = client.getMap("myMap");
 
-map.put(1, “Ali”);
+map.put(1, "John");
 String value= map.get(1);
 map.remove(1);
 ----
@@ -228,8 +228,8 @@ A MultiMap usage example is shown below.
 ----
 MultiMap<Integer, String> multiMap = client.getMultiMap("myMultiMap");
 
-multiMap.put(1,”ali”);
-multiMap.put(1,”veli”);
+multiMap.put(1,"John");
+multiMap.put(1,"Mary");
 
 Collection<String> values = multiMap.get(1);
 ----
@@ -244,8 +244,8 @@ An example usage is shown below.
 
 [source,java]
 ----
-IQueue<String> myQueue = client.getQueue(“theQueue”);
-myQueue.offer(“ali”)
+IQueue<String> myQueue = client.getQueue("theQueue");
+myQueue.offer("John")
 ----
 
 `getLocalQueueStats` is not supported because locality is ambiguous for the client.
