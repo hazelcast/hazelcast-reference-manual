@@ -925,11 +925,11 @@ include::{javatestresource}/hazelcast-security-realms.xml[tag=realms]
 There are several types of authentication configuration available in a security realm.
 The realm cannot have more than one authentication method specified.
 
-Available authentication types:
+The following are the available authentication types:
 
 * `jaas`: allows defining JAAS login module stacks
 * `ldap`: verifies `PasswordCredentials` against an LDAP server
-* `kerberos`: verifies Kerberos token provided in `TokenCredentials`
+* `kerberos`: verifies the Kerberos token provided in `TokenCredentials`
 * `tls`: verifies that the TLS mutual authentication was used
 in the incoming connection and the peer's certificate chain is available.
 
@@ -1085,10 +1085,9 @@ value defined in the `password-attribute` option.
 
 | `system-authentication`
 | `simple`
-| Name of the authentication mechanism used for admin LDAP connection.
-It's used as a value
-for JNDI environment property `Context#SECURITY_AUTHENTICATION`.
-Users can specify `GSSAPI` to authenticate with Kerberos protocol.
+| Name of the authentication mechanism used for the admin LDAP connection.
+It's used as a value for JNDI environment property `Context#SECURITY_AUTHENTICATION`.
+You can specify `GSSAPI` to authenticate with the Kerberos protocol.
 
 | `password-attribute`
 |
@@ -1100,20 +1099,20 @@ during the login. As a result, if the `password-attribute` option is provided,
 then the extra LDAP bind to verify credentials is not done and passwords
 are just compared within the Hazelcast code after retrieving the user object from LDAP server.
 
-This option is only used when the admin connection is configured - i.e. when `system-user-dn` or `system-authentication` is defined.
+This option is only used when the admin connection is configured, i.e., when `system-user-dn` or `system-authentication` is defined.
 
 | `user-context`
 |
 | LDAP context in which the user objects are searched, e.g., `ou=Users,dc=hazelcast,dc=com`.
 
-This option is only used when the admin connection is configured - i.e. when `system-user-dn` or `system-authentication` is defined.
+This option is only used when the admin connection is configured, i.e., when `system-user-dn` or `system-authentication` is defined.
 
 | `user-filter`
 | `(uid={login})`
 | LDAP search string for retrieving the user objects based on the provided login name.
 It usually contains a placeholder substring `{login}` which is replaced by the provided login name.
 
-This option is only used when the admin connection is configured - i.e. when `system-user-dn` or `system-authentication` is defined.
+This option is only used when the admin connection is configured, i.e., when `system-user-dn` or `system-authentication` is defined.
 
 | `user-search-scope`
 | `subtree`
@@ -1123,7 +1122,7 @@ a| LDAP search scope used for `user-filter` search. It can have one of the follo
 * `one-level`: Searches just one-level under the given context.
 * `object`: Searches (or tests) just for the context object itself (if it matches the filter criteria).
 
-This option is only used when the admin connection is configured - i.e. when `system-user-dn` or `system-authentication` is defined.
+This option is only used when the admin connection is configured, i.e., when `system-user-dn` or `system-authentication` is defined.
 
 | `skip-authentication`
 | `false`
@@ -1131,14 +1130,14 @@ a| Flag which allows disabling password verification and
 only takes care about filling `HazelcastPrincipal` instances into the
 Subject.
 
-This option is only used when the admin connection is configured - i.e. when `system-user-dn` or `system-authentication` is defined.
+This option is only used when the admin connection is configured, i.e., when `system-user-dn` or `system-authentication` is defined.
 
 | `security-realm`
 |
-a| If specified then given realm name is used for authentication of
-a (temporary) Subject which is then used for doing LDAP queries
+a| If specified, given realm name is used for authentication of
+a (temporary) Subject which is then used for doing LDAP queries.
 
-This option is only used when the admin connection is configured - i.e. when `system-user-dn` or `system-authentication` is defined.
+This option is only used when the admin connection is configured, i.e., when `system-user-dn` or `system-authentication` is defined.
 |===
 
 Detailed logging for LDAP authentication can be enabled by
@@ -1205,24 +1204,24 @@ include::{javatestresource}/hazelcast-authentication-types.xml[tag=ldap-fallback
 ===== Kerberos Authentication Type
 
 The Kerberos authentication protocol is one of the standard solutions
-for single-sign-on. It's well established in many companies. Hazelcast
+for single sign-on (SSO). It's well established in many companies. Hazelcast
 supports Kerberos authentication as an Enterprise feature and it also
 provides Kerberos integration to LDAP-based authorization.
 
-The Kerberos support in Hazelcast has 2 configuration parts - identity
-and authentication. The identity part is responsible for retrieving service
+The Kerberos support in Hazelcast has 2 configuration parts: identity
+and authentication. The identity part is responsible for retrieving the service
 ticket from Kerberos KDC (Key Distribution Center).
-The authentication part verifies service tickets.
+The authentication part verifies the service tickets.
 
 Default Service principal names for Hazelcast members are in the form
-`hz/address@REALM` (e.g. `hz/192.168.1.1@ACME.COM`).
+`hz/address@REALM`, e.g., `hz/192.168.1.1@ACME.COM`.
 
 Before a service ticket is issued, the client side of the connection has to be
-authenticated - the TGT (Ticket granting ticket) is present in the Subject.
+authenticated, which means the TGT (Ticket Granting Ticket) is present in the Subject.
 
 Hazelcast delegates the TGT retrieval to vendor specific `Krb5LoginModule`
-implementations. Find the correct login module and its opstions in your Java
-documentation. On Hazelcast side, the `security-ream` property allows
+implementations (find the correct login module and its options in your Java
+documentation). On the Hazelcast side, the `security-ream` property allows
 referencing another realm with `Krb5LoginModule` configured.
 
 [source,xml]
@@ -1261,32 +1260,32 @@ The `<kerberos>` identity configuration has the following properties:
 
 | `spn`
 |
-| Allows configuring static service principal name (SPN). It's
-meant for use-cases where all members share a single Kerberos identity.
+| Allows configuring static Service Principal Name (SPN). It's
+meant for use cases where all the members share a single Kerberos identity.
 
 | `service-name-prefix`
 | `"hz/"`
-| Defines prefix of the Service Principal
-Name. By default the member's principal name (for which this credentials
-factory asks the service ticket) is in form
-`"[servicePrefix][memberIpAddress]@[REALM]"` (e.g.
-`"hz/192.168.1.1@ACME.COM"`).
+| Defines the prefix of SPN. By default the member's
+principal name (for which this credentials
+factory asks the service ticket) is in the form
+`"[servicePrefix][memberIpAddress]@[REALM]"`, e.g.,
+`"hz/192.168.1.1@ACME.COM"`.
 
 | `realm`
 |
-| Kerberos realm name (e.g. `"ACME.COM"`)
+| Kerberos realm name, e.g., `"ACME.COM"`.
 
 | `security-realm`
 |
-| Security realm name in Hazelcast configuration used
+| Security realm name in the Hazelcast configuration used
 for Kerberos authentication. The authentication configuration in the
-referenced security realm will be used to fill the Subject with Kerberos
-credentials (e.g. TGT).
+referenced security realm will be used to fill the Subject with the Kerberos
+credentials, e.g., TGT.
 |=======================================================================
 
-The authenticating part on the server-side is able to
+The authenticating part on the server side is able to
 accept the Kerberos tickets and verify them. Again the Kerberos
-authentication is delegated to another realm with Kerberos login module
+authentication is delegated to another realm with the Kerberos login module
 configured.
 
 [source,xml]
@@ -1318,7 +1317,7 @@ configured.
 </realm>
 ----
 
-The `krb5Acceptor` realm configuration in the snippet only loads Kerberos secrets from
+The `krb5Acceptor` realm configuration in the snippet only loads the Kerberos secrets from
 a keytab file and it doesn't authenticate against a KDC.
 
 
@@ -1332,35 +1331,35 @@ a keytab file and it doesn't authenticate against a KDC.
 | `relax-flags-check`
 | `false`
 | Allows disabling some of the checks on the
-incoming token (e.g. passes authentication even if the mutual
-authentication is required by the token).
+incoming token, e.g., passes authentication even if the mutual
+authentication is required by the token.
 
 | `security-realm`
 |
-|Security realm name in Hazelcast configuration used
+|Security realm name in the Hazelcast configuration used
 for Kerberos authentication. The authentication configuration in the
-referenced security realm will be used to fill the Subject with Kerberos
-credentials (e.g. Keytab).
+referenced security realm will be used to fill the Subject with the Kerberos
+credentials, e.g., Keytab.
 |=======================================================================
 
 The `GssApiLoginModule` (implementing Kerberos authentication)
 derives from the abstract `ClusterLoginModule`. As a result the `<kerberos>`
-configuration supports the common options too - `skip-identity`, `skip-endpoint` and
+configuration supports the common options, too: `skip-identity`, `skip-endpoint` and
 `skip-role`.
 
 [NOTE]
 ====
 * The Kerberos authentication in Hazelcast is only able to validate connections on
-the server-side. It doesn't support mutual authentication.
-* The GSS-API is not used for protecting (wrapping) messages after
-authentication (e.g. encryption, integrity checks). It's only used for
+the server side. It doesn't support mutual authentication.
+* The Generic Security Services API (GSS-API) is not used for protecting (wrapping)
+the messages after the authentication, e.g., encryption, integrity checks. It's only used for
 accepting tokens.
-* The token itself is not protected against Man-in-the-Middle attacks.
+* The token itself is not protected against Man-in-the-Middle (MITM) attacks.
 If an attacker is able to eavesdrop the token and use it before the
 original sender, then the attacker succeeds with the authentication but
 the original sender won't.
-** There is a replay protection in Java which caches already used tokens.
-** Java Kerberos implementation accepts the token for 5min (by default)
+** There is a replay protection in Java which caches the already used tokens.
+** Java Kerberos implementation accepts the token for 5 minutes (by default)
 from its creation.
 * Time has to be synchronized on the machines where the Kerberos is
 used.
@@ -1373,7 +1372,7 @@ the token.
 ===== Kerberos and LDAP integration
 
 The Kerberos authentication allows loading role mapping information from
-an LDAP server (usually the one backing the Kerberos KDC server too).
+an LDAP server (usually the one backing the Kerberos KDC server, too).
 Therefore the `<ldap>` authentication configuration is also available as
 sub-configuration of the `<kerberos>` authentication.
 
@@ -1397,9 +1396,9 @@ sub-configuration of the `<kerberos>` authentication.
 </realm>
 ----
 
-NOTE: The Kerberos-LDAP integration doesn't support credentials delegation
-(i.e. reusing client's ticket for accessing the LDAP). It only allows using
-member's Kerberos credentials to authenticate into the LDAP.
+NOTE: The Kerberos-LDAP integration doesn't support credentials delegation,
+i.e., reusing client's ticket for accessing the LDAP. It only allows using
+the member's Kerberos credentials to authenticate into the LDAP.
 
 ===== TLS Authentication Type
 
@@ -1551,11 +1550,11 @@ A sample configuration is shown below:
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=credentialsFactoryRealm]
 ----
 
-==== Security realms on client-side
+==== Security Realms on the Client Side
 
-Hazelcast 4.1 introduces a limited support of security realms in native clients.
+Hazelcast IMDG 4.1 introduces a limited support of security realms in native clients.
 The configuration allows specifying JAAS login modules which can be referenced from
-Kerberos identity configuration.
+the Kerberos identity configuration.
 
 [source,xml]
 ----
