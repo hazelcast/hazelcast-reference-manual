@@ -553,6 +553,14 @@ they are under heavy load: they will be unable to send heartbeat operations in t
 | 20
 | int
 | Maximum wait time before join operation.
+This is an upper limit on the cluster's pre-join phase duration. The pre-join
+phase starts when the master receives the first join request, and ends after
+no new members have tried to join for `hazelcast.wait.seconds.before.join`
+seconds, or after this upper limit elapsed (whichever comes first). Once the
+pre-join phase ended, the master moves into the join phase, during which it
+will only admit members that have already tried joining during the pre-join
+phase and are still trying to. Once the join phase is complete, the master
+will again start admitting new members.
 
 |`hazelcast.mc.executor.thread.count`
 |int
@@ -947,5 +955,11 @@ that is used to connect to a host (which is defined without a port in TCP/IP mem
 | 5
 | int
 | Wait time before join operation.
+This time establishes a pre-join phase time window for newcomer members to
+make their first join request. Once `hazelcast.wait.seconds.before.join`
+elapsed since the last first-timer join request (i.e. where the member hasn't
+made any previous join request), or the pre-join phase has lasted for
+`hazelcast.max.wait.seconds.before.join` seconds, the phase ends and the
+master starts forming the cluster.
 
 |===
