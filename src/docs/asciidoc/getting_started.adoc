@@ -2,20 +2,240 @@
 [[getting-started]]
 == Getting Started
 
-This chapter explains how to install Hazelcast and start
-a Hazelcast member and client. It describes the executable
-files in the download package and also provides the fundamentals
-for configuring Hazelcast and its deployment options.
+This chapter offers a quick start section thru which
+you start Hazelcast members, form a cluster, connect it with
+a client application and monitor the cluster using Hazelcast Management Center.
+Then it provides pre- and post-installation
+details and deployment options.
 
-[[installation]]
-=== Installation
+=== Quick Start
 
-The following sections explain the installation of Hazelcast IMDG
-and Hazelcast IMDG Enterprise. It also includes notes and changes
-to consider when upgrading Hazelcast.
+This section covers a basic Hazelcast installation,
+starting the members and Management Center, and creating an application in your
+preferred language.
+
+==== Installing Hazelcast
+
+As a prerequisite, make sure you have link:https://www.oracle.com/java/technologies/javase-downloads.html[Java^]
+installed on your system. If you prefer to use Docker to start Hazelcast members, make sure it is also installed;
+see its link:https://www.docker.com/products/docker-desktop[download^] page.
+
+To download and install Hazelcast:
+
+* go to the link:https://hazelcast.org/imdg/download/[Downloads^] page
+* download your preferred package (`TAR` or `ZIP`) under the "Server" column
+* extract the downloaded package into a directory.
+
+==== Creating a Cluster
+
+You can use the following command on your terminal/command line
+to start a Hazelcast member while you are in the extracted directory:
+
+[source,shell,indent=0,subs="verbatim,attributes",role="primary"]
+.Linux
+----
+sh bin/start.sh
+----
+
+[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
+.Windows
+----
+bin/start.bat
+----
+
+[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
+.Docker
+----
+docker run hazelcast/hazelcast
+----
+
+Now you have a 1-member cluster. To add one more member to the cluster,
+open another terminal/command line and rerun the above command. The members
+discover each other automatically and form a 2-member cluster. Note that these
+members are started with the default configuration, i.e., `hazelcast.xml` located
+at the `bin` directory.
+
+==== Your First Client Application
+
+
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.Java
+----
+package client;
+
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+
+public class MapSample {
+    public static void main(String[] args) {
+        // Start the Hazelcast Client and connect to an already running Hazelcast Cluster on 127.0.0.1
+        HazelcastInstance hz = HazelcastClient.newHazelcastClient();
+        // Get the Distributed Map from Cluster.
+        IMap map = hz.getMap("my-distributed-map");
+        //Standard Put and Get.
+        map.put("key", "value");
+        map.get("key");
+        //Concurrent Map methods, optimistic updating
+        map.putIfAbsent("somekey", "somevalue");
+        map.replace("key", "value", "newvalue");
+        // Shutdown this Hazelcast client
+        hz.shutdown();
+    }
+}
+----
+
+[source,c++,indent=0,subs="verbatim,attributes",role="secondary"]
+.C++
+----
+#include 
+
+using namespace hazelcast::client;
+int main() {
+    // Start the Hazelcast Client and connect to an already running Hazelcast Cluster on 127.0.0.1
+    HazelcastClient hz;
+    // Get the Distributed Map from Cluster.
+    IMap map = hz.getMap("my-distributed-map");
+    //Standard Put and Get.
+    map.put("key", "value");
+    map.get("key");
+    //Concurrent Map methods, optimistic updating
+    map.putIfAbsent("somekey", "somevalue");
+    map.replace("key", "value", "newvalue");
+    // Shutdown this Hazelcast Client
+    hz.shutdown();
+
+    return 0;
+}
+----
+
+[source,csharp,indent=0,subs="verbatim,attributes",role="secondary"]
+.C#
+----
+using Hazelcast.Client;
+
+namespace Hazelcast.Examples.Org.Website.Samples
+{
+    public class MapSample
+    {
+        public static void Run(string[] args)
+        {
+            // Start the Hazelcast Client and connect to an already running Hazelcast Cluster on 127.0.0.1
+            var hz = HazelcastClient.NewHazelcastClient();
+            // Get the Distributed Map from Cluster.
+            var map = hz.GetMap("my-distributed-map");
+            //Standard Put and Get.
+            map.Put("key", "value");
+            map.Get("key");
+            //Concurrent Map methods, optimistic updating
+            map.PutIfAbsent("somekey", "somevalue");
+            map.Replace("key", "value", "newvalue");
+            // Shutdown this Hazelcast Client
+            hz.Shutdown();
+        }
+    }
+}
+----
+
+[source,javascript,indent=0,subs="verbatim,attributes",role="secondary"]
+.Node.js
+----
+var Client = require('hazelcast-client').Client;
+// Start the Hazelcast Client and connect to an already running Hazelcast Cluster on 127.0.0.1
+Client.newHazelcastClient().then(function (hz) {
+    var map;
+    // Get the Distributed Map from Cluster.
+    hz.getMap('my-distributed-map').then(function (mp) {
+        map = mp;
+        // Standard Put and Get.
+        return map.put('key', 'value');
+    }).then(function () {
+        return map.get('key');
+    }).then(function (val) {
+        // Concurrent Map methods, optimistic updating
+        return map.putIfAbsent('somekey', 'somevalue');
+    }).then(function () {
+        return map.replace('key', 'value', 'newvalue');
+    }).then(function (value) {
+        // Shutdown this Hazelcast client
+        hz.shutdown();
+    });
+});
+----
+
+[source,python,indent=0,subs="verbatim,attributes",role="secondary"]
+.Python
+----
+import hazelcast
+
+if __name__ == "__main__":
+    # Start the Hazelcast Client and connect to an already running Hazelcast Cluster on 127.0.0.1
+    hz = hazelcast.HazelcastClient()
+    # Get the Distributed Map from Cluster.
+    map = hz.get_map("my-distributed-map").blocking()
+    # Standard Put and Get
+    map.put("key", "value")
+    map.get("key")
+    # Concurrent Map methods, optimistic updating
+    map.put_if_absent("somekey", "somevalue")
+    map.replace_if_same("key", "value", "newvalue")
+    # Shutdown this Hazelcast Client
+    hz.shutdown()
+----
+
+[source,go,indent=0,subs="verbatim,attributes",role="secondary"]
+.Go
+----
+package orgwebsite
+
+import "github.com/hazelcast/hazelcast-go-client"
+
+func mapSampleRun() {
+	// Start the Hazelcast Client and connect to an already running Hazelcast Cluster on 127.0.0.1
+	hz, _ := hazelcast.NewClient()
+	// Get the Distributed Map from Cluster.
+	mp, _ := hz.GetMap("myDistributedMap")
+	//Standard Put and Get.
+	mp.Put("key", "value")
+	mp.Get("key")
+	//Concurrent Map methods, optimistic updating
+	mp.PutIfAbsent("somekey", "somevalue")
+	mp.ReplaceIfSame("key", "value", "newvalue")
+	// Shutdown this hazelcast client
+	hz.Shutdown()
+} 
+----
+
+
+==== Connecting Management Center to the Cluster
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 [[installing-hazelcast-imdg]]
-==== Installing Hazelcast IMDG
+==== Installing Hazelcast
 
 You can find Hazelcast in standard Maven repositories. If your
 project uses Maven, you do not need to add
