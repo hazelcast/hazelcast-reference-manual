@@ -4,6 +4,40 @@
 
 
 '''
+**What Guarantees does Hazelcast IMDG offer?**
+
+Hazelcast IMDG is distributed and highly available by nature.
+It is achieved by keeping the data partition backup always on another Hazelcast member.
+
+Hazelcast IMDG offers AP and CP functionality with different data structure implementations
+(see link:https://en.wikipedia.org/wiki/CAP_theorem[CAP theorem^]).
+Data structures exposed under `HazelcastInstance` API are all AP data structures.
+Hazelcast IMDG also contains a CP subsystem, built on the Raft consensus algorithm and
+accessed via `HazelcastInstance.getCPSubsytem()` which provides CP data structures and APIs.
+
+* AP Hazelcast IMDG guarantees:
+** With lazy replication, when the primary replica receives an update operation for a key,
+it executes the update locally and propagates it to backup replicas. It marks each update
+with a logical timestamp so that backups apply them in the correct order and converge to the
+same state with the primary. Backup replicas can be used to scale reads (see the <<enabling-backup-reads, Enabling Backup Reads section>>)
+with no strong consistency but monotonic reads guarantee.
+** It employs additional measurements to maintain consistency in a best-effort manner.
+** Hazelcast, as an AP product, does not provide the exactly-once guarantee. In general,
+Hazelcast tends to be an at-least-once solution.
+** See the <<consistency-and-replication-model, Consistency and Replication Model chapter>>
+for more information.
+
+* CP Hazelcast IMDG Guarantees:
+** It builds a strongly consistent layer for a set of distributed data structures.
+You can enable CP Subsystem and use it with the strong consistency guarantee.
+** Its data structures are CP with respect to the CAP principle, i.e., they always
+maintain linearizability and prefer consistency over availability during network partitions.
+** Besides network partitions, CP Subsystem withstands server and client failures.
+** It provides a good degree of fault tolerance at run-time, and <<cp-subsystem-persistence, CP Subsystem Persistence>> enables more robustness.
+** See the <<cp-subsystem, CP Subsystem chapter>> for more information.
+
+
+'''
 **Why 271 as the default partition count?**
 
 The partition count of 271, being a prime number, is a good choice because

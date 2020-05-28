@@ -1492,9 +1492,9 @@ See the following table for the before/after built-in WAN publisher examples:
     <queue-full-behavior>DISCARD_AFTER_MUTATION</queue-full-behavior>
     <queue-capacity>10000</queue-capacity>
     <target-endpoints>10.3.5.1:5701,10.3.5.2:5701</target-endpoints>
-    <wan-sync>
+    <sync>
         <consistency-check-strategy>NONE</consistency-check-strategy>
-    </wan-sync>
+    </sync>
 </batch-publisher>
 ----
 
@@ -2140,6 +2140,9 @@ all attributes and nested elements have been removed from programmatic, XML and 
 for Management Center, i.e., from `ManagementCenterConfig` class and `management-center`
 configuration element, except for the `scripting-enabled` attribute.
 
+The default value of `scripting-enabled` attribute is `false`, whereas in
+Hazelcast 3.x it was enabled by default for Hazelcast Open Source.
+
 A full example of settings available in the Management Center configuration now looks like the following:
 
 [source,xml]
@@ -2150,6 +2153,68 @@ A full example of settings available in the Management Center configuration now 
 This has come with the following changes of the system properties that configure Management Center:
 
 * `hazelcast.mc.url.change.enabled` is not available anymore.
+
+==== Changes in the Event Journal Configuration
+
+Event journal configuration had been put as a top-level configuration
+element. With IMDG 4.0, this restriction has been removed; this means
+event journal configuration now can be part of both map and cache
+configurations. This eliminates additionally specifying the map
+/cache names on the event journal configuration to connect it
+to the map/cache configurations.
+
+See the following table for the before/after snippets.
+
+[cols="1a,1a"]
+|===
+
+| *_Before IMDG 4.0_* | *_After IMDG 4.0_*
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <event-journal enabled="false">
+        <mapName>default</mapName>
+        <capacity>10000</capacity>
+        <time-to-live-seconds>0</time-to-live-seconds>
+    </event-journal>
+    ...
+    <event-journal enabled="false">
+        <cacheName>default</cacheName>
+        <capacity>10000</capacity>
+        <time-to-live-seconds>0</time-to-live-seconds>
+    </event-journal>
+    ...
+</hazelcast>
+----
+
+|
+
+[source,xml,options="nowrap"]
+----
+<hazelcast>
+    ...
+    <map name="default">
+        <event-journal enabled="false">
+            <capacity>10000</capacity>
+            <time-to-live-seconds>0</time-to-live-seconds>
+        </event-journal>
+    </map>
+    ...
+    <cache name="default">
+        <event-journal enabled="false">
+            <capacity>10000</capacity>
+            <time-to-live-seconds>0</time-to-live-seconds>
+        </event-journal>
+    </cache>
+    ...
+</hazelcast>
+----
+|===
+
 
 === Upgrading to Hazelcast IMDG 3.12.x
 

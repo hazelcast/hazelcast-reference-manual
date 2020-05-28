@@ -288,8 +288,11 @@ You can also define your own partition strategy by implementing the class `Parti
 To enable your implementation, add the full class name to your Hazelcast configuration using either
 the declarative or programmatic approach, as exemplified above.
 
-As stated previously, above strategies are defined **per map** in your Hazelcast member.
-You can also define a strategy **per member** in your Hazelcast cluster.
+The examples above show how to define a partitioning strategy per map.
+Note that all the members of your cluster must have the same
+partitioning strategy configurations.
+
+You can also change a global strategy which is applied to all the data structures in your cluster.
 This can be done by defining the `hazelcast.partitioning.strategy.class` system property.
 An example declarative way of configuring this property is shown below:
 
@@ -306,13 +309,15 @@ An example declarative way of configuring this property is shown below:
 </hazelcast>
 ----
 
+You can specify the aforementioned out-of-the-box strategies or your custom
+partitioning strategy.
+
 You can also use other system property configuring options as explained in the
 <<configuring-with-system-properties, Configuring with System Properties section>>.
 
-NOTE: As described above, partitioning strategy is supported on the member side
-(per map and per member configurations). The Hazelcast clients do not support it yet and they
-should not access the maps which have partitioning strategies defined on the
-member side.
+The per map and global (cluster) partitioning strategies are supported on the member side.
+Hazelcast IMDG Java clients only support the global strategy and it is configured
+via the same system property used in the members (`hazelcast.partitioning.strategy.class `).
 
 === Running on EC2
 
@@ -1033,6 +1038,9 @@ the eviction should be triggered. The `size` is either interpreted as entry coun
 
 Once the eviction is triggered the configured `eviction-policy` determines which, if any, entries must be evicted.
 
+Note that the policies mentioned are configured under the `near-cache` configuration block, as seen in the above
+<<near-cache-configuration-examples, configuration examples>>.
+
 ==== Near Cache Expiration
 
 Expiration means the eviction of expired records. A record is expired:
@@ -1045,6 +1053,10 @@ The actual expiration is performed in the following cases:
 * When a record is accessed: it is checked if the record is expired or not.
 If it is expired, it is evicted and `null` is returned as the value to the caller.
 * In the background: there is an expiration task that periodically (currently 5 seconds) scans records and evicts the expired records.
+
+Note that `max-idle-seconds` and `time-to-live-seconds` are configured under the `near-cache` configuration block, as seen in the above
+<<near-cache-configuration-examples, configuration examples>>.
+
 
 ==== Near Cache Invalidation
 
@@ -1079,7 +1091,7 @@ the batch size should be configured with the `hazelcast.map.invalidation.batch.s
 Near Caches are invalidated by invalidation events. Invalidation events can be lost due to the fire-and-forget fashion of eventing system.
 If an event is lost, reads from Near Cache can indefinitely be stale.
 
-To solve this problem, starting with Hazelcast 3.8, Hazelcast provides
+To solve this problem, Hazelcast provides
 eventually consistent behavior for IMap/JCache Near Caches by detecting invalidation losses.
 After detection of an invalidation loss, stale data is made unreachable and Near Cache's `get` calls to
 that data are directed to the underlying IMap/JCache to fetch the fresh data.

@@ -27,7 +27,7 @@ collection limitations so that applications can exploit hardware memory
 more efficiently without the need of oversized clusters. High-Density
 Memory Store is designed as a pluggable memory manager which enables multiple
 memory stores for different data structures. These memory stores are all
-accessible by a common access layer that scales up to terabytes of the main
+accessible by a common access layer that scales up to massive amounts of the main
 memory on a single JVM by minimizing the GC pressure. High-Density Memory
 Store enables predictable application scaling and boosts performance and
 latency while minimizing garbage collection pauses.
@@ -179,11 +179,15 @@ NativeMemoryConfig memoryConfig = new NativeMemoryConfig()
 config.setNativeMemoryConfig(memoryConfig);
 ----
 
+NOTE: Note that integration with Intel(R) Optane(TM) DC
+is supported on Linux operating system and it is for
+Optane DIMMs (not SSDs).
+
 NOTE: To achieve the best performance using
 Intel(R) Optane(TM) DC persistent memory, we recommend to
 use it for IMap, ICache and Near Cache data structures
 with relatively small values up to 1 KB. In this case,
-the performance is similar to that of standard RAM.
+the performance is similar to that of standard RAM. 
 
 === Sizing Practices
 
@@ -292,7 +296,7 @@ which is initially stable.
 
 Since only a single member has failed, the cluster performed the standard
 High Availability routine by recovering member B's data from backups and
-redistributing the data among the remaining members (the members A and B
+redistributing the data among the remaining members (the members A and C
 in this case). Member B's persisted Hot Restart data is completely irrelevant.
 
 Furthermore, when a member starts with existing Hot Restart data,
@@ -556,8 +560,8 @@ the Hot Restart directory. For this, you need to perform the following steps:
 . Configure the Persistent Memory as a File System
 . Configure the Hot Restart Store to Use Persistent Memory
 
-Using this Persistent Memory, you can get the Hot Restart times approximately
-by 250%. You can find the configuration steps in the Hot Restart Store section
+Using Persistent Memory, Hot Restart times can be drastically improved.
+You can find the configuration steps in the Hot Restart Store section
 of the link:https://hazelcast.com/resources/hazelcast-deployment-operations-guide/[Hazelcast IMDG Operations and Deployment Guide^].
 
 ==== Moving/Copying Hot Restart Data

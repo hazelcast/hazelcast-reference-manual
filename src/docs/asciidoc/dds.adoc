@@ -322,8 +322,9 @@ Hazelcast supports both synchronous and asynchronous backups. By default, backup
 are synchronous and configured with `backup-count`. In this case, backup operations block
 operations until backups are successfully copied to backup members (or deleted from backup
 members in case of remove) and acknowledgements are received. Therefore, backups are updated
-before a `put` operation is completed, provided that the cluster is stable. Sync backup
-operations have a blocking cost which may lead to latency issues.
+before a `write`(put, set, remove and their async counterparts) operation is completed, 
+provided that the cluster is stable. Sync backup operations have a blocking cost which may 
+lead to latency issues.
 
 [[creating-async-backups]]
 ===== Creating Async Backups
@@ -384,15 +385,18 @@ your hits to the keys in the backups are not reflected as hits to the original k
 members. This has an impact on IMap's maximum idle seconds or time-to-live seconds expiration.
 Therefore, even though there is a hit on a key in backups, your original key on the primary member may expire.
 
+NOTE: Backup reads that are requested by Hazelcast clients are ignored since this operation
+is performed on the local entries.
+
 [[map-eviction]]
 ==== Map Eviction
-
-NOTE: Starting with Hazelcast 3.7, Hazelcast Map uses a new eviction mechanism which is based on
-the sampling of entries. See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 Unless you delete the map entries manually or use an eviction policy, they will remain in the map.
 Hazelcast supports policy-based eviction for distributed maps. Currently supported policies are
 LRU (Least Recently Used) and LFU (Least Frequently Used).
+
+Hazelcast Map uses the same eviction mechanism as the JCache implementation.
+See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 [[understanding-map-eviction]]
 ===== Understanding Map Eviction
@@ -888,6 +892,10 @@ When you provide a `MapLoader` implementation and request an entry
 method loads that entry from the data store. This loaded entry is placed
 into the map and will stay there until it is removed or evicted.
 
+All loads can be listened via `EntryLoadedListener`. See the
+<<listening-for-map-events, Listening for Map Events section>>
+to learn how you can catch entry-based events.
+
 When a `MapStore` implementation is provided, an entry is also put into a
 user defined data store.
 
@@ -897,9 +905,6 @@ is not supported.
 
 NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface
 as you can see in the interface link:{docBaseUrl}/javadoc/com/hazelcast/map/MapStore.html[code^].
-
-NOTE: Starting with Hazelcast IMDG 3.11, all loads can be listened via `EntryLoadedListener`.
-
 
 Following is a `MapStore` example.
 
@@ -1076,6 +1081,29 @@ load is asynchronous. EAGER means load is blocked till all partitions are loaded
 See the <<initializing-map-on-startup, Initializing Map on Startup section>> for
 more details.
 
+===== Managing the Lifecycle of a MapLoader
+
+With `MapLoader` (and `MapStore` which extends it), you can do the regular store and load operations.
+If you need to perform other operations on create or on destroy of a `MapLoader`,
+such as establishing a connection to a database or accessing to other Hazelcast maps,
+you need to implement the `MapLoaderLifeCycleSupport` interface. By implementing
+it, you will have the `init()` and `destroy()` methods.
+
+The `init()` method initializes the `MapLoader` implementation. Hazelcast calls
+this method when the map is first created on a Hazelcast instance. The `MapLoader`
+implementation can initialize the required resources
+such as reading a configuration file or creating a database connection 
+or accessing a Hazelcast instance.
+
+The `destroy()` method is called during the graceful shutdown of a Hazelcast instance. 
+You can override this method  to cleanup the resources held by the `MapLoader` implementation, such as
+closing the database connections.
+
+In summary, you need `MapLoaderLifecycleSupport` to perform actions
+on create and on destroy of a `MapLoader`.
+
+See link:https://github.com/hazelcast/hazelcast-code-samples/blob/master/hazelcast-integration/mongodb/src/main/java/com/hazelcast/loader/MongoMapStore.java[here^] to see this interface in action.
+
 [[storing-entries-to-multiple-maps]]
 ===== Storing Entries to Multiple Maps
 
@@ -1104,17 +1132,8 @@ mapStoreConfig.setFactoryImplementation( new MapStoreFactory<Object, Object>() {
 
 To initialize the `MapLoader` implementation with the given map name, configuration
 properties and the Hazelcast instance, implement the
-link:{docBaseUrl}/javadoc/com/hazelcast/core/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface^].
-This interface has the methods `init()` and `destroy()`.
-
-The method `init()` initializes the `MapLoader` implementation. Hazelcast calls
-this method when the map is first used on the Hazelcast instance. The `MapLoader`
-implementation can initialize the required resources for implementing `MapLoader`
-such as reading a configuration file or creating a database connection.
-
-Hazelcast calls the method `destroy()` before shutting down. You can override this
-method  to cleanup the resources held by this `MapLoader` implementation, such as
-closing the database connections.
+link:{docBaseUrl}/javadoc/com/hazelcast/map/MapLoaderLifecycleSupport.html[`MapLoaderLifecycleSupport` interface^]
+which is described in the previous section.
 
 [[initializing-map-on-startup]]
 ===== Initializing Map on Startup

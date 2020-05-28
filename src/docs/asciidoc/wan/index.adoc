@@ -1,0 +1,73 @@
+== WAN Replication
+
+[blue]*Hazelcast IMDG Enterprise Feature*
+
+[[introduction-to-wr]]
+=== Introduction
+
+You can use Hazelcast's WAN Replication feature when you need
+to synchronize multiple Hazelcast clusters, which are connected by WANs, to the same state.
+It allows replicating updates in your data structures across the clusters. For now,
+Hazelcast WAN Replication supports the map and cache data structures.
+
+Assume that you have data centers in different cities each running an independent
+Hazelcast IMDG cluster. You can reliably use the WAN Replication feature
+to synchronize all of these clusters by replicating the updates to each of them.
+
+WAN Replication provides more control compared to the replication mechanism between
+the members in a single cluster. It has the following features and capabilities:
+
+* It gracefully detects if there is a connectivity issue between the clusters, buffering any updates
+that are not yet replicated and attempts to re-establish a connection to resume the replication.
+* It allows you to permanently pause, stop and resume the replication. This is most useful when you know
+that one of the clusters is temporarily (e.g., due to an upgrade),
+or permanently (e.g., due to removing a cluster out of service) unavailable.
+* It allows you to dynamically add new target clusters without any restarts.
+
+This chapter explains how you can replicate the state of your clusters over wide area
+networks through Hazelcast's WAN Replication.
+
+NOTE: WAN Replication is a Hazelcast IMDG Enterprise Edition feature. However,
+its API is available publicly link:https://docs.hazelcast.org/docs/latest/javadoc/com/hazelcast/wan/package-summary.html[here^] and,
+benefiting from it, you may write your own replication logic.
+
+[[wr-concepts]]
+==== Concepts
+
+Let's first define several important terms before we discuss WAN Replication:
+
+* Active cluster: The user updates performed on the cluster are replicated to other clusters connected through
+WAN Replication. In another words, this cluster can be seen as the "source" cluster which generates WAN update
+events and replicates them actively to other clusters.
+* Passive cluster: The user updates performed on this cluster are not replicated to other clusters. In another words,
+this cluster can be seen as the "target" cluster which is capable of receiving, applying and possibly forwarding
+WAN events from other ("active") clusters. It does not generate any WAN update events because of user interaction.
+* WAN publisher: A publisher is a sink for WAN events and an implementation of `WanReplicationPublisher`.
+Most often, this is a single, entire target Hazelcast IMDG cluster but you can also define custom publishers which
+may transmit WAN events to other systems such as messaging queues, Kafka or even persist events on disk.
+* WAN endpoint: when a publisher is replicating events to another Hazelcast cluster, an endpoint is a single member
+in that target cluster. That means that a WAN publisher replicates to multiple WAN endpoints.
+* WAN replication scheme: a named collection of WAN publishers. Hazelcast maps and caches are configured to
+replicate to a WAN replication scheme, meaning that a single map/cache update can be replicated to multiple target
+clusters or multiple external systems.
+* WAN publisher ID: A unique identifier for a specific WAN replication publisher in a WAN replication scheme. This
+identifier can then be used to control the behavior of a WAN replication publisher while the source/active cluster is
+running. For instance, you can use this identifier in combination with the WAN replication scheme name to pause, stop or
+resume WAN replication for that specific publisher. Or, you can trigger synchronization with a specific target cluster
+and so on.
+
+include::modes.adoc[]
+
+include::quick_start.adoc[]
+
+include::defining_wan_replication.adoc[]
+
+include::configuring_for_map_and_cache.adoc[]
+
+include::advanced_features.adoc[]
+
+include::tuning.adoc[]
+
+include::failures.adoc[]
+
+include::rest_api.adoc[]

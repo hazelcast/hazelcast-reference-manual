@@ -1,0 +1,20 @@
+=== WAN Replication Modes
+
+In clusters connected with WAN Replication, a cluster can have one of two roles:
+Active or Passive, conceptually explained in the previous section above.
+
+With these roles, there are two modes of WAN Replication:
+
+* [[active-passive]]**Active-Passive:** This mode can be used for failover scenarios where you want to replicate an active
+cluster to one or more passive clusters, for the purpose of maintaining a backup.
+If the active cluster becomes unavailable, you may redirect user traffic to the passive clusters. Once the active
+cluster becomes available again, you may again redirect user traffic to the active cluster. The active cluster may have
+however been started empty or might have simply missed any updates that have happened on the passive clusters.
+Any updates made on the passive clusters will not be replicated back to the active cluster and if the data is out-of-sync,
+it will not be synchronized. If you require that these updates be copied back to the active cluster, you may consider
+using active-active mode instead.
+
+* [[active-active]]**Active-Active:** Every cluster is equal, each cluster replicates to all other clusters.
+This is normally used to connect different clients to different clusters for the sake of
+the shortest path between client and server, hence gaining increased performance. An example use case would be geographically
+distributed applications.

@@ -421,20 +421,7 @@ You can find the JMX API definition below with descriptions and the API methods 
 *  **Node ( `HazelcastInstance.Node` )**
 *  Address ( `address` )
 *  Master address ( `masterAddress` )
-* **Event Service ( `HazelcastInstance.EventService` )**
-**  Event thread count  ( `eventThreadCount` )
-**  Event queue size ( `eventQueueSize` )
-**  Event queue capacity ( `eventQueueCapacity` )
-* **Operation Service ( `HazelcastInstance.OperationService` )**
-** Response queue size  ( `responseQueueSize` )
-**  Operation executor queue size ( `operationExecutorQueueSize` )
-** Running operation count ( `runningOperationsCount` )
-** Remote operation count ( `remoteOperationCount` )
-** Executed operation count ( `executedOperationCount` )
-** Operation thread count ( `operationThreadCount` )
-* **Proxy Service ( `HazelcastInstance.ProxyService` )**
-**  Proxy count ( `proxyCount` )
-* **Partition Service ( `HazelcastInstance.PartitionService` )**
+* **Partition Service ( `HazelcastInstance.PartitionServiceMBean` )**
 **  Partition count ( `partitionCount` )
 **  Active partition count ( `activePartitionCount` )
 ** Cluster Safe State ( `isClusterSafe` )
@@ -443,8 +430,6 @@ You can find the JMX API definition below with descriptions and the API methods 
 **  Client connection count ( `clientConnectionCount` )
 **  Active connection count ( `activeConnectionCount` )
 **  Connection count ( `connectionCount` )
-* **Client Engine ( `HazelcastInstance.ClientEngine` )**
-**  Client endpoint count ( `clientEndpointCount` )
 * **System Executor ( `HazelcastInstance.ManagedExecutorService` )**
 **  Name ( `name` )
 **  Work queue size ( `queueSize` )
@@ -505,14 +490,14 @@ You can find the JMX API definition below with descriptions and the API methods 
 You can monitor your Hazelcast members via the JMX protocol.
 
 To achieve this, first add the following system properties to enable
-the link:http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html[JMX agent^]:
+link:http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html[JMX agent^]:
 
 * `-Dcom.sun.management.jmxremote`
 * `-Dcom.sun.management.jmxremote.port=\_portNo\_` (to specify JMX port, the default is `1099`) (*optional*)
 * `-Dcom.sun.management.jmxremote.authenticate=false` (to disable JMX auth) (*optional*)
 
 
-Then, enable JMX by setting the `hazelcast.jmx` property to `true` using one of the following ways:
+Then enable JMX by setting the property `hazelcast.jmx` property to `true` using one of the following ways:
 
 * By declarative configuration:
 +
@@ -2235,22 +2220,22 @@ Note that the link:https://jcp.org/en/jsr/detail?id=223[JSR 223^] API is used in
 It's possible to restrict the source IP addresses from which Management Center operations
 are allowed. By default all source connections are allowed.
 
-Defining the source addresses is possible through the
-`hazelcast.mc.trusted.interfaces` property. The wildcard (`*`) and ranges can be used.
+Defining these source addresses is possible through the `trusted-interfaces`
+configuration element. The wildcard (`*`) and ranges can be used.
 See the following example:
 
 [source,xml]
 ----
 <hazelcast>
-    <properties>
-        <property name="hazelcast.mc.trusted.interfaces">192.168.1.*</property>
-    </properties>
+    ...
+    <management-center>
+        <trusted-interfaces>
+            <interface>192.168.1.*</interface>
+        </trusted-interfaces>
+    </management-center>
+    ...
 </hazelcast>
 ----
-
-NOTE: This property is only available in the patch releases for Hazelcast IMDG minor version `4.0`.
-Starting with IMDG `4.1` a new configuration element is added under `management-center` configuration
-block and the property-based configuration is not supported anymore.
 
 === Clustered JMX and REST via Management Center
 
