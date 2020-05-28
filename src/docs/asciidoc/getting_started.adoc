@@ -222,29 +222,40 @@ For comprehensive information on the clients, see the following sections:
 
 ==== Connecting Management Center to the Cluster
 
+Hazelcast Management Center helps you to monitor and manage your IMDG cluster.
+After you created your cluster and client application as depicted in the above sections,
+let's connect Management Center.
+Management Center comes with the Hazelcast IMDG download package.
 
+Use the following scripts to start the Management Center service first. In case you are
+using Docker, run the related command shown below.
 
+[source,shell,indent=0,subs="verbatim,attributes",role="primary"]
+.Linux
+----
+management-center/start.sh
+----
 
+[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
+.Windows
+----
+management-center/start.bat
+----
 
+[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
+.Docker
+----
+docker run -p 8080:8080 hazelcast/management-center
+----
 
+Then, open your preferred web browser to 'http://localhost:8080' and
+select the 'default' security provider to provide a username and password.
+Log in to Management Center using those credentials and create a cluster connection;
+the defaults should work fine. If using Docker for members, find out the Docker IP address
+of cluster rather than the default of localhost.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+For comprehensive information on Management Center, see its
+link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[documentation^].
 
 
 [[installing-hazelcast-imdg]]
