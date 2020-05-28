@@ -78,6 +78,10 @@ Please note that this merge policy can only be used when the clusters' clocks ar
 NOTE: When using WAN replication, please note that the key based operations are replicated to the target cluster,
 except `evict()`. Also the results of entry processors are also replicated.
 
+NOTE: Note that WAN replication does not replicate configurations, but only the events, i.e., data inserts,
+updates and removals. When a map or cache is replicated and the target cluster does not have a configuration
+for that map or cache, the default configuration will apply on the target cluster.
+
 **Enabling WAN Replication for `ICache`:**
 
 The following is a declarative configuration example for enabling WAN Replication for `ICache`:
