@@ -2,125 +2,8 @@
 [[hazelcast-overview]]
 == Overview
 
-This chapter describes what Hazelcast IMDG (In-Memory Data Grid) is along with its
-use cases, topology and architecture.
-
-=== What is Hazelcast IMDG?
-
-Hazelcast IMDG is an open-source distributed in-memory
-object store supporting a wide variety of data structures.
-
-You can use Hazelcast IMDG to store your data in RAM, spread
-and replicate it across your cluster of machines, and perform computations on it.
-Replication gives you the resilience to failures of cluster members.
-
-Hazelcast IMDG is highly scalable and available. Distributed applications can use
-it for distributed caching, synchronization, clustering, processing,
-pub/sub messaging, etc.
-
-It is implemented in Java language and has clients for Java, C++, .NET, REST, Python,
-Go and Node.js. Hazelcast IMDG also speaks Memcached and REST protocols. It plugs into
-Hibernate and can easily be used with any existing database system.
-
-Hazelcast IMDG makes distributed computing simple by
-offering distributed implementations of many developer-friendly interfaces.
-For example, the Map interface provides an In-Memory Key Value store which confers many
-of the advantages of NoSQL in terms of developer friendliness and developer productivity.
-
-Your cloud-native applications can easily use Hazelcast IMDG.
-It is flexible enough to use as a data and computing platform out-of-the-box
-or as a framework for your own cloud-native applications and microservices.
-
-Hazelcast IMDG is designed to be lightweight and easy to use. Since it
-is delivered as a compact library (JAR) and
-has no external dependencies other than Java, it easily
-plugs into your software solution and provides
-distributed data structures and computing utilities.
-
-It is designed to scale up to hundreds and thousands of members.
-When you add new members. they automatically discover the cluster
-and linearly increase both the memory and
-processing capacity. The members maintain a TCP connection between
-each other and all communication is performed through
-this layer. Each cluster member is configured to be the same in terms
-of functionality. The oldest member (the first member created
-in the cluster) automatically performs the data assignment to cluster members.
-If the oldest member dies, the second oldest member takes over.
-
-NOTE: You can come across with the term "master" or "master member" in some
-sections of this manual. They are used for contextual clarification purposes;
-please remember that they refer to the "oldest member" which is explained in
-the above paragraph.
-
-Hazelcast IMDG offers simple scalability, partitioning (sharding), and re-balancing
-out-of-the-box. It does not require any extra coordination processes. NoSQL and
-traditional databases are difficult to scale out and manage. They require additional
-processes for coordination and high availability. With Hazelcast IMDG, when you start
-another process to add more capacity, data and backups are automatically and evenly balanced.
-
-**Hazelcast's Distinctive Strengths**
-
-* It is open source.
-* It is only a JAR file. You do not need to install software other than Java.
-* Hazelcast IMDG stores everything in-memory (RAM). It is designed to perform fast reads
-and updates.
-* Hazelcast IMDG is peer-to-peer; there is no single point of failure in a Hazelcast IMDG cluster;
-each member in the cluster is configured to be functionally the same. They all store equal amounts
-of data and do equal amounts of processing. You can embed Hazelcast IMDG in your
-existing application or use it in client and server mode where your application is a
-client to Hazelcast members.
-* When the size of your memory and compute requirements increase, new members can
-be dynamically joined to the Hazelcast IMDG cluster to scale elastically.
-* Data is resilient to member failure. Data backups are distributed across the cluster.
-This is a big benefit when a member in the cluster crashes as data is not lost.
-Hazelcast keeps the backup of each data entry on multiple members. On a member
-failure, the data is restored from the backup and the cluster continues to operate without downtime.
-* Members are always aware of each other unlike in traditional key-value caching solutions.
-* You can build your own custom-distributed data structures using the Service Programming
-Interface (SPI) if you are not happy with the data structures provided.
-* Hazelcast provides out-of-the-box distributed data structures.
-
-Finally, Hazelcast has a vibrant open source community enabling it to be continuously developed.
-
-Hazelcast is a fit when you need:
-
-* analytic applications requiring big data processing by partitioning the data
-* to retain frequently accessed data in the grid
-* a cache, particularly an open source JCache provider with elastic distributed
-scalability
-* a primary data store for applications with utmost performance, scalability and
-low-latency requirements
-* an In-Memory NoSQL Key Value Store
-* publish/subscribe communication at highest speed and scalability between applications
-* applications that need to scale elastically in distributed and cloud environments
-* a highly available distributed cache for applications
-* an alternative to Coherence and Terracotta.
-
-[[use-cases]]
-=== Use Cases
-
-Hazelcast can be used:
-
-* to share server configuration/information to see how a cluster performs
-* to cluster highly changing data with event notifications, e.g., user based events, and
-to queue and distribute background tasks
-* as a simple Memcache with Near Cache
-* as a cloud-wide scheduler of certain processes that need to be performed on some members
-* to share information (user information, queues, maps, etc.) on the fly with multiple
-members in different installations under OSGI environments
-* to share thousands of keys in a cluster where there is a web service interface on an
-application server and some validation
-* as a distributed topic (publish/subscribe server) to build scalable chat servers for smartphones
-* as a front layer for a Cassandra back-end
-* to distribute user object states across the cluster, to pass messages between objects
-and to share system data structures (static initialization state, mirrored objects, object
-identity generators)
-* as a multi-tenancy cache where each tenant has its own map
-* to share datasets, e.g., table-like data structure, to be used by applications
-* to distribute the load and collect status from Amazon EC2 servers where the front-end is
-developed using, for example, Spring framework
-* as a real-time streamer for performance detection
-* as storage for session data in web applications (enables horizontal scalability of the web application).
+This chapter describes the architecture of Hazelcast IMDG along with its
+partitioning mechanism, use cases and topology.
 
 [[hazelcast-imdg-architecture]]
 === Architecture
@@ -292,6 +175,32 @@ repartitioning when a member joins or leaves the cluster.
 In these cases, the partition table in the oldest member is updated with the new partition
 ownerships. Note that if a lite member joins or leaves a cluster, repartitioning is not triggered
 since lite members do not own any partitions.
+
+[[use-cases]]
+=== Use Cases
+
+Hazelcast can be used:
+
+* to share server configuration/information to see how a cluster performs
+* to cluster highly changing data with event notifications, e.g., user based events, and
+to queue and distribute background tasks
+* as a simple Memcache with Near Cache
+* as a cloud-wide scheduler of certain processes that need to be performed on some members
+* to share information (user information, queues, maps, etc.) on the fly with multiple
+members in different installations under OSGI environments
+* to share thousands of keys in a cluster where there is a web service interface on an
+application server and some validation
+* as a distributed topic (publish/subscribe server) to build scalable chat servers for smartphones
+* as a front layer for a Cassandra back-end
+* to distribute user object states across the cluster, to pass messages between objects
+and to share system data structures (static initialization state, mirrored objects, object
+identity generators)
+* as a multi-tenancy cache where each tenant has its own map
+* to share datasets, e.g., table-like data structure, to be used by applications
+* to distribute the load and collect status from Amazon EC2 servers where the front-end is
+developed using, for example, Spring framework
+* as a real-time streamer for performance detection
+* as storage for session data in web applications (enables horizontal scalability of the web application).
 
 [[resources]]
 === Resources
