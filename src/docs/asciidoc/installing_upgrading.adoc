@@ -1,0 +1,680 @@
+[[installing-hazelcast-imdg]]
+== Installing and Upgrading
+
+This chapter provides pre- and post-installation
+details, and deployment options of Hazelcast IMDG.
+
+=== Using Maven
+
+You can find Hazelcast in standard Maven repositories. If your
+project uses Maven, you do not need to add
+additional repositories to your `pom.xml` or add
+`hazelcast-{imdg-version}.jar` file into your
+classpath (Maven does that for you). Just add the following
+lines to your `pom.xml`:
+
+
+[source,xml,indent=0,subs="verbatim,attributes+",role="primary"]
+.Hazelcast Open Source Edition
+----
+<dependencies>
+    <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast</artifactId>
+        <version>{imdg-version}</version>
+    </dependency>
+</dependencies>
+----
+
+[source,xml,indent=0,subs="verbatim,attributes+",role="secondary"]
+.Hazelcast Enterprise Edition
+----
+<!-- There are two Maven repositories defined for Hazelcast IMDG Enterprise: -->
+
+<repository>
+    <id>Hazelcast Private Snapshot Repository</id>
+    <url>https://repository.hazelcast.com/snapshot/</url>
+</repository>
+<repository>
+    <id>Hazelcast Private Release Repository</id>
+    <url>https://repository.hazelcast.com/release/</url>
+</repository>
+
+
+<!-- You may also define dependencies: -->
+
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise</artifactId>
+    <version>{imdg-version}</version>
+</dependency>
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise-all</artifactId>
+    <version>{imdg-version}</version>
+</dependency>
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise-all</artifactId>
+    <version>{imdg-version}</version>
+    <classifier>javadoc</classifier>
+</dependency>
+----
+
+Above dependency (`hazelcast`) includes both member and Java
+client libraries of Hazelcast IMDG. A separate Java client module
+and dependency do not exist. See <<removal-of-hazelcast-client-module, here>>
+for the details.
+
+=== Using the Download Archives
+
+As an alternative to Maven, you can download and install Hazelcast IMDG
+yourself. You only need to:
+
+* download the package `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
+from link:https://hazelcast.org/download[hazelcast.org^]
+* extract the downloaded `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
+* and add the file `hazelcast-{imdg-version}.jar` to your classpath.
+
+=== Using Docker
+
+You can run the following command to launch Hazelcast Docker Container:
+
+[source,shell]
+----
+$ docker run hazelcast/hazelcast:$HAZELCAST_VERSION
+----
+
+This command will pull Hazelcast Docker image and run a new Hazelcast instance.
+
+You can find the full list of Hazelcast versions to replace $HAZELCAST_VERSION]
+at the link:https://hub.docker.com/r/hazelcast/hazelcast/tags[Official Hazelcast Docker Hub^].
+
+[[supported-jvms]]
+=== Supported Java Virtual Machines
+
+Following table summarizes the version compatibility between Hazelcast IMDG
+and various vendors' Java Virtual Machines (JVMs).
+
+
+[cols="35,10,15,15,15,10",options="header"]
+.Supported JVMs
+|===
+
+|Hazelcast IMDG Version | JDK Version | Oracle JDK | IBM SDK, Java Technology Edition | Azul Zing JDK | OpenJDK
+
+| Up to 3.11
+
+(_JDK 6 support is dropped with the release of Hazelcast IMDG 3.12_)
+| 6
+| icon:check[]
+| icon:times[]
+| icon:check[]
+| icon:check[]
+
+| Up to 3.11
+
+(_JDK 7 support is dropped with the release of Hazelcast IMDG 3.12_)
+| 7
+| icon:check[]
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+| Up to current
+| 8
+| icon:check[]
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported.
+| 9
+| icon:check[]
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported.
+| 10
+| icon:check[]
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported.
+| 11
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:check[]
+
+|===
+
+
+NOTE: Hazelcast IMDG 3.10 and older releases are not fully tested on JDK 9
+and newer, so there may be some features that are not working properly.
+
+[IMPORTANT]
+====
+See the following sections for the details of Hazelcast IMDG supporting
+JDK 9 and newer:
+
+* <<running-in-modular-java, Running in Modular Java>>: Talks about the
+new module system present in Java 9 and newer and how you can run a Hazelcast
+application on it.
+* <<tls-ssl-for-hazelcast-members, TLS/SSL for Hazelcast Members>>: Lists
+`TLSv1.3`, which comes with Java 11, as a supported TLS version.
+====
+
+[[setting-the-license-key]]
+==== Licensing
+
+Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise**
+and **Enterprise HD**. The supported features differ in your Hazelcast
+setup according to the license type you own.
+
+* **Enterprise license**: In addition to the open source edition of
+Hazelcast, Enterprise features are the following:
+** Security
+** WAN Replication
+** Clustered REST
+** Clustered JMX
+** Striim Hot Cache
+** Rolling Upgrades
+* **Enterprise HD license**: In addition to the Enterprise features,
+Enterprise HD features are the following:
+** High-Density Memory Store
+** Hot Restart Persistence
+
+
+To use Hazelcast IMDG Enterprise, you need to set the provided license
+key using one of the configuration methods shown below.
+
+NOTE: Hazelcast IMDG Enterprise license keys are required only for members.
+You do not need to set a license key for your Java clients for which you
+want to use IMDG Enterprise features.
+
+**Declarative Configuration:**
+
+Add the below line to any place you like in the file `hazelcast.xml`.
+This XML file offers you a declarative way to configure your Hazelcast.
+It is included in the Hazelcast download package. When you extract the
+downloaded package, you will see the file `hazelcast.xml` under the `/bin` directory.
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <license-key>Your Enterprise License Key</license-key>
+    ...
+</hazelcast>
+----
+
+**Programmatic Configuration:**
+
+Alternatively, you can set your license key programmatically as shown below.
+
+[source,java]
+----
+Config config = new Config();
+config.setLicenseKey( "Your Enterprise License Key" );
+----
+
+**Spring XML Configuration:**
+
+If you are using Spring with Hazelcast, then you can set the license
+key using the Spring XML schema, as shown below.
+
+[source,xml]
+----
+<hz:config>
+    ...
+    <hz:license-key>Your Enterprise License Key</hz:license-key>
+    ...
+</hz:config>
+----
+
+**JVM System Property:**
+
+As another option, you can set your license key using the below
+command (the "-D" command line option).
+
+```
+-Dhazelcast.enterprise.license.key=Your Enterprise License Key
+```
+
+[[license-key-format]]
+===== License Key Format
+
+License keys have the following format:
+
+```
+<Name of the Hazelcast edition>#<Count of the Members>#<License key>
+```
+
+The strings before the `<License key>` is the human readable part. You
+can use your license key with or without this human readable part. So,
+both the following example license keys are valid:
+
+```
+HazelcastEnterpriseHD#2Nodes#1q2w3e4r5t
+```
+
+
+```
+1q2w3e4r5t
+```
+
+[[license-info]]
+==== License Information
+
+License information is available through the following Hazelcast APIs.
+
+===== JMX
+
+The MBean `HazelcastInstance.LicenseInfo` holds all the relative license
+details and can be accessed through Hazelcast's JMX port (if enabled). The
+following parameters represent these details:
+
+* `maxNodeCountAllowed`: Maximum members allowed to form a cluster under
+the current license.
+* `expiryDate`: Expiration date of the current license.
+* `typeCode`: Type code of the current license.
+* `type`: Type of the current license.
+* `ownerEmail`: Email of the current license's owner.
+* `companyName`: Company name on the current license.
+
+Following is the list of license ``type``s and ``typeCode``s:
+
+```
+MANAGEMENT_CENTER(1, "Management Center"),
+ENTERPRISE(0, "Enterprise"),
+ENTERPRISE_SECURITY_ONLY(2, "Enterprise only with security"),
+ENTERPRISE_HD(3, "Enterprise HD"),
+CUSTOM(4, "Custom");
+```
+
+===== REST
+
+You can access the license details by issuing a `GET` request through the
+REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using the
+REST Endpoint Groups section>>) on the `/license` resource, as shown below.
+
+```
+curl -v http://localhost:5701/hazelcast/rest/license
+```
+
+Its output is similar to the following:
+
+```
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 5701 (#0)
+> GET /hazelcast/rest/license HTTP/1.1
+> Host: localhost:5701
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 165
+<
+{"licenseInfo":{"expiryDate":4090168799999,"maxNodeCount":99,"type":3,"companyName":null,"ownerEmail":null,"keyHash":"OsLh4O6vqDuKEq8lOANQuuAaRnmDfJfRPrFSEhA7T3Y="}}
+```
+
+[[rest-update-license]]To update the license of a running cluster, you can issue a `POST`
+request through the REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using
+the REST Endpoint Groups section>>) on the `/license` as shown below:
+
+```
+curl --data "${CLUSTERNAME}&${PASSWORD}&${LICENSE}" http://localhost:5001/hazelcast/rest/license
+```
+
+NOTE: The request parameters must be properly URL-encoded as described in the <<rest-client, REST Client section>>.
+
+The above command updates the license on all running Hazelcast members of the cluster.
+If successful, the response looks as follows:
+
+```
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 5001 (#0)
+> POST /hazelcast/rest/license HTTP/1.1
+> Host: 127.0.0.1:5001
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Length: 164
+> Content-Type: application/x-www-form-urlencoded
+>
+* upload completely sent off: 164 out of 164 bytes
+< HTTP/1.1 200 OK
+< Content-Type: application/javascript
+< Content-Length: 364
+<
+* Connection #0 to host 127.0.0.1 left intact
+{"status":"success","licenseInfo":{"expiryDate":1560380399161,"maxNodeCount":10,
+"type":-1,"companyName":"ExampleCompany","ownerEmail":"info@example.com",
+"keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="},
+"message":"License updated at run time - please make sure to update the license
+in the persistent configuration to avoid losing the changes on restart."}
+```
+
+As the message in the above example indicates, the license is updated only at runtime.
+The persistent configuration of each member needs to be updated manually to ensure that
+the license change is not lost on restart. The same message is logged as a warning in
+each member's log.
+
+It is only possible to update to a license that expires at the same time or after
+the current license. The new license must allow the exact same list of features and
+the same number of members.
+
+If, for any reason, updating the license fails on some members (member does not respond,
+license is not compatible, etc.), the whole operation fails, leaving the cluster in
+a potentially inconsistent state (some members have been switched to the new license
+while some have not). It is up to you to resolve this situation manually.
+
+===== Logs
+
+Besides the above approaches (JMX and REST) to access the license details,
+Hazelcast also starts to log a license information banner into the log files
+when the license expiration is approaching.
+
+During the last two months prior to the expiration, this license information
+banner is logged daily, as a reminder to renew your license to avoid any
+interruptions. Once the expiration is due to a month, the frequency of
+logging this banner becomes hourly (instead of daily). Lastly, when the
+expiration is due in a week, this banner is printed every 30 minutes.
+
+NOTE: Similar alerts are also present on the Hazelcast Management Center.
+
+The banner has the following format:
+
+```
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ WARNING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+HAZELCAST LICENSE WILL EXPIRE IN 29 DAYS.
+Your Hazelcast cluster will stop working after this time.
+
+Your license holder is customer@example-company.com, you should have them contact
+our license renewal department, urgently on info@hazelcast.com
+or call us on +1 (650) 521-5453
+
+Please quote license id CUSTOM_TEST_KEY
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+```
+
+WARNING: Please pay attention to the license warnings to prevent any possible
+interruptions in the operation of your Hazelcast applications.
+
+[[running-in-modular-java]]
+=== Running in Modular Java
+
+Java link:http://openjdk.java.net/projects/jigsaw/[project Jigsaw^] brought
+a new Module System into Java 9 and newer. Hazelcast supports running in
+the modular environment. If you want to run your application with Hazelcast
+libraries on the modulepath, use the following module name:
+
+* `com.hazelcast.core` for `hazelcast-{imdg-version}.jar` and
+`hazelcast-enterprise-{imdg-version}.jar`
+
+Don't use `hazelcast-all-{imdg-version}.jar` or
+`hazelcast-enterprise-all-{imdg-version}.jar` on the modulepath as it could
+lead to problems in module dependencies for your application. You can
+still use them on the classpath.
+
+The Java Module System comes with stricter visibility rules. It affects
+Hazelcast which uses internal Java API to reach the best performance results.
+
+Hazelcast needs the `java.se` module and access to the following Java
+packages for a proper work:
+
+* `java.base/jdk.internal.ref`
+* `java.base/java.nio` _(reflective access)_
+* `java.base/sun.nio.ch` _(reflective access)_
+* `java.base/java.lang` _(reflective access)_
+* `jdk.management/com.ibm.lang.management.internal` _(reflective access)_
+* `jdk.management/com.sun.management.internal` _(reflective access)_
+* `java.management/sun.management` _(reflective access)_
+
+You can provide the access to the above mentioned packages by using
+`--add-exports` and `--add-opens` (for the reflective access) Java arguments.
+
+**Example: Running a member on the classpath**
+
+[source,bash,subs="attributes+"]
+----
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  --add-opens java.base/java.nio=ALL-UNNAMED \
+  --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+  --add-opens java.management/sun.management=ALL-UNNAMED \
+  --add-opens jdk.management/com.ibm.lang.management.internal=ALL-UNNAMED \
+  --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED \
+  -jar hazelcast-{imdg-version}.jar
+----
+
+**Example: Running a member on the modulepath**
+
+[source,bash]
+----
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=com.hazelcast.core \
+  --add-opens java.base/java.lang=com.hazelcast.core \
+  --add-opens java.base/java.nio=com.hazelcast.core \
+  --add-opens java.base/sun.nio.ch=com.hazelcast.core \
+  --add-opens java.management/sun.management=com.hazelcast.core \
+  --add-opens jdk.management/com.ibm.lang.management.internal=com.hazelcast.core \
+  --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
+  --module-path lib \
+  --module com.hazelcast.core/com.hazelcast.core.server.HazelcastMemberStarter
+----
+
+_This example expects `hazelcast-{imdg-version}.jar` placed in the `lib` directory._
+
+[[starting-the-member-and-client]]
+=== Starting the Member and Client
+
+Having installed Hazelcast, you can get started.
+
+In this short tutorial, you perform the following activities:
+
+. Create a simple Java application using the Hazelcast distributed map and queue.
+. Run our application twice to have a cluster with two members (JVMs).
+. Connect to our cluster from another Java application by using the
+Hazelcast Native Java Client API.
+
+Let's begin.
+
+
+* The following code starts the first Hazelcast member and
+creates and uses the `customers` map and queue.
++
+[source,java]
+----
+include::{javasource}/GettingStartedMember.java[tag=startmember]
+----
++
+* Run this `GettingStarted` class a second time to get the second member
+started. The members form a cluster and the output is similar to the following.
++
+```
+Members {size:2, ver:2} [
+    Member [127.0.0.1]:5701 - e40081de-056a-4ae5-8ffe-632caf8a6cf1 this
+    Member [127.0.0.1]:5702 - 93e82109-16bf-4b16-9c87-f4a6d0873080
+]
+```
++
+Here, you can see the size of your cluster (`size`) and member list
+version (`ver`). The member list version is incremented when changes
+happen to the cluster, e.g., a member leaving from or joining to the cluster.
++
+* Now, add the `hazelcast-client-`*`{imdg-version}`*`.jar` library to your classpath.
+This is required to use a Hazelcast client.
+* The following code starts a Hazelcast Client, connects to our cluster,
+and prints the size of the `customers` map.
++
+[source,java]
+----
+public class GettingStartedClient {
+    public static void main( String[] args ) {
+        ClientConfig clientConfig = new ClientConfig();
+        HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
+        IMap map = client.getMap( "customers" );
+        System.out.println( "Map Size:" + map.size() );
+    }
+}
+----
++
+* When you run it, you see the client properly connecting to the cluster
+and printing the map size as **3**.
+
+Hazelcast also offers a tool, **Management Center**, that enables you to monitor your cluster.
+It is included in your Hazelcast IMDG download package and can also be downloaded
+from the Hazelcast website's link:https://hazelcast.org/download/#management-center[download page^].
+You can use this tool to monitor your cluster, cluster members, clients, data structures
+and WAN replications. See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[documentation^] for details on Hazelcast Management Center.
+
+By default, Hazelcast uses multicast to discover other members that can form a cluster.  If you are
+working with other Hazelcast developers on the same network, you may find yourself joining their
+clusters under the default settings.  Hazelcast provides a way to segregate clusters within the same
+network when using multicast. See the <<creating-cluster, Creating Clusters section>>
+for more information.  Alternatively, if you do not wish to use the default multicast mechanism,
+you can provide a fixed list of IP addresses that are allowed to join. See
+the <<join, Join configuration section>> for more information.
+
+NOTE: Multicast mechanism is not recommended for production since UDP
+is often blocked in production environments and other discovery mechanisms
+are more definite. See the <<discovery-mechanisms, Discovery Mechanisms section>>.
+
+NOTE: You can also check the video tutorials link:https://hazelcast.org/getting-started-with-hazelcast[here^].
+
+[[using-the-scripts-in-the-package]]
+=== Using the Scripts In The Package
+
+When you download and extract the Hazelcast ZIP or TAR.GZ package, you will
+see the following scripts under the `/bin` folder that provide basic
+functionalities for member and cluster management.
+
+The following are the names and descriptions of each script:
+
+* `start.sh` / `start.bat`: Starts a Hazelcast member with default
+configuration in the working directory.
+* `stop.sh` / `stop.bat`: Stops the Hazelcast member that was started
+in the current working directory.
++
+NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance
+per folder. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ
+package in a new folder.
++
+NOTE: You can also use the start scripts to deploy your own library to a
+Hazelcast member. See the <<adding-user-library-to-classpath, Adding User
+Library to CLASSPATH section>>.
+* `cluster.sh`: Provides basic functionalities for cluster management,
+such as getting and changing the cluster state, shutting down the cluster
+or forcing the cluster to clean its persisted data and make a fresh start.
+See the <<using-the-script-cluster-sh, Using the Script cluster.sh section>>
+to learn the usage of this script.
+* `cp-subsystem.sh`: Provides access to the CP subsystem management APIs
+using the REST interface.
+See the <<cp-subsystem-management-apis, CP Subsystem Management APIs section>>.
+* `healthcheck.sh`: Provides basic information about your clusters
+such as the state and size.
+See the <<health-check-script, Using the healthcheck.sh Script section>>.
+
+=== Deploying using Hazelcast Cloud
+
+A simple option for deploying Hazelcast is link:https://cloud.hazelcast.com/sign-up[Hazelcast Cloud^]. It delivers
+enterprise-grade Hazelcast software in the cloud. You can deploy, scale
+and update your Hazelcast easily using Hazelcast Cloud; it maintains the
+clusters for you. You can use Hazelcast Cloud as a low-latency high-performance
+caching or data layer for your microservices, and it is also a nice solution
+for state management of serverless functions (AWS Lambda).
+
+Hazelcast Cloud uses Docker and Kubernetes, and is powered by Hazelcast IMDG
+Enterprise HD. It is initially available on Amazon Web Services (AWS), to be
+followed by Microsoft Azure and Google Cloud Platform (GCP). Since it is based
+on Hazelcast IMDG Enterprise HD, it features advanced functionality such as
+TLS, multi-region, persistence, and high availability.
+
+[[deploying-on-amazon-ec2]]
+=== Deploying On Amazon EC2
+
+You can easily deploy your Hazelcast projects on Amazon EC2 instances.
+For this, you can use Hazelcast's AWS cloud discovery module. This
+module helps the cluster members discover each other and form a cluster on EC2.
+It has easy-to-apply features including tagging, IAM roles, and connections
+to the cluster from clients outside the cloud.
+
+See the Hazelcast AWS cloud discovery module's
+link:https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation]
+to learn more about this module.
+
+Alternative to the discovery module mentioned above, if you are a link:https://www.vagrantup.com[Vagrant^] and/or
+link:https://www.chef.io/chef/[Chef^] user, you can also check our
+link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/amazon-ec2-vagrant-chef[sample^]
+project that uses these 3rd party tools to deploy a Hazelcast cluster on EC2.
+
+
+[[deploying-on-microsoft-azure]]
+=== Deploying On Microsoft Azure
+
+You can deploy your Hazelcast cluster onto a Microsoft Azure environment.
+For this, your cluster should make use of Hazelcast Discovery Plugin for
+Microsoft Azure. You can find information about this plugin on its GitHub
+repository at link:https://github.com/hazelcast/hazelcast-azure[Hazelcast Azure^].
+
+For information on how to automatically deploy your cluster onto Azure,
+see the link:https://github.com/hazelcast/hazelcast-azure/blob/master/README.md#automated-deployment[Deployment section^]
+of the Hazelcast Azure plugin repository.
+
+[[deploying-on-pivotal-cloud-foundry]]
+=== Deploying On Pivotal Cloud Foundry
+
+You can deploy your Hazelcast cluster onto Pivotal Cloud Foundry. It
+is available as a Pivotal Cloud Foundry Tile which you can download at
+link:https://network.pivotal.io/products/hazelcast-pcf/[here^]. You can find
+the installation and usage instructions and the release notes documents
+link:https://docs.pivotal.io/partners/hazelcast/index.html[here^].
+
+[[deploying-using-docker]]
+=== Deploying using Docker
+
+You can deploy your Hazelcast projects using the Docker containers.
+Hazelcast has the following images on Docker:
+
+* Hazelcast IMDG
+* Hazelcast IMDG Enterprise
+* Hazelcast Management Center
+* Hazelcast OpenShift
+
+After you pull an image from the Docker registry, you can run your image
+to start the Management Center or a Hazelcast instance with Hazelcast's
+default configuration. All repositories provide the latest stable releases
+but you can pull a specific release, too. You can also specify environment
+variables when running the image.
+
+If you want to start a customized Hazelcast instance, you can extend the
+Hazelcast image by providing your own configuration file.
+
+This feature is provided as a Hazelcast plugin. See its own GitHub repo at
+link:https://github.com/hazelcast/hazelcast-docker[Hazelcast Docker^]
+for details on configurations and usages.
