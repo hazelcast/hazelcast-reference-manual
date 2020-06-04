@@ -76,6 +76,39 @@ from link:https://hazelcast.org/download[hazelcast.org^]
 * extract the downloaded `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
 * and add the file `hazelcast-{imdg-version}.jar` to your classpath.
 
+[[using-the-scripts-in-the-package]]
+==== Using the Scripts In The Package
+
+When you download and extract the Hazelcast ZIP or TAR.GZ package, you will
+see the following scripts under the `/bin` folder that provide basic
+functionalities for member and cluster management.
+
+The following are the names and descriptions of each script:
+
+* `start.sh` / `start.bat`: Starts a standalone Hazelcast member with default
+configuration in the working directory.
+* `stop.sh` / `stop.bat`: Stops the member that was started
+in the current working directory.
++
+NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance
+per directory. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ
+package in a new directory.
++
+NOTE: You can also use the start scripts to deploy your own library to a
+Hazelcast member. See the <<adding-user-library-to-classpath, Adding User
+Library to CLASSPATH section>>.
+* `cluster.sh`: Provides basic functionalities for cluster management,
+such as getting and changing the cluster state, shutting down the cluster
+or forcing the cluster to clean its persisted data and make a fresh start.
+See the <<using-the-script-cluster-sh, Using the Script cluster.sh section>>
+to learn the usage of this script.
+* `cp-subsystem.sh`: Provides access to the CP subsystem management APIs
+using the REST interface.
+See the <<cp-subsystem-management-apis, CP Subsystem Management APIs section>>.
+* `healthcheck.sh`: Provides basic information about your clusters
+such as the state and size.
+See the <<health-check-script, Using the healthcheck.sh Script section>>.
+
 === Using Docker
 
 You can run the following command to launch Hazelcast Docker Container:
@@ -184,8 +217,153 @@ application on it.
 `TLSv1.3`, which comes with Java 11, as a supported TLS version.
 ====
 
+[[running-in-modular-java]]
+=== Running in Modular Java
+
+Java link:http://openjdk.java.net/projects/jigsaw/[project Jigsaw^] brought
+a new Module System into Java 9 and newer. Hazelcast supports running in
+the modular environment. If you want to run your application with Hazelcast
+libraries on the modulepath, use the following module name:
+
+* `com.hazelcast.core` for `hazelcast-{imdg-version}.jar` and
+`hazelcast-enterprise-{imdg-version}.jar`
+
+Don't use `hazelcast-all-{imdg-version}.jar` or
+`hazelcast-enterprise-all-{imdg-version}.jar` on the modulepath as it could
+lead to problems in module dependencies for your application. You can
+still use them on the classpath.
+
+The Java Module System comes with stricter visibility rules. It affects
+Hazelcast which uses internal Java API to reach the best performance results.
+
+Hazelcast needs the `java.se` module and access to the following Java
+packages for a proper work:
+
+* `java.base/jdk.internal.ref`
+* `java.base/java.nio` _(reflective access)_
+* `java.base/sun.nio.ch` _(reflective access)_
+* `java.base/java.lang` _(reflective access)_
+* `jdk.management/com.ibm.lang.management.internal` _(reflective access)_
+* `jdk.management/com.sun.management.internal` _(reflective access)_
+* `java.management/sun.management` _(reflective access)_
+
+You can provide the access to the above mentioned packages by using
+`--add-exports` and `--add-opens` (for the reflective access) Java arguments.
+
+**Example: Running a member on the classpath**
+
+[source,bash,subs="attributes+"]
+----
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  --add-opens java.base/java.nio=ALL-UNNAMED \
+  --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+  --add-opens java.management/sun.management=ALL-UNNAMED \
+  --add-opens jdk.management/com.ibm.lang.management.internal=ALL-UNNAMED \
+  --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED \
+  -jar hazelcast-{imdg-version}.jar
+----
+
+**Example: Running a member on the modulepath**
+
+[source,bash]
+----
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=com.hazelcast.core \
+  --add-opens java.base/java.lang=com.hazelcast.core \
+  --add-opens java.base/java.nio=com.hazelcast.core \
+  --add-opens java.base/sun.nio.ch=com.hazelcast.core \
+  --add-opens java.management/sun.management=com.hazelcast.core \
+  --add-opens jdk.management/com.ibm.lang.management.internal=com.hazelcast.core \
+  --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
+  --module-path lib \
+  --module com.hazelcast.core/com.hazelcast.core.server.HazelcastMemberStarter
+----
+
+_This example expects `hazelcast-{imdg-version}.jar` placed in the `lib` directory._
+
+=== Deploying using Hazelcast Cloud
+
+A simple option for deploying Hazelcast is link:https://cloud.hazelcast.com/sign-up[Hazelcast Cloud^]. It delivers
+enterprise-grade Hazelcast software in the cloud. You can deploy, scale
+and update your Hazelcast easily using Hazelcast Cloud; it maintains the
+clusters for you. You can use Hazelcast Cloud as a low-latency high-performance
+caching or data layer for your microservices, and it is also a nice solution
+for state management of serverless functions (AWS Lambda).
+
+Hazelcast Cloud uses Docker and Kubernetes, and is powered by Hazelcast IMDG
+Enterprise HD. It is initially available on Amazon Web Services (AWS), to be
+followed by Microsoft Azure and Google Cloud Platform (GCP). Since it is based
+on Hazelcast IMDG Enterprise HD, it features advanced functionality such as
+TLS, multi-region, persistence, and high availability.
+
+[[deploying-on-amazon-ec2]]
+=== Deploying On Amazon EC2
+
+You can easily deploy your Hazelcast projects on Amazon EC2 instances.
+For this, you can use Hazelcast's AWS cloud discovery module. This
+module helps the cluster members discover each other and form a cluster on EC2.
+It has easy-to-apply features including tagging, IAM roles, and connections
+to the cluster from clients outside the cloud.
+
+See the Hazelcast AWS cloud discovery module's
+link:https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation]
+to learn more about this module.
+
+Alternative to the discovery module mentioned above, if you are a link:https://www.vagrantup.com[Vagrant^] and/or
+link:https://www.chef.io/chef/[Chef^] user, you can also check our
+link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/amazon-ec2-vagrant-chef[sample^]
+project that uses these 3rd party tools to deploy a Hazelcast cluster on EC2.
+
+
+[[deploying-on-microsoft-azure]]
+=== Deploying On Microsoft Azure
+
+You can deploy your Hazelcast cluster onto a Microsoft Azure environment.
+For this, your cluster should make use of Hazelcast Discovery Plugin for
+Microsoft Azure. You can find information about this plugin on its GitHub
+repository at link:https://github.com/hazelcast/hazelcast-azure[Hazelcast Azure^].
+
+For information on how to automatically deploy your cluster onto Azure,
+see the link:https://github.com/hazelcast/hazelcast-azure/blob/master/README.md#automated-deployment[Deployment section^]
+of the Hazelcast Azure plugin repository.
+
+[[deploying-on-pivotal-cloud-foundry]]
+=== Deploying On Pivotal Cloud Foundry
+
+You can deploy your Hazelcast cluster onto Pivotal Cloud Foundry. It
+is available as a Pivotal Cloud Foundry Tile which you can download at
+link:https://network.pivotal.io/products/hazelcast-pcf/[here^]. You can find
+the installation and usage instructions and the release notes documents
+link:https://docs.pivotal.io/partners/hazelcast/index.html[here^].
+
+[[deploying-using-docker]]
+=== Deploying using Docker
+
+You can deploy your Hazelcast projects using the Docker containers.
+Hazelcast has the following images on Docker:
+
+* Hazelcast IMDG
+* Hazelcast IMDG Enterprise
+* Hazelcast Management Center
+* Hazelcast OpenShift
+
+After you pull an image from the Docker registry, you can run your image
+to start the Management Center or a Hazelcast instance with Hazelcast's
+default configuration. All repositories provide the latest stable releases
+but you can pull a specific release, too. You can also specify environment
+variables when running the image.
+
+If you want to start a customized Hazelcast instance, you can extend the
+Hazelcast image by providing your own configuration file.
+
+This feature is provided as a Hazelcast plugin. See its own GitHub repo at
+link:https://github.com/hazelcast/hazelcast-docker[Hazelcast Docker^]
+for details on configurations and usages.
+
 [[setting-the-license-key]]
-==== Licensing
+=== Licensing
 
 Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise**
 and **Enterprise HD**. The supported features differ in your Hazelcast
@@ -262,7 +440,7 @@ command (the "-D" command line option).
 ```
 
 [[license-key-format]]
-===== License Key Format
+==== License Key Format
 
 License keys have the following format:
 
@@ -424,257 +602,3 @@ Please quote license id CUSTOM_TEST_KEY
 WARNING: Please pay attention to the license warnings to prevent any possible
 interruptions in the operation of your Hazelcast applications.
 
-[[running-in-modular-java]]
-=== Running in Modular Java
-
-Java link:http://openjdk.java.net/projects/jigsaw/[project Jigsaw^] brought
-a new Module System into Java 9 and newer. Hazelcast supports running in
-the modular environment. If you want to run your application with Hazelcast
-libraries on the modulepath, use the following module name:
-
-* `com.hazelcast.core` for `hazelcast-{imdg-version}.jar` and
-`hazelcast-enterprise-{imdg-version}.jar`
-
-Don't use `hazelcast-all-{imdg-version}.jar` or
-`hazelcast-enterprise-all-{imdg-version}.jar` on the modulepath as it could
-lead to problems in module dependencies for your application. You can
-still use them on the classpath.
-
-The Java Module System comes with stricter visibility rules. It affects
-Hazelcast which uses internal Java API to reach the best performance results.
-
-Hazelcast needs the `java.se` module and access to the following Java
-packages for a proper work:
-
-* `java.base/jdk.internal.ref`
-* `java.base/java.nio` _(reflective access)_
-* `java.base/sun.nio.ch` _(reflective access)_
-* `java.base/java.lang` _(reflective access)_
-* `jdk.management/com.ibm.lang.management.internal` _(reflective access)_
-* `jdk.management/com.sun.management.internal` _(reflective access)_
-* `java.management/sun.management` _(reflective access)_
-
-You can provide the access to the above mentioned packages by using
-`--add-exports` and `--add-opens` (for the reflective access) Java arguments.
-
-**Example: Running a member on the classpath**
-
-[source,bash,subs="attributes+"]
-----
-java --add-modules java.se \
-  --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
-  --add-opens java.base/java.lang=ALL-UNNAMED \
-  --add-opens java.base/java.nio=ALL-UNNAMED \
-  --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
-  --add-opens java.management/sun.management=ALL-UNNAMED \
-  --add-opens jdk.management/com.ibm.lang.management.internal=ALL-UNNAMED \
-  --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED \
-  -jar hazelcast-{imdg-version}.jar
-----
-
-**Example: Running a member on the modulepath**
-
-[source,bash]
-----
-java --add-modules java.se \
-  --add-exports java.base/jdk.internal.ref=com.hazelcast.core \
-  --add-opens java.base/java.lang=com.hazelcast.core \
-  --add-opens java.base/java.nio=com.hazelcast.core \
-  --add-opens java.base/sun.nio.ch=com.hazelcast.core \
-  --add-opens java.management/sun.management=com.hazelcast.core \
-  --add-opens jdk.management/com.ibm.lang.management.internal=com.hazelcast.core \
-  --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
-  --module-path lib \
-  --module com.hazelcast.core/com.hazelcast.core.server.HazelcastMemberStarter
-----
-
-_This example expects `hazelcast-{imdg-version}.jar` placed in the `lib` directory._
-
-[[starting-the-member-and-client]]
-=== Starting the Member and Client
-
-Having installed Hazelcast, you can get started.
-
-In this short tutorial, you perform the following activities:
-
-. Create a simple Java application using the Hazelcast distributed map and queue.
-. Run our application twice to have a cluster with two members (JVMs).
-. Connect to our cluster from another Java application by using the
-Hazelcast Native Java Client API.
-
-Let's begin.
-
-
-* The following code starts the first Hazelcast member and
-creates and uses the `customers` map and queue.
-+
-[source,java]
-----
-include::{javasource}/GettingStartedMember.java[tag=startmember]
-----
-+
-* Run this `GettingStarted` class a second time to get the second member
-started. The members form a cluster and the output is similar to the following.
-+
-```
-Members {size:2, ver:2} [
-    Member [127.0.0.1]:5701 - e40081de-056a-4ae5-8ffe-632caf8a6cf1 this
-    Member [127.0.0.1]:5702 - 93e82109-16bf-4b16-9c87-f4a6d0873080
-]
-```
-+
-Here, you can see the size of your cluster (`size`) and member list
-version (`ver`). The member list version is incremented when changes
-happen to the cluster, e.g., a member leaving from or joining to the cluster.
-+
-* Now, add the `hazelcast-client-`*`{imdg-version}`*`.jar` library to your classpath.
-This is required to use a Hazelcast client.
-* The following code starts a Hazelcast Client, connects to our cluster,
-and prints the size of the `customers` map.
-+
-[source,java]
-----
-public class GettingStartedClient {
-    public static void main( String[] args ) {
-        ClientConfig clientConfig = new ClientConfig();
-        HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
-        IMap map = client.getMap( "customers" );
-        System.out.println( "Map Size:" + map.size() );
-    }
-}
-----
-+
-* When you run it, you see the client properly connecting to the cluster
-and printing the map size as **3**.
-
-Hazelcast also offers a tool, **Management Center**, that enables you to monitor your cluster.
-It is included in your Hazelcast IMDG download package and can also be downloaded
-from the Hazelcast website's link:https://hazelcast.org/download/#management-center[download page^].
-You can use this tool to monitor your cluster, cluster members, clients, data structures
-and WAN replications. See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[documentation^] for details on Hazelcast Management Center.
-
-By default, Hazelcast uses multicast to discover other members that can form a cluster.  If you are
-working with other Hazelcast developers on the same network, you may find yourself joining their
-clusters under the default settings.  Hazelcast provides a way to segregate clusters within the same
-network when using multicast. See the <<creating-cluster, Creating Clusters section>>
-for more information.  Alternatively, if you do not wish to use the default multicast mechanism,
-you can provide a fixed list of IP addresses that are allowed to join. See
-the <<join, Join configuration section>> for more information.
-
-NOTE: Multicast mechanism is not recommended for production since UDP
-is often blocked in production environments and other discovery mechanisms
-are more definite. See the <<discovery-mechanisms, Discovery Mechanisms section>>.
-
-NOTE: You can also check the video tutorials link:https://hazelcast.org/getting-started-with-hazelcast[here^].
-
-[[using-the-scripts-in-the-package]]
-=== Using the Scripts In The Package
-
-When you download and extract the Hazelcast ZIP or TAR.GZ package, you will
-see the following scripts under the `/bin` folder that provide basic
-functionalities for member and cluster management.
-
-The following are the names and descriptions of each script:
-
-* `start.sh` / `start.bat`: Starts a Hazelcast member with default
-configuration in the working directory.
-* `stop.sh` / `stop.bat`: Stops the Hazelcast member that was started
-in the current working directory.
-+
-NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance
-per folder. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ
-package in a new folder.
-+
-NOTE: You can also use the start scripts to deploy your own library to a
-Hazelcast member. See the <<adding-user-library-to-classpath, Adding User
-Library to CLASSPATH section>>.
-* `cluster.sh`: Provides basic functionalities for cluster management,
-such as getting and changing the cluster state, shutting down the cluster
-or forcing the cluster to clean its persisted data and make a fresh start.
-See the <<using-the-script-cluster-sh, Using the Script cluster.sh section>>
-to learn the usage of this script.
-* `cp-subsystem.sh`: Provides access to the CP subsystem management APIs
-using the REST interface.
-See the <<cp-subsystem-management-apis, CP Subsystem Management APIs section>>.
-* `healthcheck.sh`: Provides basic information about your clusters
-such as the state and size.
-See the <<health-check-script, Using the healthcheck.sh Script section>>.
-
-=== Deploying using Hazelcast Cloud
-
-A simple option for deploying Hazelcast is link:https://cloud.hazelcast.com/sign-up[Hazelcast Cloud^]. It delivers
-enterprise-grade Hazelcast software in the cloud. You can deploy, scale
-and update your Hazelcast easily using Hazelcast Cloud; it maintains the
-clusters for you. You can use Hazelcast Cloud as a low-latency high-performance
-caching or data layer for your microservices, and it is also a nice solution
-for state management of serverless functions (AWS Lambda).
-
-Hazelcast Cloud uses Docker and Kubernetes, and is powered by Hazelcast IMDG
-Enterprise HD. It is initially available on Amazon Web Services (AWS), to be
-followed by Microsoft Azure and Google Cloud Platform (GCP). Since it is based
-on Hazelcast IMDG Enterprise HD, it features advanced functionality such as
-TLS, multi-region, persistence, and high availability.
-
-[[deploying-on-amazon-ec2]]
-=== Deploying On Amazon EC2
-
-You can easily deploy your Hazelcast projects on Amazon EC2 instances.
-For this, you can use Hazelcast's AWS cloud discovery module. This
-module helps the cluster members discover each other and form a cluster on EC2.
-It has easy-to-apply features including tagging, IAM roles, and connections
-to the cluster from clients outside the cloud.
-
-See the Hazelcast AWS cloud discovery module's
-link:https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation]
-to learn more about this module.
-
-Alternative to the discovery module mentioned above, if you are a link:https://www.vagrantup.com[Vagrant^] and/or
-link:https://www.chef.io/chef/[Chef^] user, you can also check our
-link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/amazon-ec2-vagrant-chef[sample^]
-project that uses these 3rd party tools to deploy a Hazelcast cluster on EC2.
-
-
-[[deploying-on-microsoft-azure]]
-=== Deploying On Microsoft Azure
-
-You can deploy your Hazelcast cluster onto a Microsoft Azure environment.
-For this, your cluster should make use of Hazelcast Discovery Plugin for
-Microsoft Azure. You can find information about this plugin on its GitHub
-repository at link:https://github.com/hazelcast/hazelcast-azure[Hazelcast Azure^].
-
-For information on how to automatically deploy your cluster onto Azure,
-see the link:https://github.com/hazelcast/hazelcast-azure/blob/master/README.md#automated-deployment[Deployment section^]
-of the Hazelcast Azure plugin repository.
-
-[[deploying-on-pivotal-cloud-foundry]]
-=== Deploying On Pivotal Cloud Foundry
-
-You can deploy your Hazelcast cluster onto Pivotal Cloud Foundry. It
-is available as a Pivotal Cloud Foundry Tile which you can download at
-link:https://network.pivotal.io/products/hazelcast-pcf/[here^]. You can find
-the installation and usage instructions and the release notes documents
-link:https://docs.pivotal.io/partners/hazelcast/index.html[here^].
-
-[[deploying-using-docker]]
-=== Deploying using Docker
-
-You can deploy your Hazelcast projects using the Docker containers.
-Hazelcast has the following images on Docker:
-
-* Hazelcast IMDG
-* Hazelcast IMDG Enterprise
-* Hazelcast Management Center
-* Hazelcast OpenShift
-
-After you pull an image from the Docker registry, you can run your image
-to start the Management Center or a Hazelcast instance with Hazelcast's
-default configuration. All repositories provide the latest stable releases
-but you can pull a specific release, too. You can also specify environment
-variables when running the image.
-
-If you want to start a customized Hazelcast instance, you can extend the
-Hazelcast image by providing your own configuration file.
-
-This feature is provided as a Hazelcast plugin. See its own GitHub repo at
-link:https://github.com/hazelcast/hazelcast-docker[Hazelcast Docker^]
-for details on configurations and usages.
