@@ -24,14 +24,16 @@ both for 3.12 and 4.0/4.1. We will distinguish between two types of members:
 "migration" and "plain" members.
 
 The "migration" members are the instances which are
-available as non-public releases, which are able to accept connections and packets
+available as non-public releases and are able to accept connections and packets
 from members of a different major version. They use more memory, have higher GC pressure
 and CPU usage in certain scenarios, all to be able to process messages from two different
 major versions.
 
 On the other hand, "plain" members are the regular public releases with
-a minimal amount of compatibility code. To be exact, these are public Hazelcast
-releases from 3.12.8 and from 4.0.2 onward. The "plain" members are not able to
+a minimal amount of compatibility code. In the examples going forward, we will be using
+any public 3.12.x release and any release from 4.0.2 onward. These artifacts
+can be downloaded from any of our standard distribution channels (maven, website, ...).
+The "plain" members are not able to
 accept connections and process messages from members of another major version.
 However, you might combine "plain" and "migration" members to form a single cluster.
 
@@ -50,11 +52,11 @@ from 3.12 to a 4.0/4.1 cluster. Below we describe the diagram and
 process in more details.
 
 1. The first step is to setup the 3.12 cluster. You can also use your existing 3.12 cluster.
-The members of the 3.12 cluster should have a minor version of at least 3.12, but it can be of any
-patch level (3.12.x). You need to setup a WAN replication between the 3.12 and 4.0/4.1 clusters as stated
+The members of the 3.12 cluster should have a minor version of at least 3.12 (any patch version).
+You need to setup WAN replication between the 3.12 and 4.0/4.1 clusters as stated
 in the 3rd step below.
 2. Next, setup a 4.0/4.1 cluster. It must have at least one "migration" member and
-all other ("plain") members should have a patch version of at least 4.0.2.
+all other ("plain") members should be at least 4.0.2 and at most 4.1 (any patch version).
 The "migration" member can also be a "lite" member while the other "plain" members need not be.
 Making the "migration" member a "lite" member will also simplify further migration steps.
 3. Add WAN replication between the two clusters. As always, this can be done using the static
@@ -77,17 +79,17 @@ You can also can continue using this cluster or continue onto rolling upgrade to
 image::migration-scenario2.png[Migrating 4.0/4.1 -> 3.12]
 
 The diagram above outlines how you can perform the migration
-from 4.0/4.1 to a 3.12 cluster.The process is analogous to the
+from 4.0/4.1 to a 3.12 cluster. The process is analogous to the
 3.12 -> 4.0/4.1 migration but we will describe the diagram and process in more details below:
 
 1. The first step is to set up the 4.0/4.1 cluster. You can also use an existing 4.0/4.1 cluster.
-The members of the 4.0/4.1 cluster can be of any patch level. You need to set up WAN replication
+The members of the 4.0/4.1 cluster should be at least 4.0.2 and at most 4.1 (any patch version). You need to set up WAN replication
 between the 4.0/4.1 cluster and the 3.12 cluster but this will be described soon.
 2. Next, set up a 3.12 cluster. It must have at least one "migration" member and all other
-("plain") members should have a patch version of at least 3.12.8. The "migration" member
-can also be a "lite" member while the other "plain" members need not be. Making the "migration"
+("plain") members should have a version of 3.12 (any patch level). The "migration" member
+can also be a "lite" member while other "plain" members need not be. Making the "migration"
 member a "lite" member will also simplify further migration steps.
-3. Set up WAN replication between the two clusters. As always, this can be done using the static
+3. Set up WAN replication between the two clusters. As always, this can be done using static
 configuration and can be added dynamically. The key point is that the 4.0/4.1 cluster needs to
 replicate only to the "migration" members of the 3.12 cluster. Other "plain" members are unable
 to process messages from 4.0/4.1 members and WAN replication must not replicate to these members.
@@ -108,11 +110,11 @@ between 3.12 and 4.0/4.1. The process is simply a combination of the first two s
 
 1. The first step is to set up the 3.12 and 4.0/4.1 clusters. You can also use existing clusters.
 The 3.12 cluster must have at least one "migration" member and the 4.0/4.1 cluster must also have
-at least one "migration" member. The "migration" member can also be a "lite" member while the other
+at least one "migration" member. The "migration" member can also be a "lite" member while other
 "plain" members need not be. Making the "migration" member a "lite" member will also simplify
-further migration steps. Other "plain" members of the 3.12 cluster must have a patch version of
-at least 3.12.8 and members of the 4.0/4.1 cluster must have a patch version of at least 4.0.2.
-2. Setup WAN replication between the two clusters. As always, this can be done using the static configuration
+further migration steps. Other "plain" members of the 3.12 cluster can be of any patch version
+and members of the 4.0/4.1 cluster should be at least 4.0.2 and at most 4.1 (any patch version).
+2. Setup WAN replication between the two clusters. As always, this can be done using static configuration
 and can be added dynamically. The key point is that both clusters need to replicate only to the "migration"
 members and not to the "plain" ones as they are unable to process messages from the members of another major version.
 Other than that, the WAN replication configuration is the same as any other regular WAN replication towards
@@ -133,8 +135,9 @@ that you need to keep in mind when combining are as follows:
 1. If you are connecting members of different major versions, the recipient/target
 of the connection must be a "migration" member and not a "plain" member.
 2. If a cluster contains a "migration" member, it may also contain "plain" members
-but with the added restriction that they must be at least 3.12.8 (in case of a 3.12 cluster)
-or 4.0.2 (in case of a 4.0/4.1 cluster).
+but with the added restriction that 4.x "plain" members should be at least 4.0.2 and at most 4.1 (any patch version).
+The 3.x "plain" members can be of any patch version. Once migration has finished and "migration" members have been
+shut down, this restriction is lifted.
 3. If the cluster is a source/active/sender cluster replicating towards another cluster
 of another major version, the source cluster must be of the minor versions 3.12, 4.0 or 4.1.
 The patch level is irrelevant, unless the source cluster is also a target cluster for another
@@ -142,6 +145,10 @@ WAN replication, where must adhere to the first two rules.
 
 [#limitations-and-known-issues]
 ==== Limitations and Known Issues
+
+**The solution is limited to IMap and ICache**
+
+Since we're using WAN replication for migration, the data migration is restricted to migrating `IMap` and `ICache` data. In addition to this, `IMap` WAN replication supports WAN sync while `ICache` doesn't.
 
 **The "migration" member needs to be able to deserialize and serialize all the received keys and values:**
 
@@ -209,7 +216,7 @@ Some examples of classes that exhibit this behavior when used as keys or values 
 
 WAN replication uses merge policies to apply a change on a target cluster entry.
 The merge policy is configured in the source cluster and it is transferred with
-each WAN event batch. 
+each WAN event batch.
 
 In Hazelcast 3.12, there were two different ways in which
 you can configure a merge policy - data structure specific and data structure agnostic.
