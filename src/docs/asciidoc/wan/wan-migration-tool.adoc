@@ -1,7 +1,8 @@
-=== WAN Migration Tool for 3.12 and 4.0/4.1 Releases
+=== Migrating Between IMDG 3.12 and 4.0/4.1 Releases Using WAN Replication
 
 This section outlines a solution for migrating user data from a
-running 3.12 cluster to a 4.0 or 4.1 cluster and vice versa using WAN replication.
+running IMDG 3.12 cluster to a 4.0 or 4.1 cluster and vice versa using
+Hazelcast's WAN replication feature.
 
 [IMPORTANT]
 ====
@@ -48,10 +49,10 @@ The diagram above outlines how you can perform the migration
 from 3.12 to a 4.0/4.1 cluster. Below we describe the diagram and
 process in more details.
 
-1. The first step is to setup the 3.12 cluster. You can also use an existing 3.12 cluster.
+1. The first step is to setup the 3.12 cluster. You can also use your existing 3.12 cluster.
 The members of the 3.12 cluster should have a minor version of at least 3.12, but it can be of any
-patch level. You need to setup WAN replication between the 3.12 and 4.0/4.1 clusters but this will
-be described soon.
+patch level (3.12.x). You need to setup a WAN replication between the 3.12 and 4.0/4.1 clusters as stated
+in the 3rd step below.
 2. Next, setup a 4.0/4.1 cluster. It must have at least one "migration" member and
 all other ("plain") members should have a patch version of at least 4.0.2.
 The "migration" member can also be a "lite" member while the other "plain" members need not be.
@@ -62,6 +63,8 @@ replicate only to the "migration" members of the 4.0/4.1 cluster. Other "plain" 
 unable to process messages from 3.12 members and WAN replication must not replicate to these members.
 Other than that, the WAN replication configuration on the 3.12 cluster is the same as any other
 WAN replication towards a 3.12 cluster and no special configuration is needed.
+(??? a configuration example here would be nice ???)
+See also the <<wan-replication, WAN Replication section>> for the details.
 4. After the clusters have been started and WAN replication has been added,
 you can use WAN sync for `IMap` or wait until enough entries have been replicated in case of `IMap` or `ICache`.
 5. After enough data has been replicated to the 4.0/4.1 cluster, you can shut down the 3.12 cluster.
