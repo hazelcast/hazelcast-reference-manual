@@ -3,7 +3,7 @@
 == Quick Start
 
 This chapter briefly describes Hazelcast IMDG and
-covers a basic installation and quick start thru which
+covers a basic installation and quick start through which
 you start Hazelcast members, form a cluster, connect it with
 a client application in your preferred language and monitor
 the cluster using Hazelcast Management Center.
@@ -40,8 +40,8 @@ has no external dependencies other than Java, it easily
 plugs into your software solution and provides
 distributed data structures and computing utilities.
 
-It is designed to scale up to hundreds and thousands of members.
-When you add new members. they automatically discover the cluster
+It is designed to scale up to hundreds of members and thousands of clients.
+When you add new members, they automatically discover the cluster
 and linearly increase both the memory and
 processing capacity. The members maintain a TCP connection between
 each other and all communication is performed through
@@ -79,8 +79,6 @@ This is a big benefit when a member in the cluster crashes as data is not lost.
 Hazelcast keeps the backup of each data entry on multiple members. On a member
 failure, the data is restored from the backup and the cluster continues to operate without downtime.
 * Members are always aware of each other unlike in traditional key-value caching solutions.
-* You can build your own custom-distributed data structures using the Service Programming
-Interface (SPI) if you are not happy with the data structures provided.
 * Hazelcast provides out-of-the-box distributed data structures.
 
 Finally, Hazelcast has a vibrant open source community enabling it to be continuously developed.
@@ -308,7 +306,10 @@ For comprehensive information on the clients, see the following sections:
 
 Hazelcast Management Center helps you to monitor and manage your IMDG cluster.
 After you created your cluster and client application as depicted in the above sections,
-let's connect Management Center.
+let's connect Management Center to the cluster. Note that having client applications
+is not a must to use the Management Center; you can connect it to your cluster that
+does not have any clients.
+
 Management Center comes with the Hazelcast IMDG download package.
 
 Use the following scripts to start the Management Center service first. In case you are

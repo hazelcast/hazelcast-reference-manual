@@ -4,125 +4,6 @@
 This chapter provides pre- and post-installation
 details, and deployment options of Hazelcast IMDG.
 
-=== Using Maven
-
-You can find Hazelcast in standard Maven repositories. If your
-project uses Maven, you do not need to add
-additional repositories to your `pom.xml` or add
-`hazelcast-{imdg-version}.jar` file into your
-classpath (Maven does that for you). Just add the following
-lines to your `pom.xml`:
-
-
-[source,xml,indent=0,subs="verbatim,attributes+",role="primary"]
-.Hazelcast Open Source Edition
-----
-<dependencies>
-    <dependency>
-        <groupId>com.hazelcast</groupId>
-        <artifactId>hazelcast</artifactId>
-        <version>{imdg-version}</version>
-    </dependency>
-</dependencies>
-----
-
-[source,xml,indent=0,subs="verbatim,attributes+",role="secondary"]
-.Hazelcast Enterprise Edition
-----
-<!-- There are two Maven repositories defined for Hazelcast IMDG Enterprise: -->
-
-<repository>
-    <id>Hazelcast Private Snapshot Repository</id>
-    <url>https://repository.hazelcast.com/snapshot/</url>
-</repository>
-<repository>
-    <id>Hazelcast Private Release Repository</id>
-    <url>https://repository.hazelcast.com/release/</url>
-</repository>
-
-
-<!-- You may also define dependencies: -->
-
-<dependency>
-    <groupId>com.hazelcast</groupId>
-    <artifactId>hazelcast-enterprise</artifactId>
-    <version>{imdg-version}</version>
-</dependency>
-<dependency>
-    <groupId>com.hazelcast</groupId>
-    <artifactId>hazelcast-enterprise-all</artifactId>
-    <version>{imdg-version}</version>
-</dependency>
-<dependency>
-    <groupId>com.hazelcast</groupId>
-    <artifactId>hazelcast-enterprise-all</artifactId>
-    <version>{imdg-version}</version>
-    <classifier>javadoc</classifier>
-</dependency>
-----
-
-Above dependency (`hazelcast`) includes both member and Java
-client libraries of Hazelcast IMDG. A separate Java client module
-and dependency do not exist. See <<removal-of-hazelcast-client-module, here>>
-for the details.
-
-=== Using the Download Archives
-
-As an alternative to Maven, you can download and install Hazelcast IMDG
-yourself. You only need to:
-
-* download the package `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
-from link:https://hazelcast.org/download[hazelcast.org^]
-* extract the downloaded `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
-* and add the file `hazelcast-{imdg-version}.jar` to your classpath.
-
-[[using-the-scripts-in-the-package]]
-==== Using the Scripts In The Package
-
-When you download and extract the Hazelcast ZIP or TAR.GZ package, you will
-see the following scripts under the `/bin` folder that provide basic
-functionalities for member and cluster management.
-
-The following are the names and descriptions of each script:
-
-* `start.sh` / `start.bat`: Starts a standalone Hazelcast member with default
-configuration in the working directory.
-* `stop.sh` / `stop.bat`: Stops the member that was started
-in the current working directory.
-+
-NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance
-per directory. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ
-package in a new directory.
-+
-NOTE: You can also use the start scripts to deploy your own library to a
-Hazelcast member. See the <<adding-user-library-to-classpath, Adding User
-Library to CLASSPATH section>>.
-* `cluster.sh`: Provides basic functionalities for cluster management,
-such as getting and changing the cluster state, shutting down the cluster
-or forcing the cluster to clean its persisted data and make a fresh start.
-See the <<using-the-script-cluster-sh, Using the Script cluster.sh section>>
-to learn the usage of this script.
-* `cp-subsystem.sh`: Provides access to the CP subsystem management APIs
-using the REST interface.
-See the <<cp-subsystem-management-apis, CP Subsystem Management APIs section>>.
-* `healthcheck.sh`: Provides basic information about your clusters
-such as the state and size.
-See the <<health-check-script, Using the healthcheck.sh Script section>>.
-
-=== Using Docker
-
-You can run the following command to launch Hazelcast Docker Container:
-
-[source,shell]
-----
-$ docker run hazelcast/hazelcast:$HAZELCAST_VERSION
-----
-
-This command will pull Hazelcast Docker image and run a new Hazelcast instance.
-
-You can find the full list of Hazelcast versions to replace $HAZELCAST_VERSION]
-at the link:https://hub.docker.com/r/hazelcast/hazelcast/tags[Official Hazelcast Docker Hub^].
-
 [[supported-jvms]]
 === Supported Java Virtual Machines
 
@@ -216,6 +97,103 @@ application on it.
 * <<tls-ssl-for-hazelcast-members, TLS/SSL for Hazelcast Members>>: Lists
 `TLSv1.3`, which comes with Java 11, as a supported TLS version.
 ====
+
+=== Using the Download Archives
+
+As an alternative to Maven, you can download and install Hazelcast IMDG
+yourself. You only need to:
+
+* download the package `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
+from link:https://hazelcast.org/download[hazelcast.org^]
+* extract the downloaded `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
+* and add the file `hazelcast-{imdg-version}.jar` to your classpath.
+
+When you download and extract the Hazelcast ZIP or TAR.GZ package, you will
+see the `start/stop.sh` (for Linux) and `start/stop.bat` (for Windows) scripts under the `/bin` folder.
+These scripts start/stop a Hazelcast member. See the <<creating-a-cluster, Quick Start chapter>>
+to see the start scripts in action.
+
+There are also some other scripts in the download archive whose usage descriptions
+are given in their related sections including the <<using-the-script-cluster-sh, Using the Script cluster.sh>>,
+<<cp-subsystem-management-apis, CP Subsystem Management APIs section>> and
+<<health-check-script, Using the healthcheck.sh Script>> sections. You can also check the full list
+of scripts in the `readme.html` of your download archive.
+
+=== Using Docker
+
+You can run the following command to launch Hazelcast Docker Container:
+
+[source,shell]
+----
+$ docker run hazelcast/hazelcast:$HAZELCAST_VERSION
+----
+
+This command will pull Hazelcast Docker image and run a new Hazelcast instance.
+
+You can find the full list of Hazelcast versions to replace $HAZELCAST_VERSION]
+at the link:https://hub.docker.com/r/hazelcast/hazelcast/tags[Official Hazelcast Docker Hub^].
+
+=== Using Maven
+
+You can find Hazelcast in standard Maven repositories. If your
+project uses Maven, you do not need to add
+additional repositories to your `pom.xml` or add
+`hazelcast-{imdg-version}.jar` file into your
+classpath (Maven does that for you). Just add the following
+lines to your `pom.xml`:
+
+
+[source,xml,indent=0,subs="verbatim,attributes+",role="primary"]
+.Hazelcast Open Source Edition
+----
+<dependencies>
+    <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast</artifactId>
+        <version>{imdg-version}</version>
+    </dependency>
+</dependencies>
+----
+
+[source,xml,indent=0,subs="verbatim,attributes+",role="secondary"]
+.Hazelcast Enterprise Edition
+----
+<!-- There are two Maven repositories defined for Hazelcast IMDG Enterprise: -->
+
+<repository>
+    <id>Hazelcast Private Snapshot Repository</id>
+    <url>https://repository.hazelcast.com/snapshot/</url>
+</repository>
+<repository>
+    <id>Hazelcast Private Release Repository</id>
+    <url>https://repository.hazelcast.com/release/</url>
+</repository>
+
+
+<!-- You may also define dependencies: -->
+
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise</artifactId>
+    <version>{imdg-version}</version>
+</dependency>
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise-all</artifactId>
+    <version>{imdg-version}</version>
+</dependency>
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise-all</artifactId>
+    <version>{imdg-version}</version>
+    <classifier>javadoc</classifier>
+</dependency>
+----
+
+Above dependency (`hazelcast`) includes both member and Java
+client libraries of Hazelcast IMDG. A separate Java client module
+and dependency do not exist. See <<removal-of-hazelcast-client-module, here>>
+for the details.
 
 [[running-in-modular-java]]
 === Running in Modular Java

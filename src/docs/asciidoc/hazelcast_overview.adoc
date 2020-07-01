@@ -181,16 +181,17 @@ since lite members do not own any partitions.
 
 Hazelcast can be used:
 
-* to share server configuration/information to see how a cluster performs
 * to cluster highly changing data with event notifications, e.g., user based events, and
 to queue and distribute background tasks
 * as a simple Memcache with Near Cache
 * as a cloud-wide scheduler of certain processes that need to be performed on some members
 * to share information (user information, queues, maps, etc.) on the fly with multiple
 members in different installations under OSGI environments
-* to share thousands of keys in a cluster where there is a web service interface on an
+* to share keys in a cluster where there is a web service interface on an
 application server and some validation
 * as a distributed topic (publish/subscribe server) to build scalable chat servers for smartphones
+* as a strongly consistent layer for its concurrency API which is Hazelcast's CP
+(CP with respect the CAP principle) subsystem built on top of the Raft consensus algorithm
 * as a front layer for a Cassandra back-end
 * to distribute user object states across the cluster, to pass messages between objects
 and to share system data structures (static initialization state, mirrored objects, object
