@@ -1119,6 +1119,11 @@ The option `ASYNC` enables reconnection in a non-blocking manner where
 all the waiting invocations receive a `HazelcastClientOfflineException`.
 Its default value is `ON`.
 
+[[non-stop-client]]NOTE: When you have `ASYNC`  as the `reconnect-mode` and defined a Near Cache for your client,
+the client functions without interruptions/downtime by communicating the data from its Near Cache,
+provided that there is non-expired data in it. See <<configuring-client-near-cache, here>> to
+learn how you can add a Near Cache to your client.
+
 The example declarative and programmatic configurations below show how to configure
 a Java client's starting and reconnecting modes.
 
