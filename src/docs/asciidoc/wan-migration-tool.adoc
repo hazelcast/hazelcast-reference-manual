@@ -1,12 +1,12 @@
-=== Migrating Between IMDG 3.12 and 4.0/4.1 Releases Using WAN Replication
+=== Migrating Between IMDG 3.12 and 4.0/4.1 Releases Using the Migration tool
 
 This section outlines a solution for migrating user data from a
 running IMDG 3.12 cluster to a 4.0 or 4.1 cluster and vice versa using
-Hazelcast's WAN replication feature.
+the migration tool, which is a specialized variant of Hazelcast's WAN replication feature.
 
 [IMPORTANT]
 ====
-* The WAN migration tool does not take into account migrating clients.
+* The migration tool does not take into account migrating clients.
 You will have to adapt your code to use 4.x clients, run both 3.x and 4.x clients
 and clusters side by side, and gradually transfer traffic from 3.x clients to 4.x clients.
 We will outline this solution in the <<client-migration, Client Migration section>>.
@@ -50,6 +50,9 @@ image::migration-scenario1.png[Migrating 3.12 -> 4.0/4.1]
 The diagram above outlines how you can perform the migration
 from 3.12 to a 4.0/4.1 cluster. Below we describe the diagram and
 process in more details.
+In case you are using an additional 3.12 cluster for Disaster Recovery (DR),
+please read the <<wan-event-forwarding, WAN Event Forwarding section>> for more information after
+reading this chapter.
 
 1. The first step is to setup the 3.12 cluster. You can also use your existing 3.12 cluster.
 The members of the 3.12 cluster should have a minor version of at least 3.12 (any patch version).
@@ -59,19 +62,37 @@ in the 3rd step below.
 all other ("plain") members should be at least 4.0.2 and at most 4.1 (any patch version).
 The "migration" member can also be a "lite" member while the other "plain" members need not be.
 Making the "migration" member a "lite" member will also simplify further migration steps.
+The exact ratio of "migration" and "plain" members depends on your environment. In some cases
+it will not be possible to mix members of different "types" (or versions, for example in PCF) and
+in those cases you can create a cluster comprised entirely out of "migration" members. In other
+cases, the exact ratio of member types depends on parameters such as the map and cache mutation
+rate on the source cluster, the WAN tuning parameters, the resources given to the 4.0/4.1 cluster
+members, the load on the 4.0/4.1 cluster which isn't related to the migration process, if
+"migration" members are lite members or not and many more. A good rule of thumb is starting with
+the same number of "migration" members as the number of members which are usually involved in WAN
+replication (if you were already using WAN replication to replicate data between different clusters)
+or to simply use an equal number of "migration" and "plain" members and then decrease the number
+of "migration" members if testing the migration scenario shows that the decreased number can handle
+the migration load.
 3. Add WAN replication between the two clusters. As always, this can be done using the static
 configuration and can be added dynamically. The key point is that the 3.12 cluster needs to
 replicate only to the "migration" members of the 4.0/4.1 cluster. Other "plain" members are
 unable to process messages from 3.12 members and WAN replication must not replicate to these members.
 Other than that, the WAN replication configuration on the 3.12 cluster is the same as any other
 WAN replication towards a 3.12 cluster and no special configuration is needed.
-(??? a configuration example here would be nice ???)
 See also the <<wan-replication, WAN Replication section>> for the details.
 4. After the clusters have been started and WAN replication has been added,
 you can use WAN sync for `IMap` or wait until enough entries have been replicated in case of `IMap` or `ICache`.
-5. After enough data has been replicated to the 4.0/4.1 cluster, you can shut down the 3.12 cluster.
+5. After enough data has been replicated to the 4.0/4.1 cluster, you can shut down the 3.12 cluster. You can check
+if your map data is in sync by using merkle tree sync with the caveat that in some edge cases, the merkle tree
+consistency check may indicate that the clusters are out-of-sync while in reality they are actually in-sync. In
+other cases, once WAN sync completes successfully and if there are no errors, the map data should be synchronized.
+See <<limitations-and-known-issues, Limitations and Known Issues section>> for more information when using merkle
+trees for consistency checks.
 6. Finally, you can simply shut down the 4.0/4.1 "migration" members or do a rolling restart of these members
-to "plain" members. At this point, the 4.0/4.1 cluster should have only "plain" members.
+to "plain" members. If your 4.0/4.1 cluster was comprised entirely out of "migration" members, you will need
+to do a rolling restart of the entire cluster (for example, when migrating in PCF).
+At this point, the 4.0/4.1 cluster should have only "plain" members.
 You can also can continue using this cluster or continue onto rolling upgrade to 4.2, for instance.
 
 **Migrating from 4.0/4.1 to 3.12 (ACTIVE/PASSIVE):**
@@ -79,7 +100,10 @@ You can also can continue using this cluster or continue onto rolling upgrade to
 image::migration-scenario2.png[Migrating 4.0/4.1 -> 3.12]
 
 The diagram above outlines how you can perform the migration
-from 4.0/4.1 to a 3.12 cluster. The process is analogous to the
+from 4.0/4.1 to a 3.12 cluster.
+In case you are using an additional 4.0/4.1 cluster for Disaster Recovery (DR),
+please read the <<wan-event-forwarding, WAN Event Forwarding section>> for more information after
+reading this chapter. The process is analogous to the
 3.12 -> 4.0/4.1 migration but we will describe the diagram and process in more details below:
 
 1. The first step is to set up the 4.0/4.1 cluster. You can also use an existing 4.0/4.1 cluster.
@@ -89,24 +113,47 @@ between the 4.0/4.1 cluster and the 3.12 cluster but this will be described soon
 ("plain") members should have a version of 3.12 (any patch level). The "migration" member
 can also be a "lite" member while other "plain" members need not be. Making the "migration"
 member a "lite" member will also simplify further migration steps.
+The exact ratio of "migration" and "plain" members depends on your environment. In some cases
+it will not be possible to mix members of different "types" (or versions, for example in PCF) and
+in those cases you can create a cluster comprised entirely out of "migration" members. In other
+cases, the exact ratio of member types depends on parameters such as the map and cache mutation
+rate on the source cluster, the WAN tuning parameters, the resources given to the 3.12 cluster
+members, the load on the 3.12 cluster which isn't related to the migration process, if
+"migration" members are lite members or not and many more. A good rule of thumb is starting with
+the same number of "migration" members as the number of members which are usually involved in WAN
+replication (if you were already using WAN replication to replicate data between different clusters)
+or to simply use an equal number of "migration" and "plain" members and then decrease the number
+of "migration" members if testing the migration scenario shows that the decreased number can handle
+the migration load.
 3. Set up WAN replication between the two clusters. As always, this can be done using static
 configuration and can be added dynamically. The key point is that the 4.0/4.1 cluster needs to
 replicate only to the "migration" members of the 3.12 cluster. Other "plain" members are unable
 to process messages from 4.0/4.1 members and WAN replication must not replicate to these members.
 Other than that, the WAN replication configuration on the 4.0/4.1 cluster is the same as any other
 WAN replication towards a 4.0/4.1 cluster and no special configuration is needed.
-4. After the clusters have been started and WAN replication has been added,
-you can use WAN sync for `IMap` or wait until enough entries have been replicated in case of `IMap` or `ICache`.
+4. After the clusters have been started and WAN replication has been added, you can use WAN sync for
+`IMap` or wait until enough entries have been replicated in case of `IMap` or `ICache`.You can check
+if your map data is in sync by using merkle tree sync with the caveat that in some edge cases, the merkle tree
+consistency check may indicate that the clusters are out-of-sync while in reality they are actually in-sync. In
+other cases, once WAN sync completes successfully and if there are no errors, the map data should be synchronized.
+See <<limitations-and-known-issues, Limitations and Known Issues section>> for more information when using merkle
+trees for consistency checks.
 5. After enough data has been replicated to the 3.12 cluster, you can shut down the 4.0/4.1 cluster.
 6. Finally, you can simply shut down the 3.12 "migration" members or do a rolling restart of
-these members to "plain" members. At this point, the 3.12 cluster should have only "plain" members.
+these members to "plain" members. If your 3.12 cluster was comprised entirely out of "migration" members,
+you will need to do a rolling restart of the entire cluster (for example, when migrating in PCF).
+At this point, the 3.12 cluster should have only "plain" members.
 
 **Bidirectional Migrating between 3.12 and 4.0/4.1 (ACTIVE/ACTIVE):**
 
 image::migration-scenario3.png[Migrating 3.12 <-> 4.0/4.1]
 
 The diagram above outlines how you can perform a bidirectional migration
-between 3.12 and 4.0/4.1. The process is simply a combination of the first two scenarios:
+between 3.12 and 4.0/4.1.
+In case you are using additional 3.12 or 4.0/4.1 clusters for Disaster Recovery (DR),
+please read the <<wan-event-forwarding, WAN Event Forwarding section>> for more information after
+reading this chapter.
+The process is simply a combination of the first two scenarios:
 
 1. The first step is to set up the 3.12 and 4.0/4.1 clusters. You can also use existing clusters.
 The 3.12 cluster must have at least one "migration" member and the 4.0/4.1 cluster must also have
@@ -114,16 +161,36 @@ at least one "migration" member. The "migration" member can also be a "lite" mem
 "plain" members need not be. Making the "migration" member a "lite" member will also simplify
 further migration steps. Other "plain" members of the 3.12 cluster can be of any patch version
 and members of the 4.0/4.1 cluster should be at least 4.0.2 and at most 4.1 (any patch version).
+The exact ratio of "migration" and "plain" members depends on your environment. In some cases
+it will not be possible to mix members of different "types" (or versions, for example in PCF) and
+in those cases you can create a cluster comprised entirely out of "migration" members. In other
+cases, the exact ratio of member types depends on parameters such as the map and cache mutation
+rate on the source cluster, the WAN tuning parameters, the resources given to the cluster
+members, the load on the clusters which isn't related to the migration process, if "migration"
+members are lite members or not and many more. A good rule of thumb is starting with
+the same number of "migration" members as the number of members which are usually involved in WAN
+replication (if you were already using WAN replication to replicate data between different clusters)
+or to simply use an equal number of "migration" and "plain" members and then decrease the number
+of "migration" members if testing the migration scenario shows that the decreased number can handle
+the migration load.
 2. Setup WAN replication between the two clusters. As always, this can be done using static configuration
 and can be added dynamically. The key point is that both clusters need to replicate only to the "migration"
 members and not to the "plain" ones as they are unable to process messages from the members of another major version.
 Other than that, the WAN replication configuration is the same as any other regular WAN replication towards
 clusters of the same major version and no special configuration is needed.
-3. After the clusters have been started and WAN replication has been added,
-you can use WAN sync for `IMap` or wait until enough entries have been replicated in case of `IMap` or `ICache`.
+3. After the clusters have been started and WAN replication has been added, you can use WAN sync for `IMap`
+or wait until enough entries have been replicated in case of `IMap` or `ICache`. You can check
+if your map data is in sync by using merkle tree sync with the caveat that in some edge cases, the merkle tree
+consistency check may indicate that the clusters are out-of-sync while in reality they are actually in-sync. In
+other cases, once WAN sync completes successfully and if there are no errors, the map data should be synchronized.
+See <<limitations-and-known-issues, Limitations and Known Issues section>> for more information when using merkle
+trees for consistency checks.
 4. After enough data has been replicated, you can shut down either of the clusters and afterwards shut down the
-remaining "migration" members or do a rolling restart of these members to "plain" members.
+remaining "migration" members or do a rolling restart of these members to "plain" members. If any of the clusters
+that you are keeping is comprised entirely out of "migration" members, you will need to do a rolling restart of
+the entire cluster (for example, when migrating in PCF).
 
+[#wan-event-forwarding]
 **WAN Event Forwarding:**
 
 image::migration-scenario4.png[WAN event forwarding]
@@ -143,12 +210,21 @@ of another major version, the source cluster must be of the minor versions 3.12,
 The patch level is irrelevant, unless the source cluster is also a target cluster for another
 WAN replication, where must adhere to the first two rules.
 
+In case you were using an additional cluster for disaster recovery, you will need to set up
+WAN event forwarding from the migration target cluster to a new DR cluster and only after the migration
+process has finished may you shut down the source cluster and its' DR cluster. For example, see the following image
+for an example setup when migrating from 3.12 to 4.0/4.1 with additional DR clusters.
+
+image::migration-scenario5.png[Migrating 3.12 -> 4.0/4.1 with Disaster Recovery sites]
+
+In the example above, once the migration is complete, you may shut down the 3.12 DR and primary sites.
+
 [#limitations-and-known-issues]
 ==== Limitations and Known Issues
 
 **The solution is limited to IMap and ICache**
 
-Since we're using WAN replication for migration, the data migration is restricted to migrating `IMap` and `ICache` data. In addition to this, `IMap` WAN replication supports WAN sync while `ICache` doesn't.
+Since we're relying on WAN replication for migration, the data migration is restricted to migrating `IMap` and `ICache` data. In addition to this, `IMap` WAN replication supports WAN sync while `ICache` doesn't.
 
 **The "migration" member needs to be able to deserialize and serialize all the received keys and values:**
 
@@ -195,7 +271,7 @@ equal as reported by `equals` are serialized as two different keys.
 The serialized format of some classes changed between 3.12 and 4.0/4.1 and
 merkle trees may report that there are differences between two IMaps while
 in fact there is none. For WAN sync using merkle trees, this means the source
-cluster my transmit more entries than what is necessary to bring the two IMaps
+cluster might transmit more entries than what is necessary to bring the two IMaps
 in-sync. This is not a correctness issue, and the IMaps should end up with the
 same contents. On the other hand, a "consistency check" might always report that
 the two IMaps are out-of-sync while in fact the contents of the IMaps are identical.
