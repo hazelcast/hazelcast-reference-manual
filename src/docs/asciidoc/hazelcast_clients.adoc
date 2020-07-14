@@ -455,7 +455,7 @@ For programmatic configuration of the Hazelcast Java Client, just instantiate a 
 [source,java]
 ----
 ClientConfig clientConfig = new ClientConfig();
-clientConfig.setClusterName("dev").setClusterPassword("dev-pass");
+clientConfig.setClusterName("dev");
 clientConfig.setLoadBalancer(yourLoadBalancer);
 ----
 
@@ -1034,11 +1034,11 @@ See the <<near-cache, Near Cache section>> for a detailed explanation of the Nea
 [[client-cluster-configuration]]
 ===== Configuring Client Cluster
 
-Clients should provide a cluster name and password in order to connect to the cluster.
-You can configure them using `ClientConfig`, as shown below.
+Clients should provide a cluster name in order to connect to the cluster.
+You can configure it using `ClientConfig`, as shown below.
 
 ```
-clientConfig.setClusterName("dev").setClusterPassword("dev-pass");
+clientConfig.setClusterName("dev");
 ```
 
 [[client-security-configuration]]
@@ -1118,6 +1118,11 @@ a cluster connection is established or failed.
 The option `ASYNC` enables reconnection in a non-blocking manner where
 all the waiting invocations receive a `HazelcastClientOfflineException`.
 Its default value is `ON`.
+
+NOTE: When you have `ASYNC`  as the `reconnect-mode` and defined a Near Cache for your client,
+the client functions [[non-stop-client]]without interruptions/downtime by communicating the data from its Near Cache,
+provided that there is non-expired data in it. See <<configuring-client-near-cache, here>> to
+learn how you can add a Near Cache to your client.
 
 The example declarative and programmatic configurations below show how to configure
 a Java client's starting and reconnecting modes.

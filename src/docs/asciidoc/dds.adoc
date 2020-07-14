@@ -209,8 +209,8 @@ for Real-Time Stream Processing (by enabling the Event Journal on your map) and
 Fast Batch Processing. Hazelcast Jet uses IMap as a source (reads data from IMap) and as a sink
 (writes data to IMap). See the link:https://jet.hazelcast.org/use-cases/fast-batch-processing/[Fast Batch Processing^]
 and link:https://jet.hazelcast.org/use-cases/real-time-stream-processing/[Real-Time Stream Processing^]
-use cases for Hazelcast Jet. See also link:https://docs.hazelcast.org/docs/jet/latest/manual/#connector-imdg[here^]
-in the Hazelcast Jet Reference Manual to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
+use cases for Hazelcast Jet. See also link:https://jet-start.sh/docs/api/sources-sinks#imap[here^]
+in the Hazelcast Jet Programming Guide to learn how Jet uses IMap, i.e., how it can read from and write to IMap.
 
 
 [[getting-a-map-and-putting-an-entry]]
@@ -322,8 +322,8 @@ Hazelcast supports both synchronous and asynchronous backups. By default, backup
 are synchronous and configured with `backup-count`. In this case, backup operations block
 operations until backups are successfully copied to backup members (or deleted from backup
 members in case of remove) and acknowledgements are received. Therefore, backups are updated
-before a `write`(put, set, remove and their async counterparts) operation is completed, 
-provided that the cluster is stable. Sync backup operations have a blocking cost which may 
+before a `write`(put, set, remove and their async counterparts) operation is completed,
+provided that the cluster is stable. Sync backup operations have a blocking cost which may
 lead to latency issues.
 
 [[creating-async-backups]]
@@ -1092,10 +1092,10 @@ it, you will have the `init()` and `destroy()` methods.
 The `init()` method initializes the `MapLoader` implementation. Hazelcast calls
 this method when the map is first created on a Hazelcast instance. The `MapLoader`
 implementation can initialize the required resources
-such as reading a configuration file or creating a database connection 
+such as reading a configuration file or creating a database connection
 or accessing a Hazelcast instance.
 
-The `destroy()` method is called during the graceful shutdown of a Hazelcast instance. 
+The `destroy()` method is called during the graceful shutdown of a Hazelcast instance.
 You can override this method  to cleanup the resources held by the `MapLoader` implementation, such as
 closing the database connections.
 

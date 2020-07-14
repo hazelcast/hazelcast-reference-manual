@@ -541,7 +541,7 @@ Example Maven dependencies:
 
 . Install OpenSSL. Make sure that you are installing 1.0.1 or newer release.
 See its documentation at
-link:https://github.com/openssl/openssl/blob/master/INSTALL[github.com/openssl^].
+link:https://github.com/openssl/openssl/blob/master/INSTALL.md[github.com/openssl^].
 . Install Apache Portable Runtime (APR) library. See link:https://apr.apache.org/download.cgi[apr.apache.org^].
 +
 For RHEL: `sudo yum -y install apr openssl`
@@ -1281,6 +1281,13 @@ factory asks the service ticket) is in the form
 for Kerberos authentication. The authentication configuration in the
 referenced security realm will be used to fill the Subject with the Kerberos
 credentials, e.g., TGT.
+
+| `use-canonical-hostname`
+| `false`
+| Flag which controls if canonical hostnames should be used instead of IP addresses
+in generated Service Principal names.
+This property is only used when Service Principal name is not static, i.e., when `spn` option
+is not configured).
 |=======================================================================
 
 The authenticating part on the server side is able to
@@ -1333,6 +1340,11 @@ a keytab file and it doesn't authenticate against a KDC.
 | Allows disabling some of the checks on the
 incoming token, e.g., passes authentication even if the mutual
 authentication is required by the token.
+
+| `use-name-without-realm`
+| `false`
+| When set to `true`, then the Kerberos realm part is removed from the
+authenticated name, e.g., `"jduke@ACME.COM"` becomes just `"jduke"`.
 
 | `security-realm`
 |

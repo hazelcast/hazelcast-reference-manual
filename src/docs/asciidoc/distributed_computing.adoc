@@ -402,8 +402,11 @@ The value of `split-brain-protection-ref` should be the split-brain protection c
 
 === Scheduled Executor Service
 
-Hazelcast's scheduled executor service (IScheduledExecutorService) is a data structure which implements the `java.util.concurrent.ScheduledExecutorService`, partially.
-Here, partially means that it allows the scheduling of a single future execution and/or at a fixed rate execution but not at a fixed delay.
+Hazelcast's scheduled executor service (IScheduledExecutorService)
+is a data structure which implements `java.util.concurrent.ScheduledExecutorService`, partially.
+By partially, we mean the behavior difference in scheduling a task at a fixed rate (`scheduleAtFixedRate()`).
+Hazelcast's behavior guarantees that a task is not executed by multiple threads concurrently:
+a scheduled execution is skipped, instead of postponing, if another thread is still running the same task.
 
 On top of the Vanilla Scheduling API, IScheduledExecutorService allows additional methods such as the following:
 
