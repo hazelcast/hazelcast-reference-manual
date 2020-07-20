@@ -2023,43 +2023,70 @@ for this client in this repo.
 === REST Client
 
 Hazelcast provides a REST interface: it provides an HTTP service
-in each cluster member so that you can access your `map` and `queue` using HTTP protocol.
+in each cluster member so that you can access your data
+structures and cluster using the HTTP protocol.
+
+[IMPORTANT]
+====
+REST service is disabled in the configuration by default.
+You should enable it on your cluster members to use the REST client
+as follows: 
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <rest-api enabled="true">
+        ...
+        </rest-api>
+    </network>
+    ...
+</hazelcast>
+----
+====
+
+Hazelcast uses grouped endpoints to provide the communication
+via REST interface. In this section, as an example, we show various operations
+that are performed on the **data structures** in a cluster using the REST calls.
+For these operations to work, in addition to enabling the REST service as shown above,
+you also need to enable the `DATA` endpoint group which allows accessing the data structures,
+as shown below:
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <network>
+        <rest-api enabled="true">
+            <endpoint-group name="DATA" enabled="true"/>
+        </rest-api>
+    </network>
+    ...
+</hazelcast>
+----
+
+See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> for details
+and to learn about the other endpoint groups Hazelcast offers.
+
+In terms of data structures, currently maps and queues are supported.
 Assuming `mapName` and `queueName` are already configured in your Hazelcast,
-its structure is shown below:
+the structure of REST calls is shown below:
 
-`+http://member IP address:port/hazelcast/rest/maps/mapName/key+`
+`+http://<member IP address>:<port>/hazelcast/rest/maps/mapName/key+`
 
-`+http://member IP address:port/hazelcast/rest/queues/queueName+`
+`+http://<member IP address>:<port>/hazelcast/rest/queues/queueName+`
 
 For the operations to be performed, standard REST conventions for HTTP calls are used.
 
-NOTE: REST client request listener service is not enabled by default.
-You should enable it on your cluster members to use REST client.
-It can be enabled using the `DATA` endpoint group; see the
-<<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>>.
-
-NOTE: All parameters that are used in REST API URLs, such as the distributed data structure and key names, must be
-link:https://en.wikipedia.org/wiki/Percent-encoding[URL encoded^] when composing a call. As an example, `name.with/special@chars`
+All parameters that are used in REST API URLs, such as
+the distributed data structure and key names, must be
+link:https://en.wikipedia.org/wiki/Percent-encoding[URL encoded^]
+when composing a call. As an example, `name.with/special@chars`
 parameter value would be encoded as `name.with%2Fspecial%40chars`.
 
 ==== REST Client GET/POST/DELETE Examples
 
-In the following `GET`, `POST` and `DELETE` examples,
-assume that your cluster members are as shown below.
-
-[source,plain]
-----
-Members [5] {
-  Member [10.20.17.1:5701]
-  Member [10.20.17.2:5701]
-  Member [10.20.17.4:5701]
-  Member [10.20.17.3:5701]
-  Member [10.20.17.5:5701]
-}
-----
-
-[NOTE]
-====
 All of the requests below can return one of the following responses in case of a failure.
 
 * If the HTTP request syntax is not known, the following response is returned.
@@ -2075,12 +2102,11 @@ Content-Length: 0
 < HTTP/1.1 500 Internal Server Error
 < Content-Length: 0
 ```
-====
 
 ===== Creating/Updating Entries in a Map for REST Client
 
 You can put a new `key1/value1` entry into a map by using `POST` call to
-`+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+` URL.
+`+http://<member IP address>:<port>/hazelcast/rest/maps/mapName/key1+` URL.
 This call's content body should contain the value of the key.
 Also, if the call contains the MIME type, Hazelcast stores this information, too.
 
@@ -2089,7 +2115,7 @@ An example `POST` call is shown below.
 [source,plain]
 ----
 $ curl -v -H "Content-Type: text/plain" -d "bar"
-    http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
+    http://<member IP address>:<port>/hazelcast/rest/maps/mapName/foo
 ----
 
 It returns the following response if successful:
@@ -2105,7 +2131,7 @@ If your `POST` call has a trailing slash, Hazelcast will strip it so that it is 
 [source,plain]
 ----
 $ curl -v -H "Content-Type: text/plain" -d "bar"
-    http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo/
+    http://<member IP address>:<port>/hazelcast/rest/maps/mapName/foo/
 ----
 
 The `POST` call will instead be processed as below:
@@ -2113,20 +2139,20 @@ The `POST` call will instead be processed as below:
 [source,plain]
 ----
 $ curl -v -H "Content-Type: text/plain" -d "bar"
-    http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
+    http://<member IP address>:<port>/hazelcast/rest/maps/mapName/foo
 ----
 
 ===== Retrieving Entries from a Map for REST Client
 
 If you want to retrieve an entry, you can use a `GET` call
-to `+http://10.20.17.1:5701/hazelcast/rest/maps/mapName/key1+`.
+to `+http://<member IP address>:<port>/hazelcast/rest/maps/mapName/key1+`.
 You can also retrieve this entry from another member of your cluster, such as
-`+http://10.20.17.3:5701/hazelcast/rest/maps/mapName/key1+`.
+`+http://<another member IP address>:<port>/hazelcast/rest/maps/mapName/key1+`.
 
 An example of a `GET` call is shown below.
 
 ```
-$ curl -X GET http://10.20.17.3:5701/hazelcast/rest/maps/mapName/foo
+$ curl -X GET http://<member IP address>:<port>/hazelcast/rest/maps/mapName/foo
 ```
 
 It returns the following response if there is a corresponding value:
@@ -2157,7 +2183,7 @@ You can use a `DELETE` call to remove an entry. An example `DELETE` call is show
 
 [source,plain]
 ----
-$ curl -v -X DELETE http://10.20.17.1:5701/hazelcast/rest/maps/mapName/foo
+$ curl -v -X DELETE http://<member IP address>:<port>/hazelcast/rest/maps/mapName/foo
 ----
 
 ```
@@ -2169,7 +2195,7 @@ If you leave the key empty as follows, the `DELETE` call deletes all entries fro
 
 [source,plain]
 ----
-$ curl -v -X DELETE http://10.20.17.1:5701/hazelcast/rest/maps/mapName
+$ curl -v -X DELETE http://<member IP address>:<port>/hazelcast/rest/maps/mapName
 ----
 
 [source,plain]
@@ -2185,7 +2211,7 @@ You can use a `POST` call to create an item on the queue. An example is shown be
 [source,plain]
 ----
 $ curl -v -H "Content-Type: text/plain" -d "foo"
-    http://10.20.17.1:5701/hazelcast/rest/queues/myEvents
+    http://<member IP address>:<port>/hazelcast/rest/queues/myEvents
 ----
 
 The above call is equivalent to `HazelcastInstance.getQueue("myEvents").offer("foo");`.
@@ -2215,7 +2241,7 @@ An example is shown below (**10** being the timeout value).
 
 [source,plain]
 ----
-$ curl -v -X DELETE \http://10.20.17.1:5701/hazelcast/rest/queues/myEvents/10
+$ curl -v -X DELETE \http://<member IP address>:<port>/hazelcast/rest/queues/myEvents/10
 ----
 
 The above call is equivalent to `HazelcastInstance.getQueue("myEvents").poll(10, SECONDS);`.
@@ -2242,7 +2268,7 @@ there is no item on the queue to be returned.
 
 [source,plain]
 ----
-$ curl -v -X GET \http://10.20.17.1:5701/hazelcast/rest/queues/myEvents/size
+$ curl -v -X GET \http://<member IP address>:<port>/hazelcast/rest/queues/myEvents/size
 ----
 
 The above call is equivalent to `HazelcastInstance.getQueue("myEvents").size();`.
@@ -2263,7 +2289,7 @@ an example of which is shown below.
 
 [source,plain]
 ----
-$ curl -v http://127.0.0.1:5701/hazelcast/rest/cluster
+$ curl -v http://<member IP address>:<port>/hazelcast/rest/cluster
 ----
 
 The response is as follows:
@@ -2275,21 +2301,21 @@ The response is as follows:
 {
   "members": [
     {
-      "address": "[127.0.0.1]:5701",
+      "address": "<member IP address>:<port>",
       "liteMember": false,
       "localMember": true,
       "uuid": "73f5d6ad-7b51-4e74-bd74-15b2e7de7edd",
       "memberVersion": "4.0.0"
     },
     {
-      "address": "[127.0.0.1]:5702",
+      "address": "<another member IP address>:<port>",
       "liteMember": false,
       "localMember": false,
       "uuid": "e8b41ac6-9db9-43f1-9e98-8b0392891560",
       "memberVersion": "4.0.0"
     },
     {
-      "address": "[127.0.0.1]:5703",
+      "address": "<another member IP address>:<port>",
       "liteMember": false,
       "localMember": false,
       "uuid": "c6929312-d4d3-4527-83bc-474c229394d6",
@@ -2308,7 +2334,7 @@ An example is shown below.
 
 [source,plain]
 ----
-$ curl -v http://127.0.0.1:5701/hazelcast/rest/instance
+$ curl -v http://<member IP address>:<port>/hazelcast/rest/instance
 ----
 
 The response is as follows:
