@@ -360,23 +360,19 @@ Enterprise HD features are the following:
 ** High-Density Memory Store
 ** Hot Restart Persistence
 
-
-To use Hazelcast IMDG Enterprise, you need to set the provided license
-key using one of the configuration methods shown below.
-
 NOTE: Hazelcast IMDG Enterprise license keys are required only for members.
 You do not need to set a license key for your Java clients for which you
 want to use IMDG Enterprise features.
 
-**Declarative Configuration:**
+To use Hazelcast IMDG Enterprise, you need to set the provided license
+key using one of the configuration methods shown below.
 
-Add the below line to any place you like in the file `hazelcast.xml`.
-This XML file offers you a declarative way to configure your Hazelcast.
-It is included in the Hazelcast download package. When you extract the
-downloaded package, you will see the file `hazelcast.xml` under the `/bin` directory.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
+<!-- Add the below line to any place you like in the file `hazelcast-default.xml`. -->
+
 <hazelcast>
     ...
     <license-key>Your Enterprise License Key</license-key>
@@ -384,22 +380,28 @@ downloaded package, you will see the file `hazelcast.xml` under the `/bin` direc
 </hazelcast>
 ----
 
-**Programmatic Configuration:**
-
-Alternatively, you can set your license key programmatically as shown below.
-
-[source,java]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
+# Add the below line to any place you like in the file `hazelcast-default.yaml`.
+
+hazelcast:
+  ...
+  license-key: Your Hazelcast Enterprise or Enterprise HD License Key
+  ...
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+// Programmatic configuration.
+
 Config config = new Config();
 config.setLicenseKey( "Your Enterprise License Key" );
 ----
 
-**Spring XML Configuration:**
-
-If you are using Spring with Hazelcast, then you can set the license
-key using the Spring XML schema, as shown below.
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring XML
 ----
 <hz:config>
     ...
@@ -408,14 +410,12 @@ key using the Spring XML schema, as shown below.
 </hz:config>
 ----
 
-**JVM System Property:**
-
-As another option, you can set your license key using the below
-command (the "-D" command line option).
-
-```
+[source,plain,indent=0,subs="verbatim,attributes",role="secondary"]
+.JVM System Property
+----
 -Dhazelcast.enterprise.license.key=Your Enterprise License Key
-```
+----
+
 
 [[license-key-format]]
 ==== License Key Format

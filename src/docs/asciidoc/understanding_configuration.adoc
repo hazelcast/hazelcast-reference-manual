@@ -20,12 +20,12 @@ file. When you download and unzip `hazelcast-{imdg-version}
 .zip`, you see the following files present in the  `/bin` folder, which are
 standard configuration files:
 
-* `hazelcast.xml`: Default declarative XML configuration file for Hazelcast.
+* `hazelcast-default.xml`: Default declarative XML configuration file for Hazelcast.
 The configuration for the distributed data structures in this XML file should
 be fine for most of the Hazelcast users. If not, you can tailor this XML file according
 to your needs by adding/removing/modifying properties. Also see the <<setting-up-clusters,
 Setting Up Clusters chapter>> for the network related configurations.
-* `hazelcast.yaml`: Default YAML configuration file identical to `hazelcast.xml` in content.
+* `hazelcast-default.yaml`: Default YAML configuration file identical to `hazelcast.xml` in content.
 * `hazelcast-full-example.xml`: Configuration file which includes all Hazelcast configuration
 elements and attributes with their descriptions. It is the "superset" of `hazelcast.xml`.
 You can use `hazelcast-full-example.xml` as a reference document to learn about any element
@@ -45,9 +45,11 @@ attributes with their descriptions. Read about Blue-Green Deployment and Disaste
 * `hazelcast-client-failover-full-example.yaml`: YAML configuration file identical to
 `hazelcast-client-failover-full-example.xml` in content.
 
-A part of `hazelcast.xml` is shown as an example below.
+A part of the default XML/YAML configurations is shown as an example below.
 
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -82,9 +84,8 @@ A part of `hazelcast.xml` is shown as an example below.
 </hazelcast>
 ----
 
-The identical part of the configuration extracted from `hazelcast.yaml` is shown as below.
-
-[source,yaml]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
 hazelcast:
   ...
@@ -114,6 +115,7 @@ hazelcast:
     default:
       time-to-live-seconds: 0
     ...
+
 ----
 
 
@@ -531,7 +533,8 @@ each option.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -542,7 +545,8 @@ each option.
 </hazelcast>
 ----
 
-[source,yaml]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
 hazelcast:
     ...
@@ -794,7 +798,6 @@ And the following is an example pattern matcher:
 include::{javasource}/ExampleConfigPatternMatcher.java[tag=patternmatcher]
 ----
 
-
 [[using-wildcards]]
 === Using Wildcards
 
@@ -890,20 +893,18 @@ For example, see the following command that sets two system properties.
 ```
 
 Let's get the values of these system properties in the declarative
-configuration of Hazelcast, as shown below.
+configuration (XML/YAML) of Hazelcast, as shown below.
 
-In the XML configuration:
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <cluster-name>${cluster.name}</cluster-name>
 </hazelcast>
 ----
 
-In the YAML configuration:
-
-[source,yaml]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
 hazelcast:
   cluster-name: ${cluster.name}
@@ -912,14 +913,16 @@ hazelcast:
 This also applies to the declarative configuration of Hazelcast Java Client,
 as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     <cluster-name>${cluster.name}</cluster-name>
 </hazelcast-client>
 ----
 
-[source,yaml]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
 hazelcast-client:
   cluster-name: ${cluster.name}
@@ -960,9 +963,9 @@ for basic information on how a replacer works.
 Variable replacers are configured within the element `<config-replacers>` under `<hazelcast>`,
 as shown below.
 
-In the XML configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -979,9 +982,8 @@ In the XML configuration:
 </hazelcast>
 ----
 
-In the YAML configuration:
-
-[source,yaml]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
 hazelcast:
     ...

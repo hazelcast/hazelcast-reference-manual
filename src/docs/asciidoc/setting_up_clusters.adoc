@@ -184,7 +184,8 @@ full descriptions of the TCP/IP discovery configuration elements.
 
 The following is an example declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -203,6 +204,24 @@ The following is an example declarative configuration.
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    join:
+      multicast:
+        enabled: false
+      tcp-ip:
+        enabled: true
+        member-list:
+          - machine1
+          - machine2
+          - machine3:5799
+          - 192.168.1.0-7
+          - 192.168.1.21
 ----
 
 As shown above, you can provide IP addresses or host names for `member` elements.
@@ -241,7 +260,8 @@ multicast values.
 
 The following is an example declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -264,6 +284,26 @@ The following is an example declarative configuration.
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    join:
+      multicast:
+        enabled: true
+        multicast-group: 224.2.2.3
+        multicast-port: 54327
+        multicast-time-to-live: 32
+        multicast-timeout-seconds: 2
+        trusted-interfaces:
+          - 192.168.1.102
+      tcp-ip:
+        enabled: false
+      aws:
+        enabled: false
 ----
 
 Pay attention to the `multicast-timeout-seconds` element. `multicast-timeout-seconds`
