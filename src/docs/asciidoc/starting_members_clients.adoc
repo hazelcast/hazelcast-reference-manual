@@ -1,0 +1,157 @@
+[[starting-the-member-and-client]]
+== Starting the Members and Clients
+
+Having installed Hazelcast and assuming you have the required
+libraries of your preferred client language, let's see how we can start the
+members and clients.
+
+**Members:**
+
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.Shell
+----
+// Starts a standalone member:
+
+sh bin/start.sh
+----
+
+[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
+.Docker
+----
+docker run hazelcast/hazelcast:$HAZELCAST_VERSION
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+Config cfg = new Config();
+HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
+----
+
+NOTE: `start.sh` / `start.bat` scripts lets you start one Hazelcast instance
+per directory. To start a new instance, please unzip Hazelcast ZIP or TAR.GZ
+package in a new directory.
+
+NOTE: You can also use the start scripts to deploy your own library to a
+Hazelcast member. See the <<adding-user-library-to-classpath, Adding User
+Library to CLASSPATH section>>.
+
+**Clients:**
+
+
+[source,java,indent=0,subs="verbatim,attributes",role="primary"]
+.Java
+----
+ClientConfig clientConfig = new ClientConfig();
+HazelcastInstance hzclient = HazelcastClient.newHazelcastClient();
+----
+
+[source,c++,indent=0,subs="verbatim,attributes",role="secondary"]
+.C++
+----
+hazelcast::client::ClientConfig config;
+hazelcast::client::HazelcastClient hzclient(config);
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.C#
+----
+var cfg = new ClientConfig();
+var hzclient = HazelcastClient.NewHazelcastClient(cfg);
+----
+
+[source,javascript,indent=0,subs="verbatim,attributes",role="secondary"]
+.Node.js
+----
+const { Client } = require('hazelcast-client');
+const hzclient = await Client.newHazelcastClient();
+----
+
+[source,python,indent=0,subs="verbatim,attributes",role="secondary"]
+.Python
+----
+config = hazelcast.ClientConfig()
+hzclient = hazelcast.HazelcastClient(config)
+----
+
+[source,go,indent=0,subs="verbatim,attributes",role="secondary"]
+.Go
+----
+config := hazelcast.NewConfig()
+hzclient , _ := hazelcast.NewClientWithConfig(config)
+----
+
+
+Hazelcast also offers a tool, **Management Center**, that enables you to monitor your cluster.
+It is included in your Hazelcast IMDG download package and can also be downloaded
+from the Hazelcast website's link:https://hazelcast.org/download/#management-center[download page^].
+You can use this tool to monitor your cluster, cluster members, clients, data structures
+and WAN replications. See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[documentation^] for details on Hazelcast Management Center.
+
+By default, Hazelcast uses multicast to discover other members that can form a cluster.  If you are
+working with other Hazelcast developers on the same network, you may find yourself joining their
+clusters under the default settings.  Hazelcast provides a way to segregate clusters within the same
+network when using multicast. See the <<creating-cluster, Creating Clusters section>>
+for more information.  Alternatively, if you do not wish to use the default multicast mechanism,
+you can provide a fixed list of IP addresses that are allowed to join. See
+the <<join, Join configuration section>> for more information.
+
+NOTE: Multicast mechanism is not recommended for production since UDP
+is often blocked in production environments and other discovery mechanisms
+are more definite. See the <<discovery-mechanisms, Discovery Mechanisms section>>.
+
+NOTE: You can also check the video tutorials link:https://hazelcast.org/getting-started-with-hazelcast[here^].
+
+=== Example Application
+
+In this short tutorial, you perform the following activities:
+
+. Create a simple Java application using the Hazelcast distributed map and queue.
+. Run our application twice to have a cluster with two members (JVMs).
+. Connect to our cluster from another Java application by using the
+Hazelcast Native Java Client API.
+
+Let's begin.
+
+
+* The following code starts the first Hazelcast member and
+creates and uses the `customers` map and queue.
++
+[source,java]
+----
+include::{javasource}/GettingStartedMember.java[tag=startmember]
+----
++
+* Run this `GettingStarted` class a second time to get the second member
+started. The members form a cluster and the output is similar to the following.
++
+```
+Members {size:2, ver:2} [
+    Member [127.0.0.1]:5701 - e40081de-056a-4ae5-8ffe-632caf8a6cf1 this
+    Member [127.0.0.1]:5702 - 93e82109-16bf-4b16-9c87-f4a6d0873080
+]
+```
++
+Here, you can see the size of your cluster (`size`) and member list
+version (`ver`). The member list version is incremented when changes
+happen to the cluster, e.g., a member leaving from or joining to the cluster.
++
+* Now, add the `hazelcast-client-`*`{imdg-version}`*`.jar` library to your classpath.
+This is required to use a Hazelcast client.
+* The following code starts a Hazelcast Client, connects to our cluster,
+and prints the size of the `customers` map.
++
+[source,java]
+----
+public class GettingStartedClient {
+    public static void main( String[] args ) {
+        ClientConfig clientConfig = new ClientConfig();
+        HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
+        IMap map = client.getMap( "customers" );
+        System.out.println( "Map Size:" + map.size() );
+    }
+}
+----
++
+* When you run it, you see the client properly connecting to the cluster
+and printing the map size as **3**.

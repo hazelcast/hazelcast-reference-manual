@@ -1,0 +1,749 @@
+[[installing-hazelcast-imdg]]
+== Installing and Upgrading
+
+This chapter provides pre- and post-installation
+details, and deployment options of Hazelcast IMDG.
+
+[[supported-jvms]]
+=== Supported Java Virtual Machines
+
+Following table summarizes the version compatibility between Hazelcast IMDG
+and various vendors' Java Virtual Machines (JVMs).
+
+
+[cols="35,10,15,15,15,10",options="header"]
+.Supported JVMs
+|===
+
+|Hazelcast IMDG Version | JDK Version | Oracle JDK | IBM SDK, Java Technology Edition | Azul Zing JDK | OpenJDK
+
+| Up to 3.11
+
+(_JDK 6 support is dropped with the release of Hazelcast IMDG 3.12_)
+| 6
+| icon:check[]
+| icon:times[]
+| icon:check[]
+| icon:check[]
+
+| Up to 3.11
+
+(_JDK 7 support is dropped with the release of Hazelcast IMDG 3.12_)
+| 7
+| icon:check[]
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+| Up to current
+| 8
+| icon:check[]
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported.
+| 9
+| icon:check[]
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported.
+| 10
+| icon:check[]
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:check[]
+
+a| * 3.11 and newer:  Fully supported.
+* 3.10 and older: Partially supported.
+| 11
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:times[]
+
+(JDK not available yet)
+| icon:check[]
+
+|===
+
+
+NOTE: Hazelcast IMDG 3.10 and older releases are not fully tested on JDK 9
+and newer, so there may be some features that are not working properly.
+
+[IMPORTANT]
+====
+See the following sections for the details of Hazelcast IMDG supporting
+JDK 9 and newer:
+
+* <<running-in-modular-java, Running in Modular Java>>: Talks about the
+new module system present in Java 9 and newer and how you can run a Hazelcast
+application on it.
+* <<tls-ssl-for-hazelcast-members, TLS/SSL for Hazelcast Members>>: Lists
+`TLSv1.3`, which comes with Java 11, as a supported TLS version.
+====
+
+=== Using the Download Archives
+
+As an alternative to Maven, you can download and install Hazelcast IMDG
+yourself. You only need to:
+
+* download the package `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
+from link:https://hazelcast.org/download[hazelcast.org^]
+* extract the downloaded `hazelcast-{imdg-version}.zip` or `hazelcast-{imdg-version}.tar.gz`
+* and add the file `hazelcast-{imdg-version}.jar` to your classpath.
+
+When you download and extract the Hazelcast ZIP or TAR.GZ package, you will
+see the `start/stop.sh` (for Linux) and `start/stop.bat` (for Windows) scripts under the `/bin` folder.
+These scripts start/stop a Hazelcast member. See the <<creating-a-cluster, Quick Start chapter>>
+to see the start scripts in action.
+
+There are also some other scripts in the download archive whose usage descriptions
+are given in their related sections including the <<using-the-script-cluster-sh, Using the Script cluster.sh>>,
+<<cp-subsystem-management-apis, CP Subsystem Management APIs section>> and
+<<health-check-script, Using the healthcheck.sh Script>> sections. You can also check the full list
+of scripts in the `readme.html` of your download archive.
+
+=== Using Docker
+
+You can run the following command to launch Hazelcast Docker Container:
+
+[source,shell]
+----
+$ docker run hazelcast/hazelcast:$HAZELCAST_VERSION
+----
+
+This command will pull Hazelcast Docker image and run a new Hazelcast instance.
+
+You can find the full list of Hazelcast versions to replace $HAZELCAST_VERSION]
+at the link:https://hub.docker.com/r/hazelcast/hazelcast/tags[Official Hazelcast Docker Hub^].
+
+=== Using Maven
+
+You can find Hazelcast in standard Maven repositories. If your
+project uses Maven, you do not need to add
+additional repositories to your `pom.xml` or add
+`hazelcast-{imdg-version}.jar` file into your
+classpath (Maven does that for you). Just add the following
+lines to your `pom.xml`:
+
+
+[source,xml,indent=0,subs="verbatim,attributes+",role="primary"]
+.Hazelcast Open Source Edition
+----
+<dependencies>
+    <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast</artifactId>
+        <version>{imdg-version}</version>
+    </dependency>
+</dependencies>
+----
+
+[source,xml,indent=0,subs="verbatim,attributes+",role="secondary"]
+.Hazelcast Enterprise Edition
+----
+<!-- There are two Maven repositories defined for Hazelcast IMDG Enterprise: -->
+
+<repository>
+    <id>Hazelcast Private Snapshot Repository</id>
+    <url>https://repository.hazelcast.com/snapshot/</url>
+</repository>
+<repository>
+    <id>Hazelcast Private Release Repository</id>
+    <url>https://repository.hazelcast.com/release/</url>
+</repository>
+
+
+<!-- You may also define dependencies: -->
+
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise</artifactId>
+    <version>{imdg-version}</version>
+</dependency>
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise-all</artifactId>
+    <version>{imdg-version}</version>
+</dependency>
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-enterprise-all</artifactId>
+    <version>{imdg-version}</version>
+    <classifier>javadoc</classifier>
+</dependency>
+----
+
+Above dependency (`hazelcast`) includes both member and Java
+client libraries of Hazelcast IMDG. A separate Java client module
+and dependency do not exist. See <<removal-of-hazelcast-client-module, here>>
+for the details.
+
+[[running-in-modular-java]]
+=== Running in Modular Java
+
+Java link:http://openjdk.java.net/projects/jigsaw/[project Jigsaw^] brought
+a new Module System into Java 9 and newer. Hazelcast supports running in
+the modular environment. If you want to run your application with Hazelcast
+libraries on the modulepath, use the following module name:
+
+* `com.hazelcast.core` for `hazelcast-{imdg-version}.jar` and
+`hazelcast-enterprise-{imdg-version}.jar`
+
+Don't use `hazelcast-all-{imdg-version}.jar` or
+`hazelcast-enterprise-all-{imdg-version}.jar` on the modulepath as it could
+lead to problems in module dependencies for your application. You can
+still use them on the classpath.
+
+The Java Module System comes with stricter visibility rules. It affects
+Hazelcast which uses internal Java API to reach the best performance results.
+
+Hazelcast needs the `java.se` module and access to the following Java
+packages for a proper work:
+
+* `java.base/jdk.internal.ref`
+* `java.base/java.nio` _(reflective access)_
+* `java.base/sun.nio.ch` _(reflective access)_
+* `java.base/java.lang` _(reflective access)_
+* `jdk.management/com.ibm.lang.management.internal` _(reflective access)_
+* `jdk.management/com.sun.management.internal` _(reflective access)_
+* `java.management/sun.management` _(reflective access)_
+
+You can provide the access to the above mentioned packages by using
+`--add-exports` and `--add-opens` (for the reflective access) Java arguments.
+
+**Example: Running a member on the classpath**
+
+[source,bash,subs="attributes+"]
+----
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
+  --add-opens java.base/java.lang=ALL-UNNAMED \
+  --add-opens java.base/java.nio=ALL-UNNAMED \
+  --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+  --add-opens java.management/sun.management=ALL-UNNAMED \
+  --add-opens jdk.management/com.ibm.lang.management.internal=ALL-UNNAMED \
+  --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED \
+  -jar hazelcast-{imdg-version}.jar
+----
+
+**Example: Running a member on the modulepath**
+
+[source,bash]
+----
+java --add-modules java.se \
+  --add-exports java.base/jdk.internal.ref=com.hazelcast.core \
+  --add-opens java.base/java.lang=com.hazelcast.core \
+  --add-opens java.base/java.nio=com.hazelcast.core \
+  --add-opens java.base/sun.nio.ch=com.hazelcast.core \
+  --add-opens java.management/sun.management=com.hazelcast.core \
+  --add-opens jdk.management/com.ibm.lang.management.internal=com.hazelcast.core \
+  --add-opens jdk.management/com.sun.management.internal=com.hazelcast.core \
+  --module-path lib \
+  --module com.hazelcast.core/com.hazelcast.core.server.HazelcastMemberStarter
+----
+
+_This example expects `hazelcast-{imdg-version}.jar` placed in the `lib` directory._
+
+=== Deploying using Hazelcast Cloud
+
+A simple option for deploying Hazelcast is link:https://cloud.hazelcast.com/sign-up[Hazelcast Cloud^]. It delivers
+enterprise-grade Hazelcast software in the cloud. You can deploy, scale
+and update your Hazelcast easily using Hazelcast Cloud; it maintains the
+clusters for you. You can use Hazelcast Cloud as a low-latency high-performance
+caching or data layer for your microservices, and it is also a nice solution
+for state management of serverless functions (AWS Lambda).
+
+Hazelcast Cloud uses Docker and Kubernetes, and is powered by Hazelcast IMDG
+Enterprise HD. It is initially available on Amazon Web Services (AWS), to be
+followed by Microsoft Azure and Google Cloud Platform (GCP). Since it is based
+on Hazelcast IMDG Enterprise HD, it features advanced functionality such as
+TLS, multi-region, persistence, and high availability.
+
+[[deploying-on-amazon-ec2]]
+=== Deploying On Amazon EC2
+
+You can easily deploy your Hazelcast projects on Amazon EC2 instances.
+For this, you can use Hazelcast's AWS cloud discovery module. This
+module helps the cluster members discover each other and form a cluster on EC2.
+It has easy-to-apply features including tagging, IAM roles, and connections
+to the cluster from clients outside the cloud.
+
+See the Hazelcast AWS cloud discovery module's
+link:https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation]
+to learn more about this module.
+
+Alternative to the discovery module mentioned above, if you are a link:https://www.vagrantup.com[Vagrant^] and/or
+link:https://www.chef.io/chef/[Chef^] user, you can also check our
+link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/amazon-ec2-vagrant-chef[sample^]
+project that uses these 3rd party tools to deploy a Hazelcast cluster on EC2.
+
+
+[[deploying-on-microsoft-azure]]
+=== Deploying On Microsoft Azure
+
+You can deploy your Hazelcast cluster onto a Microsoft Azure environment.
+For this, your cluster should make use of Hazelcast Discovery Plugin for
+Microsoft Azure. You can find information about this plugin on its GitHub
+repository at link:https://github.com/hazelcast/hazelcast-azure[Hazelcast Azure^].
+
+For information on how to automatically deploy your cluster onto Azure,
+see the link:https://github.com/hazelcast/hazelcast-azure/blob/master/README.md#automated-deployment[Deployment section^]
+of the Hazelcast Azure plugin repository.
+
+[[deploying-on-pivotal-cloud-foundry]]
+=== Deploying On Pivotal Cloud Foundry
+
+You can deploy your Hazelcast cluster onto Pivotal Cloud Foundry. It
+is available as a Pivotal Cloud Foundry Tile which you can download at
+link:https://network.pivotal.io/products/hazelcast-pcf/[here^]. You can find
+the installation and usage instructions and the release notes documents
+link:https://docs.pivotal.io/partners/hazelcast/index.html[here^].
+
+[[deploying-using-docker]]
+=== Deploying using Docker
+
+You can deploy your Hazelcast projects using the Docker containers.
+Hazelcast has the following images on Docker:
+
+* Hazelcast IMDG
+* Hazelcast IMDG Enterprise
+* Hazelcast Management Center
+* Hazelcast OpenShift
+
+After you pull an image from the Docker registry, you can run your image
+to start the Management Center or a Hazelcast instance with Hazelcast's
+default configuration. All repositories provide the latest stable releases
+but you can pull a specific release, too. You can also specify environment
+variables when running the image.
+
+If you want to start a customized Hazelcast instance, you can extend the
+Hazelcast image by providing your own configuration file.
+
+This feature is provided as a Hazelcast plugin. See its own GitHub repo at
+link:https://github.com/hazelcast/hazelcast-docker[Hazelcast Docker^]
+for details on configurations and usages.
+
+[[setting-the-license-key]]
+=== Licensing
+
+Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise**
+and **Enterprise HD**. The supported features differ in your Hazelcast
+setup according to the license type you own.
+
+* **Enterprise license**: In addition to the open source edition of
+Hazelcast, Enterprise features are the following:
+** Security
+** WAN Replication
+** Clustered REST
+** Clustered JMX
+** Striim Hot Cache
+** Rolling Upgrades
+* **Enterprise HD license**: In addition to the Enterprise features,
+Enterprise HD features are the following:
+** High-Density Memory Store
+** Hot Restart Persistence
+
+
+To use Hazelcast IMDG Enterprise, you need to set the provided license
+key using one of the configuration methods shown below.
+
+NOTE: Hazelcast IMDG Enterprise license keys are required only for members.
+You do not need to set a license key for your Java clients for which you
+want to use IMDG Enterprise features.
+
+**Declarative Configuration:**
+
+Add the below line to any place you like in the file `hazelcast.xml`.
+This XML file offers you a declarative way to configure your Hazelcast.
+It is included in the Hazelcast download package. When you extract the
+downloaded package, you will see the file `hazelcast.xml` under the `/bin` directory.
+
+[source,xml]
+----
+<hazelcast>
+    ...
+    <license-key>Your Enterprise License Key</license-key>
+    ...
+</hazelcast>
+----
+
+**Programmatic Configuration:**
+
+Alternatively, you can set your license key programmatically as shown below.
+
+[source,java]
+----
+Config config = new Config();
+config.setLicenseKey( "Your Enterprise License Key" );
+----
+
+**Spring XML Configuration:**
+
+If you are using Spring with Hazelcast, then you can set the license
+key using the Spring XML schema, as shown below.
+
+[source,xml]
+----
+<hz:config>
+    ...
+    <hz:license-key>Your Enterprise License Key</hz:license-key>
+    ...
+</hz:config>
+----
+
+**JVM System Property:**
+
+As another option, you can set your license key using the below
+command (the "-D" command line option).
+
+```
+-Dhazelcast.enterprise.license.key=Your Enterprise License Key
+```
+
+[[license-key-format]]
+==== License Key Format
+
+License keys have the following format:
+
+```
+<Name of the Hazelcast edition>#<Count of the Members>#<License key>
+```
+
+The strings before the `<License key>` is the human readable part. You
+can use your license key with or without this human readable part. So,
+both the following example license keys are valid:
+
+```
+HazelcastEnterpriseHD#2Nodes#1q2w3e4r5t
+```
+
+
+```
+1q2w3e4r5t
+```
+
+[[license-info]]
+==== License Information
+
+License information is available through the following Hazelcast APIs.
+
+===== JMX
+
+The MBean `HazelcastInstance.LicenseInfo` holds all the relative license
+details and can be accessed through Hazelcast's JMX port (if enabled). The
+following parameters represent these details:
+
+* `maxNodeCountAllowed`: Maximum members allowed to form a cluster under
+the current license.
+* `expiryDate`: Expiration date of the current license.
+* `typeCode`: Type code of the current license.
+* `type`: Type of the current license.
+* `ownerEmail`: Email of the current license's owner.
+* `companyName`: Company name on the current license.
+
+Following is the list of license ``type``s and ``typeCode``s:
+
+```
+MANAGEMENT_CENTER(1, "Management Center"),
+ENTERPRISE(0, "Enterprise"),
+ENTERPRISE_SECURITY_ONLY(2, "Enterprise only with security"),
+ENTERPRISE_HD(3, "Enterprise HD"),
+CUSTOM(4, "Custom");
+```
+
+===== REST
+
+You can access the license details by issuing a `GET` request through the
+REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using the
+REST Endpoint Groups section>>) on the `/license` resource, as shown below.
+
+```
+curl -v http://localhost:5701/hazelcast/rest/license
+```
+
+Its output is similar to the following:
+
+```
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 5701 (#0)
+> GET /hazelcast/rest/license HTTP/1.1
+> Host: localhost:5701
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 165
+<
+{"licenseInfo":{"expiryDate":4090168799999,"maxNodeCount":99,"type":3,"companyName":null,"ownerEmail":null,"keyHash":"OsLh4O6vqDuKEq8lOANQuuAaRnmDfJfRPrFSEhA7T3Y="}}
+```
+
+[[rest-update-license]]To update the license of a running cluster, you can issue a `POST`
+request through the REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using
+the REST Endpoint Groups section>>) on the `/license` as shown below:
+
+```
+curl --data "${CLUSTERNAME}&${PASSWORD}&${LICENSE}" http://localhost:5001/hazelcast/rest/license
+```
+
+NOTE: The request parameters must be properly URL-encoded as described in the <<rest-client, REST Client section>>.
+
+The above command updates the license on all running Hazelcast members of the cluster.
+If successful, the response looks as follows:
+
+```
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 5001 (#0)
+> POST /hazelcast/rest/license HTTP/1.1
+> Host: 127.0.0.1:5001
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Length: 164
+> Content-Type: application/x-www-form-urlencoded
+>
+* upload completely sent off: 164 out of 164 bytes
+< HTTP/1.1 200 OK
+< Content-Type: application/javascript
+< Content-Length: 364
+<
+* Connection #0 to host 127.0.0.1 left intact
+{"status":"success","licenseInfo":{"expiryDate":1560380399161,"maxNodeCount":10,
+"type":-1,"companyName":"ExampleCompany","ownerEmail":"info@example.com",
+"keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="},
+"message":"License updated at run time - please make sure to update the license
+in the persistent configuration to avoid losing the changes on restart."}
+```
+
+As the message in the above example indicates, the license is updated only at runtime.
+The persistent configuration of each member needs to be updated manually to ensure that
+the license change is not lost on restart. The same message is logged as a warning in
+each member's log.
+
+It is only possible to update to a license that expires at the same time or after
+the current license. The new license must allow the exact same list of features and
+the same number of members.
+
+If, for any reason, updating the license fails on some members (member does not respond,
+license is not compatible, etc.), the whole operation fails, leaving the cluster in
+a potentially inconsistent state (some members have been switched to the new license
+while some have not). It is up to you to resolve this situation manually.
+
+===== Logs
+
+Besides the above approaches (JMX and REST) to access the license details,
+Hazelcast also starts to log a license information banner into the log files
+when the license expiration is approaching.
+
+During the last two months prior to the expiration, this license information
+banner is logged daily, as a reminder to renew your license to avoid any
+interruptions. Once the expiration is due to a month, the frequency of
+logging this banner becomes hourly (instead of daily). Lastly, when the
+expiration is due in a week, this banner is printed every 30 minutes.
+
+NOTE: Similar alerts are also present on the Hazelcast Management Center.
+
+The banner has the following format:
+
+```
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ WARNING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+HAZELCAST LICENSE WILL EXPIRE IN 29 DAYS.
+Your Hazelcast cluster will stop working after this time.
+
+Your license holder is customer@example-company.com, you should have them contact
+our license renewal department, urgently on info@hazelcast.com
+or call us on +1 (650) 521-5453
+
+Please quote license id CUSTOM_TEST_KEY
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+```
+
+WARNING: Please pay attention to the license warnings to prevent any possible
+interruptions in the operation of your Hazelcast applications.
+
+
+[[rolling-member-upgrades]]
+=== Rolling Member Upgrades
+
+[blue]*Hazelcast IMDG Enterprise*
+
+This chapter explains the procedure of upgrading the version of Hazelcast members in a running cluster without interrupting the operation of the cluster.
+
+[[terminology]]
+==== Terminology
+
+* **Minor version**: A version change after the decimal point, e.g.,
+3.12 and 3.13.
+* **Patch version**: A version change after the second decimal point,
+e.g., 3.12.1 and 3.12.2.
+* **Member codebase version**: The `major.minor.patch` version of the
+Hazelcast binary on which the member executes. For example, when running
+on `hazelcast-3.12.jar`, your member's codebase version is `3.12.0`.
+* **Cluster version**: The `major.minor` version at which the cluster
+operates. This ensures that cluster members are able to communicate using
+the same cluster protocol and
+determines the feature set exposed by the cluster.
+
+[[hazelcast-members-compatibility-guarantees]]
+==== Hazelcast Members Compatibility Guarantees
+
+Hazelcast members operating on binaries of the same major and minor
+version numbers are compatible regardless of patch version.
+For example, in a cluster with members running on version 3.11.1,
+it is possible to perform a rolling upgrade to 3.11.2 by shutting
+down, upgrading to `hazelcast-3.11.2.jar` binary and starting each
+member one by one. _Patch level compatibility applies to both Hazelcast
+IMDG and Hazelcast IMDG Enterprise_.
+
+Also, each minor version is compatible with the previous one (back until
+Hazelcast IMDG 3.8). For example, it is possible to perform a rolling
+upgrade on a cluster running Hazelcast IMDG Enterprise 3.11 to Hazelcast
+IMDG Enterprise 3.12. _Rolling upgrades across minor versions is a Hazelcast
+IMDG Enterprise feature_.
+
+The compatibility guarantees described above are given in the context of
+rolling member upgrades and only apply to GA (general availability) releases.
+It is never advisable to run a cluster with members running on different 
+patch or minor versions for prolonged periods of time.
+
+[[rolling-upgrade-procedure]]
+==== Rolling Upgrade Procedure
+
+NOTE: The version numbers used in this chapter are examples.
+
+Let's assume a cluster with four members running on codebase version `3.12.0` with cluster version `3.12`, that should be upgraded to codebase version
+`3.13.0` and cluster version `3.13`. The rolling upgrade process for this cluster, i.e., replacing existing `3.12.0` members one by one with an upgraded
+one at version `3.13.0`, includes the following steps which should be repeated for each member:
+
+* Gracefully shut down an existing `3.12.0` member.
+* Wait until all partition migrations are completed; during migrations,
+membership changes (member joins or removals) are not allowed.
+* Update the member with the new `3.13.0` Hazelcast binaries.
+* Start the member and wait until it joins the cluster. You should
+see something like the following in your logs:
++
+```
+ ...
+ INFO: [192.168.2.2]:5701 [cluster] [3.13] Hazelcast 3.9 (20170630 - a67dc3a) starting at [192.168.2.2]:5701
+ ...
+ INFO: [192.168.2.2]:5701 [cluster] [3.13] Cluster version set to 3.12
+```
+
+The version in brackets (`[3.13]`) still denotes the member's codebase version (running on the hypothetical `hazelcast-3.13.jar` binary). Once the member locates the existing cluster members, it sends its join request to the master. The master validates that the new member is allowed to join the cluster and lets the new member know that the cluster is currently operating at `3.12` cluster version. The new member sets `3.12` as its cluster version and starts operating normally.
+
+At this point all members of the cluster have been upgraded to codebase version `3.13.0` but the cluster still operates at cluster version `3.12`. In order to use `3.13` features the cluster version must be changed to `3.13`.
+
+NOTE: Rolling upgrade can be used for one version at a time, e.g., 3.n to 3.n+1. You cannot upgrade
+your members, for example, from 3.13 to 3.15 in a single rolling upgrade session.
+
+[[upgrading-cluster-version]]
+==== Upgrading Cluster Version
+
+You have the following options to upgrade the cluster version:
+
+* Using https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Management Center].
+* Using the <<using-the-script-cluster-sh, cluster.sh>> script.
+* Allow the cluster to <<enabling-auto-upgrading, auto-upgrade>>.
+
+Note that you need to enable the REST API to use either of the above methods
+to upgrade your cluster version. For this, enable the `CLUSTER_WRITE`
+REST endpoint group (its default is disabled). See the
+<<using-the-rest-endpoint-groups>> section on how to enable them.
+
+Also note that you need to upgrade your Management Center version *before* upgrading the member version if you want to
+change the cluster version using Management Center. Management Center is compatible with the previous minor version of
+Hazelcast. For example, Management Center 3.12 works with both Hazelcast IMDG
+3.11 and 3.12. To change your cluster version to 3.12, you need Management Center 3.12.
+
+==== Enabling Auto-Upgrading
+
+The cluster can automatically upgrade its version. As soon as it detects 
+that all its members have a version higher than the current cluster 
+version, it upgrades the cluster version to match it. This feature is
+disabled by default. To enable it, set the system property 
+`hazelcast.cluster.version.auto.upgrade.enabled` to `true`.
+
+There is one tricky detail here: as you are shutting down and upgrading 
+the members one by one, when you shut down the last one, all the members 
+in the remaining cluster have the newer version, but you don't want the 
+auto-upgrade to kick in before you have successfully upgraded the last
+member as well. To avoid this, you can use the 
+`hazelcast.cluster.version.auto.upgrade.min.cluster.size` system
+property. You should 
+set it to the size of your cluster, and then Hazelcast will wait for the
+last member to join before it can proceed with the auto-upgrade.
+
+[[network-partitions-and-rolling-upgrades]]
+==== Network Partitions and Rolling Upgrades
+
+In the event of network partitions which split your cluster into two subclusters, split-brain handling works as explained in the <<network-partitioning, Network Partitioning chapter>>, with the
+additional constraint that two subclusters only merge as long as they operate on the same cluster version. This is a requirement to ensure that all members participating
+in each one of the subclusters are able to operate as members of the merged cluster at the same cluster version.
+
+With regards to rolling upgrades, the above constraint implies that if a network partition occurs while a change of cluster version is in progress, then with some unlucky timing, one subcluster may be upgraded to the new cluster version and another subcluster may have upgraded members but still operate at the old cluster version.
+
+In order for the two subclusters to merge, it is necessary to change the cluster version of the subcluster that still operates on the old cluster version, so that both subclusters
+will be operating at the same, upgraded cluster version and able to merge as soon as the network partition is fixed.
+
+[[rolling-upgrade-faq]]
+==== Rolling Upgrade FAQ
+
+The following provide answers to the frequently asked questions related to rolling member upgrades.
+
+**How is the cluster version set?**
+
+When a new member starts, it is not yet joined to a cluster; therefore its cluster version is still undetermined. In order for the cluster version to be
+set, one of the following must happen:
+
+* the member cannot locate any members of the cluster to join or is configured without a joiner: in this case, the member appoints itself as the master of a new single-member cluster and its cluster version is set to the `major.minor` version of its own codebase version. So a standalone member running on codebase version `3.12.0` sets its own cluster version to `3.12`.
+* the member that is starting locates members of the cluster and identifies which is the master: in this case, the master validates that the joining member's codebase version is compatible with the current cluster version. If it is found to be compatible, then the member joins and the master sends the cluster version, which is set on the joining member. Otherwise, the starting member fails to join and shuts down.
+
+**What if a new Hazelcast minor version changes fundamental cluster protocol communication, like join messages?**
+
+NOTE: The version numbers used in the paragraph below are only used as an example.
+
+On startup, as answered in the above question (How is the cluster version set?), the cluster version is not yet known to a member that has not joined any cluster.
+By default the newly started member uses the cluster protocol that corresponds to its codebase version until this member joins a cluster
+(so for codebase `3.12.0` this means implicitly assuming cluster version `3.12`). If, hypothetically, major changes in discovery & join operations
+have been introduced which do not allow the member to join a `3.11` cluster, then the member should be explicitly configured to start
+assuming a `3.11` cluster version.
+
+
+**Do I have to upgrade clients to work with rolling upgrades?**
+
+Clients which implement the Open Binary Client Protocol
+are compatible with Hazelcast version 3.6 and newer minor versions. Thus older client versions are compatible with next minor versions. Newer clients
+connected to a cluster operate at the lower version of capabilities until all members are upgraded and the cluster version upgrade occurs.
+
+
+**Can I stop and start multiple members at once during a rolling member upgrade?**
+
+It is not recommended due to potential network partitions. It is advised to always stop and start one member in each upgrade step.
+
+
+**Can I upgrade my business app together with Hazelcast while doing a rolling member upgrade?**
+
+Yes, but make sure to make the new version of your app compatible with the old one since there will be a timespan when both versions interoperate. Checking if two versions of your app are compatible includes verifying binary and algorithmic compatibility and some other steps.
+
+It is worth mentioning that a business app upgrade is orthogonal to a rolling member upgrade. A rolling business app upgrade may be done without upgrading the members.
+
+
