@@ -302,7 +302,8 @@ want to have. That way, data on a cluster member is copied onto other member(s).
 
 To create synchronous backups, select the number of backup copies using the `backup-count` property.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -311,6 +312,15 @@ To create synchronous backups, select the number of backup copies using the `bac
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      backup-count: 1
 ----
 
 When this count is 1, a map entry will have its backup on one other member in the cluster.
@@ -335,7 +345,8 @@ do not require acknowledgements; the backup operations are performed at some poi
 To create asynchronous backups, select the number of async backups with the `async-backup-count`
 property. An example is shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -345,6 +356,16 @@ property. An example is shown below.
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      backup-count: 0
+      async-backup-count: 1 
 ----
 
 See <<consistency-and-replication-model, Consistency and Replication Model>> for more detail.
@@ -365,7 +386,8 @@ To enable backup reads (read local backup entries), set the value of the `read-b
 to **true**. Its default value is **false** for consistency. Enabling backup reads can improve
 performance but on the other hand it can cause stale reads while still preserving monotonic-reads property.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -376,6 +398,17 @@ performance but on the other hand it can cause stale reads while still preservin
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      backup-count: 0
+      async-backup-count: 1
+      read-backup-data: true      
 ----
 
 This feature is available when there is at least one sync or async backup.
@@ -445,7 +478,8 @@ size and selected policy.
 
 The following is an example declarative configuration for map eviction.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -456,6 +490,20 @@ The following is an example declarative configuration for map eviction.
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      time-to-live-seconds: 0
+      max-idle-seconds: 0
+      eviction:
+        eviction-policy: LRU
+        max-size-policy: PER_NODE
+        size: 5000
 ----
 
 The following are the configuration element descriptions:
@@ -582,7 +630,8 @@ for eviction and expiration.
 [[example-eviction-configurations]]
 ===== Example Eviction Configurations
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -594,6 +643,19 @@ for eviction and expiration.
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    documents:
+      eviction:
+        eviction-policy: LRU
+        max-size-policy: PER_NODE
+        size: 10000
+      max-idle-seconds: 60
+----
+
 In the above example, `documents` map starts to evict its entries from a member when the
 map size exceeds 10000 in that member. Then the entries least recently used will be evicted.
 The entries not used for more than 60 seconds will be evicted as well.
@@ -601,16 +663,30 @@ The entries not used for more than 60 seconds will be evicted as well.
 And the following is an example eviction configuration for a map having `NATIVE` as the
 in-memory format:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
-    <map name="nativeMap*">
+    <map name="nativeMap">
         <in-memory-format>NATIVE</in-memory-format>
         <eviction max-size-policy="USED_NATIVE_MEMORY_PERCENTAGE" eviction-policy="LFU" size="99"/>
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    nativeMap:
+      in-memory-format: NATIVE
+      eviction:
+        eviction-policy: LFU
+        max-size-policy: USED_NATIVE_MEMORY_PERCENTAGE
+        size: 99
 ----
 
 [[evicting-specific-entries]]
@@ -711,7 +787,8 @@ Then you can enable your policy by setting it via the method
 programmatically or via XML declaratively. Following is the example
 declarative configuration for the eviction policy `OddEvictor` implemented above:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -721,6 +798,16 @@ declarative configuration for the eviction policy `OddEvictor` implemented above
         ...
     </map>
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    test:
+      eviction:
+        comparator-class-name: com.mycompany.OddEvictor
 ----
 
 If you Hazelcast with Spring, you can enable your policy as shown below.
@@ -795,15 +882,25 @@ To overcome this challenge, Hazelcast offers High-Density Memory Store for your 
 You can configure your map to use High-Density Memory Store by setting the in-memory
 format to `NATIVE`. The following snippet is the declarative configuration example.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
-    <map name="nativeMap*">
+    <map name="nativeMap">
         <in-memory-format>NATIVE</in-memory-format>
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    nativeMap:
+      in-memory-format: NATIVE
 ----
 
 Keep in mind that you should have already enabled the High-Density Memory Store
@@ -814,28 +911,37 @@ Intel(R) Optane(TM) DC to be used by the High-Density Memory Store. See the
 <<using-persistent-memory, Using Persistent Memory section>>.
 
 [[required-configuration-changes-when-using-native]]
-===== Required configuration changes when using NATIVE
+===== Required Configuration Changes When Using NATIVE
 
 Note that the eviction mechanism is different for `NATIVE` in-memory format.
 The new eviction algorithm for map with High-Density Memory Store is similar
 to that of JCache with High-Density Memory Store and is described <<eviction-algorithm, here>>.
 
-+
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
-    <map name="nativeMap*">
+    <map name="nativeMap">
         <in-memory-format>NATIVE</in-memory-format>
         <eviction-percentage>25</eviction-percentage> <--! NO IMPACT with NATIVE -->
     </map>
     ...
 </hazelcast>
 ----
-+
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    nativeMap:
+      in-memory-format: NATIVE
+      eviction-percentage: 25 # NO IMPACT with NATIVE
+----
+
 * These IMap eviction policies for `size` cannot be used: `FREE_HEAP_PERCENTAGE`,
 `FREE_HEAP_SIZE`, `USED_HEAP_PERCENTAGE`, `USED_HEAP_SIZE`.
-+
 * Near Cache eviction policy `ENTRY_COUNT` cannot be used for
 `max-size-policy`.
 
@@ -856,7 +962,8 @@ configuration element.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -870,6 +977,18 @@ configuration element.
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    map-a:
+    # valid values for metadata-policy are:
+    # - OFF
+    # - CREATE_ON_UPDATE (default)
+      metadata-policy: OFF
 ----
 
 **Programmatic Configuration:**
@@ -1042,7 +1161,8 @@ only work with your data store. Otherwise, you may get into deadlock situations.
 
 Here is an example configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1056,6 +1176,21 @@ Here is an example configuration:
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      map-store:
+        enabled: true
+        initial-mode: LAZY
+        class-name: com.hazelcast.examples.DummyStore
+        write-delay-seconds: 60
+        write-batch-size: 1000
+        write-coalescing: true
 ----
 
 The following are the descriptions of MapStore configuration elements and attributes:
@@ -1260,7 +1395,8 @@ You can define the database properties, such as its URL and name, using the
 `properties` configuration element. The following is a configuration example
 for MongoDB:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1276,6 +1412,22 @@ for MongoDB:
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    supplements:
+      map-store:
+        enabled: true
+        initial-mode: LAZY
+        class-name: com.hazelcast.loader.YourMapStoreImplementation
+        properties:
+          mongo_url: mongodb://localhost:27017
+          mongo.db: mydb
+          mango.collection: supplements
 ----
 
 After you specified the database properties in your configuration,
@@ -1523,7 +1675,8 @@ and `MultiMap.tryLock(K, long, java.util.concurrent.TimeUnit, long, java.util.co
 
 An example of declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1535,6 +1688,18 @@ An example of declarative configuration:
     </lock>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    myMap:
+      split-brain-protection-ref: map-actions-split-brain-protection
+  lock:
+    myMap:
+      split-brain-protection-ref: map-lock-actions-split-brain-protection
 ----
 
 Here the configured map uses the `map-lock-actions-split-brain-protection` for
@@ -1554,7 +1719,8 @@ link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.
 To be able to retrieve the map statistics, the `statistics-enabled`
 element under the map configuration should be set as `true`, which is the default value:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1563,6 +1729,15 @@ element under the map configuration should be set as `true`, which is the defaul
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    myMap:
+      statistics-enabled: true
 ----
 
 When this element is set to `false`, the statistics are not gathered
@@ -1928,7 +2103,8 @@ queue size goes below `max-size`, which happens when a consumer removes items fr
 Let's set **10** as the maximum size of our example queue in <<creating-an-example-queue,
 Creating an Example Queue>>.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1937,6 +2113,15 @@ Creating an Example Queue>>.
     </queue>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  queue:
+    queue:
+      max-size: 10
 ----
 
 When the producer is started, ten items are put into the queue and then the queue
@@ -1969,7 +2154,8 @@ include::{javasource}/dds/queue/TheQueueStore.java[tag=qs]
 
 `Item` must be serializable. The following is an example queue store configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1986,6 +2172,21 @@ include::{javasource}/dds/queue/TheQueueStore.java[tag=qs]
     </queue>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  queue:
+    queue:
+      max-size: 10
+      queue-store:
+        class-name: com.hazelcast.QueueStoreImpl
+        properties:
+          binary: false
+          memory-limit: 1000
+          bulk-load: 500
 ----
 
 The following are the descriptions for each queue store property:
@@ -2038,7 +2239,8 @@ Queueing with Persistent Datastore>> section.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2063,6 +2265,29 @@ Queueing with Persistent Datastore>> section.
     </queue>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  queue:
+    default:
+      max-size: 0
+      backup-count: 1
+      async-backup-count: 0
+      empty-queue-ttl: -1
+      item-listeners:
+        - include-value: true
+          class-name: com.hazelcast.examples.ItemListener
+      statistics-enabled: true
+      queue-store:
+        class-name: com.hazelcast.QueueStoreImpl
+        properties:
+          binary: false
+          memory-limit: 1000
+          bulk-load: 500
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 **Programmatic Configuration:**
@@ -2175,7 +2400,8 @@ The following are the example MultiMap configurations.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2190,6 +2416,22 @@ The following are the example MultiMap configurations.
     </multimap>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  multimap:
+    default:
+      backup-count: 0
+      async-backup-count: 1
+      value-collection-type: SET
+      entry-listeners:
+        - class-name: com.hazelcast.examples.EntryListener
+          include-value: false
+          local: false
+      split-brain-protection-ref: split-brain-protection-name
 ----
 
 **Programmatic Configuration:**
@@ -2270,7 +2512,8 @@ Split-brain protection for MultiMap can be configured programmatically using
 the method link:{docBaseUrl}/javadoc/com/hazelcast/config/MultiMapConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2279,6 +2522,15 @@ or declaratively using the element `split-brain-protection-ref`. Following is an
     </multimap>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  multimap:
+    default:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you configured
@@ -2327,11 +2579,13 @@ The following are the example Hazelcast Set configurations.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <set name="default">
+        <statistics-enabled>false</statistics-enabled>
         <backup-count>1</backup-count>
         <async-backup-count>0</async-backup-count>
         <max-size>10</max-size>
@@ -2342,6 +2596,21 @@ The following are the example Hazelcast Set configurations.
     </set>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  set:
+    default:
+      statistics-enabled: false
+      backup-count: 1
+      async-backup-count: 0
+      max-size: 10
+      item-listeners:
+        - class-name: com.hazelcast.examples.ItemListener
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 **Programmatic Configuration:**
@@ -2411,7 +2680,8 @@ Split-brain protection for ISet can be configured programmatically using
 the method link:{docBaseUrl}/javadoc/com/hazelcast/config/SetConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. The following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2420,6 +2690,16 @@ or declaratively using the element `split-brain-protection-ref`. The following i
     </set>
     ...
 </hazelcast>
+
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  set:
+    default:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you
@@ -2471,11 +2751,13 @@ The following are the example Hazelcast List configurations.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <list name="default">
+        <statistics-enabled>false</statistics-enabled>
         <backup-count>1</backup-count>
         <async-backup-count>0</async-backup-count>
         <max-size>10</max-size>
@@ -2488,6 +2770,21 @@ The following are the example Hazelcast List configurations.
     </list>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  list:
+    default:
+      statistics-enabled: false
+      backup-count: 1
+      async-backup-count: 0
+      max-size: 10
+      item-listeners:
+        - class-name: com.hazelcast.examples.ItemListener
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 **Programmatic Configuration:**
@@ -2562,7 +2859,8 @@ Split-brain protection for IList can be configured programmatically using
 the method link:{docBaseUrl}/javadoc/com/hazelcast/config/ListConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2571,6 +2869,15 @@ or declaratively using the element `split-brain-protection-ref`. Following is an
     </list>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  list:
+    default:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you
@@ -2654,7 +2961,8 @@ that better fits your needs.
 
 Below is a declarative configuration example of a Ringbuffer with a `capacity` of 2000 items.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2663,6 +2971,15 @@ Below is a declarative configuration example of a Ringbuffer with a `capacity` o
     </ringbuffer>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    rb:
+      capacity: 2000
 ----
 
 Currently, Hazelcast Ringbuffer is not a partitioned data structure;
@@ -2679,7 +2996,8 @@ distributed data structures by setting the synchronous and asynchronous backups:
 `backup-count` and `async-backup-count`. In the example below, a Ringbuffer is configured with no
 synchronous backups and one asynchronous backup:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2689,6 +3007,16 @@ synchronous backups and one asynchronous backup:
     </ringbuffer>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    rb:
+      backup-count: 0
+      async-backup-count: 1
 ----
 
 An asynchronous backup probably gives you better performance. However, there
@@ -2710,7 +3038,8 @@ either the oldest item is overwritten, or the call is rejected.
 
 In the example below, a Ringbuffer is configured with a time-to-live of 180 seconds.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2719,6 +3048,15 @@ In the example below, a Ringbuffer is configured with a time-to-live of 180 seco
     </ringbuffer>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    rb:
+      time-to-live-seconds: 180
 ----
 
 [[setting-ringbuffer-overflow-policy]]
@@ -2780,7 +3118,8 @@ include::{javasource}/dds/ringbuffer/TheRingbufferObjectStore.java[tag=rbstore]
 `Item` must be serializable. The following is an example of a Ringbuffer with the
 Ringbuffer store configured and enabled.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2796,16 +3135,27 @@ Ringbuffer store configured and enabled.
     </ringbuffer>
     ...
 </hazelcast>
+
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    default:
+      capacity: 10000
+      time-to-live-seconds: 30
+      backup-count: 1
+      async-backup-count: 0
+      in-memory-format: BINARY
+      ringbuffer-store:
+        class-name: com.hazelcast.RingbufferStoreImpl
 ----
 
 The following are the explanations for the Ringbuffer store configuration elements:
 
-* `class-name: Name of the class implementing the `RingbufferStore` interface.
-* `factory-class-name`: Name of the class implementing the `RingbufferStoreFactory`
-interface. This interface allows a factory class to be registered instead of a class
-implementing the `RingbufferStore` interface.
-
-Either the `class-name` or the `factory-class-name` element should be used.
+* `class-name: Name of the Ringbuffer store factory class.
 
 [[configuring-ringbuffer-in-memory-format]]
 ==== Configuring Ringbuffer In-Memory Format
@@ -2819,7 +3169,8 @@ applied or when the `OBJECT` in-memory format has a smaller memory footprint tha
 In the declarative configuration example below, a Ringbuffer is configured with the
 `OBJECT` in-memory format:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2828,6 +3179,16 @@ In the declarative configuration example below, a Ringbuffer is configured with 
     </ringbuffer>
     ...
 </hazelcast>
+
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    rb:
+      in-memory-format: OBJECT
 ----
 
 [[configuring-split-brain-protection-for-ringbuffer]]
@@ -2840,15 +3201,26 @@ using the element `split-brain-protection-ref`. You should set this element's va
 which you configured under the `split-brain-protection` element as explained in the <<split-brain-protection,
 Split-Brain Protection section>>. Following is an example snippet:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <ringbuffer name="rb">
-        <split-brain-protection-ref>quorumname</split-brain-protection-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </ringbuffer>
     ...
 </hazelcast>
+
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    rb:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The following is a list of methods, grouped by the protection types, that support split-brain protection checks:
@@ -3024,7 +3396,8 @@ stage.whenCompleteAsync((response, throwable) -> {
 The following shows the declarative configuration of a Ringbuffer called `rb`.
 The configuration is modeled after the Ringbuffer defaults.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -3034,10 +3407,24 @@ The configuration is modeled after the Ringbuffer defaults.
         <async-backup-count>0</async-backup-count>
         <time-to-live-seconds>0</time-to-live-seconds>
         <in-memory-format>BINARY</in-memory-format>
-        <split-brain-protection-ref>quorumname</split-brain-protection-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </ringbuffer>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    rb:
+      capacity: 10000
+      backup-count: 1
+      async-backup-count: 0
+      time-to-live-seconds: 0
+      in-memory-format: BINARY
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 You can also configure a Ringbuffer programmatically. The following is a programmatic
@@ -3194,7 +3581,8 @@ You can see the example configuration snippets below.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -3207,6 +3595,18 @@ You can see the example configuration snippets below.
     </topic>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  topic:
+    yourTopicName:
+      global-ordering-enabled: true
+      statistics-enabled: true
+      message-listeners:
+        - MessageListenerImpl
 ----
 
 **Programmatic Configuration:**
@@ -3275,7 +3675,8 @@ By default, a Ringbuffer does not have any TTL (time-to-live) and it has a limit
 capacity; you may want to change that configuration. The following is an example
 configuration for the "sometopic" given above.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -3290,6 +3691,19 @@ configuration for the "sometopic" given above.
     </reliable-topic>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ringbuffer:
+    sometopic:
+      capacity: 1000
+      time-to-live-seconds: 5
+  reliable-topic:
+    sometopic:
+      topic-overload-policy: BLOCK
 ----
 
 See the <<configuring-reliable-topic, Configuring Reliable Topic section>>
@@ -3328,7 +3742,8 @@ The following are example Reliable Topic configurations.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -3344,6 +3759,19 @@ The following are example Reliable Topic configurations.
     </reliable-topic>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  reliable-topic:
+    default:
+      statistics-enabled: true
+      message-listeners:
+        - ...
+      read-batch-size: 10
+      topic-overload-policy: BLOCK
 ----
 
 **Programmatic Configuration:**
@@ -3516,7 +3944,6 @@ operations are not atomic. Since `IAtomicLong` is a distributed implementation,
 those operations can be remote ones, which may lead to race problems. By using functions,
 the data is not pulled into the code, but the code is sent to the data. This makes it more scalable.
 
-
 [[isemaphore]]
 === ISemaphore
 
@@ -3577,7 +4004,6 @@ As you can see, the maximum count of concurrent threads is equal or
 smaller than three. If you remove the semaphore acquire/release statements
 in `SemaphoreMember`, you will see that there is no limitation on the number
 of concurrent usages.
-
 
 [[iatomicreference]]
 === IAtomicReference
@@ -3682,7 +4108,6 @@ value as a parameter. This is useful when the `countDown` method fails. To see `
 in action, start the leader first and then start one or more followers. You will see that the
 followers wait until the leader completes.
 
-
 [[pn-counter]]
 === PN Counter
 
@@ -3767,7 +4192,8 @@ This code snippet creates an instance of a PN counter, increments it by 5 and re
 
 Following is an example declarative configuration snippet:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -3777,6 +4203,16 @@ Following is an example declarative configuration snippet:
     </pn-counter>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  pn-counter:
+    default:
+      replica-count: 10
+      statistics-enabled: true
 ----
 
 PN Counter has the following configuration elements:
@@ -3818,7 +4254,8 @@ of slower convergence of replicas.
 Hazelcast implements the state-based replication mechanism - the CRDT state for changed
 CRDTs is replicated in its entirety to other replicas on each replication round.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -3828,6 +4265,15 @@ CRDTs is replicated in its entirety to other replicas on each replication round.
     </crdt-replication>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  crdt-replication:
+    max-concurrent-replication-targets: 1
+    replication-period-millis: 1000
 ----
 
 CRDT replication has the following configuration elements:
@@ -3921,19 +4367,39 @@ restart will be preserved thanks to the timestamp component.
 
 Following is an example declarative configuration snippet:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <flake-id-generator name="default">
         <prefetch-count>100</prefetch-count>
         <prefetch-validity-millis>600000</prefetch-validity-millis>
-        <id-offset>0</id-offset>
+        <epoch-start>1514764800000</epoch-start>
         <node-id-offset>0</node-id-offset>
+        <bits-sequence>6</bits-sequence>
+        <bits-node-id>16</bits-node-id>
+        <allowed-future-millis>15000</allowed-future-millis>
         <statistics-enabled>true</statistics-enabled>
     </flake-id-generator>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  flake-id-generator:
+    default:
+      prefetch-count: 100
+      prefetch-validity-millis: 600000
+      epoch-start: 1514764800000
+      node-id-offset: 0
+      bits-sequence: 6
+      bits-node-id: 16
+      allowed-future-millis: 15000
+      statistics-enabled: true
 ----
 
 The following are the descriptions of configuration elements and attributes:
@@ -3950,22 +4416,17 @@ contain a timestamp component, which ensures a rough global ordering of them.
 If an ID is assigned to an object that was created later, it will be out of order.
 If ordering is not important, set this value to 0. This setting pertains only to
 `newId()` calls made on the member that configured it.
-* `id-offset`: Specifies the offset that is added to the returned IDs.
-Its default value is 0. Setting might be useful when migrating from ID Generator.
-The default value works for all green-field projects. For example, assume the
-largest ID returned from ID Generator is 150. And, Flake ID Generator now returns 100.
-If you set this element to 50 and stop using the ID Generator, the next ID from
-Flake ID Generator will be 151 or larger and no duplicate IDs will be generated.
-In real-life, the IDs are much larger. You also need to add a reserve to the
-offset because the IDs from Flake ID Generator are only roughly ordered.
-Recommended reserve is 2^38, that is 274877906944. Negative values are allowed
-to increase the lifespan of the generator, however keep in mind that the
-generated IDs might also be negative.
+* `epoch-start`: Offset of the timestamp component. Time unit is
+milliseconds, default is 1514764800000 (1.1.2018 0:00 UTC)
 * `node-id-offset`: Specifies the offset that is added to the node ID assigned
 to cluster member for this generator. Might be useful in A/B deployment scenarios
 where you have cluster A which you want to upgrade. You create cluster B and
 for some time both will generate IDs and you want to have them unique.
 In this case, configure node ID offset for generators on cluster B.
+* `bits-sequence`: Bit-length of the sequence component. Default value is 6 bits.
+* `bits-node-id`: Bit-length of node id component. Default value is 16 bits.
+* `allowed-future-millis`: Sets how far to the future is the generator allowed to
+generate IDs without blocking. Default is 15 seconds.
 * `statistics-enabled`: Specifies whether the statistics gathering is enabled
 for your Flake ID Generator. If set to `false`, you cannot collect statistics
 in your implementation (using `getLocalFlakeIdGeneratorStats()`) and also
@@ -4107,7 +4568,8 @@ Replicated Map can be configured programmatically or declaratively.
 You can declare your Replicated Map configuration in the Hazelcast configuration
 file `hazelcast.xml`. See the following example:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -4120,10 +4582,24 @@ file `hazelcast.xml`. See the following example:
                 com.hazelcast.examples.EntryListener
             </entry-listener>
        </entry-listeners>
-       <split-brain-protection-ref>quorumname</split-brain-protection-ref>
+       <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </replicatedmap>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  replicatedmap:
+    default:
+      in-memory-format: BINARY
+      async-fillup: true
+      statistics-enabled: true
+      entry-listeners:
+        - class-name: com.hazelcast.examples.EntryListener
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 Replicated Map has the following configuration elements:
@@ -4152,7 +4628,7 @@ See the <<split-brain-protection-for-replicated-map, Split-Brain Protection for 
 
 You can configure a Replicated Map programmatically, as you can do for all other
 data structures in Hazelcast. You must create the configuration upfront, when you
-nstantiate the `HazelcastInstance`.
+instantiate the `HazelcastInstance`.
 A basic example of how to configure the Replicated Map using the programmatic approach
 is shown in the following snippet.
 
@@ -4247,15 +4723,25 @@ Split-brain protection for Replicated Map can be configured programmatically
 using the method link:{docBaseUrl}/javadoc/com/hazelcast/config/ReplicatedMapConfig.html[setSplitBrainProtectionName()^],
 or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <replicatedmap name="default">
-        <split-brain-protection-ref>quorumname</split-brain-protection-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </replicatedmap>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  replicatedmap:
+    default:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you
@@ -4330,15 +4816,25 @@ programmatically using the method link:{docBaseUrl}/javadoc/com/hazelcast/config
 or declaratively using the element `split-brain-protection-ref`.
 Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <cardinality-estimator name="default">
-        <split-brain-protection-ref>quorumname</split-brain-protection-ref>
+        <split-brain-protection-ref>splitbrainprotection-name</split-brain-protection-ref>
     </cardinality-estimator>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cardinality-estimator:
+    default:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name
@@ -4357,15 +4853,26 @@ link:{docBaseUrl}/javadoc/com/hazelcast/config/CardinalityEstimatorConfig.html[s
 or declaratively using the element `merge-policy`.
 Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <cardinality-estimator name="default">
-        <merge-policy>HyperLogLogMergePolicy</merge-policy>
+        <merge-policy batch-size="102">HyperLogLogMergePolicy</merge-policy>
     </cardinality-estimator>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cardinality-estimator:
+      merge-policy:
+        batch-size: 102
+        class-name: HyperLogLogMergePolicy
 ----
 
 The following out-of-the-box merge policies are available:
@@ -4443,23 +4950,46 @@ event journal.
 Below is a declarative configuration example of an event journal with a
 `capacity` of 5000 items for a map and 10000 items for a cache:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
-    <event-journal enabled="true">
-        <mapName>myMap</mapName>
-        <capacity>5000</capacity>
-        <time-to-live-seconds>20</time-to-live-seconds>
-    </event-journal>
-    <event-journal enabled="true">
-        <cacheName>myCache</cacheName>
-        <capacity>10000</capacity>
-        <time-to-live-seconds>0</time-to-live-seconds>
-    </event-journal>
+    <map name="default">
+        <event-journal enabled="true">
+            <capacity>5000</capacity>
+            <time-to-live-seconds>20</time-to-live-seconds>
+        </event-journal>
+    </map>
+    ...
+    <cache name="default">
+        <event-journal enabled="true">
+            <capacity>10000</capacity>
+            <time-to-live-seconds>0</time-to-live-seconds>
+        </event-journal>
+    </cache>
     ...
 </hazelcast>
 ----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      event-journal:
+        enabled: true
+        capacity: 5000
+        time-to-live-seconds: 20
+  cache:
+    default:
+      event-journal:
+        enabled: true
+        capacity: 10000
+        time-to-live-seconds: 0
+----
+
 
 You can also configure an event journal programmatically. The following
 is a programmatic version of the above declarative configuration:
@@ -4507,15 +5037,29 @@ being read from or written to, the journal may keep expired items indefinitely.
 
 In the example below, an event journal is configured with a `time-to-live` of 180 seconds:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
-    <event-journal enabled="true">
-        <cacheName>myCache</cacheName>
-        <capacity>10000</capacity>
-        <time-to-live-seconds>180</time-to-live-seconds>
-    </event-journal>
+    <cache name="myCache">
+        <event-journal enabled="true">
+            <capacity>10000</capacity>
+            <time-to-live-seconds>180</time-to-live-seconds>
+        </event-journal>
+    </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cache:
+    myCache:
+      event-journal:
+        enabled: true
+        capacity: 10000
+        time-to-live-seconds: 180
 ----
