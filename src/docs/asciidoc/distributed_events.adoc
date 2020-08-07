@@ -105,10 +105,10 @@ config.addListenerConfig(
 new ListenerConfig( "com.yourpackage.ClusterMembershipListener" ) );
 ----
 
-
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -121,9 +121,16 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  listeners:
+    - com.yourpackage.ClusterMembershipListener
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:listeners>
     <hz:listener class-name="com.yourpackage.ClusterMembershipListener"/>
@@ -183,7 +190,8 @@ new ListenerConfig( "com.yourpackage.ExampleDistObjListener" ) );
 
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -196,9 +204,16 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  listeners:
+    - com.yourpackage.ExampleDistObjListener
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:listeners>
     <hz:listener class-name="com.yourpackage.ExampleDistObjListener"/>
@@ -266,10 +281,10 @@ config.addListenerConfig(
 new ListenerConfig( "com.yourpackage.ClusterMigrationListener" ) );
 ----
 
-
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -282,9 +297,16 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  listeners:
+    - com.yourpackage.ClusterMigrationListener
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:listeners>
     <hz:listener class-name="com.yourpackage.ClusterMigrationListener"/>
@@ -361,7 +383,8 @@ hazelcastInstance.getPartitionService().addPartitionLostListener( new ConsoleLog
 
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -372,6 +395,14 @@ The following is an example of the equivalent declarative configuration.
     </listeners>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  listeners:
+    - com.yourpackage.ConsoleLoggingPartitionLostListener
 ----
 
 [[listening-for-lifecycle-events]]
@@ -430,10 +461,10 @@ config.addListenerConfig(
     new ListenerConfig( "com.yourpackage.NodeLifecycleListener" ) );
 ----
 
-
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -446,9 +477,16 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  listeners:
+    - com.yourpackage.NodeLifecycleListener
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:listeners>
     <hz:listener class-name="com.yourpackage.NodeLifecycleListener"/>
@@ -477,7 +515,8 @@ hazelcastInstance.getClientService().addClientListener(new ExampleClientListener
 
 The following is the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -490,9 +529,16 @@ The following is the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is the equivalent configuration in the Spring context.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  listeners:
+    - com.yourpackage.ExampleClientListener
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:listeners>
     <hz:listener class-name="com.yourpackage.ExampleClientListener"/>
@@ -623,7 +669,8 @@ new EntryListenerConfig( "com.yourpackage.MyEntryListener",
 
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -638,9 +685,20 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  somemap:
+    map:
+      entry-listeners:
+        - class-name: com.your-package.MyEntryListener
+          include-value: false
+          local: false
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:map name="somemap">
     <hz:entry-listeners>
@@ -693,17 +751,17 @@ programmatic, or Spring configuration, as shown below.
 
 The following is an example programmatic configuration.
 
-[source,xml]
+[source,java]
 ----
 multiMapConfig.addEntryListenerConfig(
   new EntryListenerConfig( "com.yourpackage.ExampleEntryListener",
     false, false ) );
 ----
 
-
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -719,9 +777,21 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  multimap:
+    somemap:
+      value-collection: SET
+      entry-listeners:
+        - class-name: com.your-package.MyEntryListener
+          include-value: false
+          local: false
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:multimap name="somemap" value-collection-type="SET">
     <hz:entry-listeners>
@@ -807,7 +877,8 @@ new ItemListenerConfig( "com.yourpackage.ExampleItemListener", true ) );
 
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -822,9 +893,19 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  set:
+    default:
+      item-listeners:
+        - class-name: com.yourpackage.ExampleItemListener
+          include-value: true
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:set name="default" >
     <hz:item-listeners>
@@ -895,10 +976,10 @@ topicConfig.addMessageListenerConfig(
   new ListenerConfig( "com.yourpackage.ExampleMessageListener" ) );
 ----
 
-
 The following is an example of the equivalent declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -913,9 +994,18 @@ The following is an example of the equivalent declarative configuration.
 </hazelcast>
 ----
 
-The following is an example of the equivalent Spring configuration.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  topic:
+    default:
+      message-listeners:
+        - com.yourpackage.ExampleMessageListener
+----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:topic name="default">
     <hz:message-listeners>
