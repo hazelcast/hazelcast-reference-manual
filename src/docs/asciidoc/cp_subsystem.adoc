@@ -641,7 +641,8 @@ Default value is `120` seconds.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -657,6 +658,21 @@ Default value is `120` seconds.
     </cp-subsystem>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cp-subsystem:
+    cp-member-count: 7
+    group-size: 3
+    session-time-to-live-seconds: 300
+    session-heartbeat-interval-seconds: 5
+    missing-cp-member-auto-removal-seconds: 14400
+    fail-on-indeterminate-operation-state: false
+    persistence-enabled: true
+    base-dir: custom-cp-dir
 ----
 
 **Programmatic Configuration:**
@@ -687,7 +703,8 @@ Default value is `0`.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -710,6 +727,20 @@ Default value is `0`.
     </cp-subsystem>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cp-subsystem:
+    locks:
+      reentrant-lock:
+        lock-acquire-limit: 0
+      limited-reentrant-lock:
+        lock-acquire-limit: 10
+      non-reentrant-lock:
+        lock-acquire-limit: 1
 ----
 
 **Programmatic Configuration:**
@@ -745,7 +776,8 @@ Default value is 0.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -765,6 +797,19 @@ Default value is 0.
     </cp-subsystem>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cp-subsystem:
+    semaphores:
+      jdk-compatible-semaphore:
+        jdk-compatible: true
+      another-semaphore:
+        jdk-compatible: false
+        initial-permits: 5
 ----
 
 **Programmatic Configuration:**
@@ -843,7 +888,8 @@ Default value is `100` milliseconds.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -862,6 +908,21 @@ Default value is `100` milliseconds.
     </cp-subsystem>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cp-subsystem:
+    raft-algorithm:
+      leader-election-timeout-in-millis: 2000
+      leader-heartbeat-period-in-millis: 5000
+      max-missed-leader-heartbeat-count: 5
+      append-request-max-entry-count: 100
+      commit-index-advance-count-to-snapshot: 10000
+      uncommitted-entry-count-to-reject-new-appends: 200
+      append-request-backoff-timeout-in-millis: 250
 ----
 
 **Programmatic Configuration:**
