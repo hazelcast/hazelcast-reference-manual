@@ -248,7 +248,8 @@ The following are example configurations for executor service.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -260,6 +261,19 @@ The following are example configurations for executor service.
     </executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ..
+  executor-service:
+    exec:
+      pool-size: 1
+      queue-capacity: 10
+      statistics-enabled: true
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 **Programmatic Configuration:**
@@ -300,7 +314,8 @@ The following is a list of methods, grouped by the operations, that support spli
 
 Split-brain protection for Executor Service can be configured programmatically using the method link:{docBaseUrl}/javadoc/com/hazelcast/config/ExecutorConfig.html[setSplitBrainProtectionName()^], or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -309,6 +324,16 @@ Split-brain protection for Executor Service can be configured programmatically u
     </executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ..
+  executor-service:
+    default:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you configured under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
@@ -336,7 +361,8 @@ This section presents example configurations for durable executor service along 
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -348,6 +374,19 @@ This section presents example configurations for durable executor service along 
     </durable-executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  durable-executor-service:
+    myDurableExecSvc:
+      pool-size: 8
+      durability: 1
+      capacity: 1
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 **Programmatic Configuration:**
@@ -387,7 +426,8 @@ The following is a list of methods, grouped by the operations, that support spli
 
 Split-brain protection for Durable Executor Service can be configured programmatically using the method link:{docBaseUrl}/javadoc/com/hazelcast/config/DurableExecutorConfig.html[setSplitBrainProtectionName()^], or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -396,6 +436,16 @@ Split-brain protection for Durable Executor Service can be configured programmat
     </durable-executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  durable-executor-service:
+    myDurableExecSvc:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you configured under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
@@ -447,7 +497,8 @@ This section presents example configurations for scheduled executor service alon
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -459,6 +510,19 @@ This section presents example configurations for scheduled executor service alon
     </scheduled-executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  scheduled-executor-service:
+    myScheduledExecSvc:
+      pool-size: 16
+      durability: 1
+      capacity: 100
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 **Programmatic Configuration:**
@@ -535,7 +599,8 @@ The following is a list of methods, grouped by the operations, that support spli
 
 Split-brain protection for Scheduled Executor Service can be configured programmatically using the method link:{docBaseUrl}/javadoc/com/hazelcast/config/ScheduledExecutorConfig.html[setSplitBrainProtectionName()^], or declaratively using the element `split-brain-protection-ref`. Following is an example declarative configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -544,6 +609,16 @@ Split-brain protection for Scheduled Executor Service can be configured programm
     </scheduled-executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  scheduled-executor-service:
+    myScheduledExecSvc:
+      split-brain-protection-ref: splitbrainprotection-name
 ----
 
 The value of `split-brain-protection-ref` should be the split-brain protection configuration name which you configured under the `split-brain-protection` element as explained in the <<split-brain-protection, Split-Brain Protection section>>.
@@ -686,7 +761,8 @@ The method `getExecutorName()` method may also return two constants defined in t
 
 Note that if the method `getExecutorName()` cannot find an executor whose name matches the one called by this method, then the default executor service is used. Here is the configuration for the "default" executor:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -698,9 +774,21 @@ Note that if the method `getExecutorName()` cannot find an executor whose name m
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+    ...
+  executor-service:
+    default:
+      pool-size: 16
+      queue-capacity: 0
+----
+
 An example of an Offloadable called "OffloadedInventoryEntryProcessor" would be as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -710,6 +798,17 @@ An example of an Offloadable called "OffloadedInventoryEntryProcessor" would be 
     </executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  executor-service:
+    OffloadedInventoryEntryProcessor:
+      pool-size: 30
+      queue-capacity: 0
 ----
 
 Remember to set the `pool-size` (count of executor threads per member) according to your execution needs. See the <<configuring-executor-service, Configuring Executor Service section>> for the configuration details.
