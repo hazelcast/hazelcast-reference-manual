@@ -543,7 +543,8 @@ Otherwise, use `IndexType.HASH`.
 Also, you can define `IMap` indexes in configuration. An example is
 shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -565,19 +566,22 @@ shown below.
 </hazelcast>
 ----
 
-You can also define `IMap` indexes using programmatic configuration,
-as in the example below.
-
-[source,java]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
-mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "name"));
-mapConfig.addIndexConfig(new IndexConfig(IndexType.SORTED, "age"));
+hazelcast:
+  map:
+    default:
+      indexes:
+        - type: HASH
+            attributes:
+              - "name"
+        - attributes:
+            - "age"
 ----
 
-The following is the Spring declarative configuration for the same
-example.
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:map name="default">
     <hz:indexes>
@@ -594,6 +598,19 @@ example.
     </hz:indexes>
 </hz:map>
 ----
+
+
+You can also define `IMap` indexes using programmatic configuration,
+as in the example below.
+
+[source,java]
+----
+mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "name"));
+mapConfig.addIndexConfig(new IndexConfig(IndexType.SORTED, "age"));
+----
+
+The following is the Spring declarative configuration for the same
+example.
 
 NOTE: Non-primitive types to be indexed should implement *`Comparable`*.
 
@@ -628,7 +645,8 @@ operation which can be performed very efficiently.
 The unordered composite index on the `name` and `age` attributes may be
 configured for a map as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -644,6 +662,18 @@ configured for a map as follows:
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      - type: HASH
+          attributes:
+            - "name"
+            - "age"
 ----
 
 The attributes indexed by the _unordered_ composite indexes can't be
@@ -664,7 +694,8 @@ into a single index query operation. For instance, the `name = 'Alice' and
 age > 33` and `name = 'Bob' and age = 33 and balance > 0.0` queries are good
 candidates to be covered by an ordered composite index configured as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -681,6 +712,19 @@ candidates to be covered by an ordered composite index configured as follows:
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    persons:
+      indexes:
+        - attributes:
+          - "name"
+          - "age"
+          - "balance"
 ----
 
 Unlike the _unordered_ composite indexes, partial attribute prefixes may be
@@ -747,7 +791,8 @@ Memory Stores (HD).
 In the simplest form, bitmap index for an `IMap` entry attribute can be
 declaratively configured as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -764,6 +809,18 @@ declaratively configured as follows:
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    persons:
+      indexes:
+        - type: BITMAP
+          attributes:
+            - "age"
+----
+
 Internally, a unique non-negative `long` ID is assigned to every
 indexed `IMap` entry based on the entry key. That unique ID is
 required for bitmap indexes to distinguish one indexed `IMap` entry from
@@ -776,7 +833,8 @@ attribute, the attribute values can be used as unique `long` IDs
 directly without any additional transformations. That can be configured
 as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <index type="BITMAP">
     <attributes>
@@ -787,6 +845,18 @@ as follows:
         <unique-key-transformation>RAW</unique-key-transformation>
     </bitmap-index-options>
 </index>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      indexes:
+        - type: BITMAP
+          attributes:
+            - "age"
+          bitmap-index-options:
+            unique-key: uniqueId
+            unique-key-transformation: RAW
 ----
 
 The index definition above instructs Hazelcast to create a bitmap index
@@ -801,7 +871,9 @@ This causes increased memory usage in bitmap indexes since the best case
 scenario for them is sequential contiguous IDs. That can be countered by
 applying the renumbering technique:
 
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <index type="BITMAP">
     <attributes>
@@ -814,6 +886,18 @@ applying the renumbering technique:
 </index>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      indexes:
+        - type: BITMAP
+          attributes:
+            - "age"
+          bitmap-index-options:
+            unique-key: uniqueId
+            unique-key-transformation: LONG
+----
+
 The index definition above instructs the bitmap index to extract the unique
 keys from `uniqueId` attribute, convert every extracted non-negative
 value to `long` (`LONG`) and assign an internal sequential unique `long`
@@ -824,7 +908,8 @@ This long-to-long mapping is performed more efficiently than the general
 object-to-long mapping done for the simple index definitions. Basically,
 the following simple bitmap index definition:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <index type="BITMAP">
     <attributes>
@@ -833,9 +918,20 @@ the following simple bitmap index definition:
 </index>
 ----
 
-Is equivalent to the following full-form definition:
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      indexes:
+        - type: BITMAP
+          attributes:
+            - "age"
+----
 
-[source,xml]
+
+is equivalent to the following full-form definition:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <index type="BITMAP">
     <attributes>
@@ -848,12 +944,25 @@ Is equivalent to the following full-form definition:
 </index>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      indexes:
+        - type: BITMAP
+          attributes:
+            - "age"
+          bitmap-index-options:
+            unique-key: __key
+            unique-key-transformation: OBJECT
+----
+
 Which indexes `age` attribute, uses `IMap` entry keys (`__key`) interpreted
 as Java objects (`OBJECT`) to assign internal unique `long` IDs.
 
 The full-form definition syntax is defined as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <index type="BITMAP">
     <attributes>
@@ -865,6 +974,19 @@ The full-form definition syntax is defined as follows:
     </bitmap-index-options>
 </index>
 ----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      indexes:
+        - type: BITMAP
+          attributes:
+            - <attribute>
+          bitmap-index-options:
+            unique-key: <key>
+            unique-key-transformation: <transformation>
+----
+
 
 The following are the parameter descriptions:
 
@@ -896,7 +1018,8 @@ and it has the best performance in terms of time and memory.
 The regular dotted attribute path syntax is supported for `<attr>` and
 `<key>`:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <index type="BITMAP">
     <attributes>
@@ -919,12 +1042,32 @@ The regular dotted attribute path syntax is supported for `<attr>` and
         <unique-key>id.external</unique-key>
     </bitmap-index-options>
 </index>
-...
 ----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      indexes:
+        - type: BITMAP
+          attributes:
+            - name.first
+        - type: BITMAP
+          attributes:
+            - name.first
+          bitmap-index-options:
+            unique-key: __key.id
+        - type: BITMAP
+          attributes:
+            - name.first
+          bitmap-index-options:
+            unique-key: id.external
+----
+
 
 Collection and array indexing is also possible using the regular syntax:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <index type="BITMAP">
     <attributes>
@@ -936,7 +1079,18 @@ Collection and array indexing is also possible using the regular syntax:
         <attribute>habits[0]</attribute>
     </attributes>
 </index>
-...
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      indexes:
+        - type: BITMAP
+          attributes:
+            - habits[any]
+        - type: BITMAP
+          attributes:
+            - habits[0]
 ----
 
 
@@ -1043,7 +1197,8 @@ predicates and for description of the above system property.
 
 Below is an example of that declarative configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1052,6 +1207,16 @@ Below is an example of that declarative configuration.
     </executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  executor-service:
+    "hz:query":
+      pool-size: 100
 ----
 
 Below is the equivalent programmatic configuration.
@@ -1159,7 +1324,8 @@ in the index definition.
 
 Let's assume you have the following index definition:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1172,6 +1338,17 @@ Let's assume you have the following index definition:
     </indexes>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  indexes:
+    - type: HASH
+      attributes:
+        - wheels.[any].name
 ----
 
 The following query uses the index:
@@ -1193,7 +1370,8 @@ Predicates.equal("wheels[0].name", "front-wheel")
 In order to use the index in the case mentioned above, you have to create
 another index, as shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1206,6 +1384,17 @@ another index, as shown below:
     </indexes>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  indexes:
+    - type: HASH
+      attributes:
+        - wheels.[0].name
 ----
 
 ==== Corner cases
@@ -1424,7 +1613,8 @@ All extractors have to be defined upfront in the map's initial configuration.
 The following snippet demonstrates how to define a custom attribute in the
 Hazelcast XML Configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1435,6 +1625,17 @@ Hazelcast XML Configuration.
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    trades:
+      attributes:
+        currency:
+          extractor-class-name: com.bank.CurrencyExtractor
 ----
 
 Analogous to the example above, `currency` is the name of the custom attribute
@@ -1455,7 +1656,8 @@ used in the attributes configuration.
 Defining indexes with extraction arguments is allowed, as shown in the example
 below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1476,6 +1678,18 @@ below:
     ...
 </hazelcast>
 ----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  ...
+  indexes:
+    attributes:
+      - "currency"
+      - "currency[incoming]"
+----
+
 
 [[aggregations]]
 === Aggregations
@@ -1769,8 +1983,8 @@ create your query caches using the  `<query-cache>` sub-element under `<query-ca
 
 The following is an example declarative configuration.
 
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1802,6 +2016,34 @@ The following is an example declarative configuration.
     ...
 </hazelcast>
 ----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    query-caches:
+        myContQueryCache:
+          include-value: true
+          predicate:
+            class-name: com.hazelcast.examples.ExamplePredicate
+          entry-listeners:
+            - class-name: "..."
+          in-memory-format: BINARY
+          populate: true
+          coalesce: false
+          batch-size: 2
+          delay-seconds: 3
+          buffer-size: 32
+          eviction:
+            size: 1000
+            max-size-policy: ENTRY_COUNT
+            eviction-policy: LFU
+          indexes:
+            - attributes:
+              - "age"
+----
+
 
 Continuous query caches have the following configuration elements:
 
