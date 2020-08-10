@@ -111,7 +111,8 @@ include::{javasource}/storage/SampleHDConfiguration.java[tag=hdconf]
 
 The following is the declarative configuration example.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -124,6 +125,22 @@ The following is the declarative configuration example.
     </native-memory>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  native-memory:
+    enabled: true
+    allocator-type: POOLED
+    size:
+      unit: MEGABYTES
+      value: 512
+    min-block-size: 16
+    page-size: 4194304
+    metadata-space-percentage: 12.5
+    persistent-memory-directory: /mnt/persmemory/data
 ----
 
 NOTE: You can check whether there is enough free physical memory for the
@@ -154,7 +171,8 @@ as an example for Intel(R) Optane(TM) DC.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -164,6 +182,19 @@ as an example for Intel(R) Optane(TM) DC.
     </native-memory>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  native-memory:
+    enabled: true
+    allocator-type: POOLED
+    size:
+      unit: GIGABYTES
+      value: 100
+    persistent-memory-directory: /mnt/optane/data
 ----
 
 **Programmatic Configuration:**
@@ -515,17 +546,17 @@ The following are example configurations for a Hazelcast map and JCache implemen
 
 An example configuration is shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <hot-restart-persistence enabled="true">
         <base-dir>/mnt/hot-restart</base-dir>
-        <parallelism>1</parallelism>
+        <backup-dir>/mnt/hot-backup</backup-dir>
         <validation-timeout-seconds>120</validation-timeout-seconds>
         <data-load-timeout-seconds>900</data-load-timeout-seconds>
         <cluster-data-recovery-policy>FULL_RECOVERY_ONLY</cluster-data-recovery-policy>
-        <auto-remove-stale-data>true</auto-remove-stale-data>
     </hot-restart-persistence>
     ...
     <map name="test-map">
@@ -541,6 +572,29 @@ An example configuration is shown below.
     </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  hot-restart-persistence:
+    enabled: true
+    base-dir: /mnt/hot-restart
+    backup-dir: /mnt/hot-backup
+    validation-timeout-seconds: 120
+    data-load-timeout-seconds: 900
+    cluster-data-recovery-policy: FULL_RECOVERY_ONLY
+  map:
+    test-map:
+      hot-restart:
+        enabled: true
+        fsync: false
+  cache:
+    test-cache:
+      hot-restart:
+        enabled: true
+        fsync: false
 ----
 
 **Programmatic Configuration**:
@@ -755,7 +809,8 @@ The following are the example configurations for Hot backup.
 
 An example configuration is shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -765,6 +820,15 @@ An example configuration is shown below.
     </hot-restart-persistence>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  hot-restart-persistence:
+    enabled: true
+    backup-dir: /mnt/hot-backup
 ----
 
 **Programmatic Configuration**:
@@ -836,16 +900,26 @@ the <<global-hot-restart-configuration, base directory>> (i.e., `base-dir`) to t
 
 Let's say you have configured your hot backup directory as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <hot-restart-persistence enabled="true">
         <backup-dir>/mnt/hot-backup</backup-dir>
-        ...
+	...
     </hot-restart-persistence>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  hot-restart-persistence:
+    enabled: true
+    backup-dir: /mnt/hot-backup
 ----
 
 And let's say you have a subdirectory named `backup-2018Oct24` under the
@@ -853,7 +927,8 @@ backup directory `/mnt/hot-backup`. When you want to start your cluster with dat
 from this backup (`backup-2018Oct24`), here is the configuration you should have
 for the `base-dir` while starting the cluster:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -869,6 +944,21 @@ for the `base-dir` while starting the cluster:
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  hot-restart-persistence:
+    enabled: true
+    base-dir: backup-2018Oct24
+    parallelism: 1
+  map:
+    test-map:
+      hot-restart:
+        enabled: true
+        fsync: false
 ----
 
 ===== Achieving High Consistency of Backup Data
@@ -1043,7 +1133,8 @@ The following are the example configurations for Encryption at Rest.
 
 An example configuration is shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1059,6 +1150,21 @@ An example configuration is shown below.
     </hot-restart-persistence>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  hot-restart-persistence:
+    enabled: true
+    encryption-at-rest:
+      enabled: true
+      algorithm: AES/CBC/PKCS5Padding
+      salt: thesalt
+      key-size: 128
+      secure-store:
+         ...
 ----
 
 **Programmatic Configuration**:
@@ -1103,9 +1209,10 @@ itself. Entries of other types (private key entries, certificate entries) are ig
 otherwise, the highest entry in the alphabetical order will be used. The remaining entries will
 represent historical versions of the encryption key.
 
-An example XML configuration is shown below:
+An example declarative configuration is shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <secure-store>
     <keystore>
@@ -1116,6 +1223,18 @@ An example XML configuration is shown below:
         <polling-interval>60</polling-interval>
     </keystore>
 </secure-store>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      secure-store:
+        keystore:
+          path: /path/to/keystore.file
+          type: PKCS12
+          password: password
+          current-key-alias: current
+          polling-interval: 60
 ----
 
 The following is an equivalent programmatic configuration:
@@ -1171,9 +1290,10 @@ vault kv put hz/cluster value=HEzO124Vz...
 With KV V2, a second `put` to the same secret path creates a new version of the encryption key.
 With KV V1, it simply overwrites the current encryption key, discarding the old value.
 
-An example XML configuration is shown below:
+An example declarative configuration is shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <secure-store>
     <vault>
@@ -1184,6 +1304,19 @@ An example XML configuration is shown below:
         <ssl>...</ssl>
     </vault>
 </secure-store>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+      secure-store:
+        vault:
+          address: http://localhost:1234
+          secret-path: secret/path
+          token: token
+          polling-interval: 60
+          ssl:
+            ...
 ----
 
 The following is an equivalent programmatic configuration:
