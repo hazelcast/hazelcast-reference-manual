@@ -192,7 +192,8 @@ Note that this section only describes the JCache provided
 standard properties. For the Hazelcast specific properties,
 see the <<icache-configuration, ICache Configuration section>>.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -220,6 +221,36 @@ see the <<icache-configuration, ICache Configuration section>>.
     </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cache:
+    default:
+      key-type:
+        class-name: java.lang.Object
+      value-type:
+        class-name: java.lang.Object
+      statistics-enabled: false
+      management-enabled: false
+      read-through: true
+      write-through: true
+      cache-loader-factory:
+        class-name: com.example.cache.MyCacheLoaderFactory
+      cache-writer-factory:
+        class-name: com.example.cache.MyCacheWriterFactory
+      expiry-policy-factory:
+        class-name: com.example.cache.MyExpirePolicyFactory
+      cache-entry-listeners:
+        cache-entry-listener:
+          old-value-required: false
+          synchronous: false
+          cache-entry-listener-factory:
+            class-name: com.example.cache.MyEntryListenerFactory
+          cache-entry-event-filter-factory:
+            class-name: com.example.cache.MyEntryEventFilterFactory
 ----
 
 * `key-type#class-name`: Fully qualified class name of the cache

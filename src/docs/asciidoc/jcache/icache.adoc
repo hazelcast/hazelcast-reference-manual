@@ -66,9 +66,10 @@ might be already available to your JCache configuration.
 By configuring an instance name in `hazelcast.xml` in the classpath root,
 the `CacheManager` locates the existing instance by name and reuses it.
 
-* `hazelcast.xml`:
-+
-[source,xml]
+`hazelcast.xml/yaml`:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -76,9 +77,16 @@ the `CacheManager` locates the existing instance by name and reuses it.
     ...
 </hazelcast>
 ----
-+
-* `HazelcastInstance` & `CacheManager` startup:
-+
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  instance-name: hz-member-1
+----
+
+`HazelcastInstance` & `CacheManager` startup:
+
 [source,java]
 ----
 // start hazelcast, configured with default hazelcast.xml
@@ -462,11 +470,12 @@ eviction policy and split-brain protection reference.
 The declarative configuration for ICache is a superset of the previously
 discussed JCache configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
-    <cache>
+    <cache name="default">
         <!-- ... default cache configuration goes here ... -->
         <backup-count>1</backup-count>
         <async-backup-count>1</async-backup-count>
@@ -480,6 +489,25 @@ discussed JCache configuration:
     </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cache:
+    default:
+      backup-count: 1
+      async-backup-count: 0
+      in-memory-format: BINARY
+      eviction:
+        size: 10000
+        max-size-policy: ENTRY_COUNT
+        eviction-policy: LRU
+      partition-lost-listeners:
+        - CachePartitionLostListenerImpl
+      split-brain-protection-ref: split-brain-protection-name
+      disable-per-entry-invalidation-events: true
 ----
 
 * `backup-count`: Number of synchronous backups. Those backups
@@ -803,10 +831,11 @@ cacheConfig.setEvictionConfig(evictionConfig);
 
 You can specify the full class name of custom `EvictionPolicyComparator`
 (`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation
-in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast
-configuration XML file.
+in the `<eviction>` tag through `comparator-class-name` or `comparator-bean` attributes in Hazelcast
+configuration files:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -817,28 +846,24 @@ configuration XML file.
 </hazelcast>
 ----
 
-**Declarative Configuration for Spring:**
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cache:
+    cacheWithCustomEvictionPolicyComparator:
+      eviction:
+        size: 50000
+        max-size-policy: ENTRY_COUNT
+      expiry-policy-factory:
+        class-name: com.mycompany.MyEvictionPolicyComparator
+----
 
-You can specify the full class name of custom `EvictionPolicyComparator`
-(`CacheEvictionPolicyComparator` for JCache and its Near Cache) implementation
-in the `<eviction>` tag through `comparator-class-name` attribute in Hazelcast
-*Spring* configuration XML file.
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:cache name="cacheWithCustomEvictionPolicyComparator">
     <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-class-name="com.mycompany.MyEvictionPolicyComparator"/>
-</hz:cache>
-----
-
-You can specify the custom `EvictionPolicyComparator`
-(`CacheEvictionPolicyComparator` for JCache and its Near Cache) bean in the `<eviction>` tag
-by referencing through `comparator-bean` attribute in Hazelcast *Spring* configuration XML file
-
-[source,xml]
-----
-<hz:cache name="cacheWithCustomEvictionPolicyComparator">
-    <hz:eviction size="50000" max-size-policy="ENTRY_COUNT" comparator-bean="myEvictionPolicyComparatorBean"/>
 </hz:cache>
 ----
 
