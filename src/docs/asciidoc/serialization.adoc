@@ -374,7 +374,8 @@ As the last step, you need to register `EmployeeDataSerializableFactory` declara
 Note that `factory-id` has the same value of `FACTORY_ID` in the above code.
 This is crucial to enable Hazelcast to find the correct factory.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -387,6 +388,16 @@ This is crucial to enable Hazelcast to find the correct factory.
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    data-serializable-factories:
+      - factory-id: 1
+        class-name: EmployeeDataSerializableFactory
 ----
 
 NOTE: See the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>>
@@ -465,8 +476,8 @@ Config config = new Config();
 config.getSerializationConfig().addPortableFactory( 1, new MyPortableFactory() );
 ----
 
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -474,12 +485,23 @@ config.getSerializationConfig().addPortableFactory( 1, new MyPortableFactory() )
         <portable-version>0</portable-version>
         <portable-factories>
             <portable-factory factory-id="1">
-                com.hazelcast.nio.serialization.MyPortableFactory
+                com.hazelcast.examples.PortableFactory
             </portable-factory>
         </portable-factories>
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    portable-version: 0
+    portable-factories:
+      - factory-id: 1
+        class-name: com.hazelcast.examples.PortableFactory
 ----
 
 Note that the `id` that is passed to the `SerializationConfig` is the same
@@ -509,7 +531,8 @@ are serialized through a member get the globally configured portable version.
 You can declare Version in the configuration file `hazelcast.xml` using
 the `portable-version` element, as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -523,6 +546,17 @@ the `portable-version` element, as shown below.
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    portable-version: 1
+    portable-factories:
+      - factory-id: 1
+        class-name: PortableFactoryImpl
 ----
 
 You can also use the interface
@@ -654,7 +688,8 @@ Uniqueness of the type ID enables Hazelcast to determine which serializer is use
 As the last step, let's register the `EmployeeStreamSerializer` in
 the configuration file `hazelcast.xml`, as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -665,6 +700,16 @@ the configuration file `hazelcast.xml`, as shown below.
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    serializers:
+      - type-class: EmployeeSS
+        class-name: EmployeeStreamSerializer
 ----
 
 NOTE: `StreamSerializer` cannot be created for well-known types, such as Long and String and primitive arrays.
@@ -715,7 +760,8 @@ Config config = new Config();
 config.getSerializationConfig().addSerializerConfig(sc);
 ----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <serialization>
@@ -725,6 +771,16 @@ config.getSerializationConfig().addSerializerConfig(sc);
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    serializers:
+      - type-class: com.www.Foo
+        class-name: com.www.FooXmlSerializer
 ----
 
 From now on, this Hazelcast example will use `FooXmlSerializer`
@@ -751,7 +807,8 @@ include::{javasource}/serialization/EmployeeByteArraySerializer.java[tag=empbas]
 
 As usual, let's register the `EmployeeByteArraySerializer` in the configuration file `hazelcast.xml`, as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -762,6 +819,16 @@ As usual, let's register the `EmployeeByteArraySerializer` in the configuration 
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    serializers:
+      - type-class: Employee
+        class-name: EmployeeByteArraySerializer
 ----
 
 NOTE: See the <<serialization-configuration-wrap-up, Serialization Configuration Wrap-Up section>>
@@ -836,7 +903,8 @@ public class GlobalStreamSerializer
 
 Now, we can register the global serializer in the configuration file `hazelcast.xml`, as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -847,6 +915,16 @@ Now, we can register the global serializer in the configuration file `hazelcast.
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    global-serializer:
+      override-java-serialization: true
+      class-name: GlobalStreamSerializer
 ----
 
 === Implementing HazelcastInstanceAware
@@ -883,8 +961,9 @@ These listings support prefixes.
 
 This protection is controlled using the configuration element `java-serialization-filter` under `serialization`,
 as shown in the example below.
-op
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -893,10 +972,10 @@ op
             <whitelist>
 		<class>example.Foo</class>
 		<package>com.acme.app</package>
-		<prefix>com.hazelcast.</package>
-		<prefix>java.</package>
-		<prefix>javax.</package>
-		<prefix>[</package>
+		<prefix>com.hazelcast.</prefix>
+		<prefix>java.</prefix>
+		<prefix>javax.</prefix>
+		<prefix>[</prefix>
             </whitelist>
             <blacklist>
                 <class>com.acme.app.BeanComparator</class>
@@ -905,6 +984,28 @@ op
     </serialization>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    java-serialization-filter:
+      defaults-disabled: true
+      whitelist:
+        class:
+          - example.Foo
+        package:
+          - com.acme.app
+        prefix:
+          - com.hazelcast.
+          - java.
+          - javax.
+          - [
+      blacklist:
+        class:
+          - com.acme.app.BeanComparator
 ----
 
 As an alternative, you can also configure it programmatically using
@@ -956,36 +1057,79 @@ into all-in-one examples. The following are example serialization configurations
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
-    ...
     <serialization>
-        <portable-version>2</portable-version>
-        <use-native-byte-order>true</use-native-byte-order>
+        <portable-version>0</portable-version>
+        <use-native-byte-order>false</use-native-byte-order>
         <byte-order>BIG_ENDIAN</byte-order>
-        <enable-compression>true</enable-compression>
-        <enable-shared-object>false</enable-shared-object>
-        <allow-unsafe>true</allow-unsafe>
         <data-serializable-factories>
-            <data-serializable-factory factory-id="1001">
-                abc.xyz.Class
+            <data-serializable-factory factory-id="1">com.hazelcast.examples.DataSerializableFactory
             </data-serializable-factory>
         </data-serializable-factories>
         <portable-factories>
-            <portable-factory factory-id="9001">
-                xyz.abc.Class
-            </portable-factory>
+            <portable-factory factory-id="1">com.hazelcast.examples.PortableFactory</portable-factory>
         </portable-factories>
         <serializers>
-            <global-serializer>abc.Class</global-serializer>
-            <serializer type-class="Employee" class-name="com.EmployeeSerializer">
-            </serializer>
+            <global-serializer>com.hazelcast.examples.GlobalSerializerFactory</global-serializer>
+            <serializer type-class="com.hazelcast.examples.DummyType"
+                        class-name="com.hazelcast.examples.SerializerFactory"/>
         </serializers>
         <check-class-def-errors>true</check-class-def-errors>
+        <java-serialization-filter defaults-disabled="true">
+            <blacklist>
+                <class>com.acme.app.BeanComparator</class>
+            </blacklist>
+            <whitelist>
+                <class>java.lang.String</class>
+                <class>example.Foo</class>
+                <package>com.acme.app</package>
+                <package>com.acme.app.subpkg</package>
+                <prefix>com.hazelcast.</prefix>
+                <prefix>java</prefix>
+            </whitelist>
+        </java-serialization-filter>
     </serialization>
-    ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  serialization:
+    portable-version: 0
+    use-native-byte-order: false
+    byte-order: BIG_ENDIAN
+    data-serializable-factories:
+      - factory-id: 1
+        class-name: com.hazelcast.examples.DataSerializableFactory
+    portable-factories:
+      - factory-id: 1
+        class-name: com.hazelcast.examples.PortableFactory
+    global-serializer:
+      class-name: com.hazelcast.examples.GlobalSerializerFactory
+    serializers:
+      - type-class: com.hazelcast.examples.DummyType
+        class-name: com.hazelcast.examples.SerializerFactory
+    check-class-def-errors: true
+    java-serialization-filter:
+      defaults-disabled: true
+      blacklist:
+        class:
+          - com.acme.app.BeanComparator
+      whitelist:
+        class:
+          - java.lang.String
+          - example.Foo
+        package:
+          - com.acme.app
+          - com.acme.app.subpkg
+        prefix:
+          - com.hazelcast.
+          - java
 ----
 
 **Programmatic Configuration:**
@@ -1032,3 +1176,5 @@ Java Serializable and Externalizable is prior to global serializer by default (`
 * `serializer`: The class name of the serializer implementation.
 * `check-class-def-errors`: When set to `true`, the serialization system checks for
 class definitions error at start and throws a Serialization Exception with an error definition.
+* `java-serialization-filter`: Provides deserialization protection based on
+whitelisting and blacklisting the class/package names.
