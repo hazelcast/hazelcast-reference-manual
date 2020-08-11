@@ -489,7 +489,7 @@ You can find the JMX API definition below with descriptions and the API methods 
 
 You can monitor your Hazelcast members via the JMX protocol.
 
-To achieve this, first add the following system properties to enable
+To achieve this, first add the following system properties to enable the
 link:http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html[JMX agent^]:
 
 * `-Dcom.sun.management.jmxremote`
@@ -497,11 +497,11 @@ link:http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html[JM
 * `-Dcom.sun.management.jmxremote.authenticate=false` (to disable JMX auth) (*optional*)
 
 
-Then enable JMX by setting the property `hazelcast.jmx` property to `true` using one of the following ways:
+Then enable JMX by setting the `hazelcast.jmx` property to `true` using
+the following configuration:
 
-* By declarative configuration:
-+
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -511,22 +511,34 @@ Then enable JMX by setting the property `hazelcast.jmx` property to `true` using
     ...
 </hazelcast>
 ----
-+
-* By programmatic configuration:
-+
-`config.setProperty("hazelcast.jmx", "true");`
-+
-* By Spring XML configuration:
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  properties:
+    hazelcast.jmx: true
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
+----
+config.setProperty("hazelcast.jmx", "true");
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Spring
 ----
 <hz:properties>
     <hz: property name="hazelcast.jmx">true</hz:property>
 </hz:properties>
 ----
-+
-* By setting the system property `-Dhazelcast.jmx=true`
 
+[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
+.System Property
+----
+-Dhazelcast.jmx=true
+----
 
 ==== MBean Naming for Hazelcast Data Structures
 
@@ -605,7 +617,8 @@ Using the REST service is disabled by default.
 To be able to use the REST endpoints, you need to
 enable the REST API as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -616,6 +629,15 @@ enable the REST API as follows:
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    rest-api:
+      enabled: true
 ----
 
 ====
@@ -718,7 +740,8 @@ The following table lists all the endpoints along with the groups they belong to
 You can enable or disable any REST endpoint group using
 the following declarative configuration (`HEALTH_CHECK` group is used as an example):
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -729,6 +752,18 @@ the following declarative configuration (`HEALTH_CHECK` group is used as an exam
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    rest-api:
+      enabled: true
+      endpoint-groups:
+        HEALTH_CHECK
+          enabled: false
 ----
 
 The following is the equivalent programmatic configuration:
@@ -744,7 +779,8 @@ config.getNetworkConfig().setRestApiConfig(restApiConfig);
 
 Alternatively, you can also use the `advanced-network` element for the same purpose:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -757,6 +793,18 @@ Alternatively, you can also use the `advanced-network` element for the same purp
     </advanced-network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  advanced-network:
+    enabled: true
+    rest-server-socket-endpoint-config:
+      endpoint-groups:
+        HEALTH_CHECK:
+          enabled: false
 ----
 
 And the following is the equivalent programmatic configuration:
@@ -1271,13 +1319,22 @@ You can enable a cluster member to be a lite member using declarative or program
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <lite-member enabled="true"/>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  lite-member:
+    enabled: true
 ----
 
 **Programmatic Configuration:**
@@ -1370,7 +1427,8 @@ See the <<member-user-code-deployment-beta, User Code Deployment section>> for m
 You can also define your member attributes through declarative configuration and
 start your member afterwards. Here is how you can use the declarative approach:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1379,6 +1437,16 @@ start your member afterwards. Here is how you can use the declarative approach:
     </member-attributes>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  member-attributes:
+    CPU_CORE_COUNT:
+      type: int
+      value: 4
 ----
 
 ==== Safety Checking Cluster Members
@@ -1452,7 +1520,8 @@ You can configure the metrics system declaratively or programmatically.
 The following is an example declarative configuration with the
 default values, on the member side:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <metrics enabled="true">
     <management-center enabled="true">
@@ -1461,6 +1530,19 @@ default values, on the member side:
     <jmx enabled="true"/>
     <collection-frequency-seconds>5</collection-frequency-seconds>
 </metrics>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+metrics:
+    enabled: true
+    management-center:
+      enabled: true
+      retention-seconds: 5
+    jmx:
+      enabled: true
+    collection-frequency-seconds: 5
 ----
 
 Note that all of the metrics configuration values can be overridden with system properties.
@@ -1480,12 +1562,23 @@ The client configuration is very similar, it just lacks the Management Center co
 not connected to Management Center and the client metrics are sent to
 Management Center through a member to which the client is connected.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <metrics enabled="true">
     <jmx enabled="true"/>
     <collection-frequency-seconds>5</collection-frequency-seconds>
 </metrics>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+metrics:
+    enabled: true
+    jmx:
+      enabled: true
+    collection-frequency-seconds: 5
 ----
 
 Similarly to the member configuration, the client metrics configuration can be overridden with the following system properties:
@@ -1955,9 +2048,10 @@ Hazelcast provides the HTTP-based Health Check endpoint, Health Check script and
 To be able to benefit from the Health Check endpoint and script,
 you must enable the Health Check using either one of the following configuration options:
 
-. Using the `network` configuration element:
-+
-[source,xml]
+Using the `network` configuration element:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1969,10 +2063,23 @@ you must enable the Health Check using either one of the following configuration
     ...
 </hazelcast>
 ----
-+
-. Using the `advanced-network` configuration element:
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    rest-api:
+      enabled: true
+      endpoint-groups:
+        HEALTH_CHECK:
+          enabled: true
+----
+
+Using the `advanced-network` configuration element:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1985,6 +2092,17 @@ you must enable the Health Check using either one of the following configuration
     </advanced-network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  advanced-network:
+    rest-server-socket-endpoint-config:
+      endpoint-groups:
+        HEALTCH_CHECK:
+          enabled: true
 ----
 
 ==== Health Check
@@ -2230,13 +2348,22 @@ Scripts access the system, on which the member runs, with permissions of the run
 Scripting can be allowed or prevented by specifying the `scripting-enabled` attribute of
 the `management-center` element within the Hazelcast member configuration file, as shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <management-center scripting-enabled="false" />
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  management-center:
+    scripting-enabled: false
 ----
 
 Note that the link:https://jcp.org/en/jsr/detail?id=223[JSR 223^] API is used in Hazelcast IMDG to support scripting.
@@ -2250,7 +2377,8 @@ Defining these source addresses is possible through the `trusted-interfaces`
 configuration element. The wildcard (`*`) and ranges can be used.
 See the following example:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2261,6 +2389,15 @@ See the following example:
     </management-center>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  management-center:
+    trusted-interfaces:
+      - 192.168.1.*
 ----
 
 === Clustered JMX and REST via Management Center
