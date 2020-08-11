@@ -370,7 +370,7 @@ Hazelcast throws an exception if null is returned for `typeId`.
 ===== Registering EmployeeDataSerializableFactory
 
 As the last step, you need to register `EmployeeDataSerializableFactory` declaratively
-(declare in the configuration file `hazelcast.xml`) as shown below.
+(declare in the configuration file `hazelcast.xml/yaml`) as shown below.
 Note that `factory-id` has the same value of `FACTORY_ID` in the above code.
 This is crucial to enable Hazelcast to find the correct factory.
 
@@ -405,7 +405,7 @@ for a full description of Hazelcast Serialization configuration.
 
 When using a client/server deployment, you also need to register the implemented factory on
 the client side. For a Java client, the process is the same as described above to be performed
-in the client configuration, e.g., `hazelcast-client.xml`.
+in the client configuration, e.g., `hazelcast-client.xml/yaml`.
 For the other Hazelcast clients, see the following for details:
 
 * link:https://github.com/hazelcast/hazelcast-csharp-client#41-identifieddataserializable-serialization[.NET^]
@@ -509,7 +509,7 @@ as the `factoryId` that the `Foo` class returns.
 
 When using a client/server deployment, you also need to register the implemented factory on
 the client side. For a Java client, the process is the same as described above to be performed
-in the client configuration, e.g., `hazelcast-client.xml`.
+in the client configuration, e.g., `hazelcast-client.xml/yaml`.
 For the other Hazelcast clients, see the following for details:
 
 * link:https://github.com/hazelcast/hazelcast-csharp-client#42-portable-serialization[.NET^]
@@ -528,7 +528,7 @@ Portable serialization supports versioning.
 It is a global versioning, meaning that all portable classes that
 are serialized through a member get the globally configured portable version.
 
-You can declare Version in the configuration file `hazelcast.xml` using
+You can declare the version in the XML or YAML configuration file using
 the `portable-version` element, as shown below.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
@@ -686,7 +686,7 @@ The type ID must be unique and greater than or equal to **1**.
 Uniqueness of the type ID enables Hazelcast to determine which serializer is used during deserialization.
 
 As the last step, let's register the `EmployeeStreamSerializer` in
-the configuration file `hazelcast.xml`, as shown below.
+the configuration file `hazelcast.xml/yaml`, as shown below.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
@@ -751,7 +751,7 @@ look up the `StreamSerializer` while it deserializes the object.
 The last required step is to register the `StreamSerializer` in your Hazelcast configuration.
 Below are the programmatic and declarative configurations for this step.
 
-[source,xml]
+[source,java]
 ----
 SerializerConfig sc = new SerializerConfig()
     .setImplementation(new FooXmlSerializer())
@@ -805,7 +805,7 @@ include::{javasource}/serialization/EmployeeByteArraySerializer.java[tag=empbas]
 
 ===== Configuring ByteArraySerializer
 
-As usual, let's register the `EmployeeByteArraySerializer` in the configuration file `hazelcast.xml`, as shown below.
+As usual, let's register the `EmployeeByteArraySerializer` in the configuration file `hazelcast.xml/yaml`, as shown below.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
@@ -901,7 +901,7 @@ public class GlobalStreamSerializer
 }
 ----
 
-Now, we can register the global serializer in the configuration file `hazelcast.xml`, as shown below.
+Now, we can register the global serializer in the configuration file `hazelcast.xml/yaml`, as shown below.
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
