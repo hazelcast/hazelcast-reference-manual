@@ -337,7 +337,8 @@ Hazelcast Management Center Reference Manual for more information on this topic.
 Declaratively, you can define the client labels using the `client-labels`
 configuration element. See the below example.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -348,6 +349,16 @@ configuration element. See the below example.
     </client-labels>
     ....
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  instance-name: barClient
+  client-labels:
+    - user
+    - bar
 ----
 
 The equivalent programmatic approach is shown below.
@@ -472,7 +483,8 @@ Then we will look at its sub-elements and attributes.
 Here is an example declarative configuration of `network` for Java Client,
 which includes all the parent configuration elements.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -534,6 +546,60 @@ which includes all the parent configuration elements.
 </hazelcast-client>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+network:
+    cluster-members:
+      - 127.0.0.1
+      - 127.0.0.2
+    outbound-ports:
+      - 34600
+      - 34700-34710
+    smart-routing: true
+    redo-operation: true
+    connection-timeout: 60000
+    socket-options:
+      ...
+    socket-interceptor:
+      ...
+    ssl:
+      enabled: false
+      ...
+    aws:
+      enabled: true
+      connection-timeout-seconds: 11
+      ...
+    gcp:
+      enabled: false
+      ...
+    azure:
+      enabled: false
+      ...
+    kubernetes:
+      enabled: false
+      ...
+    eureka:
+      enabled: false
+      ...
+    icmp-ping:
+      enabled: false
+      ...
+    hazelcast-cloud:
+      enabled: false
+      discovery-token: EXAMPLE_TOKEN
+    discovery-strategies:
+      node-filter:
+        class: DummyFilterClass
+      discovery-strategies:
+        - class: DummyDiscoveryStrategy1
+          enabled: true
+          properties:
+            key-string: foo
+            key-int: 123
+            key-boolean: true
+----
+
 **Programmatic Configuration:**
 
 Here is an example of configuring network for Java Client programmatically.
@@ -554,11 +620,19 @@ By default, backup acknowledgement to the client is enabled for smart clients
 
 Here is an example of configuring the backup acknowledgement for Java Client declaratively.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client ... >
        <backup-ack-to-client-enabled>false</backup-ack-to-client-enabled>
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  backup-ack-to-client: false
 ----
 
 And here is its equivalent programmatical configuration.
@@ -591,7 +665,8 @@ it is recommended that you give the addresses for all the members.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -603,6 +678,16 @@ Declarative Configuration:
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    cluster-members:
+      - 10.1.1.21
+      - 10.1.1.22:5703
 ----
 
 Programmatic Configuration:
@@ -635,7 +720,8 @@ The following are example configurations.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -650,6 +736,17 @@ Declarative Configuration:
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    outbound-ports:
+      - 34700-34710
+      - 34700,34701,34702,34703
+      - 34700,34705-34710
 ----
 
 Programmatic Configuration:
@@ -683,7 +780,8 @@ The following are example configurations.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -692,6 +790,14 @@ Declarative Configuration:
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    smart-routing: true
 ----
 
 Programmatic Configuration:
@@ -717,7 +823,8 @@ The following are the example configurations.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -726,6 +833,14 @@ Declarative Configuration:
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    redo-operation: true
 ----
 
 Programmatic Configuration:
@@ -746,7 +861,8 @@ accept client connection requests. The following are the example configurations.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -755,6 +871,14 @@ Declarative Configuration:
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    connection-timeout: 5000
 ----
 
 Programmatic Configuration:
@@ -868,7 +992,8 @@ See the following example configurations.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -880,6 +1005,18 @@ Declarative Configuration:
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    ssl:
+      enabled: true
+    hazelcast-cloud:
+      enabled: true
+      discovery-token: YOUR_TOKEN
 ----
 
 Programmatic Configuration:
@@ -925,7 +1062,8 @@ how to configure a Java client for connecting to a Hazelcast cluster in AWS.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -934,7 +1072,6 @@ Declarative Configuration:
             <inside-aws>false</inside-aws>
             <access-key>my-access-key</access-key>
             <secret-key>my-secret-key</secret-key>
-            <iam-role>s3access</iam-role>
             <region>us-west-1</region>
             <host-header>ec2.amazonaws.com</host-header>
             <security-group-name>hazelcast-sg</security-group-name>
@@ -944,6 +1081,23 @@ Declarative Configuration:
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    aws:
+      enabled: true
+      inside-aws: false
+      access-key: my-access-key
+      secret-key: my-secret-key
+      region: us-west-1
+      host-header: ec2.amazonaws.com
+      security-group-name: hazelcast-sg
+      tag-key: type
+      tag-value: hz-members
 ----
 
 Programmatic Configuration:
@@ -981,15 +1135,22 @@ The following are example configurations.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
-    <load-balancer type=“random”>
-        yourLoadBalancer
-    </load-balancer>
+    <load-balancer type=“random”/>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  load-balancer:
+    type: random
 ----
 
 Programmatic Configuration:
@@ -1085,7 +1246,8 @@ You can edit that configuration according to your needs.
 You can configure a Reliable Topic structure on the client side also declaratively.
 The following is the declarative configuration equivalent to the above example:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -1099,6 +1261,20 @@ The following is the declarative configuration equivalent to the above example:
     </reliable-topic>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  ringbuffer:
+    default:
+      capacity: 10000000
+      time-to-live-seconds: 5
+  reliable-topic:
+    default:
+      topic-overload-policy: BLOCK
+      read-batch-size: 10
 ----
 
 ==== Java Client Connection Strategy
@@ -1129,13 +1305,23 @@ a Java client's starting and reconnecting modes.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
     <connection-strategy async-start="true" reconnect-mode="ASYNC" />
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  connection-strategy:
+    async-start: true
+    reconnect-mode: ASYNC
 ----
 
 Programmatic Configuration:
@@ -1159,7 +1345,8 @@ Below are the example configurations for each.
 
 Declarative Configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -1174,6 +1361,21 @@ Declarative Configuration:
     </connection-strategy>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  connection-strategy:
+    async-start: false
+    reconnect-mode: ON
+    connection-retry:
+      initial-backoff-millis: 1000
+      max-backoff-millis: 60000
+      multiplier: 2
+      cluster-connect-timeout-millis: 50000
+      jitter: 0.2
 ----
 
 Programmatic Configuration:
@@ -1307,17 +1509,33 @@ the client decides to shut down is provided using the `try-count` configuration 
 See the following configuration related sections.
 
 We didn't go over the configuration yet (see the following configuration related sections),
-but for the sake of explaining the ordering, assume that you have `client-config1`, `client-config2` and `client-config3`
-in the given order as shown below. This means you have three alternative clusters.
+but for the sake of explaining the ordering, assume that you have
+`client-config1`, `client-config2` and `client-config3`
+in the given order as shown below (in your `hazelcast-client-failover` XML or YAML file).
+This means you have three alternative clusters.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
-<try-count>4</try-count>
-<clients>
-    <client>client-config1.xml</client>
-    <client>client-config2.xml</client>
-    <client>client-config3.xml</client>
-</clients>
+<hazelcast-client-failover>
+    <try-count>4</try-count>
+    <clients>
+        <client>client-config1.xml</client>
+        <client>client-config2.xml</client>
+        <client>client-config3.xml</client>
+    </clients>
+</hazelcast-client-failover>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client-failover:
+  try-count: 4
+  clients:
+    - client-config1.yaml
+    - client-config2.yaml
+    - client-config3.yaml
 ----
 
 And let's say the client is disconnected from the cluster
@@ -1343,9 +1561,10 @@ Let's describe the configuration with examples.
 
 Assume that you have two clusters, Cluster A and Cluster B, and two Java clients.
 
-. First configure the Cluster A members as shown below:
-+
-[source,xml]
+First configure the Cluster A members as shown below:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1360,10 +1579,22 @@ Assume that you have two clusters, Cluster A and Cluster B, and two Java clients
     ...
 </hazelcast>
 ----
-+
-. Then, configure the Cluster B members as shown below.
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    join:
+      tcp-ip:
+        enabled: true
+        members: clusterA.member1,clusterA.member2
+----
+
+Then, configure the Cluster B members as shown below.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1378,11 +1609,22 @@ Assume that you have two clusters, Cluster A and Cluster B, and two Java clients
     ...
 </hazelcast>
 ----
-+
-. Configure your two clients as shown below.
-+
 
-[source,xml]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    join:
+      tcp-ip:
+        enabled: true
+        members: clusterB.member1,clusterB.member2
+----
+
+Configure the two clients as shown below.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Client 1 XML
 ----
 <hazelcast-client>
     ...
@@ -1396,8 +1638,21 @@ Assume that you have two clusters, Cluster A and Cluster B, and two Java clients
     ...
 </hazelcast-client>
 ----
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  cluster-name: cluster-a
+  network:
+    cluster-members:
+      - production1.myproject
+      - production2.myproject
+
+----
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Client 2 XML
 ----
 <hazelcast-client>
     ...
@@ -1411,12 +1666,25 @@ Assume that you have two clusters, Cluster A and Cluster B, and two Java clients
     ...
 </hazelcast-client>
 ----
-+
-. Assuming that the client configuration file names of the above example clients are
-`hazelcast-client-c1.xml` and `hazelcast-client-c1.xml`, you should configure the
-client failovers for a blue-green deployment scenario as follows:
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  cluster-name: cluster-b
+  network:
+    cluster-members:
+      - production1.myproject
+      - production2.myproject
+
+----
+
+Assuming that the client configuration file names of the above example clients are
+`hazelcast-client-c1.xml/yaml` and `hazelcast-client-c1.xml/yaml`, you should configure the
+client failover for a blue-green deployment scenario as follows:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client-failover>
     <try-count>4</try-count>
@@ -1426,30 +1694,42 @@ client failovers for a blue-green deployment scenario as follows:
     </clients>
 </hazelcast-client-failover>
 ----
-+
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client-failover:
+  try-count: 4
+  clients:
+    - hazelcast-client-c1.yaml
+    - hazelcast-client-c2.yaml
+----
+
 NOTE: You can find the complete Hazelcast client failover
 example configuration file (`hazelcast-client-failover-full-example`)
 both in XML and YAML formats including the descriptions of elements and attributes,
 in the `/bin` folder of your Hazelcast download directory.
-+
-. You should also configure your clients to forget DNS lookups using the
+
+You should also configure your clients to forget DNS lookups using the
 link:https://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html[networkaddress.cache.ttl^] JVM parameter.
-. Configure the addresses in your clients' configuration to resolve to hostnames of
+
+Configure the addresses in your clients' configuration to resolve to hostnames of
 Cluster A via CNAME so that the clients will connect to Cluster A when it starts:
-+
+
 `production1.myproject` → `clusterA.member1`
-+
+
 `production2.myproject` → `clusterA.member2`
-+
-. When you want the clients to switch to the other cluster, change the mapping as follows:
-+
+
+When you want the clients to switch to the other cluster, change the mapping as follows:
+ 
 `production1.myproject` → `clusterB.member1`
-+
+
 `production2.myproject` → `clusterB.member2`
-+
-. Wait for the time you configured using the `networkaddress.cache.ttl` JVM parameter for
+
+Wait for the time you configured using the `networkaddress.cache.ttl` JVM parameter for
 the client JVM to forget the old mapping.
-. Blacklist the clients in Cluster A using the Hazelcast Management Center.
+
+Blacklist the clients in Cluster A using the Hazelcast Management Center.
 
 ===== Configuring Without CNAME
 
@@ -1457,7 +1737,8 @@ Let's first give example configurations and describe the configuration elements.
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client-failover>
     <try-count>4</try-count>
@@ -1466,6 +1747,16 @@ Let's first give example configurations and describe the configuration elements.
         <client>hazelcast-client-c2.xml</client>
     </clients>
 </hazelcast-client-failover>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client-failover:
+  try-count: 4
+  clients:
+    - hazelcast-client-c1.yaml
+    - hazelcast-client-c2.yaml
 ----
 
 **Programmatic Configuration:**
@@ -1511,12 +1802,10 @@ The client configurations must be exactly the same except the following configur
 * `NetworkConfig.CloudConfig`
 * `NetworkConfig.DiscoveryConfig`
 
-
 You can also configure it within the Spring context, as shown below:
 
 [source,xml]
 ----
-
 <beans>
     <hz:client-failover id="blueGreenClient" try-count="5">
         <hz:client>
@@ -1575,7 +1864,8 @@ should be larger than that of `hazelcast.client.heartbeat.interval`.
 The following is a declarative example showing how you can configure the Deadline Failure Detector
 for your client (in the client's configuration XML file, e.g., `hazelcast-client.xml`):
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -1585,6 +1875,15 @@ for your client (in the client's configuration XML file, e.g., `hazelcast-client
     </properties>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  properties
+    hazelcast.client.heartbeat.timeout: 60000
+    hazelcast.client.heartbeat.interval: 5000
 ----
 
 And, the following is the equivalent programmatic configuration:
@@ -1630,7 +1929,8 @@ fallback on TCP Echo attempts on port 7.
 An example declarative configuration to use the Ping Failure Detector is
 as follows (in the client's configuration XML file, e.g., `hazelcast-client.xml`):
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -1645,6 +1945,20 @@ as follows (in the client's configuration XML file, e.g., `hazelcast-client.xml`
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    icmp-ping:
+      enabled: false
+      timeout-milliseconds: 1000
+      interval-milliseconds: 1000
+      ttl: 255
+      echo-fail-fast-on-startup: false
+      max-attempts: 2
 ----
 
 And, the equivalent programmatic configuration:
@@ -2032,7 +2346,8 @@ REST service is disabled in the configuration by default.
 You should enable it on your cluster members to use the REST client
 as follows: 
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2044,6 +2359,16 @@ as follows:
     ...
 </hazelcast>
 ----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    rest-api:
+      enabled: true
+----
+
 ====
 
 Hazelcast uses grouped endpoints to provide the communication
@@ -2053,7 +2378,8 @@ For these operations to work, in addition to enabling the REST service as shown 
 you also need to enable the `DATA` endpoint group which allows accessing the data structures,
 as shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2064,6 +2390,18 @@ as shown below:
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    rest-api:
+      enabled: true
+      endpoint-groups:
+        DATA:
+          enabled: true
 ----
 
 See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> for details
@@ -2364,9 +2702,10 @@ No additional configuration is required.
 To be able to use a Memcache client, you must enable
 the Memcache client request listener service using either one of the following configuration options:
 
-. Using the `network` configuration element:
-+
-[source,xml]
+1 - Using the `network` configuration element:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2376,10 +2715,20 @@ the Memcache client request listener service using either one of the following c
     ...
 </hazelcast>
 ----
-+
-. Using the `advanced-network` configuration element:
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    memcache-protocol:
+      enabled: true
+----
+
+2 - Using the `advanced-network` configuration element:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2390,6 +2739,19 @@ the Memcache client request listener service using either one of the following c
     </advanced-network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  advanced-network:
+    memcache-server-socket-endpoint-config:
+      name: memcache
+      port:
+        auto-increment: false
+        port-count: 10
+        port: 6000
 ----
 
 ==== Memcache Client Code Examples
