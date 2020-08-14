@@ -126,9 +126,8 @@ the count of members in the cluster, as observed by the local member's cluster
 membership manager and is available since Hazelcast 3.5.
 The following are map configurations for the example 7-member cluster scenario described above:
 
-**Declarative Configuration:**
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -142,9 +141,21 @@ The following are map configurations for the example 7-member cluster scenario d
 </hazelcast>
 ----
 
-**Programmatic Configuration:**
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  split-brain-protection:
+    splitBrainProtectionRuleWithFourMembers:
+      enabled: true
+      minimum-cluster-size: 4
+  map:
+    default:
+      split-brain-protection-ref: splitBrainProtectionRuleWithFourMembers
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 include::{javasource}/networkpartitioning/MemberCountSplitBrainProtection.java[tag=mcq]
 ----
@@ -183,9 +194,8 @@ the normal distribution used when calculating phi. Too low standard deviation mi
 result in too much sensitivity for sudden, but normal, deviations in heartbeat
 inter arrival times. Its default value is `100` milliseconds.
 
-**Declarative Configuration:**
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -202,9 +212,26 @@ inter arrival times. Its default value is `100` milliseconds.
 </hazelcast>
 ----
 
-**Programmatic Configuration:**
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  split-brain-protection:
+    probabilistic-split-brain-protection:
+      enabled: true
+      minimum-cluster-size: 3
+      protect-on: READ_WRITE
+      probabilistic-split-brain-protection:
+        acceptable-heartbeat-pause-millis: 5000
+        max-sample-size: 500
+        suspicion-threshold: 10
+  set:
+    split-brain-protected-set:
+      split-brain-protection-ref: probabilistic-split-brain-protection
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 include::{javasource}/networkpartitioning/ProbabilisticSplitBrainProtection.java[tag=pq]
 ----
@@ -216,9 +243,8 @@ a more conservative split-brain protection by requiring that
 a heartbeat has been received from each member within a configurable
 time window since now.
 
-**Declarative Configuration:**
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -234,9 +260,24 @@ time window since now.
 </hazelcast>
 ----
 
-**Programmatic Configuration:**
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  split-brain-protection:
+    recently-active-split-brain-protection:
+      enabled: true
+      minimum-cluster-size: 4
+      protect-on: READ_WRITE
+      recently-active-split-brain-protection:
+        heartbeat-tolerance-millis: 60000
+  set:
+    split-brain-protected-set:
+      split-brain-protection-ref: recently-active-split-brain-protection
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 include::{javasource}/networkpartitioning/RecentlyActiveSplitBrainProtection.java[tag=raq]
 ----
@@ -276,7 +317,8 @@ public class CustomSplitBrainProtectionFunction implements SplitBrainProtectionF
     }
 ----
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ... 
@@ -286,7 +328,19 @@ public class CustomSplitBrainProtectionFunction implements SplitBrainProtectionF
         <split-brain-protection-function-class-name>my.domain.CustomSplitBrainProtectionFunction</split-brain-protection-function-class-name>
     </split-brain-protection>
     ...
-</hazelcast>    
+</hazelcast> 
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  split-brain-protection:
+    member-count-split-brain-protection:
+      enabled: true
+      protect-on: READ_WRITE
+      minimum-cluster-size: 3
+      split-brain-protection-function-class-name: my.domain.CustomSplitBrainProtectionFunction
 ----
 
 ==== Configuring Split-Brain Protection Listeners
@@ -298,9 +352,8 @@ so they receive only events that occurred on that local member.
 These listeners can be configured via declarative or programmatic configuration.
 The following examples are such configurations.
 
-**Declarative Configuration:**
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -319,13 +372,25 @@ The following examples are such configurations.
 </hazelcast>
 ----
 
-**Programmatic Configuration:**
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  split-brain-protection:
+    splitBrainProtectionRuleWithFourMembers:
+      enabled: true
+      minimum-cluster-size: 4
+      split-brain-protection-listener: com.company.splitbrainprotection.FourMemberSplitBrainProtectionListener
+  map:
+    default:
+      split-brain-protection-ref: splitBrainProtectionRuleWithFourMembers
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 include::{javasource}/networkpartitioning/SplitBrainProtectionListenerConfiguration.java[tag=qlc]
 ----
-
 
 ==== Querying Split-Brain Protection Results
 
@@ -457,7 +522,8 @@ the `merge-policy` configuration. For the out-of-the-box merge policies the simp
 
 Here are examples how merge policies can be specified for various data structures:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -484,10 +550,41 @@ Here are examples how merge policies can be specified for various data structure
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    default:
+      merge-policy:
+        batch-size: 100
+        class-name: LatestUpdateMergePolicy
+  replicatedmap:
+    default:
+      merge-policy:
+        batch-size: 100
+        class-name: org.example.merge.MyMergePolicy
+  multimap:
+    default:
+      merge-policy:
+        batch-size: 50
+        class-name: HigherHitsMergePolicy
+  list:
+    default:
+      merge-policy:
+        batch-size: 500
+        class-name: org.example.merge.MyMergePolicy
+  atomic-long:
+    default:
+      merge-policy:
+        class-name: PutIfAbsentMergePolicy
+----
+
 Here is how merge policies are specified for `ICache` (it is the same configuration tag,
 but lacks the support for additional attributes like `batch-size`):
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -496,6 +593,16 @@ but lacks the support for additional attributes like `batch-size`):
     </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cache:
+    default:
+      merge-policy:
+        class-name: org.example.merge.MyMergePolicy
 ----
 
 ===== Programmatic Configuration
