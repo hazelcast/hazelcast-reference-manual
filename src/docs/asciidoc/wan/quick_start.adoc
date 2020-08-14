@@ -11,8 +11,8 @@ Let's say you have two clusters, one in London and the other in Tokyo.
 You want to replicate the updates between each other and use the one in Tokyo
 as the active cluster.
 
-. Add the following configuration example on your cluster in Tokyo:
-+
+1 - Add the following configuration example on your cluster in Tokyo:
+
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
 ----
@@ -30,14 +30,14 @@ as the active cluster.
 
 </hazelcast>
 ----
-+
+
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
 .Java
 ----
 include::{javasource}/wan/MinimalActivePassiveConfiguration.java[tag=wrc]
-
 ----
-. Start your clusters to start using Active-Passive WAN Replication.
+
+2 - Start your clusters to start using Active-Passive WAN Replication.
 
 Basically, what we did here is defining a WAN Replication configuration (`wan-replication`)
 and configuring our map to use it (`wan-replication-ref`). As mentioned, this is the minimal
@@ -65,7 +65,7 @@ cloud infrastructures. See the <<wanbatchreplication-discovery-spi, Using Discov
 
 Using the above scenario, this mode requires configuration on both clusters.
 
-1- Add the following configuration example on your cluster in Tokyo:
+1 - Add the following configuration example on your cluster in Tokyo:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
@@ -92,7 +92,7 @@ Using the above scenario, this mode requires configuration on both clusters.
 include::{javasource}/wan/MinimalActiveActiveConfiguration1.java[tag=wrc]
 ----
 
-2- Add the following configuration example on your cluster in London:
+2 - Add the following configuration example on your cluster in London:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .XML
@@ -118,7 +118,8 @@ include::{javasource}/wan/MinimalActiveActiveConfiguration1.java[tag=wrc]
 ----
 include::{javasource}/wan/MinimalActiveActiveConfiguration2.java[tag=wrc]
 ----
-3- Start your clusters to start using Active-Active WAN Replication.
+
+3 - Start your clusters to start using Active-Active WAN Replication.
 
 Notice the `cluster-name` configuration element (not the one under the `batch-publisher` element, but
 the one under the `hazelcast` element).

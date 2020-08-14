@@ -11,9 +11,10 @@ The maximum size of events that are sent in a single batch can be changed depend
 The batch of events is not sent until this size is reached or enough time has elapsed. The default value for batch size is `500`.
 The batch size can be set for each WAN publisher separately by modifying the related `WanBatchPublisherConfig`.
 
-Below is the declarative configuration for changing the value of the element:
+Below is the configuration for changing the value of the element:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -27,15 +28,26 @@ Below is the declarative configuration for changing the value of the element:
 </hazelcast>
 ----
 
-And following is the equivalent programmatic configuration:
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        batch-size: 1000
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 WanReplicationConfig wanConfig = config.getWanReplicationConfig("london-wan-rep");
 WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
         .setClusterName("london")
         .setBatchSize(1000);
 wanConfig.addWanPublisherConfig(publisherConfig);
+
 ----
 
 ==== Batch Maximum Delay
@@ -47,9 +59,10 @@ Default value of for this duration is 1 second (1000 milliseconds).
 
 Maximum delay can be set for each target cluster by modifying related `WanBatchPublisherConfig`.
 
-You can change this element using the declarative configuration as shown below.
+You can change this element using the configuration as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -63,15 +76,26 @@ You can change this element using the declarative configuration as shown below.
 </hazelcast>
 ----
 
-And, the following is the equivalent programmatic configuration:
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        batch-max-delay-millis: 2000
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 WanReplicationConfig wanConfig = config.getWanReplicationConfig("london-wan-rep");
 WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
         .setClusterName("london")
         .setBatchMaxDelayMillis(2000);
 wanConfig.addWanPublisherConfig(publisherConfig);
+
 ----
 
 ==== Response Timeout
@@ -84,9 +108,10 @@ the target cluster. Default value of this duration is `60000` milliseconds.
 You can change this duration depending on your network latency for each target cluster by
 modifying related `WanBatchPublisherConfig`.
 
-Below is an example of declarative configuration:
+Below is an example configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -100,9 +125,19 @@ Below is an example of declarative configuration:
 </hazelcast>
 ----
 
-And, the following is the equivalent programmatic configuration:
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        response-timeout-millis: 5000
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 WanReplicationConfig wanConfig = config.getWanReplicationConfig("london-wan-rep");
 WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
@@ -121,9 +156,10 @@ Note that a separate queue is used for each WAN Replication configured for IMap 
 
 Queue capacity can be set for each target cluster by modifying the related `WanBatchPublisherConfig`.
 
-You can change this element using the declarative configuration as shown below.
+You can change this element using the configuration as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -137,9 +173,19 @@ You can change this element using the declarative configuration as shown below.
 </hazelcast>
 ----
 
-And, the following is the equivalent programmatic configuration:
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        queue-capacity: 15000
+----
 
-[source,java]
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 WanReplicationConfig wanConfig = config.getWanReplicationConfig("london-wan-rep");
 WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
@@ -185,7 +231,8 @@ But, it  throws exception only when WAN replication is active. It discards the n
 
 The following is an example configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -197,6 +244,27 @@ The following is an example configuration:
     </wan-replication>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        queue-full-behavior: DISCARD_AFTER_MUTATION
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
+----
+WanReplicationConfig wanConfig = config.getWanReplicationConfig("london-wan-rep");
+WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
+        .setClusterName("london")
+        .setQueueFullBehavior("DISCARD_AFTER_MUTATION");
+wanConfig.addWanPublisherConfig(publisherConfig);
 ----
 
 NOTE: `queue-full-behavior` configuration is optional. Its default value is `DISCARD_AFTER_MUTATION`.
@@ -214,7 +282,8 @@ before sending the next batch of events.
 
 The following is an example configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -228,6 +297,27 @@ The following is an example configuration:
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        acknowledge-type: ACK_ON_OPERATION_COMPLETE
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
+----
+WanReplicationConfig wanConfig = config.getWanReplicationConfig("london-wan-rep");
+WanBatchPublisherConfig publisherConfig = new WanBatchPublisherConfig()
+        .setClusterName("london")
+        .setAcknowledgeType("ACK_ON_OPERATION_COMPLETE");
+wanConfig.addWanPublisherConfig(publisherConfig);
+----
+
 NOTE: `acknowledge-type` configuration is optional. Its default value is `ACK_ON_OPERATION_COMPLETE`.
 
 ==== Key-based Coalescing
@@ -239,7 +329,8 @@ turn on key-based coalescing, thus saving on amounts of data replicated between 
 
 The following is an example configuration:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -251,6 +342,17 @@ The following is an example configuration:
     </wan-replication>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        snapshot-enabled: true
 ----
 
 NOTE: `snapshot-enabled` is optional. Its default value is `false`.
@@ -293,7 +395,8 @@ If a WAN event is enqueued while the WAN replication thread is in the idle state
 
 An example WAN replication configuration using the default values of the above elements is shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -309,6 +412,20 @@ An example WAN replication configuration using the default values of the above e
     </wan-replication>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        batch-size: 500
+        batch-max-delay-millis: 1000
+        idle-min-park-ns: 10000000
+        idle-max-park-ns: 250000000
 ----
 
 We will now discuss tuning these elements. Unfortunately, the exact tuning parameters heavily depend
@@ -346,7 +463,8 @@ The name of this executor is `hz:wan`. Below is an example of a concrete, dedica
 See the <<configuring-executor-service, Configuring Executor Service section>> for more information on
 the configuration options of the executor.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -355,6 +473,15 @@ the configuration options of the executor.
     </executor-service>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  executor-service:
+    hz-wan:
+      pool-size: 16
 ----
 
 The last two elements that you might want to change are `acknowledge-type` and `max-concurrent-invocations`.
@@ -404,7 +531,8 @@ the target endpoint count while maintaining causality.
 An example WAN replication configuration using the default values of
 the aforementioned elements is shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -418,6 +546,17 @@ the aforementioned elements is shown below.
     </wan-replication>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep-batch:
+      cluster-name: london
+      acknowledge-type: ACK_ON_OPERATION_COMPLETE
+      max-concurrent-invocations: -1
 ----
 
 Finally, as we've mentioned, the exact values which will give you the optimal performance depend on your environment and use case.
@@ -450,7 +589,8 @@ When using WAN Replication with Discovery SPI, you can set the maximum number of
 at any point using the `max-target-endpoints` property. This element has no effect when static endpoint addresses
 are defined using `target-endpoints`. Default is `Integer.MAX_VALUE`.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -465,13 +605,25 @@ are defined using `target-endpoints`. Default is `Integer.MAX_VALUE`.
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep-batch:
+      batch-publisher:
+        cluster-name: london
+        max-target-endpoints: 5
+----
+
 ==== Use Endpoint Private Address
 
 When using WAN Replication with Discovery SPI, you can set whether the WAN connection manager should connect to the
 endpoint on the private address returned by the Discovery SPI using the `use-endpoint-private-address` property.
 By default this element is `false` which means the WAN connection manager always uses the public address.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -484,4 +636,15 @@ By default this element is `false` which means the WAN connection manager always
     </wan-replication>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep-batch:
+      batch-publisher:
+        cluster-name: london
+        use-endpoint-private-address: true
 ----

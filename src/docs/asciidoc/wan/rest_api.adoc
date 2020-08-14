@@ -32,7 +32,8 @@ Let's use the following declarative configuration as the example to
 be used in the curl commands described in the sections below, and
 let's assume that our source cluster does not have a password:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <cluster-name>tokyo</cluster-name>
@@ -49,6 +50,22 @@ let's assume that our source cluster does not have a password:
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cluster-name: tokyo
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        target-endpoints: 10.3.5.1:5701, 10.3.5.2:5701
+  map:
+    myMap:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+----
 
 ==== Clearing the Queues
 

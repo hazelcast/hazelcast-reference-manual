@@ -14,7 +14,8 @@ Imagine you have different distributed maps, however only one of those maps shou
 To achieve this, configure the map that you want to be replicated by adding the `wan-replication-ref` element in
 the map configuration as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -29,6 +30,21 @@ the map configuration as shown below.
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      ...
+  map:
+    my-shared-map:
+      wan-replication-ref:
+        london-wan-rep:
+          merge-policy: com.hazelcast.spi.merge.PassThroughMergePolicy
+          republishing-enabled: false
 ----
 
 The following is the equivalent programmatic configuration:
@@ -86,7 +102,8 @@ for that map or cache, the default configuration will apply on the target cluste
 
 The following is a declarative configuration example for enabling WAN Replication for `ICache`:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -101,6 +118,21 @@ The following is a declarative configuration example for enabling WAN Replicatio
     </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      ...
+  cache:
+    my-shared-cache:
+      wan-replication-ref:
+        london-wan-rep:
+          merge-policy: com.hazelcast.spi.merge.PassThroughMergePolicy
+          republishing-enabled: true
 ----
 
 The following is the equivalent programmatic configuration:

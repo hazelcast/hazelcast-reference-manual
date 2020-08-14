@@ -64,8 +64,29 @@ Here, we show the simplest working configurations to replicate to a target clust
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        target-endpoints: 10.3.5.1:5701, 10.3.5.2:5701
+  map:
+    replicatedMap:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+  cache:
+    replicatedCache:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+----
+
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.Java
+.JAVA
 ----
 include::{javasource}/wan/ExampleWANReplicationConfiguration.java[tag=wrc]
 ----
@@ -151,8 +172,33 @@ You must have the link:https://github.com/hazelcast/hazelcast-aws[Hazelcast AWS 
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        discovery-strategies:
+          discovery-strategy:
+            - enabled: true
+              class: com.hazelcast.aws.AwsDiscoveryStrategy
+              properties:
+                access-key: test-access-key
+                secret-key: test-secret-key
+                region: test-region
+                iam-role: test-iam-role
+                host-header: ec2.test-host-header
+                security-group-name: test-security-group-name
+                tag-key: test-tag-key
+                tag-value: test-tag-value
+                connection-timeout-seconds: 10
+                hz-port: 5701
+----
+
 [source,java,indent=0,subs="verbatim,attributes",role="secondary"]
-.Java
+.JAVA
 ----
 include::{javasource}/wan/ExampleWANReplicationDiscoveryConfiguration.java[tag=wrdc]
 ----
@@ -167,7 +213,8 @@ The other properties are the same as when using the `aws` element. In case of EC
 the WAN replication using the `aws` element. You may use either the `discovery-strategies` or `aws`
 element, but not both at the same time.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -198,6 +245,36 @@ element, but not both at the same time.
     </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        use-endpoint-private-address: false
+        aws:
+        enabled: true
+          access-key: my-access-key
+          secret-key: my-secret-key
+          region: us-west-1
+          security-group-name: hazelcast-sg
+          tag-key: type
+          tag-value: hz-members
+          hz-port: 5701
+  map:
+    replicatedMap:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+  cache:
+    replicatedCache:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
 ----
 
 See the <<aws-element, aws element>> and the <<configuring-client-for-aws, Configuring Client for AWS>>
@@ -233,7 +310,8 @@ The WAN batch publisher transmits WAN events (map and cache updates) between clu
 
 Here is a declarative example on using and configuring `batch-publisher`:
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <wan-replication name="london-wan-rep">
@@ -251,6 +329,27 @@ Here is a declarative example on using and configuring `batch-publisher`:
         <wan-replication-ref name="london-wan-rep"/>
     </cache>
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      batch-publisher:
+        cluster-name: london
+        ...
+  map:
+    replicatedMap:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+  cache:
+    replicatedCache:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
 ----
 
 Above, you notice that we have configured the instance to replicate a map and a cache to a target cluster

@@ -58,7 +58,8 @@ You need to add URL-encoded parameters to the request in the following order sep
 
 Assume that you have configured an IMap with a WAN replication configuration as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -74,6 +75,20 @@ Assume that you have configured an IMap with a WAN replication configuration as 
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication name: london-wan-rep
+    batch-publisher:
+      cluster-name: istanbul
+  map:
+    my-map:
+      wan-replication-ref:
+        london-wan-rep:
+          merge-policy: com.hazelcast.spi.merge.PassThroughMergePolicy
 ----
 
 Then, an example curl command to initiate the synchronization for "my-map" would be as follows:
@@ -125,13 +140,14 @@ To be able to use Delta WAN synchronization, the following must be met:
 
 To be able to use Delta WAN synchronization for a Hazelcast data structure:
 
-. Configure the WAN synchronization mechanism for your WAN publisher so that
+1 - Configure the WAN synchronization mechanism for your WAN publisher so that
 it uses the Merkle tree: If configuring declaratively, you can use the `consistency-check-strategy` sub-element of
 the `sync` element. If configuring programmatically, you can use the setter of the
 link:{docBaseUrl}/javadoc/com/hazelcast/config/WanSyncConfig.html[WanSyncConfig^] object.
 Here is a declarative example:
-+
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -146,26 +162,54 @@ Here is a declarative example:
     ...
 </hazelcast>
 ----
-. Bind that WAN synchronization configuration to the data structure (currently IMap):
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    wanReplicationScheme:
+      batch-publisher:
+        cluster-name: clusterName
+        sync:
+          consistency-check-strategy: MERKLE_TREES
+----
+
+2 - Bind that WAN synchronization configuration to the data structure (currently IMap):
 Simply set the WAN replication reference of your map to the name of the WAN replication
 configuration which uses the Merkle tree.
 Here is a declarative example:
-+
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <map name="myMap">
         <wan-replication-ref name="wanReplicationScheme">
+          ...
         </wan-replication-ref>
     </map>
     ...
 </hazelcast>
 ----
-. Finally, configure the Merkle tree using the `merkle-tree` element which is contained
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    myMap:
+      wan-replication-ref:
+        wanReplicationScheme:
+          ...
+----
+
+3 - Finally, configure the Merkle tree using the `merkle-tree` element which is contained
 in the `map` configuration:
-+
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -177,15 +221,26 @@ in the `map` configuration:
     ...
 </hazelcast>
 ----
-+
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    myMap:
+      merkle-tree:
+        enabled: true
+        depth: 5
+----
+
 You can programmatically configure it, too, using the
 link:{docBaseUrl}/javadoc/com/hazelcast/config/MerkleTreeConfig.html[MerkleTreeConfig^] object.
 
 Here is the full declarative configuration example showing how to
 enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap in this case) and specify its depth:
 
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -208,6 +263,26 @@ enable Delta WAN Synchronization, bind it to a Hazelcast data structure (an IMap
     </wan-replication>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    myMap:
+      wan-replication-ref:
+        wanReplicationScheme:
+          ...
+      merkle-tree:
+        enabled: true
+        depth: 10
+  wan-replication:
+    wanReplicationScheme:
+      batch-publisher:
+        cluster-name: clusterName
+        sync:
+          consistency-check-strategy: MERKLE_TREES
 ----
 
 Here, the element `consistency-check-strategy` sets the strategy for
@@ -509,19 +584,34 @@ The limitation is that there must be an existing WAN replication configuration b
 it can be empty, without any publishers (target clusters).
 For instance, this is an example of an XML configuration to which you can dynamically add new publishers:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
-    <wan-replication name="wanReplication"></wan-replication>
+    <wan-replication name="myWanReplication"></wan-replication>
     <map name="my-map">
-        <wan-replication-ref name="wan-replication">
+        <wan-replication-ref name="myWanReplication">
             <merge-policy>com.hazelcast.spi.merge.PassThroughMergePolicy</merge-policy>
             <republishing-enabled>false</republishing-enabled>
        </wan-replication-ref>
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    myWanReplication:
+  map:
+    myMap:
+      wan-replication-ref:
+        myWanReplication:
+          merge-policy: com.hazelcast.spi.merge.PassThroughMergePolicy
+          republishing-enabled: false
 ----
 
 Note that the map has defined WAN replication but there is no target cluster yet.
@@ -764,7 +854,8 @@ You can attach filters to your data structures using the `filter` element of
 `wan-replication-ref` configuration inside `hazelcast.xml` as shown below.
 You can also configure it using the programmatic configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -778,6 +869,19 @@ You can also configure it using the programmatic configuration.
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    testMap:
+      wan-replication-ref:
+        test:
+          filters:
+            - com.example.MyFilter
+            - com.example.MyFilter2
 ----
 
 As shown in the above configuration, you can define more than one filter. Filters are called in the order that they are introduced.
@@ -801,7 +905,8 @@ In addition to using the Hazelcast's built-in WAN Replication implementation, yo
 Following is the configuration snippet where `replicatedMap` and `replicatedCache` use the custom implementation
 `com.my.WanPublisher` to replicate map and cache updates.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -829,6 +934,30 @@ Following is the configuration snippet where `replicatedMap` and `replicatedCach
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      custom-publisher:
+        publisher-id: myCustomPublisher
+        class-name: com.my.WanPublisher
+        properties:
+          prop1: val1
+          prop2: val2
+  map:
+    replicatedMap:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+  cache:
+    replicatedCache:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+----
+
 The `custom-publisher` is used to configure a custom implementation of a WAN replication implementing
 `com.hazelcast.wan.WanPublisher`. For example, you might implement replication to Kafka or some JMS queue or even
 write out map and cache event changes to a log on disk. It has the following sub-elements:
@@ -847,7 +976,8 @@ through some JMS queue like ActiveMQ. In this case, you need to implement both y
 
 Below is a configuration example for specifying a custom WAN replication consumer on the target/passive cluster:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -861,6 +991,19 @@ Below is a configuration example for specifying a custom WAN replication consume
         </consumer>
     </wan-replication>
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      consumer:
+        class-name: com.my.WanConsumer
+        properties:
+          prop1: val1
+          prop2: val2
 ----
 
 The `consumer` is used to configure the implementation of the `com.hazelcast.wan.WanConsumer` interface
@@ -885,7 +1028,8 @@ you may simply omit defining it which causes the default processing logic to be 
 Below you can see an example configuration of the target/passive cluster where we configure how incoming WAN events
 are processed.
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -907,6 +1051,26 @@ are processed.
     </cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+hazelcast:
+  wan-replication:
+    london-wan-rep:
+      consumer:
+        persist-wan-replicated-data: false
+  map:
+    replicatedMap:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
+  cache:
+    replicatedCache:
+      wan-replication-ref:
+        london-wan-rep:
+          ...
 ----
 
 In the configuration above you can see that the WAN Replication configuration is again matched by WAN replication
