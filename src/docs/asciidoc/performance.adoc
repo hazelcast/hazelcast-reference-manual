@@ -103,7 +103,6 @@ these entries will be co-located. We achieve this by making `orderKey` s `Partit
 include::{javasource}/performance/OrderKey.java[tag=orderkey]
 ----
 
-
 Notice that OrderKey implements `PartitionAware` and that `getPartitionKey()` returns the `customerId`.
 These make sure that the `Customer` entry and its ``Order``s are stored on the same member.
 
@@ -231,7 +230,6 @@ The following are the benefits of doing the same operation with distributed `Exe
 * less lock duration, i.e., higher concurrency, for the `Customer` entry since
 lock/update/unlock cycle is done locally (local to the customer data)
 
-
 ==== PartitioningStrategy
 
 Another way of storing the related data on the same location is using/implementing
@@ -253,11 +251,10 @@ If it is a string key, it works like the `StringPartitioningStrategy`.
 
 Following are the example configuration snippets. Note that these strategy configurations are **per map**.
 
-
 **Declarative Configuration:**
 
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -268,6 +265,16 @@ Following are the example configuration snippets. Note that these strategy confi
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    name-of-the-map:
+      partition-strategy: com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
+      
 ----
 
 **Programmatic Configuration:**
@@ -296,7 +303,8 @@ You can also change a global strategy which is applied to all the data structure
 This can be done by defining the `hazelcast.partitioning.strategy.class` system property.
 An example declarative way of configuring this property is shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -307,6 +315,14 @@ An example declarative way of configuring this property is shown below:
     </properties>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+hazelcast:
+  properties:
+    hazelcast.partitioning.strategy.class: com.hazelcast.partition.strategy.StringAndPartitionAwarePartitioningStrategy
 ----
 
 You can specify the aforementioned out-of-the-box strategies or your custom
@@ -746,33 +762,53 @@ The following shows the configuration for the Hazelcast Near Cache.
 NOTE: Please keep in mind that, if you want to use near cache on a Hazelcast member,
 configure it on the member; if you want to use it on a Hazelcast client, configure it on the client.
 
-
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <near-cache name="myDataStructure">
-        <in-memory-format>(OBJECT|BINARY|NATIVE)</in-memory-format>
-        <serialize-keys>(true|false)</serialize-keys>
-        <invalidate-on-change>(true|false)</invalidate-on-change>
-        <time-to-live-seconds>(0..INT_MAX)</time-to-live-seconds>
-        <max-idle-seconds>(0..INT_MAX)</max-idle-seconds>
-        <eviction eviction-policy="(LRU|LFU|RANDOM|NONE)"
-            max-size-policy="(ENTRY_COUNT
-              |USED_NATIVE_MEMORY_SIZE|USED_NATIVE_MEMORY_PERCENTAGE
-              |FREE_NATIVE_MEMORY_SIZE|FREE_NATIVE_MEMORY_PERCENTAGE"
-            size="(0..INT_MAX)"/>
-        <cache-local-entries>(false|true)</cache-local-entries>
-        <local-update-policy>(INVALIDATE|CACHE_ON_UPDATE)</local-update-policy>
-        <preloader enabled="(true|false)"
+        <in-memory-format>BINARY</in-memory-format>
+        <invalidate-on-change>true</invalidate-on-change>
+        <time-to-live-seconds>0</time-to-live-seconds>
+        <max-idle-seconds>60</max-idle-seconds>
+        <eviction eviction-policy="LFU"
+            max-size-policy= "ENTRY_COUNT"
+            size="1000"/>
+        <cache-local-entries>false</cache-local-entries>
+        <local-update-policy>INVALIDATE</local-update-policy>
+        <preloader enabled="true"
              directory="nearcache-example"
-             store-initial-delay-seconds="(0..INT_MAX)"
-             store-interval-seconds="(0..INT_MAX)"/>
+             store-initial-delay-seconds="0"
+             store-interval-seconds="0"/>
     </near-cache>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+    near-cache:
+      myDataStructure:
+        in-memory-format: BINARY
+        invalidate-on-change: true
+        time-to-live-seconds: 0
+        max-idle-seconds: 60
+        eviction:
+          size: 1000
+          max-size-policy: ENTRY_COUNT
+          eviction-policy: LFU
+        cache-local-entries: false
+        local-update-policy: INVALIDATE
+        preloader:
+          enabled: true
+          directory: nearcache-example
+          store-initial-delay-seconds: 0
+          store-interval-seconds: 0
 ----
 
 The element `<near-cache>` has an optional attribute `name` whose default value is `default`.
@@ -797,10 +833,6 @@ Note that a map's in-memory format can be different from that of its Near Cache.
 This option is available only in Hazelcast IMDG Enterprise HD. Note that a map and
 its Near Cache can independently use High-Density Memory Store.
 For example, while your map does not use High-Density Memory Store, its Near Cache can use it.
-* `serialize-keys`: Specifies if the keys of a Near Cache entry should be serialized or not.
-Serializing the keys has a big impact on the read performance of the Near Cache.
-It should just be activated when you have mutable keys, which are changed after use for the Near Cache.
-Its default value is `false`.
 * `invalidate-on-change`: Specifies whether the cached entries are evicted when the entries are updated or removed.
 Its default value is true.
 * `time-to-live-seconds`: Maximum number of seconds for each entry to stay in the Near Cache.
@@ -873,7 +905,8 @@ This section shows some configuration examples for different Hazelcast data stru
 
 The following are configuration examples for IMap Near Caches for Hazelcast members and clients.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -891,7 +924,26 @@ The following are configuration examples for IMap Near Caches for Hazelcast memb
 </hazelcast>
 ----
 
-[source,java]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    mostlyReadMap:
+      in-memory-format: BINARY
+      near-cache:
+        in-memory-format: OBJECT
+        invalidate-on-change: false
+        time-to-live-seconds: 600
+        eviction:
+          eviction-policy: NONE
+          max-size-policy: ENTRY_COUNT
+          size: 5000
+          cache-local-entries: true
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.NONE)
@@ -913,7 +965,8 @@ config.getMapConfig("mostlyReadMap")
 The Near Cache configuration for maps on members is a child of the map configuration,
 so you do not have to define the map name in the Near Cache configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -926,7 +979,22 @@ so you do not have to define the map name in the Near Cache configuration.
 </hazelcast-client>
 ----
 
-[source,java]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  near-cache:
+    mostlyReadMap:
+      in-memory-format: OBJECT
+      invalidate-on-change: true
+      eviction:
+        eviction-policy: LRU
+        max-size-policy: ENTRY_COUNT
+        size: 50000
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.LRU)
@@ -952,7 +1020,8 @@ A Near Cache can have its own `in-memory-format` which is independent of the `in
 
 The following is a configuration example for a JCache Near Cache for a Hazelcast client.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -966,7 +1035,23 @@ The following is a configuration example for a JCache Near Cache for a Hazelcast
 </hazelcast-client>
 ----
 
-[source,java]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  near-cache:
+    mostlyReadCache:
+      in-memory-format: OBJECT
+      invalidate-on-change: true
+      eviction:
+        eviction-policy: LRU
+        max-size-policy: ENTRY_COUNT
+        size: 30000
+      local-update-policy: CACHE_ON_UPDATE
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.LRU)
@@ -990,7 +1075,8 @@ ClientConfig clientConfig = new ClientConfig()
 
 The following is a configuration example for an IMap High-Density Near Cache for a Hazelcast member.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1005,7 +1091,23 @@ The following is a configuration example for an IMap High-Density Near Cache for
 </hazelcast>
 ----
 
-[source,java]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    mostlyReadMapWithHighDensityNearCache
+      in-memory-format: OBJECT
+      near-cache:
+        in-memory-format: NATIVE
+        eviction:
+          eviction-policy: LFU
+          max-size-policy: USED_NATIVE_MEMORY_PERCENTAGE
+          size: 90
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.JAVA
 ----
 EvictionConfig evictionConfig = new EvictionConfig()
   .setEvictionPolicy(EvictionPolicy.LFU)
@@ -1154,7 +1256,8 @@ There may be cases where you do not want to deserialize some values in your Haze
 This way your query operations get faster.
 This is possible by using the `cache-deserialized-values` element in your declarative Hazelcast configuration, as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1165,6 +1268,17 @@ This is possible by using the `cache-deserialized-values` element in your declar
     </map>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  map:
+    myMap:
+      in-memory-format: BINARY
+      cache-deserialized-values: INDEX-ONLY
+      backup-count: 1
 ----
 
 The `cache-deserialized-values` element controls the caching of deserialized values.
