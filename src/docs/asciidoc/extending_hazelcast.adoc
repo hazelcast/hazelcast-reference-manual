@@ -310,7 +310,8 @@ members, therefore we read the file on request.
 To actually use the new `DiscoveryStrategy` implementation we need to
 configure it like in the following example:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -340,6 +341,28 @@ configure it like in the following example:
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  properties:
+    hazelcast.discovery.enabled: true
+  network:
+    join:
+      multicast:
+        enabled: false
+      tcp-ip:
+        enabled: false
+      aws:
+        enabled: false
+      discovery-strategies:
+        discovery-strategy:
+          - class: com.hazelcast.examples.spi.discovery.HostsDiscoveryStrategy
+            enabled: true
+            properties:
+              site-domain: cluster.local
 ----
 
 To find out further details, please have a look at the
