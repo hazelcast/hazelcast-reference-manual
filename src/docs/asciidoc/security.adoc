@@ -24,7 +24,8 @@ and/or endpoint address.
 You can enable security declaratively or programmatically,
 as shown below.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -35,7 +36,16 @@ as shown below.
 </hazelcast>
 ----
 
-[source,java]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  security:
+    enabled: true
+----
+
+[source,java,indent=0,subs="verbatim,attributes",role="secondary"]
+.Java
 ----
 include::{javasource}/security/EnablingSecurity.java[tag=es]
 ----
@@ -63,7 +73,8 @@ include::{javasource}/security/SocketInterceptorMember.java[tag=msi]
 
 You can declaratively configure this socket interceptor as follows:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -73,11 +84,26 @@ You can declaratively configure this socket interceptor as follows:
             <properties>
                 <property name="kerberos-host">kerb-host-name</property>
                 <property name="kerberos-config-file">kerb.conf</property>
+                <property name=foo>bar</property>
             </properties>
         </socket-interceptor>
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    socket-interceptor:
+        enabled: true
+        class-name: com.hazelcast.examples.MySocketInterceptor
+        properties:
+          kerberos-host: kerb-host-name
+          kerberos-config-file: kerb.conf
+          foo: bar
 ----
 
 The following is an example configuration of the above socket
@@ -151,8 +177,8 @@ the resulting output is stored with the salt.
 In symmetric encryption, each member uses the same key, so the key is
 shared. Here is an example configuration for symmetric encryption.
 
-
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -166,6 +192,19 @@ shared. Here is an example configuration for symmetric encryption.
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    symmetric-encryption:
+      enabled: true
+      algorithm: AES
+      salt: thesalt
+      password: thepass
+      iteration-count: 175
 ----
 
 You set the encryption algorithm, the salt, password and the iteration count to be used
@@ -218,7 +257,8 @@ public class MySSLContextFactory implements SSLContextFactory {
 The following is the base declarative configuration for the
 implemented `SSLContextFactory`:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -236,12 +276,25 @@ implemented `SSLContextFactory`:
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    ssl:
+      enabled: true
+      factory-class-name: com.hazelcast.examples.MySSLContextFactory
+      properties:
+        foo: bar
+----
+
 Hazelcast provides a default SSLContextFactory,
 `com.hazelcast.nio.ssl.BasicSSLContextFactory`, which uses the configured
 keystore to initialize `SSLContext`; see the following example configuration
 for TLS/SSL.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -251,19 +304,38 @@ for TLS/SSL.
                 com.hazelcast.nio.ssl.BasicSSLContextFactory
             </factory-class-name>
             <properties>
+                <property name="protocol">TLSv1.2</property>
+                <property name="mutualAuthentication">REQUIRED</property>
                 <property name="keyStore">/opt/hazelcast-keystore.p12</property>
                 <property name="keyStorePassword">secret.123</property>
                 <property name="keyStoreType">PKCS12</property>
                 <property name="trustStore">/opt/hazelcast-truststore.p12</property>
                 <property name="trustStorePassword">changeit</property>
                 <property name="trustStoreType">PKCS12</property>
-                <property name="protocol">TLSv1.2</property>
-                <property name="mutualAuthentication">REQUIRED</property>
             </properties>
         </ssl>
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    ssl:
+      enabled: true
+      factory-class-name: com.hazelcast.nio.ssl.BasicSSLContextFactory
+      properties:
+        protocol: TLSv1.2
+        mutualAuthentication: REQUIRED
+        keyStore: /opt/hazelcast-keystore.p12
+        keyStorePassword: secret.123
+        keyStoreType: PKCS12
+        trustStore: /opt/hazelcast-truststore.p12
+        trustStorePassword: changeit
+        trustStoreType: PKCS12
 ----
 
 The following are the descriptions of the properties:
@@ -312,7 +384,8 @@ your application chooses the TLS version according to your Java version.
 
 The TLS configuration in Hazelcast clients is very similar to member configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -322,16 +395,41 @@ The TLS configuration in Hazelcast clients is very similar to member configurati
                 com.hazelcast.nio.ssl.BasicSSLContextFactory
             </factory-class-name>
             <properties>
-                <property name="keyStore">/opt/hazelcast-client.keystore</property>
-                <property name="keyStorePassword">clientsSecret</property>
+                <property name="protocol">TLSv1.2</property>
                 <property name="trustStore">/opt/hazelcast-client.truststore</property>
                 <property name="trustStorePassword">changeit</property>
-                <property name="protocol">TLSv1.2</property>
+                <property name="trustStoreType">JKS</property>
+
+                <!-- Following properties are only needed when the mutual authentication is used. -->
+                <property name="keyStore">/opt/hazelcast-client.keystore</property>
+                <property name="keyStorePassword">clientsSecret</property>
+                <property name="keyStoreType">JKS</property>
             </properties>
         </ssl>
     </network>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  network:
+    ssl:
+      enabled: true
+      factory-class-name: com.hazelcast.nio.ssl.BasicSSLContextFactory
+      properties:
+        protocol: TLSv1.2
+
+        trustStore: /opt/hazelcast-client.truststore
+        trustStorePassword: changeit
+        trustStoreType: JKS
+
+        # Following properties are only needed when the mutual authentication is used.
+        keyStore: /opt/hazelcast-client.keystore
+        keyStorePassword: clientsSecret
+        keyStoreType: JKS
 ----
 
 The same `BasicSSLContextFactory` properties used for members are available
@@ -575,7 +673,8 @@ Configuring OpenSSL in Hazelcast is straight forward. On the client and/or
 member side, the following snippet enables TLS/SSL
 using OpenSSL:
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -586,7 +685,7 @@ using OpenSSL:
                 <property name="protocol">TLSv1.2</property>
                 <property name="trustCertCollectionFile">trusted-certs.pem</property>
                  <!-- If the TLS mutual authentication is not used,
-                     then the key configuration is not needed on client side. -->
+                     then the key configuration is not needed on the client side. -->
                 <property name="keyFile">privkey.pem</property>
                 <property name="keyCertChainFile">chain.pem</property>
             </properties>
@@ -594,6 +693,23 @@ using OpenSSL:
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    ssl:
+      enabled: true
+      factory-class-name: com.hazelcast.nio.ssl.OpenSSLEngineFactory
+      properties:
+        protocol: TLSv1.2
+        trustCertCollectionFile: trusted-certs.pem
+        
+        # If the TLS mutual authentication is not used, following lines (key configuration) are not needed on the client side. 
+        keyFile: privkey.pem
+        keyCertChainFile: chain.pem
 ----
 
 The configuration is similar to a regular TLS/SSL integration. The main differences
@@ -715,7 +831,8 @@ negligible.
 
 The cipher suites are configured using the `ciphersuites` property as shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -731,6 +848,20 @@ The cipher suites are configured using the `ciphersuites` property as shown belo
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    ssl:
+      enabled: true
+      factory-class-name: ...
+      properties:
+        keyStore: upload/hazelcast.keystore
+        ciphersuites: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                                      TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA
 ----
 
 The `ciphersuites` property accepts a comma separated list (spaces, enters, tabs are
@@ -915,9 +1046,34 @@ Realms allow configuring JAAS authentication and/or own identity
 independently on the module which consumes this configuration.
 The realm is a named configuration and other modules just reference it by name.
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-security-realms.xml[tag=realms]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+  security:
+    enabled: true
+    realms:
+      - name: realm1
+        authentication:
+          jaas:
+            - class-name: com.hazelcast.examples.MyRequiredLoginModule
+              usage: REQUIRED
+              properties:
+                property: value
+        identity:
+          credentials-factory:
+            class-name: com.hazelcast.examples.MyCredentialsFactory
+            properties:
+              property: value
+    member-authentication:
+      realm: realm1
+    client-authentication:
+      realm: realm1
 ----
 
 ==== Authentication Configuration
@@ -943,9 +1099,29 @@ custom login modules and ordering them in a login module stack.
 The following is a sample configuration which authenticates against an LDAP server or
 database as a fallback:
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=jaas]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+    realms:
+      - name: jaasRealm
+        authentication:
+          jaas:
+            - class-name: com.examples.LdapLoginModule
+              usage: SUFFICIENT
+              properties:
+                url: ldap://corp-ldap
+            - class-name: com.examples.DatabaseLoginModule
+              usage: SUFFICIENT
+              properties:
+                type: ora18
+                host: corp-db
+                table: USERS
 ----
 
 For more details, see the <<jaas-authentication, JAAS authentication section>>.
@@ -1187,18 +1363,42 @@ include::{javasource}/security/ldap/CustomSSLSocketFactory.java[]
 
 The authentication configuration could look like as follows:
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=ldaps]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+    realms:
+      - name: ldapsRealm
+        authentication:
+          ldap:
+             url: ldaps://ldapserver.acme.com
+             socket-factory-class-name: security.ldap.CustomSSLSocketFactory
+             role-mapping-attribute: cn
 ----
 
 The LDAP authentication is backed by the JNDI API in Java.
 It has also the failover support. You can configure multiple space-separated
 URLs in the `<url>` option:
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=ldap-fallback]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+    realms:
+      - name: ldapFallbackRealm
+        authentication:
+          ldap:
+             url: ldap://ldap-master.example.com ldap://ldap-backup.example.com
 ----
 
 ===== Kerberos Authentication Type
@@ -1224,8 +1424,8 @@ implementations (find the correct login module and its options in your Java
 documentation). On the Hazelcast side, the `security-ream` property allows
 referencing another realm with `Krb5LoginModule` configured.
 
-[source,xml]
-.Sample Kerberos Identity Configuration
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Sample Kerberos Identity Configuration XML
 ----
 <realm name="kerberosRealm">
     <identity>
@@ -1247,6 +1447,24 @@ referencing another realm with `Krb5LoginModule` configured.
         </jaas>
     </authentication>
 </realm>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+  realms:
+    - name: kerberosRealm
+        identity:
+          kerberos:
+            realm: ACME.COM
+            security-realm: krb5Initiator
+    - name: krb5Initiator
+        authentication:
+          jaas:
+            class-name: com.sun.security.auth.module.Krb5LoginModule
+              properties:
+                useTicketCache: true
+                doNotPrompt: true
 ----
 
 The `<kerberos>` identity configuration has the following properties:
@@ -1295,8 +1513,8 @@ accept the Kerberos tickets and verify them. Again the Kerberos
 authentication is delegated to another realm with the Kerberos login module
 configured.
 
-[source,xml]
-.Sample Kerberos Authentication Configuration
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Sample Kerberos Authentication Configuration XML
 ----
 <realm name="kerberosRealm">
     <authentication>
@@ -1322,6 +1540,29 @@ configured.
         </jaas>
     </authentication>
 </realm>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+    realms:
+      name: kerberosRealm
+        authentication:
+          kerberos:
+            security-realm: krb5Acceptor
+      name: krb5Acceptor
+        authentication:
+          jaas:
+            - class-name: com.sun.security.auth.module.Krb5LoginModule
+              usage: REQUIRED
+              properties:
+                isInitiator: false
+                useTicketCache: false
+                doNotPrompt: true
+                useKeyTab: true
+                storeKey: true
+                principal: hz/192.168.1.1@ACME.COM
+                keyTab: /opt/member1.keytab
 ----
 
 The `krb5Acceptor` realm configuration in the snippet only loads the Kerberos secrets from
@@ -1388,7 +1629,8 @@ an LDAP server (usually the one backing the Kerberos KDC server, too).
 Therefore the `<ldap>` authentication configuration is also available as
 sub-configuration of the `<kerberos>` authentication.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <realm name="kerberosRealm">
     <authentication>
@@ -1406,6 +1648,24 @@ sub-configuration of the `<kerberos>` authentication.
         </kerberos>
     </authentication>
 </realm>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+    realms:
+      - name: kerberosRealm
+        authentication:
+          kerberos:
+            skip-role: true
+            security-realm: krb5Acceptor
+            ldap:
+              url: ldap://ldap.hazelcast.com
+              system-authentication: GSSAPI
+              security-realm: krb5Initiator
+              skip-authentication: true
+              user-filter: "(krb5PrincipalName={login})"
+              role-mapping-attribute: memberOf
 ----
 
 NOTE: The Kerberos-LDAP integration doesn't support credentials delegation,
@@ -1428,10 +1688,22 @@ This authentication type is able to parse a role name from the client's certific
 subject DN. The `<tls>` element has an attribute, `roleAttribute`, which specifies
 a part of DN to be used as a role name.
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=tls]
 ----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+realms:
+  name: tlsRealm
+    authentication:
+      tls:
+        roleAttribute: cn
+----
+
 
 This `tls` authentication  uses `cn` attribute from the subject DN as the role name.
 If the subject DN in the certificate is `cn=admin,ou=Devs,o=Hazelcast` for instance,
@@ -1509,9 +1781,23 @@ A `PasswordCredentials` implementation can be configured as a
 simple identity representation. It is configured by the `<username-password/>`
 XML configuration element as shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-password-realm.xml[tag=password]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+realms:
+  name: passwordRealm
+    identity:
+      username-password:
+        username: member1
+        password: s3crEt
+member-authentication:
+  realm: passwordRealm
 ----
 
 The equivalent programmatic configuration is shown below:
@@ -1531,9 +1817,24 @@ as its value.
 
 The following two realms define the same token value - bytes of the "Hazelcast" string:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=token]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+realms:
+  name: tokenRealm1
+    identity:
+      token: Hazelcast
+  name: tokenRealm2
+    identity:
+      token:
+        encoding: base64
+        value: SGF6ZWxjYXN0
 ----
 
 The equivalent programmatic configuration is as follows:
@@ -1557,9 +1858,22 @@ The properties are provided in the `init(Properties)` method.
 
 A sample configuration is shown below:
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 include::{javatestresource}/hazelcast-authentication-types.xml[tag=credentialsFactoryRealm]
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+realms:
+  name: credentialsFactoryRealm
+    identity:
+      credentials-factory:
+        class-name: com.examples.TOTPCredentialsFactory
+        properties:
+          seed: 3132333435363738393031323334353637383930
 ----
 
 ==== Security Realms on the Client Side
@@ -1568,7 +1882,8 @@ Hazelcast IMDG 4.1 introduces a limited support of security realms in native cli
 The configuration allows specifying JAAS login modules which can be referenced from
 the Kerberos identity configuration.
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <security>
     <kerberos>
@@ -1592,6 +1907,23 @@ the Kerberos identity configuration.
 </security>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+security:
+  kerberos:
+    realm: ACME.COM
+    security-realm: krb5Initiator
+    realms:
+      name: krb5Initiator
+        authentication:
+          jaas:
+            class-name: com.sun.security.auth.module.Krb5LoginModule
+            usage: REQUIRED
+            properties:
+              useTicketCache: true
+              doNotPrompt: true
+----
 
 [[jaas-authentication]]
 === JAAS authentication
@@ -1732,8 +2064,8 @@ between the cluster members. A <<security-realms, Security Realm>> can
 be referenced by `<member-authentication/>` element to define authentication
 between the member and identity of the current member.
 
-
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1756,6 +2088,25 @@ between the member and identity of the current member.
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  security:
+    enabled: true
+    realms:
+      name: memberRealm
+      authentication:
+        ldap:
+          url: ldap://corp-ldap.example.com
+      identity:
+        username-password:
+          username: uid=member1,dc=example,dc=com
+          password: s3crEt
+    member-authentication:
+      realm: memberRealm
+----
+
 === Native Client Security
 
 Hazelcast's Client security includes both authentication and authorization.
@@ -1770,7 +2121,8 @@ To implement the client authentication, you reference a <<security-realms, Secur
 with the `authentication` section defined in the `<client-authentication/>` element
 of a cluster member configuration.
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1791,12 +2143,28 @@ of a cluster member configuration.
 </hazelcast>
 ----
 
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+hazelcast:
+  security:
+    enabled: true
+    realms:
+      name: clientRealm
+      authentication:
+        ldap:
+          url: ldap://corp-ldap.example.com/
+          role-mapping-attribute: cn
+    member-authentication:
+      realm: clientRealm
+----
+
 The identity of the connecting client is defined on the client side.
 There are no security realms on the clients, but just identity
 defined directly in the security configuration:
 
-
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 <hazelcast-client>
     ...
@@ -1805,6 +2173,16 @@ defined directly in the security configuration:
     </security>
     ...
 </hazelcast-client>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+hazelcast-client:
+  security:
+    username-password:
+      username: uid=member1,dc=example,dc=com
+      password: s3crEt
 ----
 
 On the clients, You can use the same identity types as in security realms:
@@ -1827,7 +2205,8 @@ attribute configuration. Instance and principal names and endpoint addresses can
 be defined as wildcards(*). See the <<other-network-configurations, Network Configuration>>
 and <<using-wildcards, Using Wildcards>> sections.
 
-[source,xml,options="nowrap"]
+[source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -1887,6 +2266,52 @@ and <<using-wildcards, Using Wildcards>> sections.
     </security>
     ...
 </hazelcast>
+
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",options="nowrap",role="secondary"]
+.YAML
+----
+hazelcast:
+  security:
+    enabled: true
+    client-permissions:
+      on-join-operation: RECEIVE
+      all:
+        principal: admin,root
+        endpoints:
+          - 127.0.0.1
+      map:
+        - name: myMap
+          principal: dev
+          endpoints:
+            - 127.0.0.1
+          actions:
+            - create
+            - destroy
+            - put
+            - read
+      map:
+        - name: com.foo.entity
+          principal: dev
+          endpoints:
+            - 10.10.*.*
+            - 127.0.0.1
+          actions:
+            - put
+            - read
+            - remove
+      queue:
+        - name: "*"
+          principal: dev
+          endpoints:
+            - 192.168.1.1-100
+            - 192.168.2.*
+          actions:
+            - create
+            - add
+            - remove
+      transaction:
 ----
 
 You can also define your own policy by implementing `com.hazelcast.security.IPermissionPolicy`.
@@ -1926,9 +2351,10 @@ it decides whether the current `Subject` has permission to access the requested 
 
 The following is the list of client permissions that can be configured on the member:
 
-* All Permission
-+
-[source,xml]
+**All Permission:**
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <all-permissions principal="principal">
     <endpoints>
@@ -1936,10 +2362,22 @@ The following is the list of client permissions that can be configured on the me
     </endpoints>
 </all-permissions>
 ----
-+
-* Map Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+all:
+  principal: principal
+  endpoints:
+    - ..
+----
+
+**Map Permission:**
+
+Actions: all, create, destroy, put, read, remove, lock, intercept, index, listen
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <map-permission name="name" principal="principal">
     <endpoints>
@@ -1950,12 +2388,25 @@ The following is the list of client permissions that can be configured on the me
     </actions>
 </map-permission>
 ----
-+
-Actions: all, create, destroy, put, read, remove, lock, intercept, index, listen
-+
-* Queue Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+map:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Queue Permission:**
+
+Actions: all, create, destroy, add, remove, read, listen
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <queue-permission name="name" principal="principal">
     <endpoints>
@@ -1966,12 +2417,25 @@ Actions: all, create, destroy, put, read, remove, lock, intercept, index, listen
     </actions>
 </queue-permission>
 ----
-+
-Actions: all, create, destroy, add, remove, read, listen
-+
-* Multimap Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+queue:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Multimap Permission:**
+
+Actions: all, create, destroy, put, read, remove, listen, lock
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <multimap-permission name="name" principal="principal">
     <endpoints>
@@ -1982,12 +2446,26 @@ Actions: all, create, destroy, add, remove, read, listen
      </actions>
 </multimap-permission>
 ----
-+
-Actions: all, create, destroy, put, read, remove, listen, lock
-+
-* Topic Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+multimap:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Topic Permission:**
+
+Actions: create, destroy, publish, listen
+
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <topic-permission name="name" principal="principal">
     <endpoints>
@@ -1998,12 +2476,25 @@ Actions: all, create, destroy, put, read, remove, listen, lock
     </actions>
 </topic-permission>
 ----
-+
-Actions: create, destroy, publish, listen
-+
-* List Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+topic:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**List Permission:**
+
+Actions: all, create, destroy, add, read, remove, listen
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <list-permission name="name" principal="principal">
     <endpoints>
@@ -2014,12 +2505,25 @@ Actions: create, destroy, publish, listen
     </actions>
 </list-permission>
 ----
-+
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+list:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Set Permission:**
+
 Actions: all, create, destroy, add, read, remove, listen
-+
-* Set Permission
-+
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <set-permission name="name" principal="principal">
     <endpoints>
@@ -2030,12 +2534,25 @@ Actions: all, create, destroy, add, read, remove, listen
     </actions>
 </set-permission>
 ----
-+
-Actions: all, create, destroy, add, read, remove, listen
-+
-* Lock Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+set:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Lock Permission:**
+
+Actions: all, create, destroy, lock, read
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <lock-permission name="name" principal="principal">
     <endpoints>
@@ -2046,12 +2563,25 @@ Actions: all, create, destroy, add, read, remove, listen
     </actions>
 </lock-permission>
 ----
-+
-Actions: all, create, destroy, lock, read
-+
-* AtomicLong Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+lock:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**AtomicLong Permission:**
+
+Actions: all, create, destroy, read, modify
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <atomic-long-permission name="name" principal="principal">
     <endpoints>
@@ -2062,12 +2592,25 @@ Actions: all, create, destroy, lock, read
     </actions>
 </atomic-long-permission>
 ----
-+
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+atomic-long:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**CountDownLatch Permission:**
+
 Actions: all, create, destroy, read, modify
-+
-* CountDownLatch Permission
-+
-[source,xml]
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <countdown-latch-permission name="name" principal="principal">
     <endpoints>
@@ -2078,28 +2621,25 @@ Actions: all, create, destroy, read, modify
     </actions>
 </countdown-latch-permission>
 ----
-+
-Actions: all, create, destroy, modify, read
-+
-* IdGenerator Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
-<id-generator-permission name="name" principal="principal">
-    <endpoints>
-        ...
-    </endpoints>
-    <actions>
-        ...
-    </actions>
-</id-generator-permission>
+countdown-latch:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
 ----
-+
-Actions: all, create, destroy, modify, read
-+
-* FlakeIdGenerator Permission
-+
-[source,xml]
+
+**FlakeIdGenerator Permission:**
+
+Actions: all, create, destroy, read, modify
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <flake-id-generator-permission name="name" principal="principal">
     <endpoints>
@@ -2110,12 +2650,25 @@ Actions: all, create, destroy, modify, read
     </actions>
 </flake-id-generator-permission>
 ----
-+
-Actions: all, create, destroy, modify
-+
-* Semaphore Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+flake-id-generator:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Semaphore Permission:**
+
+Actions: all, create, destroy, acquire, release, read
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <semaphore-permission name="name" principal="principal">
     <endpoints>
@@ -2126,12 +2679,25 @@ Actions: all, create, destroy, modify
     </actions>
 </semaphore-permission>
 ----
-+
-Actions: all, create, destroy, acquire, release, read
-+
-* Executor Service Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+semaphore:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Executor Service Permission:**
+
+Actions: all, create, destroy
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <executor-service-permission name="name" principal="principal">
     <endpoints>
@@ -2142,12 +2708,23 @@ Actions: all, create, destroy, acquire, release, read
     </actions>
 </executor-service-permission>
 ----
-+
-Actions: all, create, destroy
-+
-* Transaction Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+executor-service:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Transaction Permission:**
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <transaction-permission principal="principal">
     <endpoints>
@@ -2155,10 +2732,22 @@ Actions: all, create, destroy
     </endpoints>
 </transaction-permission>
 ----
-+
-* Cache Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+transaction:
+  principal: principal
+  endpoints:
+    - ..
+----
+
+**Cache Permission:**
+
+Actions: all, create, destroy, put, read, remove, listen
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <cache-permission name="/hz/cache-name" principal="principal">
     <endpoints>
@@ -2169,12 +2758,29 @@ Actions: all, create, destroy
     </actions>
 </cache-permission>
 ----
-+
-Actions: all, create, destroy, put, read, remove, listen
-+
-* User Code Deployment Permission
-+
-[source,xml]
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+cache:
+  - name: /hz/cache-name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+NOTE: The name provided in `cache-permission` must be the Hazelcast distributed
+object name corresponding to the `Cache` as described in
+the <<jcache-hazelcast-instance-integration, JCache - Hazelcast Instance Integration section>>.
+
+**User Code Deployment Permission:**
+
+Actions: all, deploy
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <user-code-deployment-permission principal="principal">
     <endpoints>
@@ -2185,12 +2791,17 @@ Actions: all, create, destroy, put, read, remove, listen
     </actions>
 </user-code-deployment-permission>
 ----
-+
-Actions: all, deploy
 
-NOTE: The name provided in `cache-permission` must be the Hazelcast distributed
-object name corresponding to the `Cache` as described in
-the <<jcache-hazelcast-instance-integration, JCache - Hazelcast Instance Integration section>>.
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+user-code-deployment:
+  principal: principal
+  endpoints:
+    - ..
+  actions:
+    - ..
+----
 
 ===== Handling Permissions When a New Member Joins
 
@@ -2213,7 +2824,8 @@ The following are the examples for both approaches on how to use them:
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2224,6 +2836,16 @@ The following are the examples for both approaches on how to use them:
     </security>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  security:
+    enabled: true
+    client-permissions:
+      on-join-operation: SEND
 ----
 
 **Programmatic Configuration:**
@@ -2286,7 +2908,6 @@ client.getMap("protectedConfig").put("master.resolution", "1920");
 client.shutdown();
 hzLite.shutdown();
 ----
-
 
 [[security-debugging]]
 === Security Debugging
@@ -2369,7 +2990,8 @@ The FIPS mode is controlled by an optional `true`/`false` property called
 
 **Example OpenSSL configuration in the FIPS mode:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
@@ -2388,6 +3010,22 @@ The FIPS mode is controlled by an optional `true`/`false` property called
     </network>
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  network:
+    ssl:
+      enabled: true
+      factory-class-name: com.hazelcast.nio.ssl.OpenSSLEngineFactory
+      properties:
+        fipsMode: true
+        protocol: TLSv1.2
+        trustCertCollectionFile: trusted-certs.pem
+        keyFile: privkey.pem
+        keyCertChainFile: chain.pem
 ----
 
 When the `fipsMode` property is set to `true`, the native OpenSSL engine is
