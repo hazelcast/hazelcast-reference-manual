@@ -63,31 +63,20 @@ scalability advantages of the Client/Server deployment, you can consider definin
 for your clients. This enables the frequently used data to be kept in the client's local memory.
 See the <<configuring-client-near-cache, Configuring Client Near Cache section>>.
 
-[[sharding-in-hazelcast]]
-=== Sharding
-
-Hazelcast shards are called **partitions**. By default, Hazelcast has 271 partitions.
-Given a key, we serialize, hash and mod it with the number of partitions to find
-the partition which the key belongs to. The partitions themselves are
-distributed equally among the members of the cluster. Hazelcast also creates the
-backups of partitions and distributes
-them among members for redundancy.
-
-NOTE: See the <<data-partitioning, Data Partitioning section>> for more
-information on how Hazelcast partitions
-your data.
-
 [[data-partitioning]]
 === Data Partitioning
 
-As you read in the <<sharding-in-hazelcast, Sharding in Hazelcast section>>, Hazelcast
-shards are called Partitions. Partitions are memory segments that can contain hundreds
-or thousands of data entries each, depending on the memory capacity of your system. Each
-Hazelcast partition can have multiple replicas, which are distributed among the cluster
-members. One of the replicas becomes the `primary` and other replicas are called `backups`.
-Cluster member which owns `primary` replica of a partition is called `partition owner`.
-When you read or write a particular data entry, you transparently talk to the owner of
-the partition that contains the data entry.
+The memory segments in Hazelcast IMDG are called partitions. They can contain hundreds
+or thousands of data entries each, depending on the memory capacity of your system.
+
+The partitions are distributed equally among the members of the cluster. Hazelcast
+also creates backups of these partitions which are also distributed in the cluster.
+
+By default, Hazelcast creates a single copy/replica of each partition. You can configure Hazelcast so that
+each partition can have multiple replicas. One of these replicas is called "primary"
+and others are called "backups". The cluster member which owns the "primary" replica of a partition
+is called the "partition owner". When you read or write a particular data entry, you transparently
+talk to the partition owner that contains the data entry.
 
 By default, Hazelcast offers 271 partitions. When you start a cluster with a single member,
 it owns all of 271 partitions (i.e., it keeps primary replicas for 271 partitions). The following
@@ -142,7 +131,7 @@ key (for example, for a map) or an object name (for example, for a topic or list
 * this byte array is hashed
 * the result of the hash is mod by the number of partitions.
 
-The result of this modulo - *MOD(hash result, partition count)* -  is the partition in which the
+The result of this modulo - *MOD(hash result, partition count)* - is the partition in which the
 data will be stored, that is the **partition ID**. For ALL members you have in your cluster, the
 partition ID for a given key is always the same.
 
