@@ -623,6 +623,11 @@ For example:
 include::{javasource}/DynamicConfiguration.java[tag=dynconf]
 ----
 
+WARNING: You must invoke the `add*Config` method on the Hazelcast instance's configuration object to
+add a configuration dynamically. In the above example, this is done with the
+`instance.getConfig().addMapConfig(noBackupsMap);` line. This submits the map configuration dynamically
+to all cluster members and also to members which join the cluster later.
+
 Dynamic configuration elements must be fully configured before the invocation
 of `add*Config` method: at that point, the configuration object is delivered
 to every member of the cluster and added to each member's dynamic configuration,
