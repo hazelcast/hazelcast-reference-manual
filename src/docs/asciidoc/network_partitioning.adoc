@@ -21,12 +21,13 @@ Moreover, communication failures don't have to be symmetrical.
 A network failure can interrupt only one side of the channel or
 a suspended process/member may not even observe the rest as crashed.
 That kind of network partitioning can be called as _partial network partitioning_.
+See <<partial-network-partitions, Partial Network Partitions section>> for more info.
 
 === Dealing with Network Partitions
 
 Hazelcast handles network partitions using the following solutions:
 
-* Split-brain protection (quorums): Split-brain protection could be used when
+* Split-brain protection: Split-brain protection could be used when
 consistency is the major concern on a network partitioning.
 It requires a minimum cluster size to keep a particular data structure available.
 When cluster size is below the defined split-brain protection size,
@@ -321,14 +322,14 @@ public class CustomSplitBrainProtectionFunction implements SplitBrainProtectionF
 .XML
 ----
 <hazelcast>
-    ... 
+    ...
     <split-brain-protection enabled="true" name="member-count-split-brain-protection">
         <protect-on>READ_WRITE</protect-on>
         <minimum-cluster-size>3</minimum-cluster-size>
         <split-brain-protection-function-class-name>my.domain.CustomSplitBrainProtectionFunction</split-brain-protection-function-class-name>
     </split-brain-protection>
     ...
-</hazelcast> 
+</hazelcast>
 ----
 
 [source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
@@ -731,7 +732,7 @@ And the following table shows the merge types provided by each data structure:
 |Data Structure |Merge Type
 
 | `IMap`
-| 
+|
 
 * `MergingEntry`
 * `MergingCreationTime`
@@ -961,3 +962,72 @@ If you return a deserialized value, it might need to be serialized again, which 
 * Be careful with slow operations in the merge policy (like database accesses),
 since they block your partition threads. Also the `LifeCycleEvent.MERGED` or
 `LifeCycleEvent.MERGE_FAILED` may be thrown too early, if the merge operations take too long to finish.
+
+
+=== Partial Network Partitions
+
+In some cases, detecting and handling network partitions is not very straightforward.
+Because these kind of network partitions don't cause a clearly separated, distinct groups.
+But they create overlapping partitioned groups or worse, asymmetric communication failures
+between members. This can be called as partial network partitioning.
+
+Assume `[N1, N2, N3, N4]` is a cluster with 4 members. This is how a healthy cluster looks,
+each member has a connection to other members:
+
+image::HealthyCluster.png[Healthy Cluster]
+
+When `N2` becomes partitioned away from rest of the cluster when it disconnects from
+other members, and eventually 2 separate groups are formed: `[N1, N3, N4]` and `[N2]`.
+This is called a full network partition:
+
+image::FullNetworkPartition.png[Full Network Partition]
+
+But when `N2` cannot communicate only one or two of the rest, then there won't be a clear
+separation of partitioned groups. For instance when `N2` becomes disconnected from both
+`N3` and `N4`, two overlapping healthy groups will be formed: `[N1, N2]` and `[N1, N3, N4]`.
+
+image::PartialNetworkPartition1.png[Partial Network Partition]
+
+Or when `N2` is disconnected only from `N1`, again two overlapping healthy groups will be
+formed, but this time with equal size: `[N1, N3, N4]` and `[N2, N3, N4]`.
+
+image::PartialNetworkPartition1.png[Partial Network Partition]
+
+Last two figures above are samples of the partial network partitioning. Our solution to
+this problem is to figure out the largest set of fully-connected members and artifically separate
+these members from the rest. This way we will have completely separated set of members without
+any intersection. This is the same problem with the link:https://en.wikipedia.org/wiki/Clique_problem[maximum clique problem^]
+in graph theory. Hence we are using an implementation of the link:https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm[Bron–Kerbosch algorithm^]
+to find the maximum clique.
+
+Normally each Hazelcast member tracks the liveliness of other members using local failure detectors.
+But they don't share their failure detection knowledge with other cluster members. In order to
+execute the Bron–Kerbosch algorithm and figure out the largest set of fully-connected members,
+we need to gather those local failure detection data from all members. When partital network
+partitioning resolution mechanism is enabled, all members send their local failure detections (suspicions about other members)
+inside the usual heartbeat-message. (See the <<failure-detector-configuration, Failure Detector Configuration section>>
+for more info about failure detectors.) The master (oldest) member in the cluster gathers all this
+information and executes the max clique algorithm and then decides the smallest set of Hazelcast members,
+if any, to kick from the cluster so that the remaining members are fully-connected to each other again.
+In a healtly cluster this set will be empty.
+
+This process has two properties to configure:
+
+- `hazelcast.partial.member.disconnection.resolution.heartbeat.count`:  When the master receives
+a heartbeat problem report from another member, it first waits for a number of heartbeat rounds
+to allow other members to report their problems if there is any. After that, it takes all reports
+received so far and checks if it can update the cluster member in a way that the minimum number of
+members will be kicked from the cluster and there won't be any heartbeat problem between the remaining members.
++
+If this configuration option is set to `0`, this functionality is disabled. It is recommended to be
+set to at least `3` or `5` so that the master will wait long enough to collect heartbeat problem reports.
+Otherwise, the master member can make sub-optimal decisions. Default value is `0`.
+
+- `hazelcast.partial.member.disconnection.resolution.algorithm.timeout.seconds`: The partial member
+disconnection resolution mechanism uses a graph algorithm that finds a max-clique in non-polynomial time.
+Since it could take a lot of time to find a max-clique in a large graph, i.e, in a large cluster with
+lots of random network disconnections, we use a timeout mechanism to stop execution of the algorithm.
+Default value is `5` seconds.
+
+
+NOTE: Partial network partition resolution mechanism is not enabled by default.
