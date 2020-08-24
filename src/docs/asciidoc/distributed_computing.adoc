@@ -659,11 +659,29 @@ The link:{docBaseUrl}/javadoc/com/hazelcast/map/IMap.html[IMap interface^] provi
 * `executeOnKeys` processes entries mapped by a collection of keys, blocking until the processing is complete and the results are returned.
 * `submitToKey` processes an entry mapped by a key and provides a way to register a callback to receive notifications about the result of the entry processing.
 * `executeOnEntries` processes all entries in a map, blocking until the processing is complete and the results are returned.
-* `executeOnEntries` process all entries in a map matching the provided predicate, blocking until the processing is complete and the results are returned.
+* `executeOnEntries` also processes all entries in a map matching the provided predicate, blocking until the processing is complete and the results are returned.
 
 When using the `executeOnEntries` method, if the number of entries is high and you do not need the results, then returning null with the `process()` method is a good practice. This method is offered by the link:{docBaseUrl}/javadoc/com/hazelcast/map/EntryProcessor.html[EntryProcessor interface^]. By returning null, results of the processing are not collected and thus out of memory errors are eliminated.
 
 If you do not need to read or modify the entry in any way but would like to execute a task on the member owning the entry with that key (i.e. the member is the partition owner for that key), you can also use `executeOnKeyOwner` provided by link:{docBaseUrl}/javadoc/com/hazelcast/core/IExecutorService.html#executeOnKeyOwner-java.lang.Runnable-java.lang.Object-[IExecutorService^]. You need to make sure that the runnable can be serialized (using any of the available serialization techniques in Hazelcast). The runnable will not receive the map entry key or value and is not running on the same thread as operations reading the map data so operations such as `map.get()` or `map.put()` will not be blocked.
+
+You can also use entry processors to remove entries from your map simply
+by setting the value(s) of a single entry or multiple entries to `null`. See the following
+example code snippet:
+
+[source,java]
+----
+class EntryDeletingProcessor implements EntryProcessor<String, MyData, Boolean> {
+
+    public Boolean process(Map.Entry<String, MyData> entry) {
+        entry.setValue(null);
+        return true;
+    }
+}
+---
+
+Related to above, IMap's `executeOnEntries()` method accepts predicates; you can also
+remove entries that match to a predicate that you provide.
 
 NOTE: Entry processors run via operation threads that are dedicated to specific partitions. Therefore, with long running entry processor executions, other partition operations such as `map.put(key)` on some partitions can be blocked while partition operations on other partitions might run concurrently. With this in mind, it is a good practice to make your entry processor executions as quick as possible.
 
