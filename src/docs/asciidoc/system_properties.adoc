@@ -737,12 +737,22 @@ of these rounds.
 | int
 | Total partition count.
 
-|`hazelcast.partition.max.parallel.replications`
+|`hazelcast.partition.max.parallel.migrations`
 |5
 |int
-|Maximum number of parallel partition backup replication operations per member.
+|Maximum number of partition migrations to be executed on a member. Member can be either source or target of the migration.
+This parameter limits the maximum running migration operations in parallel on a single member.
+
+    * Having too much parallelization can increase the heap memory usage and overload the network during partition rebalance.
+    * Having less parallelization can increase the total migration completion time.
+
+|`hazelcast.partition.max.parallel.replications`
+|10
+|int
+|Maximum number of anti-entropy partition replications to be executed on a member.
 When a partition backup ownership changes or a backup inconsistency is detected, the members start to sync their backup partitions.
 This parameter limits the maximum running replication operations in parallel.
+Default value is equal to `hazelcast.partition.max.parallel.migrations`.
 
 |`hazelcast.partition.migration.fragments.enabled`
 | true
