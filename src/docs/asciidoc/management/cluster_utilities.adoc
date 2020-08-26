@@ -1,0 +1,673 @@
+=== Cluster Utilities
+
+This section provides information on programmatic utilities you can use to listen to
+the cluster events, to change the state of your cluster,
+to check whether the cluster and/or members are safe before shutting down a member and
+to define the minimum number of cluster members required for the cluster to remain up and running.
+It also gives information on the Hazelcast Lite Member.
+
+==== Getting Member Events and Member Sets
+
+Hazelcast allows you to register for membership events so that you are notified when
+members are added or removed. You can also get the set of cluster members.
+
+The following example code does the above: registers for member events,
+notifies when members are added or removed and gets the set of cluster members.
+
+[source,java]
+----
+public class ExampleGetMemberEventsAndSets {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        Cluster cluster = hazelcastInstance.getCluster();
+        cluster.addMembershipListener( new MembershipListener() {
+            public void memberAdded( MembershipEvent membershipEvent ) {
+                System.out.println( "MemberAdded " + membershipEvent );
+            }
+
+            public void memberRemoved( MembershipEvent membershipEvent ) {
+                System.out.println( "MemberRemoved " + membershipEvent );
+            }
+        } );
+
+        Member localMember  = cluster.getLocalMember();
+        System.out.println ( "my inetAddress= " + localMember.getInetAddress() );
+
+        Set setMembers  = cluster.getMembers();
+        for ( Member member : setMembers ) {
+            System.out.println( "isLocalMember " + member.localMember() );
+            System.out.println( "member.inetaddress " + member.getInetAddress() );
+            System.out.println( "member.port " + member.getPort() );
+        }
+    }
+}
+----
+
+NOTE: See the <<listening-for-member-events, Membership Listener section>>
+for more information on membership events.
+
+==== Managing Cluster and Member States
+
+This section explains the states of Hazelcast clusters and members which
+you can use to allow or restrict the designated cluster/member operations.
+
+===== Cluster States
+
+By changing the state of your cluster, you can allow/restrict several
+cluster operations or change the behavior of those operations.
+You can use the methods `changeClusterState()` and `shutdown()` which are in the
+link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface^] to change your cluster's state.
+
+Hazelcast clusters have the following states:
+
+* **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
+* **`NO_MIGRATION`**:
+** In this state, there is no data movement between Hazelcast members.
+It means that when there is a member crash or a new member in the cluster,
+there won’t be any partition rebalancing, partition backup replica creation
+or migration.
++
+Please note that promoting a backup replica to the primary replica is a
+local operation and does not involve any data movement between cluster members.
+Hence, backup promotions occur on member crashes when the cluster is in this mode.
+Upon a member crash, all other members that keep backup replicas of the crashed member
+promote backup replicas to the primary replica role and restore availability.
+However, there is a limitation here. Since the maximum number of backups is 6,
+if you lose 7 members in your large cluster, you can lose availability of the
+partitions whose primary and backup replicas are mapped to those crashed members.
++
+** The cluster accepts new members.
+** All other operations are allowed.
+** You cannot change the state of a cluster to `NO_MIGRATION` when
+migration/replication tasks are being performed.
+** When you want to add multiple new members to the cluster, you can first
+change the cluster state to `NO_MIGRATION`, then start the new members.
+Once all of them join to the cluster, you can change the cluster state back to `ACTIVE`.
+Then, the cluster rebalances partition replica distribution at once.
+* **`FROZEN`**:
+** In this state, the partition table is frozen and partition assignments are not performed.
+** The cluster does not accept new members.
+** If a member leaves, it can join back. Its partition assignments
+(both primary and backup replicas) remain the same until either it joins back or
+the cluster state is changed to `ACTIVE`. When it joins back to the cluster,
+it owns all previous partition assignments as it was. On the other hand,
+when the cluster state changes to `ACTIVE`, re-partitioning starts and
+unassigned partition replicas are assigned to the active members.
+** All other operations in the cluster, except migration, continue without restrictions.
+** You cannot change the state of a cluster to `FROZEN` when migration/replication tasks are being performed.
+** You can make use of `FROZEN` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
+feature. You can change the cluster state to `FROZEN`, then restart some of your members using
+the Hot Restart feature. The data on the restarting members will not be accessible but
+you will be able to access to the data that is stored in other members.
+Basically, `FROZEN` cluster state allows you do perform maintenance on your members with degrading availability partially.
+* **`PASSIVE`**:
+** In this state, the partition table is frozen and partition assignments are not performed.
+** The cluster does not accept new members.
+** If a member leaves while the cluster is in this state, the member will be
+removed from the partition table if cluster state moves back to `ACTIVE`.
+** This state rejects ALL operations immediately EXCEPT the read-only operations like
+`map.get()` and `cache.get()`, replication and cluster heartbeat tasks.
+** You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
+** You can make use of `PASSIVE` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
+feature. See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html#shutdown--[Cluster Shutdown API^]
+for more info.
+* **`IN_TRANSITION`**:
+** This state shows that the state of the cluster is in transition.
+** You cannot set your cluster's state as `IN_TRANSITION` explicitly.
+** It is a temporary and intermediate state.
+** During this state, your cluster does not accept new members and migration/replication tasks are paused.
+
+NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the cluster,
+it throws an exception immediately (it is not retried).
+
+The following snippet is from the `Cluster` interface showing
+the methods used to manage your cluster's states.
+
+[source,java]
+----
+public interface Cluster {
+    ClusterState getClusterState();
+    void changeClusterState(ClusterState newState);
+    void changeClusterState(ClusterState newState, TransactionOptions transactionOptions);
+    void shutdown();
+    void shutdown(TransactionOptions transactionOptions);
+----
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface Javadoc^] for information on these methods.
+
+===== Cluster Member States
+
+Hazelcast cluster members have the following states:
+
+* **`ACTIVE`**: This is the initial member state. The member can execute and process
+all operations. When the state of the cluster is `ACTIVE` or `FROZEN`, the members are in the `ACTIVE` state.
+* **`PASSIVE`**: In this state, member rejects all operations EXCEPT the read-only ones,
+replication and migration operations, heartbeat operations and the join operations as explained
+in the <<cluster-states, Cluster States section>> above.
+A member can go into this state when either of the following happens:
+. Until the member's shutdown process is completed after the method `Node.shutdown(boolean)` is called.
+Note that, when the shutdown process is completed, member's state changes to `SHUT_DOWN`.
+. Cluster's state is changed to `PASSIVE` using the method `changeClusterState()`.
+* **`SHUT_DOWN`**: A member goes into this state when the member's shutdown process is completed.
+The member in this state rejects all operations and invocations. A member in this state cannot be restarted.
+
+[[using-the-script-cluster-sh]]
+==== Using the cluster.sh Script
+
+You can use the script `cluster.sh`, which comes with the Hazelcast package, to
+get/change the state of your cluster, to shutdown your cluster and
+to force your cluster to clean its persisted data and make a fresh start.
+The latter is the Force Start operation of Hazelcast's Hot Restart Persistence feature.
+See the <<force-start, Force Start section>>.
+
+NOTE: The script `cluster.sh` uses `curl` command and `curl` must be installed to be able to use the script.
+
+The script `cluster.sh` takes the following parameters to operate according to your needs.
+If these parameters are not provided, the default values are used.
+
+[cols="2,2,5a"]
+|===
+|Parameter | Default Value | Description
+
+|`-o` or `--operation`
+|`get-state`
+|Executes a cluster-wide operation. Operations can be the following:
+
+* IMDG Open Source operations: `get-state`, `change-state`, `shutdown` and `get-cluster-version`.
+* IMDG Enterprise operations: `force-start`, `partial-start` and `change-cluster-version`.
+
+|`-s` or `--state`
+|None
+|Updates the state of the cluster to a new state. New state can be `active`,
+`no_migration`, `frozen`, `passive`. This is used with the operation `change-state`.
+This parameter has no default value; when you use this, you should provide a valid state.
+
+|`-a` or `--address`
+|`127.0.0.1`
+|Defines the IP address of a cluster member. If you want to manage your cluster remotely,
+you should use this parameter to provide the IP address of a member to this script.
+
+|`-p` or `--port`
+|`5701`
+|Defines on which port Hazelcast is running on the local or remote machine.
+
+|`-c` or `--clustername`
+|`dev`
+|Defines the name of a cluster which is used for a simple authentication.
+See the <<creating-cluster, Creating Clusters section>>.
+
+|`-P` or `--password`
+|`dev-pass`
+|Defines the password of a cluster (valid only for Hazelcast releases older than 3.8.2).
+See the <<creating-cluster, Creating Clusters section>>.
+
+|`-v` or `--version`
+|_no argument expected_
+|Defines the cluster version to change to. It is used in conjunction with
+the `change-cluster-version` operation.
+
+|`-d` or `--debug`
+|_no argument expected_
+|Prints error output.
+
+|`--https`
+|_no argument expected_
+|Uses HTTPS protocol for REST calls.
+
+|`--cacert`
+|_set of well-known CA certificates_
+|Defines trusted PEM-encoded certificate file path. It's used to verify member certificates.
+
+|`--cert`
+|None
+|Defines PEM-encoded client certificate file path. Only needed when client certificate authentication is used.
+
+|`--key`
+|None
+|Defines PEM-encoded client private key file path. Only needed when client certificate authentication is used.
+
+|`--insecure`
+|_no argument expected_
+|Disables member certificate verification.
+|===
+
+The script `cluster.sh` is self-documented; you can see the parameter descriptions using
+the command `./cluster.sh -h` or `./cluster.sh --help`.
+
+NOTE: You can perform the above operations using the Hot Restart tab of Hazelcast Management Center or
+using the REST API. See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart^]
+and <<using-rest-api-for-cluster-management, Using REST API for Cluster Management>> sections
+in the Hazelcast Management Center Reference Manual.
+
+===== Example Usages for cluster.sh
+
+Let's say you have a cluster running on remote machines and one Hazelcast member is running on the IP `172.16.254.1` and on the port
+`5702`. The cluster name and password of the cluster are `test` and `test`.
+
+**Getting the cluster state:**
+
+To get the state of the cluster, use the following command:
+
+`./cluster.sh -o get-state -a 172.16.254.1 -p 5702 -g test -P test`
+
+The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
+
+`./cluster.sh --operation get-state --address 172.16.254.1 --port 5702 --clustername test --password test`
+
+**Changing the cluster state:**
+
+To change the state of the cluster to `frozen`, use the following command:
+
+`./cluster.sh -o change-state -s frozen -a 172.16.254.1 -p 5702 -g test -P test`
+
+Similarly, you can use the following command for the same purpose:
+
+`./cluster.sh --operation change-state --state frozen --address 172.16.254.1 --port 5702 --clustername test --password test`
+
+**Shutting down the cluster:**
+
+To shutdown the cluster, use the following command:
+
+`./cluster.sh -o shutdown -a 172.16.254.1 -p 5702 -g test -P test`
+
+Similarly, you can use the following command for the same purpose:
+
+
+`./cluster.sh --operation shutdown --address 172.16.254.1 --port 5702 --clustername test --password test`
+
+**Partial starting the cluster:**
+
+To partial start the cluster when Hot Restart is enabled, use the following command:
+
+`./cluster.sh -o partial-start -a 172.16.254.1 -p 5702 -g test -P test`
+
+Similarly, you can use the following command for the same purpose:
+
+`./cluster.sh --operation partial-start --address 172.16.254.1 --port 5702 --clustername test --password test`
+
+**Force starting the cluster:**
+
+To force start the cluster when Hot Restart is enabled, use the following command:
+
+`./cluster.sh -o force-start -a 172.16.254.1 -p 5702 -g test -P test`
+
+Similarly, you can use the following command for the same purpose:
+
+`./cluster.sh --operation force-start --address 172.16.254.1 --port 5702 --clustername test --password test`
+
+**Getting the current cluster version:**
+
+To get the cluster version, use the following command:
+
+`./cluster.sh -o get-cluster-version -a 172.16.254.1 -p 5702 -g test -P test`
+
+The following also gets the cluster state, using the alternative parameter names, e.g., `--port` instead of `-p`:
+
+`./cluster.sh --operation get-cluster-version --address 172.16.254.1 --port 5702 --clustername test --password test`
+
+**Changing the cluster version:**
+
+See the <<rolling-member-upgrades, Rolling Member Upgrades chapter>> to learn more about the cases when you should change the cluster version.
+
+To change the cluster version to `X.Y`, use the following command:
+
+`./cluster.sh -o change-cluster-version -v X.Y -a 172.16.254.1 -p 5702 -g test -P test`
+
+The cluster version is always in the `major.minor` format, e.g., 3.12. Using other formats results in a failure.
+
+**Calls against the TLS protected members (using HTTPS protocol):**
+
+When the member has TLS configured, use the `--https` argument to instruct `cluster.sh` to use the proper URL scheme:
+
+[source,sh]
+----
+./cluster.sh --https \
+  --operation get-state --address member1.example.com --port 5701
+----
+
+If the default set of trusted certificate authorities is not sufficient, e.g, you use a self-signed certificate,
+you can provide a custom file with the root certificates:
+
+[source,sh]
+----
+./cluster.sh --https \
+  --cacert /path/to/ca-certs.pem \
+  --operation get-state --address member1.example.com --port 5701
+----
+
+When the TLS mutual authentication is enabled, you have to provide the client certificate and related private key:
+
+[source,sh]
+----
+./cluster.sh --https \
+  --key privkey.pem \
+  --cert cert.pem \
+  --operation get-state --address member1.example.com --port 5701
+----
+
+NOTE: Currently, this script is not supported on the Windows platforms.
+
+==== Using REST API for Cluster Management
+
+Besides the Management Center's Hot Restart
+link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[tab^] and
+the script <<using-the-script-cluster-sh, `cluster.sh`>>, you can also use REST API to manage your cluster's state.
+The following are the operations you can perform.
+
+NOTE: Some of the REST calls listed below need their REST endpoint groups to be enabled.
+See the <<using-the-rest-endpoint-groups, Using the REST Endpoint Groups section>> on how to enable them.
+
+Also note that the value of `${PASSWORD}` in the following calls is checked only if
+the security is <<enabling-jaas-security, enabled>> in Hazelcast IMDG, i.e., if you have Hazelcast IMDG Enterprise Edition.
+If the security is disabled, the `${PASSWORD}` can be left empty.
+
+[cols="5a"]
+.REST API calls
+|===
+|**IMDG Open Source commands**
+
+* _Checking if a member is ready to be used:_
++
+When a member joins the cluster, you can check whether it is ready to be used with the following HTTP call.
+It should return the `200` status code, meaning that the member can be safely used.
+Otherwise, it returns the `503` status code indicating the member is not available yet.
+Only HTTP GET request method is supported.
++
+[source,plain]
+----
+curl http://127.0.0.1:${PORT}/hazelcast/health/ready
+----
+* _Getting the cluster state:_
++
+To get the state of the cluster, use the following command:
++
+[source,plain]
+----
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/state
+----
++
+* _Changing the cluster state:_
++
+To change the state of the cluster to `frozen`, use the following command:
++
+[source,plain]
+----
+curl --data "${CLUSTERNAME}&${PASSWORD}&${STATE}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/changeState
+----
++
+* _Shutting down the cluster:_
++
+To shutdown the cluster, use the following command:
++
+[source,plain]
+----
+curl --data "${CLUSTERNAME}&${PASSWORD}"  http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/clusterShutdown
+----
++
+* _Querying the current cluster version:_
++
+To get the current cluster version, use the following `curl` command:
++
+[source,plain]
+----
+$ curl http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
+  {"status":"success","version":"3.9"}
+----
+|**IMDG Enterprise commands**
+
+* _Partial starting the cluster:_
++
+To partial start the cluster when Hot Restart is enabled, use the following command:
++
+[source,plain]
+----
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/partialStart/
+----
++
+* _Force starting the cluster:_
++
+To force start the cluster when Hot Restart is enabled, use the following command:
++
+[source,plain]
+----
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/forceStart/
+----
++
+NOTE: You can also perform the above operations (partialStart and forceStart) using
+the Hot Restart tab of Hazelcast Management Center or using the script `cluster.sh`.
+See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#hot-restart[Hot Restart^]
+and <<using-the-script-cluster-sh, `cluster.sh`>> sections.
++
+* _Initiating Hot Backup:_
++
+To initiate the Hot Backup, use the following `curl` command:
++
+[source,plain]
+----
+curl --data "${CLUSTERNAME}&${PASSWORD}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/hotBackup
+----
++
+* _Changing the cluster version:_
++
+To upgrade the cluster version, after having upgraded all members of your cluster to
+a new minor version, use the following `curl` command:
++
+[source,plain]
+----
+$ curl --data "${CLUSTERNAME}&${PASSWORD}&${CLUSTER_VERSION}" http://127.0.0.1:${PORT}/hazelcast/rest/management/cluster/version
+----
++
+For example, assuming the default cluster name and password, issue the following command to any member
+of the cluster to upgrade from cluster version 3.8 to 3.9:
++
+[source,plain]
+----
+$ curl --data "dev&dev-pass&3.9" http://127.0.0.1:5701/hazelcast/rest/management/cluster/version
+  {"status":"success","version":"3.9"}
+----
++
+NOTE: You can also perform the above cluster version operations using Hazelcast Management Center
+or using the script `cluster.sh`. See the link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html#rolling-upgrade[Rolling Member Upgrades^]
+and <<using-the-script-cluster-sh, `cluster.sh`>> sections.
+|===
+
+==== Enabling Lite Members
+
+Lite members are the Hazelcast cluster members that do not store data.
+These members are used mainly to execute tasks and register listeners and they do not have partitions.
+
+You can form your cluster to include the regular Hazelcast members to store data and
+Hazelcast lite members to run heavy computations.
+The presence of the lite members do not affect the operations performed on the other members in the cluster.
+You can directly submit your tasks to the lite members, register listeners on them and invoke operations for
+the Hazelcast data structures on them such as `map.put()` and `map.get()`.
+
+IMPORTANT: If you want to use lite members in a Hazelcast IMDG Enterprise
+cluster, they are also subjected to the Enterprise license.
+
+===== Configuring Lite Members
+
+You can enable a cluster member to be a lite member using declarative or programmatic configuration.
+
+**Declarative Configuration:**
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
+----
+<hazelcast>
+    ...
+    <lite-member enabled="true"/>
+    ...
+</hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  lite-member:
+    enabled: true
+----
+
+**Programmatic Configuration:**
+
+[source,java]
+----
+Config config = new Config();
+config.setLiteMember(true);
+----
+
+===== Promoting Lite Members to Data Member
+
+Lite members can be promoted to data members using the `Cluster` interface.
+When they are promoted, cluster partitions are rebalanced and ownerships of some portion of
+the partitions are assigned to the newly promoted data members.
+
+[source,java]
+----
+Config config = new Config();
+config.setLiteMember(true);
+
+HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+Cluster cluster = hazelcastInstance.getCluster();
+cluster.promoteLocalLiteMember();
+----
+
+NOTE: A data member cannot be downgraded to a lite member back.
+
+==== Defining Member Attributes
+
+You can define various member attributes on your Hazelcast members.
+You can use these member attributes to tag your members as may be required by your business logic.
+
+To define a member attribute on a member, you can:
+
+* provide `MemberAttributeConfig` to your `Config` object
+* or provide the member attributes at runtime via attribute setter methods on the `Member` interface.
+
+For example, you can tag your members with their CPU characteristics and
+you can route CPU intensive tasks to those CPU-rich members. Here is how you can do it:
+
+[source,java]
+----
+public class ExampleMemberAttributes {
+
+    public static void main(String[] args) {
+        MemberAttributeConfig fourCore = new MemberAttributeConfig();
+        memberAttributeConfig.setAttribute( "CPU_CORE_COUNT", "4" );
+        MemberAttributeConfig twelveCore = new MemberAttributeConfig();
+        memberAttributeConfig.setAttribute( "CPU_CORE_COUNT", "12" );
+        MemberAttributeConfig twentyFourCore = new MemberAttributeConfig();
+        memberAttributeConfig.setAttribute( "CPU_CORE_COUNT", "24" );
+
+        Config member1Config = new Config();
+        config.setMemberAttributeConfig( fourCore );
+        Config member2Config = new Config();
+        config.setMemberAttributeConfig( twelveCore );
+        Config member3Config = new Config();
+        config.setMemberAttributeConfig( twentyFourCore );
+
+        HazelcastInstance member1 = Hazelcast.newHazelcastInstance( member1Config );
+        HazelcastInstance member2 = Hazelcast.newHazelcastInstance( member2Config );
+        HazelcastInstance member3 = Hazelcast.newHazelcastInstance( member3Config );
+
+        IExecutorService executorService = member1.getExecutorService( "processor" );
+
+        executorService.execute( new CPUIntensiveTask(), new MemberSelector() {
+            @Override
+            public boolean select(Member member) {
+                int coreCount = Integer.parseInt(member.getAttribute( "CPU_CORE_COUNT" ));
+                // Task will be executed at either member2 or member3
+                if ( coreCount > 8 ) {
+                    return true;
+                }
+                return false;
+            }
+        } );
+
+        HazelcastInstance member4 = Hazelcast.newHazelcastInstance();
+        // We can also set member attributes at runtime.
+        member4.setAttribute( "CPU_CORE_COUNT", "2" );
+    }
+}
+----
+
+For another example, you can tag some members with a filter so that
+a member in the cluster can load classes from those tagged members.
+See the <<member-user-code-deployment-beta, User Code Deployment section>> for more information.
+
+You can also define your member attributes through declarative configuration and
+start your member afterwards. Here is how you can use the declarative approach:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
+----
+<hazelcast>
+    ...
+    <member-attributes>
+        <attribute name="CPU_CORE_COUNT">4</attribute-name>
+    </member-attributes>
+    ...
+</hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  member-attributes:
+    CPU_CORE_COUNT:
+      type: int
+      value: 4
+----
+
+==== Safety Checking Cluster Members
+
+To prevent data loss when shutting down a cluster member, Hazelcast provides
+a graceful shutdown feature. You perform this shutdown by calling the method `HazelcastInstance.shutdown()`.
+
+The oldest cluster member migrates all of the replicas owned by
+the shutdown-requesting member to the other running (not initiated shutdown) cluster members.
+After these migrations are completed, the shutting down member will not be the owner or
+a backup of any partition anymore. It means that you can shutdown any number of Hazelcast members
+in a cluster concurrently with no data loss.
+
+Please note that the process of shutting down members waits for
+a predefined amount of time for the oldest member to migrate their partition replicas.
+You can specify this graceful shutdown timeout duration using the property `hazelcast.graceful.shutdown.max.wait`.
+Its default value is 10 minutes. If migrations are not completed within this duration,
+shutdown may continue non-gracefully and lead to data loss.
+Therefore, you should choose your own timeout duration considering the size of data in your cluster.
+
+===== Ensuring Safe State with PartitionService
+
+With the improvements in graceful shutdown procedure in Hazelcast 3.7,
+the following methods are not needed to perform graceful shutdown.
+Nevertheless, you can use them to check the current safety status of the partitions in your cluster.
+
+[source,java]
+----
+public interface PartitionService {
+   ...
+   ...
+    boolean isClusterSafe();
+    boolean isMemberSafe(Member member);
+    boolean isLocalMemberSafe();
+    boolean forceLocalMemberToBeSafe(long timeout, TimeUnit unit);
+}
+----
+
+The method `isClusterSafe` checks whether the cluster is in a safe state.
+It returns `true` if there are no active partition migrations and all backups are in sync for each partition.
+
+The method `isMemberSafe` checks whether a specific member is in a safe state.
+It checks if all backups of partitions of the given member are in sync with the primary ones.
+Once it returns `true`, the given member is safe and it can be shut down without data loss.
+
+Similarly, the method `isLocalMemberSafe` does the same check for the local member.
+The method `forceLocalMemberToBeSafe` forces the owned and backup partitions to be synchronized,
+making the local member safe.
+
+See link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/monitoring/cluster-safety[here^]
+for more `PartitionService` code samples.
