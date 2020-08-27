@@ -2,24 +2,67 @@
 
 == SQL
 
-SQL allows you to query data stored in the Hazelcast cluster declaratively.
+SQL allows you to query data stored in `IMap` declaratively.
 
 WARNING: The SQL feature is currently in beta. The compatibility between versions
 is not guaranteed. API might change between versions without notice.
 
-=== How Distributed SQL works
+=== Example
 
-When an SQL statement is submitted for execution, the engine parses and
-optimizes it using Apache Calcite. The result is an executable plan that
-is cached and reused by the subsequent executions of the same statement.
+Consider that we have an IMap `emp` that contains values of type `Employee`:
 
-The plan contains a tree of query fragments. A query fragment is a tree of
-operators that could be executed on a single member independently. Child
-fragments supply data to parent fragments, possibly through a network, until
-the root fragment is reached. The root fragment returns query results to a
-user.
+[source,java]
+----
+public class Employee implements Serializable {
+    private long id;
+    private String name;
+    private int age;
+    private boolean active;
+    private double salary;
 
-Only `IMap` objects are supported at the moment.
+    public Employee(long id, String name, int age, boolean active, double salary) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.active = active;
+        this.salary = salary;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+}
+----
+
+The following code will print IDs of employees who are active and whose age
+is less than 30:
+
+[source,java]
+----
+try (SqlResult result = hazelcastInstance.getSql().execute("SELECT id FROM emp WHERE active AND age < ?", 30)) {
+    for (SqlRow row : result) {
+        long id = row.getObject(0);
+
+        System.out.println(id);
+    }
+}
+----
 
 === Querying IMap
 
@@ -150,59 +193,14 @@ The support for other client platforms is planned for future releases.
 SQL queries cannot be started on lite-members. This limitation will be removed in
 future releases.
 
-=== Example
+=== How Distributed SQL works
 
-Consider that we have an IMap `emp` that contains values of type `Employee`:
+When an SQL statement is submitted for execution, the engine parses and
+optimizes it using Apache Calcite. The result is an executable plan that
+is cached and reused by the subsequent executions of the same statement.
 
-[source,java]
-----
-public class Employee implements Serializable {
-    private long id;
-    private String name;
-    private int age;
-    private boolean active;
-    private double salary;
-
-    public Employee(long id, String name, int age, boolean active, double salary) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.active = active;
-        this.salary = salary;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-}
-----
-
-The following code will print IDs of employees who are active and whose age
-is less than 30:
-
-[source,java]
-----
-try (SqlResult result = hazelcastInstance.getSql().execute("SELECT id FROM emp WHERE active AND age < ?", 30)) {
-    for (SqlRow row : result) {
-        long id = row.getObject(0);
-
-        System.out.println(id);
-    }
-}
-----
+The plan contains a tree of query fragments. A query fragment is a tree of
+operators that could be executed on a single member independently. Child
+fragments supply data to parent fragments, possibly through a network, until
+the root fragment is reached. The root fragment returns query results to a
+user.
