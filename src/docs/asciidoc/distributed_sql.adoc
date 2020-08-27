@@ -127,52 +127,70 @@ set to `true` (default). Otherwise, an exception will be thrown.
 See <<configuring-with-system-properties, Configuring with System Properties>> for
 more information on setting system properties.
 
+=== Data Types
+
+The SQL service supports a set of SQL data types. Every data type is mapped to a Java
+class that represents the type's value.
+
+[cols="1,1", options="header"]
+.SQL Data Types
+|===
+| Type Name
+| Java Class
+
+|`BOOLEAN`
+|`java.lang.Boolean`
+
+|`VARCHAR`
+|`java.lang.String`
+
+|`TINYINT`
+|`java.lang.Byte`
+
+|`SMALLINT`
+|`java.lang.Short`
+
+|`INTEGER`
+|`java.lang.Integer`
+
+|`BIGINT`
+|`java.lang.Long`
+
+|`DECIMAL`
+|`java.math.BigDecimal`
+
+|`REAL`
+|`java.lang.Float`
+
+|`DOUBLE`
+|`java.lang.Double`
+
+|`DATE`
+|`java.time.LocalDate`
+
+|`TIME`
+|`java.time.LocalTime`
+
+|`TIMESTAMP`
+|`java.time.LocalDateTime`
+
+|`TIMESTAMP_WITH_TIME_ZONE`
+|`java.time.OffsetDateTime`
+
+|`OBJECT`
+|N/A
+
+|===
+
 === Supported Features
 
-==== Data Types
-
-The following SQL types are currently supported.
-
-General:
-
-- `BOOLEAN` (`java.lang.Boolean`)
-- `VARCHAR` (`java.lang.String`, `java.lang.Character`)
-- `OBJECT`
-
-Numeric:
-
-- `TINYINT` (`java.lang.Byte`)
-- `SMALLINT` (`java.lang.Short`)
-- `INTEGER` (`java.lang.Integer`)
-- `BIGINT` (`java.lang.Long`)
-- `DECIMAL` (`java.math.BigDecimal`, `java.math.BigInteger`)
-- `REAL` (`java.lang.Float`)
-- `DOUBLE` (`java.lang.Double`)
-
-Temporal:
-
-- `DATE` (`java.time.LocalDate`)
-- `TIME` (`java.time.LocalTime`)
-- `TIMESTAMP` (`java.time.LocalDateTime`)
-- `TIMESTAMP_WITH_TIME_ZONE` (`java.time.OffsetDateTime`, `java.time.ZonedDateTime`,
-`java.time.Instant`, `java.util.Date`, `java.util.Calendar`)
-
-==== Operators
-
-It is possible to execute project-filter queries in the form
+Currently it is possible to execute project-filter queries in the form
 `SELECT ... FROM <map_name> WHERE ...` on a single map.
 
-The support for the following operators are planned for future releases:
+The following features are *not supported* and are planned for future releases:
+sorting, aggregations, joins, set operators (`UNION`, `INTERSECT`, `MINUS`), subqueries.
 
-- `ORDER BY`
-- `GROUP BY`
-- Joins
-- Set operators (`UNION`, `INTERSECT`, `MINUS`)
-- Subqueries
-
-==== Functions
-
-The following functions are currently supported.
+The SQL service supports the following functions:
 
 - Binary functions: `+`, `-`, `*`, `/`
 - Comparison predicates: `>`, `>=`, `<`, `<=`, `=`, `!=`, `<>`
@@ -184,14 +202,6 @@ The following functions are currently supported.
 `SIGN`, `SIN`, `TAN`, `TRUNCATE`
 - String functions: `||` (concatenation), `ASCII`, `INITCAP`, `LENGTH`,
 `LIKE`, `LOWER`, `LTRIM`, `RTRIM`, `SUBSTRING`, `TRIM`, `UPPER`
-
-More functions will be added in future releases.
-
-=== Clients
-
-SQL queries could be executed from Java clients using the same API as with members.
-
-The support for other client platforms is planned for future releases.
 
 === Lite Members
 
