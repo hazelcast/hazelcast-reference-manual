@@ -68,8 +68,8 @@ try (SqlResult result = hazelcastInstance.getSql().execute("SELECT id FROM emp W
 
 ==== Names
 
-The engine exposes `IMap` objects as tables in the predefined `partitioned`
-schema using exact names. This schema is in the engine search path so that
+The SQL service exposes `IMap` objects as tables in the predefined `partitioned`
+schema using exact names. This schema is in the SQL service search path so that
 `IMap` objects could be accessed with or without the schema name.
 
 Schema and table names are case sensitive. For example, the `IMap` with the name
@@ -78,8 +78,8 @@ Schema and table names are case sensitive. For example, the `IMap` with the name
 
 ==== Fields
 
-The engine reads the first local entry of the `IMap` to get the list of fields
-accessible from the SQL. The engine extracts field metadata (name, type)
+The SQL service reads the first local entry of the `IMap` to get the list of fields
+accessible from the SQL. The SQL service extracts field metadata (name, type)
 from the key and the value, and combines them into a final list of fields.
 
 Field metadata extraction logic depends on the serialization format, as described
@@ -112,7 +112,7 @@ value will be used.
 
 ==== Indexes
 
-The engine could use `IMap` indexes to speed up the execution of certain queries.
+The SQL service could use `IMap` indexes to speed up the execution of certain queries.
 
 `SORTED` and `HASH` indexes are supported.
 
@@ -193,9 +193,9 @@ The support for other client platforms is planned for future releases.
 SQL queries cannot be started on lite-members. This limitation will be removed in
 future releases.
 
-=== How Distributed SQL works
+=== How Distributed SQL Works
 
-When an SQL statement is submitted for execution, the engine parses and
+When an SQL statement is submitted for execution, the SQL service parses and
 optimizes it using Apache Calcite. The result is an executable plan that
 is cached and reused by the subsequent executions of the same statement.
 
