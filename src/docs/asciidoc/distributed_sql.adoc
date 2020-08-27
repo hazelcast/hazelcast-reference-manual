@@ -115,14 +115,17 @@ value will be used.
 The SQL service could use `IMap` indexes to speed up the execution of certain queries.
 `SORTED` and `HASH` indexes are supported.
 
-See <<indexing-queries, Distributed Query, Indexes>> for more information on how to create an
-`IMap` index.
+See <<indexing-queries, Indexes>> for more information on `IMap`
+index creation.
 
 ==== High-Density Memory Store
 
 `IMap` objects with the `InMemoryFormat.NATIVE` could only be queried if they have
-at least one index, and the property `hazelcast.hd.global.index.enabled` is set to
-`true`.
+at least one index, and the system property `hazelcast.hd.global.index.enabled` is
+set to `true` (default). Otherwise, an exception will be thrown.
+
+See <<configuring-with-system-properties, Configuring with System Properties>> for
+more information on setting system properties.
 
 === Supported Features
 
