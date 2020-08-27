@@ -1,0 +1,216 @@
+=== Getting Member Statistics
+
+You can get various statistics from your distributed data structures via the Statistics API.
+Since the data structures are distributed in the cluster, the Statistics API provides
+statistics for the local portion (1/Number of Members in the Cluster) of data on each member.
+
+==== Map Statistics
+
+To get local map statistics, use the `getLocalMapStats()` method from the `IMap` interface.
+This method returns a `LocalMapStats` object that holds local map statistics.
+
+Below is an example code where the `getLocalMapStats()` method and
+the `getOwnedEntryCount()` method get the number of entries owned by this member.
+
+[source,java]
+----
+include::{javasource}/management/ExampleLocalMapStats.java[tag=lms]
+----
+
+NOTE: Since Hazelcast IMDG 3.8 `getOwnedEntryMemoryCost()` method is
+now supported for NATIVE in-memory format as well.
+
+The following are some of the metrics that you can access via the `LocalMapStats` object:
+
+* Number of entries owned by the member (`getOwnedEntryCount()`).
+* Number of backup entries held by the member (`getBackupEntryCount()`).
+* Number of backups per entry (`getBackupCount()`).
+* Memory cost (number of bytes) of owned entries in the member (`getOwnedEntryMemoryCost()`).
+* Creation time of the map on the member (`getCreationTime()`).
+* Number of hits (reads) of the locally owned entries (`getHits()`).
+* Number of get and put operations on the map (`getPutOperationCount()` and
+`getGetOperationCount()`).
+* Number of queries executed on the map (`getQueryCount()` and `getIndexedQueryCount()`)
+(it may be imprecise for queries involving partition predicates (`PartitionPredicate`) on the off-heap storage).
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/map/LocalMapStats.html[`LocalMapStats` Javadoc^] to see all the metrics.
+
+==== Map Index Statistics
+
+To access map index statistics, if you are using indexes to speed up map queries,
+use the `getIndexStats()` method of the `LocalMapStats` interface returned by `IMap.getLocalMapStats()`.
+
+Below is an example where the `getIndexStats()` method is used to examine an average selectivity of index hits:
+
+[source,java]
+----
+include::{javasource}/management/ExampleLocalIndexStats.java[tag=lis]
+----
+
+The following are some of the metrics that you can obtain via the `LocalIndexStats` interface:
+
+* Number of queries and hits into an index (`getQueryCount()` and `getHitCount()`):
+Number of hits and queries may differ since a single query may hit the same index more than once.
+* Average index hit latency measured in nanoseconds (`getAverageHitLatency()`)
+* Average index hit selectivity (`getAverageHitSelectivity`): Returned values are
+in the range from 0.0 to 1.0. Values close to 1.0 indicate a high selectivity meaning
+the index is efficient; values close to 0.0 indicate a low selectivity meaning
+the index efficiency is approaching an efficiency of a simple full scan.
+* Number of index insert, update and remove operations (`getInsertCount()`,
+`getUpdateCount()` and `getRemoveCount()`).
+* Total latencies of insert, update and remove operations (`getTotalInsertLatency()`,
+`getTotalUpdateLatency()`, `getTotalRemoveLatency()`):
+To compute an average latency divide the returned value by the number of operations of a corresponding type.
+* Memory cost of an index (`getMemoryCost()`): For on-heap storages,
+this memory cost metric value is a best-effort approximation and
+doesn't indicate a precise on-heap memory usage of an index.
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/query/LocalIndexStats.html[`LocalIndexStats` Javadoc^] to see all the metrics.
+
+To compute an aggregated value of `getAverageHitSelectivity()` for all cluster members,
+you can use a simple averaging computation as shown below:
+
+```
+(s(1) + s(2) + ... + s(n)) / n
+```
+
+In this computation, `s(i)` is an average hit selectivity on the member `i` and
+`n` is the total number of cluster members.
+
+A more advanced solution is to compute a weighted average as shown below:
+
+```
+(s(1) * h(1) + s(2) * h(2) + ... + s(n) * h(n)) / (h(1) + h(2) + ... + h(n))
+```
+
+Here, `s(i)` is an average hit selectivity on the member `i`,
+`h(i)` is a hit count (`getHitCount()`) on the member `i` and
+`n` is the total number of cluster members.
+This more advanced solution may produce more precise results in unstable
+dynamic clusters where new members do not have enough statistics accumulated.
+The same technique may be applied to the `getAverageHitLatency()` metric.
+
+Accuracy and reliability notes:
+
+* The values returned by `getAverageHitSelectivity()` have an accuracy of around 1% for on-heap storages.
+* The values returned by `getQueryCount()` and `getHitCount()` may be
+imprecise for queries involving partition predicates (`PartitionPredicate`) on off-heap storage.
+* The index statistics may be imprecise after a new cluster member addition or
+the existing member removal until enough fresh statistics is accumulated on a new owner of an index or its partition.
+
+==== Near Cache Statistics
+
+To get Near Cache statistics, use the `getNearCacheStats()` method from the `LocalMapStats` object.
+This method returns a `NearCacheStats` object that holds Near Cache statistics.
+
+Below is an example code where the `getNearCacheStats()` method and
+the `getRatio` method from `NearCacheStats` get a Near Cache hit/miss ratio.
+
+[source,java]
+----
+include::{javasource}/management/ExampleNearCacheStats.java[tag=ncs]
+----
+
+The following are some of the metrics that you can access via
+the `NearCacheStats` object (applies to both client and member Near Caches):
+
+* creation time of the Near Cache on the member (`getCreationTime()`)
+* number of entries owned by the member (`getOwnedEntryCount()`)
+* memory cost (number of bytes) of owned entries in the Near Cache (`getOwnedEntryMemoryCost()`)
+* number of hits (reads) of the locally owned entries (`getHits()`)
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/nearcache/NearCacheStats.html[`NearCacheStats` Javadoc^] to see all the metrics.
+
+==== Multimap Statistics
+
+To get MultiMap statistics, use the `getLocalMultiMapStats()` method from the `MultiMap` interface.
+This method returns a `LocalMultiMapStats` object that holds local MultiMap statistics.
+
+Below is an example code where the `getLocalMultiMapStats()` method and
+the `getLastUpdateTime` method from `LocalMultiMapStats` get the last update time.
+
+[source,java]
+----
+include::{javasource}/management/ExampleMultiMapStats.java[tag=mms]
+----
+
+The following are some of the metrics that you can access via
+the `LocalMultiMapStats` object:
+
+* number of entries owned by the member (`getOwnedEntryCount()`)
+* number of backup entries held by the member (`getBackupEntryCount()`)
+* number of backups per entry (`getBackupCount()`)
+* memory cost (number of bytes) of owned entries in the member (`getOwnedEntryMemoryCost()`)
+* creation time of the multimap on the member (`getCreationTime()`)
+* number of hits (reads) of the locally owned entries (`getHits()`)
+* number of get and put operations on the map (`getPutOperationCount()` and
+`getGetOperationCount()`)
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/multimap/LocalMultiMapStats.html[`LocalMultiMapStats` Javadoc^] to see all the metrics.
+
+==== Queue Statistics
+
+To get local queue statistics, use the `getLocalQueueStats()` method from the `IQueue` interface.
+This method returns a `LocalQueueStats` object that holds local queue statistics.
+
+Below is an example code where the `getLocalQueueStats()` method and
+the `getAverageAge` method from `LocalQueueStats` get the average age of items.
+
+[source,java]
+----
+include::{javasource}/management/ExampleQueueStats.java[tag=qs]
+----
+
+The following are some of the metrics that you can access via
+the `LocalQueueStats ` object:
+
+* number of owned items in the member (`getOwnedItemCount()`)
+* number of backup items in the member (`getBackupItemCount()`)
+* minimum and maximum ages of the items in the member (`getMinAge()` and `getMaxAge()`)
+* number of offer, put and add operations (`getOfferOperationCount()`)
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/collection/LocalQueueStats.html[`LocalQueueStats` Javadoc^] to see all the metrics.
+
+==== Topic Statistics
+
+To get local topic statistics, use the `getLocalTopicStats()` method from the `ITopic` interface.
+This method returns a `LocalTopicStats` object that holds local topic statistics.
+
+Below is an example code where the `getLocalTopicStats()` method and
+the `getPublishOperationCount` method from `LocalTopicStats` get the number of publish operations.
+
+[source,java]
+----
+include::{javasource}/management/ExampleTopicStats.java[tag=ts]
+----
+
+The following are the metrics that you can access via the `LocalTopicStats ` object:
+
+* creation time of the topic on the member (`getCreationTime()`)
+* total number of published messages of the topic on the member (`getPublishOperationCount()`)
+* total number of received messages of the topic on the member (`getReceiveOperationCount()`)
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/topic/LocalTopicStats.html[`LocalTopicStats` Javadoc^] to see all the metrics.
+
+==== Executor Statistics
+
+To get local executor statistics, use the `getLocalExecutorStats()` method from the `IExecutorService` interface.
+This method returns a `LocalExecutorStats` object that holds local executor statistics.
+
+Below is an example code where the `getLocalExecutorStats()` method and
+the `getCompletedTaskCount` method from `LocalExecutorStats` get
+the number of completed operations of the executor service.
+
+[source,java]
+----
+include::{javasource}/management/ExampleExecutorStats.java[tag=es]
+----
+
+The following are some of the metrics that you can access via
+the `LocalExecutorStats ` object:
+
+* number of pending operations of the executor service (`getPendingTaskCount()`)
+* number of started operations of the executor service (`getStartedTaskCount()`)
+* number of completed operations of the executor service (`getCompletedTaskCount()`)
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/executor/LocalExecutorStats.html[`LocalExecutorStats` Javadoc^] to see all the metrics.
