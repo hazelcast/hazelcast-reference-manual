@@ -2,37 +2,35 @@
 
 == Distributed SQL
 
-Distributed SQL allows you to access data stored in Hazelcast cluster declaratively
-using SQL.
+Distributed SQL allows you to access data stored in the Hazelcast cluster
+declaratively using SQL.
 
 === Beta Status
 
-The distributed SQL is currently in beta. Compatibility between versions is not
-guaranteed. API might change between versions without a notice.
+The distributed SQL is currently in beta. The compatibility between versions
+is not guaranteed. API might change between versions without notice.
 
 === How Distributed SQL works
 
-The engine assigns fully-qualified SQL names to distributed Hazelcast objects,
-and analyzes their content to create the list of fields. This forms the list of
-objects that could be queried. Only `IMap` objects could be queried at the moment.
-
 When an SQL statement is submitted for execution, the engine parses and
 optimizes it using Apache Calcite. The result is an executable plan that
-is cached and re-used by the subsequent executions of the same statement.
+is cached and reused by the subsequent executions of the same statement.
 
 The plan contains a tree of query fragments. A query fragment is a tree of
 operators that could be executed on a single member independently. Child
-fragments supply data to parent fragments, possibly through network, until
+fragments supply data to parent fragments, possibly through a network, until
 the root fragment is reached. The root fragment returns query results to a
 user.
+
+Only `IMap` objects are supported at the moment.
 
 === Querying IMap
 
 ==== Names
 
 The engine exposes `IMap` objects as tables in the predefined `partitioned`
-schema using exact names. This schema is in the engine search path, so tables
-objects could be accessed with or without the schema name.
+schema using exact names. This schema is in the engine search path so that
+`IMap` objects could be accessed with or without the schema name.
 
 Schema and table names are case sensitive. For example, the `IMap` with the name
 `employee` can be accessed as `employee` or `partitioned.employee`, but not as
@@ -40,33 +38,33 @@ Schema and table names are case sensitive. For example, the `IMap` with the name
 
 ==== Fields
 
-To get the list of fields for the table backed by the `IMap`, the engine reads
-the first local entry of the `IMap`, extracts field metadata (name, type)
-from the key and the value, and combines them in a final list of fields.
+The engine reads the first local entry of the `IMap` to get the list of fields
+accessible from the SQL. The engine extracts field metadata (name, type)
+from the key and the value, and combines them into a final list of fields.
 
-Field metadata extraction logic depends on the serialization format as described
+Field metadata extraction logic depends on the serialization format, as described
 below.
 
 -  For Java objects (`Serializable`, `DataSerializable`, `IdentifiedDataSerializable`),
-the object is deserialized if needed, and then analyzed using reflection. Only public
-fields and getters are taken in count. A public field is exposed using it's exact name.
-A getter is exposed using JavaBean naming convention. E.g. `getName` is exposed as
-`name`, and `isActive` is exposed as `active`.
-- For `Portable` objects, only the fields written in the `Portable.writePortable` method
-are exposed using their exact names.
+the object is deserialized if needed and then analyzed using reflection. Only public
+fields and getters are taken in count. A public field is exposed using its exact name.
+A getter is exposed using the JavaBean naming conventions. E.g. `getName` is exposed as
+`name` and `isActive` is exposed as `active`
+- For `Portable` objects, only the fields that are written in the `Portable.writePortable`
+method are exposed using their exact names
 - `HazelcastJsonValue` objects cannot be queried at the moment. This limitation will be
-removed in the future releases
+removed in future releases
 
 Field names are case-sensitive.
 
-If the `IMap` do not have local entries on the member where the query is started,
+If the `IMap` does not have local entries on the member where the query is started,
 then the list of fields cannot be resolved, and an exception is thrown.
 
 We refer to the key and the value as *top-level* objects. The key is exposed as
 `__key` field, and the value is exposed as `this` field.
 
 If a top-level object does not have nested fields, then it is exposed as a normal
-field. Otherwise it is exposed a a *hidden field*. Hidden fields behave similarly
+field. Otherwise, it is exposed a *hidden field*. Hidden fields behave similarly
 to normal fields, but are not returned by `SELECT * ...` queries.
 
 If both the key and the value have fields with the same name, then the field of the
@@ -74,13 +72,13 @@ value will be used.
 
 ==== Indexes
 
-The engine could use `IMap` indexes to speedup execution of certain queries.
+The engine could use `IMap` indexes to speed up the execution of certain queries.
 
 `SORTED` and `HASH` indexes are supported.
 
 ==== HD
 
-`IMap` objects with the `InMemoryFormat.NATIVE` could be queried only if they have
+`IMap` objects with the `InMemoryFormat.NATIVE` could only be queried if they have
 at least one index, and the property `hazelcast.hd.global.index.enabled` is set to
 `true`.
 
@@ -119,7 +117,7 @@ Temporal:
 It is possible to execute project-filter queries in the form
 `SELECT ... FROM <map_name> WHERE ...` on a single map.
 
-The support for the following operators are planned for the future releases:
+The support for the following operators are planned for future releases:
 
 - `ORDER BY`
 - `GROUP BY`
@@ -142,22 +140,22 @@ The following functions are currently supported.
 - String functions: `||` (concatenation), `ASCII`, `INITCAP`, `LENGTH`,
 `LIKE`, `LOWER`, `LTRIM`, `RTRIM`, `SUBSTRING`, `TRIM`, `UPPER`
 
-More functions will be added in the future releases.
+More functions will be added in future releases.
 
 === Clients
 
 SQL queries could be executed from Java clients using the same API as with members.
 
-The support for other client platforms is planned for the future releases.
+The support for other client platforms is planned for future releases.
 
 === Lite Members
 
 SQL queries cannot be started on lite-members. This limitation will be removed in
-the future releases.
+future releases.
 
 === Example
 
-Consider the that we have an IMap `emp` that contains value of type `Employee`:
+Consider that we have an IMap `emp` that contains values of type `Employee`:
 
 [source,java]
 ----
