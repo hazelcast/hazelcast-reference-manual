@@ -52,7 +52,7 @@ The same code snippet could be executed from a member or a client.
 The SQL service exposes `IMap` objects as tables in the predefined `partitioned`
 schema using exact names. This schema is in the SQL service search path so that
 `IMap` objects could be accessed with or without the schema name. Schema and table
-names are case sensitive.
+names are case-sensitive.
 
 For example, the `IMap` with the name `employee` can be accessed as `employee` or
 `partitioned.employee`, but not as `Employee`:
@@ -65,64 +65,64 @@ SELECT * FROM partitioned.employee
 
 ==== Fields
 
-The SQL service reads the first local entry of the `IMap` to get the list of fields
-accessible from the SQL. The SQL service extracts field metadata (name, type)
-from the key and the value, and combines them into a final list of fields.
-
-Field metadata extraction logic depends on the serialization format, as described
-below.
-
--  For Java objects (`Serializable`, `DataSerializable`, `IdentifiedDataSerializable`),
-the object is deserialized if needed and then analyzed using reflection. Only public
-fields and getters are taken in count. A public field is exposed using its exact name.
-A getter is exposed using the JavaBean naming conventions. E.g. `getName` is exposed as
-`name` and `isActive` is exposed as `active`
-- For `Portable` objects, only the fields that are written in the `Portable.writePortable`
-method are exposed using their exact names
-- `HazelcastJsonValue` objects cannot be queried at the moment. This limitation will be
-removed in future releases
+The SQL service resolves fields accessible from the SQL automatically. The
+service reads the first local entry pair of the `IMap` to construct the
+list of fields. If the `IMap` does not have local entries on the member where
+the query is started, then the list of fields cannot be resolved, and an
+exception is thrown.
 
 Field names are case-sensitive.
 
-If the `IMap` does not have local entries on the member where the query is started,
-then the list of fields cannot be resolved, and an exception is thrown.
+===== Key and Value Objects
 
-We refer to the key and the value as *top-level* objects. The key is exposed as
-`__key` field, and the value is exposed as `this` field.
+An `IMap` entry consists of a key and a value. The key and the value are accessible
+through the `__key` and `this` aliases, respectively. The following query returns
+the keys and the values of all entries in the IMap:
 
-If a top-level object does not have nested fields, then it is exposed as a normal
-field. Otherwise, it is exposed a *hidden field*. Hidden fields behave similarly
-to normal fields, but are not returned by `SELECT * ...` queries.
+[source,sql]
+----
+SELECT __key, this FROM employee
+----
 
-If both the key and the value have fields with the same name, then the field of the
-value will be used.
+===== Key and Value Fields
 
-Consider the `Employee` class from the first example, that is stored in the `IMap<Long, Employee>`.
-The following fields will be accessible from the SQL.
+You may also access fields of the key or the value. The list of exposed fields depends
+on the serialization format, as described below.
 
-[cols="1,1,1", options="header"]
+- For Java objects (`Serializable`, `DataSerializable`, `IdentifiedDataSerializable`),
+the object is deserialized if needed and then analyzed using reflection. Only public
+fields and getters are taken in count. A public field is exposed using its exact name.
+A getter is exposed using the JavaBean naming conventions.
+- For `Portable` objects, the fields that are written in the `Portable.writePortable`
+method are exposed using their exact names.
+- `HazelcastJsonValue` objects cannot be queried at the moment. This limitation will be
+removed in future releases.
+
+Consider the `Employee` class from the example above. The following fields will
+be accessible from the SQL service:
+
+[cols="1,1"]
 |===
 | Name
 | Type
-| Note
-
-|`__key`
-|`BIGINT`
-|The key object
-
-|`this`
-|`OBJECT`
-|The value object (hidden)
 
 |`name`
 |`VARCHAR`
-|
 
 |`age`
 |`INTEGER`
-|
-
 |===
+
+Together with the key and the value objects, you may query the following fields from
+the `IMap<Long, Employee>`:
+
+[source,sql]
+----
+SELECT __key, this, name, age FROM employee
+----
+
+If both the key and the value have fields with the same name, then the field of the
+value will be exposed.
 
 ==== Indexes
 
