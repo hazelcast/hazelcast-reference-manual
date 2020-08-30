@@ -51,11 +51,17 @@ The same code snippet could be executed from a member or a client.
 
 The SQL service exposes `IMap` objects as tables in the predefined `partitioned`
 schema using exact names. This schema is in the SQL service search path so that
-`IMap` objects could be accessed with or without the schema name.
+`IMap` objects could be accessed with or without the schema name. Schema and table
+names are case sensitive.
 
-Schema and table names are case sensitive. For example, the `IMap` with the name
-`employee` can be accessed as `employee` or `partitioned.employee`, but not as
-`Employee`.
+For example, the `IMap` with the name `employee` can be accessed as `employee` or
+`partitioned.employee`, but not as `Employee`:
+
+[source,sql]
+----
+SELECT * FROM employee
+SELECT * FROM partitioned.employee
+----
 
 ==== Fields
 
