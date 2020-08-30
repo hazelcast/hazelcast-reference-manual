@@ -86,8 +86,8 @@ SELECT __key, this FROM employee
 
 ===== Key and Value Fields
 
-You may also access fields of the key or the value. The list of exposed fields depends
-on the serialization format, as described below.
+You may also access the nested fields of the key or the value. The list of exposed
+fields depends on the serialization format, as described below.
 
 - For Java objects (`Serializable`, `DataSerializable`, `IdentifiedDataSerializable`),
 the object is deserialized if needed and then analyzed using reflection. Only public
@@ -123,6 +123,20 @@ SELECT __key, this, name, age FROM employee
 
 If both the key and the value have fields with the same name, then the field of the
 value will be exposed.
+
+===== "SELECT *" Queries
+
+You may use the `SELECT * FROM <table>` syntax to get all fields of the table.
+
+The `__key` and `this` fields are returned by `SELECT *` queries only if they do
+not have nested fields. For the `IMap<Long, Employee>`, the following query will
+not return the `this` field, because the value has nested fields `name` and `age`:
+
+[source,sql]
+----
+-- Returns __key, name, age
+SELECT * FROM employee
+----
 
 ==== Indexes
 
