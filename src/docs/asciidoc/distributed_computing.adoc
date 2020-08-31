@@ -367,6 +367,7 @@ This section presents example configurations for durable executor service along 
 <hazelcast>
     ...
     <durable-executor-service name="myDurableExecSvc">
+        <statistics-enabled>true</statistics-enabled>
         <pool-size>8</pool-size>
         <durability>1</durability>
         <capacity>1</capacity>
@@ -383,6 +384,7 @@ hazelcast:
   ...
   durable-executor-service:
     myDurableExecSvc:
+      statistics-enabled: true
       pool-size: 8
       durability: 1
       capacity: 1
@@ -399,6 +401,7 @@ include::{javasource}/distributedcomputing/DurableExecutorConfiguration.java[tag
 The following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the executor task.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled. If set to `false`, you cannot collect statistics.
 * `pool-size`: Number of executor threads per member for the executor.
 * `durability`: Number of backups in the cluster for the submitted task. Its default value is 1.
 * `capacity`: Executor's task queue capacity; the number of tasks this queue can hold.
@@ -503,6 +506,7 @@ This section presents example configurations for scheduled executor service alon
 <hazelcast>
     ...
     <scheduled-executor-service name="myScheduledExecSvc">
+        <statistics-enabled>true</statistics-enabled>
         <pool-size>16</pool-size>
         <durability>1</durability>
         <capacity>100</capacity>
@@ -519,6 +523,7 @@ hazelcast:
   ...
   scheduled-executor-service:
     myScheduledExecSvc:
+      statistics-enabled: true
       pool-size: 16
       durability: 1
       capacity: 100
@@ -535,6 +540,7 @@ include::{javasource}/distributedcomputing/ScheduledExecutorConfiguration.java[t
 The following are the descriptions of each configuration element and attribute:
 
 * `name`: Name of the scheduled executor.
+* `statistics-enabled`: Specifies whether the statistics gathering is enabled. If set to `false`, you cannot collect statistics.
 * `pool-size`: Number of executor threads per member for the executor.
 * `capacity`: Maximum number of tasks that a scheduler can have per partition. Attempt to schedule more results in `RejectedExecutionException`. To free up the capacity, tasks should get disposed by the user.
 * `durability`: Durability of the executor.
