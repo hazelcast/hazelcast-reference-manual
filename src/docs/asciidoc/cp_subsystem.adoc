@@ -316,8 +316,8 @@ the last CP member checks its local data to notice that it is the last CP
 member alive, and proceeds its shutdown without attempting a Raft commit on
 _the METADATA CP group_.
 
-See <<cp-membership-listener, CP Membership Listener section>> to get notified
-about CP member additions and removals.
+See the <<cp-membership-listener, CP Membership Listener section>> to get notified
+about the CP member additions and removals.
 
 === CP Subsystem's Fault Tolerance Capabilities
 
@@ -384,7 +384,6 @@ means that CP Subsystem has lost its majority irrevocably.** In this case,
 the only solution is to wipe-out the whole CP Subsystem state by performing
 a force-reset via `CPSubsystemManagementService.reset()`.
 
-
 **When `CPSubsystemConfig.getCPMemberCount()` is greater than
 `CPSubsystemConfig.getGroupSize()`, CP groups are formed by selecting a subset
 of CP members. In this case, each CP group can have a different set of CP
@@ -421,11 +420,19 @@ more details.
 
 === CP Subsystem Listeners
 
+The CP Subsystem provides the following listeners:
+
+* CP membership listeners
+* CP group availability listeners
+
+The following sections explain each listener and
+how to register them.
+
 ==== CP Membership Listener
 
 `CPMembershipListener` is notified when a CP member is added to or removed
 from the CP Subsystem. Its signature is very similar to Hazelcast's usual
-`MembershipListener`.
+<<listening-for-member-events, `MembershipListener`>>.
 
 The listener interface has methods that are invoked for the following events:
 
@@ -434,7 +441,7 @@ The listener interface has methods that are invoked for the following events:
 
 To get notified for CP membership events, you implement the `CPMembershipListener` interface.
 
-The following is an example `CPMembershipListener` class.
+The following is an example `CPMembershipListener` class:
 
 [source,java]
 ----
@@ -443,10 +450,10 @@ include::{javasource}/cp/event/CPMembershipListenerImpl.java[tag=impl]
 
 ===== Registering CP Membership Listeners
 
-`CPMembershipListener` can be defined in configuration or can be registered
-in runtime via `CPSubsystem` API.
+`CPMembershipListener` can be defined in the configuration or can be registered
+in runtime via the `CPSubsystem` API.
 
-Below is an example registering the listener in runtime using method `CPSubsystem.addMembershipListener`.
+Below is an example registering the listener in runtime using the `CPSubsystem.addMembershipListener` method:
 
 [source,java]
 ----
@@ -455,7 +462,7 @@ HazelcastInstance hazelcastInstance = ...;
 hazelcastInstance.getCPSubsystem().addMembershipListener(new CPMembershipListenerImpl());
 ----
 
-The following is an example programmatic configuration.
+The following is an example programmatic configuration:
 
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
 .Server
@@ -471,7 +478,7 @@ ClientConfig config = new ClientConfig();
 config.addListenerConfig(new ListenerConfig("com.yourpackage.CPMembershipListenerImpl"));
 ----
 
-The followings are examples of the equivalent declarative configurations.
+The followings are examples of the equivalent declarative configurations:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Server XML
@@ -519,29 +526,27 @@ hazelcast-client:
     - com.yourpackage.CPMembershipListenerImpl
 ----
 
-
 ==== CP Group Availability Listener
 
-`CPGroupAvailabilityListener` is notified when availability of a CP group decreases
+`CPGroupAvailabilityListener` is notified when the availability of a CP group decreases
 or it loses the majority completely.
 
-In general, availability decreases when a CP member becomes unreachable because of process crash,
-network partition, out of memory etc. Once a member is declared as unavailable
+In general, the availability decreases when a CP member becomes unreachable because of process crash,
+network partition, out of memory, etc. Once a member is declared as unavailable
 by the Hazelcast's failure detector, that member is removed from the cluster.
-If it is also a CP member, `CPGroupAvailabilityEvent`s are fired for each CP group
+If it is also a CP member, ``CPGroupAvailabilityEvent``s are fired for each CP group
 that member belongs to.
 
 As a special case, `CPGroupAvailabilityListener` has a separate method to report
-loss of majority. When majority of a CP group is lost, that CP group cannot make
-progress anymore. Even a new CP member cannot join to this CP group,
-because membership changes also go through the Raft consensus algorithm.
+the loss of majority. When the majority of a CP group is lost, that CP group cannot make
+progress anymore. Even a new CP member cannot join to this CP group
+since membership changes also go through the Raft consensus algorithm.
 
 When a CP group has lost its majority:
 
-- If the group is a non-METADATA CP group, it must be force-destroyed immediately,
-because it can block the METADATA CP group to perform membership changes on CP Subsystem.
-
-- If the majority of the METADATA CP group permanently crash, unfortunately
+* If the group is a non-METADATA CP group, it must be force-destroyed immediately,
+because it can block the METADATA CP group to perform membership changes on the CP Subsystem.
+* If the majority of the METADATA CP group permanently crashes, unfortunately
 it is equivalent to the permanent crash of the majority CP members of the whole CP Subsystem,
 even though other CP groups are running fine.
 
@@ -551,7 +556,7 @@ The listener interface has methods that are invoked for the following events:
 but still has the majority of members available.
 * `majorityLost`: A CP group has lost its majority.
 
-The following is an example `CPGroupAvailabilityListener` class.
+The following is an example `CPGroupAvailabilityListener` class:
 
 [source,java]
 ----
@@ -561,9 +566,9 @@ include::{javasource}/cp/event/CPGroupAvailabilityListenerImpl.java[tag=impl]
 ===== Registering CP Group Availability Listeners
 
 Similar to `CPMembershipListener`, a `CPGroupAvailabilityListener` can be defined
-in configuration or can be registered in runtime via `CPSubsystem` API.
+in the configuration or can be registered in runtime via the `CPSubsystem` API.
 
-Below is an example registering the listener in runtime using method `CPSubsystem.addGroupAvailabilityListener`.
+Below is an example registering the listener in runtime using the `CPSubsystem.addGroupAvailabilityListener` method:
 
 [source,java]
 ----
@@ -572,7 +577,7 @@ HazelcastInstance hazelcastInstance = ...;
 hazelcastInstance.getCPSubsystem().addGroupAvailabilityListener(new CPGroupAvailabilityListenerImpl());
 ----
 
-The following is an example programmatic configuration.
+The following is an example programmatic configuration:
 
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
 .Server
@@ -588,8 +593,7 @@ ClientConfig config = new ClientConfig();
 config.addListenerConfig(new ListenerConfig("com.yourpackage.CPGroupAvailabilityListenerImpl"));
 ----
 
-
-The followings are examples of the equivalent declarative configurations.
+The followings are examples of the equivalent declarative configurations:
 
 [source,xml,indent=0,subs="verbatim,attributes",role="primary"]
 .Server XML
