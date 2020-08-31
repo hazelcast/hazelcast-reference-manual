@@ -1,0 +1,248 @@
+== SQL
+
+SQL allows you to query data stored in `IMap` declaratively.
+
+WARNING: The SQL feature is currently in beta. The compatibility between versions
+is not guaranteed. API might change between versions without notice.
+
+=== Example: How to Query an IMap using SQL
+
+Consider that we have an IMap `emp` that contains values of type `Employee`:
+
+[source,java]
+----
+public class Employee implements Serializable {
+    private String name;
+    private int age;
+
+    public Employee(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+----
+
+The following code will print names of employees whose age is less than 30:
+
+[source,java]
+----
+try (SqlResult result = hazelcastInstance.getSql().execute("SELECT name FROM emp WHERE age < ?", 30)) {
+    for (SqlRow row : result) {
+        String name = row.getObject(0);
+
+        System.out.println(name);
+    }
+}
+----
+
+The same code snippet could be executed from a member or a client.
+
+=== Querying IMap
+
+==== Names
+
+The SQL service exposes `IMap` objects as tables in the predefined `partitioned`
+schema using exact names. This schema is in the SQL service search path so that
+`IMap` objects could be accessed with or without the schema name. Schema and table
+names are case-sensitive.
+
+For example, the `IMap` with the name `employee` can be accessed as `employee` or
+`partitioned.employee`, but not as `Employee`:
+
+[source,sql]
+----
+SELECT * FROM employee
+SELECT * FROM partitioned.employee
+----
+
+==== Fields
+
+The SQL service resolves fields accessible from the SQL automatically. The
+service reads the first local entry pair of the `IMap` to construct the
+list of fields. If the `IMap` does not have local entries on the member where
+the query is started, then the list of fields cannot be resolved, and an
+exception is thrown.
+
+Field names are case-sensitive.
+
+===== Key and Value Objects
+
+An `IMap` entry consists of a key and a value. The key and the value are accessible
+through the `__key` and `this` aliases, respectively. The following query returns
+the keys and the values of all entries in the IMap:
+
+[source,sql]
+----
+SELECT __key, this FROM employee
+----
+
+===== Key and Value Fields
+
+You may also access the nested fields of the key or the value. The list of exposed
+fields depends on the serialization format, as described below.
+
+- For Java objects (`Serializable`, `DataSerializable`, `IdentifiedDataSerializable`),
+the object is deserialized if needed and then analyzed using reflection. Only public
+fields and getters are taken in count. A public field is exposed using its exact name.
+A getter is exposed using the JavaBean naming conventions.
+- For `Portable` objects, the fields that are written in the `Portable.writePortable`
+method are exposed using their exact names.
+- `HazelcastJsonValue` objects cannot be queried at the moment. This limitation will be
+removed in future releases.
+
+Consider the `Employee` class from the example above. The following fields will
+be accessible from the SQL service:
+
+[cols="1,1"]
+|===
+| Name
+| Type
+
+|`name`
+|`VARCHAR`
+
+|`age`
+|`INTEGER`
+|===
+
+Together with the key and the value objects, you may query the following fields from
+the `IMap<Long, Employee>`:
+
+[source,sql]
+----
+SELECT __key, this, name, age FROM employee
+----
+
+If both the key and the value have fields with the same name, then the field of the
+value will be exposed.
+
+===== "SELECT *" Queries
+
+You may use the `SELECT * FROM <table>` syntax to get all the table fields.
+
+The `__key` and `this` fields are returned by `SELECT *` queries if they do not
+have nested fields. For the `IMap<Long, Employee>`, the following query will
+not return the `this` field, because the value has nested fields `name` and `age`:
+
+[source,sql]
+----
+-- Returns __key, name, age
+SELECT * FROM employee
+----
+
+==== Indexes
+
+The SQL service could use `IMap` indexes to speed up the execution of certain queries.
+`SORTED` and `HASH` indexes are supported.
+
+See <<indexing-queries, Indexes>> for more information on `IMap`
+index creation.
+
+==== High-Density Memory Store
+
+`IMap` objects with the `InMemoryFormat.NATIVE` could only be queried if they have
+at least one index.
+
+See <<configuring-with-system-properties, Configuring with System Properties>> for
+more information on setting system properties.
+
+=== Data Types
+
+The SQL service supports a set of SQL data types. Every data type is mapped to a Java
+class that represents the type's value.
+
+[cols="1,1", options="header"]
+.SQL Data Types
+|===
+| Type Name
+| Java Class
+
+|`BOOLEAN`
+|`java.lang.Boolean`
+
+|`VARCHAR`
+|`java.lang.String`
+
+|`TINYINT`
+|`java.lang.Byte`
+
+|`SMALLINT`
+|`java.lang.Short`
+
+|`INTEGER`
+|`java.lang.Integer`
+
+|`BIGINT`
+|`java.lang.Long`
+
+|`DECIMAL`
+|`java.math.BigDecimal`
+
+|`REAL`
+|`java.lang.Float`
+
+|`DOUBLE`
+|`java.lang.Double`
+
+|`DATE`
+|`java.time.LocalDate`
+
+|`TIME`
+|`java.time.LocalTime`
+
+|`TIMESTAMP`
+|`java.time.LocalDateTime`
+
+|`TIMESTAMP_WITH_TIME_ZONE`
+|`java.time.OffsetDateTime`
+
+|`OBJECT`
+|Any Java class
+
+|===
+
+=== Supported Features
+
+Currently it is possible to execute project-filter queries in the form
+`SELECT ... FROM <map_name> WHERE ...` on a single map.
+
+The following features are *not supported* and are planned for future releases:
+sorting, aggregations, joins, set operators (`UNION`, `INTERSECT`, `MINUS`), subqueries.
+
+The SQL service supports the following functions:
+
+- Binary functions: `+`, `-`, `*`, `/`
+- Comparison predicates: `>`, `>=`, `<`, `<=`, `=`, `!=`, `<>`
+- Logical predicates: `AND`, `OR`, `NOT`
+- `IS` predicates: `IS [NOT] NULL`, `IS [NOT] TRUE`, `IS [NOT] FALSE`
+- `CAST` function
+- Math functions: `ABS`, `ACOS`, `ASIN`, `ATAN`, `CEIL`, `COS`, `COT`,
+`DEGREES`, `EXP`, `FLOOR`, `LN`, `LOG10`, `RADIANS`, `RAND`, `ROUND`,
+`SIGN`, `SIN`, `TAN`, `TRUNCATE`
+- String functions: `||` (concatenation), `ASCII`, `INITCAP`, `LENGTH`,
+`LIKE`, `LOWER`, `LTRIM`, `RTRIM`, `SUBSTRING`, `TRIM`, `UPPER`
+
+=== Lite Members
+
+SQL queries cannot be started on lite-members. This limitation will be removed in
+future releases.
+
+=== How Distributed SQL Works
+
+When an SQL statement is submitted for execution, the SQL service parses and
+optimizes it using Apache Calcite. The result is an executable plan that
+is cached and reused by the subsequent executions of the same statement.
+
+The plan contains a tree of query fragments. A query fragment is a tree of
+operators that could be executed on a single member independently. Child
+fragments supply data to parent fragments, possibly through a network, until
+the root fragment is reached. The root fragment returns query results to a
+user.
