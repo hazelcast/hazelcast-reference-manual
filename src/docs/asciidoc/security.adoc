@@ -2912,22 +2912,32 @@ hzLite.shutdown();
 [[auditlog]]
 === Logging Auditable Events
 
-Hazelcast Enterprise allows observing some important cluster events by the Auditlog feature.
-Auditable events have a unique type ID, they contain a timestamp and importance level.
-Events may also contain a message and parameters.
+Hazelcast IMDG Enterprise allows observing some important cluster events
+using the Auditlog feature. Auditable events have a unique type ID;
+they contain a timestamp and importance level.
+The events may also contain a message and parameters.
 Supported event type identifiers are listed in link:{docBaseUrl}/javadoc/com/hazelcast/auditlog/AuditlogTypeIds.html[`AuditlogTypeIds`^].
 
-Auditlog can be enabled in the Hazelcast configuration:
+You can enable the auditlog feature in the configuration as follows:
 
 **Declarative Configuration:**
 
-[source,xml]
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     ...
     <auditlog enabled="true" />
     ...
 </hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  auditlog:
+    enabled: true
 ----
 
 **Programmatic Configuration:**
@@ -2939,7 +2949,7 @@ config.getAuditLogConfig().setEnabled(true);
 ----
 
 The default auditlog implementation uses Hazelcast logging configuration and writes the events
-as log entries with category name `"hazelcast.auditlog"`.
+as log entries with the category name `"hazelcast.auditlog"`.
 
 **Sample Log4j2 configuration writing auditable events to a Syslog:**
 
@@ -2962,14 +2972,16 @@ as log entries with category name `"hazelcast.auditlog"`.
 
 ==== Auditlog SPI
 
-The Auditlog has own SPI allowing users to provide own implementations. Relevant classes and interfaces are located
+The auditlog has its own SPI allowing you to provide your implementations.
+Relevant classes and interfaces are located
 in the link:{docBaseUrl}/javadoc/com/hazelcast/auditlog/package-summary.html[`com.hazelcast.auditlog` package^].
 
 The central point of auditlog SPI is the
 link:{docBaseUrl}/javadoc/com/hazelcast/auditlog/AuditlogService.html[`AuditlogService` interface^]
-and its `log(...)` methods. Their implementation is responsible for processing auditable events (e.g. writing them to a database).
+and its `log(...)` methods. Their implementations are responsible for
+processing auditable events, e.g., writing them to a database.
 
-The `AuditlogService` also creates the
+`AuditlogService` also creates the
 link:{docBaseUrl}/javadoc/com/hazelcast/auditlog/EventBuilder.html[`EventBuilder`^]
 instances which are used to build
 link:{docBaseUrl}/javadoc/com/hazelcast/auditlog/AuditableEvent.html[`AuditableEvents`^].
@@ -2977,8 +2989,6 @@ link:{docBaseUrl}/javadoc/com/hazelcast/auditlog/AuditableEvent.html[`AuditableE
 Another important piece in the SPI is the
 link:{docBaseUrl}/javadoc/com/hazelcast/auditlog/AuditlogServiceFactory.html[`AuditlogServiceFactory` interface^].
 The factory class allows the `AuditlogService` initialization based on parameters.
-
-
 
 [[security-debugging]]
 === Security Debugging
