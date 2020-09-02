@@ -461,7 +461,7 @@ NOTE: Starting with 3.8.2, members no longer perform a password check
 during the cluster join process. Starting with 3.11, members no longer
 perform a password check when a client connects to the cluster.
 
-[[member-user-code-deployment-beta]]
+[[member-user-code-deployment]]
 === Deploying User Code on the Member
 
 Hazelcast can dynamically load your custom classes or domain classes from other
@@ -484,6 +484,11 @@ class into the local class cache as mentioned in the previous step.
 . If the class is not found, `ClassNotFoundException` is thrown.
 . The dynamic class loader is released after the operation is handled. A next
 operation will load the class from the cache or re-fetch it.
+
+NOTE: Using the user code deployment feature is a fit for your functional objects
+like `Runnable`, `Callable` and `EntryProcessor`.
+For the domain objects, we recommend you to use the
+<<accessing-domain-objects-without-domain-classes, generic object interface>> (`GenericRecord`).
 
 [[configuring-user-code-deployment]]
 ==== Configuring User Code Deployment
@@ -604,7 +609,7 @@ member:
 include::{javasource}/MemberUCD.java[tag=memberAttributeConfig]
 ----
 
-[[client-user-code-deployment-beta]]
+[[client-user-code-deployment]]
 === Deploying User Code from Clients
 
 You can also deploy your code from the client side for the following
@@ -621,12 +626,20 @@ members do not require a restart to include it in their classpath.
 You can also use the client permission policy to specify which clients
 are permitted to use User Code Deployment. See the <<permissions, Permissions section>>.
 
+NOTE: 
+
 [[configuring-client-user-code-deployment]]
 ==== Configuring Client User Code Deployment
 
 Client User Code Deployment feature is not enabled by default. You can
-configure this feature declaratively or programmatically. Following are
-example configuration snippets:
+configure this feature declaratively or programmatically.
+
+NOTE: Using the user code deployment feature is a fit for your functional objects
+like `Runnable`, `Callable` and `EntryProcessor`.
+For the domain objects, we recommend you to use the
+<<accessing-domain-objects-without-domain-classes, generic object interface>> (`GenericRecord`).
+
+Following are example configuration snippets:
 
 **Declarative Configuration:**
 
@@ -702,7 +715,7 @@ user code deployment:
 include::{javasource}/ClientUCD.java[tag=configureMemberForClientUcd]
 ----
 
-See the <<member-user-code-deployment-beta, Member User Code Deployment section>>
+See the <<member-user-code-deployment, Member User Code Deployment section>>
 for more information on enabling it on the member side and the configuration properties.
 
 Classes deployed from clients are always cached on the members, no matter
@@ -777,6 +790,115 @@ hazelcast:
 Then, you can start your Hazelcast member by using the start scripts
 (`start.sh` or `start.bat`) in the `/bin` directory. The start scripts
 automatically adds your class and JAR files to the classpath.
+
+[[accessing-domain-objects-without-domain-classes]]
+=== Accessing Domain Objects without Domain Classes - BETA
+
+Hazelcast offers a generic object interface (`GenericRecord`) that is returned to the user
+when the domain class is missing on the classpath.
+For example, if `PortableFactory` is not given in the serialization configuration for a
+portable object, the user domain class cannot be created, and Hazelcast returns `GenericRecord` instead.
+In the previous Hazelcast IMDG releases, we were throwing `HazelcastSerializationException("Could not create Portable for class-id: " + classId)`
+for the same situation.
+
+`GenericRecord` is an immutable object. It allows you to read the fields of objects via the related read fields.
+
+You can use this feature when the cluster does not have the domain classes of the clients in a
+client-server architecture. On remote calls like distributed executor service or entry processors,
+you may need to access the domain object. In case the class of the domain object is not available on the cluster,
+`GenericRecord` allows to access, read and write the objects
+back without the class of the domain object on the classpath. Here is a read example with entry processor:
+
+[source,java]
+----
+    map.executeOnKey(key, (EntryProcessor<Object, Object, Object>) entry -> {
+             Object value = entry.getValue();
+             GenericRecord genericRecord = (GenericRecord) value;
+
+             int id = genericRecord.readInt("id");
+
+             return null;
+         });
+----
+
+An alternative approach introduced in the previous Hazelcast IMDG releases is the <<member-user-code-deployment, User Code Deployment>>
+feature to deploy the classes from the client to the cluster.
+However, it has a restriction: you can not upload
+a new version of your class to the cluster if you use the portable versioning support.
+Loading two different versions of the same class on the JVM is not a problem that we want to solve: using `GenericRecord`,
+you can easily write different versions of your classes
+from the clients and access them without using the User Code Deployment feature.
+
+With the introduction of `GenericRecord`, User Code Deployment should be used only for functional objects like `Runnable`,
+`Callable` and `EntryProcessor`.
+
+You can also create a `GenericRecord` in portable format with `GenericRecord.Builder` as follows:
+
+[source,java]
+----
+ClassDefinition classDefinition = new ClassDefinitionBuilder(PORTABLE_FACTORY_ID, EMPLOYEE_CLASS_ID)
+                        .addUTFField("name").addIntField("id").build();
+        
+GenericRecord namedRecord = GenericRecord.Builder.portable(classDefinition)
+                .writeUTF("name", "foo")
+                .writeInt("id", 123).build();
+----
+
+Note that the class definitions are better to be created once and
+used when creating different instances of the same type `GenericRecord`.
+
+We have also added two convenience methods in `GenericRecord` for you to
+avoid passing a class definition. For example, if you want to modify a value and
+put it back using an entry processor, you don't need to create a class definition.
+Instead you can create a builder from `GenericRecord` which carries the same class definition as follows:
+
+[source,java]
+----
+map.executeOnKey("key", (EntryProcessor<Object, Object, Object>) entry -> {
+            GenericRecord genericRecord = (GenericRecord) entry.getValue();
+            GenericRecord modifiedGenericRecord = genericRecord.newBuilder()
+                    .writeUTF("name","Kermit")
+                    .writeLong("id", 4)
+                    .writeInt("age",20)
+                    .writeUTF("surname", "The Frog").build();
+            entry.setValue(modifiedGenericRecord);
+            return null;
+        });
+----
+
+Another convenience method is `cloneWithBuilder`. This is useful if you want to update only
+a couple of fields from the original `genericRecord`. In that case, the new builder carries
+both `classDefinition` and values from the original
+`genericRecord`. Here is the same example where we just update the age:
+
+[source,java]
+----
+map.executeOnKey("key", (EntryProcessor<Object, Object, Object>) entry -> {
+            GenericRecord genericRecord = (GenericRecord) entry.getValue();
+            GenericRecord modifiedGenericRecord = genericRecord.cloneWithBuilder()
+                    .writeInt("age",22).build();
+            entry.setValue(modifiedGenericRecord);
+            return null;
+        });
+----
+
+Another use case of this feature is on the client side (could also be a member):
+`GenericRecord` allows to read from/write to a cluster without having the related classes on the classpath.
+A client could work with the cluster without introducing the `PortableFactory` at the start.
+In this case, the client works with ``GenericRecord``s instead of domain classes.
+An example code snippet on the client side with a map is shown below:
+
+[source,java]
+----
+        GenericRecord record = (GenericRecord) map.get("key1");
+        String name = record.readUTF("name");
+        int id = record.readInt("id");
+        
+        GenericRecord newGenericRecord = genericRecord.cloneWithBuilder()
+                .writeInt("age",22).build();
+        
+        map.put("key2", newGenericRecord);
+----
 
 [[partition-group-configuration]]
 === Partition Group Configuration
