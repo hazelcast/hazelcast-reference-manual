@@ -1,156 +1,48 @@
 === Cluster Utilities
 
-This section provides information on programmatic utilities you can use to listen to
+This section provides information on the Hazelcast command line and
+other programmatic utilities you can use to listen to
 the cluster events, to change the state of your cluster,
 to check whether the cluster and/or members are safe before shutting down a member and
 to define the minimum number of cluster members required for the cluster to remain up and running.
 It also gives information on the Hazelcast Lite Member.
 
-==== Getting Member Events and Member Sets
+==== Hazelcast Command Line Tool
 
-Hazelcast allows you to register for membership events so that you are notified when
-members are added or removed. You can also get the set of cluster members.
+This is a tool using which you can install and run Hazelcast IMDG and Management Center
+on your Unix-like local environments. You need link:https://www.oracle.com/java/technologies/javase-downloads.html[JRE 8 or newer^]
+as a prerequisite.
 
-The following example code does the above: registers for member events,
-notifies when members are added or removed and gets the set of cluster members.
+This tool comes with your Hazelcast IMDG download package.
+When you extract the package, you see the "hazelcast-command-line" directory.
 
-[source,java]
-----
-public class ExampleGetMemberEventsAndSets {
+To install and start using the tool, follow these steps:
 
-    public static void main(String[] args) {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        Cluster cluster = hazelcastInstance.getCluster();
-        cluster.addMembershipListener( new MembershipListener() {
-            public void memberAdded( MembershipEvent membershipEvent ) {
-                System.out.println( "MemberAdded " + membershipEvent );
-            }
-
-            public void memberRemoved( MembershipEvent membershipEvent ) {
-                System.out.println( "MemberRemoved " + membershipEvent );
-            }
-        } );
-
-        Member localMember  = cluster.getLocalMember();
-        System.out.println ( "my inetAddress= " + localMember.getInetAddress() );
-
-        Set setMembers  = cluster.getMembers();
-        for ( Member member : setMembers ) {
-            System.out.println( "isLocalMember " + member.localMember() );
-            System.out.println( "member.inetaddress " + member.getInetAddress() );
-            System.out.println( "member.port " + member.getPort() );
-        }
-    }
-}
-----
-
-NOTE: See the <<listening-for-member-events, Membership Listener section>>
-for more information on membership events.
-
-==== Managing Cluster and Member States
-
-This section explains the states of Hazelcast clusters and members which
-you can use to allow or restrict the designated cluster/member operations.
-
-===== Cluster States
-
-By changing the state of your cluster, you can allow/restrict several
-cluster operations or change the behavior of those operations.
-You can use the methods `changeClusterState()` and `shutdown()` which are in the
-link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface^] to change your cluster's state.
-
-Hazelcast clusters have the following states:
-
-* **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
-* **`NO_MIGRATION`**:
-** In this state, there is no data movement between Hazelcast members.
-It means that when there is a member crash or a new member in the cluster,
-there won’t be any partition rebalancing, partition backup replica creation
-or migration.
+. Run the following commands in the extracted IMDG directory:
 +
-Please note that promoting a backup replica to the primary replica is a
-local operation and does not involve any data movement between cluster members.
-Hence, backup promotions occur on member crashes when the cluster is in this mode.
-Upon a member crash, all other members that keep backup replicas of the crashed member
-promote backup replicas to the primary replica role and restore availability.
-However, there is a limitation here. Since the maximum number of backups is 6,
-if you lose 7 members in your large cluster, you can lose availability of the
-partitions whose primary and backup replicas are mapped to those crashed members.
+```
+$ cd hazelcast-command-line/distro
+$ make
+```
+. When the `make` command finishes, run the following commands:
 +
-** The cluster accepts new members.
-** All other operations are allowed.
-** You cannot change the state of a cluster to `NO_MIGRATION` when
-migration/replication tasks are being performed.
-** When you want to add multiple new members to the cluster, you can first
-change the cluster state to `NO_MIGRATION`, then start the new members.
-Once all of them join to the cluster, you can change the cluster state back to `ACTIVE`.
-Then, the cluster rebalances partition replica distribution at once.
-* **`FROZEN`**:
-** In this state, the partition table is frozen and partition assignments are not performed.
-** The cluster does not accept new members.
-** If a member leaves, it can join back. Its partition assignments
-(both primary and backup replicas) remain the same until either it joins back or
-the cluster state is changed to `ACTIVE`. When it joins back to the cluster,
-it owns all previous partition assignments as it was. On the other hand,
-when the cluster state changes to `ACTIVE`, re-partitioning starts and
-unassigned partition replicas are assigned to the active members.
-** All other operations in the cluster, except migration, continue without restrictions.
-** You cannot change the state of a cluster to `FROZEN` when migration/replication tasks are being performed.
-** You can make use of `FROZEN` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
-feature. You can change the cluster state to `FROZEN`, then restart some of your members using
-the Hot Restart feature. The data on the restarting members will not be accessible but
-you will be able to access to the data that is stored in other members.
-Basically, `FROZEN` cluster state allows you do perform maintenance on your members with degrading availability partially.
-* **`PASSIVE`**:
-** In this state, the partition table is frozen and partition assignments are not performed.
-** The cluster does not accept new members.
-** If a member leaves while the cluster is in this state, the member will be
-removed from the partition table if cluster state moves back to `ACTIVE`.
-** This state rejects ALL operations immediately EXCEPT the read-only operations like
-`map.get()` and `cache.get()`, replication and cluster heartbeat tasks.
-** You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
-** You can make use of `PASSIVE` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
-feature. See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html#shutdown--[Cluster Shutdown API^]
-for more info.
-* **`IN_TRANSITION`**:
-** This state shows that the state of the cluster is in transition.
-** You cannot set your cluster's state as `IN_TRANSITION` explicitly.
-** It is a temporary and intermediate state.
-** During this state, your cluster does not accept new members and migration/replication tasks are paused.
+```
+$ cd build/dist/bin
+$ ./hz
+```
 
-NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the cluster,
-it throws an exception immediately (it is not retried).
+You are now ready to use the tool.
 
-The following snippet is from the `Cluster` interface showing
-the methods used to manage your cluster's states.
+* **Starting a standalone Hazelcast member with the default configuration:**
++
+`$ ./hz start`
+*
+* **Starting Hazelcast Management Center:**
++
+`$ ./hz mc start`
 
-[source,java]
-----
-public interface Cluster {
-    ClusterState getClusterState();
-    void changeClusterState(ClusterState newState);
-    void changeClusterState(ClusterState newState, TransactionOptions transactionOptions);
-    void shutdown();
-    void shutdown(TransactionOptions transactionOptions);
-----
-
-See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface Javadoc^] for information on these methods.
-
-===== Cluster Member States
-
-Hazelcast cluster members have the following states:
-
-* **`ACTIVE`**: This is the initial member state. The member can execute and process
-all operations. When the state of the cluster is `ACTIVE` or `FROZEN`, the members are in the `ACTIVE` state.
-* **`PASSIVE`**: In this state, member rejects all operations EXCEPT the read-only ones,
-replication and migration operations, heartbeat operations and the join operations as explained
-in the <<cluster-states, Cluster States section>> above.
-A member can go into this state when either of the following happens:
-. Until the member's shutdown process is completed after the method `Node.shutdown(boolean)` is called.
-Note that, when the shutdown process is completed, member's state changes to `SHUT_DOWN`.
-. Cluster's state is changed to `PASSIVE` using the method `changeClusterState()`.
-* **`SHUT_DOWN`**: A member goes into this state when the member's shutdown process is completed.
-The member in this state rejects all operations and invocations. A member in this state cannot be restarted.
+Please see the tool's link:https://github.com/hazelcast/hazelcast-command-line[documentation^]
+for all the other usages.
 
 [[using-the-script-cluster-sh]]
 ==== Using the cluster.sh Script
@@ -535,6 +427,153 @@ cluster.promoteLocalLiteMember();
 ----
 
 NOTE: A data member cannot be downgraded to a lite member back.
+
+
+==== Getting Member Events and Member Sets
+
+Hazelcast allows you to register for membership events so that you are notified when
+members are added or removed. You can also get the set of cluster members.
+
+The following example code does the above: registers for member events,
+notifies when members are added or removed and gets the set of cluster members.
+
+[source,java]
+----
+public class ExampleGetMemberEventsAndSets {
+
+    public static void main(String[] args) {
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        Cluster cluster = hazelcastInstance.getCluster();
+        cluster.addMembershipListener( new MembershipListener() {
+            public void memberAdded( MembershipEvent membershipEvent ) {
+                System.out.println( "MemberAdded " + membershipEvent );
+            }
+
+            public void memberRemoved( MembershipEvent membershipEvent ) {
+                System.out.println( "MemberRemoved " + membershipEvent );
+            }
+        } );
+
+        Member localMember  = cluster.getLocalMember();
+        System.out.println ( "my inetAddress= " + localMember.getInetAddress() );
+
+        Set setMembers  = cluster.getMembers();
+        for ( Member member : setMembers ) {
+            System.out.println( "isLocalMember " + member.localMember() );
+            System.out.println( "member.inetaddress " + member.getInetAddress() );
+            System.out.println( "member.port " + member.getPort() );
+        }
+    }
+}
+----
+
+NOTE: See the <<listening-for-member-events, Membership Listener section>>
+for more information on membership events.
+
+==== Managing Cluster and Member States
+
+This section explains the states of Hazelcast clusters and members which
+you can use to allow or restrict the designated cluster/member operations.
+
+===== Cluster States
+
+By changing the state of your cluster, you can allow/restrict several
+cluster operations or change the behavior of those operations.
+You can use the methods `changeClusterState()` and `shutdown()` which are in the
+link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface^] to change your cluster's state.
+
+Hazelcast clusters have the following states:
+
+* **`ACTIVE`**: This is the default cluster state. Cluster continues to operate without restrictions.
+* **`NO_MIGRATION`**:
+** In this state, there is no data movement between Hazelcast members.
+It means that when there is a member crash or a new member in the cluster,
+there won’t be any partition rebalancing, partition backup replica creation
+or migration.
++
+Please note that promoting a backup replica to the primary replica is a
+local operation and does not involve any data movement between cluster members.
+Hence, backup promotions occur on member crashes when the cluster is in this mode.
+Upon a member crash, all other members that keep backup replicas of the crashed member
+promote backup replicas to the primary replica role and restore availability.
+However, there is a limitation here. Since the maximum number of backups is 6,
+if you lose 7 members in your large cluster, you can lose availability of the
+partitions whose primary and backup replicas are mapped to those crashed members.
++
+** The cluster accepts new members.
+** All other operations are allowed.
+** You cannot change the state of a cluster to `NO_MIGRATION` when
+migration/replication tasks are being performed.
+** When you want to add multiple new members to the cluster, you can first
+change the cluster state to `NO_MIGRATION`, then start the new members.
+Once all of them join to the cluster, you can change the cluster state back to `ACTIVE`.
+Then, the cluster rebalances partition replica distribution at once.
+* **`FROZEN`**:
+** In this state, the partition table is frozen and partition assignments are not performed.
+** The cluster does not accept new members.
+** If a member leaves, it can join back. Its partition assignments
+(both primary and backup replicas) remain the same until either it joins back or
+the cluster state is changed to `ACTIVE`. When it joins back to the cluster,
+it owns all previous partition assignments as it was. On the other hand,
+when the cluster state changes to `ACTIVE`, re-partitioning starts and
+unassigned partition replicas are assigned to the active members.
+** All other operations in the cluster, except migration, continue without restrictions.
+** You cannot change the state of a cluster to `FROZEN` when migration/replication tasks are being performed.
+** You can make use of `FROZEN` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
+feature. You can change the cluster state to `FROZEN`, then restart some of your members using
+the Hot Restart feature. The data on the restarting members will not be accessible but
+you will be able to access to the data that is stored in other members.
+Basically, `FROZEN` cluster state allows you do perform maintenance on your members with degrading availability partially.
+* **`PASSIVE`**:
+** In this state, the partition table is frozen and partition assignments are not performed.
+** The cluster does not accept new members.
+** If a member leaves while the cluster is in this state, the member will be
+removed from the partition table if cluster state moves back to `ACTIVE`.
+** This state rejects ALL operations immediately EXCEPT the read-only operations like
+`map.get()` and `cache.get()`, replication and cluster heartbeat tasks.
+** You cannot change the state of a cluster to `PASSIVE` when migration/replication tasks are being performed.
+** You can make use of `PASSIVE` state along with the <<hot-restart-persistence, Hot Restart Persistence>>
+feature. See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html#shutdown--[Cluster Shutdown API^]
+for more info.
+* **`IN_TRANSITION`**:
+** This state shows that the state of the cluster is in transition.
+** You cannot set your cluster's state as `IN_TRANSITION` explicitly.
+** It is a temporary and intermediate state.
+** During this state, your cluster does not accept new members and migration/replication tasks are paused.
+
+NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the cluster,
+it throws an exception immediately (it is not retried).
+
+The following snippet is from the `Cluster` interface showing
+the methods used to manage your cluster's states.
+
+[source,java]
+----
+public interface Cluster {
+    ClusterState getClusterState();
+    void changeClusterState(ClusterState newState);
+    void changeClusterState(ClusterState newState, TransactionOptions transactionOptions);
+    void shutdown();
+    void shutdown(TransactionOptions transactionOptions);
+----
+
+See the link:{docBaseUrl}/javadoc/com/hazelcast/cluster/Cluster.html[Cluster interface Javadoc^] for information on these methods.
+
+===== Cluster Member States
+
+Hazelcast cluster members have the following states:
+
+* **`ACTIVE`**: This is the initial member state. The member can execute and process
+all operations. When the state of the cluster is `ACTIVE` or `FROZEN`, the members are in the `ACTIVE` state.
+* **`PASSIVE`**: In this state, member rejects all operations EXCEPT the read-only ones,
+replication and migration operations, heartbeat operations and the join operations as explained
+in the <<cluster-states, Cluster States section>> above.
+A member can go into this state when either of the following happens:
+. Until the member's shutdown process is completed after the method `Node.shutdown(boolean)` is called.
+Note that, when the shutdown process is completed, member's state changes to `SHUT_DOWN`.
+. Cluster's state is changed to `PASSIVE` using the method `changeClusterState()`.
+* **`SHUT_DOWN`**: A member goes into this state when the member's shutdown process is completed.
+The member in this state rejects all operations and invocations. A member in this state cannot be restarted.
 
 ==== Defining Member Attributes
 
