@@ -255,8 +255,8 @@ every allocator thread for the entire lifetime of the Hazelcast instance.
 Hazelcast iterates over the configured persistent memory directories and
 makes sure every allocation is done in a different directory then the last.
 This is a best-effort attempt to distribute the allocations evenly on the
-persistent memory DIMMs, which is important from utilization and performance
-point of view as well. This is the default allocation strategy.
+persistent memory DIMMs, which is important from the utilization and
+performance point of view as well. This is the default allocation strategy.
 
 ====== NUMA-aware Allocation Strategy
 
@@ -285,12 +285,12 @@ discovered by the `numactl -H` command.
 
 The second requirement for the NUMA-aware strategy is defining the NUMA node
 for every persistent memory directory in the configuration. If both configuration
-is done properly, the threads in the thread groups restricted to run on a single
+are done properly, the threads in the thread groups restricted to run on a single
 NUMA node will use the NUMA-aware allocation strategy, while the rest of threads
 will still use the round-robin strategy. To check which persistent memory is
-attached to which NUMA node the command `ndctl list -v -m fsdax` can be used.
-Please check which mount point represents which PMEM device in the output of
-`ndctl`.
+attached to which NUMA node, the command `ndctl list -v -m fsdax` can be used.
+Please check which mount point represents which persistent memory device in the
+output of `ndctl`.
 
 ===== Allocation Overflowing
 
@@ -317,9 +317,9 @@ impacts the performance of Hazelcast depends on multiple factors. Since
 Hazelcast is a distributed platform, the higher latency of the persistent memory
 modules can easily be hidden by the latency variance of the network and in the
 end, in certain use cases there may be no observable difference in the throughput
-of Hazelcast if its stores its data on persistent memory or on regular memory.
+of Hazelcast if it stores its data on persistent memory or on regular memory.
 Such a use case is caching, where accessing the entries remotely through
-Hazelcast clients results in very similar throughput. Based on our tests with
+Hazelcast clients results in a very similar throughput. Based on our tests with
 Intel(R) Optane(TM) DC persistent memory modules we recommend the Optane modules
 for the caching use case up to 10KB entry size.
 
