@@ -12,47 +12,44 @@ see <<what-is-hazelcast-imdg>>.
 
 === Installing
 
-As a prerequisite, make sure you have link:https://www.oracle.com/java/technologies/javase-downloads.html[Java^]
-installed on your system. If you prefer to use Docker to start Hazelcast members, make sure it is also installed;
-see its link:https://www.docker.com/products/docker-desktop[download^] page.
+The fastest way how to get down with Hazelcast IMDG is through
+our link:https://github.com/hazelcast/hazelcast-command-line[Command Line Interface (CLI)^].
 
-To download and install Hazelcast:
+[source,bash,subs="attributes+"]
+----
+$ brew tap hazelcast/homebrew-hazelcast
+$ brew install hazelcast
+----
 
-* go to the link:https://hazelcast.org/imdg/download/[Downloads^] page
-* download your preferred package (`TAR` or `ZIP`) under the "Server" column
-* extract the downloaded package into a directory.
+Currently, the CLI way is meant for development purposes, not for a production usage.
+For production or if you prefer other ways, take a look at <<installing-hazelcast-imdg>>.
 
 === Creating a Cluster
 
-You can use the following command on your terminal/command line
-to start a standalone Hazelcast member while you are in the extracted directory:
+Use the following command on your terminal/command line
+to start a standalone Hazelcast member:
 
-[source,shell,indent=0,subs="verbatim,attributes",role="primary"]
-.Linux
+[source,bash,subs="attributes+"]
 ----
-sh bin/start.sh
-----
-
-[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
-.Windows
-----
-bin/start.bat
-----
-
-[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
-.Docker
-----
-docker run hazelcast/hazelcast:$HAZELCAST_VERSION
+$ hz start
 ----
 
 Now you have a 1-member cluster. To add one more member to the cluster,
 open another terminal/command line and rerun the above command. The members
-discover each other automatically and form a 2-member cluster. Note that these
-members are started with the default configuration, i.e., `hazelcast.xml` located
-at the `bin` directory.
+discover each other automatically and form a 2-member cluster. You should see
+happening it with log output in the command line like:
 
-NOTE: You can also use Hazelcast's <<hazelcast-command-line-tool, command line tool>>
-to start members.
+[source,bash,subs="attributes+"]
+----
+Members {size:2, ver:2} [
+    Member [127.0.0.1]:5701 - e40081de-056a-4ae5-8ffe-632caf8a6cf1 this
+    Member [127.0.0.1]:5702 - 93e82109-16bf-4b16-9c87-f4a6d0873080
+]
+----
+
+Note that these members are started with the default configuration.
+The location of the `hazelcast.xml` is printed on the first line of
+the output of the above command.
 
 === Your First Client Application
 
@@ -66,7 +63,9 @@ same machine for simplicity.
 [source,java,indent=0,subs="verbatim,attributes",role="primary"]
 .Java
 ----
-//Installation notes: There is no need for a separate installation.
+// Installation notes: You have to have Hazelcast Java Client on the classpath.
+// The simplest way of doing it is to put `hazelcast-all` JAR
+// on the classpath, e.g. via Maven. See "Installation" chapter for details.
 
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
@@ -226,27 +225,11 @@ let's connect Management Center to the cluster. Note that having client applicat
 is not a must to use the Management Center; you can connect it to your cluster that
 does not have any clients.
 
-Management Center comes with the Hazelcast IMDG download package.
+Use the following command to start the Management Center:
 
-Use the following scripts to start the Management Center service first. In case you are
-using Docker, run the related command shown below.
-
-[source,shell,indent=0,subs="verbatim,attributes",role="primary"]
-.Linux
+[source,bash,subs="attributes+"]
 ----
-management-center/start.sh
-----
-
-[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
-.Windows
-----
-management-center/start.bat
-----
-
-[source,shell,indent=0,subs="verbatim,attributes",role="secondary"]
-.Docker
-----
-docker run -p 8080:8080 hazelcast/management-center
+hz mc start
 ----
 
 Then, open your preferred web browser to `\http://localhost:8080` and
@@ -258,6 +241,14 @@ of cluster rather than the default of localhost.
 For comprehensive information on Management Center, see its
 link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.html[documentation^].
 
-NOTE: You can also use Hazelcast's <<hazelcast-command-line-tool, command line tool>>
-to start Management Center.
+=== What's next?
 
+You're done! You have successfully started Hazelcast cluster, inserted data to it via clients and monitored
+everything through the Management Center. Where to go next?
+
+* Perhaps you want to form a cluster not just on your local machine. Take a look at <<setting-up-clusters>>.
+* How about starting with our most used distributed datastructure - IMap? Learn its power in <<map>>.
+* If you're not sure where to configure all these wonderful things don't miss <<understanding-configuration>>.
+
+Lastly, don't hesitate to reach out for help via link:https://slack.hazelcast.com/[Slack^],
+link:https://groups.google.com/forum/#!forum/hazelcast[Mail Group^] or link:http://www.stackoverflow.com[StackOverflow^].
