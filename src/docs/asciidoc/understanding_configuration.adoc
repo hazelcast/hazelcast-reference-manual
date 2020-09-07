@@ -650,6 +650,31 @@ In order to make Hazelcast recognize environment variables as valid config entri
 * Dashes (`-`) should be removed
 * Variable names should be in upper case
 
+For example, the following configuration:
+
+[source,yaml]
+----
+hazelcast:
+  cluster-name: dev
+  network:
+    port:
+      auto-increment: true
+      port-count: 100
+      port: 5701
+    join:
+      auto-detection:
+        enabled: true
+----
+
+Would be represented as a set of following environment variables:
+[source]
+----
+export HZ_CLUSTERNAME=dev
+export HZ_NETWORK_PORT_AUTOINCREMENT=true
+export HZ_NETWORK_PORT_PORTCOUNT=100
+export HZ_NETWORK_PORT_PORT=5701
+export HZ_NETWORK_JOIN_AUTODETECTION_ENABLED=true
+----
 
 In order to make Hazelcast recognize system properties as valid config entries, they need to obey a few simple rules:
 
@@ -657,9 +682,35 @@ In order to make Hazelcast recognize system properties as valid config entries, 
 * A new configuration level should be introduced with an underscore (`_`)
 * Variable names should be in lower case
 
-In both cases, the entry structure needs to reflect Hazelcast YAML configuration representation.
+For example, the following configuration:
 
-Keep in mind that it's not possible to represent configuration entries represented as YAML sequences.
+[source,yaml]
+----
+hazelcast:
+  cluster-name: dev
+  network:
+    port:
+      auto-increment: true
+      port-count: 100
+      port: 5701
+    join:
+      auto-detection:
+        enabled: true
+----
+
+Would be represented as a set of following system properties:
+[source]
+----
+hz.cluster-name=dev
+hz.network.port.auto-increment=true
+hz.network.port_port-count=100
+hz.network.port_port=5701
+hz.network.join-auto-detection-enabled=true
+----
+
+In both cases, the entry structure needs to follow Hazelcast YAML configuration representation.
+
+WARNING: Keep in mind that it's not possible to represent configuration entries represented as YAML sequences.
 
 
 [[dynamically-adding-data-structure-configuration-on-a-cluster]]
