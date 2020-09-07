@@ -253,10 +253,10 @@ every allocator thread for the entire lifetime of the Hazelcast instance.
 ====== Round-robin Allocation Strategy
 
 Hazelcast iterates over the configured persistent memory directories and
-makes sure every allocation is done in a different directory then the last.
+makes sure every allocation is done in a different directory than the last.
 This is a best-effort attempt to distribute the allocations evenly on the
 persistent memory DIMMs, which is important from the utilization and
-performance point of view as well. This is the default allocation strategy.
+performance points of view as well. This is the default allocation strategy.
 
 ====== NUMA-aware Allocation Strategy
 
@@ -276,15 +276,19 @@ the thread can be scheduled only on the CPUs of a single NUMA node. Starting
 with Hazelcast 4.1 this can be done with thread group granularity. For the
 detailed explanation please refer to the thread affinity documentation. What
 makes the biggest impact on performance is enabling the NUMA-aware allocation
-strategy for the operation threads. An example configuration for that:
-`-Dhazelcast.operation.thread.affinity=[0-9,20-29]:20,[10-19,30-39]:20`. This
-configuration restricts all 40 operation threads to run on a single NUMA node
-on a dual-socket 40 core system, where node0's cpu set is `[0-9,20-29]` and
-node1's cpu set is `[10-19,30-39]`. The NUMA nodes and their CPU sets can be
+strategy for the operation threads. An example configuration for that is as follows:
+
+```
+-Dhazelcast.operation.thread.affinity=[0-9,20-29]:20,[10-19,30-39]:20
+````
+
+The above example configuration restricts all 40 operation threads to run on a single NUMA node
+on a dual-socket 40 core system, where node0's CPU set is `[0-9,20-29]` and
+node1's CPU set is `[10-19,30-39]`. The NUMA nodes and their CPU sets can be
 discovered by the `numactl -H` command.
 
 The second requirement for the NUMA-aware strategy is defining the NUMA node
-for every persistent memory directory in the configuration. If both configuration
+for every persistent memory directory in the configuration. If both configurations
 are done properly, the threads in the thread groups restricted to run on a single
 NUMA node will use the NUMA-aware allocation strategy, while the rest of threads
 will still use the round-robin strategy. To check which persistent memory is
