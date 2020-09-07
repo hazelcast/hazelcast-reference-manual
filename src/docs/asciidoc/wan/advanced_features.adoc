@@ -357,61 +357,45 @@ See the REST call details <<synchronizing-the-clusters, here>>.
 
 Since Merkle trees are built for each partition and each map, the memory overhead of the trees with high entry count and deep
 trees can be significant. The trees are maintained on-heap, therefore - besides the memory consumption - garbage collection could be another
-concern. Make sure the configuration is tested with realistic data size before deployed in production.
+concern.
 
 The table below shows a few examples for what the memory overhead could be.
 
-.Merkle trees memory overhead for a member
+.Merkle trees memory overhead for a member, for one map
 |===
-|Entries Stored |Partitions Owned |Entries per Leaf |Depth |Memory Overhead
+|Partitions Owned |Depth |Memory Overhead
 
-|1M
 |271
-|7
+|8
+|0.27 MB
+
+|271
 |10
-|57 MB
+|1 MB
 
-|1M
 |271
-|1
 |13
-|97 MB
+|8 MB
 
-|10M
 |271
-|72
-|10
-|412 MB
+|16
+|68 MB
 
-|10M
-|271
-|9
+|5009
+|8
+|5 MB
+
+|5009
+|10
+|20 MB
+
+|5009
 |13
-|453 MB
+|157 MB
 
-|10M
 |5009
-|4
-|10
-|577 MB
-
-|10M
-|5009
-|1
-|12
-|900 MB
-
-|25M
-|5009
-|10
-|10
-|1986 MB
-
-|25M
-|5009
-|1
-|13
-|2740 MB
+|16
+|1252 MB
 
 |===
 
@@ -438,7 +422,7 @@ efficiency of the Merkle tree based synchronization compared to the default sync
 
 |10M
 |11
-|685 MB
+|39 MB
 |2
 |5M
 |10M
@@ -446,7 +430,7 @@ efficiency of the Merkle tree based synchronization compared to the default sync
 
 |10M
 |12
-|900 MB
+|78 MB
 |1
 |5M
 |5M
@@ -454,7 +438,7 @@ efficiency of the Merkle tree based synchronization compared to the default sync
 
 |10M
 |10
-|577 MB
+|20 MB
 |4
 |1M
 |4M
@@ -462,7 +446,7 @@ efficiency of the Merkle tree based synchronization compared to the default sync
 
 |10M
 |8
-|497 MB
+|5 MB
 |16
 |10K
 |160K
@@ -470,7 +454,7 @@ efficiency of the Merkle tree based synchronization compared to the default sync
 
 |10M
 |12
-|900 MB
+|78 MB
 |1
 |10K
 |10K
