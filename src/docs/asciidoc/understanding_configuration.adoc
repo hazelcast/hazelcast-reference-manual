@@ -10,7 +10,9 @@ You can configure Hazelcast using one or mix of the following options:
 * Programmatic way
 * Using Hazelcast system properties
 * Within the Spring context
+* Overriding configuration with environment variables or system properties
 * Dynamically adding configuration on a running cluster
+
 
 [[configuring-declaratively]]
 === Configuring Declaratively
@@ -604,6 +606,60 @@ example Hazelcast configuration when integrated with Spring:
 
 See the <<integration-with-spring, Integration with Spring section>> for
 more information on Hazelcast-Spring integration.
+
+[[overriding-configuration-with-environment-variables-or-system-properties]]
+=== Overriding Configuration with environment variables or system properties
+
+Whenever you want to override the configuration,
+you can achieve this by using system properties or environment variables.
+
+For example, if you just want to override a `cluster-name`, you'd need to craft an XML/YAML configuration file:
+[source,xml]
+----
+<hazelcast>
+    <cluster-name name="dev"/>
+</hazelcast>
+----
+
+[source,yaml]
+----
+hazelcast:
+  cluster-name: dev
+----
+
+The same could be achieved by setting a single environment variable:
+[source]
+----
+export HZ_CLUSTERNAME=dev
+----
+
+or system property:
+[source]
+----
+java -Dhz.cluster-name=value
+----
+
+
+==== Conversion Rules
+
+In order to make Hazelcast recognize environment variables as valid config entries, they need to obey a few simple rules:
+
+* Each config entry needs to start with `HZ_` or `HZ_CLIENT_`
+* A new configuration level should be introduced with an underscore (`_`)
+* Dashes (`-`) should be removed
+* Variable names should be in upper case
+
+
+In order to make Hazelcast recognize system properties as valid config entries, they need to obey a few simple rules:
+
+* Each config entry needs to start with `hz.` or `hz-client.`
+* A new configuration level should be introduced with an underscore (`_`)
+* Variable names should be in lower case
+
+In both cases, the entry structure needs to reflect Hazelcast YAML configuration representation.
+
+Keep in mind that it's not possible to represent configuration entries represented as YAML sequences.
+
 
 [[dynamically-adding-data-structure-configuration-on-a-cluster]]
 === Dynamically Adding Data Structure Configuration on a Cluster
