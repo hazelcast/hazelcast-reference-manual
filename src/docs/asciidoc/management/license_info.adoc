@@ -1,0 +1,140 @@
+[[license-info]]
+==== License Information
+
+License information is available through the following Hazelcast APIs.
+
+===== JMX
+
+The MBean `HazelcastInstance.LicenseInfo` holds all the relative license
+details and can be accessed through Hazelcast's JMX port (if enabled). The
+following parameters represent these details:
+
+* `maxNodeCountAllowed`: Maximum members allowed to form a cluster under
+the current license.
+* `expiryDate`: Expiration date of the current license.
+* `typeCode`: Type code of the current license.
+* `type`: Type of the current license.
+* `ownerEmail`: Email of the current license's owner.
+* `companyName`: Company name on the current license.
+
+Following is the list of license ``type``s and ``typeCode``s:
+
+```
+MANAGEMENT_CENTER(1, "Management Center"),
+ENTERPRISE(0, "Enterprise"),
+ENTERPRISE_SECURITY_ONLY(2, "Enterprise only with security"),
+ENTERPRISE_HD(3, "Enterprise HD"),
+CUSTOM(4, "Custom");
+```
+
+===== REST
+
+You can access the license details by issuing a `GET` request through the
+REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using the
+REST Endpoint Groups section>>) on the `/license` resource, as shown below.
+
+```
+curl -v http://localhost:5701/hazelcast/rest/license
+```
+
+Its output is similar to the following:
+
+```
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 5701 (#0)
+> GET /hazelcast/rest/license HTTP/1.1
+> Host: localhost:5701
+> User-Agent: curl/7.58.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 165
+<
+{"licenseInfo":{"expiryDate":4090168799999,"maxNodeCount":99,"type":3,"companyName":null,"ownerEmail":null,"keyHash":"OsLh4O6vqDuKEq8lOANQuuAaRnmDfJfRPrFSEhA7T3Y="}}
+```
+
+[[rest-update-license]]To update the license of a running cluster, you can issue a `POST`
+request through the REST API (if enabled; see the <<using-the-rest-endpoint-groups, Using
+the REST Endpoint Groups section>>) on the `/license` as shown below:
+
+```
+curl --data "${CLUSTERNAME}&${PASSWORD}&${LICENSE}" http://localhost:5001/hazelcast/rest/license
+```
+
+NOTE: The request parameters must be properly URL-encoded as described in the <<rest-client, REST Client section>>.
+
+The above command updates the license on all running Hazelcast members of the cluster.
+If successful, the response looks as follows:
+
+```
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 5001 (#0)
+> POST /hazelcast/rest/license HTTP/1.1
+> Host: 127.0.0.1:5001
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Length: 164
+> Content-Type: application/x-www-form-urlencoded
+>
+* upload completely sent off: 164 out of 164 bytes
+< HTTP/1.1 200 OK
+< Content-Type: application/javascript
+< Content-Length: 364
+<
+* Connection #0 to host 127.0.0.1 left intact
+{"status":"success","licenseInfo":{"expiryDate":1560380399161,"maxNodeCount":10,
+"type":-1,"companyName":"ExampleCompany","ownerEmail":"info@example.com",
+"keyHash":"ml/u6waTNQ+T4EWxnDRykJpwBmaV9uj+skZzv0SzDhs="},
+"message":"License updated at run time - please make sure to update the license
+in the persistent configuration to avoid losing the changes on restart."}
+```
+
+As the message in the above example indicates, the license is updated only at runtime.
+The persistent configuration of each member needs to be updated manually to ensure that
+the license change is not lost on restart. The same message is logged as a warning in
+each member's log.
+
+It is only possible to update to a license that expires at the same time or after
+the current license. The new license must allow the exact same list of features and
+the same number of members.
+
+If, for any reason, updating the license fails on some members (member does not respond,
+license is not compatible, etc.), the whole operation fails, leaving the cluster in
+a potentially inconsistent state (some members have been switched to the new license
+while some have not). It is up to you to resolve this situation manually.
+
+===== Logs
+
+Besides the above approaches (JMX and REST) to access the license details,
+Hazelcast also starts to log a license information banner into the log files
+when the license expiration is approaching.
+
+During the last two months prior to the expiration, this license information
+banner is logged daily, as a reminder to renew your license to avoid any
+interruptions. Once the expiration is due to a month, the frequency of
+logging this banner becomes hourly (instead of daily). Lastly, when the
+expiration is due in a week, this banner is printed every 30 minutes.
+
+NOTE: Similar alerts are also present on the Hazelcast Management Center.
+
+The banner has the following format:
+
+```
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ WARNING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+HAZELCAST LICENSE WILL EXPIRE IN 29 DAYS.
+Your Hazelcast cluster will stop working after this time.
+
+Your license holder is customer@example-company.com, you should have them contact
+our license renewal department, urgently on info@hazelcast.com
+or call us on +1 (650) 521-5453
+
+Please quote license id CUSTOM_TEST_KEY
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+```
+
+WARNING: Please pay attention to the license warnings to prevent any possible
+interruptions in the operation of your Hazelcast applications.
