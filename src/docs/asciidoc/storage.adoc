@@ -100,7 +100,7 @@ Memory for tracking the used and available memory blocks. It is used only by
 the **POOLED** memory allocator. Its default value is **12.5**. Please note that
 when the memory runs out, you get a `NativeOutOfMemoryException`;  if your store
 has a large number of entries, you should consider increasing this percentage.
-* **persistent-memory-directory:** See the <<using-persistent-memory, Using Persistent Memory section>> below.
+* **persistent-memory:** See the <<using-persistent-memory, Using Persistent Memory section>> below.
 
 The following is the programmatic configuration example.
 
@@ -121,7 +121,12 @@ The following is the declarative configuration example.
         <min-block-size>16</min-block-size>
         <page-size>4194304</page-size>
         <metadata-space-percentage>12.5</metadata-space-percentage>
-        <persistent-memory-directory>/mnt/persmemory/data</persistent-memory-directory>
+        <persistent-memory>
+            <directories>
+                <directory numa-node="0">/mnt/pmem0</directory>
+                <directory numa-node="1">/mnt/pmem1</directory>
+            </directories>
+        </persistent-memory>
     </native-memory>
     ...
 </hazelcast>
@@ -140,7 +145,12 @@ hazelcast:
     min-block-size: 16
     page-size: 4194304
     metadata-space-percentage: 12.5
-    persistent-memory-directory: /mnt/persmemory/data
+    persistent-memory:
+        directories:
+            - directory: /mnt/pmem0
+              numa-node: 0
+            - directory: /mnt/pmem1
+              numa-node: 1
 ----
 
 NOTE: You can check whether there is enough free physical memory for the
@@ -151,23 +161,24 @@ system properties.
 [[using-persistent-memory]]
 ==== Using Persistent Memory
 
-To support larger and more affordable storage
-for data structures like IMap, ICache and Near Cache,
-Hazelcast provides integration with persistent memory technologies
-like Intel(R) Optane(TM) DC. To benefit from the technology
-you do not need to make any changes in your application code.
+To support larger and more affordable storage for data structures like IMap,
+ICache and Near Cache, Hazelcast provides integration with persistent memory
+technologies like Intel(R) Optane(TM) DC. To benefit from the technology you
+do not need to make any changes in your application code.
 Only a few configuration changes are required.
 
-The optional `persistent-memory-directory` element under the `native-memory`
-configuration block defines where the persistent memory is mounted.
-This option enables usage of the persistent memory on the cluster member
-so that all data structures backed by High-Density Memory Store use
-the specified mounting directory to store data.
-If the `persistent-memory-directory` element is not configured, standard RAM is used.
+The optional `persistent-memory` element under the `native-memory`
+configuration block defines the directories where the persistent memory is mounted.
+This option enables usage of the persistent memory on the cluster member so
+that all data structures backed by High-Density Memory Store use the specified
+mounting directories to store data. If no persistent memory directory is configured,
+standard RAM is used.
 
 The following snippets demonstrate how to configure the persistent memory as
-High-Density Memory Store in Hazelcast. The directory `/mnt/optane/data` is used
-as an example for Intel(R) Optane(TM) DC.
+High-Density Memory Store in Hazelcast. The example assumes dual-socket machine,
+both sockets are populated with Intel(R) Optane(TM) DC persistent memory DIMMs that
+are configured in interleaved mode. The two sockets' DIMMs are mounted as `/mnt/pmem0`
+and `/mnt/pmem1` and are known as NUMA node0 and node1 respectively.
 
 **Declarative Configuration:**
 
@@ -177,8 +188,13 @@ as an example for Intel(R) Optane(TM) DC.
 <hazelcast>
     ...
     <native-memory allocator-type="POOLED" enabled="true">
-      <size unit="GIGABYTES" value="100" />
-      <persistent-memory-directory>/mnt/optane/data</persistent-memory-directory>
+        <size unit="GIGABYTES" value="100" />
+        <persistent-memory>
+            <directories>
+                <directory numa-node="0">/mnt/pmem0</directory>
+                <directory numa-node="1">/mnt/pmem1</directory>
+            </directories>
+        </persistent-memory>
     </native-memory>
     ...
 </hazelcast>
@@ -194,7 +210,12 @@ hazelcast:
     size:
       unit: GIGABYTES
       value: 100
-    persistent-memory-directory: /mnt/optane/data
+    persistent-memory:
+      directories:
+        - directory: /mnt/pmem0
+          numa-node: 0
+        - directory: /mnt/pmem1
+          numa-node: 1
 ----
 
 **Programmatic Configuration:**
@@ -205,20 +226,110 @@ Config config = new Config();
 NativeMemoryConfig memoryConfig = new NativeMemoryConfig()
                 .setEnabled(true)
                 .setSize(new MemorySize(100, MemoryUnit.GIGABYTES))
-                .setAllocatorType(POOLED)
-                .setPersistentMemoryDirectory("/mnt/optane/data");
+                .setAllocatorType(POOLED);
+
+PersistentMemoryConfig pmemConfig = memoryConfig.getPersistentMemoryConfig()
+                .addDirectoryConfig(new PersistentMemoryDirectoryConfig("/mnt/pmem0", 0))
+                .addDirectoryConfig(new PersistentMemoryDirectoryConfig("/mnt/pmem1", 1));
+
 config.setNativeMemoryConfig(memoryConfig);
 ----
 
-NOTE: Note that integration with Intel(R) Optane(TM) DC
-is supported on Linux operating system and it is for
-Optane DIMMs (not SSDs).
+NOTE: Note that integration with Intel(R) Optane(TM) DC is supported on Linux
+operating system and it is for Optane DIMMs (not SSDs).
 
-NOTE: To achieve the best performance using
-Intel(R) Optane(TM) DC persistent memory, we recommend to
-use it for IMap, ICache and Near Cache data structures
-with relatively small values up to 1 KB. In this case,
-the performance is similar to that of standard RAM. 
+===== Allocation Strategies
+
+Since on multi-socket machines there could be multiple persistent memory
+mount points, the memory allocations need to follow an allocation strategy.
+Starting with 4.1, Hazelcast supports two allocation strategies:
+
+* Round-robin allocation strategy
+* NUMA-aware allocation strategy
+
+Hazelcast's memory allocator chooses and statically caches one of them for
+every allocator thread for the entire lifetime of the Hazelcast instance.
+
+====== Round-robin Allocation Strategy
+
+Hazelcast iterates over the configured persistent memory directories and
+makes sure every allocation is done in a different directory then the last.
+This is a best-effort attempt to distribute the allocations evenly on the
+persistent memory DIMMs, which is important from the utilization and
+performance point of view as well. This is the default allocation strategy.
+
+====== NUMA-aware Allocation Strategy
+
+The persistent memory modules are mounted in the memory slots just like the
+regular memory modules and sharing the same memory bus. Therefore, the same
+NUMA locality concerns apply to the persistent memory that apply to regular
+memory. This means accessing the persistent memory modules attached to the
+socket on which the current thread runs is cheaper than accessing the
+persistent memory modules attached to a different socket. These are typically
+referenced as NUMA-local and NUMA-remote memories. To achieve the best
+possible performance, Hazelcast implements a NUMA-aware  allocation strategy
+to ensure all persistent memory accesses are local, if certain conditions hold.
+
+To enable this allocation strategy for a certain thread, the thread has to be
+bounded to a single NUMA node, which means the kernel's scheduler makes sure
+the thread can be scheduled only on the CPUs of a single NUMA node. Starting
+with Hazelcast 4.1 this can be done with thread group granularity. For the
+detailed explanation please refer to the thread affinity documentation. What
+makes the biggest impact on performance is enabling the NUMA-aware allocation
+strategy for the operation threads. An example configuration for that:
+`-Dhazelcast.operation.thread.affinity=[0-9,20-29]:20,[10-19,30-39]:20`. This
+configuration restricts all 40 operation threads to run on a single NUMA node
+on a dual-socket 40 core system, where node0's cpu set is `[0-9,20-29]` and
+node1's cpu set is `[10-19,30-39]`. The NUMA nodes and their CPU sets can be
+discovered by the `numactl -H` command.
+
+The second requirement for the NUMA-aware strategy is defining the NUMA node
+for every persistent memory directory in the configuration. If both configuration
+are done properly, the threads in the thread groups restricted to run on a single
+NUMA node will use the NUMA-aware allocation strategy, while the rest of threads
+will still use the round-robin strategy. To check which persistent memory is
+attached to which NUMA node, the command `ndctl list -v -m fsdax` can be used.
+Please check which mount point represents which persistent memory device in the
+output of `ndctl`.
+
+===== Allocation Overflowing
+
+Since both allocation strategies try to allocate from a single persistent
+memory directory, it may happen that the chosen directory cannot serve the
+allocation request due to lack of free capacity. In this case, both strategies
+take the other directories and try to serve the allocation from those. Please
+note that this compromises the NUMA-aware strategy in the way that there will
+be NUMA-remote persistent memory accesses.
+
+===== On the Performance of Persistent Memory
+
+While the persistent memory modules are mounted next to the regular memory
+modules and sharing the same memory bus, the two types of the modules have
+different performance characteristics. First, the persistent memory modules
+can be accessed with higher latency than the regular memory modules. Second,
+while with the regular memory modules the performance of the reads and the
+writes are not different, this is not the case with the persistent memory
+modules. The persistent memory has an asymmetric performance profile, which
+means the writes are slower than the reads.
+
+Despite the above facts, whether the higher latency of the persistent memory
+impacts the performance of Hazelcast depends on multiple factors. Since
+Hazelcast is a distributed platform, the higher latency of the persistent memory
+modules can easily be hidden by the latency variance of the network and in the
+end, in certain use cases there may be no observable difference in the throughput
+of Hazelcast if it stores its data on persistent memory or on regular memory.
+Such a use case is caching, where accessing the entries remotely through
+Hazelcast clients results in a very similar throughput. Based on our tests with
+Intel(R) Optane(TM) DC persistent memory modules we recommend the Optane modules
+for the caching use case up to 10KB entry size.
+
+Other use cases that don't involve networking, such as iterating over all entries
+with entry processors can be impacted by the higher latency of the persistent
+memory modules, especially, if the entry processors update a significant portion
+of the entries. In general, in such a use case the higher the entry size, the
+higher the impact on the performance. That means with smaller entry sizes the
+performance of Hazelcast with persistent memory can be comparable to the
+performance with regular memory.
 
 === Sizing Practices
 
