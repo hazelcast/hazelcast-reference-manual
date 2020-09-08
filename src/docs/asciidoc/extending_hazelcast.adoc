@@ -34,9 +34,8 @@ fairness for any of the data structures with blocking operations, such as Lock a
 By default, Hazelcast is bundled with multiple ways to define and find other members in the same network.
 Commonly used, especially with development, is the Multicast discovery.
 This sends out a multicast request to a network segment and awaits other members to
-answer with their IP addresses. In addition, Hazelcast supports fixed IP addresses:
-link:https://jclouds.apache.org/reference/providers/[jclouds®^] or
-link:https://aws.amazon.com/de/ec2/[AWS (Amazon EC2)^] based discoveries.
+answer with their IP addresses. In addition, Hazelcast supports a number of built-in discovery strategies described in
+the <<discovery-mechanisms, Discovery Mechanisms>> section.
 
 Since there is an ever growing number of public and private cloud environments,
 as well as numerous Service Discovery systems in the wild,
@@ -321,11 +320,6 @@ configure it like in the following example:
     </properties>
     <network>
         <join>
-            <!-- deactivating other discoveries -->
-            <multicast enabled="false"/>
-            <tcp-ip enabled="false" />
-            <aws enabled="false"/>
-
             <!-- activate our discovery strategy -->
             <discovery-strategies>
 
@@ -351,12 +345,6 @@ hazelcast:
     hazelcast.discovery.enabled: true
   network:
     join:
-      multicast:
-        enabled: false
-      tcp-ip:
-        enabled: false
-      aws:
-        enabled: false
       discovery-strategies:
         discovery-strategy:
           - class: com.hazelcast.examples.spi.discovery.HostsDiscoveryStrategy
