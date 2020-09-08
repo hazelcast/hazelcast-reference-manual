@@ -606,51 +606,63 @@ example Hazelcast configuration when integrated with Spring:
 See the <<integration-with-spring, Integration with Spring section>> for
 more information on Hazelcast-Spring integration.
 
-[[overriding-configuration-with-environment-variables-or-system-properties]]
-=== Overriding Configuration with environment variables or system properties
+[[overriding-configuration]]
+=== Overriding Configuration
 
-Whenever you want to override the configuration,
-you can achieve this by using system properties or environment variables.
+You can override your clusters' configurations
+without having to modify the XML or YAML configuration files.
+Hazelcast makes this possible using the system properties or
+environment variables.
 
-For example, if you just want to override a `cluster-name`, you'd need to craft an XML/YAML configuration file:
-[source,xml]
+For example, if you just want to override `cluster-name`,
+you would need to craft a declarative configuration as follows:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
 ----
 <hazelcast>
     <cluster-name name="dev"/>
 </hazelcast>
 ----
 
-[source,yaml]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
 ----
 hazelcast:
   cluster-name: dev
 ----
 
-The same could be achieved by setting a single environment variable:
-[source]
+Instead of the above, you can achieve the same purpose using
+the following on the command line:
+
+[source,plain,indent=0,subs="verbatim,attributes",role="primary"]
+.Using Environment Variable
 ----
 export HZ_CLUSTERNAME=dev
 ----
 
-or system property:
-[source]
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.Using System Property
 ----
 java -Dhz.cluster-name=value
 ----
 
-NOTE: The above mechanism exists mostly for the sake of trivial environment-specific configuration changes
-and should not be treated as replacement for XML/YAML config files.
+NOTE: The above mechanism exists mostly for the sake of trivial
+environment specific configuration changes, and should not be treated
+as a replacement for the XML/YAML configuration files.
 
 ==== Conversion Rules
 
-In order to make Hazelcast recognize environment variables as valid config entries, they need to obey a few simple rules:
+In order to make Hazelcast recognize environment variables
+as valid configuration entries, they need to obey the following rules:
 
-* Each config entry needs to start with `HZ_` or `HZ_CLIENT_`
-* A new configuration level should be introduced with an underscore (`_`)
-* Dashes (`-`) should be removed
-* Variable names should be in upper case
+* Each configuration entry needs to start with `HZ_` or `HZ_CLIENT_`.
+* A new configuration level should be introduced with an underscore (`_`).
+* Dashes (`-`) should be removed.
+* Variable names should be in upper case.
 
-For example, the following configuration:
+Assume that you want to have the following configuration for
+your cluster, represented as YAML:
 
 [source,yaml]
 ----
@@ -666,8 +678,10 @@ hazelcast:
         enabled: true
 ----
 
-Would be represented as a set of following environment variables:
-[source]
+If you want to use the environment variables, the above
+would be represented as a set of the following environment variables:
+
+[source,plain]
 ----
 export HZ_CLUSTERNAME=dev
 export HZ_NETWORK_PORT_AUTOINCREMENT=true
@@ -676,30 +690,18 @@ export HZ_NETWORK_PORT_PORT=5701
 export HZ_NETWORK_JOIN_AUTODETECTION_ENABLED=true
 ----
 
-In order to make Hazelcast recognize system properties as valid config entries, they need to obey a few simple rules:
+In order to make Hazelcast recognize system properties
+as valid configuration entries, they need to obey the following rules:
 
-* Each config entry needs to start with `hz.` or `hz-client.`
-* A new configuration level should be introduced with an underscore (`_`)
-* Variable names should be in lower case
+* Each configuration entry needs to start with `hz.` or `hz-client.`.
+* A new configuration level should be introduced with an underscore (`_`).
+* Variable names should be in lower case.
 
-For example, the following configuration:
+If you want to use the environment variables, the above YAML
+configuration would be represented as a set of the following system
+properties:
 
-[source,yaml]
-----
-hazelcast:
-  cluster-name: dev
-  network:
-    port:
-      auto-increment: true
-      port-count: 100
-      port: 5701
-    join:
-      auto-detection:
-        enabled: true
-----
-
-Would be represented as a set of following system properties:
-[source]
+[source,plain]
 ----
 hz.cluster-name=dev
 hz.network.port.auto-increment=true
@@ -708,10 +710,11 @@ hz.network.port_port=5701
 hz.network.join-auto-detection-enabled=true
 ----
 
-In both cases, the entry structure needs to follow Hazelcast YAML configuration representation.
+In both cases, the entry structure needs to follow the
+Hazelcast YAML configuration representation.
 
-WARNING: Keep in mind that it's not possible to represent configuration entries represented as YAML sequences.
-
+WARNING: Keep in mind that it's not possible to represent
+configuration entries represented as YAML sequences.
 
 [[dynamically-adding-data-structure-configuration-on-a-cluster]]
 === Dynamically Adding Data Structure Configuration on a Cluster
