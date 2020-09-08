@@ -11,7 +11,6 @@ public class CPSubsystemPersistence {
         config.setLicenseKey("your-license-key");
         NetworkConfig networkConfig = config.getNetworkConfig();
         JoinConfig join = networkConfig.getJoin();
-        join.getMulticastConfig().setEnabled(false);
         TcpIpConfig tcpIpConfig = join.getTcpIpConfig();
         tcpIpConfig.setEnabled(true);
         tcpIpConfig.addMember("127.0.0.1");

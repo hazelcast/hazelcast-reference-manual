@@ -1068,7 +1068,7 @@ Declarative Configuration:
     ...
     <network>
         <aws enabled="true">
-            <inside-aws>false</inside-aws>
+            <use-public-ip>true</use-public-ip>
             <access-key>my-access-key</access-key>
             <secret-key>my-secret-key</secret-key>
             <region>us-west-1</region>
@@ -1089,7 +1089,7 @@ hazelcast-client:
   network:
     aws:
       enabled: true
-      inside-aws: false
+      use-public-ip: true
       access-key: my-access-key
       secret-key: my-secret-key
       region: us-west-1
@@ -1107,17 +1107,13 @@ include::{javasource}/clients/ExampleClientAwsConfig.java[tag=clientaws]
 ----
 
 See the <<aws-element, aws element section>> for the descriptions of
-the above AWS configuration elements except `inside-aws` and `iam-role`, which are explained below.
+the above AWS configuration elements except `use-public-ip`.
 
-If the `inside-aws` element is not set, the private addresses of cluster members
+If the `use-public-ip` element is set to `true`, the private addresses of cluster members
 are always converted to public addresses. Also, the client uses public addresses to
-connect to the members. In order to use private addresses, set the `inside-aws` parameter to `true`.
-Also note that, when connecting outside from AWS, setting the `inside-aws` parameter to `true` causes
+connect to the members. In order to use private addresses, set the `use-public-ip` parameter to `false`.
+Also note that, when connecting outside from AWS, setting the `use-public-ip` parameter to `false` causes
 the client to not be able to reach the members.
-
-IAM roles are used to make secure requests from your clients.
-You can provide the name of your IAM role that you created previously on your AWS console using
-the `iam-role` or `setIamRole()` method.
 
 ===== Configuring Client Load Balancer
 
@@ -1795,7 +1791,7 @@ The client configurations must be exactly the same except the following configur
 * `NetworkConfig.SSLConfig`
 * `NetworkConfig.AwsConfig`
 * `NetworkConfig.GcpConfig`
-* `NetworkConfig.azureConfig`
+* `NetworkConfig.AzureConfig`
 * `NetworkConfig.KubernetesConfig`
 * `NetworkConfig.EurekaConfig`
 * `NetworkConfig.CloudConfig`
