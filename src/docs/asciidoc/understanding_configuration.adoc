@@ -649,9 +649,11 @@ java -Dhz.cluster-name=value
 
 NOTE: The above mechanism exists mostly for the sake of trivial
 environment specific configuration changes, and should not be treated
-as a replacement for the XML/YAML configuration files.
+as a replacement for complex XML/YAML configuration files.
 
 ==== Conversion Rules
+
+NOTE: All entries need to mirror YAML configuration structure which differs slightly from XML's.
 
 In order to make Hazelcast recognize environment variables
 as valid configuration entries, they need to obey the following rules:
@@ -683,11 +685,11 @@ would be represented as a set of the following environment variables:
 
 [source,plain]
 ----
-export HZ_CLUSTERNAME=dev
-export HZ_NETWORK_PORT_AUTOINCREMENT=true
-export HZ_NETWORK_PORT_PORTCOUNT=100
-export HZ_NETWORK_PORT_PORT=5701
-export HZ_NETWORK_JOIN_AUTODETECTION_ENABLED=true
+HZ_CLUSTERNAME=dev
+HZ_NETWORK_PORT_AUTOINCREMENT=true
+HZ_NETWORK_PORT_PORTCOUNT=100
+HZ_NETWORK_PORT_PORT=5701
+HZ_NETWORK_JOIN_AUTODETECTION_ENABLED=true
 ----
 
 In order to make Hazelcast recognize system properties
@@ -710,11 +712,8 @@ hz.network.port_port=5701
 hz.network.join-auto-detection-enabled=true
 ----
 
-In both cases, the entry structure needs to follow the
-Hazelcast YAML configuration representation.
-
-WARNING: Keep in mind that it's not possible to represent
-configuration entries represented as YAML sequences.
+WARNING: Keep in mind that it's not possible to override
+configuration entries using YAML sequences.
 
 [[dynamically-adding-data-structure-configuration-on-a-cluster]]
 === Dynamically Adding Data Structure Configuration on a Cluster
