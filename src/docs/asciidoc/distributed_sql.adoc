@@ -211,26 +211,391 @@ class that represents the type's value.
 
 |===
 
-=== Supported Features
+=== SELECT
 
-Currently it is possible to execute project-filter queries in the form
-`SELECT ... FROM <map_name> WHERE ...` on a single map.
+==== Synopsis
+
+[source,sql]
+----
+SELECT [ * | expression [ [ AS ] expression_alias ] [, ...] ]
+FROM table_name [ [ AS ] table_alias ]
+[WHERE condition]
+----
+
+==== Description
+
+The `SELECT` command retrieves rows from a table. A row is a sequence of expressions defined after the `SELECT` keyword.
+Expressions may have an optional aliases.
+
+`table_name` refers to a single `IMap` data structure. A table may have an optional alias.
+
+An optional `WHERE` clause defines a `condition`, that is any expression that evaluates to a result of type boolean.
+Any row that doesn't satisfy the condition is eliminated from the result.
 
 The following features are *not supported* and are planned for future releases:
-sorting, aggregations, joins, set operators (`UNION`, `INTERSECT`, `MINUS`) and subqueries.
+`ORDER BY`, `LIMIT`/`OFFSET`, `GROUP BY`/`HAVING`, `JOIN`, set operators (`UNION`, `INTERSECT`, `MINUS`), subqueries.
 
-The SQL service supports the following functions:
+=== Expressions
 
-* Binary functions: `+`, `-`, `*`, `/`
-* Comparison predicates: `>`, `>=`, `<`, `<=`, `=`, `!=`, `<>`
-* Logical predicates: `AND`, `OR`, `NOT`
-* `IS` predicates: `IS [NOT] NULL`, `IS [NOT] TRUE`, `IS [NOT] FALSE`
-* `CAST` function
-* Math functions: `ABS`, `ACOS`, `ASIN`, `ATAN`, `CEIL`, `COS`, `COT`,
-`DEGREES`, `EXP`, `FLOOR`, `LN`, `LOG10`, `RADIANS`, `RAND`, `ROUND`,
-`SIGN`, `SIN`, `TAN`, `TRUNCATE`
-* String functions: `||` (concatenation), `ASCII`, `INITCAP`, `LENGTH`,
-`LIKE`, `LOWER`, `LTRIM`, `RTRIM`, `SUBSTRING`, `TRIM`, `UPPER`
+Hazelcast SQL supports logical predicates, `IS` predicates, comparison operators, mathematical functions and operators,
+string functions, and special functions.
+
+[cols="1,1,1,1", options="header"]
+.AND/OR Predicates
+|===
+| `a`
+| `b`
+| `a AND b`
+| `a OR b`
+
+|`TRUE`
+|`TRUE`
+|`TRUE`
+|`TRUE`
+
+|`TRUE`
+|`FALSE`
+|`FALSE`
+|`TRUE`
+
+|`TRUE`
+|`NULL`
+|`NULL`
+|`TRUE`
+
+|`FALSE`
+|`FALSE`
+|`FALSE`
+|`FALSE`
+
+|`FALSE`
+|`NULL`
+|`FALSE`
+|`NULL`
+
+|`NULL`
+|`NULL`
+|`NULL`
+|`NULL`
+|===
+
+[cols="1,1", options="header"]
+.NOT Predicate
+|===
+| `a`
+| `NOT a`
+
+|`TRUE`
+|`FALSE`
+
+|`FALSE`
+|`TRUE`
+
+|`NULL`
+|`NULL`
+|===
+
+[cols="1,2,1", options="header"]
+.IS Predicates
+|===
+| Predicate
+| Description
+| Example
+
+|`IS TRUE`
+|Evaluates to `TRUE` if the boolean argument is `TRUE`
+|`age < 30 IS TRUE`
+
+|`IS NOT TRUE`
+|Evaluates to `TRUE` if the boolean argument is `FALSE` or `NULL`
+|`age < 30 IS NOT TRUE`
+
+|`IS FALSE`
+|Evaluates to `TRUE` if the boolean argument is `FALSE`
+|`age < 30 IS FALSE`
+
+|`IS NOT FALSE`
+|Evaluates to `TRUE` if the boolean argument is `TRUE` or `NULL`
+|`age < 30 IS NOT FALSE`
+
+|`IS NULL`
+|Evaluates to `TRUE` if the argument is `NULL`
+|`name IS NULL`
+
+|`IS NOT NULL`
+|Evaluates to `TRUE` if the argument is not `NULL`
+|`name IS NOT NULL`
+|===
+
+[cols="1,2,1", options="header"]
+.Comparison Operators
+|===
+| Operator
+| Description
+| Example
+
+|`=`
+|Equal to
+|`age = 30`
+
+|`!=` or `<>`
+|Not equal to
+|`age != 30` or `age <> 30`
+
+|`<`
+|Less than
+|`age < 30`
+
+|`>`
+|Greater than
+|`age > 30`
+
+|`\<=`
+|Less than or equal to
+|`age \<= 30`
+
+|`>=`
+|Greater than or equal to
+|`age >= 30`
+|===
+
+[cols="1,2,1", options="header"]
+.Mathematical Operators
+|===
+| Operator
+| Description
+| Example
+
+|`+`
+|Addition
+|`5 + 2`
+
+|`-`
+|Subtraction
+|`5 - 2`
+
+|`*`
+|Multiplication
+|`5 * 2`
+
+|`/`
+|Division
+|`5 / 2`
+|===
+
+[cols="1,2,1,1", options="header"]
+.Mathematical Functions
+|===
+| Function
+| Description
+| Example
+| Result
+
+|`ABS(number)`
+|Aboslute value of the argument
+|`ABS(-5)`
+|`5`
+
+|`CEIL(number)`
+|The nearest integer greater than or equal to argument
+|`CEIL(25.3)`
+|`26`
+
+|`DEGREES(double)`
+|Convert radians to degrees
+|`DEGREES(0.67)`
+|`38.38817227376516`
+
+|`EXP(number)`
+|Exponential
+|`EXP(2.5)`
+|`12.182493960703473`
+
+|`FLOOR(number)`
+|The nearest integer less than or equal to argument
+|`FLOOR(25.3)`
+|`25`
+
+|`LN(number)`
+|Natural logarithm
+|`LN(2.5)`
+|`0.9162907318741551`
+
+|`LOG10(number)`
+|Base 10 logarithm
+|`LOG(2.5)`
+|`0.3979400086720376`
+
+|`RADIANS(double)`
+|Convert degrees to radians
+|`RADIANS(38.39)`
+|`0.6700318998406232`
+
+|`RAND`
+|Random value in the range [0.0; 1.0)
+|`RAND()`
+|`0.6324099982812553`
+
+|`RAND(number)`
+|Random value in the range [0.0; 1.0) using the given seed
+|`RAND(10)`
+|`0.7304302967434272`
+
+|`ROUND(number)`
+|Round toward zero
+|`ROUND(34.5678)`
+|`35`
+
+|`ROUND(number, s integer)`
+|Round to `s` decimal places
+|`ROUND(34.5678, 2)`
+|`34.57`
+
+|`SIGN(number)`
+|Return -1, 0 or 1 for negative, zero or positive argument, respectively
+|`SIGN(-25)`
+|`-1`
+
+|`TRUNCATE(number)`
+|Truncate toward zero
+|`TRUNC(34.5678)`
+|`34`
+
+|`TRUNCATE(number, s integer)`
+|Truncate to `s` decimal places
+|`TRUNC(34.5678, 2)`
+|`34.56`
+
+|===
+
+[cols="1,1", options="header"]
+.Trigonometric Functions
+|===
+| Function
+| Description
+
+|`ACOS(double)`
+|Inverse cosine
+
+|`ASIN(double)`
+|Inverse sine
+
+|`ATAN(double)`
+|Inverse tangent
+
+|`COS(double)`
+|Cosine
+
+|`COT(double)`
+|Cotangent
+
+|`SIN(double)`
+|Sine
+
+|`TAN(double)`
+|Tangent
+|===
+
+[cols="1,2,1,1", options="header"]
+.String Functions
+|===
+| Function
+| Description
+| Example
+| Result
+
+|`string \|\| string`
+|Concatenate two strings
+|`'John' \|\| ' ' \|\| 'Doe'`
+|`John Doe`
+
+|`ASCII(string)`
+|ASCII code of the first character of the argument
+|`ASCII('a')`
+|`97`
+
+|`BTRIM(string)`
+|Equivalent to `TRIM(BOTH ' ' FROM string)`
+|
+|
+
+|`INITCAP(string)`
+|Convert the first letter of each word to upper case, and the rest to lower case
+|`INITCAP('john DOE')`
+|`John Doe`
+
+|`LENGTH(string)`
+|Length of the string
+|`LENGTH('John Doe')`
+|`8`
+
+|`LIKE`
+|Return `TRUE` if the value string follows the pattern
+|`'John Doe' LIKE '%Doe'`
+|`TRUE`
+
+|`LIKE ... ESCAPE`
+|Return `TRUE` if the value string follows the pattern, escaping a special character in the pattern
+|`'text' LIKE '!_ext' ESCAPE '!'`
+|`FALSE`
+
+|`LOWER(string)`
+|Convert the string to lower case
+|`LOWER('John Doe')`
+|`john doe`
+
+|`LTRIM(string)`
+|Equivalent to `TRIM(LEADING ' ' FROM string)`
+|
+|
+
+|`RTRIM(string)`
+|Equivalent to `TRIM(TRAILING ' ' FROM string)`
+|
+|
+
+|`SUBSTRING(string FROM integer)`
+|Extract substring starting with the given position
+|`SUBSTRING('John Doe' FROM 6)`
+|`Doe`
+
+|`SUBSTRING(string FROM integer FOR integer)`
+|Extract substring starting with the given position for the given length
+|`SUBSTRING('John Doe' FROM 1 FOR 4)`
+|`John`
+
+|`TRIM([LEADING\|TRAILING\|BOTH] [characters FROM] string)`
+|Remove `characters` (a space by default) from the start/end/both ends of the string
+|`TRIM(BOTH '[]' FROM '[John Doe]')`
+|`John Doe`
+
+|`TRIM(characters FROM string)`
+|Equivalent to `TRIM(BOTH characters FROM string)`
+|`TRIM('[]' FROM '[John Doe]')`
+|`John Doe`
+
+|`TRIM(string)`
+|Equivalent to `TRIM(BOTH ' ' FROM string)`
+|`TRIM(' John Doe ')`
+|`John Doe`
+
+|`UPPER(string)`
+|Convert the string to upper case
+|`UPPER('John Doe')`
+|`JOHN DOE`
+|===
+
+[cols="1,2,1", options="header"]
+.Special Functions
+|===
+| Function
+| Description
+| Example
+
+|`CAST(value AS type)`
+|Convert the value to the given type
+|`CAST(age AS VARCHAR)`
+|===
 
 === Lite Members
 
