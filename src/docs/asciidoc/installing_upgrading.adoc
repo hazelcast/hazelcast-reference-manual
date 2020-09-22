@@ -116,19 +116,19 @@ Hazelcast is distributed in a form of Docker images.
 You can run the following command to launch Hazelcast Docker container:
 
 [source,shell,indent=0,subs="verbatim,attributes+",role="primary"]
-.hazelcast/hazelcast
+.hazelcast
 ----
 $ docker run hazelcast/hazelcast:$HAZELCAST_VERSION
 ----
 
 [source,shell,indent=0,subs="verbatim,attributes+",role="secondary"]
-.hazelcast/hazelcast-enterprise
+.hazelcast-enterprise
 ----
 $ docker run -e HZ_LICENSE_KEY=<Your Enterprise License Key> hazelcast/hazelcast-enterprise:$HAZELCAST_VERSION
 ----
 
 [source,shell,indent=0,subs="verbatim,attributes+",role="secondary"]
-.hazelcast/hazelcast-enterprise-4-rhel8
+.hazelcast-enterprise-4-rhel8
 ----
 # You must be logged into Red Hat Container Registry
 $ docker run -e HZ_LICENSE_KEY=<Your Enterprise License Key> registry.connect.redhat.com/hazelcast/hazelcast-enterprise-4-rhel8:$HAZELCAST_VERSION
@@ -218,29 +218,30 @@ Kubernetes Operators are software extensions to the Kubernetes which help you cr
 You can deploy and manage Hazelcast using the following Operators:
 
 * link:https://hub.docker.com/r/hazelcast/hazelcast-operator[hazelcast/hazelcast-operator]: Hazelcast Operator hosted on Docker Hub
-* link:https://hub.docker.com/r/hazelcast/hazelcast-enterprise-operator[hazelcast/hazelcast-enterprise-operator]: Hazelcast Enterprise Operator hosted on Docker Hub
+* link:https://hub.docker.com/r/hazelcast/hazelcast-enterprise-operator[hazelcast/hazelcast-enterprise-operator]: Red Hat certified Hazelcast Enterprise Operator hosted on Docker Hub
 * link:https://catalog.redhat.com/software/containers/hazelcast/hazelcast-enterprise-operator/5eb3bf9bac3db90370945f59[registry.connect.redhat.com/hazelcast/hazelcast-enterprise-operator]: Hazelcast Enterprise Operator hosted on Red Hat Container Catalog
 
 There are a few different ways of how to use Hazelcast Operators:
 
 * kubectl/oc instructions - please check link:https://github.com/hazelcast/hazelcast-operator[Hazelcast Operator documentation]
-* OpenShift Web Console - OpenShift provides a way to deploy operators from using UI
+* OpenShift Web Console - OpenShift provides a way to deploy operators from its UI
 * OperatorHub instructions - please check Operator Hub for link:https://operatorhub.io/operator/hazelcast-operator[Hazelcast] and link:https://operatorhub.io/operator/hazelcast-enterprise-operator[Hazelcast Enterprise]
 
 [[deploying-on-pivotal-cloud-foundry]]
-==== VMware Tanzu (Pivotal Cloud Foundry)
+=== Deploying in VMware Tanzu
 
 You can deploy your Hazelcast Enterprise cluster onto VMware Tanzu (former Pivotal Cloud Foundry). For more information
 please check:
 
 * link:https://network.pivotal.io/products/hazelcast-pcf/[Hazelcast Enterprise Product Page]
 * link:https://docs.pivotal.io/partners/hazelcast/index.html[Hazelcast Enterprise Usage Instructions and Release Notes]
+* link:https://guides.hazelcast.org/vmware-tanzu/[Hazelcast Guides: Hazelcast Enterprise IMDG for VMware Tanzu]
 
 [[deploying-in-cloud]]
 === Deploying in Cloud Providers
 
-Hazelcast can be deployed into different cloud providers. Thanks to the dedicated
-<<hazelcast-cloud-discovery-plugins, Hazelcast Discovery plugins>> there is no static IP configuration needed and
+Hazelcast can be deployed into different cloud providers. Thanks to dedicated
+<<hazelcast-cloud-discovery-plugins, Hazelcast Cloud Discovery plugins>> there is no static IP configuration needed and
 Hazelcast cluster is resilient to availability zone failures.
 
 [[deploying-on-amazon-ec2]]
