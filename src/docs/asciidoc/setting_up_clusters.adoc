@@ -421,31 +421,6 @@ while `h2` and `h3` belong to the `development` cluster.
 include::{javasource}/GroupingClusters.java[tag=groupingclusters]
 ----
 
-[[cluster-groups-before-hazelcast-382]]
-==== Cluster Groups before Hazelcast 3.8.2
-
-If you have a Hazelcast release older than 3.8.2, you need to provide also
-a group password along with the group name. The following are the configuration examples with the password element:
-
-[source,xml]
-----
-<hazelcast>
-    <group>
-        <name>production</name>
-        <password>prod-pass</password>
-    </group>
-</hazelcast>
-----
-
-[source,java]
-----
-include::{javasource}/GroupingClusters2.java[tag=groupingclusters]
-----
-
-NOTE: Starting with 3.8.2, members no longer perform a password check
-during the cluster join process. Starting with 3.11, members no longer
-perform a password check when a client connects to the cluster.
-
 [[member-user-code-deployment]]
 === Deploying User Code on the Member
 
@@ -611,7 +586,7 @@ members do not require a restart to include it in their classpath.
 You can also use the client permission policy to specify which clients
 are permitted to use User Code Deployment. See the <<permissions, Permissions section>>.
 
-NOTE: 
+NOTE:
 
 [[configuring-client-user-code-deployment]]
 ==== Configuring Client User Code Deployment
@@ -823,7 +798,7 @@ You can also create a `GenericRecord` in portable format with `GenericRecord.Bui
 ----
 ClassDefinition classDefinition = new ClassDefinitionBuilder(PORTABLE_FACTORY_ID, EMPLOYEE_CLASS_ID)
                         .addUTFField("name").addIntField("id").build();
-        
+
 GenericRecord namedRecord = GenericRecord.Builder.portable(classDefinition)
                 .writeUTF("name", "foo")
                 .writeInt("id", 123).build();
@@ -878,10 +853,10 @@ An example code snippet on the client side with a map is shown below:
         GenericRecord record = (GenericRecord) map.get("key1");
         String name = record.readUTF("name");
         int id = record.readInt("id");
-        
+
         GenericRecord newGenericRecord = genericRecord.cloneWithBuilder()
                 .writeInt("age",22).build();
-        
+
         map.put("key2", newGenericRecord);
 ----
 
@@ -1748,7 +1723,7 @@ the used discovery strategy.
 
 You can specify which network interfaces that Hazelcast should use.
 Servers mostly have more than one network interface, so you may want to list
-the valid IPs. Range characters (`\*` and `-`) can be used for simplicity.
+the valid IPs. **Range characters `"\*"` and `"-"`** can be used for simplicity.
 For instance, 10.3.10.* refers to IPs between 10.3.10.0 and 10.3.10.255.
 Interface 10.3.10.4-18 refers to IPs between 10.3.10.4 and 10.3.10.18
 (4 and 18 included). If network interface configuration is enabled
