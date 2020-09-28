@@ -706,8 +706,8 @@ hazelcast:
       properties:
         protocol: TLSv1.2
         trustCertCollectionFile: trusted-certs.pem
-        
-        # If the TLS mutual authentication is not used, following lines (key configuration) are not needed on the client side. 
+
+        # If the TLS mutual authentication is not used, following lines (key configuration) are not needed on the client side.
         keyFile: privkey.pem
         keyCertChainFile: chain.pem
 ----
@@ -2201,9 +2201,13 @@ instance names (map, queue, name, etc.), instance actions (put, read, remove, ad
 the client endpoint address (`ClusterEndpointPrincipal`) and client roles (`ClusterRolePrincipal`).
 
 The default permission policy allows to use comma separated names in the `principal`
-attribute configuration. Instance and principal names and endpoint addresses can
-be defined as wildcards(*). See the <<other-network-configurations, Network Configuration>>
-and <<using-wildcards, Using Wildcards>> sections.
+attribute configuration.
+
+Instance and principal names can be defined as wildcards using the `"*"` character.
+See the <<using-wildcards, Using Wildcards>> section for details.
+
+Endpoint names can use range characters `"-"` and `"*"` as described
+in the section <<interfaces, Interfaces>>.
 
 [source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
 .XML
