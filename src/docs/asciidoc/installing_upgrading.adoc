@@ -109,11 +109,11 @@ for the details.
 
 Hazelcast is distributed in a form of Docker images.
 
-* link:https://hub.docker.com/r/hazelcast/hazelcast[hazelcast/hazelcast]: Hazelcast Docker image hosted on Docker Hub
-* link:https://hub.docker.com/r/hazelcast/hazelcast-enterprise[hazelcast/hazelcast-enterprise]: Hazelcast Enterprise Docker image hosted on Docker Hub
-* link:https://catalog.redhat.com/software/containers/hazelcast/hazelcast-enterprise-4-rhel8/5ee38856ecb5246c090412bd[registry.connect.redhat.com/hazelcast/hazelcast-enterprise-4-rhel8]: Red Hat certified Docker image hosted on Red Hat Container Catalog
+* link:https://hub.docker.com/r/hazelcast/hazelcast[hazelcast/hazelcast^]: Hazelcast Docker image hosted on Docker Hub
+* link:https://hub.docker.com/r/hazelcast/hazelcast-enterprise[hazelcast/hazelcast-enterprise^]: Hazelcast Enterprise Docker image hosted on Docker Hub
+* link:https://catalog.redhat.com/software/containers/hazelcast/hazelcast-enterprise-4-rhel8/5ee38856ecb5246c090412bd[registry.connect.redhat.com/hazelcast/hazelcast-enterprise-4-rhel8^]: Red Hat certified Docker image hosted on Red Hat Container Catalog
 
-You can run the following command to launch Hazelcast Docker container:
+You can run the following command to launch the Hazelcast Docker container:
 
 [source,shell,indent=0,subs="verbatim,attributes+",role="primary"]
 .hazelcast
@@ -131,15 +131,16 @@ $ docker run -e HZ_LICENSE_KEY=<Your Enterprise License Key> hazelcast/hazelcast
 .hazelcast-enterprise-4-rhel8
 ----
 # You must be logged into Red Hat Container Registry
+
 $ docker run -e HZ_LICENSE_KEY=<Your Enterprise License Key> registry.connect.redhat.com/hazelcast/hazelcast-enterprise-4-rhel8:$HAZELCAST_VERSION
 ----
 
 This command will pull Hazelcast Docker image and run a new Hazelcast instance.
 
-For more details please check:
+See the following for more details:
 
-* link:https://github.com/hazelcast/hazelcast-docker[Hazelcast and Hazelcast Enterprise Docker image documentation]
-* link:https://github.com/hazelcast/hazelcast-openshift[Red Hat Hazelcast Enterprise Docker image documentation]
+* link:https://github.com/hazelcast/hazelcast-docker[Hazelcast and Hazelcast Enterprise Docker image documentation^]
+* link:https://github.com/hazelcast/hazelcast-openshift[Red Hat Hazelcast Enterprise Docker image documentation^]
 
 [[installing-using-download-archives]]
 === Download Archives
@@ -190,7 +191,7 @@ Hazelcast provides a few methods to simplify deploying Hazelcast cluster into Ku
 ==== Quick Start
 
 If you just want to play with Hazelcast on Kubernetes, execute the following commands to create Hazelcast cluster
-with 3 members into `default` namespace using `default` Service Account.
+with 3 members into `default` namespace using the `default` Service Account.
 
 [source,shell]
 ----
@@ -200,42 +201,44 @@ kubectl run hazelcast-2 --image=hazelcast/hazelcast:$HAZELCAST_VERSION
 kubectl run hazelcast-3 --image=hazelcast/hazelcast:$HAZELCAST_VERSION
 ----
 
-Hazelcast members automatically discovers themselves using link:https://github.com/hazelcast/hazelcast-kubernetes[Hazelcast Kubernetes Discovery plugin]
+Hazelcast members automatically discovers themselves using the
+link:https://github.com/hazelcast/hazelcast-kubernetes[Hazelcast Kubernetes Discovery plugin^]
 and therefore form one Hazelcast cluster.
 
 ==== Helm Chart
 
-link:https://helm.sh/[Helm] is a package manager for Kubernetes. Hazelcast is distributed in a form of Helm Charts:
+link:https://helm.sh/[Helm^] is a package manager for Kubernetes. Hazelcast is distributed in a form of Helm Charts:
 
-* link:https://github.com/hazelcast/charts/tree/master/stable/hazelcast[hazelcast/hazelcast]
-* link:https://github.com/hazelcast/charts/tree/master/stable/hazelcast-enterprise[hazelcast/hazelcast-enterprise]
+* link:https://github.com/hazelcast/charts/tree/master/stable/hazelcast[hazelcast/hazelcast^]
+* link:https://github.com/hazelcast/charts/tree/master/stable/hazelcast-enterprise[hazelcast/hazelcast-enterprise^]
 
-For more details, please check link:https://github.com/hazelcast/charts[Hazelcast Helm Charts documentation].
+See the link:https://github.com/hazelcast/charts[Hazelcast Helm Charts documentation^]
+for more details.
 
 ==== Kubernetes/OpenShift Operator
 
-Kubernetes Operators are software extensions to the Kubernetes which help you create and manage your applications.
+Kubernetes Operators are software extensions to Kubernetes which help you create and manage your applications.
 You can deploy and manage Hazelcast using the following Operators:
 
-* link:https://hub.docker.com/r/hazelcast/hazelcast-operator[hazelcast/hazelcast-operator]: Hazelcast Operator hosted on Docker Hub
-* link:https://hub.docker.com/r/hazelcast/hazelcast-enterprise-operator[hazelcast/hazelcast-enterprise-operator]: Red Hat certified Hazelcast Enterprise Operator hosted on Docker Hub
-* link:https://catalog.redhat.com/software/containers/hazelcast/hazelcast-enterprise-operator/5eb3bf9bac3db90370945f59[registry.connect.redhat.com/hazelcast/hazelcast-enterprise-operator]: Hazelcast Enterprise Operator hosted on Red Hat Container Catalog
+* link:https://hub.docker.com/r/hazelcast/hazelcast-operator[hazelcast/hazelcast-operator^]: Hazelcast Operator hosted on Docker Hub
+* link:https://hub.docker.com/r/hazelcast/hazelcast-enterprise-operator[hazelcast/hazelcast-enterprise-operator^]: Red Hat certified Hazelcast Enterprise Operator hosted on Docker Hub
+* link:https://catalog.redhat.com/software/containers/hazelcast/hazelcast-enterprise-operator/5eb3bf9bac3db90370945f59[registry.connect.redhat.com/hazelcast/hazelcast-enterprise-operator^]: Hazelcast Enterprise Operator hosted on Red Hat Container Catalog
 
-There are a few different ways of how to use Hazelcast Operators:
+There are a few different ways in using Hazelcast Operators:
 
-* kubectl/oc instructions - please check link:https://github.com/hazelcast/hazelcast-operator[Hazelcast Operator documentation]
-* OpenShift Web Console - OpenShift provides a way to deploy operators from its UI
-* OperatorHub instructions - please check Operator Hub for link:https://operatorhub.io/operator/hazelcast-operator[Hazelcast] and link:https://operatorhub.io/operator/hazelcast-enterprise-operator[Hazelcast Enterprise]
+* kubectl/oc instructions: See the link:https://github.com/hazelcast/hazelcast-operator[Hazelcast Operator documentation^].
+* OpenShift Web Console: OpenShift provides a way to deploy operators from its UI.
+* OperatorHub instructions: Check Operator Hub for link:https://operatorhub.io/operator/hazelcast-operator[Hazelcast^] and link:https://operatorhub.io/operator/hazelcast-enterprise-operator[Hazelcast Enterprise^].
 
 [[deploying-on-pivotal-cloud-foundry]]
 === Deploying in VMware Tanzu
 
-You can deploy your Hazelcast Enterprise cluster onto VMware Tanzu (former Pivotal Cloud Foundry). For more information
-please check:
+You can deploy your Hazelcast Enterprise cluster in VMware Tanzu (former Pivotal Cloud Foundry).
+See the following for details:
 
-* link:https://network.pivotal.io/products/hazelcast-pcf/[Hazelcast Enterprise Product Page]
-* link:https://docs.pivotal.io/partners/hazelcast/index.html[Hazelcast Enterprise Usage Instructions and Release Notes]
-* link:https://guides.hazelcast.org/vmware-tanzu/[Hazelcast Guides: Hazelcast Enterprise IMDG for VMware Tanzu]
+* link:https://network.pivotal.io/products/hazelcast-pcf/[Hazelcast Enterprise Product Page^]
+* link:https://docs.pivotal.io/partners/hazelcast/index.html[Hazelcast Enterprise Usage Instructions and Release Notes^]
+* link:https://guides.hazelcast.org/vmware-tanzu/[Hazelcast Guides: Hazelcast Enterprise IMDG for VMware Tanzu^]
 
 [[deploying-in-cloud]]
 === Deploying in Cloud Providers
@@ -247,20 +250,23 @@ Hazelcast cluster is resilient to availability zone failures.
 [[deploying-on-amazon-ec2]]
 ==== Amazon Web Services
 
-You can easily deploy your Hazelcast projects on AWS EC2 instances and ECS clusters. For details please check the
-information about <<hazelcast-cloud-discovery-plugins-aws, Hazelcast AWS Discovery plugin>>.
+You can easily deploy your Hazelcast projects on AWS EC2 instances and ECS clusters. See the
+information about <<hazelcast-cloud-discovery-plugins-aws, Hazelcast AWS Discovery plugin>>
+for details.
 
 [[deploying-on-microsoft-azure]]
 ==== Microsoft Azure
 
-You can easily deploy your Hazelcast projects on the Azure VM Instances and AKS clusters. For details please check the
-information about <<hazelcast-cloud-discovery-plugins-azure, Hazelcast Azure Discovery plugin>>.
+You can easily deploy your Hazelcast projects on the Azure VM Instances and AKS clusters. See the
+information about <<hazelcast-cloud-discovery-plugins-azure, Hazelcast Azure Discovery plugin>>
+for details.
 
 [[deploying-on-gcp]]
 ==== Google Cloud Platform
 
-You can easily deploy your Hazelcast projects on the Google Compute VM Instances and GKE clusters. For details please check the
-information about <<hazelcast-cloud-discovery-plugins-gcp, Hazelcast GCP Discovery plugin>>.
+You can easily deploy your Hazelcast projects on the Google Compute VM Instances and GKE clusters. See the
+information about <<hazelcast-cloud-discovery-plugins-gcp, Hazelcast GCP Discovery plugin>>
+for details.
 
 [[setting-the-license-key]]
 === Using Enterprise edition
