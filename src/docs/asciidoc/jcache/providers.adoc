@@ -34,10 +34,10 @@ the delegating `CachingProvider`.
 CachingProvider provider = javax.cache.Caching.getCachingProvider();
 ```
 
-By default, the delegating caching provider will choose the client-side implementation,
+By default, the delegating caching provider chooses the client-side implementation,
 however it can be configured to explicitly pick the client- or member-side implementation.
-This is achieved  by setting system property `hazelcast.jcache.provider.type` to value `client`
-or `member`. The legacy value `server` is also accepted as an alias for `member` however its
+This is achieved by setting the `hazelcast.jcache.provider.type` system property to `client`
+or `member`. The legacy value `server` is also accepted as an alias for `member`, however its
 usage is discouraged as it will be removed in a future version.
 
 ```java
@@ -46,13 +46,13 @@ System.setProperty("hazelcast.jcache.provider.type", "member");
 CachingProvider provider = javax.cache.Caching.getCachingProvider();
 ```
 
-The default `CachingProvider` can be also configured by setting its fully qualified
-class name as the value of system property `javax.cache.spi.CachingProvider`.
+You can also configure the default `CachingProvider` by setting its fully qualified
+class name to the value of the `javax.cache.spi.CachingProvider` system property.
 The system property can be defined at the `java` command line (using
 `-Djavax.cache.spi.CachingProvider=<fully-qualified-class-name>`) or
 programmatically using `java.lang.System#setProperty(String, String)`.
 
-The JCache API also provides methods to explicitly request instantiation of
+The JCache API also provides methods to explicitly request the instantiation of
 a specific `CachingProvider` by supplying its fully qualified class name. This is
 useful to explicitly choose Hazelcast as `CachingProvider` in case multiple
 implementations reside on the classpath.
