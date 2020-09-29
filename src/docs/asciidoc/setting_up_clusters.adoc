@@ -29,7 +29,7 @@ By default, Hazelcast tries to automatically detect the applicable discovery mec
 Note that using Auto Detection is not recommended for production. Note also that if Hazelcast finds no applicable
 discovery mechanism, then it falls back to <<multicast, Multicast>>.
 
-See the <<discovering-members-auto-detection, Discovering Members by Auto Detection>> for more details.
+See the <<discovering-members-auto-detection, Discovering Members by Auto Detection section>> for more details.
 
 [[tcp]]
 ==== TCP
@@ -52,13 +52,13 @@ using multicast communication. See the
 
 Hazelcast supports EC2/ECS auto-discovery. It is useful when you
 do not want to provide or you cannot provide the list of possible
-IP addresses. See the <<hazelcast-cloud-discovery-plugins-aws, Cloud Discovery Plugins: Hazelcast AWS>> section.
+IP addresses. See the <<hazelcast-cloud-discovery-plugins-aws, Cloud Discovery Plugins: Hazelcast AWS section>>.
 
 [[azure-cloud-discovery]]
 ==== Azure Cloud Discovery
 
 Hazelcast offers a discovery strategy for your Hazelcast applications
-running on Azure. See the <<hazelcast-cloud-discovery-plugins-azure, Cloud Discovery Plugins: Hazelcast Azure>> section.
+running on Azure. See the <<hazelcast-cloud-discovery-plugins-azure, Cloud Discovery Plugins: Hazelcast Azure section>>.
 
 [[gcp-cloud-discovery]]
 ==== GCP Cloud Discovery
@@ -67,26 +67,26 @@ Hazelcast supports discovering members in the link:https://cloud.google.com/comp
 environment. You can easily configure Hazelcast members discovery, WAN replication,
 and Hazelcast Client to work seamlessly on the native GCP VM Instances.
 This discovery feature is provided as a Hazelcast plugin.
-See the <<hazelcast-cloud-discovery-plugins-gcp, Cloud Discovery Plugins: Hazelcast GCP>> section.
+See the <<hazelcast-cloud-discovery-plugins-gcp, Cloud Discovery Plugins: Hazelcast GCP section>>.
 
 [[kubernetes-cloud-discovery]]
 ==== Kubernetes Cloud Discovery
 
 Hazelcast provides Kubernetes discovery mechanism that looks for IP addresses of members.
-See the <<hazelcast-cloud-discovery-plugins-kubernetes, Cloud Discovery Plugins: Hazelcast Kubernetes>> section.
+See the <<hazelcast-cloud-discovery-plugins-kubernetes, Cloud Discovery Plugins: Hazelcast Kubernetes section>>.
 
 [[eureka-cloud-discovery]]
 ==== Eureka Cloud Discovery
 
 Hazelcast supports the Eureka V1 discovery.
-See the <<hazelcast-cloud-discovery-plugins-eureka, Cloud Discovery Plugins: Hazelcast Eureka>> section.
+See the <<hazelcast-cloud-discovery-plugins-eureka, Cloud Discovery Plugins: Hazelcast Eureka section>>.
 
 [[zookeeper-cloud-discovery]]
 ==== Zookeeper Cloud Discovery
 
 This discovery mechanism provides a service based discovery strategy by using
 Apache Curator to communicate with your Zookeeper server.
-See the <<hazelcast-cloud-discovery-plugins-zookeeper, Cloud Discovery Plugins: Hazelcast Zookeeper>> section.
+See the <<hazelcast-cloud-discovery-plugins-zookeeper, Cloud Discovery Plugins: Hazelcast Zookeeper section>>.
 
 [[hazelcast-for-pcf]]
 ==== Hazelcast for Tanzu VMware
@@ -94,13 +94,13 @@ See the <<hazelcast-cloud-discovery-plugins-zookeeper, Cloud Discovery Plugins: 
 Using a clickable Hazelcast Tile for VMWare (former Pivotal Cloud Foundry), you can
 deploy your Hazelcast cluster on PCF. This feature is provided as a Hazelcast
 plugin.
-See the <<deploying-on-pivotal-cloud-foundry, Deploying in VMware Tanzu>> section.
+See the <<deploying-on-pivotal-cloud-foundry, Deploying in VMware Tanzu section>>.
 
 [[discovering-members-auto-detection]]
 === Discovering Members by Auto Detection
 
 Auto Detection is a good way to start playing with Hazelcast. It tries to automatically detect the appropriate
-discovery plugin and apply it to into your Hazelcast configuration. For example, assuming you have `hazelcast-all`
+discovery plugin and apply it to your Hazelcast configuration. Assuming you have `hazelcast-all`
 on your classpath and your runtime is Kubernetes, Hazelcast automatically applies
 the <<kubernetes-cloud-discovery, Kubernetes discovery mechanism>>.
 
@@ -116,16 +116,16 @@ Below is a table with minimal requirements for each environment.
 |AWS EC2 requires the following points:
 
 * Security Group with the port 5701 open
-* IAM role with the `ec2:DescribeInstances` permission attached to EC2 Instance
+* IAM role with the `ec2:DescribeInstances` permission attached to the EC2 Instance
 
 |<<hazelcast-cloud-discovery-plugins-azure, Azure>>
-|Azure requires having Azure managed identity with the `READ` role attached to your Azure Virtual Machine
+|Azure requires having Azure managed identity with the `READ` role attached to your Azure Virtual Machine.
 
 |<<hazelcast-cloud-discovery-plugins-gcp, GCP>>
-|GCP requires having Cloud API (at minimum Read Only to Compute Engine API) access attached to your VM Instance
+|GCP requires having Cloud API (at minimum Read Only to Compute Engine API) access attached to your VM Instance.
 
 |<<hazelcast-cloud-discovery-plugins-kubernetes, Kubernetes>>
-| Kubernetes requires applying the following
+| Kubernetes requires applying the
 link:https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml[RBAC permissions^].
 
 |===
