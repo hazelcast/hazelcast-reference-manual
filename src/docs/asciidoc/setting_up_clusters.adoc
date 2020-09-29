@@ -26,11 +26,10 @@ for advices on the best discovery mechanism to use.
 
 By default, Hazelcast tries to automatically detect the applicable discovery mechanism based on the runtime environment.
 
-For example, assuming you have `hazelcast-all` on your classpath and your runtime is Kubernetes, Hazelcast
-automatically applies the <<kubernetes-cloud-discovery, Kubernetes discovery mechanism>>.
-
 Note that using Auto Detection is not recommended for production. Note also that if Hazelcast finds no applicable
 discovery mechanism, then it falls back to <<multicast, Multicast>>.
+
+See the <<discovering-members-auto-detection, Discovering Members by Auto Detection>> for more details.
 
 [[tcp]]
 ==== TCP
@@ -51,21 +50,15 @@ using multicast communication. See the
 [[aws-cloud-discovery]]
 ==== AWS Cloud Discovery
 
-Hazelcast supports EC2 auto-discovery. It is useful when you
+Hazelcast supports EC2/ECS auto-discovery. It is useful when you
 do not want to provide or you cannot provide the list of possible
-IP addresses. This discovery feature is provided as a Hazelcast
-plugin. See its link:https://github.com/hazelcast/hazelcast-aws/blob/master/README.md[documentation^]
-for information on configuring and using it.
+IP addresses. See the <<hazelcast-cloud-discovery-plugins-aws, Cloud Discovery Plugins: Hazelcast AWS>> section.
 
 [[azure-cloud-discovery]]
 ==== Azure Cloud Discovery
 
 Hazelcast offers a discovery strategy for your Hazelcast applications
-running on Azure. This strategy provides all of your Hazelcast instances
-by returning the virtual machines within your Azure resource group that are
-tagged with a specified value. This discovery feature is provided as a Hazelcast
-plugin. See its link:https://github.com/hazelcast/hazelcast-azure/blob/master/README.md[documentation^]
-for information on configuring and using it.
+running on Azure. See the <<hazelcast-cloud-discovery-plugins-azure, Cloud Discovery Plugins: Hazelcast Azure>> section.
 
 [[gcp-cloud-discovery]]
 ==== GCP Cloud Discovery
@@ -73,106 +66,69 @@ for information on configuring and using it.
 Hazelcast supports discovering members in the link:https://cloud.google.com/compute/[GCP Compute Engine^]
 environment. You can easily configure Hazelcast members discovery, WAN replication,
 and Hazelcast Client to work seamlessly on the native GCP VM Instances.
-This discovery feature is provided as a Hazelcast plugin. See its
-link:https://github.com/hazelcast/hazelcast-gcp/blob/master/README.md[documentation^] for
-information on configuring and using it.
+This discovery feature is provided as a Hazelcast plugin.
+See the <<hazelcast-cloud-discovery-plugins-gcp, Cloud Discovery Plugins: Hazelcast GCP>> section.
 
 [[kubernetes-cloud-discovery]]
 ==== Kubernetes Cloud Discovery
 
-Kubernetes is an open source system for automating deployment, scaling and
-management of containerized applications. Hazelcast provides Kubernetes
-discovery mechanism that looks for IP addresses of other members by resolving
-the requests against a Kubernetes Service Discovery system. It supports two
-different options of resolving against the discovery registry: (i) a request to
-the REST API, (ii) DNS Lookup against a given DNS service name. This discovery
-feature is provided as a Hazelcast plugin. See its
-link:https://github.com/hazelcast/hazelcast-kubernetes[documentation^] for information on configuring and using it.
-
-[[hazelcast-openshift-integration]]
-==== Hazelcast OpenShift Integration
-
-Hazelcast can run inside OpenShift benefiting from its cluster management
-software Kubernetes for discovery of members. Using Hazelcast Docker images,
-templates and default configuration files, you can deploy Hazelcast IMDG, Hazelcast
-IMDG Enterprise and Management Center onto OpenShift. See the following related documentation:
-
-* link:https://github.com/hazelcast/hazelcast-openshift[Hazelcast IMDG and Hazelcast IMDG Enterprise^]
-* link:https://github.com/hazelcast/management-center-openshift[Management Center^]
-
-See also the link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift[Hazelcast for OpenShift^]
-guide, which presents how to set up the local OpenShift environment, start
-a Hazelcast cluster, configure the Management Center and finally run a
-sample client application.
+Hazelcast provides Kubernetes discovery mechanism that looks for IP addresses of members.
+See the <<hazelcast-cloud-discovery-plugins-kubernetes, Cloud Discovery Plugins: Hazelcast Kubernetes>> section.
 
 [[eureka-cloud-discovery]]
 ==== Eureka Cloud Discovery
 
-Eureka is a REST based service that is primarily used in the AWS cloud
-for locating services for the purpose of load balancing and failover of
-middle-tier servers. Hazelcast supports Eureka V1 discovery; Hazelcast members
-within EC2 Virtual Private Cloud can discover each other using this mechanism.
-This discovery feature is provided as a Hazelcast plugin. See its
-link:https://github.com/hazelcast/hazelcast-eureka[documentation^].
-
-[[apache-jclouds-cloud-discovery]]
-==== Apache jclouds® Cloud Discovery
-
-Hazelcast members and native clients support jclouds® for discovery. This mechanism
-allows applications to be deployed in various cloud infrastructure ecosystems in
-an infrastructure-agnostic way. This discovery feature is provided as a Hazelcast
-plugin. See its link:https://github.com/hazelcast/hazelcast-jclouds/blob/master/README.md[documentation^]
-for information on configuring and using it.
+Hazelcast supports the Eureka V1 discovery.
+See the <<hazelcast-cloud-discovery-plugins-eureka, Cloud Discovery Plugins: Hazelcast Eureka>> section.
 
 [[zookeeper-cloud-discovery]]
 ==== Zookeeper Cloud Discovery
 
 This discovery mechanism provides a service based discovery strategy by using
-Apache Curator to communicate with your Zookeeper server. You can use this plugin
-with <<discovery-spi, Discovery SPI>> enabled applications. This is provided as a
-Hazelcast plugin. See its link:https://github.com/hazelcast/hazelcast-zookeeper/blob/master/README.md[documentation^]
-for information on configuring and using it.
-
-[[consul-cloud-discovery]]
-==== Consul Cloud Discovery
-
-Consul is a highly available and distributed service discovery and key-value
-store designed with support for the modern data center to make distributed
-systems and configuration easy. This mechanism provides a Consul based discovery
-strategy for Hazelcast enabled applications and enables Hazelcast members to
-dynamically discover one another via Consul. This discovery feature is provided
-as a Hazelcast plugin. See its link:https://github.com/bitsofinfo/hazelcast-consul-discovery-spi[documentation^]
-for information on configuring and using it.
-
-[[etcd-cloud-discovery]]
-==== etcd Cloud Discovery
-
-This mechanism provides an https://coreos.com/etcd/[etcd] based discovery strategy
-for Hazelcast enabled applications. This is an easy to configure plug-and-play
-Hazelcast discovery strategy that optionally registers each of your Hazelcast
-members with etcd and enables Hazelcast members to dynamically discover one another
-via etcd. This discovery feature is provided as a Hazelcast plugin. See its
-link:https://github.com/bitsofinfo/hazelcast-etcd-discovery-spi/blob/master/README.md[documentation^]
-for information on configuring and using it.
+Apache Curator to communicate with your Zookeeper server.
+See the <<hazelcast-cloud-discovery-plugins-zookeeper, Cloud Discovery Plugins: Hazelcast Zookeeper>> section.
 
 [[hazelcast-for-pcf]]
-==== Hazelcast for PCF
+==== Hazelcast for Tanzu VMware
 
-Using a clickable Hazelcast Tile for Pivotal Cloud Foundry (PCF), you can
+Using a clickable Hazelcast Tile for VMWare (former Pivotal Cloud Foundry), you can
 deploy your Hazelcast cluster on PCF. This feature is provided as a Hazelcast
-plugin. See its link:https://docs.pivotal.io/partners/hazelcast/index.html[documentation^]
-on how to install, configure and use the plugin Hazelcast for PCF.
+plugin.
+See the <<deploying-on-pivotal-cloud-foundry, Deploying in VMware Tanzu>> section.
 
-[[heroku-cloud-discovery]]
-==== Heroku Cloud Discovery
+[[discovering-members-auto-detection]]
+=== Discovering Members by Auto Detection
 
-Heroku is a platform as a service (PaaS) with which you can build,
-run and operate applications entirely in the cloud. It is a cloud platform based
-on a managed container system, with integrated data services and a powerful
-ecosystem. Hazelcast offers a discovery plugin that looks for IP addresses of
-other members by resolving service names against the Heroku DNS Discovery in
-Heroku Private Spaces. This discovery feature is provided as a Hazelcast plugin.
-See its link:https://github.com/jkutner/hazelcast-heroku-discovery/blob/master/README.md[documentation^].
+Auto Detection is a good way to start playing with Hazelcast. It tries to automatically detect the appropriate
+discovery plugin and apply it to into your Hazelcast configuration. For example, assuming you have `hazelcast-all`
+on your classpath and your runtime is Kubernetes, Hazelcast automatically applies
+the <<kubernetes-cloud-discovery, Kubernetes discovery mechanism>>.
+
+Below is a table with minimal requirements for each environment.
+
+.Environment Requirements
+[cols="2,5a"]
+|===
+
+|Environment|Requirements
+
+|<<hazelcast-cloud-discovery-plugins-aws, AWS>>
+|AWS EC2 requires the following points:
+
+* Security Group with the port 5701 open
+* IAM role with the `ec2:DescribeInstances` permission attached to EC2 Instance
+
+|<<hazelcast-cloud-discovery-plugins-azure, Azure>>
+|Azure requires having Azure managed identity with the `READ` role attached to your Azure Virtual Machine
+
+|<<hazelcast-cloud-discovery-plugins-gcp, GCP>>
+|GCP requires having Cloud API (at minimum Read Only to Compute Engine API) access attached to your VM Instance
+
+|<<hazelcast-cloud-discovery-plugins-kubernetes, Kubernetes>>
+| Kubernetes requires applying the following
+link:https://raw.githubusercontent.com/hazelcast/hazelcast-kubernetes/master/rbac.yaml[RBAC permissions^].
+
+|===
 
 [[discovering-members-by-tcp]]
 === Discovering Members by TCP
