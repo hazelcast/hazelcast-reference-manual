@@ -212,6 +212,10 @@ IMap<String, Employee> map = hazelcastInstance.getMap( "employee" );
 Set<Employee> employees = map.values( Predicates.sql( "active AND age < 30" ) );
 ----
 
+NOTE: Hazelcast offers an SQL service that allows to execute SQL queries,
+as opposed to SQL-like predicates in case of `Predicates.sql()`. See the
+<<sql, SQL chapter>> for more information.
+
 ===== Supported SQL Syntax
 
 **AND/OR:** `<expression> AND <expression> AND <expression>... `
