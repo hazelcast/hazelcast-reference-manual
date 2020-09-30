@@ -542,7 +542,8 @@ for more info.
 ** During this state, your cluster does not accept new members and migration/replication tasks are paused.
 
 NOTE: All in-cluster methods are fail-fast, i.e., when a method fails in the cluster,
-it throws an exception immediately (it is not retried).
+it throws an exception immediately (it is not retried): when there is an error during a state transition,
+that error is propagated immediately, Hazelcast does not attempt to retry the transition in this case.
 
 The following snippet is from the `Cluster` interface showing
 the methods used to manage your cluster's states.
