@@ -1084,10 +1084,10 @@ The realm cannot have more than one authentication method specified.
 
 The following are the available authentication types:
 
-* `jaas`: allows defining JAAS login module stacks
-* `ldap`: verifies `PasswordCredentials` against an LDAP server
-* `kerberos`: verifies the Kerberos token provided in `TokenCredentials`
-* `tls`: verifies that the TLS mutual authentication was used
+* `jaas`: It allows defining JAAS login module stacks.
+* `ldap`: It verifies `PasswordCredentials` against an LDAP server.
+* `kerberos`: It verifies the Kerberos token provided in `TokenCredentials`.
+* `tls`: It verifies that the TLS mutual authentication was used
 in the incoming connection and the peer's certificate chain is available.
 
 ===== JAAS Authentication Type
@@ -1724,7 +1724,8 @@ Available identity configuration types are as follows:
 
 * `username-password`: Defines a new `PasswordCredentials` object.
 * `token`: Defines a new `TokenCredentials` object.
-* `kerberos`: Defines Kerberos identity which uses service tickets stored in `TokenCredentials` object.
+* `kerberos`: Defines the Kerberos identity which uses the
+service tickets stored in the `TokenCredentials` object.
 * `credentials-factory`: Configures the factory class which creates the `Credentials` objects.
 
 [[credentials]]
@@ -1850,9 +1851,9 @@ include::{javatest}/security/SecurityXmlTest.java[tag=token-realm]
 ===== Kerberos Identity
 
 The `kerberos` identity type is used to retrieve Kerberos service tickets to access
-a member with `kerberos` authentication type configured. The resulting tickets
+a member with the `kerberos` authentication type configured. The resulting tickets
 are `TokenCredentials` instances. Read more about `kerberos` identity in
-the <<kerberos-authentication, Kerberos authentication>> section.
+the <<kerberos-authentication, Kerberos authentication section>>.
 
 ===== Credentials Factory
 
@@ -2121,17 +2122,17 @@ hazelcast:
 === Default authentication
 
 The Default Authentication is used when security is enabled and no explicit
-authentication configuration is provided. It can happen in following cases:
+authentication configuration is provided. It can happen when:
 
-* `member-authentication` is not configured;
-* security realm referenced by `member-authentication` doesn't contain the `authenticaton` configuration;
-* `client-authentication` is not configured;
-* security realm referenced by `client-authentication` doesn't contain the `authenticaton` configuration.
+* `member-authentication` is not configured
+* the security realm referenced by `member-authentication` doesn't contain the `authentication` configuration
+* `client-authentication` is not configured
+* the security realm referenced by `client-authentication` doesn't contain the `authentication` configuration.
 
 The behavior of the default authentication mechanism depends on **member's identity configuration**
-(i.e. `identity` configuration in the security realm referenced from `member-authentication`).
-If the `identity` is configured as a `username-password`, then authenticated username and password
-credentials are checked for equality with these configured ones. In all other cases only the incoming
+(i.e., `identity` configuration in the security realm referenced from `member-authentication`).
+If the `identity` is configured as a `username-password`, then the authenticated username and password
+credentials are checked for equality with these configured ones. In all other cases, only the incoming
 cluster name is checked for equality with the one configured on the authenticating member.
 
 === Native Client Security
@@ -2146,8 +2147,8 @@ To implement the client authentication, you reference a <<security-realms, Secur
 with the `authentication` section defined in the `<client-authentication/>` element
 of a cluster member configuration.
 
-The `authentication` configuration defines a method used to verifying the client's identity
-and assigning its roles.
+The `authentication` configuration defines a method used to verify the client's identity
+and assign its roles.
 
 [source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
 .XML
