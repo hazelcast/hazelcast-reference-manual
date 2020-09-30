@@ -59,7 +59,8 @@ license.
 Hazelcast allows you to intercept socket connections before a member
 joins a cluster or a client connects to a member of a cluster.
 This allow you to add custom hooks to join and perform connection
-procedures (like identity checking using Kerberos, etc.).
+procedures (like identity checking using a
+custom network authentication protocol, etc.).
 
 To use the socket interceptor, implement `com.hazelcast.nio.MemberSocketInterceptor`
 for members and `com.hazelcast.nio.SocketInterceptor` for clients.
@@ -82,8 +83,8 @@ You can declaratively configure this socket interceptor as follows:
         <socket-interceptor enabled="true">
             <class-name>com.hazelcast.examples.MySocketInterceptor</class-name>
             <properties>
-                <property name="kerberos-host">kerb-host-name</property>
-                <property name="kerberos-config-file">kerb.conf</property>
+                <property name="property1">value1</property>
+                <property name="property2">value2</property>
                 <property name=foo>bar</property>
             </properties>
         </socket-interceptor>
@@ -101,8 +102,8 @@ hazelcast:
         enabled: true
         class-name: com.hazelcast.examples.MySocketInterceptor
         properties:
-          kerberos-host: kerb-host-name
-          kerberos-config-file: kerb.conf
+          property1: value1
+          property2: value2
           foo: bar
 ----
 
@@ -1401,6 +1402,7 @@ include::{javatestresource}/hazelcast-authentication-types.xml[tag=ldap-fallback
              url: ldap://ldap-master.example.com ldap://ldap-backup.example.com
 ----
 
+[[kerberos-authentication]]
 ===== Kerberos Authentication Type
 
 The Kerberos authentication protocol is one of the standard solutions
@@ -1722,6 +1724,7 @@ Available identity configuration types are as follows:
 
 * `username-password`: Defines a new `PasswordCredentials` object.
 * `token`: Defines a new `TokenCredentials` object.
+* `kerberos`: Defines Kerberos identity which uses service tickets stored in `TokenCredentials` object.
 * `credentials-factory`: Configures the factory class which creates the `Credentials` objects.
 
 [[credentials]]
@@ -1843,6 +1846,13 @@ The equivalent programmatic configuration is as follows:
 ----
 include::{javatest}/security/SecurityXmlTest.java[tag=token-realm]
 ----
+
+===== Kerberos Identity
+
+The `kerberos` identity type is used to retrieve Kerberos service tickets to access
+a member with `kerberos` authentication type configured. The resulting tickets
+are `TokenCredentials` instances. Read more about `kerberos` identity in
+the <<kerberos-authentication, Kerberos authentication>> section.
 
 ===== Credentials Factory
 
@@ -2107,6 +2117,23 @@ hazelcast:
       realm: memberRealm
 ----
 
+[[default-authentication]]
+=== Default authentication
+
+The Default Authentication is used when security is enabled and no explicit
+authentication configuration is provided. It can happen in following cases:
+
+* `member-authentication` is not configured;
+* security realm referenced by `member-authentication` doesn't contain the `authenticaton` configuration;
+* `client-authentication` is not configured;
+* security realm referenced by `client-authentication` doesn't contain the `authenticaton` configuration.
+
+The behavior of the default authentication mechanism depends on **member's identity configuration**
+(i.e. `identity` configuration in the security realm referenced from `member-authentication`).
+If the `identity` is configured as a `username-password`, then authenticated username and password
+credentials are checked for equality with these configured ones. In all other cases only the incoming
+cluster name is checked for equality with the one configured on the authenticating member.
+
 === Native Client Security
 
 Hazelcast's Client security includes both authentication and authorization.
@@ -2114,12 +2141,13 @@ Hazelcast's Client security includes both authentication and authorization.
 ==== Authentication
 
 The authentication mechanism works in similar way as the cluster member authentication.
-It can be referenced by the `<member-authentication/>` element to
-define authentication between the member and identity of the current member.
 
 To implement the client authentication, you reference a <<security-realms, Security Realm>>
 with the `authentication` section defined in the `<client-authentication/>` element
 of a cluster member configuration.
+
+The `authentication` configuration defines a method used to verifying the client's identity
+and assigning its roles.
 
 [source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
 .XML
@@ -2160,7 +2188,7 @@ hazelcast:
 ----
 
 The identity of the connecting client is defined on the client side.
-There are no security realms on the clients, but just identity
+Usually, there are no security realms on the clients, but just identity
 defined directly in the security configuration:
 
 [source,xml,indent=0,subs="verbatim,attributes",options="nowrap",role="primary"]
@@ -2189,6 +2217,7 @@ On the clients, You can use the same identity types as in security realms:
 
 * `username-password`
 * `token`
+* `kerberos` _(may require an additional security realm definition)_
 * `credentials-factory`
 
 ==== Authorization
