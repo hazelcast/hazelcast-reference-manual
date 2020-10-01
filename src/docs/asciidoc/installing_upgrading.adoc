@@ -7,23 +7,21 @@ details, and deployment options of Hazelcast IMDG.
 Hazelcast IMDG provides a number of options on how to install it.
 Here's a brief overview of them:
 
-* <<installing-using-cli>> - the fastest way of getting Hazelcast IMDG running (in the client/server mode).
+* <<installing-using-cli>>: Fastest way of getting Hazelcast IMDG running (in the client/server mode).
 Currently not suitable for production usage, but rather for development purposes.
-* <<installing-using-maven>> - the easiest way for Maven users (typically Java developers), especially appropriate
-for the embedded mode when the Hazelcast IMDG is tightly coupled with the application.
-* <<installing-using-docker>> - one line Docker based setup.
-* <<installing-using-download-archives>> - Swiss-Army knife providing the most flexibility and all the tooling,
-but takes the most time (unbearable 3 steps).
+* <<installing-using-maven>>: Easiest way for Maven users (typically Java developers), especially appropriate
+for the embedded mode when Hazelcast IMDG is tightly coupled with the application.
+* <<installing-using-docker>>: One line Docker based setup.
+* <<installing-using-download-archives>>: Provides the most flexibility and all the tooling, but takes a little longer time.
 
 A separate section is dedicated for
 <<deploying-in-cloud, deployments into cloud>>, which includes the following:
 
-* <<deploying-on-hazelcast-cloud>>
+* <<deploying-hazelcast-cloud>>
 * <<deploying-on-amazon-ec2>>
 * <<deploying-on-microsoft-azure>>
-* <<deploying-on-microsoft-azure>>
+* <<deploying-on-gcp>>
 * <<deploying-on-pivotal-cloud-foundry>>
-* <<deploying-using-docker>>
 
 [[installing-using-cli]]
 === CLI
@@ -269,32 +267,38 @@ information about <<hazelcast-cloud-discovery-plugins-gcp, Hazelcast GCP Discove
 for details.
 
 [[setting-the-license-key]]
-=== Using Enterprise edition
+=== Using Pro and Enterprise editions
 
-Hazelcast IMDG Enterprise offers you two types of licenses: **Enterprise**
-and **Enterprise HD**. The supported features differ in your Hazelcast
+Hazelcast IMDG offers two commercially licensed editions: **Pro** and **Enterprise**.
+The supported features differ in your Hazelcast
 setup according to the license type you own.
 
-* **Enterprise license**: In addition to the open source edition of
+* **Pro license**: In addition to the open source edition of Hazelcast,
+Pro features are the following:
+** <<cp-subsystem-persistence>>
+** <<deploying-on-pivotal-cloud-foundry, Deploying in VMware Tanzu>>
+** <<deploying-in-kubernetes, Deploying in Openshift container platform>>
+* **Enterprise license**: In addition to the open source and Pro editions of
 Hazelcast, Enterprise features are the following:
-** <<security>>
+** <<security, Security suite>>
 ** <<wan-replication>>
 ** <<clustered-jmx-and-rest-via-management-center, Clustered REST>>
 ** <<clustered-jmx-and-rest-via-management-center, Clustered JMX>>
 ** <<hazelcast-striim-hot-cache, Striim Hot Cache>>
 ** <<rolling-member-upgrades, Rolling Upgrades>>
-* **Enterprise HD license**: In addition to the Enterprise features,
-Enterprise HD features are the following:
 ** <<high-density-memory-store>>
 ** <<hot-restart-persistence>>
 
+See also link:https://hazelcast.com/product-features/imdg-comparison/[here^] for a
+more detailed feature comparison between the editions.
+
 ==== Setting Up License Key
 
-NOTE: Hazelcast IMDG Enterprise license keys are required only for members.
+NOTE: Hazelcast IMDG Pro and Enterprise license keys are required only for members.
 You do not need to set a license key for your Java clients for which you
-want to use IMDG Enterprise features.
+want to use the Pro and Enterprise features.
 
-To use Hazelcast IMDG Enterprise, you need to set the provided license
+To use Hazelcast IMDG Pro or Enterprise, you need to set the provided license
 key using one of the configuration methods shown below.
 
 
