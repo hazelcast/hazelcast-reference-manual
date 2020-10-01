@@ -1508,6 +1508,21 @@ credentials, e.g., TGT.
 in generated Service Principal names.
 This property is only used when Service Principal name is not static, i.e., when `spn` option
 is not configured).
+
+| `principal`
+|
+| Kerberos Principal name. This is a helper option which can be used together
+with the `keytabFile` to replace `security-realm` configuration.
+
+_We don't recommend using this property in production!_
+
+| `keytabFile`
+|
+| Path to a keytab file with current principal's  secrets.
+This is a helper option which can be used together
+with the `principal` to replace `security-realm` configuration.
+
+_We don't recommend using this property in production!_
 |=======================================================================
 
 The authenticating part on the server side is able to
@@ -1595,6 +1610,21 @@ authenticated name, e.g., `"jduke@ACME.COM"` becomes just `"jduke"`.
 for Kerberos authentication. The authentication configuration in the
 referenced security realm will be used to fill the Subject with the Kerberos
 credentials, e.g., Keytab.
+
+| `principal`
+|
+| Kerberos Principal name. This is a helper option which can be used together
+with the `keytabFile` to replace `security-realm` configuration.
+
+_We don't recommend using this property in production!_
+
+| `keytabFile`
+|
+| Path to a keytab file with current principal's  secrets.
+This is a helper option which can be used together
+with the `principal` to replace `security-realm` configuration.
+
+_We don't recommend using this property in production!_
 |=======================================================================
 
 The `GssApiLoginModule` (implementing Kerberos authentication)
@@ -1673,6 +1703,79 @@ sub-configuration of the `<kerberos>` authentication.
 NOTE: The Kerberos-LDAP integration doesn't support credentials delegation,
 i.e., reusing client's ticket for accessing the LDAP. It only allows using
 the member's Kerberos credentials to authenticate into the LDAP.
+
+===== Simplified Kerberos configuration
+
+To simplify the Kerberos configuration process for new users, Hazelcast allows
+skipping `Krb5LoginModule` JAAS configuration within separate security realms.
+Instead it's possible to define the `principal` and `keytabFile` options in
+`kerberos` identity and authentication configuration.
+If these options are used instead of the `security-realm`, then a new temporary
+realm is generated on the fly during the authentication.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
+----
+<hz:realm name="simpleKerberosRealm">
+    <hz:authentication>
+        <hz:kerberos>
+            <hz:principal>hz/127.0.0.1@HAZELCAST.COM</hz:principal>
+            <hz:keytab-file>/opt/localhost.keytab</hz:keytab-file>
+        </hz:kerberos>
+    </hz:authentication>
+    <hz:identity>
+        <hz:kerberos>
+            <hz:realm>HAZELCAST.COM</hz:realm>
+            <hz:principal>hz/127.0.0.1@HAZELCAST.COM</hz:principal>
+            <hz:keytab-file>/opt/localhost.keytab</hz:keytab-file>
+        </hz:kerberos>
+    </hz:identity>
+</hz:realm>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+    realms:
+      - name: simpleKerberosRealm
+        authentication:
+          kerberos:
+            principal: hz/127.0.0.1@HAZELCAST.COM
+            keytab-file: /opt/localhost.keytab
+        identity:
+          kerberos:
+            realm: HAZELCAST.COM
+            principal: hz/127.0.0.1@HAZELCAST.COM
+            keytab-file: /opt/localhost.keytab
+----
+
+A warning is logged during the first usage of the simplified configuration form.
+It includes the generated configuration, so users can use it as a starting point
+for defining full Kerberos configuration. Example:
+
+```
+12:37:41,187  WARN [KerberosCredentialsFactory] Using generated Kerberos initiator
+realm configuration is not intended for production use. It's recommended
+to properly configure the Krb5LoginModule manually to fit your needs.
+Following configuration was generated from provided keytab and principal properties:
+<realm name="krb5Initiator">
+  <authentication>
+    <jaas>
+      <login-module class-name="com.sun.security.auth.module.Krb5LoginModule" usage="REQUIRED">
+        <properties>
+          <property name="isInitiator">true</property>
+          <property name="useKeyTab">true</property>
+          <property name="refreshKrb5Config">true</property>
+          <property name="doNotPrompt">true</property>
+          <property name="storeKey">true</property>
+          <property name="keyTab">/opt/localhost.keytab</property>
+          <property name="principal">hz/127.0.0.1@HAZELCAST.COM</property>
+        </properties>
+      </login-module>
+    </jaas>
+  </authentication>
+</realm>
+```
 
 ===== TLS Authentication Type
 
