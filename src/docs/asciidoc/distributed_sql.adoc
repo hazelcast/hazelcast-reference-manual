@@ -142,7 +142,7 @@ SELECT * FROM employee
 
 ==== Indexes
 
-The SQL service could use `IMap` indexes to speed up the execution of certain queries.
+The SQL service can use `IMap` indexes to speed up the execution of certain queries.
 `SORTED` and `HASH` indexes are supported.
 
 See the <<indexing-queries, Indexing Queries section>> for more information on `IMap`
@@ -225,7 +225,7 @@ FROM table_name [ [ AS ] table_alias ]
 ==== Description
 
 The `SELECT` command retrieves rows from a table. A row is a sequence of expressions defined after the `SELECT` keyword.
-Expressions may have an optional aliases.
+Expressions may have optional aliases.
 
 `table_name` refers to a single `IMap` data structure. A table may have an optional alias.
 
@@ -241,7 +241,7 @@ Hazelcast SQL supports logical predicates, `IS` predicates, comparison operators
 string functions, and special functions.
 
 [cols="1,1,1,1", options="header"]
-.AND/OR Predicates
+.AND/OR Operators
 |===
 | `a`
 | `b`
@@ -280,7 +280,7 @@ string functions, and special functions.
 |===
 
 [cols="1,1", options="header"]
-.NOT Predicate
+.NOT Operator
 |===
 | `a`
 | `NOT a`
@@ -296,7 +296,7 @@ string functions, and special functions.
 |===
 
 [cols="1,2,1", options="header"]
-.IS Predicates
+.IS Operator
 |===
 | Predicate
 | Description
@@ -442,7 +442,7 @@ string functions, and special functions.
 |`0.7304302967434272`
 
 |`ROUND(number)`
-|Round toward zero
+|Round to an integer
 |`ROUND(34.5678)`
 |`35`
 
@@ -457,7 +457,7 @@ string functions, and special functions.
 |`-1`
 
 |`TRUNCATE(number)`
-|Truncate toward zero
+|Truncate to an integer
 |`TRUNC(34.5678)`
 |`34`
 
@@ -599,16 +599,16 @@ string functions, and special functions.
 
 === Lite Members
 
-You cannot start SQL queries on the lite members. This limitation will be removed in
+You cannot start SQL queries on lite members. This limitation will be removed in
 future releases.
 
 === How Distributed SQL Works
 
 When an SQL statement is submitted for execution, the SQL service parses and
 optimizes it using Apache Calcite. The result is an executable plan that
-is cached and reused by the subsequent executions of the same statement.
+is cached and reused by subsequent executions of the same statement.
 
 The plan contains a tree of query fragments. A query fragment is a tree of
-operators that could be executed on a single member independently. The child
-fragments supply data to the parent fragments, possibly through a network, until
+operators that could be executed on a single member independently. Child
+fragments supply data to parent fragments, possibly over a network, until
 the root fragment is reached. The root fragment returns the query results.
