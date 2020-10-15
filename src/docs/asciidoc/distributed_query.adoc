@@ -499,13 +499,13 @@ only the results to the caller.
 Then, on the caller side, the results are merged.
 
 When a query runs on a
-member, Hazelcast iterates through all the owned entries and find the
+member, Hazelcast iterates through all the owned entries and finds the
 matching ones. This can be made faster by indexing
-the mostly queried fields, just like you would do for your database.
-Indexing adds overhead for each `write`
-operation but queries will be a lot faster. If you query your map a
+the most-queried fields, just like you would do for your database.
+Indexing adds overhead for each write
+operation but reading will be a lot faster. If you query your map a
 lot, make sure to add indexes for the most frequently
-queried fields. For example, if you do an `active and age < 30` query,
+queried fields. For example, if you do `active AND age < 30` query,
 make sure you add an index for the `active` and
 `age` fields. The following example code does that by getting the map
 from the Hazelcast instance and adding indexes to the map with the
@@ -520,15 +520,15 @@ map.addIndex(new IndexConfig(IndexType.SORTED, "age"));
 map.addIndex(new IndexConfig(IndexType.HASH, "active"));
 ----
 
-Note that creating indexes once is sufficient. Subsequent operations are
-reflected in the index automatically. So, although it is safe to call the
-`addIndex()` method consecutively, there will be a performance penalty
-due to the redundant index creation.
+Note that creating indexes once is sufficient. Subsequent write
+operations on the map are reflected in the index automatically. So,
+although it is safe to call the `addIndex()` method repeatedly, there
+will be a performance penalty due to the redundant index creation.
 
 When you call, for example, `map.addIndex("fieldName", true)`, each
-partition iterates over their recordset and creates an index for each entry.
+partition iterates over its records and adds each entry to the index.
 The previously created index entry will be recreated and replaced with the new entry.
-The performance penalty will be parallel with the number of entries. If you
+The performance penalty will be proportional to the number of entries. If you
 have maps with a large number of entries, then synchronizing index addition process
 is recommended.
 
