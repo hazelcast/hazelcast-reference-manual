@@ -2336,6 +2336,66 @@ link:https://docs.hazelcast.org/docs/management-center/latest/manual/html/index.
 will not show them. Its default value is `true`.
 * `split-brain-protection-ref` : Name of the split-brain protection configuration that you want this queue to use.
 
+=== Priority Queue
+
+Priority queue is a regular blocking queue with a comparator.
+Items in this queue do not necessarily follow the FIFO or LIFO order;
+you assign a comparator which defines the items to have a higher priority.
+Items with higher priority get polled first, regardless of when they have been added.
+
+Its configuration is same as the regular queue as explained in <<configuring-queue>>
+except the additional comparator configuration element. A declarative example
+is shown below:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
+----
+<queue name="default">
+    <max-size>10</max-size>
+    <backup-count>1</backup-count>
+    <item-listeners>
+      <item-listener include-value="true">com.hazelcast.examples.ItemListener</item-listener>
+    </item-listeners>
+    <queue-store>
+      <class-name>com.hazelcast.QueueStoreImpl</class-name>
+      <properties>
+        <property name="binary">false</property>
+        <property name="memory-limit">10000</property>
+        <property name="bulk-load">500</property>
+      </properties>
+    </queue-store>
+    <priority-comparator-class-name>com.hazelcast.collection.impl.queue.model.PriorityElementComparator</priority-comparator-class-name>
+</queue>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+queue:
+  default:
+    statistics-enabled: true
+    max-size: 10
+    backup-count: 1
+    item-listeners:
+      - include-value: true
+        class-name: com.hazelcast.examples.ItemListener
+    queue-store:
+        class-name: com.hazelcast.QueueStoreImpl
+        properties:
+          binary: false
+          memory-limit: 1000
+          bulk-load: 500
+    priority-comparator-class-name: com.hazelcast.collection.impl.queue.model.PriorityElementComparator
+----
+
+
+The `priority-comparator-class-name` element is the
+fully-qualified comparator's class name to be used for the priority queue.
+If you do not provide a value, then the queue behaves as a regular FIFO queue.
+
+NOTE: When you provide a comparator, Hazelcast ignores the queue store
+`memory-limit` configuration value.
+
 [[multimap]]
 === MultiMap
 
