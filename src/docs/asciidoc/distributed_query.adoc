@@ -624,6 +624,24 @@ indexes, the indexes are automatically stored in the High-Density Memory Store
 as well. This prevents from running into full garbage collections when doing
 a lot of updates to index.
 
+===== Global versus partitioned Indexes
+The on-heap indexes are always **global**, that is one index covers all `IMap`'s entries stored on the partitions
+owned by the cluster's member. Such indexes are beneficial for lookup and range queries because only one lookup
+operation is needed to execute a query. A drawback of global indexes is a potential high contention on the
+index concurrent data structure that might cause performance degradation.
+
+<<configuring-high-density-memory-store, High-Density Memory Store>> supports **partitioned** indexes. Each partition
+owned by the cluster's member has its own index. All operations on the partitioned index are performed on the
+partitioned thread, thus eliminating contention issue of the global indexes. However, a query lookup and range
+query has to perform lookup operation on every partition and combine the results. Normally, such partition and
+combine execution yields poorer performance results comparing with the global indexes.
+
+Since 4.1 release we introduced global concurrent HD indexes (based on our own off-heap B+tree implementation)
+bringing all benefits of global indexes to the HD `IMap`.
+
+The global HD indexes are enabled by default. The `GLOBAL_HD_INDEX_ENABLED` property `ClusterProperty` allows you
+to change the setting.
+
 ===== Composite Indexes
 
 Composite indexes, also known as compound indexes, are special kind of
