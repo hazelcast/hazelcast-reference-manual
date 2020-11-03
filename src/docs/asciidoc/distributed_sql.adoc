@@ -612,3 +612,11 @@ The plan contains a tree of query fragments. A query fragment is a tree of
 operators that could be executed on a single member independently. Child
 fragments supply data to parent fragments, possibly over a network, until
 the root fragment is reached. The root fragment returns the query results.
+
+=== SQL on HD data structure
+If you configure the `IMap` data structure to use
+<<configuring-high-density-memory-store, High-Density Memory Store>>, you have to
+create at least one global HD index to run a SQL statement. This limitation comes
+from the fact that off-heap `IMap` data structure is not thread-safe, and we use
+thread-safe concurrent HD index based on the B+tree implementation to run `IMap`'s
+scan operators.
