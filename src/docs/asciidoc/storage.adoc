@@ -121,7 +121,7 @@ The following is the declarative configuration example.
         <min-block-size>16</min-block-size>
         <page-size>4194304</page-size>
         <metadata-space-percentage>12.5</metadata-space-percentage>
-        <persistent-memory>
+        <persistent-memory enabled="true" mode="MOUNTED">
             <directories>
                 <directory numa-node="0">/mnt/pmem0</directory>
                 <directory numa-node="1">/mnt/pmem1</directory>
@@ -146,11 +146,13 @@ hazelcast:
     page-size: 4194304
     metadata-space-percentage: 12.5
     persistent-memory:
-        directories:
-            - directory: /mnt/pmem0
-              numa-node: 0
-            - directory: /mnt/pmem1
-              numa-node: 1
+      enabled: true
+      mode: MOUNTED
+      directories:
+        - directory: /mnt/pmem0
+          numa-node: 0
+        - directory: /mnt/pmem1
+          numa-node: 1
 ----
 
 NOTE: You can check whether there is enough free physical memory for the
@@ -167,22 +169,17 @@ the <<hot-restart-persistence, Hot Restart Persistence>> feature.
 
 To support larger and more affordable storage for data structures like IMap,
 ICache and Near Cache, Hazelcast provides integration with persistent memory
-technologies like Intel(R) Optane(TM) DC. To benefit from the technology you
+technologies like Intel(R) Optane(TM) DC. To benefit from the technology, you
 do not need to make any changes in your application code.
 Only a few configuration changes are required.
 
-The optional `persistent-memory` element under the `native-memory`
-configuration block defines the directories where the persistent memory is mounted.
-This option enables usage of the persistent memory on the cluster member so
-that all data structures backed by High-Density Memory Store use the specified
-mounting directories to store data. If no persistent memory directory is configured,
-standard RAM is used.
+NOTE: Integration with Intel(R) Optane(TM) DC is supported on Linux
+operating system and it is for Optane DIMMs (not SSDs).
 
-The following snippets demonstrate how to configure the persistent memory as
-High-Density Memory Store in Hazelcast. The example assumes dual-socket machine,
-both sockets are populated with Intel(R) Optane(TM) DC persistent memory DIMMs that
-are configured in interleaved mode. The two sockets' DIMMs are mounted as `/mnt/pmem0`
-and `/mnt/pmem1` and are known as NUMA node0 and node1 respectively.
+The optional `persistent-memory` element in the `native-memory`
+configuration block enables the persistent memory usage and defines the
+directories where this memory is mounted along with its operational mode.
+See the element descriptions below the following configuration snippets.
 
 **Declarative Configuration:**
 
@@ -193,7 +190,7 @@ and `/mnt/pmem1` and are known as NUMA node0 and node1 respectively.
     ...
     <native-memory allocator-type="POOLED" enabled="true">
         <size unit="GIGABYTES" value="100" />
-        <persistent-memory>
+        <persistent-memory enabled="true" mode="MOUNTED">
             <directories>
                 <directory numa-node="0">/mnt/pmem0</directory>
                 <directory numa-node="1">/mnt/pmem1</directory>
@@ -215,6 +212,8 @@ hazelcast:
       unit: GIGABYTES
       value: 100
     persistent-memory:
+      enabled: true
+      mode: MOUNTED
       directories:
         - directory: /mnt/pmem0
           numa-node: 0
@@ -233,14 +232,34 @@ NativeMemoryConfig memoryConfig = new NativeMemoryConfig()
                 .setAllocatorType(POOLED);
 
 PersistentMemoryConfig pmemConfig = memoryConfig.getPersistentMemoryConfig()
+                .setEnabled(true)
+                .setMode(MOUNTED)
                 .addDirectoryConfig(new PersistentMemoryDirectoryConfig("/mnt/pmem0", 0))
                 .addDirectoryConfig(new PersistentMemoryDirectoryConfig("/mnt/pmem1", 1));
 
 config.setNativeMemoryConfig(memoryConfig);
 ----
 
-NOTE: Note that integration with Intel(R) Optane(TM) DC is supported on Linux
-operating system and it is for Optane DIMMs (not SSDs).
+The above snippets demonstrate how to configure the persistent memory as
+High-Density Memory Store in Hazelcast. The example assumes dual-socket machine;
+both sockets are populated with Intel(R) Optane(TM) DC persistent memory DIMMs that
+are configured in interleaved mode. The two sockets' DIMMs are mounted as `/mnt/pmem0`
+and `/mnt/pmem1` and are known as NUMA node0 and node1, respectively.
+
+Here are the descriptions of the  persistent memory configuration elements and attributes:
+
+* `enabled`: Specifies whether the persistent memory usage is enabled or not. Its default value is `false`, 
+i.e., persistent memory usage is disabled.
+* `mode`: Defines the persistent memory operational mode. Two modes are supported:
+** `MOUNTED`: If you choose this mode, the persistent memory is mounted into the file system (aka FS DAX).
+** `SYSTEM_MEMORY`: If you choose this mode, the persistent memory is onlined as system memory (aka KMEM DAX).
+* `directories`: List of the persistent memory mounting directories to store data of all the data structures backed by
+High-Density Memory Store. When you provide the directories:
+** the persistent memory usage is enabled automatically and you do not need to explicitly
+set the `enabled` attribute to `true`
+** the `mode` should be set to `MOUNTED`.
++
+If you do not provide a persistent memory directory is configured, standard RAM is used.
 
 ===== Allocation Strategies
 
@@ -278,7 +297,7 @@ To enable this allocation strategy for a certain thread, the thread has to be
 bounded to a single NUMA node, which means the kernel's scheduler makes sure
 the thread can be scheduled only on the CPUs of a single NUMA node. Starting
 with Hazelcast 4.1 this can be done with thread group granularity. For the
-detailed explanation please refer to the thread affinity documentation. What
+detailed explanation please refer to the <<cpu-thread-affinity, Thread Affinity section>>. What
 makes the biggest impact on performance is enabling the NUMA-aware allocation
 strategy for the operation threads. An example configuration for that is as follows:
 

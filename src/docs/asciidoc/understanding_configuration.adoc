@@ -649,7 +649,11 @@ java -Dhz.cluster-name=value
 
 Recognized and unrecognized configuration entries will be logged when Hazelcast starts.
 
-NOTE: The above mechanism exists mostly for the sake of trivial
+When overriding the configuration provided in a custom file,
+remember to overwrite the whole configuration sections at once;
+if you don't, the remaining entries will be set to their default values.
+
+NOTE: The above mechanism exists mostly for the sake of convenience of applying trivial
 environment specific configuration changes, and should not be treated
 as a replacement for complex XML/YAML configuration files.
 
