@@ -16,36 +16,29 @@ You can use the Hazelcast
 link:https://github.com/hazelcast/hazelcast-command-line[Command Line Interface (CLI)^]
 to install and start Hazelcast IMDG.
 
-==== Installing Hazelcast on macOS with Homebrew
+Run the following commands to install Hazelcast CLI:
 
-Assuming you have the link:https://brew.sh/[Homebrew^] package manager, run the following commands:
-
-[source,bash,subs="attributes+"]
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.Homebrew
 ----
 $ brew tap hazelcast/hz
 $ brew install hazelcast
 ----
 
-==== Installing Hazelcast with Debian Package
-
-Run the commands below to install Hazelcast using Debian package. It downloads the package from our own APT repository:
-
-[source,bash,subs="attributes+"]
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.Debian
 ----
-$ wget -qO - https://bintray.com/user/downloadSubjectPublicKey?username=hazelcast | apt-key add -
-$ echo "deb http://dl.bintray.com/hazelcast/deb stable main" | tee -a /etc/apt/sources.list
-$ apt update && apt install hazelcast
+$ wget -qO - https://bintray.com/user/downloadSubjectPublicKey?username=hazelcast | sudo apt-key add -
+$ echo "deb http://dl.bintray.com/hazelcast/deb stable main" | sudo tee -a /etc/apt/sources.list
+$ sudo apt update && apt install hazelcast
 ----
 
-==== Installing Hazelcast with RPM
-
-Run the following commands to install Hazelcast using link:https://rpm.org/[RPM^]:
-
-[source,bash,subs="attributes+"]
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.RPM
 ----
 $ wget https://bintray.com/hazelcast/rpm/rpm -O bintray-hazelcast-rpm.repo
-$ mv bintray-hazelcast-rpm.repo /etc/yum.repos.d/
-$ yum install hazelcast
+$ sudo mv bintray-hazelcast-rpm.repo /etc/yum.repos.d/
+$ sudo yum install hazelcast
 ----
 
 After the installation of Hazelcast CLI, the package managers will display the installation directory and usage information.
