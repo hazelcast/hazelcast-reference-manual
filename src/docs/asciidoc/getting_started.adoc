@@ -16,13 +16,32 @@ You can use the Hazelcast
 link:https://github.com/hazelcast/hazelcast-command-line[Command Line Interface (CLI)^]
 to install and start Hazelcast IMDG.
 
-Assuming you have the link:https://brew.sh/[Homebrew^] package manager, run the following commands:
+Run the following commands to install Hazelcast CLI:
 
-[source,bash,subs="attributes+"]
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.Homebrew
 ----
 $ brew tap hazelcast/hz
 $ brew install hazelcast
 ----
+
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.Debian
+----
+$ wget -qO - https://bintray.com/user/downloadSubjectPublicKey?username=hazelcast | sudo apt-key add -
+$ echo "deb http://dl.bintray.com/hazelcast/deb stable main" | sudo tee -a /etc/apt/sources.list
+$ sudo apt update && apt install hazelcast
+----
+
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.RPM
+----
+$ wget https://bintray.com/hazelcast/rpm/rpm -O bintray-hazelcast-rpm.repo
+$ sudo mv bintray-hazelcast-rpm.repo /etc/yum.repos.d/
+$ sudo yum install hazelcast
+----
+
+After the installation of Hazelcast CLI, the package managers will display the installation directory and usage information.
 
 Currently, the CLI way is meant for development purposes, not for a production usage.
 For production or if you prefer other ways, take a look at <<installing-hazelcast-imdg>>.
