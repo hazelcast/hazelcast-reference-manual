@@ -24,7 +24,7 @@ the map configuration as shown below.
     </wan-replication>
     <map name="my-shared-map">
         <wan-replication-ref name="london-wan-rep">
-            <merge-policy>com.hazelcast.spi.merge.PassThroughMergePolicy</merge-policy>
+            <merge-policy>PassThroughMergePolicy</merge-policy>
             <republishing-enabled>false</republishing-enabled>
         </wan-replication-ref>
     </map>
@@ -43,7 +43,7 @@ hazelcast:
     my-shared-map:
       wan-replication-ref:
         london-wan-rep:
-          merge-policy: com.hazelcast.spi.merge.PassThroughMergePolicy
+          merge-policy: PassThroughMergePolicy
           republishing-enabled: false
 ----
 
@@ -75,19 +75,19 @@ the `wan-replication-ref` element).
 
 Hazelcast provides the following merge policies for `IMap`:
 
-* `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`: Incoming entry merges from the source map to
+* `PutIfAbsentMergePolicy`: Incoming entry merges from the source map to
 the target map if it does not exist in the target map.
-* `com.hazelcast.spi.merge.HigherHitsMergePolicy`: Incoming entry merges from the source map to
+* `HigherHitsMergePolicy`: Incoming entry merges from the source map to
 the target map if the source entry has more hits than the target one.
-* `com.hazelcast.spi.merge.PassThroughMergePolicy`: Incoming entry merges from the source map to
+* `PassThroughMergePolicy`: Incoming entry merges from the source map to
 the target map unless the incoming entry is not null.
-* `com.hazelcast.spi.merge.ExpirationTimeMergePolicy`: Incoming entry merges from the source map to
+* `ExpirationTimeMergePolicy`: Incoming entry merges from the source map to
 the target map if the source entry will expire later than the destination entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
-* `com.hazelcast.spi.merge.LatestAccessMergePolicy`: Incoming entry merges from the source map to
+* `LatestAccessMergePolicy`: Incoming entry merges from the source map to
 the target map if the source entry has been accessed more recently than the destination entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
-* `com.hazelcast.spi.merge.LatestUpdateMergePolicy`: Incoming entry merges from the source map to
+* `LatestUpdateMergePolicy`: Incoming entry merges from the source map to
 the target map if the source entry has been updated more recently than the target entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
 
@@ -112,7 +112,7 @@ The following is a declarative configuration example for enabling WAN Replicatio
     </wan-replication>
     <cache name="my-shared-cache">
         <wan-replication-ref name="london-wan-rep">
-            <merge-policy>com.hazelcast.spi.merge.PassThroughMergePolicy</merge-policy>
+            <merge-policy>PassThroughMergePolicy</merge-policy>
             <republishing-enabled>true</republishing-enabled>
         </wan-replication-ref>
     </cache>
@@ -131,7 +131,7 @@ hazelcast:
     my-shared-cache:
       wan-replication-ref:
         london-wan-rep:
-          merge-policy: com.hazelcast.spi.merge.PassThroughMergePolicy
+          merge-policy: PassThroughMergePolicy
           republishing-enabled: true
 ----
 
@@ -143,24 +143,24 @@ include::{javasource}/wan/EnablingWRforCache.java[tag=wrcache]
 ----
 
 NOTE: Caches that are created dynamically do not support WAN replication functionality.
-Cache configurations should be defined either declaratively (by XML) or programmatically on both
+Cache configurations should be defined either declaratively (by XML/YAML) or programmatically on both
 source and target clusters.
 
 Hazelcast provides the following merge policies for `ICache`:
 
-* `com.hazelcast.spi.merge.PutIfAbsentMergePolicy`: Incoming entry merges from the source cache to
+* `PutIfAbsentMergePolicy`: Incoming entry merges from the source cache to
 the target cache if it does not exist in the target cache.
-* `com.hazelcast.spi.merge.HigherHitsMergePolicy`: Incoming entry merges from the source cache to
+* `HigherHitsMergePolicy`: Incoming entry merges from the source cache to
 the target cache if the source entry has more hits than the target one.
-* `com.hazelcast.spi.merge.PassThroughMergePolicy`: Incoming entry merges from the source cache to
+* `merge.PassThroughMergePolicy`: Incoming entry merges from the source cache to
 the target cache unless the incoming entry is not null.
-* `com.hazelcast.spi.merge.ExpirationTimeMergePolicy`: Incoming entry merges from the source cache to
+* `ExpirationTimeMergePolicy`: Incoming entry merges from the source cache to
 the target cache if the source entry will expire later than the destination entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
-* `com.hazelcast.spi.merge.LatestAccessMergePolicy`: Incoming entry merges from the source cache to
+* `LatestAccessMergePolicy`: Incoming entry merges from the source cache to
 the target cache if the source entry has been accessed more recently than the destination entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
-* `com.hazelcast.spi.merge.LatestUpdateMergePolicy`: Incoming entry merges from the source cache to
+* `LatestUpdateMergePolicy`: Incoming entry merges from the source cache to
 the target cache if the source entry has been updated more recently than the target entry.
 Please note that this merge policy can only be used when the clusters' clocks are in sync.
 

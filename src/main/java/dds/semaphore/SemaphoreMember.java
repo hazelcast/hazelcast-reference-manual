@@ -10,6 +10,7 @@ public class SemaphoreMember {
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
         ISemaphore semaphore = hazelcastInstance.getCPSubsystem().getSemaphore( "semaphore" );
         IAtomicLong resource = hazelcastInstance.getCPSubsystem().getAtomicLong( "resource" );
+        semaphore.init(4);
         for ( int k = 0 ; k < 1000 ; k++ ) {
             System.out.println( "At iteration: " + k + ", Active Threads: " + resource.get() );
             semaphore.acquire();
