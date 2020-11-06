@@ -413,8 +413,8 @@ predicate has a filter
 to retrieve the objects with an "age" greater than or equal to 18.
 * Then a `PagingPredicate` is constructed in which the page size is 5,
 so that there are five objects in each page.
-The first time the values are called creates the first page.
-* It gets subsequent pages with the `nextPage()`
+The first time the `values()` method is called, the first page is fetched.
+* Finally, the subsequent page is fetched by calling the `nextPage()`
 method of `PagingPredicate` and querying the map again with the
 updated `PagingPredicate`.
 
@@ -434,8 +434,8 @@ values = map.values( pagingPredicate );
 ----
 
 If a comparator is not specified for `PagingPredicate`, but you want
-to get a collection of keys or values page by page, this collection must
-be an instance of `Comparable` (i.e., it must implement `java.lang.Comparable`).
+to get a collection of keys or values page by page, keys or values must
+be instances of `Comparable` (i.e., they must implement `java.lang.Comparable`).
 Otherwise, the `java.lang.IllegalArgument` exception is thrown.
 
 You can also access a specific page more
@@ -445,7 +445,7 @@ once instead of reaching the hundredth page one by one using the `nextPage()` me
 Note that this feature tires the memory and see the
 link:{docBaseUrl}/javadoc/com/hazelcast/query/PagingPredicate.html[PagingPredicate Javadoc^].
 
-Paging Predicate, also known as Order & Limit, is not supported in
+NOTE: Paging Predicate, also known as Order & Limit, is not supported in
 Transactional Context.
 
 ==== Filtering with Partition Predicate
