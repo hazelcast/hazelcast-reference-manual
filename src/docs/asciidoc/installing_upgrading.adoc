@@ -44,7 +44,7 @@ of the link:https://github.com/hazelcast/hazelcast-command-line[Command Line Int
 === Maven
 
 NOTE: As a prerequisite, make sure you have Java installed on your system.
-If you're using JDK 9 and newer, see <<running-in-modular-java>>.
+If you're using JDK 11 or later, see <<running-in-modular-java>>.
 For the list of supported Java versions, see <<supported-jvms>>.
 
 You can find Hazelcast in standard Maven repositories. If your
@@ -144,7 +144,7 @@ See the following for more details:
 === Download Archives
 
 NOTE: As a prerequisite, make sure you have Java installed on your system.
-If you're using JDK 9 and newer, see <<running-in-modular-java>>.
+If you're using JDK 11 or later, see <<running-in-modular-java>>.
 For the list of supported Java versions, see <<supported-jvms>>.
 
 You can download and install Hazelcast IMDG yourself. You only need to:
@@ -543,7 +543,7 @@ It is worth mentioning that a business app upgrade is orthogonal to a rolling me
 === Running in Modular Java
 
 Java link:http://openjdk.java.net/projects/jigsaw/[project Jigsaw^] brought
-a new Module System into Java 9 and newer. Hazelcast supports running in
+a new Module System into Java 9 and later. Hazelcast supports running in
 the modular environment. If you want to run your application with Hazelcast
 libraries on the modulepath, use the following module name:
 
@@ -608,65 +608,42 @@ _This example expects `hazelcast-{imdg-version}.jar` placed in the `lib` directo
 [[supported-jvms]]
 === Supported Java Virtual Machines
 
-Following table summarizes the version compatibility between Hazelcast IMDG
-and various vendors' Java Virtual Machines (JVMs).
+Hazelcast IMDG supports the latest and long-term support (LTS) versions of the Java Development Kit (JDK).
+
+However, the Java Virtual Machine (JVM) in some JDKs may not be compatible with Hazelcast IMDG.
+
+This version has been tested against the following JDKs.
 
 
-[cols="35,10,15,15,15,10",options="header"]
-.Supported JVMs
+[options="header"]
+.Supported JDKs
 |===
+|JDK | Versions
 
-|Hazelcast IMDG Version | JDK Version | Oracle JDK | IBM SDK, Java Technology Edition | Azul Zing JDK | OpenJDK
+|AdoptOpenJDK|8, 11, and later
 
-| Up to 3.11
+|Amazon Correcto|8, 11, and
 
-(_JDK 6 support is dropped with the release of Hazelcast IMDG 3.12_)
-| 6
-| icon:check[]
-| icon:times[]
-| icon:check[]
-| icon:check[]
+|Azul Zing|8
 
-| Up to 3.11
+|Azul Zulu| 8, 11, and later
 
-(_JDK 7 support is dropped with the release of Hazelcast IMDG 3.12_)
-| 7
-| icon:check[]
-| icon:check[]
-| icon:check[]
-| icon:check[]
+|IBM SDK, Java Technology Edition|8 (latest)
 
-| Up to current
-| 8
-| icon:check[]
-| icon:check[]
-| icon:check[]
-| icon:check[]
-
-a| * 3.11 and newer:  Fully supported.
-* 3.10 and older: Partially supported.
-| 11
-| icon:check[]
-| icon:times[]
-
-(JDK not available yet)
-| icon:check[]
-| icon:check[]
+|Oracle|8, 11, and later
 
 |===
 
 
-NOTE: Hazelcast IMDG 3.10 and older releases are not fully tested on JDK 9
-and newer, so there may be some features that are not working properly.
+NOTE: To find out the supported JVMs of older versions of Hazelcast IMDG, see the {docs-archive}[archived reference manuals].
 
 [IMPORTANT]
 ====
-See the following sections for the details of Hazelcast IMDG supporting
-JDK 9 and newer:
+If you use version 11 or later of the JDK, see the following relevant sections:
 
 * <<running-in-modular-java, Running in Modular Java>>: Talks about the
-new module system present in Java 9 and newer and how you can run a Hazelcast
+new module system and how you can run a Hazelcast
 application on it.
-* <<tls-ssl-for-hazelcast-members, TLS/SSL for Hazelcast Members>>: Lists
+* <<tlsssl-for-hazelcast-members, TLS/SSL for Hazelcast Members>>: Lists
 `TLSv1.3`, which comes with Java 11, as a supported TLS version.
 ====
