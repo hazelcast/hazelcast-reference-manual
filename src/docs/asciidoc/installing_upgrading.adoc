@@ -31,10 +31,27 @@ For production setups please use the other installation options explained later 
 
 To install Hazelcast via command line interface, run the following commands:
 
-[source,shell]
+[source,bash,indent=0,subs="verbatim,attributes",role="primary"]
+.Homebrew
 ----
 $ brew tap hazelcast/hz
 $ brew install hazelcast
+----
+
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.Debian
+----
+$ wget -qO - https://bintray.com/user/downloadSubjectPublicKey?username=hazelcast | sudo apt-key add -
+$ echo "deb http://dl.bintray.com/hazelcast/deb stable main" | sudo tee -a /etc/apt/sources.list
+$ sudo apt update && apt install hazelcast
+----
+
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.RPM
+----
+$ wget https://bintray.com/hazelcast/rpm/rpm -O bintray-hazelcast-rpm.repo
+$ sudo mv bintray-hazelcast-rpm.repo /etc/yum.repos.d/
+$ sudo yum install hazelcast
 ----
 
 For more information visit the GitHub repository
