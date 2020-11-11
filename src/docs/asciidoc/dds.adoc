@@ -602,6 +602,23 @@ Eviction and expiration can be used together. In this case, the expiration confi
 expired entries regardless of the map size. Note that locked map entries are not the subjects
 for eviction and expiration.
 
+====== Fine-Tuning Map Eviction
+
+Besides the above configuration elements and attributes you can fine-tune
+the eviction related to the entry counts to be evicted using the following
+Hazelcast properties:
+
+* `hazelcast.map.eviction.batch.size`: Specifies the maximum number of map entries
+that are evicted during a single eviction cycle. Its default value is 1, meaning
+at most 1 entry is evicted, which is typically fine.
+However, when you insert values during an eviction cycle, each iteration doubles the entry size.
+In this situation more than just a single entry should be evicted.
+* `hazelcast.map.eviction.sample.count`: Whenever a map eviction is required, a new sampling starts by the built-in sampler.
+The sampling algorithm selects a random sample from the underlying data storage and
+it results in a set of map entries. This property specifies the entry count of this sample. Its default value is 15.
+
+See also the <<eviction-algorithm, Eviction Algorithm section>> to learn more details on evicting entries.
+
 [[example-eviction-configurations]]
 ===== Example Eviction Configurations
 
