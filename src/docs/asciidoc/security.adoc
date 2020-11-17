@@ -17,7 +17,8 @@ edition.
 With Hazelcast's extensible, JAAS based security feature, you can:
 
 * authenticate both cluster members and clients
-* and perform access control checks on client operations.
+* perform access control checks on client operations.
++
 Access control can be done according to endpoint principal
 and/or endpoint address.
 
@@ -2588,6 +2589,35 @@ Actions: all, create, destroy, put, read, remove, listen, lock
 .YAML
 ----
 multimap:
+  - name: name
+    principal: principal
+    endpoints:
+      - ..
+    actions:
+      - ..
+----
+
+**Replicated Map Permission:**
+
+Actions: all, create, destroy, put, read, remove, listen, lock, index, intercept
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
+----
+<replicatedmap-permission name="name" principal="principal">
+    <endpoints>
+        ...
+    </endpoints>
+    <actions>
+        ...
+     </actions>
+</replicatedmap-permission>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+replicatedmap:
   - name: name
     principal: principal
     endpoints:

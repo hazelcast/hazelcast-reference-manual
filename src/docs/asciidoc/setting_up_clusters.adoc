@@ -40,12 +40,16 @@ You can configure Hazelcast to be a full TCP/IP cluster. See the
 [[multicast]]
 ==== Multicast
 
-Multicast mechanism is not recommended for production since UDP is often
-blocked in production environments and other discovery mechanisms are more definite.
-
 With this mechanism, Hazelcast allows cluster members to find each other
-using multicast communication. See the
+using the multicast communication. See the
 <<discovering-members-by-multicast, Discovering Members by Multicast section>>.
+
+If you prefer to use this mechanism, make sure that your network is enclosed and secure.
+Since multicast packets are being broadcasted, any member from anywhere can join
+the cluster with the appropriate cluster name, so you have less control on the cluster.
+
+Note also that if User Datagram Protocol (UDP) is blocked, as it is for most of the production environments,
+discovering with multicast does not work.
 
 [[aws-cloud-discovery]]
 ==== AWS Cloud Discovery
@@ -1476,7 +1480,6 @@ networkConfig.setReuseAddress( true );
 ...
 ----
 
-
 [[join]]
 ==== Join
 
@@ -1607,8 +1610,8 @@ join to the cluster, its join request is rejected if it is not a trusted member.
 give an IP addresses range using the wildcard (\*) on the last digit of IP address,
 e.g., 192.168.1.* or 192.168.1.100-110.
 
-NOTE: Multicast mechanism is not recommended for production since UDP is often blocked
-in production environments and other join mechanisms are more definite.
+NOTE: If you prefer to use the multicast mechanism, make sure that your network is enclosed and secure.
+See the <<multicast, Multicast section>>.
 
 [[tcp-ip-element]]
 ===== tcp-ip element
