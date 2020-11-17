@@ -77,6 +77,13 @@ You can also set the number of files using the following property:
 -Dhazelcast.diagnostics.max.rolled.file.count=5
 ```
 
+NOTE: The aforementioned rolling file approach only works within the
+lifetime of a member. When you restart a member, the size and count of the
+diagnostics log files are reset, and this leads to more files being created and
+additional disk space consumption. We recommend you to use a file archiving strategy
+of your own (cron jobs, scripts, etc.) paying attention to keep the recent
+log files for some time to examine the causes for a crash, for example, when and if it happens.
+
 ==== Diagnostics Plugins
 
 As it is stated in the introduction of this section and shown in the log file content above,
