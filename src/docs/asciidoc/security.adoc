@@ -2970,6 +2970,32 @@ user-code-deployment:
     - ..
 ----
 
+**Configuration Permission:**
+
+This permission defines which
+client principals/endpoints are allowed to perform
+<<dynamically-adding-data-structure-configuration-on-a-cluster, dynamic configuration changes>>,
+i.e., adding data structure configurations at runtime.
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
+----
+<config-permission principal="principal">
+    <endpoints>
+        <endpoint>...</endpoint>
+    </endpoints>
+</config-permission>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+config:
+  principal: principal
+  endpoints:
+    - ..
+----
+
 ===== Handling Permissions When a New Member Joins
 
 By default, the set of permissions defined in the leader member of a cluster is
