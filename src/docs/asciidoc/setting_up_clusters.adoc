@@ -44,9 +44,9 @@ With this mechanism, Hazelcast allows cluster members to find each other
 using the multicast communication. See the
 <<discovering-members-by-multicast, Discovering Members by Multicast section>>.
 
-If you prefer to use this mechanism, make sure that your network is enclosed and secure.
-Since multicast packets are being broadcasted, any member from anywhere can join
-the cluster with the appropriate cluster name, so you have less control on the cluster.
+If you prefer to use this mechanism, make sure that your network is secure.
+Since multicast packets are being broadcasted, any member with the appropriate cluster name
+can join the cluster, so you have less control on the cluster.
 
 Note also that if User Datagram Protocol (UDP) is blocked, as it is for most of the production environments,
 discovering with multicast does not work.
@@ -1586,7 +1586,7 @@ The `join` element has the following sub-elements and attributes.
 
 The `auto-detection` element includes the following parameters:
 
-* `enabled`: Enables Hazelcast Auto Detection, `true` by default.
+* `enabled`: Enables <<discovering-members-auto-detection, Hazelcast Auto Detection>>; `true` by default.
 
 [[multicast-element]]
 ===== multicast element
