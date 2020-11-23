@@ -503,6 +503,13 @@ However, when you insert values in a
 loop, each iteration doubles the entry size. In this
 situation more than just a single entry should be evicted.
 
+|`hazelcast.map.eviction.sample.count`
+|15
+|int
+| Count of the IMap entries in the entry set formed by
+random samplings from which Hazelcast chooses to remove the optimal entry
+during an IMap eviction.
+
 |`hazelcast.map.invalidation.batchfrequency.seconds`
 | 10
 | int
@@ -678,9 +685,10 @@ if it does not receive backup acks in time with respect to backup configuration 
 its data structure, or the member which owns primary replica of the target partition leaves the cluster.
 
 |`hazelcast.operation.generic.thread.count`
-| -1
+| 2
 | int
-| Number of generic operation handler threads. `-1` means CPU core count / 2.
+| Number of generic operation handler threads for each Hazelcast member.
+Its default value is the maximum of `2` and `processor count / 2`.
 
 |`hazelcast.operation.priority.generic.thread.count`
 | 1
@@ -713,9 +721,10 @@ However, keep in mind that this increases the CPU utilization.
 We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
 
 |`hazelcast.operation.thread.count`
-| -1
+| 2
 | int
-| Number of partition based operation handler threads. `-1` means CPU core count.
+| Number of partition based operation handler threads for each Hazelcast member.
+Its default value is the maximum of `2` and count of available processors.
 
 |`hazelcast.partial.member.disconnection.resolution.algorithm.timeout.seconds`
 |5
@@ -743,12 +752,22 @@ of these rounds.
 | int
 | Total partition count.
 
+|`hazelcast.partition.max.parallel.migrations`
+|10
+|int
+|Maximum number of partition migrations to be executed concurrently on a member.
+Member can be either source or target of the migration. Having too much parallelization
+can increase the heap memory usage and overload the network during a partition rebalance.
+Having less parallelization can increase the total migration completion time.
+The default value, `10`, is fine for most of the setups.
+
 |`hazelcast.partition.max.parallel.replications`
-|5
+|10
 |int
 |Maximum number of parallel partition backup replication operations per member.
 When a partition backup ownership changes or a backup inconsistency is detected, the members start to sync their backup partitions.
 This parameter limits the maximum running replication operations in parallel.
+The default value, which is the value of `hazelcast.partition.max.parallel.migrations`, is fine for most of the setups.
 
 |`hazelcast.partition.migration.fragments.enabled`
 | true
