@@ -685,9 +685,10 @@ if it does not receive backup acks in time with respect to backup configuration 
 its data structure, or the member which owns primary replica of the target partition leaves the cluster.
 
 |`hazelcast.operation.generic.thread.count`
-| -1
+| 2
 | int
-| Number of generic operation handler threads. `-1` means CPU core count / 2.
+| Number of generic operation handler threads for each Hazelcast member.
+Its default value is the maximum of `2` and `processor count / 2`.
 
 |`hazelcast.operation.priority.generic.thread.count`
 | 1
@@ -720,9 +721,10 @@ However, keep in mind that this increases the CPU utilization.
 We recommend you to use backoff with care and if you have a tool for measuring your cluster's performance.
 
 |`hazelcast.operation.thread.count`
-| -1
+| 2
 | int
-| Number of partition based operation handler threads. `-1` means CPU core count.
+| Number of partition based operation handler threads for each Hazelcast member.
+Its default value is the maximum of `2` and count of available processors.
 
 |`hazelcast.partial.member.disconnection.resolution.algorithm.timeout.seconds`
 |5
