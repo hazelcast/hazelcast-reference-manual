@@ -351,6 +351,14 @@ If the free memory checker is disabled (false), acts as if the check is succeede
 |long
 |Percentage of the free memory space that is required by a hot restart.
 
+|`hazelcast.ignoreXxeProtectionFailures`
+|false
+|bool
+|If enabled and a problem occurs during enabling XML External Entity (XXE) protection, then the problem is ignored and only a warning message is logged.
+
+This property should only be used as a last resort.
+Hazelcast uses the XXE protection by setting respective XML processor properties. These properties are supported in modern XML processors (e.g. the default one available in Java). An old processor on the classpath (e.g. Xerces, Xalan) may miss the support and  throw an exception during enabling the XXE protection. Setting this system property to `true` allows ignoring such Exceptions.
+
 |`hazelcast.index.copy.behavior`
 |COPY_ON_READ
 | string
