@@ -579,6 +579,29 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.ZONE_AWARE );
 ----
 
+
+===== NODE_AWARE
+
+You can use NODE_AWARE configuration with https://github.com/hazelcast/hazelcast-kubernetes/tree/1.5.x[Hazelcast Kubernetes Discovery Service plugin]. For container orchestration tools like Kubernetes and Docker Swarm, node is the term used to refer machine that containers/pods run on.
+
+As discovery services, these plugins put node information to the Hazelcast <<defining-member-attributes, member attributes>> map during the discovery process. When NODE_AWARE is configured as partition group type, Hazelcast creates the partition groups with respect to member attributes map entries that include node information. That means backups are created in the other nodes and each node is accepted as one partition group.
+
+NOTE: When using the NODE_AWARE partition grouping, the orchestration tool must distribute Hazelcast containers/pods equally between the nodes. Otherwise, it results in uneven partition distribution among the members.
+
+The following are declarative and programmatic configuration snippets that show how to enable `NODE_AWARE` grouping:
+
+```
+<partition-group enabled="true" group-type="NODE_AWARE" />
+```
+
+[source,java]
+----
+Config config = ...;
+PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
+partitionGroupConfig.setEnabled( true )
+    .setGroupType( MemberGroupType.NODE_AWARE );
+----
+
 ===== SPI
 
 You can provide your own partition group implementation using the SPI configuration. To create your partition group implementation, you need to first extend the `DiscoveryStrategy` class of the discovery service plugin, override the method `public PartitionGroupStrategy getPartitionGroupStrategy()` and return the `PartitionGroupStrategy` configuration in that overridden method.
@@ -867,7 +890,7 @@ By default, Hazelcast lets the system pick up an ephemeral port during socket bi
 [source,xml]
 ----
 <hazelcast>
-    ...  
+    ...
     <network>
         <outbound-ports>
             <!-- ports between 33000 and 35000 -->
@@ -1477,7 +1500,7 @@ The supported protocols are as follows:
 
 ==== Server Socket Endpoint Configuration
 
-The server socket endpoint configuration is common for all protocols. The elements comprising a server socket endpoint configuration are identical to their single-socket network configuration counterparts. 
+The server socket endpoint configuration is common for all protocols. The elements comprising a server socket endpoint configuration are identical to their single-socket network configuration counterparts.
 
 The following declarative configuration example includes all the common server socket endpoint elements:
 
