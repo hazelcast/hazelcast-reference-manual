@@ -357,6 +357,21 @@ If the free memory checker is disabled (false), acts as if the check is succeede
 | Defines the behavior for index copying on index read/write.
 See the <<copying-indexes, Copying Indexes section>>.
 
+|`hazelcast.ignoreXxeProtectionFailures`
+|false
+|bool
+|If enabled and when a problem occurs during enabling the
+XML External Entity (XXE) protection, then the problem is
+ignored and only a warning message is logged.
+
+This property should only be used as a last resort.
+Hazelcast uses the XXE protection by setting respective XML processor properties.
+These properties are supported in modern XML processors, e.g.,
+the default one available in Java. An old processor, such as Xerces or Xalan,
+on the classpath may miss the support and throw an exception during
+enabling the XXE protection. Setting this system property to
+`true` allows ignoring such exceptions.
+
 |`hazelcast.init.cluster.version`
 |
 |long
