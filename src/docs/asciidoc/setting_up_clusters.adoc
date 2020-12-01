@@ -831,6 +831,39 @@ partitionGroupConfig.setEnabled( true )
     .setGroupType( MemberGroupType.ZONE_AWARE );
 ----
 
+[[node-aware-partition-grouping]]
+===== NODE_AWARE
+
+You can use the NODE_AWARE configuration with https://github.com/hazelcast/hazelcast-kubernetes/tree/1.5.x[Hazelcast Kubernetes Discovery Service plugin].
+For container orchestration tools like Kubernetes and Docker Swarm, node is the term
+used to refer to the machine that containers/pods run on.
+
+As discovery services, these plugins put node information
+to the Hazelcast <<defining-member-attributes, member attributes>> map during the
+discovery process. When NODE_AWARE is configured as partition group type,
+Hazelcast creates the partition groups with respect to member attributes map's entries
+that include the node information. That means backups are created
+in the other nodes and each node is accepted as one partition group.
+
+NOTE: When using the NODE_AWARE partition grouping, the orchestration
+tool must distribute Hazelcast containers/pods equally
+between the nodes. Otherwise, it results in uneven partition
+distribution among the members.
+
+The following are declarative and programmatic configuration snippets that show how to enable `NODE_AWARE` grouping:
+
+```
+<partition-group enabled="true" group-type="NODE_AWARE" />
+```
+
+[source,java]
+----
+Config config = ...;
+PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
+partitionGroupConfig.setEnabled( true )
+    .setGroupType( MemberGroupType.NODE_AWARE );
+----
+
 ===== SPI
 
 You can provide your own partition group implementation using the SPI configuration.
