@@ -16,7 +16,7 @@ public class ListeningClients {
         //clientConfig.setClusterName("dev");
         clientConfig.getNetworkConfig().addAddress("10.90.0.1", "10.90.0.2:5702");
 
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance();
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance(clientConfig);
 
         final ClientService clientService = instance.getClientService();
 
@@ -33,7 +33,7 @@ public class ListeningClients {
         });
 
         //this will trigger `clientConnected` event
-        HazelcastInstance client = HazelcastClient.newHazelcastClient();
+        HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
         
         final Collection<Client> connectedClients = clientService.getConnectedClients();
 
