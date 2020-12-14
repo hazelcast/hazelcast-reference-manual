@@ -1165,6 +1165,35 @@ in the above paragraphs, can be set:
 * `COPY_ON_WRITE`
 * `NEVER`
 
+The following is an example configuration snippet:
+
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.XML
+----
+<hazelcast>
+    <cluster-name>dev</cluster-name>
+    ...
+    <properties>
+        <property name="hazelcast.index.copy.behavior">NEVER</property>
+    </properties>
+    ...
+</hazelcast>
+----
+
+[source,yml,indent=0,subs="verbatim,attributes",role="secondary"]
+.YAML
+----
+hazelcast:
+  cluster-name: dev
+  ...
+  properties:
+    hazelcast.index.copy.behavior: NEVER
+  ...
+----
+
+See also the <<configuring-with-system-properties, Configuring with System properties section>>
+for reference.
+
 NOTE: Usage of this system property is supported for BINARY and OBJECT
 in-memory formats. Only in Hazelcast 3.8.7, it is also supported for
 NATIVE in-memory format.
