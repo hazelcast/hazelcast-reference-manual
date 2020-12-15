@@ -424,11 +424,28 @@ is performed on the local entries.
 [[map-eviction]]
 ==== Map Eviction
 
-Unless you delete the map entries manually or use an eviction policy, they will remain in the map.
-Hazelcast supports policy-based eviction for distributed maps. Currently supported policies are
-LRU (Least Recently Used) and LFU (Least Frequently Used).
+Hazelcast maps have no restrictions on the size and may grow arbitrarily
+large, by default. Unless you delete the map entries manually or use an
+eviction policy, they will remain in the map. When it comes to reducing the size of
+a map, there are two concepts: expiration and eviction.
 
-Hazelcast Map uses the same eviction mechanism as the JCache implementation.
+Expiration puts a limit on the maximum lifetime of an entry stored inside the map.
+When the entry expires it cannot be retrieved from the map any longer and at some point
+in time it will be cleaned out from the map to free up the memory. You can configure the expiration,
+and hence the eviction based on the expiration, using the elements `time-to-live-seconds`
+and `max-idle-seconds` as described in <<configuring-map-eviction>> below.
+
+Eviction puts a limit on the maximum size of the map. If the size of the map grows larger than
+the maximum allowed size, an eviction policy decides which item to evict from the map to reduce
+its size. You can configure the maximum allowed size and eviction policy using the elements
+`size` and `eviction-policy` as described in <<configuring-map-eviction>> below.
+
+Eviction and expiration can be used together. In this case, the expiration configurations
+(`time-to-live-seconds` and `max-idle-seconds`) continue to work as usual cleaning out the
+expired entries regardless of the map size. Note that locked map entries are not the subjects
+for eviction and expiration.
+
+Hazelcast Map uses the same eviction mechanism as our JCache implementation.
 See the <<eviction-algorithm, Eviction Algorithm section>> for details.
 
 [[understanding-map-eviction]]
@@ -543,7 +560,8 @@ this element:
 ** `eviction-policy`: Eviction policy to be applied when the size of map grows larger than
 the value specified by the `size` element described below.  Valid values are:
 *** NONE: Default policy. If set, no items are evicted and the property `size` described
-below is ignored. You still can combine it with `time-to-live-seconds` and `max-idle-seconds`.
+below is ignored. However, entries could still be expired if you configure
+`time-to-live-seconds` and/or `max-idle-seconds`.
 *** LRU: Least Recently Used.
 *** LFU: Least Frequently Used.
 +
@@ -573,34 +591,14 @@ cannot be determined when data is put as `OBJECT`.
 *** `FREE_HEAP_PERCENTAGE`: Minimum free heap size percentage for each JVM. If, for example, a JVM
 is configured to have 1000 MB and this value is 10, then the map entries will be evicted when
 free heap size is below 100 MB.
-*** `USED_NATIVE_MEMORY_SIZE`: ([navy]*Hazelcast IMDG Enterprise HD*) Maximum used native memory
+*** `USED_NATIVE_MEMORY_SIZE`: ([navy]*Hazelcast IMDG Pro and Enterprise*) Maximum used native memory
 size in megabytes per map for each Hazelcast instance.
-*** `USED_NATIVE_MEMORY_PERCENTAGE`: ([navy]*Hazelcast IMDG Enterprise HD*) Maximum used native
+*** `USED_NATIVE_MEMORY_PERCENTAGE`: ([navy]*Hazelcast IMDG Pro and Enterprise*) Maximum used native
 memory size percentage per map for each Hazelcast instance.
-*** `FREE_NATIVE_MEMORY_SIZE`: ([navy]*Hazelcast IMDG Enterprise HD*) Minimum free native memory
+*** `FREE_NATIVE_MEMORY_SIZE`: ([navy]*Hazelcast IMDG Pro and Enterprise*) Minimum free native memory
 size in megabytes for each Hazelcast instance.
-*** `FREE_NATIVE_MEMORY_PERCENTAGE`: ([navy]*Hazelcast IMDG Enterprise HD*) Minimum free native
+*** `FREE_NATIVE_MEMORY_PERCENTAGE`: ([navy]*Hazelcast IMDG Pro and Enterprise*) Minimum free native
 memory size percentage for each Hazelcast instance.
-
-To put it briefly, Hazelcast maps have no restrictions on the size and may grow arbitrarily
-large, by default. When it comes to reducing the size of a map, there are two concepts:
-expiration and eviction.
-
-Expiration puts a limit on the maximum lifetime of an entry stored inside the map.
-When the entry expires it cannot be retrieved from the map any longer and at some point
-in time it will be cleaned out from the map to free up the memory. Expiration, and hence
-the eviction based on the expiration, can be configured using the element `time-to-live-seconds`
-and `max-idle-seconds` as described above.
-
-Eviction puts a limit on the maximum size of the map. If the size of the map grows larger than
-the maximum allowed size, an eviction policy decides which item to evict from the map to reduce
-its size. The maximum allowed size can be configured using the element `size` and the
-eviction policy can be configured using the element `eviction-policy` as described above.
-
-Eviction and expiration can be used together. In this case, the expiration configurations
-(`time-to-live-seconds` and `max-idle-seconds`) continue to work as usual cleaning out the
-expired entries regardless of the map size. Note that locked map entries are not the subjects
-for eviction and expiration.
 
 ====== Fine-Tuning Map Eviction
 
@@ -1755,18 +1753,15 @@ System.out.println ( "key             : " + entry.getKey() );
 System.out.println ( "value           : " + entry.getValue() );
 ----
 
-[[map-listener]]
-==== Map Listener
-
-See the <<listening-for-map-events, Listening for Map Events section>>.
-
 [[listening-to-map-entries-with-predicates]]
 ==== Listening to Map Entries with Predicates
 
 You can listen to the modifications performed on specific map entries.
-You can think of it as an entry listener with predicates. See the
+You can think of it as an entry listener with predicates. 
+
+NOTE: See the
 <<listening-for-map-events, Listening for Map Events section>> for
-information on how to add entry listeners to a map.
+information on the listeners for Hazelcast maps and how to use them.
 
 NOTE: The default backwards-compatible event publishing strategy only publishes
 `UPDATED` events when map entries are updated to a value that
