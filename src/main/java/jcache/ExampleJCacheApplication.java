@@ -10,7 +10,8 @@ public class ExampleJCacheApplication {
     public static void main(String[] args){
         //tag::jcacheapp[]
         // Retrieve the CachingProvider which is automatically backed by
-        // the chosen Hazelcast member or client provider.
+        // the chosen Hazelcast member or client provider. By default,
+        // it returns the client-side provider.
         CachingProvider cachingProvider = Caching.getCachingProvider();
 
         // Create a CacheManager.
