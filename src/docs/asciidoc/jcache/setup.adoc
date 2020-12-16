@@ -115,9 +115,8 @@ using the static method from
 `javax.cache.Caching.getCachingManager()`, which automatically
 picks up Hazelcast as the underlying JCache implementation, if
 available in the classpath. This way, the Hazelcast implementation
-of a `CachingProvider` automatically starts a new Hazelcast
-member or client (depending on the chosen provider type) and
-pick up the configuration from either the command line parameter
+of a `CachingProvider` automatically and by default starts a new Hazelcast
+client and pick up the configuration from either the command line parameter
 or from the classpath. We will show how to use an existing
 `HazelcastInstance` later in this chapter; for now, we keep
 it simple.
@@ -161,7 +160,7 @@ called `getAndPut`.
 
 Hazelcast JCache provides two different methods for cache configuration:
 
-* declaratively: using `hazelcast.xml` or `hazelcast-client.xml`
+* declaratively: using `hazelcast.xml/yaml` or `hazelcast-client.xml/yaml`
 * programmatically: the typical Hazelcast way, using the Config API seen above
 
 [[jcache-declarative-configuration]]
