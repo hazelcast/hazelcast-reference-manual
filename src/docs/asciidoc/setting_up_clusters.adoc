@@ -2637,6 +2637,7 @@ The following is the equivalent declarative configuration:
         <batch-publisher>
             <cluster-name>clusterB</cluster-name>
             <target-endpoints>...</target-endpoints>
+            <endpoint>tokyo</endpoint>
         </batch-publisher>
     </wan-replication>
     ...
@@ -2665,8 +2666,9 @@ hazelcast:
     wan-replication:
       replicate-to-tokyo:
         batch-publisher:
-          cluster-name: clusterB<
+          cluster-name: clusterB
           target-endpoints: ...
+          endpoint: tokyo
     map:
       customer:
         wan-replication-ref:
