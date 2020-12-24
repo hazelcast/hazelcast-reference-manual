@@ -105,10 +105,10 @@ inside an application in an easy but typesafe way.
 include::{javasource}/jcache/ExampleJCacheApplication.java[tag=jcacheapp]
 ----
 
-Although the example is simple, let's go through the code
-lines one by one.
+Let's go through the code lines of the above example one by one from
+top to bottom.
 
-===== Getting the Hazelcast JCache Implementation
+*1. Getting the Hazelcast JCache Implementation:*
 
 First of all, we retrieve the `javax.cache.spi.CachingProvider`
 using the static method from
@@ -121,23 +121,23 @@ or from the classpath. We will show how to use an existing
 `HazelcastInstance` later in this chapter; for now, we keep
 it simple.
 
-===== Setting up the JCache Entry Point
+*2. Setting up the JCache Entry Point:*
 
-In the next line, we ask the `CachingProvider` to return a
+The next line in the example code above asks the `CachingProvider` to return a
 `javax.cache.CacheManager`. This is the general application's entry
 point into JCache. The `CacheManager` creates and manages
 named caches.
 
-===== Configuring the Cache Before Creating It
+*3. Configuring the Cache Before Creating It:*
 
-The next few lines create a simple
+Then we create a simple
 `javax.cache.configuration.MutableConfiguration` to configure
 the cache before actually
 creating it. In this case, we only configure the key and value
 types to make the cache typesafe which is highly recommended and
 checked on retrieval of the cache.
 
-===== Creating the Cache
+*4. Creating the Cache:*
 
 To create the cache, we call `javax.cache.CacheManager.createCache()`
 with a name for the cache and the previously created
@@ -147,9 +147,9 @@ method overload `javax.cache.CacheManager.getCache()`. If the cache
 was created using type parameters, you must retrieve the cache
 afterward using the type checking version of `getCache`.
 
-===== get, put and getAndPut
+*5. get, put and getAndPut:*
 
-The following lines are simple `put` and `get` calls from the
+Then we use the simple `put` and `get` calls from the
 `java.util.Map` interface. The
 `javax.cache.Cache.put()` has a `void` return type and does
 not return the previously assigned value of the key. To imitate the
