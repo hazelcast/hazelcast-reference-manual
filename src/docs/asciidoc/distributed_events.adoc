@@ -564,6 +564,30 @@ A map-level event is fired as a result of a map-level operation, e.g.,
 An entry-based event is fired after the operations that affect a
 specific entry, e.g., `IMap.remove()` or `IMap.evict()`.
 
+Here are the listeners for map-level and entry-based events:
+
+* `EntryAddedListener`: It is notified when an entry is added to the map.
+* `EntryEvictedListener`: It is notified when an entry is removed from the map
+due to size-based eviction. See the <<map-eviction, Map Eviction section>> for more information. 
+* `EntryExpiredListener`: It is notified when an entry is removed from the map
+due to expiration-based eviction (happens when time-to-live and/or maximum idle seconds are configured
+for the entries). If your listener implements both this one and `EntryEvictedListener` together,
+the listener may receive both expiration and eviction events for the same entry; this is because,
+size-based eviction removes entries regardless of whether entries are expired or not.
+* `EntryLoadedListener`: It is notified when an entry is loaded by a `MapLoader` implementation.
+* `EntryMergedListener`: It is notified when a WAN-replicated entry is merged.
+* `EntryRemovedListener`: It is notified when an entry is directly removed from the map,
+for example using IMap's `remove()` method or the REST `DELETE` <<removing-entries-from-a-map-for-rest-client, call>>.
+* `EntryUpdatedListener`: It is notified when an entry is updated.
+* `EventLostListener`: It is notified when events are lost.
+* `MapClearedListener`: It is notified when all the entries of a map are
+removed using IMap's `clear()` method.
+* `MapEvictedListener: It is notified when all the entries of a map are
+removed using IMap's `evictAll()` method.
+* `MapPartitionLostListener`: It is notified when the owner and all backups of
+a partition is lost for a specific map. See the <<listening-for-lost-map-partitions, Listening for Lost Map Partitions section>>
+for details.
+
 ===== Catching a Map Event
 
 To catch an event, you should explicitly
@@ -614,7 +638,7 @@ NOTE: Please note that the method `IMap.clear()` does not fire an
 NOTE: Listeners have to offload all blocking operations to another thread (pool).
 
 
-==== Listening for Lost Map Partitions
+===== Listening for Lost Map Partitions
 
 You can listen to `MapPartitionLostEvent` instances by registering an implementation
 of `MapPartitionLostListener`, which is also a sub-interface of `MapListener`.
