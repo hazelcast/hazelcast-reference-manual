@@ -168,23 +168,27 @@ namespace Hazelcast.Examples.Org.Website.Samples
 [source,javascript,indent=0,subs="verbatim,attributes",role="secondary"]
 .Node.js
 ----
-//Installation notes: Run the following command
-//npm install hazelcast-client
+// Installation notes: Run the following command
+// npm install hazelcast-client
 
-var Client = require('hazelcast-client').Client;
-// Start the client and connect to the cluster
-Client.newHazelcastClient().then(function (hz) {
-    var map;
-    // Create a Distributed Map in the cluster
-    hz.getMap('my-distributed-map').then(function (mp) {
-        map = mp;
+const { Client } = require('hazelcast-client');
+
+(async () => {
+    try {
+        // Start the client and connect to the cluster
+        const hz = await Client.newHazelcastClient();
+        // Create a Distributed Map in the cluster
+        const map = await hz.getMap('my-distributed-map');
         // Standard Put and Get
-        return map.put('1', 'John');
-    });
+        await map.put('1', 'John');
+        await map.put('2', 'Mary');
+        await map.put('3', 'Jane');
         // Shutdown the client
-        hz.shutdown();
-    });
-});
+        await hz.shutdown();
+    } catch (err) {
+        console.error('Error occurred:', err);
+    }
+})();
 ----
 
 [source,python,indent=0,subs="verbatim,attributes",role="secondary"]
