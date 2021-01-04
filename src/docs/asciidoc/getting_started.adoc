@@ -114,22 +114,21 @@ public class MapSample {
 ----
 //Installation notes: Download the latest C++ library from
 //https://hazelcast.org/imdg/clients-languages/cplusplus/
-//and see https://github.com/hazelcast/hazelcast-cpp-client#13-downloading-and-installing]
-//for installation instructions.
+//and see https://github.com/hazelcast/hazelcast-cpp-client for installation instructions.
 
-#include 
+#include <hazelcast/client/hazelcast_client.h>
 
 using namespace hazelcast::client;
 int main() {
     // Start the client and connect to the cluster
-    HazelcastClient hz;
+    hazelcast_client hz;
     // Create a Distributed Map in the cluster
-    IMap map = hz.getMap("my-distributed-map");
-    //Standard Put and Get
-    map.put("1", "John");
-    map.put("2", "Mary");
-    map.put("3", "Jane");
-    // Shutdown the client
+    auto map = hz.get_map("my-distributed-map");
+    //Standard put and get
+    map->put<std::string, std::string>("1", "John").get();
+    map->put<std::string, std::string>("2", "Mary").get();
+    map->put<std::string, std::string>("3", "Jane").get();
+    // Shutdown the client. Disconnects from cluster and releases the resources.
     hz.shutdown();
 
     return 0;
