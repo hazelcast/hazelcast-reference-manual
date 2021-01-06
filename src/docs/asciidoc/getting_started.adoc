@@ -123,7 +123,7 @@ int main() {
     // Start the client and connect to the cluster
     hazelcast_client hz;
     // Create a Distributed Map in the cluster
-    auto map = hz.get_map("my-distributed-map");
+    auto map = hz.get_map("my-distributed-map").get();
     //Standard put and get
     map->put<std::string, std::string>("1", "John").get();
     map->put<std::string, std::string>("2", "Mary").get();
