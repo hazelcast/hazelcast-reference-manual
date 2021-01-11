@@ -1172,6 +1172,22 @@ Below are example configurations for Log4j2 and Log4j. Note that Hazelcast does 
 recommend any specific logging library, these examples are provided only to demonstrate
 how to configure the logging. You can use your custom logging as explained above.
 
+==== Changing Logging Levels for JDK Logging
+
+As mentioned in the introduction of this section above, the default
+logging type of Hazelcast IMDG is JDK logging. The default logging level
+is `INFO`. To change the level in case you want to use the default logging,
+you can take the following snippet as a reference:
+
+[source,java]
+----
+java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
+rootLogger.setLevel(Level.FINE);
+for (Handler h : rootLogger.getHandlers()) {
+    h.setLevel(Level.FINE);
+}
+----
+
 ==== Example Log4j2 Configuration
 
 Specify the logging type as Log4j2 and a separate logging configuration file as shown below.
