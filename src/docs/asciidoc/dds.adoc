@@ -2392,8 +2392,11 @@ Hazelcast, `MultiMap` is distributed and thread-safe.
 
 Hazelcast `MultiMap` is not an implementation of `java.util.Map` due to the difference
 in method signatures. It supports most features of Hazelcast Map except for indexing,
-predicates and MapLoader/MapStore. Yet, like Hazelcast Map, entries are almost evenly
-distributed onto all cluster members. When a new member joins the cluster, the same
+predicates and MapLoader/MapStore. The entries are almost evenly
+distributed onto all cluster members. However, this distribution is based on the entry keys:
+if there are multiple entries having the same key but different values,
+such entries are stored on the same member, otherwise they are distributed among the members.
+When a new member joins the cluster, the same
 ownership logic used in the distributed map applies.
 
 [[getting-a-multimap-and-putting-an-entry]]
