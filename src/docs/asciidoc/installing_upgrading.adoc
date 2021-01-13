@@ -31,10 +31,27 @@ For production setups please use the other installation options explained later 
 
 To install Hazelcast via command line interface, run the following commands:
 
-[source,shell]
+[source,bash,indent=0,subs="verbatim,attributes",role="primary"]
+.Homebrew
 ----
 $ brew tap hazelcast/hz
 $ brew install hazelcast
+----
+
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.Debian
+----
+$ wget -qO - https://repository.hazelcast.com/api/gpg/key/public | sudo apt-key add -
+$ echo "deb https://repository.hazelcast.com/debian stable main" | sudo tee -a /etc/apt/sources.list
+$ sudo apt update && sudo apt install hazelcast
+----
+
+[source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
+.RPM
+----
+$ wget https://repository.hazelcast.com/rpm/hazelcast-rpm.repo -O hazelcast-rpm.repo
+$ sudo mv hazelcast-rpm.repo /etc/yum.repos.d/
+$ sudo yum install hazelcast
 ----
 
 For more information visit the GitHub repository
