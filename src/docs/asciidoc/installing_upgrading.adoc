@@ -41,16 +41,16 @@ $ brew install hazelcast
 [source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
 .Debian
 ----
-$ wget -qO - https://bintray.com/user/downloadSubjectPublicKey?username=hazelcast | sudo apt-key add -
-$ echo "deb http://dl.bintray.com/hazelcast/deb stable main" | sudo tee -a /etc/apt/sources.list
-$ sudo apt update && apt install hazelcast
+$ wget -qO - https://repository.hazelcast.com/api/gpg/key/public | sudo apt-key add -
+$ echo "deb https://repository.hazelcast.com/debian stable main" | sudo tee -a /etc/apt/sources.list
+$ sudo apt update && sudo apt install hazelcast
 ----
 
 [source,bash,indent=0,subs="verbatim,attributes",role="secondary"]
 .RPM
 ----
-$ wget https://bintray.com/hazelcast/rpm/rpm -O bintray-hazelcast-rpm.repo
-$ sudo mv bintray-hazelcast-rpm.repo /etc/yum.repos.d/
+$ wget https://repository.hazelcast.com/rpm/hazelcast-rpm.repo -O hazelcast-rpm.repo
+$ sudo mv hazelcast-rpm.repo /etc/yum.repos.d/
 $ sudo yum install hazelcast
 ----
 
