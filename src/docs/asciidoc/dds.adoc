@@ -992,107 +992,89 @@ mapConfig.setMetadataPolicy(MetadataPolicy.OFF);
 [[loading-and-storing-persistent-data]]
 ==== Loading and Storing Persistent Data
 
-Hazelcast allows you to load and store the distributed map entries
-from/to a persistent data store such as a relational database. To do this,
-you can use Hazelcast's `MapStore` and `MapLoader` interfaces.
+In some cases, you may want to load and store distributed map entries
+from/to a persistent data store such as a relational database. For example, if you want to back up your map entries or if you want to check your database for updated data entries. To do this,
+you can use Hazelcast's link:{docBaseUrl}/javadoc/com/hazelcast/map/MapStore.html[`MapStore`] and link:{docBaseUrl}/javadoc/com/hazelcast/map/MapLoader.html[`MapLoader`] interfaces.
 
-When you provide a `MapLoader` implementation and request an entry
-(`IMap.get()`) that does not exist in memory, ``MapLoader``'s `load`
-method loads that entry from the data store. This loaded entry is placed
-into the map and will stay there until it is removed or evicted.
+[cols="1m,5a"]
+|===
+|Interface| Description
 
-All loads can be listened via `EntryLoadedListener`. See the
-<<listening-for-map-events, Listening for Map Events section>>
-to learn how you can catch entry-based events.
+|MapLoader
+|This method checks the map for a requested value. If the requested value does not exist in memory, the `MapLoader.load()` method tries to load it from the data store. If the value is loaded from the data store, it remains in memory until it is removed or evicted.
 
-When a `MapStore` implementation is provided, an entry is also put into a
-user defined data store.
+|MapStore
+|This method stores the contents of a map in the data store.
 
-NOTE: Data store needs to be a centralized system that is
-accessible from all Hazelcast members. Persistence to a local file system
-is not supported.
+NOTE: The data store that you choose must be a centralized system that is accessible from all Hazelcast members. Persistence to a local file system is not supported.
 
-NOTE: Also note that the `MapStore` interface extends the `MapLoader` interface
-as you can see in the interface link:{docBaseUrl}/javadoc/com/hazelcast/map/MapStore.html[code^].
+|===
 
-Following is a `MapStore` example.
+The following example shows you how to implement the `MapStore` interface.
 
+NOTE: The `MapStore` interface extends the `MapLoader` interface. Therefore, all methods and configuration parameters of the `MapLoader` interface are also available on the `MapStore` interface.
 
 [source,java]
 ----
 include::{javasource}/dds/map/PersonMapStore.java[tag=personms]
 ----
 
-NOTE: During the initial loading process, MapStore uses a thread different from the
-partition threads that are used by the ExecutorService. After the initialization is
-completed, the `map.get` method looks up any nonexistent value from the database in
-a partition thread, or the `map.put` method looks up the database to return the previously
-associated value for a key also in a partition thread.
+During the initial loading process, the `MapStore` interface uses a different thread to the partition threads that are used by the ExecutorService.
 
-Entries loaded by `MapLoader` do not have a set time-to-live property. Therefore,
-they live until evicted or explicitly removed. It is possible to enforce time-to-live
-on the entries by using `EntryLoader`. `EntryLoader` allows you to set
-time-to-live values per key before handing the values to Hazelcast. Therefore, you can store and
-load key specific time-to-live values in the external storage.
+After the initial loading process, the `IMap.get()` and `IMap.put()` methods use a partition thread.
 
-Similar to `EntryLoader`, in order to store custom expiration times associated
-with the entries, you may use `EntryStore`. `EntryStore` allows you to
-retrieve associated expiration date for each entry. The expiration date is an offset
-from an epoch in milliseconds. Epoch is January 1, 1970 UTC which is used by
-`System.currentTimeMillis()`.
+NOTE: To monitor the `MapLoader` instance for each loaded entry, use the `EntryLoadedListener` interface. See the
+<<listening-for-map-events, Listening for Map Events section>>
+to learn how you can catch entry-based events.
 
-NOTE: Although the expiration date is expressed in milliseconds, IMap has second granularity
-when it comes to expiration. Therefore, the expiration date is rounded to the nearest lower
-whole second.
+===== Setting Expiration Times on Loaded and Stored Data Entries
 
-`EntryLoader` and `EntryStore` extend from `MapLoader` and `MapStore`, respectively.
-Therefore, all features and configuration parameters of `MapLoader` and `MapStore` apply
-to them, too.
+Entries loaded by `MapLoader` implementations do not have a set time-to-live property. Therefore,
+they live until evicted or explicitly removed. To enforce expiration times on the entries, you can use the `EntryLoader` and `EntryStore` interfaces.
 
-Following is an `EntryStore` example.
+NOTE: These interfaces extend the `MapLoader` and `MapStore` interfaces. Therefore, all methods and configuration parameters of the `MapLoader` and `MapStore` implementations are also available on the `EntryLoader` and `EntryStore` implementations.
+
+`EntryLoader` allows you to set time-to-live values per key before handing the values to Hazelcast. Therefore, you can store and load key-specific time-to-live values in the external storage.
+
+Similar to `EntryLoader`, in order to store custom expiration times associated with the entries, you may use `EntryStore`. `EntryStore` allows you to retrieve associated expiration date for each entry. The expiration date is an offset from an epoch in milliseconds. Epoch is January 1, 1970 UTC which is used by `System.currentTimeMillis()`.
+
+NOTE: Although the expiration date is expressed in milliseconds, expiration dates are rounded to the nearest lower whole second because the `IMap` interface uses second granularity when it comes to expiration.
+
+The following example shows you how to implement the `EntryStore` interface.
 
 [source,java]
 ----
 include::{javasource}/dds/map/PersonEntryStore.java[tag=personms]
 ----
 
-NOTE: For more MapStore/MapLoader code samples,
-see link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java[here^].
-
-Hazelcast supports read-through, write-through and write-behind persistence
-modes, which are explained in the subsections below.
+TIP: link:https://github.com/hazelcast/hazelcast-code-samples/tree/master/distributed-map/mapstore/src/main/java[See more MapStore/MapLoader code samples].
 
 [[using-read-through-persistence]]
 ===== Using Read-Through Persistence
 
 If an entry does not exist in memory when an application asks for it,
 Hazelcast asks the loader implementation to load that entry from the
-data store.  If the entry exists there, the loader implementation gets it,
-hands it to Hazelcast, and Hazelcast puts it into memory. This is read-through
-persistence mode.
+data store.  If the entry exists, the `MapLoader` implementation finds it,
+and sends it to Hazelcast to be stored in memory. This process is called read-through persistence mode.
 
 As you can remember from the introduction of this section, the `IMap.get()` method
-triggers the `load()` method in your MapLoader implementation if an entry does not
-exist in the memory. In this case, note that the `IMap.get()` method does not create
-backup copies for such entries, when the mode is read-through persistence: there is no
-need for backups for these entries since if the primary entry is lost, then a read for
-the key triggers the `load()` method and loads the entry from the persistence layer.
+triggers the `MapLoader.load()` method if an entry does not
+exist in memory. In this case, note that the `IMap.get()` method does not create backup copies for such entries, when the mode is read-through persistence: there is no
+need for backups for these entries since if the primary entry is lost, then a read for the key triggers the `load()` method and loads the entry from the persistence layer.
 
 [[setting-write-through-persistence]]
 ===== Setting Write-Through Persistence
 
-`MapStore` can be configured to be write-through by setting the `write-delay-seconds`
-property to **0**. This means the entries are put to the data store synchronously.
+The `MapStore` interface can be configured to be write-through by setting the `write-delay-seconds`
+property to **0**. This means the entries are sent to the data store synchronously.
 
 In this mode, when the `map.put(key,value)` call returns:
 
-* `MapStore.store(key,value)` is successfully called so the entry is persisted.
-* In-Memory entry is updated.
-* In-Memory backup copies are successfully created on other cluster members
-(if `backup-count` is greater than 0).
+* The `MapStore.store(key,value)` method is successfully called so the entry is persisted.
+* The in-memory entry is updated.
+* Any in-memory backup copies are successfully created on other cluster members (if the `backup-count` property is greater than 0).
 
-If `MapStore` throws an exception then the exception is propagated to the original
-`put` or `remove` call in the form of `RuntimeException`.
+If the `MapStore.store(key,value)` method throws an exception, it is propagated to the original `IMap.put()` or `IMap.remove()` call in the form of `RuntimeException`.
 
 NOTE: There is a key difference in the behaviors of `map.remove(key)` and
 `map.delete(key)`, i.e., the latter results in `MapStore.delete(key)` to be invoked
@@ -1201,7 +1183,7 @@ specific key by default; it applies only the last update on it. You can set this
 element to `false` to store all updates performed on a key to the data store.
 * `enabled`: True to enable this map-store, false to disable. Its default value
 is true.
-* `initial-mode`: Sets the initial load mode. LAZY is the default load mode, where
+* [[initial-mode]]`initial-mode`: Sets the initial load mode. LAZY is the default load mode, where
 load is asynchronous. EAGER means load is blocked till all partitions are loaded.
 See the <<initializing-map-on-startup, Initializing Map on Startup section>> for
 more details.
@@ -1221,7 +1203,7 @@ such as reading a configuration file or creating a database connection
 or accessing a Hazelcast instance.
 
 The `destroy()` method is called during the graceful shutdown of a Hazelcast instance.
-You can override this method  to cleanup the resources held by the `MapLoader` implementation, such as
+You can override this method to cleanup the resources held by the `MapLoader` implementation, such as
 closing the database connections.
 
 In summary, you need `MapLoaderLifecycleSupport` to perform actions
@@ -1261,38 +1243,46 @@ link:{docBaseUrl}/javadoc/com/hazelcast/map/MapLoaderLifecycleSupport.html[`MapL
 which is described in the previous section.
 
 [[initializing-map-on-startup]]
-===== Initializing Map on Startup
+===== Initializing a Map on Startup
 
-To pre-populate the in-memory map when the map is first touched/used,
-use the `MapLoader.loadAllKeys` API.
+To pre-populate the in-memory map when it is first used, you can
+implement the `MapLoader.loadAllKeys()` method. This method is the fastest way of pre-populating maps because Hazelcast optimizes the loading process by having each cluster member load its owned portion of the entries.
 
-If `MapLoader.loadAllKeys` returns NULL, then nothing will be loaded.
-Your `MapLoader.loadAllKeys` implementation can return all or some of the
-keys. For example, you may select and return only the keys which are most
-important to you that you want to load them while initializing the map.
-`MapLoader.loadAllKeys` is the fastest way of pre-populating the map since
-Hazelcast optimizes the loading process by having each cluster member load
-its owned portion of the entries.
+The `MapLoader.loadAllKeys()` method loads all data from the data store, depending on whether your `MapStore` or `MapLoader` implementations have their <<initial-mode, `initial-mode` property>> set to `LAZY` (default) or `EAGER`.
 
-The `InitialLoadMode` configuration parameter in the class
-link:{docBaseUrl}/javadoc/com/hazelcast/config/MapStoreConfig.html[MapStoreConfig^]
-has two values: `LAZY` and `EAGER`. If `InitialLoadMode` is set to
-`LAZY`, data is not loaded during the map creation. If it is set to
-`EAGER`, all the data is loaded while the map is created and everything becomes
-ready to use. Also, if you add indices to your map with the
+NOTE: If you add indices to your map with the
 link:{docBaseUrl}/javadoc/com/hazelcast/config/IndexConfig.html[IndexConfig^]
 class or the <<indexing-queries, `addIndex`>> method, then
-`InitialLoadMode` is overridden and `MapStoreConfig` behaves as if `EAGER` mode is on.
+the `initial-mode` property is overridden by `EAGER`.
+
+[cols="1m,5a"]
+|===
+|Initial Mode| Behavior
+
+|EAGER
+|The `MapLoader.loadAllKeys()` method is invoked the first time you create or get the map.
+
+|LAZY
+|After getting or creating the map, the `MapLoader.loadAllKeys()` method is invoked on each partition the first time that you use any of the `IMap` methods to get a value from that partition
+
+NOTE: For a list of all `IMap` methods that trigger the `MapLoader` methods, see <<map-mapstore, MapStore and MapLoader Methods Triggered by IMap Operations>>
+|===
+
+If your implementation of the `MapLoader.loadAllKeys()` method returns a `null` value, nothing will be loaded.
+Your `MapLoader.loadAllKeys()` method can also return all or some of the
+keys. For example, you may select and return only the keys that are most
+important to you.
+
 
 Here is the `MapLoader` initialization flow:
 
 . When `getMap()` is first called from any member, initialization starts
-depending on the value of `InitialLoadMode`. If it is set to `EAGER`,
-initialization starts on all partitions as soon as the map is touched,
+depending on the value of the `initial-mode` property. If it is set to `EAGER`,
+initialization starts on all partitions as soon as the map is created,
 i.e., all partitions are loaded when `getMap` is called.  If it is set to
 `LAZY`, data is loaded partition by partition, i.e., each partition is
 loaded with its first touch.
-. Hazelcast calls `MapLoader.loadAllKeys()` to get all your
+. When Hazelcast calls the `MapLoader.loadAllKeys()` to get all your
 keys on one of the members.
 . That member distributes keys to all other members in batches.
 . Each member loads values of all its owned keys by calling
@@ -1302,18 +1292,12 @@ keys on one of the members.
 
 NOTE: If the load mode is `LAZY` and the `clear()` method is called
 (which triggers `MapStore.deleteAll()`), Hazelcast removes **ONLY** the
-loaded entries from your map and datastore. Since all the data is not loaded
-in this case (`LAZY` mode), please note that there may still be entries
-in your datastore.
+loaded entries from your map and datastore. Since all the data is not loaded in this case (`LAZY` mode), please note that there may still be entries in your datastore.
 
 NOTE: If you do not want the MapStore start to load as soon as the
 first cluster member starts, you can use the system property `hazelcast.initial.min.cluster.size`.
 For example, if you set its value as `3`, loading process will be
 blocked until all three members are completely up.
-
-NOTE: The return type of `loadAllKeys()` is changed from `Set` to `Iterable`
-with the release of Hazelcast 3.5. MapLoader implementations from previous
-releases are also supported and do not need to be adapted.
 
 [[loading-keys-incrementally]]
 ===== Loading Keys Incrementally
@@ -1323,19 +1307,17 @@ load them incrementally rather than loading them all at once. To support
 incremental loading, the `MapLoader.loadAllKeys()` method returns an `Iterable`
 which can be lazily populated with the results of a database query.
 
-Hazelcast iterates over the `Iterable` and, while doing so, sends out the keys
-to their respective owner members. The `Iterator` obtained from `MapLoader.loadAllKeys()`
-may also implement the `Closeable` interface, in which case `Iterator` is closed
-once the iteration is over. This is intended for releasing resources such as
-closing a JDBC result set.
+NOTE: In Hazelcast IMDG version 3.5, the return type of `loadAllKeys()`  was changed from a `Set` type to an `Iterable` type. `MapLoader` implementations from previous
+releases are also supported and do not need to be adapted.
+
+Hazelcast iterates over the returned data and, while doing so, sends the keys
+to their respective owner members. The iterator that was returned from the `MapLoader.loadAllKeys()`
+may also implement the `Closeable` interface, in which case the iterator is closed when the iteration is over. This is intended for releasing resources such as closing a JDBC result set.
 
 [[forcing-all-keys-to-be-loaded]]
 ===== Forcing All Keys To Be Loaded
 
-The method `loadAll` loads some or all keys into a data store in order to
-optimize the multiple load operations. The method has two signatures; the
-same method can take two different parameter lists. One signature loads the
-given keys and the other loads all keys. See the example code below.
+The `MapLoader.loadAll()` method loads some or all keys into a data store in order to optimize multiple load operations. This method has two signatures (the same method can take two different parameter lists): One signature loads the given keys and the other loads all keys. See the example code below.
 
 [source,java]
 ----
@@ -1420,7 +1402,7 @@ hazelcast:
           mango.collection: supplements
 ----
 
-After you specified the database properties in your configuration,
+After specifying the database properties in your configuration,
 you need to implement the `MapLoaderLifecycleSupport` interface and
 give those properties in the `init()` method, as shown below:
 
@@ -1434,43 +1416,39 @@ See the full example link:https://github.com/hazelcast/hazelcast-code-samples/tr
 [[map-mapstore]]
 ===== MapStore and MapLoader Methods Triggered by IMap Operations
 
-As it is explained in the above sections, you can configure
-Hazelcast maps to be backed
-by a map store to persist the entries. In this case many of the
-IMap methods call
-MapLoader or MapStore methods to load, store or remove data. This
-section summarizes
-these methods. Here are the Hazelcast IMap operations that may
-trigger the MapStore or MapLoader methods:
+As explained in the above sections, you can configure
+Hazelcast maps to be backed by a map store to persist the entries. In this case many of the `IMap` methods call `MapLoader` or `MapStore` methods to load, store, or remove data. This section summarizes the `IMap` operations that may trigger the `MapStore` or `MapLoader` methods.
 
-[cols="1a,5a"]
+NOTE: If the <<initial-mode, `initial-mode` property>> of the `MapLoader` implementation is set to `LAZY`, the first time any link:{docBaseUrl}/javadoc/com/hazelcast/map/IMap.html[`IMap` method] is called, it triggers the `MapLoader.loadAllKeys()` method.
+
+[cols="1m,5a"]
 |===
-|IMap Method|Impact on the MapStore/MapLoader
+|`IMap` Method|Impact on the `MapStore`/`MapLoader` implementations
 
-|`flush()`
-|If the map has a MapStore, this method flushes all the local dirty
-entries. It calls the `MapStore.storeAll(Map)` or
+|flush()
+|This method flushes all the local dirty
+entries by calling the `MapStore.storeAll(Map)` or
 `MapStore.deleteAll(Collection)` methods with the elements marked as dirty.
 
-|* `put()`
-* `putAll()`
-* `putAsync()`
-* `tryPut()`
-* `putIfAbsent()`
-|These methods are used to put entries to the map. They call the
+|* put()
+* putAll()
+* putAsync()
+* tryPut()
+* putIfAbsent()
+|These methods are used to put entries into the map. They call the
 `MapLoader.load(Object)` method for each entry not found in the memory
 to load the value from the map store backing the map. They also call the
 `MapStore.store(Object, Object)` method for each entry, if write-through
 persistence mode is configured before the entry is added into the memory.
 
-|* `set()`
-* `setAsync()`
+|* set()
+* setAsync()
 |These methods put an entry into the map without returning the old value.
 They call the `MapStore.store(Object, Object)` method if write-through
 persistence mode is configured before the entry is added into the memory,
 to write the value into the map store.
 
-|`remove()`
+|remove()
 |Removes the mapping for a key from the map if it is present. It calls the
 `MapLoader.load(Object)` method if no value is found with key in the memory,
 to load the value from the map store backing the map. It also calls the
@@ -1478,35 +1456,34 @@ to load the value from the map store backing the map. It also calls the
 configured before the value is removed from the memory, to remove the value
 from the map store.
 
-|* `removeAll()`
-* `delete()`
-* `removeAsync()`
-* `tryRemove()`
+|* removeAll()
+* delete()
+* removeAsync()
+* tryRemove()
 |These methods are used to remove entries from the map for various conditions.
 They call the `MapStore.delete(Object)` method if write-through persistence mode
-is configured before the value is removed from the memory, to remove the value
-from the map store.
+is configured before the value is removed from the memory, to remove the value from the map store.
 
-| * `setTtl`
+| * setTtl
 | This method updates time-to-live of an existing entry. It calls the `MapLoader.load(Object)`
 method if no value is found in the memory. It also calls `EntryStore.store(Object, MetadataAwareValue)`
 with the entry whose time-to-live has been updated.
 
-|`clear()`
+|clear()
 |It clears the map and deletes the items from the backing map store. It calls
 the `MapStore.deleteAll(Collection)` method on each partition with the keys that the
 given partition stores.
 
-|`replace()`
+|replace()
 |It replaces the entry for a key only if currently mapped to a given value.
 It calls the `MapStore.store(Object, Object)` method if write-through persistence
 mode is configured before the value is stored in the memory, to write the value into
 the map store. 
 
-|* `executeOnKey()`
-* `executeOnKeys()`
-* `submitToKey()`
-* `executeOnAllEntries()`
+|* executeOnKey()
+* executeOnKeys()
+* submitToKey()
+* executeOnAllEntries()
 |These methods apply the user defined entry processors to the entry or entries.
 They call the `MapLoader.load(Object)` method if the value with key is not found in the
 memory, to load the value from the map store backing the map. If the entry processor
