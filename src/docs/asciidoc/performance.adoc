@@ -1371,11 +1371,12 @@ Note that caching makes the query evaluation faster, but it consumes more memory
 If you are using portable serialization or your map's in-memory format is `OBJECT` or `NATIVE`,
 then `cache-deserialized-values` element does not have any effect.
 
-==== Performance Anti Patterns
+[[performance-anti-patterns]]
+=== Best Practices for Performance
 
 This section covers various recommendations to improve the performance of your Hazelcast IMDG clusters.
 
-===== Using Single Member per Machine
+==== Using Single Member per Machine
 
 A Hazelcast member assumes it is alone on a machine, so we recommend not running multiple
 Hazelcast members on a machine. Having multiple
@@ -1384,7 +1385,7 @@ running a single member, since there will be more
 context switching, less batching, etc. So unless it is proven that running multiple members per machine does give a better
 performance/behavior in your particular setup, it is best to run a single member per machine.
 
-===== Using Operation Threads Efficiently
+==== Using Operation Threads Efficiently
 
 By default, Hazelcast uses the machine's core count to determine the number of operation threads. Creating more
 operation threads than this core count is highly unlikely leads to an improved performance since there will be more context
@@ -1397,7 +1398,7 @@ by reducing the core count is that the operations executed on the operation thre
 be a very significant amount of overhead caused by thread parking and unparking. If there are less threads, a thread needs
 to do more work, will block less and therefore needs to be notified less.
 
-===== Avoiding Random Changes
+==== Avoiding Random Changes
 
 Tweaking can be very rewarding because significant performance improvements are possible. By default, Hazelcast tries 
 to behave at its best for all situations, but this doesn't always lead to the best performance. So if you know what
@@ -1405,7 +1406,7 @@ you are doing and what to look for, it can be very rewarding to tweak. However i
 be done with proper testing to see if there is actually an improvement. Tweaking without proper benchmarking
 is likely going to lead to confusion and could cause all kinds of problems. In case of doubt, we recommend not to tweak.
 
-===== Creating the Right Benchmark Environment
+==== Creating the Right Benchmark Environment
 
 When benchmarking, it is important that the benchmark reflects your production environment. Sometimes with calculated
 guess, a representative smaller environment can be set up; but if you want to use the benchmark statistics to inference
