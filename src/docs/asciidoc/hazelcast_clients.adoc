@@ -1331,10 +1331,10 @@ clientConfig.getConnectionStrategyConfig()
 
 ===== Configuring Client Connection Retry
 
-When client is disconnected from the cluster, it searches for new connections
-to reconnect. You can configure the frequency of the reconnection attempts and
-client shutdown behavior using `ConnectionRetryConfig` (programmatical approach)/
-`connection-retry` (declarative approach).
+When the client is disconnected from the cluster or trying to connect to a one
+for the first time, it searches for new connections. You can configure the frequency
+of the connection attempts and client shutdown behavior using
+`ConnectionRetryConfig` (programmatical approach)/`connection-retry` (declarative approach).
 
 Below are the example configurations for each.
 
@@ -1397,7 +1397,11 @@ Its default value is 30000 ms.
 * `multiplier`: Factor to multiply the backoff after a failed retry.
 Its default value is 1.
 * `cluster-connect-timeout-millis`: Timeout value in milliseconds for the client to give up to connect to the current cluster
-Its default value is 20000.
+Its default value is -1. For the default value, client will not stop trying to
+connect to the target cluster (infinite timeout). If the failover client is used
+with the default value of this configuration element, the failover client will try
+to connect alternative clusters after 120000 ms (2 minutes). For any other value,
+both the client and the failover client will use this as it is.
 * `jitter`: Specifies by how much to randomize backoffs. Its default value is 0.
 
 A pseudo-code is as follows:
@@ -1408,7 +1412,9 @@ A pseudo-code is as follows:
  current_backoff_millis = INITIAL_BACKOFF_MILLIS
  while (TryConnect(connectionTimeout)) != SUCCESS) {
     if (getCurrentTime() - begin_time >= CLUSTER_CONNECT_TIMEOUT_MILLIS) {
-         //Give up to connecting to the current cluster and switch to another if exists.
+         // Give up to connecting to the current cluster and switch to another if exists.
+         // For the default values, CLUSTER_CONNECT_TIMEOUT_MILLIS is infinite for the
+         // client and equal to the 120000 ms (2 minutes) for the failover client.
     }
     Sleep(current_backoff_millis + UniformRandom(-JITTER * current_backoff_millis, JITTER * current_backoff_millis))
     current_backoff = Min(current_backoff_millis * MULTIPLIER, MAX_BACKOFF_MILLIS)
