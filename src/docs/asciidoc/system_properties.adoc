@@ -546,6 +546,13 @@ during an IMap eviction.
 | Maximum size of the key batch sent to the partition owners for value loading and
 the maximum size of a key batch for which values are loaded in a single partition.
 
+|`hazelcast.map.loaded.key.limit.per.node`
+| 50000
+| int
+| Maximum number of keys read into memory at a time.
+This is a per-member limit to prevent `OutOfMemoryError` when
+multiple maps are tried to load concurrently from the same member.
+
 |`hazelcast.map.replica.scheduled.task.delay.seconds`
 | 10
 | int
